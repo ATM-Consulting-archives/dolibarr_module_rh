@@ -91,15 +91,6 @@ class TRH_Emprunt  extends TObjetStd {
 		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
 	}
 	
-	function load(&$ATMdb, $id) {
-		parent::load($ATMdb, $id);
-	}
-	
-	
-	function save(&$ATMdb) {
-		parent::save($db);
-	}
-	
 	
 }	
 	
@@ -118,17 +109,7 @@ class TRH_Evenement  extends TObjetStd {
 		parent::add_champs('fk_user,entity','type=entier;index;');
 		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
 	}
-	
-	function load(&$ATMdb, $id) {
-		parent::load($ATMdb, $id);
-	}
-	
-	
-	function save(&$ATMdb) {
-		parent::save($db);
-	}
-	
-	
+		
 }	
 	
 	
@@ -149,14 +130,6 @@ class TRH_Contrat  extends TObjetStd {
 		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
 	}
 	
-	function load(&$ATMdb, $id) {
-		parent::load($ATMdb, $id);
-	}
-	
-	function save(&$ATMdb) {
-		parent::save($db);
-	}
-	
 	
 }	
 	
@@ -174,16 +147,7 @@ class TRH_Ressource_Contrat  extends TObjetStd {
 		parent::add_champs('fk_rh_contrat,entity','type=entier;index;');
 		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
 	}
-	
-	function load(&$ATMdb, $id) {
-		parent::load($ATMdb, $id);
-	}
-	
-	function save(&$ATMdb) {
-		parent::save($db);
-	}
-	
-	
+		
 }	
 	
 	
@@ -196,15 +160,6 @@ class TRH_Ressource_Import  extends TObjetStd {
 		parent::add_champs('fk_rh_import,entity','type=entier;index;');
 		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
 	}
-	
-	function load(&$ATMdb, $id) {
-		parent::load($ATMdb, $id);
-	}
-	
-	function save(&$ATMdb) {
-		parent::save($db);
-	}
-	
 	
 }	
 	
