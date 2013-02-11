@@ -6,7 +6,7 @@ class TRH_Absence extends TObjetStd {
 	function __construct() { /* declaration */
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence');
-		parent::add_champs('type','type=enum('rtt','conge_paye','maladie','deuil');');				//type de congé
+		parent::add_champs('type','type=varchar;');				//type de congé
 		parent::add_champs('date_debut,date_fin','type=date;');	//dates debut fin de congés
 		parent::add_champs('duree','type=entier;');				//duree en demi-journees
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
@@ -15,50 +15,8 @@ class TRH_Absence extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		
-		$this->TField=array();
-		
-	}
-	
-	function load(&$ATMdb, $id) {
-		
-		parent::load($ATMdb, $id);
-		
-		$this->load_field($ATMdb);
-		
-	}
-	
-	function load_field(&$ATMdb) {
-
-		$Tab = TRequeteCore::get_id_from_what_you_want(&$db, MAIN_DB_PREFIX.'rh_ressource_field', array('fk_rh_ressource'=>$this->getId()));
-		foreach($Tab as $k=>$id) {
-			$this->TField[$k]=new TRH_Ressource_field;
-			$this->TField[$k]->load($ATMdb, $id);
-			
-		}
-		
-		$this->init_variables();
-	}
-	function init_variables() {
-		foreach($this->TField as $field) {
-			$this->{$field->nom} = $field->valeur;
-			
-		}		
-		
-	}
-	function save(&$ATMdb) {
-		parent::save($db);
-		
-		$this->save_field($ATMdb);
-	}
-	function save_field(&$ATMdb) {
-		foreach($this->TField as &$field) {
-			$field->fk_rh_ressource = $this->getId();
-			$field->valeur = $this->{$field->nom};
-			$field->save($ATMdb);
-		}
 	}
 }
-
 
 //définition de la classe pour la notion de pointage
 class TRH_Pointage extends TObjetStd {
@@ -71,10 +29,8 @@ class TRH_Pointage extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		
-	}	
-		
+	}
 }
-
 
 //TODO  A terminer de definir...
 //Définiton classe d'export vers la comptabilité + export bilan social individuel annuel 
@@ -91,10 +47,8 @@ class TRH_Export extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		
-	}	
-		
+	}
 }
-
 
 //définition de la table pour l'enregistrement des jours non travaillés dans l'année (fériés etc...)
 class TRH_Jour_non_travaille extends TObjetStd {
@@ -106,14 +60,5 @@ class TRH_Jour_non_travaille extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		
-	}	
-		
+	}
 }
-
-
-
-
-
-
-
-	
