@@ -93,64 +93,12 @@ class TRH_Emprunt  extends TObjetStd {
 	
 	
 }	
-	
-class TRH_Evenement  extends TObjetStd {
-	
-	function __construct(){
-		parent::set_table(MAIN_DB_PREFIX.'rh_evenement');
-		parent::add_champs('libelle','type=chaine;');
-		parent::add_champs('date','type=date;');
-		parent::add_champs('type, motif','type=chaine;');
-		
-		parent::add_champs('montant_HT, TVA','type=float;');
-		
-		//Un evenement est lié à une ressource et un utilisateur
-		//TODO : fk_user ?
-		parent::add_champs('fk_user,entity','type=entier;index;');
-		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
-	}
-		
-}	
-	
-	
-class TRH_Contrat  extends TObjetStd {
-	
-	function __construct(){
-		parent::set_table(MAIN_DB_PREFIX.'rh_contrat');
-		parent::add_champs('libelle','type=chaine;');
-		parent::add_champs('date','type=date;');
-		parent::add_champs('duree, kilometrage','type=entier;');
-		
-		parent::add_champs('montant_HT, TVA','type=float;');
-		
-		//Un evenement est lié à une ressource et deux tiers (agence utilisatrice et fournisseur)
-		//TODO fk_tier existe-t-il ?
-		parent::add_champs('fk_tier,entity','type=entier;index;');
-		parent::add_champs('fk_tier,entity','type=entier;index;');
-		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
-	}
-	
-	
-}	
-	
 
 /*
  * Classes d'associations
  * 
  */
-class TRH_Ressource_Contrat  extends TObjetStd {
-	
-	function __construct(){
-		parent::set_table(MAIN_DB_PREFIX.'rh_ressource_contrat');
-		parent::add_champs('libelle','type=chaine;');
-		
-		parent::add_champs('fk_rh_contrat,entity','type=entier;index;');
-		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
-	}
-		
-}	
-	
-	
+
 class TRH_Ressource_Import  extends TObjetStd {
 	
 	function __construct(){
