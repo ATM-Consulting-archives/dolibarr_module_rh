@@ -29,10 +29,26 @@
 				break;
 				
 			case 'save':
+				$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
+				/*print_r($ressource);	
+				print '<hr>';
+				 * Alexis, pense au bug classe objet standart dans set_values sur Tableau
+				 * */
 				$ressource->set_values($_REQUEST);
 				
-				$ATMdb->db->debug=true;
+				foreach($_REQUEST['TField'] as $k=>$field) {
+					/*print_r($ressource);*/	
+					$ressource->TField[$k]->set_values($field);					
+				}
+				
+				if(isset($_REQUEST['newField']) && !empty($_REQUEST['TNField']['code'])) {
+					
+					$ressource->addField($_REQUEST['TNField']);
+					
+				}
+				
+				
 				//print_r($_REQUEST);
 				
 				$ressource->save($ATMdb);
@@ -60,8 +76,6 @@
 	elseif(isset($_REQUEST['id'])) {
 		$ressource->load($ATMdb, $_REQUEST['id']);
 		
-		
-		//_liste_fields($ATMdb, $ressource);
 		_fiche($ATMdb, $ressource, 'view');
 		
 	}
@@ -130,16 +144,30 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	llxHeader('','Type de ressource');
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
-	$form->Set_typeaff($mode);
-	
-	
-	
-	$TFields=array();
-	
+	$form->Set_typeaff('edit');//$mode);
 	echo $form->hidden('id', $ressource->getId());
 	echo $form->hidden('action', 'save');
 	
+	
+	//Champs
+	$TFields=array();
+	foreach($ressource->TField as $k=>$field) {
+		//echo $field->getId().' - '.$field->obligatoire.'<br>';
+		//print_r($field);
+		
+		$TFields[$k]=array(
+				'id'=>$field->getId()
+				,'code'=>$form->texte('', 'TField['.$k.'][code]', $field->code, 30,255,'','','-')
+				,'libelle'=>$form->texte('', 'TField['.$k.'][libelle]', $field->libelle, 50,255,'','','-')
+				,'type'=>$form->texte('', 'TField['.$k.'][type]', $field->type, 50,255,'','','-')
+									 //checkbox1($pLib,$pName,$pVal,$checked=false,$plus='',$class='',$id='',$order='case_after'){
+				,'obligatoire'=>$form->checkbox1('', 'TField['.$k.'][obligatoire]', 1)
+			);
+		
+	}
+	
 	$TBS=new TTemplateTBS();
+	//$TBS->TBS->protect=false;
 	
 	print $TBS->render('./tpl/ressource.type.tpl.php'
 		,array(
@@ -152,43 +180,25 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 100,255,'','','à saisir') 
 				,'date_maj'=>$ressource->get_date('date_maj','d/m/Y à H:i:s')
 				,'date_cre'=>$ressource->get_date('date_cre','d/m/Y')
+			)
+			,'newField'=>array(
+				'hidden'=>$form->hidden('action', 'save')
+				,'code'=>$form->texte('', 'TNField[code]', '', 30,255,'','','-')
+				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 50,255,'','','-')
+				,'type'=>$form->texte('', 'TNField[type]', '', 50,255,'','','-')
+				,'obligatoire'=>$form->checkbox1('','TNField[obligatoire]',1,true)
+				//$form->texte('', 'obligatoire', $field->obligatoire, 100,255,'','','à saisir')
+				//		texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default=''){
+			
 			)
 			,'view'=>array(
 				'mode'=>$mode
 			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 			)
 			
-		)
+		)	
+		
 	);
-	
-	/*
-	$sql="SELECT rowid as 'IDField', code as 'Code', libelle as 'Libellé', 
-				obligatoire as 'Obligatoire', fk_rh_ressource_type
-		FROM llx_rh_ressource_field ";
-	$TOrder = array('Code'=>'ASC');
-	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
-	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
-	
-	print $TBS->render('./tpl/ressource.type.tpl.php'
-		,array(
-			'ressourceField'=>$TFields
-		)
-		,array(
-			'ressourceType'=>array(
-				'id'=>$ressource->getId()
-				,'code'=>$form->texte('', 'code', $ressource->code, 30,255,'','','à saisir')
-				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 100,255,'','','à saisir') 
-				,'date_maj'=>$ressource->get_date('date_maj','d/m/Y à H:i:s')
-				,'date_cre'=>$ressource->get_date('date_cre','d/m/Y')
-			)
-			,'view'=>array(
-				'mode'=>$mode
-			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)
-			)
-			
-		)
-	);
-		*/
 	
 	echo $form->end_form();
 	// End of page
@@ -198,52 +208,5 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	llxFooter();
 }
 
-	/*
-function _liste_fields(&$ATMdb, &$ressource) {
-	global $langs,$conf, $db;	
 	
-	llxHeader('','Champs de la ressource');
-	getStandartJS();
-	
-	$r = new TSSRenderControler($ressource);
-	$sql="SELECT rowid as 'IDField', code as 'Code', libelle as 'Libellé', 
-				obligatoire as 'Obligatoire', fk_rh_ressource_type
-		FROM llx_rh_ressource_field ";
-		//WHERE fk_rh_ressource_type=".$ressource->getId();
-	
-	$TOrder = array('Code'=>'ASC');
-	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
-	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
-				
-	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
-	//print $page;
-	$r->liste($ATMdb, $sql, array(
-		'limit'=>array(
-			'page'=>$page
-			,'nbLine'=>'30'
-		)
-		,'link'=>array()
-		,'translate'=>array()
-		,'hide'=>array()
-		,'type'=>array()
-		,'liste'=>array(
-			'titre'=>'Liste des champs'
-			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
-			,'picto_suivant'=>img_picto('','next.png', '', 0)
-			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucun champs à afficher"
-			,'order_down'=>img_picto('','1downarrow.png', '', 0)
-			,'order_up'=>img_picto('','1uparrow.png', '', 0)
-			
-		)
-		,'orderBy'=>$TOrder
-		
-	));
-	
-	
-	llxFooter();
-}	
-
-//*/
 	

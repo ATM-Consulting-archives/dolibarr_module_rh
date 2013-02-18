@@ -2,7 +2,6 @@
 
 class TRH_Ressource extends TObjetStd {
 	function __construct() { /* declaration */
-		
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource');
 		parent::add_champs('libelle','type=chaine;');
 		parent::add_champs('date_achat','type=date;');
@@ -31,15 +30,12 @@ class TRH_Ressource extends TObjetStd {
 		$this->load_ressource_type($ATMdb);
 	}
 	
-	function load_ressource_type() {
-			
+	function load_ressource_type($ATMdb) {
 		//on prend le type de ressource associé	
-		$Tab = TRequeteCore::get_id_from_what_you_want($db, MAIN_DB_PREFIX.'rh_ressource_type', 
-						array(getId()=>'fk_rh_ressource_type'));
+		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type',  array(getId()=>'fk_rh_ressource_type'));
 		$this->ressourceType = $Tab[0];
 		//on charge les champs associés au type.
 		$this->ressourceType->load_field($ATMdb);
-		//load...
 		$this->init_variables();
 	}
 	
@@ -52,19 +48,16 @@ class TRH_Ressource extends TObjetStd {
 		foreach($this->TField as $field) {
 			$this->{$field->code} = $field->valeur;
 		}
-		
 	}
-	function save(&$ATMdb) {
+	
+	function save(&$db) {
 		parent::save($db);
-		
-		
 	}
 }
 
 
 class TRH_Ressource_type extends TObjetStd {
 	function __construct() { /* declaration */
-		
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource_type');
 		parent::add_champs('libelle,code','type=chaine;');
 		parent::add_champs('entity','type=entier;index;');
@@ -74,41 +67,62 @@ class TRH_Ressource_type extends TObjetStd {
 		$this->TField=array();
 	}
 	
-	function load_field(&$ATMdb) {
 
-		$Tab = TRequeteCore::get_id_from_what_you_want($db, MAIN_DB_PREFIX.'rh_ressource_field', array('fk_rh_ressource_type'=>$this->getId()));
+	function load(&$ATMdb, $id) {
+		parent::load($ATMdb, $id);
+		$this->load_field($ATMdb);
+	}
+	
+	function load_field(&$ATMdb) {
+		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_field', array('fk_rh_ressource_type'=>$this->getId()));
+		$this->TField=array();
 		foreach($Tab as $k=>$id) {
 			$this->TField[$k]=new TRH_Ressource_field;
 			$this->TField[$k]->load($ATMdb, $id);
 		}
-		$this->init_variables();
+		
 	}
-	
+	function addField($TNField) {
+		$k=count($this->TField);
+		$this->TField[$k]=new TRH_Ressource_field;
+		$this->TField[$k]->set_values($TNField);
+		
+		return $k;
+	}
 	function save(&$db) {
 		global $conf;
 		
 		$this->entity = $conf->entity;
-		
 		parent::save($db);
+		
+		foreach($this->TField as $field) {
+			$field->fk_rh_ressource_type = $this->getId();
+			$field->save($db);
+		}
+		
 	}	
 		
 }
 
 class TRH_Ressource_field extends TObjetStd {
 	function __construct() { /* declaration */
-		
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource_field');
 		parent::add_champs('code,libelle','type=chaine;');
 		parent::add_champs('type','type=entier;');
 		parent::add_champs('obligatoire','type=entier;');
 		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
-		//parent::add_champs('fk_rh_ressource','type=entier;index;');
 		
 		parent::_init_vars();
 		parent::start();
 		
-	}	
+	}
+	
+	function save(&$db) {
+		global $conf;
 		
+		$this->entity = $conf->entity;
+		parent::save($db);
+	}
 }
 	
 class TRH_Emprunt  extends TObjetStd {
