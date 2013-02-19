@@ -1,6 +1,7 @@
 #GLOBAL
 Ressource=Ressource
 nouveauTypeRessource =Nouveau type de ressource
+listeTypeRessource =Liste des types de ressource
 nouvelleRessource=Nouvelle Ressource
 attribuerRessource=Attribuer Ressource
 listeRessource=Liste Ressource

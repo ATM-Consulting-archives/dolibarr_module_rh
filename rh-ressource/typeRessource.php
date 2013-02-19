@@ -47,6 +47,7 @@
 					$ressource->addField($_REQUEST['TNField']);
 					
 				}
+		
 				
 				
 				//print_r($_REQUEST);
@@ -59,6 +60,7 @@
 			
 				
 			case 'delete':
+
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				//$ATMdb->db->debug=true;
 				$ressource->delete($ATMdb);
@@ -114,7 +116,7 @@ function _liste(&$ATMdb, &$ressource) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Code'=>'<a href="?id=@ID@">@val@</a>'
+			'Code'=>'<a href="?id=@ID@&action=edit">@val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array()
@@ -144,7 +146,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	llxHeader('','Type de ressource');
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
-	$form->Set_typeaff('edit');//$mode);
+	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $ressource->getId());
 	echo $form->hidden('action', 'save');
 	
@@ -159,15 +161,13 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				'id'=>$field->getId()
 				,'code'=>$form->texte('', 'TField['.$k.'][code]', $field->code, 30,255,'','','-')
 				,'libelle'=>$form->texte('', 'TField['.$k.'][libelle]', $field->libelle, 50,255,'','','-')
-				,'type'=>$form->texte('', 'TField['.$k.'][type]', $field->type, 50,255,'','','-')
-									 //checkbox1($pLib,$pName,$pVal,$checked=false,$plus='',$class='',$id='',$order='case_after'){
-				,'obligatoire'=>$form->checkbox1('', 'TField['.$k.'][obligatoire]', 1)
+				,'type'=>$form->combo('','TField['.$k.'][type]',$ressource->TType,$field->type)
+				,'obligatoire'=>$form->checkbox1('', 'TField['.$k.'][obligatoire]', 1, $field->obligatoire)
+				,'supprimer'=>$form->btImg('Supprimer','delete','./img/delete.png', "value='$k'")
 			);
-		
 	}
 	
 	$TBS=new TTemplateTBS();
-	//$TBS->TBS->protect=false;
 	
 	print $TBS->render('./tpl/ressource.type.tpl.php'
 		,array(
@@ -185,11 +185,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				'hidden'=>$form->hidden('action', 'save')
 				,'code'=>$form->texte('', 'TNField[code]', '', 30,255,'','','-')
 				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 50,255,'','','-')
-				,'type'=>$form->texte('', 'TNField[type]', '', 50,255,'','','-')
+				,'type'=>$form->combo('', 'type',$ressource->TType, 'TNField[type]')
 				,'obligatoire'=>$form->checkbox1('','TNField[obligatoire]',1,true)
-				//$form->texte('', 'obligatoire', $field->obligatoire, 100,255,'','','à saisir')
-				//		texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default=''){
-			
 			)
 			,'view'=>array(
 				'mode'=>$mode

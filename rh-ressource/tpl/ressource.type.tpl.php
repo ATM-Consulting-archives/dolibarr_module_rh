@@ -6,7 +6,7 @@
 </div>
 
 <div>
-
+<h2>Champs de la ressource</h2>
 <table class="border">
 	<!-- entête du tableau -->
 	<tr>
@@ -15,7 +15,7 @@
 		<td>Libellé</td>
 		<td>Type</td>
 		<td>Obligatoire</td>
-		<td>Ajouter</td>
+		<td>Action</td>
 	</tr>
 
 	<!-- fields déjà existants -->
@@ -25,7 +25,7 @@
 		<td>[ressourceField.libelle;strconv=no;protect=no]</td>
 		<td>[ressourceField.type;strconv=no;protect=no]</td>
 		<td>[ressourceField.obligatoire;strconv=no;protect=no]</td>
-		<td></td>
+		<td>[ressourceField.supprimer;strconv=no;protect=no]<!--<input type="submit" value="Supprimer" name="delField" class="button">--></td>
 	</tr>
 	
 	<!-- Nouveau field-->
@@ -47,6 +47,6 @@
 </div>
 
 <p align="center">
-		<!--<input type="submit" value="Enregistrer" name="save" class="button">--> 
+		<input type="submit" value="Enregistrer" name="save" class="button">
 		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[affaire.id]'">
 </p>

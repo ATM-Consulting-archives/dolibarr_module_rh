@@ -65,6 +65,8 @@ class TRH_Ressource_type extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		$this->TField=array();
+		$this->TType=array('texte'=>'Texte','entier'=>'Entier','float'=>'Float',"liste"=>'Liste',"checkbox"=>'Case à cocher');
+		
 	}
 	
 
@@ -108,7 +110,7 @@ class TRH_Ressource_field extends TObjetStd {
 	function __construct() { /* declaration */
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource_field');
 		parent::add_champs('code,libelle','type=chaine;');
-		parent::add_champs('type','type=entier;');
+		parent::add_champs('type','type=chaine;');
 		parent::add_champs('obligatoire','type=entier;');
 		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
 		
