@@ -6,7 +6,7 @@
 	
 	//if (!$user->rights->financement->affaire->read)	{ accessforbidden(); }
 	$ATMdb=new Tdb;
-	$ressource=new TRH_ressource_type;
+	$ressource=new TRH_ressource;
 	
 	$mesg = '';
 	$error=false;
@@ -31,45 +31,7 @@
 			case 'save':
 				$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				/*print_r($ressource);	
-				print '<hr>';
-				 * Alexis, pense au bug classe objet standart dans set_values sur Tableau
-				 * */
 				$ressource->set_values($_REQUEST);
-				
-				/*echo 'top';
-				print_r($_REQUEST['TField']);
-				echo 'topfin';//*/
-				
-				if(isset($_REQUEST['TField'])){
-				
-					foreach($_REQUEST['TField'] as $k=>$field) {
-						/*print_r($ressource);*/	
-						$ressource->TField[$k]->set_values($field);					
-					}
-				}
-				
-				if(isset($_REQUEST['newField']) && !empty($_REQUEST['TNField']['code'])) {
-					
-					$ressource->addField($_REQUEST['TNField']);
-					
-				}
-		
-				
-				if(isset($_REQUEST['deleteField']) ) {
-					$ressource->delField($ATMdb, $_REQUEST['deleteField']);
-					?>
-					<script language="javascript">
-						document.location.href="?id=".$_REQUEST['id']."&delete_ok=1";					
-					</script>
-					<?
-					$ressource->load($ATMdb, $_REQUEST['id']);
-						
-				}
-		
-				
-				//print_r($_REQUEST);
-				
 				$ressource->save($ATMdb);
 				
 				_fiche($ATMdb, $ressource,'new');
@@ -112,15 +74,15 @@
 function _liste(&$ATMdb, &$ressource) {
 	global $langs,$conf, $db;	
 	
-	llxHeader('','Type Ressource');
+	llxHeader('','Liste des ressourcessss');
 	getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
-	$sql="SELECT rowid as 'ID', code as 'Code', libelle as 'Libellé'
-		FROM @table@
+	$sql="SELECT rowid as 'ID', libelle as 'Libellé', fk_rh_ressource_type as 'Type',  bail as 'Bail', statut as 'Statut'
+		FROM llx_rh_ressource
 		WHERE entity=".$conf->entity;
 	
-	$TOrder = array('Code'=>'ASC');
+	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -132,18 +94,18 @@ function _liste(&$ATMdb, &$ressource) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Code'=>'<a href="?id=@ID@&action=edit">@val@</a>'
+			'Libellé'=>'<a href="?id=@ID@&action=edit">@val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array()
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste des types de ressources'
+			'titre'=>'Liste des ressources'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucun type de ressource à afficher"
+			,'messageNothing'=>"Il n'y a aucune ressource à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			
@@ -159,15 +121,14 @@ function _liste(&$ATMdb, &$ressource) {
 function _fiche(&$ATMdb, &$ressource, $mode) {
 	global $db,$user;
 
-	llxHeader('','Type de ressource');
+	llxHeader('','Ressource');
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $ressource->getId());
 	echo $form->hidden('action', 'save');
 	
-	
-	//Champs
+	//Ressources
 	$TFields=array();
 	foreach($ressource->TField as $k=>$field) {
 		//echo $field->getId().' - '.$field->obligatoire.'<br>';
@@ -175,35 +136,21 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 		
 		$TFields[$k]=array(
 				'id'=>$field->getId()
-				,'code'=>$form->texte('', 'TField['.$k.'][code]', $field->code, 30,255,'','','-')
-				,'libelle'=>$form->texte('', 'TField['.$k.'][libelle]', $field->libelle, 50,255,'','','-')
-				,'type'=>$form->combo('','TField['.$k.'][type]',$ressource->TType,$field->type)
-				,'obligatoire'=>$form->checkbox1('', 'TField['.$k.'][obligatoire]', 1, $field->obligatoire)
+				,'libelle'=>$form->texte('', 'TFields['.$k.'][libelle]', $field->libelle, 50,255,'','','-')
+				,'type'=>'Camembert'//$form->combo('','TRessource['.$k.'][type]',$ressource->TType,$field->type)
+				,'bail'=>$form->combo('','TFields['.$k.'][bail]',$ressource->TBail,$ressource->TBail[0])
+				,'statut'=>$form->combo('','TFields['.$k.'][statut]',$ressource->TStatut,$ressource->TStatut[0])
 			);
 	}
 	
 	$TBS=new TTemplateTBS();
 	
-	print $TBS->render('./tpl/ressource.type.tpl.php'
+	print $TBS->render('./tpl/ressource.tpl.php'
 		,array(
-			'ressourceField'=>$TFields
+			'ressource'=>TRessources
 		)
 		,array(
-			'ressourceType'=>array(
-				'id'=>$ressource->getId()
-				,'code'=>$form->texte('', 'code', $ressource->code, 30,255,'','','à saisir')
-				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 100,255,'','','à saisir') 
-				,'date_maj'=>$ressource->get_date('date_maj','d/m/Y à H:i:s')
-				,'date_cre'=>$ressource->get_date('date_cre','d/m/Y')
-			)
-			,'newField'=>array(
-				'hidden'=>$form->hidden('action', 'save')
-				,'code'=>$form->texte('', 'TNField[code]', '', 30,255,'','','-')
-				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 50,255,'','','-')
-				,'type'=>$form->combo('', 'TNField[type]',$ressource->TType, 'entier')
-				,'obligatoire'=>$form->checkbox1('','TNField[obligatoire]',1,true)
-			)
-			,'view'=>array(
+			'view'=>array(
 				'mode'=>$mode
 			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 			)
