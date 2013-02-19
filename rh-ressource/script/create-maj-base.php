@@ -15,3 +15,5 @@
 	$p=new TRH_Ressource_field;
 	$p->init_db_by_vars($ATMdb);
 	
+	$p=new TRH_Ressource;
+	$p->init_db_by_vars($ATMdb);

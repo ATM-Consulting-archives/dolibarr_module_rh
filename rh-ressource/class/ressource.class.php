@@ -7,8 +7,8 @@ class TRH_Ressource extends TObjetStd {
 		parent::add_champs('date_achat','type=date;');
 		
 		//types énuméré
-		parent::add_champs('bail','type=entier;');
-		parent::add_champs('statut','type=entier;');
+		parent::add_champs('bail','type=chaine;');
+		parent::add_champs('statut','type=chaine;');
 		
 		//clé étrangère : société
 		parent::add_champs('fk_soc,entity','type=entier;index;');//fk_soc_leaser
@@ -19,7 +19,8 @@ class TRH_Ressource extends TObjetStd {
 		parent::start();
 		
 		$this->TField=array();
-		
+		$this->TBail = array('bail'=>'Bail','immo'=>'Immo');
+		$this->TStatut = array('nonattribuée'=>'Non attribuée','attribuée'=>'Attribuée');
 		$this->ressourceType=new TRH_Ressource_type;
 	}
 	
@@ -30,9 +31,11 @@ class TRH_Ressource extends TObjetStd {
 		$this->load_ressource_type($ATMdb);
 	}
 	
-	function load_ressource_type($ATMdb) {
+	function load_ressource_type(&$ATMdb) {
 		//on prend le type de ressource associé	
-		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type',  array(getId()=>'fk_rh_ressource_type'));
+		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type', array()); 
+			//array($this->fk_rh_ressource_type=>'rowid'));
+		print_r($Tab);
 		$this->ressourceType = $Tab[0];
 		//on charge les champs associés au type.
 		$this->ressourceType->load_field($ATMdb);
