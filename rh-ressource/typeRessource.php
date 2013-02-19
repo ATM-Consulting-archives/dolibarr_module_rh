@@ -37,9 +37,16 @@
 				 * */
 				$ressource->set_values($_REQUEST);
 				
-				foreach($_REQUEST['TField'] as $k=>$field) {
-					/*print_r($ressource);*/	
-					$ressource->TField[$k]->set_values($field);					
+				/*echo 'top';
+				print_r($_REQUEST['TField']);
+				echo 'topfin';//*/
+				
+				if(isset($_REQUEST['TField'])){
+				
+					foreach($_REQUEST['TField'] as $k=>$field) {
+						/*print_r($ressource);*/	
+						$ressource->TField[$k]->set_values($field);					
+					}
 				}
 				
 				if(isset($_REQUEST['newField']) && !empty($_REQUEST['TNField']['code'])) {
@@ -49,18 +56,27 @@
 				}
 		
 				
+				if(isset($_REQUEST['deleteField']) ) {
+					$ressource->delField($ATMdb, $_REQUEST['deleteField']);
+					?>
+					<script language="javascript">
+						document.location.href="?id=".$_REQUEST['id']."&delete_ok=1";					
+					</script>
+					<?
+					$ressource->load($ATMdb, $_REQUEST['id']);
+						
+				}
+		
 				
 				//print_r($_REQUEST);
 				
 				$ressource->save($ATMdb);
 				
-				_fiche($ATMdb, $ressource,'view');
-				
+				_fiche($ATMdb, $ressource,'new');
 				break;
 			
 				
 			case 'delete':
-
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				//$ATMdb->db->debug=true;
 				$ressource->delete($ATMdb);
@@ -163,7 +179,6 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'libelle'=>$form->texte('', 'TField['.$k.'][libelle]', $field->libelle, 50,255,'','','-')
 				,'type'=>$form->combo('','TField['.$k.'][type]',$ressource->TType,$field->type)
 				,'obligatoire'=>$form->checkbox1('', 'TField['.$k.'][obligatoire]', 1, $field->obligatoire)
-				,'supprimer'=>$form->btImg('Supprimer','delete','./img/delete.png', "value='$k'")
 			);
 	}
 	
@@ -185,7 +200,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				'hidden'=>$form->hidden('action', 'save')
 				,'code'=>$form->texte('', 'TNField[code]', '', 30,255,'','','-')
 				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 50,255,'','','-')
-				,'type'=>$form->combo('', 'type',$ressource->TType, 'TNField[type]')
+				,'type'=>$form->combo('', 'TNField[type]',$ressource->TType, 'entier')
 				,'obligatoire'=>$form->checkbox1('','TNField[obligatoire]',1,true)
 			)
 			,'view'=>array(

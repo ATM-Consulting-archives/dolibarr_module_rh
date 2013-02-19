@@ -91,6 +91,13 @@ class TRH_Ressource_type extends TObjetStd {
 		
 		return $k;
 	}
+	
+	function delField(&$ATMdb, $id){
+		$toDel = new TRH_Ressource_field;
+		$toDel->load($ATMdb,$id);
+		$toDel->delete($ATMdb);
+	}
+	
 	function save(&$db) {
 		global $conf;
 		

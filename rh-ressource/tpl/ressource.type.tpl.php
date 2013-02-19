@@ -25,21 +25,17 @@
 		<td>[ressourceField.libelle;strconv=no;protect=no]</td>
 		<td>[ressourceField.type;strconv=no;protect=no]</td>
 		<td>[ressourceField.obligatoire;strconv=no;protect=no]</td>
-		<td>[ressourceField.supprimer;strconv=no;protect=no]<!--<input type="submit" value="Supprimer" name="delField" class="button">--></td>
+		<td><button type="submit" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" >Supprimer</button></td>
 	</tr>
 	
 	<!-- Nouveau field-->
-	[newField.hidden;strconv=no]
 	<tr>
 		<td>Nouveau</td>
 		<td>[newField.code;strconv=no;protect=no]</td>
 		<td>[newField.libelle;strconv=no;protect=no]</td>
 		<td>[newField.type;strconv=no;protect=no]</td>
 		<td>[newField.obligatoire;strconv=no;protect=no]</td>
-		<td><input type="submit" value="Ajouter" name="newField" class="button"></td>
-	<!--<form method="POST" action="." id="form1" name="form1"><input id="id" TYPE="HIDDEN" NAME="id" VALUE="0" > 
-		<input id="action" TYPE="hidden" NAME="action" VALUE="save" > 
--->
+		<td><input type="submit" value="Ajouter" name="newField"></td>
 	</tr>
 	
 
