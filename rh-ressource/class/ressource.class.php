@@ -19,41 +19,59 @@ class TRH_Ressource extends TObjetStd {
 		parent::start();
 		
 		$this->TField=array();
+		$this->ressourceType=new TRH_Ressource_type;
+		
+		
+		
+		$ATMdb=new Tdb;
+		
+		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type', array());
+		//type par défaut de la ressource
+		$this->ressourceType->load($ATMdb, $Tab[0]);
+		$this->fk_rh_ressource_type = $this->ressourceType->getId();	
+		//chargement d'une liste de tout les types de ressources
+		$temp = new TRH_Ressource_type;
+		$this->TType = array();
+		foreach($Tab as $k=>$id){
+			$temp->load($ATMdb, $id);
+			$this->TType[$k] = $temp->libelle;
+		}
 		$this->TBail = array('bail'=>'Bail','immo'=>'Immo');
 		$this->TStatut = array('nonattribuée'=>'Non attribuée','attribuée'=>'Attribuée');
-		$this->ressourceType=new TRH_Ressource_type;
+		
+		
 	}
 	
 	function load(&$ATMdb, $id) {
 		parent::load($ATMdb, $id);
-		//load_ressource_type
-		//$this->load_field($ATMdb);
 		$this->load_ressource_type($ATMdb);
+		
 	}
 	
 	function load_ressource_type(&$ATMdb) {
-		//on prend le type de ressource associé	
-		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type', array()); 
-			//array($this->fk_rh_ressource_type=>'rowid'));
-		print_r($Tab);
-		$this->ressourceType = $Tab[0];
+		//on prend le type de ressource associé
+		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type', array($this->fk_rh_ressource_type=>'rowid'));
+		$this->ressourceType->load($ATMdb, $Tab[0]);
+		
+		$this->fk_rh_ressource_type = $this->ressourceType->getId();
 		//on charge les champs associés au type.
 		$this->ressourceType->load_field($ATMdb);
-		$this->init_variables();
+		
+		$this->init_variables($ATMdb);
 	}
 	
-	function init_variables() {
+	function init_variables(&$ATMdb) {
 		foreach($this->ressourceType->TField as $field) {
 			$this->add_champs($field->code);
-		}		
-		$this->_init_vars();
-		
-		foreach($this->TField as $field) {
-			$this->{$field->code} = $field->valeur;
 		}
+		$this->init_db_by_vars($ATMdb);
+		parent::load($ATMdb, $this->getId());
 	}
 	
 	function save(&$db) {
+		global $conf;
+		$this->entity = $conf->entity;
+		
 		parent::save($db);
 	}
 }
@@ -68,7 +86,7 @@ class TRH_Ressource_type extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		$this->TField=array();
-		$this->TType=array('texte'=>'Texte','entier'=>'Entier','float'=>'Float',"liste"=>'Liste',"checkbox"=>'Case à cocher');
+		$this->TType=array('chaine'=>'Texte','entier'=>'Entier','float'=>'Float',"liste"=>'Liste',"checkbox"=>'Case à cocher');
 		
 	}
 	

@@ -17,14 +17,13 @@
 			case 'new':
 				
 				$ressource->set_values($_REQUEST);
-	
-				//$ressource->save($ATMdb);
+				//$ressource->load($ATMdb, 20);
+				
 				_fiche($ATMdb, $ressource,'edit');
 				
 				break;	
 			case 'edit'	:
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				
 				_fiche($ATMdb, $ressource,'edit');
 				break;
 				
@@ -63,6 +62,7 @@
 		/*
 		 * Liste
 		 */
+		 $ATMdb->db->debug=true;
 		 _liste($ATMdb, $ressource);
 	}
 	
@@ -78,9 +78,11 @@ function _liste(&$ATMdb, &$ressource) {
 	getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
-	$sql="SELECT rowid as 'ID', libelle as 'Libellé', fk_rh_ressource_type as 'Type',  bail as 'Bail', statut as 'Statut'
-		FROM llx_rh_ressource
-		WHERE entity=".$conf->entity;
+	$sql="SELECT r.rowid as 'ID', r.libelle as 'Libellé', t.libelle as 'Type',  r.bail as 'Bail', r.statut as 'Statut'
+		FROM llx_rh_ressource as r, llx_rh_ressource_type as t 
+		WHERE r.entity=".$conf->entity."
+		AND r.fk_rh_ressource_type=t.rowid
+		";
 	
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -130,26 +132,36 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	
 	//Ressources
 	$TFields=array();
-	foreach($ressource->TField as $k=>$field) {
+	
+	foreach($ressource->ressourceType->TField as $k=>$field) {
 		//echo $field->getId().' - '.$field->obligatoire.'<br>';
 		//print_r($field);
 		
+		//echo $field->code;
 		$TFields[$k]=array(
-				'id'=>$field->getId()
-				,'libelle'=>$form->texte('', 'TFields['.$k.'][libelle]', $field->libelle, 50,255,'','','-')
-				,'type'=>'Camembert'//$form->combo('','TRessource['.$k.'][type]',$ressource->TType,$field->type)
+				//'id'=>$field->getId()
+				'libelle'=>$field->libelle//$form->texte('', 'TFields['.$k.'][libelle]', $field->libelle, 50,255,'','','-')
+				,'valeur'=>$form->texte('', 'TField['.$k.'][valeur]', $ressource->{$field->code}, 50,255,'','','-')
+				/*,'type'=>$form->combo('','TRessource['.$k.'][type]',$ressource->type->TType,$field->type)
 				,'bail'=>$form->combo('','TFields['.$k.'][bail]',$ressource->TBail,$ressource->TBail[0])
-				,'statut'=>$form->combo('','TFields['.$k.'][statut]',$ressource->TStatut,$ressource->TStatut[0])
+				,'statut'=>$form->combo('','TFields['.$k.'][statut]',$ressource->TStatut,$ressource->TStatut[0])*/
 			);
 	}
 	
 	$TBS=new TTemplateTBS();
-	
 	print $TBS->render('./tpl/ressource.tpl.php'
 		,array(
-			'ressource'=>TRessources
+			'ressourceField'=>$TFields
 		)
 		,array(
+			'ressource'=>array(
+				'id'=>$ressource->getId()
+				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 50,255,'','','-')
+				,'type'=>$form->combo('','fk_rh_ressource_type',$ressource->TType,$field->type)
+				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
+				,'statut'=>$form->combo('','statut',$ressource->TStatut,$ressource->TStatut[0])
+			
+			),
 			'view'=>array(
 				'mode'=>$mode
 			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/

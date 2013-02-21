@@ -29,7 +29,7 @@
 				break;
 				
 			case 'save':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				/*print_r($ressource);	
 				print '<hr>';
@@ -53,11 +53,18 @@
 					
 					$ressource->addField($_REQUEST['TNField']);
 					
+					//ajout de ce champs à la classe ressource
+					//echo "$p->add_champs(".$_REQUEST['TNField']['code']." ,type='".$_REQUEST['TNField']['type']."' )";
+					$p=new TRH_Ressource;
+					$p->add_champs($_REQUEST['TNField']['code'] ,"type='".$_REQUEST['TNField']['type']."'" );
+					$p->init_db_by_vars($ATMdb);
+					
 				}
 		
 				
 				if(isset($_REQUEST['deleteField']) ) {
 					$ressource->delField($ATMdb, $_REQUEST['deleteField']);
+					
 					?>
 					<script language="javascript">
 						document.location.href="?id=".$_REQUEST['id']."&delete_ok=1";					
