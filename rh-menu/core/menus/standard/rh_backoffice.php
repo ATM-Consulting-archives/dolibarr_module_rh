@@ -56,7 +56,7 @@ class MenuTop
 	 */
 	function showmenu()
 	{
-		require_once DOL_DOCUMENT_ROOT_ALT.'/rh-absence/core/menus/standard/rh.lib.php';
+		require_once dirname(__FILE__).'/rh.lib.php';
 
 		print_rh_menu($this->db,$this->atarget,$this->type_user);
 	}
@@ -97,7 +97,7 @@ class MenuLeft
      */
     function showmenu()
     {
-        require_once DOL_DOCUMENT_ROOT_ALT.'/rh-absence/core/menus/standard/rh.lib.php';
+        require_once dirname(__FILE__).'/rh.lib.php';
 
         $res=print_left_rh_menu($this->db,$this->menu_array,$this->menu_array_after);
 

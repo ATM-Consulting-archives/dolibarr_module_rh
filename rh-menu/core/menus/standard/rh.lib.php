@@ -513,6 +513,7 @@ function print_rh_menu($db,$atarget,$type_user)
 function print_start_menu_array()
 {
 	print '<div class="tmenudiv">';
+	?><a id="logo-simple-rh" href="<?=DOL_URL_ROOT ?>/index.php?mainmenu=home">test</a><?
 	print '<ul class="tmenu">';
 }
 
