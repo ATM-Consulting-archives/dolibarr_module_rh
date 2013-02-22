@@ -23,16 +23,17 @@
 				
 				break;	
 			case 'edit'	:
+				
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $ressource,'edit');
 				break;
 				
 			case 'save':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$ressource->set_values($_REQUEST);
 				$ressource->save($ATMdb);
-				
+				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $ressource,'new');
 				break;
 			
@@ -54,15 +55,13 @@
 	}
 	elseif(isset($_REQUEST['id'])) {
 		$ressource->load($ATMdb, $_REQUEST['id']);
-		
 		_fiche($ATMdb, $ressource, 'view');
-		
 	}
 	else {
 		/*
 		 * Liste
 		 */
-		 $ATMdb->db->debug=true;
+		 //$ATMdb->db->debug=true;
 		 _liste($ATMdb, $ressource);
 	}
 	
@@ -74,17 +73,17 @@
 function _liste(&$ATMdb, &$ressource) {
 	global $langs,$conf, $db;	
 	
-	llxHeader('','Liste des ressourcessss');
+	llxHeader('','Liste des ressources');
 	getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
-	$sql="SELECT r.rowid as 'ID', r.libelle as 'Libellé', t.libelle as 'Type',  r.bail as 'Bail', r.statut as 'Statut'
+	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',r.libelle as 'Libellé', t.libelle as 'Type',  r.bail as 'Bail', r.statut as 'Statut'
 		FROM llx_rh_ressource as r, llx_rh_ressource_type as t 
 		WHERE r.entity=".$conf->entity."
 		AND r.fk_rh_ressource_type=t.rowid
 		";
 	
-	$TOrder = array('ID'=>'ASC');
+	$TOrder = array('DateCre'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -99,7 +98,7 @@ function _liste(&$ATMdb, &$ressource) {
 			'Libellé'=>'<a href="?id=@ID@&action=edit">@val@</a>'
 		)
 		,'translate'=>array()
-		,'hide'=>array()
+		,'hide'=>array('DateCre')
 		,'type'=>array()
 		,'liste'=>array(
 			'titre'=>'Liste des ressources'
@@ -141,7 +140,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 		$TFields[$k]=array(
 				//'id'=>$field->getId()
 				'libelle'=>$field->libelle//$form->texte('', 'TFields['.$k.'][libelle]', $field->libelle, 50,255,'','','-')
-				,'valeur'=>$form->texte('', 'TField['.$k.'][valeur]', $ressource->{$field->code}, 50,255,'','','-')
+				,'valeur'=>$form->texte('', $field->code, $ressource->{$field->code}, 50,255,'','','-')
 				/*,'type'=>$form->combo('','TRessource['.$k.'][type]',$ressource->type->TType,$field->type)
 				,'bail'=>$form->combo('','TFields['.$k.'][bail]',$ressource->TBail,$ressource->TBail[0])
 				,'statut'=>$form->combo('','TFields['.$k.'][statut]',$ressource->TStatut,$ressource->TStatut[0])*/
@@ -157,7 +156,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			'ressource'=>array(
 				'id'=>$ressource->getId()
 				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 50,255,'','','-')
-				,'type'=>$form->combo('','fk_rh_ressource_type',$ressource->TType,$field->type)
+				,'type'=>$form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type)
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
 				,'statut'=>$form->combo('','statut',$ressource->TStatut,$ressource->TStatut[0])
 			
