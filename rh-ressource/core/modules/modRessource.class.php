@@ -318,7 +318,6 @@ class modRessource extends DolibarrModules
 		
 		
 		
-		
 		//TYPES RESSOURCES
 		$r++;
 		$this->menu[$r]=array(
@@ -352,7 +351,6 @@ class modRessource extends DolibarrModules
 					'user'=> 2
         );
 		
-		
         $r++;
         $this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=typeressource',			// Put 0 if this is a top menu
@@ -369,7 +367,6 @@ class modRessource extends DolibarrModules
 					'user'=> 2
         );
 	
-		
 		// $r++;
 		// $this->menu[$r]=array(	'fk_menu'=>'r=0',		                // Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 		//							'type'=>'left',			                // This is a Left menu entry
@@ -431,11 +428,6 @@ class modRessource extends DolibarrModules
 		$sql = array();
 
 		$result=$this->load_tables();
-		
-		$url = 'http://'.$_SERVER['SERVER_NAME'].DOL_URL_ROOT_ALT.'/ressource/script/create-maj-base.php';
-
-		file_get_contents($url);
-
 
 		return $this->_init($sql, $options);
 	}

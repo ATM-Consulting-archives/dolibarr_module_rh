@@ -30,7 +30,7 @@
 				
 			case 'save':
 				$ATMdb->db->debug=true;
-				//$ressource->load($ATMdb, $_REQUEST['id']);
+				$ressource->load($ATMdb, $_REQUEST['id']);
 				$ressource->set_values($_REQUEST);
 				$ressource->save($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);

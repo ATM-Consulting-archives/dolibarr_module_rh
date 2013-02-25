@@ -37,7 +37,6 @@
 				if(isset($_REQUEST['TField'])){
 				
 					foreach($_REQUEST['TField'] as $k=>$field) {
-						/*print_r($ressource);*/	
 						$ressource->TField[$k]->set_values($field);					
 					}
 				}
@@ -171,10 +170,11 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	echo $form->hidden('action', 'save');
 	
 	
+	
 	//Champs
 	$TFields=array();
 	foreach($ressource->TField as $k=>$field) {
-		//echo $field->getId().' - '.$field->obligatoire.'<br>';
+		
 		//print_r($field);
 		
 		$TFields[$k]=array(
@@ -182,9 +182,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'code'=>$form->texte('', 'TField['.$k.'][code]', $field->code, 20,255,'','','-')
 				,'libelle'=>$form->texte('', 'TField['.$k.'][libelle]', $field->libelle, 20,255,'','','-')
 				,'type'=>$form->combo('','TField['.$k.'][type]',$ressource->TType,$field->type)
-				,'obligatoire'=>$form->checkbox1('', 'TField['.$k.'][obligatoire]', 1, $field->obligatoire)
-				
-				//<button type="submit" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" >Supprimer</button></td>
+				,'obligatoire'=>$form->combo('','TField['.$k.'][obligatoire]',array('Oui','Non'),$field->obligatoire)
+			
 			);
 	}
 	
@@ -207,7 +206,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'code'=>$form->texte('', 'TNField[code]', '', 20,255,'','','-')
 				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 20,255,'','','-')
 				,'type'=>$form->combo('', 'TNField[type]',$ressource->TType, 'entier')
-				,'obligatoire'=>$form->checkbox1('','TNField[obligatoire]',1,true)
+				,'obligatoire'=>$form->combo('','TNField[obligatoire]',array('Oui','Non'),'0')
+			
 			)
 			,'view'=>array(
 				'mode'=>$mode
