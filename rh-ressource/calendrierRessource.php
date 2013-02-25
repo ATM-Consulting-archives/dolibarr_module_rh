@@ -7,7 +7,7 @@
 	llxHeader('','Calendrier des ressources');
 	
 	require('../../wdCalendar/sample.php'); 
-	
+	//require('../../limesurvey/index.php');
 	
 	llxFooter();
 

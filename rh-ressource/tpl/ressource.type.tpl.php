@@ -25,24 +25,42 @@
 		<td>[ressourceField.libelle;strconv=no;protect=no]</td>
 		<td>[ressourceField.type;strconv=no;protect=no]</td>
 		<td>[ressourceField.obligatoire;strconv=no;protect=no]</td>
-		<td><button type="submit" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" >Supprimer</button></td>
+		
+		[onshow;block=begin;when [view.mode]=='edit']
+			<td><button type="submit" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" class="button">Supprimer</button></td>
+		[onshow;block=end]
+		[onshow;block=begin;when [view.mode]!='edit']
+			<td></td>
+		[onshow;block=end]
 	</tr>
 	
 	<!-- Nouveau field-->
+	
+	[onshow;block=begin;when [view.mode]=='edit']
 	<tr>
 		<td>Nouveau</td>
 		<td>[newField.code;strconv=no;protect=no]</td>
 		<td>[newField.libelle;strconv=no;protect=no]</td>
 		<td>[newField.type;strconv=no;protect=no]</td>
 		<td>[newField.obligatoire;strconv=no;protect=no]</td>
-		<td><input type="submit" value="Ajouter" name="newField"></td>
+		<td><input type="submit" value="Ajouter" name="newField" class="button"></td>
 	</tr>
-	
+	[onshow;block=end]
 
 </table>
 </div>
 
 <p align="center">
-		<input type="submit" value="Enregistrer" name="save" class="button">
-		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
+		[onshow;block=begin;when [view.mode]=='edit']
+			<input type="submit" value="Enregistrer" name="save" class="button">
+			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
+		[onshow;block=end]
+		[onshow;block=begin;when [view.mode]!='edit']
+			<input type="button" value="Modifier" class="button"  onclick="document.location.href='?id=[ressourceType.id]&action=edit'">
+			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
+		[onshow;block=end]
 </p>
+
+
+
+

@@ -15,7 +15,7 @@
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'new':
-				
+				$ATMdb->db->debug=true;
 				$ressource->set_values($_REQUEST);
 	
 				//$ressource->save($ATMdb);
@@ -23,23 +23,16 @@
 				
 				break;	
 			case 'edit'	:
+				$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				
 				_fiche($ATMdb, $ressource,'edit');
 				break;
 				
 			case 'save':
-				//$ATMdb->db->debug=true;
+				$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				/*print_r($ressource);	
-				print '<hr>';
-				 * Alexis, pense au bug classe objet standart dans set_values sur Tableau
-				 * */
 				$ressource->set_values($_REQUEST);
-				
-				/*echo 'top';
-				print_r($_REQUEST['TField']);
-				echo 'topfin';//*/
 				
 				if(isset($_REQUEST['TField'])){
 				
@@ -79,10 +72,14 @@
 				
 				$ressource->save($ATMdb);
 				
-				_fiche($ATMdb, $ressource,'new');
+				_fiche($ATMdb, $ressource,'view');
 				break;
 			
-				
+			case 'view':
+				$ressource->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $ressource,'view');
+				break;
+		
 			case 'delete':
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				//$ATMdb->db->debug=true;
@@ -139,7 +136,7 @@ function _liste(&$ATMdb, &$ressource) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Code'=>'<a href="?id=@ID@&action=edit">@val@</a>'
+			'Code'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array()
@@ -182,10 +179,12 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 		
 		$TFields[$k]=array(
 				'id'=>$field->getId()
-				,'code'=>$form->texte('', 'TField['.$k.'][code]', $field->code, 30,255,'','','-')
-				,'libelle'=>$form->texte('', 'TField['.$k.'][libelle]', $field->libelle, 50,255,'','','-')
+				,'code'=>$form->texte('', 'TField['.$k.'][code]', $field->code, 20,255,'','','-')
+				,'libelle'=>$form->texte('', 'TField['.$k.'][libelle]', $field->libelle, 20,255,'','','-')
 				,'type'=>$form->combo('','TField['.$k.'][type]',$ressource->TType,$field->type)
 				,'obligatoire'=>$form->checkbox1('', 'TField['.$k.'][obligatoire]', 1, $field->obligatoire)
+				
+				//<button type="submit" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" >Supprimer</button></td>
 			);
 	}
 	
@@ -198,15 +197,15 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 		,array(
 			'ressourceType'=>array(
 				'id'=>$ressource->getId()
-				,'code'=>$form->texte('', 'code', $ressource->code, 30,255,'','','à saisir')
-				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 100,255,'','','à saisir') 
+				,'code'=>$form->texte('', 'code', $ressource->code, 20,255,'','','à saisir')
+				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 20,255,'','','à saisir') 
 				,'date_maj'=>$ressource->get_date('date_maj','d/m/Y à H:i:s')
 				,'date_cre'=>$ressource->get_date('date_cre','d/m/Y')
 			)
 			,'newField'=>array(
 				'hidden'=>$form->hidden('action', 'save')
-				,'code'=>$form->texte('', 'TNField[code]', '', 30,255,'','','-')
-				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 50,255,'','','-')
+				,'code'=>$form->texte('', 'TNField[code]', '', 20,255,'','','-')
+				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 20,255,'','','-')
 				,'type'=>$form->combo('', 'TNField[type]',$ressource->TType, 'entier')
 				,'obligatoire'=>$form->checkbox1('','TNField[obligatoire]',1,true)
 			)

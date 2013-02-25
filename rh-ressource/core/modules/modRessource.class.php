@@ -201,14 +201,15 @@ class modRessource extends DolibarrModules
 								'target'=>'',
 								'user'=>0);						                // 0=Menu for internal users, 1=external users, 2=both
 		
+		//RESSOURCES
 		$r++;
         $this->menu[$r]=array(
 			            'fk_menu'=>'fk_mainmenu=ressource',			// Put 0 if this is a top menu
 			        	'type'=> 'left',			// This is a Top menu entry
 			        	'titre'=>$langs->trans('Ressource'),
 			        	'mainmenu'=> 'ressource',
-			        	'leftmenu'=> 'sousressource',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-						'url'=> '/ressource/index.php',
+			        	'leftmenu'=> 'ressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+						'url'=> '/ressource/Ressource.php',
 						'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						'position'=> 101,
 						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -218,13 +219,13 @@ class modRessource extends DolibarrModules
         );
 
 		$r++;
-		$this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=sousressource',			// Put 0 if this is a top menu
+        $this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=ressources',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('listeTypeRessource'),
-		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousressource',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/ressource/typeRessource.php',
+		        	'titre'=> $langs->trans('listeRessource'),
+		        	'mainmenu'=> 'ressource',
+		        	'leftmenu'=> 'ressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/ressource/Ressource.php',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 102,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -233,15 +234,14 @@ class modRessource extends DolibarrModules
 					'user'=> 2
         );
 		
-		
-        $r++;
+		$r++;
         $this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=sousressource',			// Put 0 if this is a top menu
+		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=ressources',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('nouveauTypeRessource'),
+		        	'titre'=> $langs->trans('nouvelleRessource'),
 		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousressource',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/ressource/typeRessource.php?action=new',
+		        	'leftmenu'=> 'ressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/ressource/Ressource.php?action=new',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 103,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -249,14 +249,15 @@ class modRessource extends DolibarrModules
 					'target'=> '',
 					'user'=> 2
         );
+		
 		$r++;
         $this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=sousressource',			// Put 0 if this is a top menu
+		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=ressources',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('listeRessource'),
+		        	'titre'=> $langs->trans('attribuerRessource'),
 		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousressource',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/ressource/Ressource.php',
+		        	'leftmenu'=> 'ressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/ressource/index.php',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 104,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -265,14 +266,16 @@ class modRessource extends DolibarrModules
 					'user'=> 2
         );
 		
+		
+		//AGENDA
 		$r++;
         $this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=sousressource',			// Put 0 if this is a top menu
+		            'fk_menu'=>'fk_mainmenu=ressource',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('nouvelleRessource'),
-		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousressource',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/ressource/Ressource.php?action=new',
+		        	'titre'=> $langs->trans('agenda'),
+		        	'mainmenu'=> 'ressource',
+		        	'leftmenu'=> 'agenda',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/ressource/calendrierRessource.php',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 105,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -283,11 +286,11 @@ class modRessource extends DolibarrModules
 		
 		$r++;
         $this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=sousressource',			// Put 0 if this is a top menu
+		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=agenda',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('attribuerRessource'),
+		        	'titre'=> $langs->trans('nouvelEvenement'),
 		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousressource',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+		        	'leftmenu'=> '',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/ressource/index.php',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 106,
@@ -297,15 +300,13 @@ class modRessource extends DolibarrModules
 					'user'=> 2
         );
 		
-		
-		
 		$r++;
         $this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=sousressource',			// Put 0 if this is a top menu
+		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=agenda',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('nouvelEvenement'),
+		        	'titre'=> $langs->trans('nouveauContrat'),
 		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousressource',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+		        	'leftmenu'=> '',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/ressource/index.php',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 107,
@@ -316,14 +317,17 @@ class modRessource extends DolibarrModules
         );
 		
 		
+		
+		
+		//TYPES RESSOURCES
 		$r++;
-        $this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=sousressource',			// Put 0 if this is a top menu
+		$this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=ressource',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('nouveauContrat'),
-		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousressource',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/ressource/index.php',
+		        	'titre'=> $langs->trans('typeRessource'),
+		        	'mainmenu'=> 'ressource',
+		        	'leftmenu'=> 'typeressource',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/ressource/typeRessource.php',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 108,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -331,6 +335,41 @@ class modRessource extends DolibarrModules
 					'target'=> '',
 					'user'=> 2
         );
+		
+		$r++;
+		$this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=typeressource',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('listeTypeRessource'),
+		        	'mainmenu'=> '',
+		        	'leftmenu'=> 'typeressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/ressource/typeRessource.php',
+					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 109,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
+		
+		
+        $r++;
+        $this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=typeressource',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('nouveauTypeRessource'),
+		        	'mainmenu'=> '',
+		        	'leftmenu'=> 'typeressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/ressource/typeRessource.php?action=new',
+					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 110,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
+	
+		
 		// $r++;
 		// $this->menu[$r]=array(	'fk_menu'=>'r=0',		                // Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 		//							'type'=>'left',			                // This is a Left menu entry
