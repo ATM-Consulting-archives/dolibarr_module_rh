@@ -561,7 +561,7 @@ function print_end_menu_entry()
  */
 function print_end_menu_array()
 {
-    print '</ul>';
+    print '</ul><div style="clear:both"></div>';
     print '</div>';
 	print "\n";
 }

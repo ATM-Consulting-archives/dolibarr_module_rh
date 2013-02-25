@@ -431,6 +431,11 @@ class modRessource extends DolibarrModules
 		$sql = array();
 
 		$result=$this->load_tables();
+		
+		$url = 'http://'.$_SERVER['SERVER_NAME'].DOL_URL_ROOT_ALT.'/ressource/script/create-maj-base.php';
+
+		file_get_contents($url);
+
 
 		return $this->_init($sql, $options);
 	}
