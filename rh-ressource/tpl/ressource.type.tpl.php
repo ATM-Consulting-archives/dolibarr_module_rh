@@ -22,7 +22,8 @@
 	</tr>
 
 	<!-- fields déjà existants -->
-	<tr>
+	<tr> <!-- id="ligne[ressourceField.numero;block=tr;strconv=no;protect=no]">-->
+		
 		<td>[ressourceField.id;block=tr;strconv=no;protect=no]</td>
 		<td>[ressourceField.code;strconv=no;protect=no]</td>
 		<td>[ressourceField.libelle;strconv=no;protect=no]</td>
@@ -33,7 +34,10 @@
 			<td><button type="submit" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" class="button">Supprimer</button></td>
 		[onshow;block=end]
 		
+		
+		
 	</tr>
+	
 	
 	<!-- Nouveau field-->
 	
@@ -49,6 +53,8 @@
 	[onshow;block=end]
 
 </table>
+
+
 </div>
 
 <p align="center">

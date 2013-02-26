@@ -18,7 +18,7 @@
 				
 				$ressource->set_values($_REQUEST);
 				//$ressource->load($ATMdb, 20);
-				
+				$mesg = '<div class="ok">Nouvelle ressource créée</div>';
 				_fiche($ATMdb, $ressource,'edit');
 				
 				break;	
@@ -34,6 +34,7 @@
 				$ressource->set_values($_REQUEST);
 				$ressource->save($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
+				$mesg = '<div class="ok">Modifications effectuées</div>';
 				_fiche($ATMdb, $ressource,'new');
 				break;
 			
@@ -48,7 +49,7 @@
 					document.location.href="?delete_ok=1";					
 				</script>
 				<?
-				
+				$mesg = '<div class="ok">Ressource supprimée</div>';
 				
 				break;
 		}

@@ -91,7 +91,7 @@ class modRessource extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
-		$this->config_page_url = array("setuppage.php@ressource");
+		//$this->config_page_url = array("setuppage.php@ressource");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
@@ -132,7 +132,7 @@ class modRessource extends DolibarrModules
                                       );*/
 
         // Dictionnaries
-        if (! isset($conf->ressource->enabled)) $conf->ressource->enabled='1';
+        //if (! isset($conf->ressource->enabled)) $conf->ressource->enabled='1';
 		$this->dictionnaries=array();
         /* Example:
         if (! isset($conf->mymodule->enabled)) $conf->mymodule->enabled=0;	// This is to avoid warnings
@@ -429,6 +429,10 @@ class modRessource extends DolibarrModules
 
 		$result=$this->load_tables();
 
+		//include_once();
+		//file_get_contents();
+		//echo exec('pwd');
+		//require(DOL_DOCUMENT_ROOT."/custom/ressource/script/create-maj-base.php");
 		return $this->_init($sql, $options);
 	}
 
