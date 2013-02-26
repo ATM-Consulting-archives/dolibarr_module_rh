@@ -4,10 +4,9 @@
 require('config.php');
 require('./class/hierarchie.class.php');
 
-
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 
 $langs->load("companies");
@@ -61,6 +60,8 @@ llxHeader();
 $head = user_prepare_head($fuser);
 $current_head = 'hierarchie';
 dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
+
+
 
 
 //Fonction qui permet d'afficher les utilisateurs qui sont en dessous hiérarchiquement du salarié passé en paramètre

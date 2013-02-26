@@ -176,12 +176,12 @@ class modRHHierarchie extends DolibarrModules
 
 		// Add here entries to declare new menus
 		//
-		$this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
-								'type'=>'top',			                // This is a Top menu entry
-								'titre'=>$langs->trans('Accueil'),
-								'mainmenu'=>'accueil',
+		$this->menu[$r]=array(	'fk_menu'=>'',		                // Put 0 if this is a top menu
+								'type'=>'top',
+								'titre'=>$langs->trans('Hierarchie'),
+								//'mainmenu'=>'home',
 								'leftmenu'=>'',
-								'url'=>'/index.php',
+								'url'=>'/hierarchie/afficher_hierarchie.php',
 								'langs'=>'hierarchie@hierarchie',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>100,
 								'enabled'=>'1',	// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
