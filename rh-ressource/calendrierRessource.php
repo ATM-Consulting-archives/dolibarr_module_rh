@@ -6,8 +6,20 @@
 	
 	llxHeader('','Calendrier des ressources');
 	
-	require('../../wdCalendar/sample.php'); 
-	//require('../../limesurvey/index.php');
+	?>
 	
+	<h1>Agenda des ressources</h1>
+
+	<div id="agenda"></div>
+	
+	<script type="text/javascript">
+	
+	$.get('../wdCalendar/sample.php', function(data) {
+	  $("#agenda").html(data);
+	});
+	</script>
+
+<?php
+
 	llxFooter();
 

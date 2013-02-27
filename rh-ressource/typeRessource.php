@@ -15,29 +15,29 @@
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'new':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$ressource->set_values($_REQUEST);
 	
 				//$ressource->save($ATMdb);
+				$mesg = '<div class="ok">Nouvelle ressource créée</div>';
 				_fiche($ATMdb, $ressource,'edit');
 				
 				break;	
 			case 'edit'	:
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				
 				_fiche($ATMdb, $ressource,'edit');
 				break;
 				
 			case 'save':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$ressource->set_values($_REQUEST);
-				
+				$mesg = '<div class="ok">Modifications effectuées</div>';
 				if(isset($_REQUEST['TField'])){
 				
 					foreach($_REQUEST['TField'] as $k=>$field) {
-						/*print_r($ressource);*/	
 						$ressource->TField[$k]->set_values($field);					
 					}
 				}
@@ -51,7 +51,7 @@
 					$p=new TRH_Ressource;
 					$p->add_champs($_REQUEST['TNField']['code'] ,"type='".$_REQUEST['TNField']['type']."'" );
 					$p->init_db_by_vars($ATMdb);
-					
+					$mesg = '<div class="ok">Le champs a bien été créé</div>';
 				}
 		
 				
@@ -64,7 +64,7 @@
 					</script>
 					<?
 					$ressource->load($ATMdb, $_REQUEST['id']);
-						
+					$mesg = '<div class="ok">Le champs a bien été supprimé.</div>';	
 				}
 		
 				
@@ -90,7 +90,7 @@
 					document.location.href="?delete_ok=1";					
 				</script>
 				<?
-				
+				$mesg = '<div class="ok">Le type de ressource a bien été supprimé.</div>';
 				
 				break;
 		}
@@ -163,7 +163,8 @@ function _liste(&$ATMdb, &$ressource) {
 function _fiche(&$ATMdb, &$ressource, $mode) {
 	global $db,$user;
 
-	llxHeader('','Type de ressource');
+
+	llxHeader('','Type de ressource', '', '', 0, 0);// array("http://code.jquery.com/jquery-1.9.1.js","http://code.jquery.com/ui/1.10.1/jquery-ui.js" ));
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
@@ -171,10 +172,11 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	echo $form->hidden('action', 'save');
 	
 	
+	
 	//Champs
 	$TFields=array();
 	foreach($ressource->TField as $k=>$field) {
-		//echo $field->getId().' - '.$field->obligatoire.'<br>';
+		
 		//print_r($field);
 		
 		$TFields[$k]=array(
@@ -182,9 +184,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'code'=>$form->texte('', 'TField['.$k.'][code]', $field->code, 20,255,'','','-')
 				,'libelle'=>$form->texte('', 'TField['.$k.'][libelle]', $field->libelle, 20,255,'','','-')
 				,'type'=>$form->combo('','TField['.$k.'][type]',$ressource->TType,$field->type)
-				,'obligatoire'=>$form->checkbox1('', 'TField['.$k.'][obligatoire]', 1, $field->obligatoire)
-				
-				//<button type="submit" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" >Supprimer</button></td>
+				,'obligatoire'=>$form->combo('','TField['.$k.'][obligatoire]',array('Oui','Non'),$field->obligatoire)
+				,'numero'=>$k
 			);
 	}
 	
@@ -207,10 +208,12 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'code'=>$form->texte('', 'TNField[code]', '', 20,255,'','','-')
 				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 20,255,'','','-')
 				,'type'=>$form->combo('', 'TNField[type]',$ressource->TType, 'entier')
-				,'obligatoire'=>$form->checkbox1('','TNField[obligatoire]',1,true)
+				,'obligatoire'=>$form->combo('','TNField[obligatoire]',array('Oui','Non'),'0')
+			
 			)
 			,'view'=>array(
 				'mode'=>$mode
+				,'nbChamps'=>count($ressource->TField)
 			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 			)
 			

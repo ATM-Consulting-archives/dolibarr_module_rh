@@ -15,11 +15,15 @@
 		<td>Libellé</td>
 		<td>Type</td>
 		<td>Obligatoire</td>
-		<td>Action</td>
+		[onshow;block=begin;when [view.mode]=='edit']
+			<td>Action</td>
+		[onshow;block=end]
+		
 	</tr>
 
 	<!-- fields déjà existants -->
-	<tr>
+	<tr> <!-- id="ligne[ressourceField.numero;block=tr;strconv=no;protect=no]">-->
+		
 		<td>[ressourceField.id;block=tr;strconv=no;protect=no]</td>
 		<td>[ressourceField.code;strconv=no;protect=no]</td>
 		<td>[ressourceField.libelle;strconv=no;protect=no]</td>
@@ -29,10 +33,11 @@
 		[onshow;block=begin;when [view.mode]=='edit']
 			<td><button type="submit" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" class="button">Supprimer</button></td>
 		[onshow;block=end]
-		[onshow;block=begin;when [view.mode]!='edit']
-			<td></td>
-		[onshow;block=end]
+		
+		
+		
 	</tr>
+	
 	
 	<!-- Nouveau field-->
 	
@@ -48,6 +53,8 @@
 	[onshow;block=end]
 
 </table>
+
+
 </div>
 
 <p align="center">

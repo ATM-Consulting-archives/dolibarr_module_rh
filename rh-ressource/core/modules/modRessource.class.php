@@ -91,7 +91,7 @@ class modRessource extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
-		$this->config_page_url = array("setuppage.php@ressource");
+		//$this->config_page_url = array("setuppage.php@ressource");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
@@ -132,7 +132,7 @@ class modRessource extends DolibarrModules
                                       );*/
 
         // Dictionnaries
-        if (! isset($conf->ressource->enabled)) $conf->ressource->enabled='1';
+        //if (! isset($conf->ressource->enabled)) $conf->ressource->enabled='1';
 		$this->dictionnaries=array();
         /* Example:
         if (! isset($conf->mymodule->enabled)) $conf->mymodule->enabled=0;	// This is to avoid warnings
@@ -318,7 +318,6 @@ class modRessource extends DolibarrModules
 		
 		
 		
-		
 		//TYPES RESSOURCES
 		$r++;
 		$this->menu[$r]=array(
@@ -352,7 +351,6 @@ class modRessource extends DolibarrModules
 					'user'=> 2
         );
 		
-		
         $r++;
         $this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=typeressource',			// Put 0 if this is a top menu
@@ -369,7 +367,6 @@ class modRessource extends DolibarrModules
 					'user'=> 2
         );
 	
-		
 		// $r++;
 		// $this->menu[$r]=array(	'fk_menu'=>'r=0',		                // Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
 		//							'type'=>'left',			                // This is a Left menu entry
@@ -431,12 +428,11 @@ class modRessource extends DolibarrModules
 		$sql = array();
 
 		$result=$this->load_tables();
-		
-		$url = 'http://'.$_SERVER['SERVER_NAME'].DOL_URL_ROOT_ALT.'/ressource/script/create-maj-base.php';
 
-		file_get_contents($url);
-
-
+		//include_once();
+		//file_get_contents();
+		//echo exec('pwd');
+		//require(DOL_DOCUMENT_ROOT."/custom/ressource/script/create-maj-base.php");
 		return $this->_init($sql, $options);
 	}
 
