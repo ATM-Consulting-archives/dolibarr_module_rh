@@ -429,10 +429,10 @@ class modRessource extends DolibarrModules
 
 		$result=$this->load_tables();
 
-		//include_once();
-		//file_get_contents();
-		//echo exec('pwd');
-		//require(DOL_DOCUMENT_ROOT."/custom/ressource/script/create-maj-base.php");
+		ob_end_flush();
+		$url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/ressource/script/create-maj-base.php";
+		file_get_contents($url);
+		
 		return $this->_init($sql, $options);
 	}
 

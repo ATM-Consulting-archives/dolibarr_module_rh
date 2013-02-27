@@ -14,6 +14,8 @@ class TRH_Ressource extends TObjetStd {
 		parent::add_champs('fk_soc,entity','type=entier;index;');//fk_soc_leaser
 		//clé étrangère : type de la ressource
 		parent::add_champs('fk_rh_ressource_type','type=chaine;index;');
+		//clé étrangère : ressource associé
+		parent::add_champs('fk_rh_ressource','type=entier;index;');
 		
 		parent::_init_vars();
 		parent::start();
@@ -24,9 +26,6 @@ class TRH_Ressource extends TObjetStd {
 		$ATMdb=new Tdb;
 		
 		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type', array());
-		//type par défaut de la ressource
-			//$this->ressourceType->load($ATMdb, $Tab[0]);
-			//$this->fk_rh_ressource_type = $this->ressourceType->getId();	
 		
 		//chargement d'une liste de tout les types de ressources
 		$temp = new TRH_Ressource_type;
@@ -36,8 +35,17 @@ class TRH_Ressource extends TObjetStd {
 			$this->TType[$temp->getId()] = $temp->libelle;
 		}
 		$this->TBail = array('bail'=>'Bail','immo'=>'Immo');
-		$this->TStatut = array('nonattribuée'=>'Non attribuée','attribuée'=>'Attribuée');	
-	}
+		$this->TStatut = array('nonattribuée'=>'Non attribuée','attribuée'=>'Attribuée');
+		
+		//chargement d'une liste de toutes les ressources (pour le combo "ressource associé")
+		$sqlReq="SELECT rowid,libelle FROM ".MAIN_DB_PREFIX."rh_ressource where rowid!=".$this->getId();
+		$ATMdb->Execute($sqlReq);
+		$this->TRessource = array('');
+		while($ATMdb->Get_line()) {
+			
+			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
+			}
+		}
 	
 	function load(&$ATMdb, $id) {
 		parent::load($ATMdb, $id);
@@ -88,6 +96,17 @@ class TRH_Ressource_type extends TObjetStd {
 	function load(&$ATMdb, $id) {
 		parent::load($ATMdb, $id);
 		$this->load_field($ATMdb);
+	}
+	
+	/**
+	 * Renvoie true si ce type est utilisé par une des ressources.
+	 */
+	function isUsedByRessource(&$ATMdb){
+		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource', array('fk_rh_ressource_type'=>$this->getId()));
+		$taille = count($Tab);
+		if ($taille>0) return true;
+		return false;
+
 	}
 	
 	function load_field(&$ATMdb) {

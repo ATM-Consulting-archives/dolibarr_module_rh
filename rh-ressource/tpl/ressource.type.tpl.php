@@ -57,16 +57,19 @@
 
 </div>
 
-<p align="center">
+<div class="tabsAction" >
 		[onshow;block=begin;when [view.mode]=='edit']
 			<input type="submit" value="Enregistrer" name="save" class="button">
 			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
 		[onshow;block=end]
 		[onshow;block=begin;when [view.mode]!='edit']
+			<a class="butAction"  href="?id=[ressourceType.id]&action=edit">Modifier</a>
+			&nbsp; &nbsp;<a class="butActionDelete"  href="?id=[ressourceType.id]&action=delete">Supprimer</a>
+			<!--
 			<input type="button" value="Modifier" class="button"  onclick="document.location.href='?id=[ressourceType.id]&action=edit'">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
+			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">-->
 		[onshow;block=end]
-</p>
+</div>
 
 
 

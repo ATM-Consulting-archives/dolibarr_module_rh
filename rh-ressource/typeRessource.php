@@ -35,6 +35,7 @@
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$ressource->set_values($_REQUEST);
 				$mesg = '<div class="ok">Modifications effectuées</div>';
+				$mode = 'view';
 				if(isset($_REQUEST['TField'])){
 				
 					foreach($_REQUEST['TField'] as $k=>$field) {
@@ -52,6 +53,7 @@
 					$p->add_champs($_REQUEST['TNField']['code'] ,"type='".$_REQUEST['TNField']['type']."'" );
 					$p->init_db_by_vars($ATMdb);
 					$mesg = '<div class="ok">Le champs a bien été créé</div>';
+					$mode = 'edit';
 				}
 		
 				
@@ -64,7 +66,8 @@
 					</script>
 					<?
 					$ressource->load($ATMdb, $_REQUEST['id']);
-					$mesg = '<div class="ok">Le champs a bien été supprimé.</div>';	
+					$mesg = '<div class="ok">Le champs a bien été supprimé.</div>';
+					$mode = 'edit';
 				}
 		
 				
@@ -72,7 +75,7 @@
 				
 				$ressource->save($ATMdb);
 				
-				_fiche($ATMdb, $ressource,'view');
+				_fiche($ATMdb, $ressource,$mode);
 				break;
 			
 			case 'view':
@@ -83,14 +86,21 @@
 			case 'delete':
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				//$ATMdb->db->debug=true;
-				$ressource->delete($ATMdb);
 				
-				?>
-				<script language="javascript">
-					document.location.href="?delete_ok=1";					
-				</script>
-				<?
-				$mesg = '<div class="ok">Le type de ressource a bien été supprimé.</div>';
+				//avant de supprimer, on vérifie qu'aucune ressource n'est de ce type. Sinon on ne le supprime pas.
+				if ( ! $ressource->isUsedByRessource($ATMdb)){
+					$ressource->delete($ATMdb);
+					?>
+					<script language="javascript">
+						document.location.href="?delete_ok=1";					
+					</script>
+					<?
+				}
+				else{
+					$mesg = '<div class="ok">Le type de ressource est utilisé par une ressource. Il ne peut pas être supprimé.</div>';
+					_fiche($ATMdb, $ressource, 'view');
+				} 
+				
 				
 				break;
 		}
