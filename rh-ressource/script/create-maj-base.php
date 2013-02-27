@@ -4,7 +4,7 @@
  * 
  */
  	define('INC_FROM_CRON_SCRIPT', true);
-	echo exec('pwd');
+	
 	require('../config.php');
 	require('../class/ressource.class.php');
 

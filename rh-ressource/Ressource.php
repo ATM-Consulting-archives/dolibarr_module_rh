@@ -29,15 +29,22 @@
 				break;
 				
 			case 'save':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$ressource->set_values($_REQUEST);
 				$ressource->save($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">Modifications effectuées</div>';
-				_fiche($ATMdb, $ressource,'new');
+				_fiche($ATMdb, $ressource,'view');
 				break;
 			
+			case 'view':
+				$ressource->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $ressource,'view');
+				break;
+			
+				
+				
 				
 			case 'delete':
 				$ressource->load($ATMdb, $_REQUEST['id']);
@@ -49,7 +56,7 @@
 					document.location.href="?delete_ok=1";					
 				</script>
 				<?
-				$mesg = '<div class="ok">Ressource supprimée</div>';
+				
 				
 				break;
 		}
@@ -96,7 +103,7 @@ function _liste(&$ATMdb, &$ressource) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Libellé'=>'<a href="?id=@ID@&action=edit">@val@</a>'
+			'Libellé'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')

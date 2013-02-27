@@ -90,6 +90,17 @@ class TRH_Ressource_type extends TObjetStd {
 		$this->load_field($ATMdb);
 	}
 	
+	/**
+	 * Renvoie true si ce champs est utilisé par une des ressources.
+	 */
+	function isUsedByRessource(&$ATMdb){
+		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource', array('fk_rh_ressource_type'=>$this->getId()));
+		$taille = count($Tab);
+		if ($taille>0) return true;
+		return false;
+
+	}
+	
 	function load_field(&$ATMdb) {
 		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_field', array('fk_rh_ressource_type'=>$this->getId()));
 		$this->TField=array();
