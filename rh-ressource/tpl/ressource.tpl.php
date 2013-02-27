@@ -43,6 +43,21 @@
 </table>
 
 <br>
+
+<h2>Ressource associé</h2>
+<div>
+	
+		[onshow;block=begin;when [view.mode]=='edit']
+			 [fk_ressource.liste_fk_rh_ressource;strconv=no;protect=no]
+		[onshow;block=end]
+		
+		[onshow;block=begin;when [view.mode]!='edit']
+			Cette ressource est associé à [fk_ressource.fk_rh_ressource;strconv=no;protect=no].
+		[onshow;block=end]
+		
+	
+</div>
+
 <div class="tabsAction" >
 
 		[onshow;block=begin;when [view.mode]=='edit']

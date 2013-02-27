@@ -168,8 +168,13 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
 				,'statut'=>$form->combo('','statut',$ressource->TStatut,$ressource->TStatut[0])
 			
-			),
-			'view'=>array(
+			)
+			,'fk_ressource'=>array(
+				'liste_fk_rh_ressource'=>$form->combo('','fk_rh_ressource',$ressource->TRessource,$ressource->fk_rh_ressource)
+				,'fk_rh_ressource'=>$ressource->fk_rh_ressource ? $ressource->TRessource[$ressource->fk_rh_ressource] : "aucune ressource"
+			)
+			
+			,'view'=>array(
 				'mode'=>$mode
 			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 			)
