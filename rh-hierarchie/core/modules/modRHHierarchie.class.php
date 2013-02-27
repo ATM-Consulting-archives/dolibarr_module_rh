@@ -28,12 +28,14 @@
 
 include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 
-
 /**
  *  Description and activation class for module MyModule
  */
+
 class modRHHierarchie extends DolibarrModules
 {
+
+
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -41,9 +43,13 @@ class modRHHierarchie extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-        global $langs,$conf;
-
+        global $langs,$conf,$user;
+		
         $this->db = $db;
+		
+	 	//$user = new User($db);
+		//$user->fetch($id);
+		//$user->getrights();
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
@@ -126,9 +132,8 @@ class modRHHierarchie extends DolibarrModules
 		// 'group'            to add a tab in group view
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
-        $this->tabs = array();/*'thirdparty:+creerTypeRessource:CréerTypeRessource:ressource@ressource:/ressource/index.php',  // To add a new tab identified by code tabname1
-                             'thirdparty:+nouvelleRessource:NouvelleRessource:ressource@ressource:/ressource/index.php',
-                                      );*/
+        $this->tabs = array('user:+hierarchie:Organigramme:hierarchie@hierarchie:/hierarchie/afficher.php?id='.$user->id // To add a new tab identified by code tabname1
+                                    );
 
         
         /* Example:
@@ -161,7 +166,7 @@ class modRHHierarchie extends DolibarrModules
 
 		
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
+		/*$this->rights = array();		// Permission array used by this module
 		$r=0;
 		$this->rights[$r][0] = 7201;
 		$this->rights[$r][1] = 'Afficher sa hiérarchie';
@@ -172,24 +177,11 @@ class modRHHierarchie extends DolibarrModules
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
-		$r=0;
+		$r=0;*/
 
 		// Add here entries to declare new menus
 		//
-		$this->menu[$r]=array(	'fk_menu'=>'',		                // Put 0 if this is a top menu
-								'type'=>'top',
-								'titre'=>$langs->trans('Hierarchie'),
-								//'mainmenu'=>'home',
-								'leftmenu'=>'',
-								'url'=>'/hierarchie/afficher_hierarchie.php',
-								'langs'=>'hierarchie@hierarchie',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>100,
-								'enabled'=>'1',	// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
-								'perms'=>'',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
-								'target'=>'',
-								'user'=>0);						                // 0=Menu for internal users, 1=external users, 2=both
-		
-		$r++;
+	
 		
 		// Exports
 		$r=1;
