@@ -1,13 +1,10 @@
-
 <?php
-//<link rel="stylesheet" type="text/css" href="./css/slickmap.css" />
+
 require('config.php');
-require('./class/hierarchie.class.php');
 
-
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 
 $langs->load("companies");
@@ -56,44 +53,67 @@ $arret=0;
 
 $ATMdb=new Tdb;
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
+
+
+?>
+<link rel="stylesheet" type="text/css" href="./css/jquery.jOrgChart.css" />
+<?
+
 
 $head = user_prepare_head($fuser);
 $current_head = 'hierarchie';
 dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
 
+?>
+<script>
+    jQuery(document).ready(function() {
+    	
+    	$("#JQorganigramme").jOrgChart({
+            chartElement : '#chart',
+            dragAndDrop : false
+        });
+    });
+    </script>
+
+<?
+
 
 //Fonction qui permet d'afficher les utilisateurs qui sont en dessous hiérarchiquement du salarié passé en paramètre
-function afficherSalarieDessous($salarie, $db1){
-				global $user;
-				$sqlReq="SELECT * FROM `llx_user` where fk_user=".$salarie->rowid;
-				$resql=$db1->query($sqlReq);
-				if ($resql)
-				{
-					$num = $db1->num_rows($resql);
-					$i = 0;
-					if ($num)
-					{
-						while ($i < $num)
-						{
-							$obj = $db1->fetch_object($resql);
-							if ($obj)
-							{
-									// affichage des utilisateurs en dessous du salarié passé en paramètre
-									if($user->id == $obj->rowid){
-										print '<ul><li><a>'.$obj->firstname." ".$obj->name." (Vous-même) ".'</a>';
-									}else{
-										print '<ul><li><a>'.$obj->firstname." ".$obj->name.'</a>';
-									}
-									
-									afficherSalarieDessous($obj,$db1);
-									print '</li></ul>';
-							}
-							$i++;
-						}
-					}
+function afficherSalarieDessous(&$ATMdb, $idBoss = -1, $niveau=1){
+		
+				global $user, $db;
+				
+					?>
+					<ul id="ul-niveau-<?=$niveau ?>">
+					<?
+					
+				
+				
+				$sqlReq="SELECT rowid FROM `llx_user` where fk_user=".$idBoss;
+				
+				$ATMdb->Execute($sqlReq);
+				
+				$Tab=array();
+				while($ATMdb->Get_line()) {
+					$user=new User($db);
+					$user->fetch($ATMdb->Get_field('rowid'));
+					
+					$Tab[]=$user;
 				}
-				return;
+				
+				foreach($Tab as &$user) {
+					?>
+					<li class="utilisateur" rel="<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?>
+					<?
+					afficherSalarieDessous($ATMdb, $user->id,$niveau+1);
+					?></li><?
+				}
+				
+				
+				?></ul><?
+				
+				
 }
 
 //Fonction qui permet d'afficher le nom du groupe d'un utilisateur
@@ -126,53 +146,40 @@ function afficherNomGroupe($groupe, $db1){
 
 ?>
 
-<select id="choixAffichage" name="choixAffichage">
-	<option selected value="entreprise">Afficher la hiérarchie de l'entreprise</option>
-	<option value="groupe">Afficher la hiérarchie du groupe</option>
-	<option value="equipe">Afficher son équipe</option>
-</select> 
+
+	<select id="choixAffichage" name="choixAffichage" onchange="document.formulaireSelect.submit();">
+		<option value="entreprise">Afficher la hiérarchie de l entreprise</option>
+		<option value="groupe">Afficher la hiérarchie du groupe</option>
+		<option value="equipe">Afficher son équipe</option>
+	</select> 
+
 
 
 <?php
 ///////////////////////////////////////////////ORGANIGRAMME ENTREPRISE
 ?>
-<div id="organigrammePrincipal" class="sitemap">
-		<br/><br/><br/>
-		<h1>Hiérarchie de l'entreprise C'PRO</h1>
-		<br/><br/><br/>
-		<ul id="primaryNav" class="col13">
-			<li id="home"><a>C'PRO</a></li>
+<div id="organigrammePrincipal">
+		<h1>Hiérarchie de l'entreprise</h1>
+		<div id="chart" class="orgChart"></div>
+		
+		<ul id="JQorganigramme" style="display:none;">
+			<li>Société
 		<?php 
 			
-			$sqlSup="SELECT * FROM `llx_user` where fk_user=-1";
-			$resql=$db->query($sqlSup);
-			if ($resql)
-			{
-				$num = $db->num_rows($resql);
-				$i = 0;
-				if ($num)
-				{
-					
-					while ($i < $num)
-					{
-						$obj = $db->fetch_object($resql);
-						if ($obj)
-						{
-								// affichage des utilisateurs n'ayant pas de supérieurs
-								print '<ul><li><a>'.$obj->firstname." ".$obj->name.'</a>';
-								
-								afficherSalarieDessous($obj, $db);
-								print '</li></ul>';
-						}
-						$i++;
-					}
-				}
-			}	
+			$ATMdb=new Tdb;
+			
+			afficherSalarieDessous($ATMdb);
+
+			$ATMdb->close();
+			
 		?>
+			</li>
+		</ul>
 </div>
 
 
 <?php
+/*
 $idUser=$user->id;
 ////////////////////////////////////////////////ORGANIGRAMME GROUPE
 ?>
@@ -181,17 +188,7 @@ $idUser=$user->id;
 		<h1>Hiérarchie de votre groupe</h1>
 		<br/><br/><br/>
 		<?php 
-		/*
-			$resql = TRequeteCore::get_id_from_what_you_want($ATMdb,'llx_user', array('fk_user'=>'-1'));
-			print_r($resql);
-			$Tuser = array();
-			foreach($resql as $k=>$id){
-				$Tuser[$k] = new TRH_Hierarchie($ATMdb); 
-				$Tuser[$k]->load($ATMdb, $id);
-				print_r ($Tuser[$k]);
-			}
-			//
-			*/
+		
 			////////////on récupère l'id du groupe de l'utilisateur 
 			$sqlGroupe="SELECT fk_usergroup FROM `llx_usergroup_user` where fk_user=".$user->id;
 			$resql=$db->query($sqlGroupe);
@@ -368,7 +365,7 @@ $idUser=$user->id;
 
 
 <?php
-
+*/
 dol_fiche_end();
 
 llxFooter();
