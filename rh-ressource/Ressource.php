@@ -80,7 +80,6 @@
 	
 function _liste(&$ATMdb, &$ressource) {
 	global $langs,$conf, $db;	
-	
 	llxHeader('','Liste des ressources');
 	getStandartJS();
 	
@@ -129,8 +128,9 @@ function _liste(&$ATMdb, &$ressource) {
 	
 function _fiche(&$ATMdb, &$ressource, $mode) {
 	global $db,$user;
+	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
 
-	llxHeader('','Ressource');
+	//llxHeader('','Ressource');
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
@@ -171,13 +171,14 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			)
 			,'fk_ressource'=>array(
 				'liste_fk_rh_ressource'=>$form->combo('','fk_rh_ressource',$ressource->TRessource,$ressource->fk_rh_ressource)
-				,'fk_rh_ressource'=>$ressource->fk_rh_ressource ? $ressource->TRessource[$ressource->fk_rh_ressource] : "aucune ressource"
+				,'fk_rh_ressource'=>$ressource->fk_rh_ressource ? $ressource->TRessource[$ressource->fk_rh_ressource] : "1"
 			)
 			
 			,'view'=>array(
 				'mode'=>$mode
 			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 			)
+			
 			
 		)	
 		
