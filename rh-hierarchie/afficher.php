@@ -245,9 +245,9 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 
 
 ?>
-<script>
-	
+<script>	
 	$(document).ready( function(){
+		$("#choixAffichage option[value='<?= $orgChoisie?>']").attr('selected', 'selected');
 		 <?php 
 		 	if($orgChoisie==""){?>
 		 		$('#organigrammeGroupe').hide();
