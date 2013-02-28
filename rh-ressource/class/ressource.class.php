@@ -85,6 +85,7 @@ class TRH_Ressource_type extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource_type');
 		parent::add_champs('libelle,code','type=chaine;');
 		parent::add_champs('entity','type=entier;index;');
+		
 				
 		parent::_init_vars();
 		parent::start();
@@ -110,14 +111,30 @@ class TRH_Ressource_type extends TObjetStd {
 	}
 	
 	function load_field(&$ATMdb) {
+		$sqlReq="SELECT rowid FROM llx_rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." ORDER BY ordre ASC;";
+		$ATMdb->Execute($sqlReq);
+		
+		$Tab = array();
+		while($ATMdb->Get_line()) {
+			$Tab[]= $ATMdb->Get_field('rowid');
+		}
+		
+		$this->TField=array();
+		foreach($Tab as $k=>$id) {
+			$this->TField[$k]=new TRH_Ressource_field;
+			$this->TField[$k]->load($ATMdb, $id);
+		}
+/*
 		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_field', array('fk_rh_ressource_type'=>$this->getId()));
 		$this->TField=array();
 		foreach($Tab as $k=>$id) {
 			$this->TField[$k]=new TRH_Ressource_field;
 			$this->TField[$k]->load($ATMdb, $id);
 		}
+	*/
 		
 	}
+	
 	function addField($TNField) {
 		$k=count($this->TField);
 		$this->TField[$k]=new TRH_Ressource_field;
@@ -153,6 +170,7 @@ class TRH_Ressource_field extends TObjetStd {
 		parent::add_champs('code,libelle','type=chaine;');
 		parent::add_champs('type','type=chaine;');
 		parent::add_champs('obligatoire','type=entier;');
+		parent::add_champs('ordre','type=entier');
 		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
 		
 		parent::_init_vars();

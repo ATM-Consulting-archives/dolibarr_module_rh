@@ -7,54 +7,71 @@
 
 <div>
 <h2>Champs de la ressource</h2>
-<table class="border">
-	<!-- entête du tableau -->
-	<tr>
-		<td>Id</td>
-		<td>Code</td>
-		<td>Libellé</td>
-		<td>Type</td>
-		<td>Obligatoire</td>
-		[onshow;block=begin;when [view.mode]=='edit']
-			<td>Action</td>
-		[onshow;block=end]
-		
-	</tr>
 
-	<!-- fields déjà existants -->
-	<tr> <!-- id="ligne[ressourceField.numero;block=tr;strconv=no;protect=no]">-->
+
+	<!-- entête du tableau -->
+		<a>Code</a>
+		<a>Libellé</a>
+		<a>Type</a>
+		<a>Libellé</a>
+		<a>Obligatoire</a>
+		<a>Action</a>
 		
-		<td>[ressourceField.id;block=tr;strconv=no;protect=no]</td>
-		<td>[ressourceField.code;strconv=no;protect=no]</td>
-		<td>[ressourceField.libelle;strconv=no;protect=no]</td>
-		<td>[ressourceField.type;strconv=no;protect=no]</td>
-		<td>[ressourceField.obligatoire;strconv=no;protect=no]</td>
-		
+<ul id="sortable" >
+
+	<li id="[ressourceField.indice;block=li;strconv=no;protect=no]" >
+		[ressourceField.ordre;strconv=no;protect=no]
+		<a>[onshow;block=begin;when [view.mode]=='edit']Déplacer[onshow;block=end]</a>
+		<a>[ressourceField.code;strconv=no;protect=no]</a>
+		<a>[ressourceField.libelle;strconv=no;protect=no]</a>
+		<a>[ressourceField.type;strconv=no;protect=no]</a>
+		<a>[ressourceField.obligatoire;strconv=no;protect=no]</a>
+		<a>
 		[onshow;block=begin;when [view.mode]=='edit']
-			<td><button type="submit" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" class="button">Supprimer</button></td>
+			<button type="submit" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" class="button">Supprimer</button>
 		[onshow;block=end]
-		
-		
-		
-	</tr>
+		</a>
+	</li>
+	
+	
+	
+	
 	
 	
 	<!-- Nouveau field-->
-	
+
 	[onshow;block=begin;when [view.mode]=='edit']
-	<tr>
-		<td>Nouveau</td>
-		<td>[newField.code;strconv=no;protect=no]</td>
-		<td>[newField.libelle;strconv=no;protect=no]</td>
-		<td>[newField.type;strconv=no;protect=no]</td>
-		<td>[newField.obligatoire;strconv=no;protect=no]</td>
-		<td><input type="submit" value="Ajouter" name="newField" class="button"></td>
-	</tr>
+	<li id="[newField.indice;strconv=no;protect=no]">
+		[newField.ordre;strconv=no;protect=no]
+		<a>Nouveau </a>
+		<a>[newField.code;strconv=no;protect=no]</a>
+		<a>[newField.libelle;strconv=no;protect=no]</a>
+		<a>[newField.type;strconv=no;protect=no]</a>
+		<a>[newField.obligatoire;strconv=no;protect=no]</a>
+		<a><input type="submit" value="Ajouter" name="newField" class="button"></a>
+	</li>
 	[onshow;block=end]
 
-</table>
+</ul>
 
+[onshow;block=begin;when [view.mode]=='edit']
+ <script>
+ $(document).ready(function(){
+ 	$( "#sortable" ).css('cursor','pointer');
+	$(function() {
+		$( "#sortable" ).sortable({
+		   stop: function(event, ui) {
+				var result = $('#sortable').sortable('toArray'); 
+				for (var i = 0; i< result.length; i++){
+					$(".ordre"+result[i]).attr("value", i)
+					}
+			}
+		});
+	});
+});
+[onshow;block=end]
 
+</script>
 </div>
 
 <div class="tabsAction" >
