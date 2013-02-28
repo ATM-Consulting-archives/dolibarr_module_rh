@@ -74,7 +74,7 @@
 				//print_r($_REQUEST);
 				
 				$ressource->save($ATMdb);
-				
+				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $ressource,$mode);
 				break;
 			
@@ -174,7 +174,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	global $db,$user;
 
 
-	llxHeader('','Type de ressource', '', '', 0, 0);// array("http://code.jquery.com/jquery-1.9.1.js","http://code.jquery.com/ui/1.10.1/jquery-ui.js" ));
+	llxHeader('','Type de ressource', '', '', 0, 0);
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
@@ -193,6 +193,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				'id'=>$field->getId()
 				,'code'=>$form->texte('', 'TField['.$k.'][code]', $field->code, 20,255,'','','-')
 				,'libelle'=>$form->texte('', 'TField['.$k.'][libelle]', $field->libelle, 20,255,'','','-')
+				,'indice'=>$k
+				,'ordre'=>$form->hidden('TField['.$k.'][ordre]', $k, 'class="ordre'.$k.'"')
 				,'type'=>$form->combo('','TField['.$k.'][type]',$ressource->TType,$field->type)
 				,'obligatoire'=>$form->combo('','TField['.$k.'][obligatoire]',array('Oui','Non'),$field->obligatoire)
 				,'numero'=>$k
@@ -216,8 +218,10 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			,'newField'=>array(
 				'hidden'=>$form->hidden('action', 'save')
 				,'code'=>$form->texte('', 'TNField[code]', '', 20,255,'','','-')
+				,'ordre'=>$form->hidden('TNField[ordre]', $k+1, 'class="ordre'.($k+1).'"')
+				,'indice'=>$k+1
 				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 20,255,'','','-')
-				,'type'=>$form->combo('', 'TNField[type]',$ressource->TType, 'entier')
+				,'type'=>$form->combo('', 'TNField[type]',$ressource->TType, 'texte')
 				,'obligatoire'=>$form->combo('','TNField[obligatoire]',array('Oui','Non'),'0')
 			
 			)
