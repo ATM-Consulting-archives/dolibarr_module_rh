@@ -77,6 +77,9 @@ dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
     </script>
 
 <?
+global $user;
+
+$orgChoisie=$_POST["choixAffichage"];
 
 
 //Fonction qui permet d'afficher les utilisateurs qui sont en dessous hiérarchiquement du salarié passé en paramètre
@@ -84,11 +87,9 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = -1, $niveau=1){
 		
 				global $user, $db;
 				
-					?>
-					<ul id="ul-niveau-<?=$niveau ?>">
-					<?
-					
-				
+				?>
+				<ul id="ul-niveau-<?=$niveau ?>">
+				<?
 				
 				$sqlReq="SELECT rowid FROM `llx_user` where fk_user=".$idBoss;
 				
@@ -110,262 +111,154 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = -1, $niveau=1){
 					?></li><?
 				}
 				
-				
 				?></ul><?
-				
-				
+								
 }
 
-//Fonction qui permet d'afficher le nom du groupe d'un utilisateur
-function afficherNomGroupe($groupe, $db1){
-				$sqlReq="SELECT * FROM `llx_usergroup` where rowid=".$groupe->fk_usergroup;
-				$resql=$db1->query($sqlReq);
-				if ($resql)
-				{
-					$num = $db1->num_rows($resql);
-					$i = 0;
-					if ($num)
-					{
-						while ($i < $num)
-						{
-							$obj = $db1->fetch_object($resql);
-							if ($obj)
-							{
-									// affichage nom groupe de l'utilisateur en haut de hierarchie
-									print '<ul id="primaryNav" class="col13">';
-									print '<li id="home"><a>'.$obj->nom.'</a></li>';
-									
-							}
-							$i++;
-						}
-					}
+//Fonction qui permet d'afficher les groupes dans la liste déroulante 
+function afficherGroupes(&$ATMdb){
+				global $user, $db;
+				//récupère les id des différents groupes de l'utilisateur
+				$sqlReq="SELECT fk_usergroup FROM `llx_usergroup_user` where fk_user=".$user->id;
+				$ATMdb->Execute($sqlReq);
+				$Tab=array();
+				while($ATMdb->Get_line()) {
+					//récupère les id des différents nom des  groupes de l'utilisateur
+					$ATMdb1=new Tdb;
+					$sqlReq1="SELECT nom FROM `llx_usergroup` where rowid=".$ATMdb->Get_field('fk_usergroup');
+					$ATMdb1->Execute($sqlReq1);
+					
+					$Tab1=array();
+					
+					while($ATMdb1->Get_line()) {
+						//affichage des groupes concernant l'utilisateur 
+						print '<option value="'.$ATMdb1->Get_field('nom').'">'.$ATMdb1->Get_field('nom').'</option>';
+					}			
 				}
-				return;
 }
 
 
 ?>
 
 
-	<select id="choixAffichage" name="choixAffichage" onchange="document.formulaireSelect.submit();">
+<form id="form" action="afficher.php?id=<?= $user->id; ?>" method="post">
+	<select id="choixAffichage" name="choixAffichage">
 		<option value="entreprise">Afficher la hiérarchie de l entreprise</option>
-		<option value="groupe">Afficher la hiérarchie du groupe</option>
 		<option value="equipe">Afficher son équipe</option>
+		<?php
+			afficherGroupes($ATMdb);
+		?>
 	</select> 
+	<input id="validSelect" type="submit" value="Valider"/>
+</form>
+	
 
 
 
 <?php
+if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise 
 ///////////////////////////////////////////////ORGANIGRAMME ENTREPRISE
 ?>
-<div id="organigrammePrincipal">
+	<div id="organigrammePrincipal">
 		<h1>Hiérarchie de l'entreprise</h1>
 		<div id="chart" class="orgChart"></div>
 		
 		<ul id="JQorganigramme" style="display:none;">
 			<li>Société
-		<?php 
-			
+		<?php 		
 			$ATMdb=new Tdb;
-			
 			afficherSalarieDessous($ATMdb);
-
 			$ATMdb->close();
-			
 		?>
 			</li>
 		</ul>
-</div>
-
-
-<?php
-/*
-$idUser=$user->id;
-////////////////////////////////////////////////ORGANIGRAMME GROUPE
-?>
-<div id="organigrammeGroupe" class="sitemap">
-		<br/><br/><br/>
-		<h1>Hiérarchie de votre groupe</h1>
-		<br/><br/><br/>
-		<?php 
-		
-			////////////on récupère l'id du groupe de l'utilisateur 
-			$sqlGroupe="SELECT fk_usergroup FROM `llx_usergroup_user` where fk_user=".$user->id;
-			$resql=$db->query($sqlGroupe);
-			if ($resql)
-			{
-				$num = $db->num_rows($resql);
-				$i = 0;
-				if ($num)
-				{
-
-					while ($i < $num)
-					{
-						$obj = $db->fetch_object($resql);
-						if ($obj)
-						{
-									
-									//////////////on récupère les id des utilisateurs du groupe
-									
-									afficherNomGroupe($obj,$db);
-									$sqlGroupe="SELECT fk_user FROM `llx_usergroup_user` where fk_usergroup=".$obj->fk_usergroup;
-									$resql1=$db->query($sqlGroupe);
-									if ($resql1)
-									{
-										$num1 = $db->num_rows($resql1);
-										$j = 0;
-										if ($num1)
-										{
-											
-											while ($j < $num1)
-											{
-												$obj1 = $db->fetch_object($resql1);
-												if ($obj1)
-												{
-														/////////////////////////////on affiche les utilisateurs
-														$sqlUser="SELECT * FROM `llx_user` where rowid=".$obj1->fk_user;
-														$resql2=$db->query($sqlUser);
-														if ($resql2)
-														{
-															$num2 = $db->num_rows($resql2);
-															$k = 0;
-															if ($num2)
-															{
-																
-																while ($k < $num2)
-																{
-																	$obj2 = $db->fetch_object($resql2);
-																	if ($obj2)
-																	{
-																			// affichage des utilisateurs n'ayant pas de supérieurs
-																			print '<ul><li><a>'.$obj2->firstname." ".$obj2->name.'</a>';
-																			afficherSalarieDessous($obj2, $db);
-																			
-																			print '</li></ul>';
-																			break;
-																			
-																	}
-																	$k++;
-																}
-															}
-														}	
-												}
-												$j++;
-												break;
-											}
-										}
-									}	
-						}
-						$i++;
-						break;
-					}
-				}
-				
-			}	
-		?>
-</div>
-
-
-
-<div id="organigrammeEquipe" class="sitemap">
-		
-		<br/><br/><br/>
-		<h1>Hiérarchie de votre équipe</h1>
-		<br/><br/><br/>
-		<ul id="primaryNav" class="col13">
-		<?php 
-			if($user->fk_user != "-1"){
-				$sqlSup="SELECT * FROM `llx_user` where rowid=".$user->fk_user;
-				$resql=$db->query($sqlSup);
-				
-				if ($resql)
-				{
-					$num = $db->num_rows($resql);
-					$i = 0;
-					if ($num)
-					{
-						
-						while ($i < $num)
-						{
-							$obj = $db->fetch_object($resql);
-							if ($obj)
-							{
-									// affichage des utilisateurs n'ayant pas de supérieurs
-									print '<ul><li><a>'.$obj->firstname." ".$obj->name." (Votre supérieur) ".'</a>';
-									afficherSalarieDessous($obj, $db);
-									print '</li></ul>';
-									break;
-							}
-							
-							$i++;
-						}
-						
-					}
-				}
-			}
-			else {
-						print '<ul><li><a>'.$user->firstname." ".$user->lastname." (Vous-même)".'</a>';
-						$sqlSup="SELECT * FROM `llx_user` where fk_user=".$user->id;
-						$resql=$db->query($sqlSup);
-						if ($resql)
-						{
-							$num = $db->num_rows($resql);
-							$i = 0;
-							if ($num)
-							{
-								
-								while ($i < $num)
-								{
-									$obj = $db->fetch_object($resql);
-									if ($obj)
-									{
-											// affichage des utilisateurs n'ayant pas de supérieurs
-											print '<ul><li><a>'.$obj->firstname." ".$obj->name.'</a>';
-											afficherSalarieDessous($obj, $db);
-											print '</li></ul>';
-									}
-									$i++;
-								}
-							}
-						}	
-			}
-				
-		?>
-</div>
-
-
-
-<script>
+	</div>
 	
-	$(document).ready( function(){
-		$('#organigrammePrincipal').show();
-		$('#organigrammeGroupe').hide();
-		$('#organigrammeEquipe').hide();
+	
+	
+<?php
+}else if($orgChoisie=="equipe"){	//on affiche l'organigramme de l'équipe
+?>
+	<div id="organigrammeEquipe">
+		<h1>Hiérarchie de votre équipe</h1>
+		<div id="chart" class="orgChart"></div>
 		
-		 $('#choixAffichage').change( 	function(){  
-				var indexSelect = $("select[name='choixAffichage'] option:selected").val();
-				if(indexSelect=="entreprise"){
-					$('#organigrammePrincipal').show();
-					$('#organigrammeGroupe').hide();
-					$('#organigrammeEquipe').hide();
+		<ul id="JQorganigramme" style="display:none;">
+			<li>Votre Equipe
+		<?php 		
+			$ATMdb=new Tdb;
+			if($user->fk_user!="-1"){		// si on a un supérieur hiérarchique, on affiche son nom, puis l'équipe 
+			
+				$sqlReq="SELECT name,firstname FROM `llx_user` where rowid=".$user->fk_user;
+				$ATMdb->Execute($sqlReq);
+				$Tab=array();
+				while($ATMdb->Get_line()) {
+					//récupère les id des différents nom des  groupes de l'utilisateur
+					
+					print '<ul><li>'.$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name')."<br/>(Votre supérieur)";
+					
 				}
-				else if(indexSelect=="groupe"){
-					$('#organigrammeGroupe').show();
-					$('#organigrammePrincipal').hide();
-					$('#organigrammeEquipe').hide();
-				}
-				else if(indexSelect=="equipe"){
-					$('#organigrammeEquipe').show();
-					$('#organigrammeGroupe').hide();
-					$('#organigrammePrincipal').hide();
-				}
-		});
+				afficherSalarieDessous($ATMdb,$user->fk_user);
+				
+			}else {		// si on n'a pas de supérieur, on écrit son nom, puis ceux de ses collaborateurs inférieurs
+						
+					print '<ul><li>'.$user->firstname." ".$user->lastname."<br/>(Vous-même)";
+					afficherSalarieDessous($ATMdb, $user->id, 1);
+					print "</li></ul>";
+				
+			}
+			
+			$ATMdb->close();
+		?>
+			</li>
+		</ul>
+	</div>
+	
+	
+	
+	
+	
+<?php 
+}else{	//on affiche l'organigramme du groupe  
+?>	
+	<div id="organigrammeGroupe">
+		<h1>Hiérarchie du groupe</h1>
+		<div id="chart" class="orgChart"></div>
+		
+		<ul id="JQorganigramme" style="display:none;">
+			<li> 
+		<?php 	
+			//////////////// On considère pour l'instant que l'utilisateur courant est le supérieur hiérarchique du groupe 
+			echo $orgChoisie;	
+			$ATMdb=new Tdb;
+			print '<ul><li>'.$user->firstname." ".$user->lastname."<br/>(Vous-même)";
+			afficherSalarieDessous($ATMdb, $user->id, 1);
+			print "</li></ul>";
+			$ATMdb->close();
+		?>
+			</li>
+		</ul>
+	</div>
+<?php	
+}
+
+
+
+?>
+<script>	
+	$(document).ready( function(){
+		$("#choixAffichage option[value='<?= $orgChoisie?>']").attr('selected', 'selected');
+		 <?php 
+		 	if($orgChoisie==""){?>
+		 		$('#organigrammeGroupe').hide();
+		 	<?php }
+		 ?>
 	});
 </script>
 
 
 <?php
-*/
+
 dol_fiche_end();
 
 llxFooter();

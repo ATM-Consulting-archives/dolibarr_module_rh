@@ -1,4 +1,23 @@
-<h1>Créer une ressource </h1>
+<?php 	llxHeader('', 'Liste des ressources', '', '', 0, 0, array('../js/jquery.jOrgChart.js'));
+?>
+<link rel="stylesheet" type="text/css" href="./css/jquery.jOrgChart.css" />
+<script>
+    jQuery(document).ready(function() {
+    	
+    	$("#JQorganigramme").jOrgChart({
+            chartElement : '#chart',
+            dragAndDrop : false
+        });
+    });
+</script>
+
+
+[onshow;block=begin;when [view.mode]=='view']
+			<h1>Visualisation de la ressource</h1>
+[onshow;block=end]
+[onshow;block=begin;when [view.mode]!='view']
+			<h1>Créer une ressource </h1>
+[onshow;block=end]
 
 <div>
 
@@ -20,9 +39,9 @@
 		<td>[ressource.type;strconv=no;protect=no] </td>
 		[onshow;block=begin;when [view.mode]=='edit']
 			<td><input type="submit" value="Valider" name="save" class="butAction"></td>
-		[onshow;block=end]
-		
+		[onshow;block=end]	
 	</tr>
+	
 </table>
 
 </div>
@@ -44,7 +63,7 @@
 
 <br>
 
-<h2>Ressource associé</h2>
+<h2>Ressources associées </h2>
 <div>
 	
 		[onshow;block=begin;when [view.mode]=='edit']
@@ -52,9 +71,30 @@
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
-			Cette ressource est associé à [fk_ressource.fk_rh_ressource;strconv=no;protect=no].
+			Cette ressource est associée à : [fk_ressource.fk_rh_ressource;strconv=no;protect=no].
 		[onshow;block=end]
 		
+		<?php /////////////////////////////////////////////////////////////////////////////////////?>
+		<br/>
+		[onshow;block=begin;when [view.mode]!='edit']
+			
+			<div id="organigrammePrincipal">
+				<br/>
+				<div id="chart" class="orgChart"></div>
+					<ul id="JQorganigramme" style="display:none;">
+				
+						[onshow;block=begin;when [fk_ressource.fk_rh_ressource]!='1']
+							<li>[fk_ressource.fk_rh_ressource;strconv=no;protect=no]
+								<ul>
+						[onshow;block=end]
+								
+									<li>
+										[ressource.libelle;strconv=no;protect=no]
+									</li>
+								</ul>
+				
+		[onshow;block=end]
+		<?php /////////////////////////////////////////////////////////////////////////////////////?>
 	
 </div>
 
