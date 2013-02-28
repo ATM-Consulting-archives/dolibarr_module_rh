@@ -248,14 +248,11 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 <script>
 	
 	$(document).ready( function(){
-		
 		 <?php 
 		 	if($orgChoisie==""){?>
 		 		$('#organigrammeGroupe').hide();
 		 	<?php }
 		 ?>
-		 
-		 
 	});
 </script>
 
