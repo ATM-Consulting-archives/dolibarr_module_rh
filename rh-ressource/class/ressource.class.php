@@ -37,19 +37,23 @@ class TRH_Ressource extends TObjetStd {
 		$this->TBail = array('bail'=>'Bail','immo'=>'Immo');
 		$this->TStatut = array('nonattribuée'=>'Non attribuée','attribuée'=>'Attribuée');
 		
-		//chargement d'une liste de toutes les ressources (pour le combo "ressource associé")
-		$sqlReq="SELECT rowid,libelle FROM ".MAIN_DB_PREFIX."rh_ressource where rowid!=".$this->getId();
-		$ATMdb->Execute($sqlReq);
 		$this->TRessource = array('');
-		while($ATMdb->Get_line()) {
-			
-			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
-			}
+		
 		}
 	
 	function load(&$ATMdb, $id) {
 		parent::load($ATMdb, $id);
 		$this->load_ressource_type($ATMdb);
+		
+		//chargement d'une liste de toutes les ressources (pour le combo "ressource associé")
+		$sqlReq="SELECT rowid,libelle FROM ".MAIN_DB_PREFIX."rh_ressource where rowid!=".$this->getId();
+		$ATMdb->Execute($sqlReq);
+		
+		while($ATMdb->Get_line()) {
+			
+			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
+			}
+		
 	}
 	
 	function load_ressource_type(&$ATMdb) {

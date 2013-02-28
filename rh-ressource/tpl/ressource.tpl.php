@@ -71,32 +71,38 @@
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
-			Cette ressource est associée à : [fk_ressource.fk_rh_ressource;strconv=no;protect=no].
+			Cette ressource est associée à : 
+		[onshow;block=end]
+							
+	
+		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]=='aucune ressource']
+			[onshow;block=begin;when [view.mode]=='view']
+				<div id="organigrammePrincipal">
+					<br/>
+					<div id="chart" class="orgChart"></div>
+						<ul id="JQorganigramme" style="display:none;">
+							<li> [ressource.libelle;strconv=no;protect=no]
+								<ul>
+										<li>
+											[sous_ressource.libelle;block=li;strconv=no;protect=no]
+											<ul>
+												
+											</ul>
+										</li>
+								</ul>
+							</li>
+						</ul>	
+				</div>
+			[onshow;block=end]
 		[onshow;block=end]
 		
-		<?php /////////////////////////////////////////////////////////////////////////////////////?>
-		<br/>
-		[onshow;block=begin;when [view.mode]!='edit']
-			
-			<div id="organigrammePrincipal">
-				<br/>
-				<div id="chart" class="orgChart"></div>
-					<ul id="JQorganigramme" style="display:none;">
-				
-						[onshow;block=begin;when [fk_ressource.fk_rh_ressource]!='1']
-							<li>[fk_ressource.fk_rh_ressource;strconv=no;protect=no]
-								<ul>
-						[onshow;block=end]
-								
-									<li>
-										[ressource.libelle;strconv=no;protect=no]
-									</li>
-								</ul>
-				
+		
+		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]!='aucune ressource']
+			[onshow;block=begin;when [view.mode]=='view']
+					[fk_ressource.fk_rh_ressource;strconv=no;protect=no]
+			[onshow;block=end]
 		[onshow;block=end]
-		<?php /////////////////////////////////////////////////////////////////////////////////////?>
-	
-</div>
+		
 
 <div class="tabsAction" >
 
