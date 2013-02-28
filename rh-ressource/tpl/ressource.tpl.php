@@ -82,6 +82,7 @@
 					<div id="chart" class="orgChart"></div>
 						<ul id="JQorganigramme" style="display:none;">
 							<li> [ressource.libelle;strconv=no;protect=no]
+								(Ressource courante)
 								<ul>
 										<li>
 											[sous_ressource.libelle;block=li;strconv=no;protect=no]
@@ -99,7 +100,23 @@
 		
 		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]!='aucune ressource']
 			[onshow;block=begin;when [view.mode]=='view']
-					[fk_ressource.fk_rh_ressource;strconv=no;protect=no]
+					<div id="organigrammePrincipal">
+					<br/>
+					<div id="chart" class="orgChart"></div>
+						<ul id="JQorganigramme" style="display:none;">
+							<li> [fk_ressource.fk_rh_ressource;strconv=no;protect=no]
+								<ul>
+										<li>
+											 [ressource.libelle;strconv=no;protect=no]
+											 (Ressource courante)
+											<ul>
+												
+											</ul>
+										</li>
+								</ul>
+							</li>
+						</ul>	
+				</div>
 			[onshow;block=end]
 		[onshow;block=end]
 		
