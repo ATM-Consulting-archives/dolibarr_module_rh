@@ -71,10 +71,33 @@
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
-			Cette ressource est associée à : 
+			Cette ressource est associée à [fk_ressource.fk_rh_ressource].
 		[onshow;block=end]
 							
+
+		
+
+<div class="tabsAction" >
+
+		[onshow;block=begin;when [view.mode]=='edit']
+			<input type="submit" value="Enregistrer" name="save" class="button">
+			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
+		[onshow;block=end]
+		[onshow;block=begin;when [view.mode]!='edit']
+			<a class="butAction"  href="?id=[ressource.id]&action=edit">Modifier</a>
+			&nbsp; &nbsp;<a class="butActionDelete"  href="?id=[ressource.id]&action=delete">Supprimer</a>
+			<!--&nbsp; &nbsp; <input type="button" value="Supprimer" name="cancel" class="butActionDelete" onclick="document.location.href='?id=[ressource.id]&action=edit'">-->
+
+		[onshow;block=end]
 	
+
+</div>
+
+
+
+<h2>Organigramme des ressources associées</h2>
+
+<div>
 		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]=='aucune ressource']
 			[onshow;block=begin;when [view.mode]=='view']
 				<div id="organigrammePrincipal">
@@ -119,20 +142,5 @@
 				</div>
 			[onshow;block=end]
 		[onshow;block=end]
-		
-
-<div class="tabsAction" >
-
-		[onshow;block=begin;when [view.mode]=='edit']
-			<input type="submit" value="Enregistrer" name="save" class="button">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
-		[onshow;block=end]
-		[onshow;block=begin;when [view.mode]!='edit']
-			<a class="butAction"  href="?id=[ressource.id]&action=edit">Modifier</a>
-			&nbsp; &nbsp;<a class="butActionDelete"  href="?id=[ressource.id]&action=delete">Supprimer</a>
-			<!--&nbsp; &nbsp; <input type="button" value="Supprimer" name="cancel" class="butActionDelete" onclick="document.location.href='?id=[ressource.id]&action=edit'">-->
-
-		[onshow;block=end]
-	
 
 </div>
