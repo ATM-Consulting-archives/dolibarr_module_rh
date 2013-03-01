@@ -154,41 +154,21 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'statut'=>$form->combo('','TFields['.$k.'][statut]',$ressource->TStatut,$ressource->TStatut[0])*/
 			);
 	}
-////////////////////////////////////////////////////////////////////////////////
-		//requete pour avoir toutes les ressources associées à la ressource concernées
-		$k=0;
-		$sqlReq="SELECT libelle FROM `llx_rh_ressource` where fk_rh_ressource=".$ressource->rowid;
-		$ATMdb->Execute($sqlReq);
-		$Tab=array();
-		$Tab_sous_ressource=array();
-		while($ATMdb->Get_line()) {
-			//récupère les id des différents nom des  groupes de l'utilisateur
-			$Tab_sous_ressource[$k]=array('libelle'=>$ATMdb->Get_field('libelle'));
-			$k++;
-		}
-		
-		/*
-		 * <div id="organigrammePrincipal">
-				<br/>
-				<div id="chart" class="orgChart"></div>
-					<ul id="JQorganigramme" style="display:none;">
-						<li> [ressource.libelle;strconv=no;protect=no]
-							<ul>
-									<li>
-										
-										[sous_ressource.libelle;block=li;strconv=no;protect=no]
-										<ul>
-											
-										</ul>
-									</li>
-							</ul>
-						</li>
-					</ul>
-							
-	
-		</div>*/
-	///////////////////////////////////////////////////////////////////////////////
-	
+
+	//requete pour avoir toutes les ressources associées à la ressource concernées
+	$k=0;
+	$sqlReq="SELECT libelle FROM `llx_rh_ressource` where fk_rh_ressource=".$ressource->rowid;
+	$ATMdb->Execute($sqlReq);
+	$Tab=array();
+	$Tab_sous_ressource=array();
+	$reqVide=0;	//variable permettant de savoir si la requete existe, et donc au final si on affichera l'organigramme
+	while($ATMdb->Get_line()) {
+		//récupère les id des différents nom des  groupes de l'utilisateur
+		$Tab_sous_ressource[$k]=array('libelle'=>$ATMdb->Get_field('libelle'));
+		$k++;
+		$reqVide=1;
+	}
+
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
@@ -208,6 +188,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			,'fk_ressource'=>array(
 				'liste_fk_rh_ressource'=>$form->combo('','fk_rh_ressource',$ressource->TRessource,$ressource->fk_rh_ressource)
 				,'fk_rh_ressource'=>$ressource->fk_rh_ressource ? $ressource->TRessource[$ressource->fk_rh_ressource] : "aucune ressource"
+				,'reqExiste'=>$reqVide
 			)
 			
 			,'view'=>array(
