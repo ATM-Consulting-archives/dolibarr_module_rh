@@ -37,7 +37,7 @@
 		<a style="width:140px;display : inline-block;">[ressourceField.type;strconv=no;protect=no]</a>
 		<a style="width:70px;display : inline-block;">[ressourceField.obligatoire;strconv=no;protect=no]</a>
 		[onshow;block=begin;when [view.mode]=='edit']
-			<a style="width:100px;display : inline-block;"><button type="button" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" onclick="submit();" class="button">Supprimer</button></a>
+			<a style="width:100px;display : inline-block;"><button type="submit" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" class="button">Supprimer</button></a>
 		[onshow;block=end]
 	</li>
 	
