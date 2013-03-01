@@ -10,7 +10,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('date_debut,date_fin','type=date;');	//dates debut fin de congés
 		parent::add_champs('duree','type=entier;');				//duree en demi-journees
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
-		parent::add_champs('fk_utilisateur','type=entier;');	//utilisateur concerné
+		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		
 		parent::_init_vars();
 		parent::start();
@@ -42,7 +42,7 @@ class TRH_Export extends TObjetStd {
 		parent::add_champs('nb_rtt','type=entier'); 	//nombre de Rtt à décompter
 		parent::add_champs('nb_conge_paye','type=entier'); 	//nombre de congés payés à décompter
 		parent::add_champs('nb_absence_autre','type=entier'); 	//nombre d'absences de type autres (deuil, maladie etc...) à décompter
-		parent::add_champs('fk_utilisateur','type=entier;');	//utilisateur concerné
+		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		
 		parent::_init_vars();
 		parent::start();
