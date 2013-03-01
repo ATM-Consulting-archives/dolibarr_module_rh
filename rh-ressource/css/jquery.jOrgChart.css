@@ -3,23 +3,24 @@
 .jOrgChart .line {
   height                : 20px;
   width                 : 4px;
+  
 }
 
 .jOrgChart .down {
-  background-color 		: black;	
+  background-color 		: #858C90;	
   margin 				: 0px auto;
 }
 
 .jOrgChart .top {
-  border-top          : 3px solid black;
+  border-top          : 3px solid #858C90;
 }
 
 .jOrgChart .left {
-  border-right          : 2px solid black;
+  border-right          : 2px solid #858C90;
 }
 
 .jOrgChart .right {
-  border-left           : 2px solid black;
+  border-left           : 2px solid #858C90;
 }
 
 /* node cell */
@@ -31,15 +32,18 @@
 
 /* The node */
 .jOrgChart .node {
-  background-color 		: #657090;
-  color: #FFFFFF;
+
+  background-color 		: #E8EFF3;
+  color: #2AA8B9;
   display               : inline-block;
   width                 : 96px;
   height                : 60px;
   z-index 				: 10;
-  margin               : 0 2px;
-  box-shadow: 2px 2px 3px #2AA8B9;
+  margin               : 0 10px;
+  box-shadow: 4px 3px 4px #558FB0;
   border: 1px solid #000000;
+  font-weight:bold;
+  
 }
 
 /* jQuery drag 'n drop */
