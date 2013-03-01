@@ -35,7 +35,14 @@
 				$ressource->save($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">Modifications effectuées</div>';
-				_fiche($ATMdb, $ressource,'view');
+				$mode = 'view';
+				
+				if(isset($_REQUEST['validerType']) ) {
+					$mode = 'edit';
+					
+				}
+				
+				_fiche($ATMdb, $ressource,$mode);
 				break;
 			
 			case 'view':
@@ -141,32 +148,28 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	$TFields=array();
 	
 	foreach($ressource->ressourceType->TField as $k=>$field) {
-		//echo $field->getId().' - '.$field->obligatoire.'<br>';
-		//print_r($field);
-		
-		//echo $field->code;
 		$TFields[$k]=array(
-				//'id'=>$field->getId()
-				'libelle'=>$field->libelle//$form->texte('', 'TFields['.$k.'][libelle]', $field->libelle, 50,255,'','','-')
+				'libelle'=>$field->libelle
 				,'valeur'=>$form->texte('', $field->code, $ressource->{$field->code}, 50,255,'','','-')
-				/*,'type'=>$form->combo('','TRessource['.$k.'][type]',$ressource->type->TType,$field->type)
-				,'bail'=>$form->combo('','TFields['.$k.'][bail]',$ressource->TBail,$ressource->TBail[0])
-				,'statut'=>$form->combo('','TFields['.$k.'][statut]',$ressource->TStatut,$ressource->TStatut[0])*/
+				
 			);
 	}
 
-		//requete pour avoir toutes les ressources associées à la ressource concernées
-		$k=0;
-		$sqlReq="SELECT libelle FROM `llx_rh_ressource` where fk_rh_ressource=".$ressource->rowid;
-		$ATMdb->Execute($sqlReq);
-		$Tab=array();
-		$Tab_sous_ressource=array();
-		while($ATMdb->Get_line()) {
-			//récupère les id des différents nom des  groupes de l'utilisateur
-			$Tab_sous_ressource[$k]=array('libelle'=>$ATMdb->Get_field('libelle'));
-			$k++;
-		}
-		
+
+	//requete pour avoir toutes les ressources associées à la ressource concernées
+	$k=0;
+	$sqlReq="SELECT libelle FROM `llx_rh_ressource` where fk_rh_ressource=".$ressource->rowid;
+	$ATMdb->Execute($sqlReq);
+	$Tab=array();
+	$Tab_sous_ressource=array();
+	$reqVide=0;	//variable permettant de savoir si la requete existe, et donc au final si on affichera l'organigramme
+	while($ATMdb->Get_line()) {
+		//récupère les id des différents nom des  groupes de l'utilisateur
+		$Tab_sous_ressource[$k]=array('libelle'=>$ATMdb->Get_field('libelle'));
+		$k++;
+		$reqVide=1;
+	}
+
 
 	
 	$TBS=new TTemplateTBS();
@@ -179,7 +182,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			'ressource'=>array(
 				'id'=>$ressource->getId()
 				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 50,255,'','','-')
-				,'type'=>$form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type)
+				,'type'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type" 
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
 				,'statut'=>$form->combo('','statut',$ressource->TStatut,$ressource->TStatut[0])
 			
@@ -187,6 +190,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			,'fk_ressource'=>array(
 				'liste_fk_rh_ressource'=>$form->combo('','fk_rh_ressource',$ressource->TRessource,$ressource->fk_rh_ressource)
 				,'fk_rh_ressource'=>$ressource->fk_rh_ressource ? $ressource->TRessource[$ressource->fk_rh_ressource] : "aucune ressource"
+				,'reqExiste'=>$reqVide
 			)
 			
 			,'view'=>array(

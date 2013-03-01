@@ -38,8 +38,12 @@
 		<td>[ressource.libelle;strconv=no;protect=no] </td>
 		<td>[ressource.type;strconv=no;protect=no] </td>
 		[onshow;block=begin;when [view.mode]=='edit']
-			<td><input type="submit" value="Valider" name="save" class="butAction"></td>
-		[onshow;block=end]	
+			<td><input type="submit" value="Valider" name="validerType" class="butAction"
+				[onshow;block=begin;when [ressource.type]=='Aucun type']
+				disabled
+				[onshow;block=end]
+				></td>
+		[onshow;block=end]
 	</tr>
 	
 </table>
@@ -73,14 +77,16 @@
 		[onshow;block=begin;when [view.mode]!='edit']
 			Cette ressource est associée à [fk_ressource.fk_rh_ressource].
 		[onshow;block=end]
-							
-
-		
 
 <div class="tabsAction" >
 
 		[onshow;block=begin;when [view.mode]=='edit']
-			<input type="submit" value="Enregistrer" name="save" class="button">
+			<input type="submit" value="Enregistrer" name="save" class="button"
+				[onshow;block=begin;when [ressource.type]=='Aucun type']
+				disabled
+				[onshow;block=end]
+			
+			>
 			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
 		[onshow;block=end]
 		[onshow;block=begin;when [view.mode]!='edit']
@@ -89,40 +95,42 @@
 			<!--&nbsp; &nbsp; <input type="button" value="Supprimer" name="cancel" class="butActionDelete" onclick="document.location.href='?id=[ressource.id]&action=edit'">-->
 
 		[onshow;block=end]
-	
-
 </div>
-<br>
 
 
-<h2>Organigramme des ressources associées</h2>
+<div style="margin-left:70px;">
 
-<div>
 		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]=='aucune ressource']
-			[onshow;block=begin;when [view.mode]=='view']
-				<div id="organigrammePrincipal">
-					<br/>
-					<div id="chart" class="orgChart"></div>
-						<ul id="JQorganigramme" style="display:none;">
-							<li> [ressource.libelle;strconv=no;protect=no]
-								(Ressource courante)
-								<ul>
-										<li>
-											[sous_ressource.libelle;block=li;strconv=no;protect=no]
-											<ul>
-												
-											</ul>
-										</li>
-								</ul>
-							</li>
-						</ul>	
-				</div>
+			[onshow;block=begin;when [fk_ressource.reqExiste]=='1']
+				[onshow;block=begin;when [view.mode]=='view']
+				</br>
+				<h2><span style="margin-left:-70px;">Organigramme des ressources associées</span></h2>
+					<div id="organigrammePrincipal">
+						<br/>
+						<div id="chart" class="orgChart"></div>
+							<ul id="JQorganigramme" style="display:none;">
+								<li> [ressource.libelle;strconv=no;protect=no]
+									(Ressource courante)
+									<ul>
+											<li>
+												[sous_ressource.libelle;block=li;strconv=no;protect=no]
+												<ul>
+													
+												</ul>
+											</li>
+									</ul>
+								</li>
+							</ul>	
+					</div>
+				[onshow;block=end]
 			[onshow;block=end]
 		[onshow;block=end]
 		
 		
 		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]!='aucune ressource']
 			[onshow;block=begin;when [view.mode]=='view']
+				</br>
+				<h2><span style="margin-left:-70px;">Organigramme des ressources associées</span></h2>
 					<div id="organigrammePrincipal">
 					<br/>
 					<div id="chart" class="orgChart"></div>
