@@ -48,8 +48,8 @@
 					$ressource->addField($_REQUEST['TNField']);
 					
 					//ajout de ce champs à la classe ressource
-					$p=new TRH_Ressource;					
-					$p->add_champs($_REQUEST['TNField']['code'] ,"type='".$_REQUEST['TNField']['type']."'" );
+					$p=new TRH_Ressource;				
+					$p->add_champs(_url_format($_REQUEST['TNField']['code']) ,"type='".$_REQUEST['TNField']['type']."'" );
 					$p->init_db_by_vars($ATMdb);
 					$mesg = '<div class="ok">Le champs a bien été créé</div>';
 					$mode = 'edit';
