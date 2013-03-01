@@ -154,7 +154,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'statut'=>$form->combo('','TFields['.$k.'][statut]',$ressource->TStatut,$ressource->TStatut[0])*/
 			);
 	}
-////////////////////////////////////////////////////////////////////////////////
+
 		//requete pour avoir toutes les ressources associées à la ressource concernées
 		$k=0;
 		$sqlReq="SELECT libelle FROM `llx_rh_ressource` where fk_rh_ressource=".$ressource->rowid;
@@ -167,28 +167,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			$k++;
 		}
 		
-		/*
-		 * <div id="organigrammePrincipal">
-				<br/>
-				<div id="chart" class="orgChart"></div>
-					<ul id="JQorganigramme" style="display:none;">
-						<li> [ressource.libelle;strconv=no;protect=no]
-							<ul>
-									<li>
-										
-										[sous_ressource.libelle;block=li;strconv=no;protect=no]
-										<ul>
-											
-										</ul>
-									</li>
-							</ul>
-						</li>
-					</ul>
-							
-	
-		</div>*/
-	///////////////////////////////////////////////////////////////////////////////
-	
+
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'

@@ -92,7 +92,7 @@
 	
 
 </div>
-
+<br>
 
 
 <h2>Organigramme des ressources associées</h2>
