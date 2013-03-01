@@ -157,6 +157,8 @@ class TRH_Ressource_type extends TObjetStd {
 		global $conf;
 		
 		$this->entity = $conf->entity;
+		$this->code = TRH_Ressource_type::code_format($this->code);
+		
 		parent::save($db);
 		
 		foreach($this->TField as $field) {
@@ -165,6 +167,17 @@ class TRH_Ressource_type extends TObjetStd {
 		}
 		
 	}	
+	
+	static function code_format($s){
+		$r="";
+		$nb=strlen($s);
+		for($i = 0; $i < $nb; $i++){
+			if(ctype_alnum($s[$i])){
+				$r.=$s[$i];			
+			}
+		} // for
+		return $r;
+	}
 		
 }
 
@@ -185,6 +198,7 @@ class TRH_Ressource_field extends TObjetStd {
 	function save(&$db) {
 		global $conf;
 		
+		$this->code = TRH_Ressource_type::code_format($this->code);
 		$this->entity = $conf->entity;
 		parent::save($db);
 	}
