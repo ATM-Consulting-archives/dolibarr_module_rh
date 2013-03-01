@@ -86,7 +86,7 @@ class modRHMenu extends DolibarrModules
 		//                        );
 		$this->module_parts = array(
 			'menus'=>DOL_DOCUMENT_ROOT_ALT.'rhmenu/core/menus/'
-			
+			,'hooks' => array('productcard')
 		);
 
 		// Data directories to create when module is enabled.
