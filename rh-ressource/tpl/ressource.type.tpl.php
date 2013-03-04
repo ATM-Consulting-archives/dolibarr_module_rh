@@ -1,12 +1,20 @@
-<h1>Type de ressource </h1>
+[onshow;block=begin;when [view.mode]=='view']
 
-<div>
-	Code de la ressource : [ressourceType.code; strconv=no]</br></br>
-	Libellé de la ressource : [ressourceType.libelle; strconv=no]</br></br>
-</div>
+	
+		<div class="fiche"> <!-- begin div class="fiche" -->
+		[view.head;strconv=no]
+		
+			<div class="tabBar">
+				
+[onshow;block=end]				
+			
+			<table width="100%" class="border">
+			<tr><td width="20%">Code</td><td>[ressourceType.code; strconv=no]</td></tr>
+			<tr><td width="20%">Libellé</td><td>[ressourceType.libelle; strconv=no]</td></tr>
+			</table>
+		
 
-
-<h2>Champs de la ressource</h2>
+	<h2>Champs de la ressource</h2>
 
 <div>
 	<!-- entête du tableau -->
@@ -73,21 +81,26 @@
 	});
 	</script>
 [onshow;block=end]
-
-</div>
-
-
-<div class="tabsAction" >
-	[onshow;block=begin;when [view.mode]=='edit']
-			<input type="button" value="Enregistrer" name="save" class="button" onclick="submit();">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
-	[onshow;block=end]				
-	[onshow;block=begin;when [view.mode]!='edit']
-			<a class="butAction"  href="?id=[ressourceType.id]&action=edit">Modifier</a>
-			&nbsp; &nbsp;<a class="butActionDelete"  href="?id=[ressourceType.id]&action=delete">Supprimer</a>
+[onshow;block=begin;when [view.mode]=='view']
+	
+		</div>
+		</div>
 		
-	[onshow;block=end]
-</div>
+		<div class="tabsAction">
+		<a href="?id=[ressourceType.id]&action=edit" class="butAction">Modifier</a>
+		<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[ressourceType.id]'">Supprimer</span>
+		</div>
+		
+		
 
+	
+[onshow;block=end]	
+[onshow;block=begin;when [view.mode]!='view']
+
+		<p align="center">
+			<input type="submit" value="Enregistrer" name="save" class="button"> 
+			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
+		</p>
+[onshow;block=end]	
 
 

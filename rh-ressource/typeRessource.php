@@ -1,6 +1,7 @@
 <?php
 	require('config.php');
 	require('./class/ressource.class.php');
+	require('./lib/ressource.lib.php');
 	
 	$langs->load('ressource@ressource');
 	
@@ -121,7 +122,6 @@
 	
 	$ATMdb->close();
 	
-	llxFooter();
 	
 function _liste(&$ATMdb, &$ressource) {
 	global $langs,$conf, $db;	
@@ -229,6 +229,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				'mode'=>$mode
 				,'nbChamps'=>count($ressource->TField)
 			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
+				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource)  , 'fiche', 'Type de ressource')
 			)
 			
 		)	

@@ -152,7 +152,14 @@ class TRH_Ressource_type extends TObjetStd {
 		$toDel->load($ATMdb,$id);
 		$toDel->delete($ATMdb);
 	}
-	
+	function delete(&$ATMdb) {
+		$ATMdb->dbdelete(MAIN_DB_PREFIX.'rh_ressource_field', 
+			array('fk_rh_ressource_type'=>$this->id, array(0=>'fk_rh_ressource_type'))
+		);
+		
+		parent::dbdelete($ATMdb);
+		
+	}
 	function save(&$db) {
 		global $conf;
 		
