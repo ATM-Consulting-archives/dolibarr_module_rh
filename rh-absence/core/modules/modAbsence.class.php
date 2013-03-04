@@ -345,7 +345,6 @@ class modAbsence extends DolibarrModules
 		
 		$result=$this->load_tables();
 
-		ob_end_flush();
 		$url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/absence/script/create-maj-base.php";
 		file_get_contents($url);
 		
@@ -375,5 +374,3 @@ class modAbsence extends DolibarrModules
 
 
 }
-
-?>
