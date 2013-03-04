@@ -91,8 +91,7 @@ function _liste(&$ATMdb, &$ressource) {
 	getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
-	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',r.libelle as 'Libellé', t.libelle as 'Type',  r.bail as 'Bail', r.statut as 'Statut'
-		FROM llx_rh_ressource as r, llx_rh_ressource_type as t 
+	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',r.libelle as 'Libellé', t.libelle as 'Type',  r.statut as 'Statut'		FROM llx_rh_ressource as r, llx_rh_ressource_type as t 
 		WHERE r.entity=".$conf->entity."
 		AND r.fk_rh_ressource_type=t.rowid
 		";
