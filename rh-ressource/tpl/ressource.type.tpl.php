@@ -79,7 +79,7 @@
 
 <div class="tabsAction" >
 	[onshow;block=begin;when [view.mode]=='edit']
-			<input type="submit" value="Enregistrer" name="save" class="button">
+			<input type="button" value="Enregistrer" name="save" class="button" onclick="submit();">
 			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
 	[onshow;block=end]				
 	[onshow;block=begin;when [view.mode]!='edit']

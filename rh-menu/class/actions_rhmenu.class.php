@@ -35,5 +35,6 @@ class ActionsRhmenu
           */
         }
 		
+		return 0;
 	}
 }
