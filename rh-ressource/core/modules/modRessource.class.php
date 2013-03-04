@@ -187,8 +187,7 @@ class modRessource extends DolibarrModules
 
 		// Add here entries to declare new menus
 		//
-		// Example to declare a new Top Menu entry and its LeHiérarchie de l'entreprise
-Société ft menu entry:
+		// Example to declare a new Top Menu entry and its Left menu entry:
 		$this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
 								'type'=>'top',			                // This is a Top menu entry
 								'titre'=>$langs->trans('Ressource'),
@@ -465,3 +464,5 @@ Société ft menu entry:
 		return $this->_load_tables('/ressource/sql/');
 	}
 }
+
+?>
