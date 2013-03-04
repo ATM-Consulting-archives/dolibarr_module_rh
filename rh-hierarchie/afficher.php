@@ -79,7 +79,7 @@ dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
 <?
 global $user;
 
-$orgChoisie=$_POST["choixAffichage"];
+$orgChoisie=isset($_POST["choixAffichage"]) ? $_POST["choixAffichage"] : 'equipe';
 $idUserCourant=$_GET["id"];
 
 
@@ -102,7 +102,7 @@ $idUserCourant=$_GET["id"];
 
 
 //Fonction qui permet d'afficher les utilisateurs qui sont en dessous hiérarchiquement du salarié passé en paramètre
-function afficherSalarieDessous(&$ATMdb, $idBoss = -1, $niveau=1){
+function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 		
 				global $user, $db, $idUserCourant, $userCourant;
 				
