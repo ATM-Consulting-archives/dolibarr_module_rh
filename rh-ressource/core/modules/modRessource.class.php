@@ -193,7 +193,7 @@ class modRessource extends DolibarrModules
 								'titre'=>$langs->trans('Ressource'),
 								'mainmenu'=>'ressource',
 								'leftmenu'=>'',
-								'url'=>'/ressource/index.php',
+								'url'=>'/ressource/ressource.php?idmenu=100',
 								'langs'=>'ressource@ressource',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>100,
 								'enabled'=>'1',	// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
@@ -209,7 +209,7 @@ class modRessource extends DolibarrModules
 			        	'titre'=>$langs->trans('Ressource'),
 			        	'mainmenu'=> 'ressource',
 			        	'leftmenu'=> 'ressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-						'url'=> '/ressource/Ressource.php',
+						'url'=> '/ressource/ressource.php',
 						'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						'position'=> 101,
 						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -225,7 +225,7 @@ class modRessource extends DolibarrModules
 		        	'titre'=> $langs->trans('listeRessource'),
 		        	'mainmenu'=> 'ressource',
 		        	'leftmenu'=> 'ressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/ressource/Ressource.php',
+					'url'=> '/ressource/ressource.php',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 102,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -241,7 +241,7 @@ class modRessource extends DolibarrModules
 		        	'titre'=> $langs->trans('nouvelleRessource'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'ressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/ressource/Ressource.php?action=new',
+					'url'=> '/ressource/ressource.php?action=new',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 103,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
