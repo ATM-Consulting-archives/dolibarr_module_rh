@@ -43,6 +43,10 @@
   padding:10px 0 0 0;
 }
 
+.jOrgChart .node a {
+	font-weight: normal;
+	color:#fff;
+}
 /* jQuery drag 'n drop */
 
 .drag-active {

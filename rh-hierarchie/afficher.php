@@ -124,7 +124,7 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 				
 				foreach($Tab as &$user) {
 					?>
-					<li class="utilisateur" rel="<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?>
+					<li class="utilisateur" rel="<?=$user->id ?>"><a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
 					<?
 					afficherSalarieDessous($ATMdb, $user->id,$niveau+1);
 					?></li><?
