@@ -168,7 +168,7 @@ function afficherGroupes(&$ATMdb){
 			afficherGroupes($ATMdb);
 		?>
 	</select> 
-	<input id="validSelect" type="submit" value="Valider"/>
+	<input id="validSelect" type="submit" value="Valider" class="button" />
 </form>
 	
 
