@@ -80,12 +80,31 @@ dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
 global $user;
 
 $orgChoisie=$_POST["choixAffichage"];
+$idUserCourant=$_GET["id"];
+
+
+//////////////////////////////////////récupération des informations de l'utilisateur courant
+		$sqlReqUser="SELECT * FROM `llx_user` where rowid=".$idUserCourant;
+		$ATMdb->Execute($sqlReqUser);
+		$Tab=array();
+		while($ATMdb->Get_line()) {
+					$userCourant=new User($db);
+					$userCourant->id=$ATMdb->Get_field('rowid');
+					$userCourant->lastname=$ATMdb->Get_field('name');
+					$userCourant->firstname=$ATMdb->Get_field('firstname');
+					$userCourant->fk_user=$ATMdb->Get_field('fk_user');
+					$Tab[]=$userCourant;
+					
+		}
+		//print "salut".$userCourant->rowid.$userCourant->lastname.$userCourant->firstname.$userCourant->fk_user;
+
+
 
 
 //Fonction qui permet d'afficher les utilisateurs qui sont en dessous hiérarchiquement du salarié passé en paramètre
 function afficherSalarieDessous(&$ATMdb, $idBoss = -1, $niveau=1){
 		
-				global $user, $db;
+				global $user, $db, $idUserCourant, $userCourant;
 				
 				?>
 				<ul id="ul-niveau-<?=$niveau ?>">
@@ -117,9 +136,9 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = -1, $niveau=1){
 
 //Fonction qui permet d'afficher les groupes dans la liste déroulante 
 function afficherGroupes(&$ATMdb){
-				global $user, $db;
+				global $user, $db, $idUserCourant, $userCourant;
 				//récupère les id des différents groupes de l'utilisateur
-				$sqlReq="SELECT fk_usergroup FROM `llx_usergroup_user` where fk_user=".$user->id;
+				$sqlReq="SELECT fk_usergroup FROM `llx_usergroup_user` where fk_user=".$userCourant->id;
 				$ATMdb->Execute($sqlReq);
 				$Tab=array();
 				while($ATMdb->Get_line()) {
@@ -141,7 +160,7 @@ function afficherGroupes(&$ATMdb){
 ?>
 
 
-<form id="form" action="afficher.php?id=<?= $user->id; ?>" method="post">
+<form id="form" action="afficher.php?id=<?= $userCourant->id; ?>" method="post">
 	<select id="choixAffichage" name="choixAffichage">
 		<option value="entreprise">Afficher la hiérarchie de l entreprise</option>
 		<option value="equipe">Afficher son équipe</option>
@@ -156,6 +175,8 @@ function afficherGroupes(&$ATMdb){
 
 
 <?php
+
+
 if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise 
 ///////////////////////////////////////////////ORGANIGRAMME ENTREPRISE
 ?>
@@ -187,9 +208,9 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 			<li>Votre Equipe
 		<?php 		
 			$ATMdb=new Tdb;
-			if($user->fk_user!="-1"){		// si on a un supérieur hiérarchique, on affiche son nom, puis l'équipe 
+			if($userCourant->fk_user!="-1"){		// si on a un supérieur hiérarchique, on affiche son nom, puis l'équipe 
 			
-				$sqlReq="SELECT name,firstname FROM `llx_user` where rowid=".$user->fk_user;
+				$sqlReq="SELECT name,firstname FROM `llx_user` where rowid=".$userCourant->fk_user;
 				$ATMdb->Execute($sqlReq);
 				$Tab=array();
 				while($ATMdb->Get_line()) {
@@ -198,12 +219,12 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 					print '<ul><li>'.$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name')."<br/>(Votre supérieur)";
 					
 				}
-				afficherSalarieDessous($ATMdb,$user->fk_user);
+				afficherSalarieDessous($ATMdb,$userCourant->fk_user);
 				
 			}else {		// si on n'a pas de supérieur, on écrit son nom, puis ceux de ses collaborateurs inférieurs
 						
-					print '<ul><li>'.$user->firstname." ".$user->lastname."<br/>(Vous-même)";
-					afficherSalarieDessous($ATMdb, $user->id, 1);
+					print '<ul><li>'.$userCourant->firstname." ".$userCourant->lastname."<br/>(Vous-même)";
+					afficherSalarieDessous($ATMdb,$userCourant->id, 1);
 					print "</li></ul>";
 				
 			}
@@ -231,8 +252,8 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 			//////////////// On considère pour l'instant que l'utilisateur courant est le supérieur hiérarchique du groupe 
 			echo $orgChoisie;	
 			$ATMdb=new Tdb;
-			print '<ul><li>'.$user->firstname." ".$user->lastname."<br/>(Vous-même)";
-			afficherSalarieDessous($ATMdb, $user->id, 1);
+			print '<ul><li>'.$userCourant->firstname." ".$userCourant->lastname."<br/>(Vous-même)";
+			afficherSalarieDessous($ATMdb, $userCourant->id, 1);
 			print "</li></ul>";
 			$ATMdb->close();
 		?>
