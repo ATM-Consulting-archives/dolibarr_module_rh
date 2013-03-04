@@ -38,7 +38,8 @@
 		<a style="width:70px;display : inline-block;">[ressourceField.obligatoire;strconv=no;protect=no]</a>
 		[onshow;block=begin;when [view.mode]=='edit']
 			<a style="width:100px;display : inline-block;">
-				<button type="button" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" class="button" onclick="submit();">Supprimer</button>
+				<img src="./img/delete.png"  onclick="document.location.href='?id=[ressourceType.id]&idField=[ressourceField.id]&action=deleteField'">
+				<!--<button type="button" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" class="button" onclick="submit();">Supprimer</button>-->
 			</a>
 		[onshow;block=end]
 	</li>
@@ -79,7 +80,7 @@
 </div>
 
 
-<div class="tabsAction" >
+<div class="tabsAction" style="text-align:center;">
 	[onshow;block=begin;when [view.mode]=='edit']
 			<input type="button" value="Enregistrer" name="save" class="button" onclick="submit();">
 			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
