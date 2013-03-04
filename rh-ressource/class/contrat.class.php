@@ -12,8 +12,8 @@ class TRH_Contrat  extends TObjetStd {
 		
 		//Un evenement est lié à une ressource et deux tiers (agence utilisatrice et fournisseur)
 		parent::add_champs('fk_tier_utilisateur,entity','type=entier;index;');
-		parent::add_champs('fk_tier_fournisseur,entity','type=entier;index;');
-		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
+		parent::add_champs('fk_tier_fournisseur','type=entier;index;');
+		parent::add_champs('fk_rh_ressource','type=entier;index;');
 		
 		parent::_init_vars();
 		parent::start();
