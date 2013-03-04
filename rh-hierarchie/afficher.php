@@ -102,7 +102,7 @@ $idUserCourant=$_GET["id"];
 
 
 //Fonction qui permet d'afficher les utilisateurs qui sont en dessous hiérarchiquement du salarié passé en paramètre
-function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
+function afficherSalarieDessous(&$ATMdb, $idBoss = -1, $niveau=1){
 		
 				global $user, $db, $idUserCourant, $userCourant;
 				
