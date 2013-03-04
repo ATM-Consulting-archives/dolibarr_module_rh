@@ -2,6 +2,28 @@
 
 //TRH_ABSENCE
 //classe pour la définition d'une absence 
+class TRH_Conge extends TObjetStd {
+	function __construct() { /* declaration */
+		
+		parent::set_table(MAIN_DB_PREFIX.'rh_conge');
+		parent::add_champs('acquisExercice','type=float;');				//type de congé
+		parent::add_champs('acquisAnciennete','type=float;');				//type de congé
+		parent::add_champs('acquisHorsPeriode','type=float;');				//type de congé
+		parent::add_champs('reportConges','type=float;');				//type de congé
+		parent::add_champs('congesPris','type=float;');				//type de congé
+		parent::add_champs('annee','type=date;');					//dates debut fin de congés
+		parent::add_champs('duree','type=entier;');				//duree en demi-journees
+		parent::add_champs('fk_user','type=entier;');			//utilisateur concerné
+		parent::_init_vars();
+		parent::start();
+	}
+}
+
+
+
+
+//TRH_ABSENCE
+//classe pour la définition d'une absence 
 class TRH_Absence extends TObjetStd {
 	function __construct() { /* declaration */
 		
@@ -17,6 +39,9 @@ class TRH_Absence extends TObjetStd {
 		
 	}
 }
+
+
+
 
 //définition de la classe pour la notion de pointage
 class TRH_Pointage extends TObjetStd {

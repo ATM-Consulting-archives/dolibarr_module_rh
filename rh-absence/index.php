@@ -8,9 +8,6 @@ require('config.php');
 
 llxHeader();
 
-//$form = new Form($db);
-//$formother = new FormOther($db);
-
 ?>
-<h1>Bienvenue sur le module Absences ! </h1>
+<h1>Bienvenue sur le module Absences <?= $user->firstname." ".$user->lastname?> !  </h1>
 

@@ -221,10 +221,10 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('afficherHierarchie'),
+		        	'titre'=> $langs->trans('compteurConges'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/afficherHierarchie.php',
+					'url'=> '/absence/absence.php',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 102,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -237,10 +237,10 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('creerHierarchie'),
+		        	'titre'=> $langs->trans('saisirConges'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/creationHierarchie.php',
+					'url'=> '/absence/index.php',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 103,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -309,7 +309,13 @@ class modAbsence extends DolibarrModules
 	function init($options='')
 	{
 		$sql = array();
+		
+		$result=$this->load_tables();
 
+		ob_end_flush();
+		$url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/absence/script/create-maj-base.php";
+		file_get_contents($url);
+		
 
 		return $this->_init($sql, $options);
 	}
@@ -329,6 +335,10 @@ class modAbsence extends DolibarrModules
 		return $this->_remove($sql, $options);
 	}
 
+	function load_tables()
+	{
+		return $this->_load_tables('/absence/sql/');
+	}
 
 
 }
