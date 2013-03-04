@@ -187,7 +187,8 @@ class modRessource extends DolibarrModules
 
 		// Add here entries to declare new menus
 		//
-		// Example to declare a new Top Menu entry and its Left menu entry:
+		// Example to declare a new Top Menu entry and its LeHiérarchie de l'entreprise
+Société ft menu entry:
 		$this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
 								'type'=>'top',			                // This is a Top menu entry
 								'titre'=>$langs->trans('Ressource'),
@@ -429,7 +430,6 @@ class modRessource extends DolibarrModules
 
 		$result=$this->load_tables();
 
-		ob_end_flush();
 		$url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/ressource/script/create-maj-base.php";
 		file_get_contents($url);
 		
@@ -465,5 +465,3 @@ class modRessource extends DolibarrModules
 		return $this->_load_tables('/ressource/sql/');
 	}
 }
-
-?>
