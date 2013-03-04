@@ -84,19 +84,19 @@ $idUserCourant=$_GET["id"];
 
 
 //////////////////////////////////////récupération des informations de l'utilisateur courant
-		$sqlReqUser="SELECT * FROM `llx_user` where rowid=".$idUserCourant;
-		$ATMdb->Execute($sqlReqUser);
-		$Tab=array();
-		while($ATMdb->Get_line()) {
-					$userCourant=new User($db);
-					$userCourant->id=$ATMdb->Get_field('rowid');
-					$userCourant->lastname=$ATMdb->Get_field('name');
-					$userCourant->firstname=$ATMdb->Get_field('firstname');
-					$userCourant->fk_user=$ATMdb->Get_field('fk_user');
-					$Tab[]=$userCourant;
-					
-		}
-		//print "salut".$userCourant->rowid.$userCourant->lastname.$userCourant->firstname.$userCourant->fk_user;
+$sqlReqUser="SELECT * FROM `llx_user` where rowid=".$idUserCourant;
+$ATMdb->Execute($sqlReqUser);
+$Tab=array();
+while($ATMdb->Get_line()) {
+			$userCourant=new User($db);
+			$userCourant->id=$ATMdb->Get_field('rowid');
+			$userCourant->lastname=$ATMdb->Get_field('name');
+			$userCourant->firstname=$ATMdb->Get_field('firstname');
+			$userCourant->fk_user=$ATMdb->Get_field('fk_user');
+			$Tab[]=$userCourant;
+			
+}
+//print "salut".$userCourant->rowid.$userCourant->lastname.$userCourant->firstname.$userCourant->fk_user;
 
 
 
@@ -208,7 +208,7 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 			<li>Votre Equipe
 		<?php 		
 			$ATMdb=new Tdb;
-			if($userCourant->fk_user!="-1"){		// si on a un supérieur hiérarchique, on affiche son nom, puis l'équipe 
+			if($userCourant->fk_user!="0"){		// si on a un supérieur hiérarchique, on affiche son nom, puis l'équipe 
 			
 				$sqlReq="SELECT name,firstname FROM `llx_user` where rowid=".$userCourant->fk_user;
 				$ATMdb->Execute($sqlReq);
