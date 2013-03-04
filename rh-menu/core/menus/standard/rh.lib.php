@@ -73,6 +73,7 @@ function print_rh_menu($db,$atarget,$type_user)
 
 	// Third parties
 	$tmpentry=array('enabled'=>($conf->societe->enabled || $conf->fournisseur->enabled), 'perms'=>($user->rights->societe->lire || $user->rights->fournisseur->lire), 'module'=>'societe|fournisseur');
+	
 	$showmode=dol_rh_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -102,15 +103,7 @@ function print_rh_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else if ($showmode == 2)
-		{
-			print_start_menu_entry($idsel,$classname);
-			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-			print_text_menu_entry($langs->trans("ThirdParties"));
-			print '</a>';
-			print_end_menu_entry();
-		}
+		
 	}
 
 	// Products-Services
@@ -146,15 +139,7 @@ function print_rh_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else if ($showmode == 2)
-		{
-			print_start_menu_entry($idsel,$classname);
-			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-			print_text_menu_entry($chaine);
-			print '</a>';
-			print_end_menu_entry();
-		}
+		
 	}
 
 	// Commercial
@@ -192,15 +177,7 @@ function print_rh_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else if ($showmode == 2)
-		{
-			print_start_menu_entry($idsel,$classname);
-			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-			print print_text_menu_entry($langs->trans("Commercial"));
-			print '</a>';
-			print_end_menu_entry();
-		}
+		
 	}
 
 	// Financial
@@ -490,15 +467,7 @@ function print_rh_menu($db,$atarget,$type_user)
 			print '</a>';
 			print_end_menu_entry();
 		}
-		else if ($showmode == 2)
-		{
-			print_start_menu_entry($idsel,'class="tmenu"');
-			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
-			print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
-			print_text_menu_entry($newTabMenu[$i]['titre']);
-			print '</a>';
-			print_end_menu_entry();
-		}
+		
 	}
 
 	print_end_menu_array();
