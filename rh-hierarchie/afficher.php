@@ -79,7 +79,7 @@ dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
 <?
 global $user;
 
-$orgChoisie=$_POST["choixAffichage"];
+$orgChoisie=isset($_POST["choixAffichage"]) ? $_POST["choixAffichage"] : 'equipe';
 $idUserCourant=$_GET["id"];
 
 
@@ -124,7 +124,7 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 				
 				foreach($Tab as &$user) {
 					?>
-					<li class="utilisateur" rel="<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?>
+					<li class="utilisateur" rel="<?=$user->id ?>"><a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
 					<?
 					afficherSalarieDessous($ATMdb, $user->id,$niveau+1);
 					?></li><?
@@ -168,7 +168,7 @@ function afficherGroupes(&$ATMdb){
 			afficherGroupes($ATMdb);
 		?>
 	</select> 
-	<input id="validSelect" type="submit" value="Valider"/>
+	<input id="validSelect" type="submit" value="Valider" class="button" />
 </form>
 	
 
