@@ -157,7 +157,7 @@ class TRH_Ressource_type extends TObjetStd {
 		global $conf;
 		
 		$this->entity = $conf->entity;
-		$this->code = TRH_Ressource_type::code_format($this->code);
+		$this->code = TRH_Ressource_type::code_format(empty($this->code) ? $this->libelle : $this->code);
 		
 		parent::save($db);
 		
@@ -169,7 +169,7 @@ class TRH_Ressource_type extends TObjetStd {
 	}	
 	
 	static function code_format($s){
-		$r="";
+		$r=""; $s = strtolower($s);
 		$nb=strlen($s);
 		for($i = 0; $i < $nb; $i++){
 			if(ctype_alnum($s[$i])){
@@ -198,7 +198,7 @@ class TRH_Ressource_field extends TObjetStd {
 	function save(&$db) {
 		global $conf;
 		
-		$this->code = TRH_Ressource_type::code_format($this->code);
+		$this->code = TRH_Ressource_type::code_format(empty($this->code) ? $this->libelle : $this->code);
 		$this->entity = $conf->entity;
 		parent::save($db);
 	}

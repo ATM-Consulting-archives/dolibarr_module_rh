@@ -43,13 +43,15 @@
 					}
 				}
 				
-				if(isset($_REQUEST['newField']) && !empty($_REQUEST['TNField']['code'])) {
+				if(isset($_REQUEST['newField']) ) {
 					
-					//$_REQUEST['TNField']['code'] = _url_format($_REQUEST['TNField']['code']);
+					//print_r($_REQUEST['TNField']);
+					
 					$ressource->addField($_REQUEST['TNField']);
 					
 					//ajout de ce champs à la classe ressource
-					$p=new TRH_Ressource;				
+					$p=new TRH_Ressource;
+					/* AA à mettre dans la classe */				
 					$p->add_champs($_REQUEST['TNField']['code'] ,"type='".$_REQUEST['TNField']['type']."'" );
 					$p->init_db_by_vars($ATMdb);
 					$mesg = '<div class="ok">Le champs a bien été créé</div>';
@@ -58,6 +60,8 @@
 		
 				
 				if(isset($_REQUEST['deleteField']) ) {
+					/* AA mauvaise méthode, en parler */	
+						
 					$ressource->delField($ATMdb, $_REQUEST['deleteField']);
 					$ressource->load($ATMdb, $_REQUEST['id']);
 					
