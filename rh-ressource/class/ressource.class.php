@@ -7,7 +7,6 @@ class TRH_Ressource extends TObjetStd {
 		parent::add_champs('date_achat','type=date;');
 		
 		//types énuméré
-		parent::add_champs('bail','type=chaine;');
 		parent::add_champs('statut','type=chaine;');
 		
 		//clé étrangère : société
