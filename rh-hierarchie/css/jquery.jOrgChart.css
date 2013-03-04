@@ -35,17 +35,24 @@
   color: #FFFFFF;
   display               : inline-block;
   width                 : 140px;
-  height                : 60px;
+  height                : 80px;
   z-index 				: 10;
   margin               : 0 2px;
   box-shadow: 2px 2px 3px #2AA8B9;
   border: 1px solid #000000;
-  padding:10px 0 0 0;
+  padding:0 0 0 0;
+  overflow:hidden;
 }
-
+.jOrgChart .node img {
+	max-height: 80px;	
+}
 .jOrgChart .node a {
-	font-weight: normal;
+	font-weight: bold;
 	color:#fff;
+}
+.jOrgChart .node div.mail,.jOrgChart .node div.tel {
+	text-align:left;
+	padding:2px 5px;
 }
 /* jQuery drag 'n drop */
 
