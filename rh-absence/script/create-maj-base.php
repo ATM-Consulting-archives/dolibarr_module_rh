@@ -14,5 +14,8 @@
 	$o=new TRH_Conge;
 	$o->init_db_by_vars($ATMdb);
 	
+	$p=new TRH_Rtt;
+	$p->init_db_by_vars($ATMdb);
+	
 
 	

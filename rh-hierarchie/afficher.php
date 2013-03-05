@@ -183,8 +183,13 @@ function afficherGroupes(&$ATMdb){
 if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise 
 ///////////////////////////////ORGANIGRAMME ENTREPRISE
 
+
+	$socName = empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI) ? $conf->global->MAIN_INFO_SOCIETE_NOM : '<img src="'.DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI).'" />';
+	//print_r($conf->global);
+
 	$socName = empty($conf->global->MAIN_INFO_SOCIETE_LOGO) ? $conf->global->MAIN_INFO_SOCIETE_NOM : '<img src="'.DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=companylogo&file='.urlencode($conf->global->MAIN_INFO_SOCIETE_LOGO).'" />';
 //	print_r($conf->global);
+
 
 ?>
 	<div id="organigrammePrincipal">
