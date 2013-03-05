@@ -8,6 +8,7 @@
 	require('../config.php');
 	require('../class/ressource.class.php');
 	require('../class/contrat.class.php');
+	require('../class/evenement.class.php');
 
 	$ATMdb=new Tdb;
 	$ATMdb->db->debug=true;
@@ -25,4 +26,7 @@
 	$p->init_db_by_vars($ATMdb);
 	
 	$p=new TRH_Contrat_Ressource;
+	$p->init_db_by_vars($ATMdb);
+	
+	$p=new TRH_Evenement;
 	$p->init_db_by_vars($ATMdb);

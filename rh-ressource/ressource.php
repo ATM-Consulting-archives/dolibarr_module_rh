@@ -38,8 +38,7 @@
 				$mode = 'view';
 				
 				if(isset($_REQUEST['validerType']) ) {
-					$mode = 'edit';
-					
+					$mode = 'edit';	
 				}
 				
 				_fiche($ATMdb, $ressource,$mode);

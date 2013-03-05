@@ -1,38 +1,69 @@
 <?php
-
-
 class TRH_Evenement  extends TObjetStd {
 	
 	function __construct(){
 		parent::set_table(MAIN_DB_PREFIX.'rh_evenement');
-		parent::add_champs('libelle','type=chaine;');
-		parent::add_champs('date','type=date;');
-		parent::add_champs('type, motif','type=chaine;');
+		parent::add_champs('date_debut, date_fin','type=date;');
 		
+		parent::add_champs('fk_rh_ressource','type=entier;index;');
+		parent::add_champs('fk_rh_ressource_type','type=entier;index;');	
+		parent::add_champs('fk_user,entity','type=entier;index;');
+
+		parent::add_champs('type, motif','type=chaine;');
 		parent::add_champs('montant_HT, TVA','type=float;');
 		
-		//Un evenement est lié à une ressource et un utilisateur
-		//TODO : fk_user ?
-		parent::add_champs('fk_user,entity','type=entier;index;');
-		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
+
+		parent::_init_vars();
+		parent::start();
+
+		
+		
+		
+		$ATMdb=new Tdb;
+		//chargement d'une liste de tout les types de ressources
+		$this->TTypeRessource = array();
+		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource_type";
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TTypeRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
+			} 
+		
+		//chargement d'une liste de touts les tiers (pour le combo "tiers")
+		$this->TUser = array();
+		$sqlReq="SELECT rowid, name FROM ".MAIN_DB_PREFIX."user";
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TUser[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('name');
+			}
+		
+		//chargement d'une liste de toutes les ressources selon le type choisi
+		$this->TRessource = array();
+		$sqlReq="SELECT rowid,libelle FROM ".MAIN_DB_PREFIX."rh_ressource WHERE fk_rh_ressource_type=".$this->fk_rh_ressource_type."";
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
+			}
+		
+			
 	}
+	function load(&$db, $id){
+		parent::load($db, $id);
+		//chargement d'une liste de toutes les ressources selon le type choisi
+		$sqlReq="SELECT rowid,libelle FROM ".MAIN_DB_PREFIX."rh_ressource where fk_rh_ressource_type=".$this->fk_rh_ressource_type."";
+		$this->TRessource = array();
+		$db->Execute($sqlReq);
+		while($db->Get_line()) {
+			$this->TRessource[$db->Get_field('rowid')] = $db->Get_field('libelle');
+			}
 		
-}	
-	
-	
-/**
- * classe qui fait la liaison n-n entre un contrat et une ressource.
- */
-class TRH_Ressource_Contrat  extends TObjetStd {
-	
-	function __construct(){
-		parent::set_table(MAIN_DB_PREFIX.'rh_ressource_contrat');
-		parent::add_champs('libelle','type=chaine;');
 		
-		parent::add_champs('fk_rh_contrat,entity','type=entier;index;');
-		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
+		
 	}
-		
-}	
 	
-	?>
+	function save(&$db) {
+		global $conf;
+		$this->entity = $conf->entity;
+		parent::save($db);
+	}
+	
+}	

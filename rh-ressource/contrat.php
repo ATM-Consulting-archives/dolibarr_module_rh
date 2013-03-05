@@ -77,7 +77,6 @@ function _liste(&$ATMdb, &$contrat) {
 	getStandartJS();
 	
 	$r = new TSSRenderControler($contrat);
-	//fk_tier_utilisateur 	fk_tier_fournisseur 	fk_rh_ressource
 	$sql= "SELECT c.rowid as 'ID',  DATE(c.date_debut) as 'Date Début',c.libelle as 'Libellé',
 			r.libelle as 'Ressource',c.bail as 'Bail', g.nom as 'Agence',s.nom as 'Fournisseur'
 			FROM llx_rh_contrat as c, llx_usergroup as g, llx_societe as s, llx_rh_ressource as r

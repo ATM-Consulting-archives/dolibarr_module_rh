@@ -205,25 +205,6 @@ class TRH_Ressource_field extends TObjetStd {
 	}
 }
 	
-class TRH_Emprunt  extends TObjetStd {
-	
-	function __construct(){
-		parent::set_table(MAIN_DB_PREFIX.'rh_emprunt');
-		parent::add_champs('libelle','type=chaine;');
-		
-		//dates de l'emprunt
-		parent::add_champs('date_debut','type=date;');
-		parent::add_champs('date_fin','type=date;');
-		
-		//Un emprunt est un lien entre une ressource et un utilisateur
-		//TODO : fk_user ?
-		parent::add_champs('fk_user,entity','type=entier;index;');
-		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
-	}
-	
-	
-}	
-
 /*
  * Classes d'associations
  * 
