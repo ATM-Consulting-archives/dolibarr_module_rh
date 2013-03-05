@@ -2,11 +2,12 @@
 Ressource=Ressource
 nouveauTypeRessource =Nouveau
 listeTypeRessource =Liste
-nouvelleRessource=Nouvelle Ressource
-attribuerRessource=Attribuer Ressource
-listeRessource=Liste Ressource
-nouvelEvenement=Nouvel Evenement
-nouveauContrat=Nouveau Contrat
+nouvelleRessource=Nouvelle ressource
+attribuerRessource=Attribuer ressource
+listeRessource=Liste des ressources
+nouvelEvenement=Nouvel événement
+listeContrat=Liste des contrats
+nouveauContrat=Nouveau contrat
 calendrierRessource = Calendrier des ressources
 agenda=Agenda
 typeRessource=Types de ressource

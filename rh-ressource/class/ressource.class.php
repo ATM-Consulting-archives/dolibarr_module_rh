@@ -7,7 +7,6 @@ class TRH_Ressource extends TObjetStd {
 		parent::add_champs('date_achat','type=date;');
 		
 		//types énuméré
-		parent::add_champs('bail','type=chaine;');
 		parent::add_champs('statut','type=chaine;');
 		
 		//clé étrangère : société
@@ -128,22 +127,17 @@ class TRH_Ressource_type extends TObjetStd {
 			$this->TField[$k]=new TRH_Ressource_field;
 			$this->TField[$k]->load($ATMdb, $id);
 		}
-/*
-		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_field', array('fk_rh_ressource_type'=>$this->getId()));
-		$this->TField=array();
-		foreach($Tab as $k=>$id) {
-			$this->TField[$k]=new TRH_Ressource_field;
-			$this->TField[$k]->load($ATMdb, $id);
-		}
-	*/
-		
 	}
 	
-	function addField($TNField) {
+	function addField(&$ATMdb, $TNField) {
 		$k=count($this->TField);
 		$this->TField[$k]=new TRH_Ressource_field;
 		$this->TField[$k]->set_values($TNField);
 		
+		$p=new TRH_Ressource;				
+		$p->add_champs($TNField['code'] ,"type='".$TNField['type']."'" );
+		$p->init_db_by_vars($ATMdb);
+					
 		return $k;
 	}
 	

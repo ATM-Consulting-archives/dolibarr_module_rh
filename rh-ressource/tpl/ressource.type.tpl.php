@@ -1,12 +1,13 @@
 [onshow;block=begin;when [view.mode]=='view']
 
-	
-		<div class="fiche"> <!-- begin div class="fiche" -->
-		[view.head;strconv=no]
+        
+                <div class="fiche"> <!-- begin div class="fiche" -->
+                [view.head;strconv=no]
+                
+                        <div class="tabBar">
+                                
+[onshow;block=end]  
 		
-			<div class="tabBar">
-				
-[onshow;block=end]				
 			
 			<table width="100%" class="border">
 			<tr><td width="20%">Code</td><td>[ressourceType.code; strconv=no]</td></tr>
@@ -45,7 +46,10 @@
 		<a style="width:140px;display : inline-block;">[ressourceField.type;strconv=no;protect=no]</a>
 		<a style="width:70px;display : inline-block;">[ressourceField.obligatoire;strconv=no;protect=no]</a>
 		[onshow;block=begin;when [view.mode]=='edit']
-			<a style="width:100px;display : inline-block;"><button type="submit" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" class="button">Supprimer</button></a>
+			<a style="width:100px;display : inline-block;">
+				<img src="./img/delete.png"  onclick="document.location.href='?id=[ressourceType.id]&idField=[ressourceField.id]&action=deleteField'">
+				<!--<button type="button" value="[ressourceField.id;strconv=no;protect=no]" name="deleteField" class="button" onclick="submit();">Supprimer</button>-->
+			</a>
 		[onshow;block=end]
 	</li>
 	
@@ -81,26 +85,21 @@
 	});
 	</script>
 [onshow;block=end]
-[onshow;block=begin;when [view.mode]=='view']
+[onshow;block=begin;when [view.mode]!='edit']
 	
-		</div>
+		
 		</div>
 		
-		<div class="tabsAction">
+	<div class="tabsAction">
 		<a href="?id=[ressourceType.id]&action=edit" class="butAction">Modifier</a>
 		<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[ressourceType.id]'">Supprimer</span>
-		</div>
-		
-		
-
-	
+	</div>
 [onshow;block=end]	
-[onshow;block=begin;when [view.mode]!='view']
-
-		<p align="center">
-			<input type="submit" value="Enregistrer" name="save" class="button"> 
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
-		</p>
-[onshow;block=end]	
+[onshow;block=begin;when [view.mode]=='edit']
 
 
+<div class="tabsAction" style="text-align:center;">
+	<input type="submit" value="Enregistrer" name="save" class="button"> 
+	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
+</div>
+[onshow;block=end]
