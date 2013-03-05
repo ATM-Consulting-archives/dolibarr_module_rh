@@ -203,8 +203,13 @@ class modRHMenu extends DolibarrModules
 	 */
 	function init($options='')
 	{
+		global $db,$conf;
+		
 		$sql = array();
 
+		dolibarr_set_const($db, 'MAIN_APPLICATION_TITLE', 'SimpleRH', 'chaine', 1, 'Nom imposé par RHMenu', $conf->entity);
+		dolibarr_set_const($db, 'THEME_RH_LOGO', defined('THEME_LOGO') ? THEME_LOGO : './img/logo.png', 'chaine', 1, 'Logo imposé par RHMenu', $conf->entity);
+		dolibarr_set_const($db, 'THEME_RH_BACKGROUND', defined('THEME_BACKGROUND') ? THEME_BACKGROUND : './img/background-galet.jpg', 'chaine', 1, 'fond imposé par RHMenu', $conf->entity);
 
 		return $this->_init($sql, $options);
 	}
