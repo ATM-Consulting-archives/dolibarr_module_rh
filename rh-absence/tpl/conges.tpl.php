@@ -2,8 +2,13 @@
 
 [onshow;block=begin;when [view.mode]=='view']
 			<h1>Visualisation de vos jours de congés [userCourant.firstname] [userCourant.lastname]</h1>
-			
-			<table  border ="1" cellspacing="1" cellpadding="1">
+
+        
+        <div class="fiche"> <!-- begin div class="fiche" -->
+          <div class="tabBar">
+                                     
+ 
+			<table  border ="1">
 				<tr>
 					<td>
 						<div>
@@ -24,8 +29,8 @@
 					</td>
 				<tr>
 			</table>
-			
-			<table style="margin-top: 30px"  border ="1" cellspacing="1" cellpadding="1">
+		
+			<table style="margin-top: 30px"  border ="1" >
 				<tr>
 					<td>
 						<div>
@@ -44,10 +49,9 @@
 				<tr>
 			</table>
 			
-			
-			
 				
-
+		  </div>
+		</div>
 			
 [onshow;block=end]
 

@@ -130,7 +130,7 @@ class modAbsence extends DolibarrModules
         $this->tabs = array();/*'thirdparty:+creerTypeRessource:CréerTypeRessource:ressource@ressource:/ressource/index.php',  // To add a new tab identified by code tabname1
                              'thirdparty:+nouvelleRessource:NouvelleRessource:ressource@ressource:/ressource/index.php',
                                       );*/
-
+	
         // Dictionnaries
         if (!isset($conf->ressource->enabled)) @$conf->ressource->enabled=0;
 		$this->dictionnaries=array();
@@ -252,12 +252,28 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Récapitulatif jours acquis'),
+		        	'titre'=> $langs->trans('Récapitulatif congés acquis'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/absence.php',
+					'url'=> '/absence/conges.php',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 104,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
+		
+			$r++;
+		$this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('Récapitulatif RTT acquis'),
+		        	'mainmenu'=> '',
+		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/absence/rtt.php',
+					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 105,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
 					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',

@@ -185,6 +185,7 @@ function _fiche(&$ATMdb, &$conge, $mode) {
 			,'view'=>array(
 				'mode'=>$mode
 			
+			
 			)
 			
 			
