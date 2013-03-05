@@ -57,7 +57,7 @@ function _liste(&$ATMdb, &$conge) {
 	
 	$r = new TSSRenderControler($conge);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',r.acquisExercice as 'acquisExercice', r.acquisAnciennete as 'acquisAnciennete', r.acquisHorsPeriode as 'acquisHorsPeriode', 
-			r.reportConges as 'reportConges', extract(year from r.annee) as 'annee', r.duree as 'duree', r.fk_user as 'Utilisateur Courant'
+			r.reportConges as 'reportConges', annee as 'annee', r.duree as 'duree', r.fk_user as 'Utilisateur Courant'
 		FROM llx_rh_conge as r
 		WHERE r.fk_user=".$user->id;
 		
@@ -80,7 +80,7 @@ function _liste(&$ATMdb, &$conge) {
 		,'hide'=>array('DateCre', 'duree')
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste de vos congés'
+			'titre'=>'Liste de vos congés payés acquis'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
@@ -146,8 +146,10 @@ function _fiche(&$ATMdb, &$conge, $mode) {
 				$Tab2[]=$congeCourant;	
 	}
 	
+	$congeCourantTotal=$congeCourant->acquisEx+$congeCourant->acquisAnc+$congeCourant->acquisHorsPer;
+	
 	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/absence.tpl.php'
+	print $TBS->render('./tpl/conges.tpl.php'
 		,array(
 			
 			
@@ -171,8 +173,8 @@ function _fiche(&$ATMdb, &$conge, $mode) {
 				,'acquisAnc'=>$form->texte('','acquisanc',$congeCourant->acquisAnc,10,50,'',$class="text", $default='')
 				,'acquisHorsPer'=>$form->texte('','acquishorsper',$congeCourant->acquisHorsPer,10,50,'',$class="text", $default='')
 				,'anneeCourante'=>$form->texte('','annee',$anneeCourante,10,50,'',$class="text", $default='')
-				,'anneePrec'=>$form->texte('','annee',$anneePrec,10,50,'',$class="text", $default='')
-				,'total'=>$form->texte('','total',$congeTotal,10,50,'',$class="text", $default='')
+				,'total'=>$form->texte('','total',$congeCourantTotal,10,50,'',$class="text", $default='')
+				,
 			)
 			,'userCourant'=>array(
 				'id'=>$user->id
