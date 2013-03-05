@@ -2,50 +2,48 @@
 
 //TRH_CONGE
 //classe pour la définition d'une absence 
-class TRH_Conge extends TObjetStd {
+class TRH_Compteur extends TObjetStd {
 	function __construct() { /* declaration */
 		
-		parent::set_table(MAIN_DB_PREFIX.'rh_conge');
-		parent::add_champs('acquisExercice','type=float;');				
-		parent::add_champs('acquisAnciennete','type=float;');				
-		parent::add_champs('acquisHorsPeriode','type=float;');				
-		parent::add_champs('reportConges','type=float;');				
-		parent::add_champs('congesPris','type=float;');				
-		parent::add_champs('annee','type=int;');					
-		parent::add_champs('duree','type=entier;');				
+		parent::set_table(MAIN_DB_PREFIX.'rh_compteur');
+		parent::add_champs('acquisExerciceN','type=float;');				
+		parent::add_champs('acquisAncienneteN','type=float;');				
+		parent::add_champs('acquisHorsPeriodeN','type=float;');											
+		parent::add_champs('anneeN','type=int;');					
+		parent::add_champs('dureeN','type=entier;');
+		
+		parent::add_champs('acquisExerciceNM1','type=float;');				
+		parent::add_champs('acquisAncienneteNM1','type=float;');				
+		parent::add_champs('acquisHorsPeriodeNM1','type=float;');				
+		parent::add_champs('reportCongesNM1','type=float;');				
+		parent::add_champs('congesPrisNM1','type=float;');				
+		parent::add_champs('anneeNM1','type=int;');					
+		parent::add_champs('dureeNM1','type=entier;');				
+		
 		parent::add_champs('fk_user','type=entier;');			//utilisateur concerné
-		parent::_init_vars();
-		parent::start();
-	}
-}
-
-
-//TRH_RTT
-//classe pour la définition d'une absence 
-class TRH_Rtt extends TObjetStd {
-	function __construct() { /* declaration */
-		parent::set_table(MAIN_DB_PREFIX.'rh_rtt');
 		parent::add_champs('rttAcquis','type=float;');	
 		parent::add_champs('rttPris','type=float;');					
-		parent::add_champs('typeAcquisition','type=chaine;');				//heure, jour...
+		parent::add_champs('rttTypeAcquisition','type=chaine;');				//heure, jour...
 		parent::add_champs('rttAcquisMensuel','type=float;');	
 		parent::add_champs('rttAcquisAnnuelCumule','type=float;');
 		parent::add_champs('rttAcquisAnnuelNonCumule','type=float;');
-		parent::add_champs('annee','type=int;');
-		parent::add_champs('fk_user','type=entier;');			//utilisateur concerné
+		parent::add_champs('rttannee','type=int;');					
+		
 		parent::_init_vars();
 		parent::start();
 	}
-	
+		
 	function save(&$db) {
 		global $conf;
 		$this->entity = $conf->entity;
 		
 		parent::save($db);
 	}
-	
-	
 }
+
+
+
+
 
 
 //TRH_ABSENCE

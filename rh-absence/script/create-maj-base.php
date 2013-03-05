@@ -11,11 +11,9 @@
 	$ATMdb=new Tdb;
 	$ATMdb->db->debug=true;
 
-	$o=new TRH_Conge;
+	$o=new TRH_Compteur;
 	$o->init_db_by_vars($ATMdb);
 	
-	$p=new TRH_Rtt;
-	$p->init_db_by_vars($ATMdb);
 	
 
 	

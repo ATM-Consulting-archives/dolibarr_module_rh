@@ -1,5 +1,3 @@
-<?php llxHeader();?>
-
 
 			<h1>Visualisation de vos RTT [userCourant.firstname] [userCourant.lastname]</h1>
 

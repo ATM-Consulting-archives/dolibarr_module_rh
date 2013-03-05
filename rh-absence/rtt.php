@@ -15,11 +15,12 @@
 				break;	
 				
 			case 'edit'	:
+				$rtt->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $rtt,'edit');
 				break;
 				
 			case 'save':
-				//$ATMdb->db->debug=true;
+				$ATMdb->db->debug=true;
 				$rtt->load($ATMdb, $_REQUEST['id']);
 				$rtt->set_values($_REQUEST);
 				$rtt->save($ATMdb);
@@ -30,6 +31,7 @@
 				break;
 				
 			case 'view':
+				$rtt->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $rtt,'view');
 				break;
 				
@@ -144,7 +146,7 @@ function _fiche(&$ATMdb, &$rtt, $mode) {
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'acquis'=>$form->texte('','rttAcquis',$rttCourant->acquis,10,50,'',$class="text", $default='')
 				,'rowid'=>$form->texte('','rowid',$rttCourant->id,10,50,'',$class="text", $default='')
-				,'id'=>$form->texte('','fk_user',$rttCourant->id,10,50,'',$class="text", $default='')
+				,'id'=>$form->texte('','fk_user',$rttCourant->fk_user,10,50,'',$class="text", $default='')
 				,'pris'=>$form->texte('','rttPris',$rttCourant->pris,10,50,'',$class="text", $default='')
 				,'mensuel'=>$form->texte('','rttAcquisMensuel',$rttCourant->mensuel,10,50,'',$class="text", $default='')
 				,'annuelCumule'=>$form->texte('','rttAcquisAnnuelCumule',$rttCourant->annuelCumule,10,50,'',$class="text", $default='')
@@ -152,7 +154,7 @@ function _fiche(&$ATMdb, &$rtt, $mode) {
 				,'typeAcquisition'=>$form->texte('','typeAcquisition',$rttCourant->typeAcquisition,10,50,'',$class="text", $default='')
 				,'reste'=>$form->texte('','total',$rttCourantReste,10,50,'',$class="text", $default='')
 				,'idNum'=>$idRttCourant
-				,
+				
 			)
 			,'userCourant'=>array(
 				'id'=>$user->id
