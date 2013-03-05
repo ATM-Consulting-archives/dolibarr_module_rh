@@ -162,11 +162,11 @@ class modFormulaire extends DolibarrModules
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
-		$this->rights[$r][0] = 7001;
+		$this->rights[$r][0] = 7301;
 		$this->rights[$r][1] = 'Créer un type de ressource';
 		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'mydossier';
-		$this->rights[$r][5] = 'write';
+		$this->rights[$r][4] = 'formulaire';
+		$this->rights[$r][5] = 'read';
 		$r++;
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
@@ -194,7 +194,7 @@ class modFormulaire extends DolibarrModules
 								'langs'=>'formulaire@formulaire',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>100,
 								'enabled'=>'1',	// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
-								'perms'=>'',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
+								'perms'=>'$user->rights->formulaire->formulaire->read',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>0);						                // 0=Menu for internal users, 1=external users, 2=both
 		

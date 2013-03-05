@@ -124,8 +124,11 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 				
 				foreach($Tab as &$user) {
 					?>
-					<li class="utilisateur" rel="<?=$user->id ?>"><a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
-					<?
+					<li class="utilisateur" rel="<?=$user->id ?>">
+						<a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
+						<? if(!empty($user->office_phone) || !empty($user->user_mobile)) { ?><div class="tel">Tél. : <?=$user->office_phone.' '.$user->user_mobile ?></div><? }
+						if(!empty($user->email) ) { ?><div class="mail">Email : <a href="mailto:<?=$user->email ?>"><?=$user->email ?></div><? }
+					
 					afficherSalarieDessous($ATMdb, $user->id,$niveau+1);
 					?></li><?
 				}
@@ -178,14 +181,18 @@ function afficherGroupes(&$ATMdb){
 
 
 if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise 
-///////////////////////////////////////////////ORGANIGRAMME ENTREPRISE
+///////////////////////////////ORGANIGRAMME ENTREPRISE
+
+	$socName = empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI) ? $conf->global->MAIN_INFO_SOCIETE_NOM : '<img src="'.DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI).'" />';
+	//print_r($conf->global);
+
 ?>
 	<div id="organigrammePrincipal">
-		<h1>Hiérarchie de l'entreprise</h1>
-		<div id="chart" class="orgChart"></div>
+		<h2>Hiérarchie de l'entreprise</h2>
+		<div id="chart" class="orgChart" align="center"></div>
 		
 		<ul id="JQorganigramme" style="display:none;">
-			<li>Société
+			<li><?=$socName ?>
 		<?php 		
 			$ATMdb=new Tdb;
 			afficherSalarieDessous($ATMdb);
@@ -201,8 +208,8 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 }else if($orgChoisie=="equipe"){	//on affiche l'organigramme de l'équipe
 ?>
 	<div id="organigrammeEquipe">
-		<h1>Hiérarchie de votre équipe</h1>
-		<div id="chart" class="orgChart"></div>
+		<h2>Hiérarchie de votre équipe</h2>
+		<div id="chart" class="orgChart" align="center"></div>
 		
 		<ul id="JQorganigramme" style="display:none;">
 			<li>Votre Equipe

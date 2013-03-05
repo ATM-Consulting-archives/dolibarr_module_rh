@@ -168,10 +168,29 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][0] = 7001;
 		$this->rights[$r][1] = 'Créer un type de ressource';
 		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'mydossier';
+		$this->rights[$r][4] = 'typeressource';
 		$this->rights[$r][5] = 'write';
 		$r++;
-		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
+		$this->rights[$r][0] = 7002;
+		$this->rights[$r][1] = 'Voir les types de ressource';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'typeressource';
+		$this->rights[$r][5] = 'read';
+		$r++;
+		
+		$this->rights[$r][0] = 7003;
+		$this->rights[$r][1] = 'Créer une ressource';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'write';
+		$r++;
+		$this->rights[$r][0] = 7004;
+		$this->rights[$r][1] = 'Voir les ressource';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'read';
+		$r++;
+				// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
 		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
 		// $this->rights[$r][1] = 'Permision label';	// Permission label
@@ -197,7 +216,7 @@ class modRessource extends DolibarrModules
 								'langs'=>'ressource@ressource',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>100,
 								'enabled'=>'1',	// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
-								'perms'=>'',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
+								'perms'=>'$user->rights->ressource->typeressource->read || $user->rights->ressource->ressource->read',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>0);						                // 0=Menu for internal users, 1=external users, 2=both
 		
