@@ -1,5 +1,6 @@
 <?php
-
+	//require('./class/evenement.class.php');
+	
 class TRH_Ressource extends TObjetStd {
 	function __construct() { /* declaration */
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource');
@@ -37,7 +38,7 @@ class TRH_Ressource extends TObjetStd {
 		$this->TStatut = array('nonattribuée'=>'Non attribuée','attribuée'=>'Attribuée');
 		
 		$this->TRessource = array('');
-		
+		$this->TEvenement = array();
 		}
 	
 	function load(&$ATMdb, $id) {
@@ -47,13 +48,27 @@ class TRH_Ressource extends TObjetStd {
 		//chargement d'une liste de toutes les ressources (pour le combo "ressource associé")
 		$sqlReq="SELECT rowid,libelle FROM ".MAIN_DB_PREFIX."rh_ressource where rowid!=".$this->getId();
 		$ATMdb->Execute($sqlReq);
-		
 		while($ATMdb->Get_line()) {
-			
 			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
-			}
+			}	
+	}
+	/**
+	 * charge les évenements associés à cette ressource dans le tableau TEvenements[]
+	 */
+	function load_evenement(&$ATMdb){
+		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_evenement', array('fk_rh_ressource'=>$this->getId()));
+		$temp =  new TRH_Evenement;
+		foreach($Tab as $k=>$id){
+			$temp->load($ATMdb, $id);
+			$this->TEvenement[$k] = array('id'=>$temp->getId()
+											,'user'=>$temp->TUser[$temp->fk_user]
+											,'date_debut'=>$temp->date_debut
+											,'date_fin'=>$temp->date_fin);
+
+		}
 		
 	}
+	
 	
 	function load_ressource_type(&$ATMdb) {
 		//on prend le type de ressource associé
