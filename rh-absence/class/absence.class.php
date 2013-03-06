@@ -21,7 +21,6 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('dureeNM1','type=entier;');				
 		
 		parent::add_champs('fk_user','type=entier;');			//utilisateur concerné
-		parent::add_champs('rttAcquis','type=float;');	
 		parent::add_champs('rttPris','type=float;');					
 		parent::add_champs('rttTypeAcquisition','type=chaine;');				//heure, jour...
 		parent::add_champs('rttAcquisMensuel','type=float;');	
