@@ -1,5 +1,16 @@
 <?php 	llxHeader('', 'Liste des ressources', '', '', 0, 0, array('../js/jquery.jOrgChart.js'));
 ?>
+[onshow;block=begin;when [view.mode]=='view']
+
+        
+                <div class="fiche"> <!-- begin div class="fiche" -->
+                [view.head;strconv=no]
+                
+                        <div class="tabBar">
+                                
+[onshow;block=end]  
+
+
 <link rel="stylesheet" type="text/css" href="./css/jquery.jOrgChart.css" />
 <script>
     jQuery(document).ready(function() {

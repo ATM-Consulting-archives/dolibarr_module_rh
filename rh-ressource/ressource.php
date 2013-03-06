@@ -1,7 +1,7 @@
 <?php
 	require('config.php');
 	require('./class/ressource.class.php');
-	
+	require('./lib/ressource.lib.php');
 	$langs->load('ressource@ressource');
 	
 	//if (!$user->rights->financement->affaire->read)	{ accessforbidden(); }
@@ -193,7 +193,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			
 			,'view'=>array(
 				'mode'=>$mode
-			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
+				/*,'userRight'=>((int)$user->rights->financement->affaire->write)*/
+				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'fiche', 'Ressource')
 			)
 			
 			

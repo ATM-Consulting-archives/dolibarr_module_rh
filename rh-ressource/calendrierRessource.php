@@ -1,25 +1,29 @@
 <?php
 	require('config.php');
-	//require('./class/ressource.class.php');
+	require('./class/ressource.class.php');
+	require('./lib/ressource.lib.php');
 	
 	
 	
 	llxHeader('','Calendrier des ressources');
 	
-	?>
-	
-	<h1>Agenda des ressources</h1>
+$ressource=new TRH_ressource;
 
-	<div id="agenda"></div>
+	$TBS=new TTemplateTBS();
+	print $TBS->render('./tpl/calendrier.tpl.php'
+		,array()
+		,array(
+			'view'=>array(
+				'mode'=>$mode
+				/*,'userRight'=>((int)$user->rights->financement->affaire->write)*/
+				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'calendrier', 'Ressource')
+			)
+			
+			
+		)	
+		
+	);
 	
-	<script type="text/javascript">
-	
-	$.get('../wdCalendar/sample.php', function(data) {
-	  $("#agenda").html(data);
-	});
-	</script>
-
-<?php
 
 	llxFooter();
 
