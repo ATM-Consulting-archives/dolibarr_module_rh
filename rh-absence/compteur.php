@@ -63,7 +63,7 @@ function _liste(&$ATMdb, &$compteur) {
 	
 	$r = new TSSRenderControler($compteur);
 	$sql="SELECT anneeN as 'annee', r.rowid as 'ID', r.date_cre as 'DateCre',r.acquisExerciceN as 'Congés acquis', r.acquisAncienneteN as 'Congés Ancienneté', 
-			 r.rttAcquis as 'Rtt Acquis', r.rttPris as 'RttPris',r.fk_user as 'Utilisateur Courant'
+			  r.rttPris as 'RttPris',r.fk_user as 'Utilisateur Courant'
 		FROM llx_rh_compteur as r
 		WHERE r.fk_user=".$user->id;
 		
@@ -161,12 +161,12 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	while($ATMdb->Get_line()) {
 				$rttCourant=new User($db);
 				$rttCourant->id=$ATMdb->Get_field('rowid');
-				$rttCourant->acquis=$ATMdb->Get_field('rttAcquis');
+				$rttCourant->acquis=$ATMdb->Get_field('rttAcquisMensuel')+$ATMdb->Get_field('rttAcquisAnnuelCumule')+$ATMdb->Get_field('rttAcquisAnnuelNonCumule');
 				$rttCourant->pris=$ATMdb->Get_field('rttPris');
 				$rttCourant->mensuel=$ATMdb->Get_field('rttAcquisMensuel');
 				$rttCourant->annuelCumule=$ATMdb->Get_field('rttAcquisAnnuelCumule');
 				$rttCourant->annuelNonCumule=$ATMdb->Get_field('rttAcquisAnnuelNonCumule');
-				$rttCourant->typeAcquisition=$ATMdb->Get_field('typeAcquisition');
+				$rttCourant->typeAcquisition=$ATMdb->Get_field('rttTypeAcquisition');
 				$rttCourant->annee=substr($ATMdb->Get_field('anneertt'),0,4);
 				$rttCourant->fk_user=$ATMdb->Get_field('fk_user');
 				$Tab[]=$rttCourant;	

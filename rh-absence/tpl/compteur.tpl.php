@@ -8,7 +8,7 @@
             
             <h1 style="color: #2AA8B9;"> Jours de Congés</h1>                         
 
-			<table  border ="1" style="display: inline-block; ">
+			<table  border ="1" style="display: inline-block; margin-left:20px;">
 				<tr>
 					<td>
 						<div>
@@ -53,16 +53,15 @@
 			<br/><br/><br/>
 			  <h1 style="color: #2AA8B9;"> Jours de RTT</h1> 	
 			
-			<table  border ="1" style="display: inline-block; ">
+			<table  border ="1" style="display: inline-block; margin-left:20px;">
 				<tr>
 					<td>
 						<div>
-							
-							<h2>Acquisition des jours</h2>
-							Type acquisition : [rttCourant.typeAcquisition;strconv=no;protect=no]<br/>
-							Mensuel : 	[rttCourant.mensuel;strconv=no;protect=no]<br/>
-							Jour ouvrés annuel :	[rttCourant.annuelCumule;strconv=no;protect=no]<br/>
-							Jour non ouvrés annuel :  	[rttCourant.annuelNonCumule;strconv=no;protect=no]<br/>
+							<h2>Crédit RTT</h2>
+							<b>Acquis</b><br/>
+							Jours RTT Acquis : [rttCourant.acquis;strconv=no;protect=no]	<br/>
+							Jours RTT Pris : [rttCourant.pris;strconv=no;protect=no]<br/>
+							Jours RTT Restant à prendre :	[rttCourant.reste;strconv=no;protect=no]<br/>
 						</div>
 					</td>
 				<tr>
@@ -72,11 +71,11 @@
 				<tr>
 					<td>
 						<div>
-							<h2>Crédit RTT</h2>
-							<b>Acquis</b><br/>
-							Jours RTT Acquis : [rttCourant.acquis;strconv=no;protect=no]	<br/>
-							Jours RTT Pris : [rttCourant.pris;strconv=no;protect=no]<br/>
-							Jours RTT Restant à prendre :	[rttCourant.reste;strconv=no;protect=no]<br/>
+							<h2>Acquisition des jours</h2>
+							Type acquisition : [rttCourant.typeAcquisition;strconv=no;protect=no]<br/>
+							Mensuel : 	[rttCourant.mensuel;strconv=no;protect=no]<br/>
+							Jour ouvrés annuel :	[rttCourant.annuelCumule;strconv=no;protect=no]<br/>
+							Jour non ouvrés annuel :  	[rttCourant.annuelNonCumule;strconv=no;protect=no]<br/>
 						</div>
 					</td>
 				<tr>
