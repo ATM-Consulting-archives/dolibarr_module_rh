@@ -15,5 +15,6 @@
 	$o->init_db_by_vars($ATMdb);
 	
 	
-
+	$p=new TRH_Absence;
+	$p->init_db_by_vars($ATMdb);
 	

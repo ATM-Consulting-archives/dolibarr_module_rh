@@ -51,14 +51,30 @@ class TRH_Absence extends TObjetStd {
 	function __construct() { /* declaration */
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence');
+		parent::add_champs('code','type=int;');				//code  congé
 		parent::add_champs('type','type=varchar;');				//type de congé
 		parent::add_champs('date_debut,date_fin','type=date;');	//dates debut fin de congés
-		parent::add_champs('duree','type=entier;');				//duree en demi-journees
+		parent::add_champs('ddMoment, dfMoment','type=chaine;');		//moment (matin ou après midi)
+		//parent::add_champs('duree','type=entier;');				//duree en demi-journees
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
+		parent::add_champs('etat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
+		
 		
 		parent::_init_vars();
 		parent::start();
+		
+		//combo box pour le type d'absence
+		$this->TTypeAbsence = array('rttcumule '=>'RTT Cumulé','rttnoncumule '=>'RTT Non Cumulé', 'conges' => 'Congés', 'maladiemaintenue' => 'Maladie maintenue', 
+		'maladienonmaintenue'=>'Maladie non maintenue','maternite'=>'Maternité', 'paternite'=>'Paternité', 
+		'chomagepartiel'=>'Chômage Partiel','nonremuneree'=>'Non rémunérée','accidentdetravail'=>'Accident de travail',
+		'maladieprofessionnelle'=>'Maladie professionnelle', 'congeparental'=>'Congé parental', 'accidentdetrajet'=>'Accident de trajet',
+		'mitempstherapeutique'=>'Mi-temps thérapeutique');
+		
+		//combo pour le choix de matin ou après midi 
+		$this->TddMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date début
+		$this->TdfMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date fin
+		
 		
 	}
 }
