@@ -5,36 +5,34 @@
 	$langs->load('absence@absence');
 	
 	$ATMdb=new Tdb;
-	$compteur=new TRH_Compteur;
-
+	$absence=new TRH_Absence;
 	
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'new':
-				_fiche($ATMdb, $compteur,'edit');
+				$absence->set_values($_REQUEST);
+				_fiche($ATMdb, $absence,'edit');
 				
 				break;	
 			case 'edit'	:
-				$compteur->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $compteur,'edit');
+				$absence->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $absence,'edit');
 				break;
 				
 			case 'save':
 				$ATMdb->db->debug=true;
-				$compteur->load($ATMdb, $_REQUEST['id']);
-				$compteur->set_values($_REQUEST);
-				$compteur->save($ATMdb);
-				$compteur->load($ATMdb, $_REQUEST['id']);
+				$absence->load($ATMdb, $_REQUEST['id']);
+				$absence->set_values($_REQUEST);
+				$absence->save($ATMdb);
 				$mesg = '<div class="ok">Modifications effectuées</div>';
-				$mode = 'view';
-				_fiche($ATMdb, $compteur,'view');
+				_fiche($ATMdb, $absence,'view');
 			
 				break;
 			
 			case 'view':
-				$compteur->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $compteur,'view');
+				$absence->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $absence,'view');
 				break;
 
 			case 'delete':
@@ -47,7 +45,7 @@
 	}
 	else {
 		$ATMdb->db->debug=true;
-		_liste($ATMdb, $compteur);
+		_liste($ATMdb, $absence);
 	}
 	
 	
@@ -56,20 +54,19 @@
 	llxFooter();
 	
 	
-function _liste(&$ATMdb, &$compteur) {
+function _liste(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
-	llxHeader('','Liste de vos jours acquis');
+	llxHeader('','Liste de vos absences');
 	getStandartJS();
 	
-	$r = new TSSRenderControler($compteur);
-	$sql="SELECT anneeN as 'annee', r.rowid as 'ID', r.date_cre as 'DateCre',r.acquisExerciceN as 'Congés acquis N', 
-	r.acquisAncienneteN as 'Congés Ancienneté', r.acquisExerciceNM1 as 'Conges Acquis N-1', r.congesPrisNM1 as 'Conges Pris N-1',
-			  r.rttAcquis as 'RttAcquis', r.rttPris as 'RttPris', r.fk_user as 'Utilisateur Courant'
-		FROM llx_rh_compteur as r
+	$r = new TSSRenderControler($absence);
+	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',DATE(r.date_debut) as 'Date début', DATE(r.date_fin) as 'date_fin', 
+			  r.type as 'type',r.fk_user as 'Utilisateur Courant',  r.etat as 'etat'
+		FROM llx_rh_absence as r
 		WHERE r.fk_user=".$user->id;
 		
 	
-	$TOrder = array('DateCre'=>'ASC');
+	$TOrder = array('etat'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -87,12 +84,12 @@ function _liste(&$ATMdb, &$compteur) {
 		,'hide'=>array('DateCre')
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste de vos jours acquis'
+			'titre'=>'Liste de vos absences'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucun jour acquis à afficher"
+			,'messageNothing'=>"Il n'y a aucune absence à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			
@@ -105,13 +102,13 @@ function _liste(&$ATMdb, &$compteur) {
 	llxFooter();
 }	
 	
-function _fiche(&$ATMdb, &$compteur, $mode) {
+function _fiche(&$ATMdb, &$absence, $mode) {
 	global $db,$user;
 	llxHeader('');
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
-	echo $form->hidden('id', $compteur->getId());
+	echo $form->hidden('id', $absence->getId());
 	echo $form->hidden('action', 'save');
 	
 	
@@ -175,9 +172,27 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	
 	$rttCourantReste=$rttCourant->acquis-$rttCourant->pris;
 	
+	/////////////////////////////////////récupération des demandes d'absences du collaborateurs
+	$sqlRtt="SELECT * FROM `llx_rh_absence` where fk_user=".$user->id;
+	$ATMdb->Execute($sqlRtt);
+	$Tab=array();
+	while($ATMdb->Get_line()) {
+				$absenceCourante=new User($db);
+				$absenceCourante->id=$ATMdb->Get_field('rowid');
+				$absenceCourante->type=$ATMdb->Get_field('type');
+				$absenceCourante->dateDebut=$ATMdb->Get_field('date_debut');
+				$absenceCourante->dateFin=$ATMdb->Get_field('date_fin');
+				$absenceCourante->commentaire=$ATMdb->Get_field('commentaire');
+				$absenceCourante->fk_user=$ATMdb->Get_field('fk_user');
+				$Tab[]=$absenceCourante;	
+	}
+	
+	
+	
+	//print_r($TTypeAbence);
 	
 	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/compteur.tpl.php'
+	print $TBS->render('./tpl/absence.tpl.php'
 		,array(
 			
 			
@@ -208,16 +223,30 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'acquis'=>$form->texte('','rttAcquis',$rttCourant->acquis,10,50,'',$class="text", $default='')
 				,'rowid'=>$form->texte('','rowid',$rttCourant->id,10,50,'',$class="text", $default='')
+				,'id'=>$form->texte('','fk_user',$rttCourant->fk_user,10,50,'',$class="text", $default='')
 				,'pris'=>$form->texte('','rttPris',$rttCourant->pris,10,50,'',$class="text", $default='')
 				,'mensuel'=>$form->texte('','rttAcquisMensuel',$rttCourant->mensuel,10,50,'',$class="text", $default='')
 				,'annuelCumule'=>$form->texte('','rttAcquisAnnuelCumule',$rttCourant->annuelCumule,10,50,'',$class="text", $default='')
 				,'annuelNonCumule'=>$form->texte('','rttAcquisAnnuelNonCumule',$rttCourant->annuelNonCumule,10,50,'',$class="text", $default='')
 				,'typeAcquisition'=>$form->texte('','typeAcquisition',$rttCourant->typeAcquisition,10,50,'',$class="text", $default='')
 				,'reste'=>$form->texte('','total',$rttCourantReste,10,50,'',$class="text", $default='')
-				,'id'=>$compteur->getId()
-
+				,'idNum'=>$idRttCourant
+				
 				
 			)
+			,'absenceCourante'=>array(
+				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
+				'id'=>$absenceCourante->id
+				,'commentaire'=>$form->texte('','commentaire',$absenceCourante->commentaire,20,500,'',$class="text", $default='')
+				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
+				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
+				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
+				,'idUser'=>$form->texte('','fk_user',$user->id,5,10,'',$class="text", $default='')
+				,'comboType'=>$form->combo('','type',$absence->TTypeAbsence,$absence->type)
+				,'etat'=>$form->hidden('etat',"Avalider")
+				
+			)	
 			,'userCourant'=>array(
 				'id'=>$user->id
 				,'lastname'=>$user->lastname

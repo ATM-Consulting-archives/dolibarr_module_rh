@@ -88,11 +88,11 @@
 		<div class="tabsAction" >
 		[onshow;block=begin;when [view.mode]=='edit']
 			<input type="submit" value="Enregistrer" name="save" class="button">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[congeCourant.idNum]&action=view'">
+			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[rttCourant.id]&action=view'">
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
-			<a class="butAction"  href="?id=[rttCourant.idNum]&action=edit">Modifier</a>
+			<a class="butAction"  href="?id=[rttCourant.id]&action=edit">Modifier</a>
 		[onshow;block=end]
 		</div>
 
