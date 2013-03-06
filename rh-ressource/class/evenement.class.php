@@ -28,7 +28,7 @@ class TRH_Evenement  extends TObjetStd {
 			$this->TTypeRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
 			} 
 		*/
-		//chargement d'une liste de touts les tiers (pour le combo "tiers")
+		//chargement d'une liste de touts les tiers (pour le combo "Utilisateur")
 		$this->TUser = array();
 		$sqlReq="SELECT rowid, name FROM ".MAIN_DB_PREFIX."user";
 		$ATMdb->Execute($sqlReq);

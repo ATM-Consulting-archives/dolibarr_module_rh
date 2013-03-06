@@ -7,8 +7,10 @@
 	
 	llxHeader('','Calendrier des ressources');
 	
-$ressource=new TRH_ressource;
-
+	$ATMdb=new Tdb;
+	$ressource=new TRH_ressource;
+	$ressource->load($ATMdb, $_REQUEST['id']);
+	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'
 		,array()

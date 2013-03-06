@@ -25,13 +25,13 @@
 				
 				break;	
 			case 'edit'	:
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $emprunt,$ressource, 'edit');
 				break;
 				
 			case 'save':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				
 				$mesg = '<div class="ok">Modifications effectuées</div>';
 				$mode = 'view';
@@ -46,7 +46,7 @@
 				break;
 			
 			case 'view':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $emprunt, $ressource, 'view');
 				break;
@@ -74,7 +74,7 @@
 		/*
 		 * Liste
 		 */
-		 $ATMdb->db->debug=true;
+		 //$ATMdb->db->debug=true;
 		 _liste($ATMdb, $emprunt);
 	}
 	
@@ -148,8 +148,8 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 		$TEmprunts[] = array(
 					'id'=>$even['id']
 					,'user'=>$even['user']
-					,'date_debut'=>$even['date_debut']
-					,'date_fin'=>$even['date_fin']
+					,'date_debut'=>date("j/m/Y",$even['date_debut'])
+					,'date_fin'=>date("j/m/Y",$even['date_fin'])
 		);
 		
 	}
@@ -172,7 +172,7 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 			,'view'=>array(
 				'mode'=>$mode
 			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
-				,'head'=>dol_get_fiche_head(ressourcePrepareHead($emprunt, 'ressource')  , 'attribution', 'Ressource')
+				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'attribution', 'Ressource')
 			)
 			
 			

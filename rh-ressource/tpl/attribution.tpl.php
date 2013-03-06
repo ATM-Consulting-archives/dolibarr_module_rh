@@ -12,7 +12,7 @@
 	Attribution d'une ressource à un utilisateur
 </h2>
 
-<table>
+<table class="border">
 	<tr>
 		<td>Utilisateur</td>
 		<td>Date début</td>
