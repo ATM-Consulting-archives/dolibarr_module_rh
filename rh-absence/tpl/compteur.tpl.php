@@ -14,6 +14,8 @@
 						<div>
 							<h2>Jours de congés payés N-1 ([congesPrec.anneePrec;strconv=no;protect=no])</h2>
 							<b>Acquis</b><br/>
+							Utilisateur courant : [congesPrec.user;strconv=no;protect=no]<br/>
+							
 							Acquis Exercice : [congesPrec.acquisEx;strconv=no;protect=no]	<br/>
 							Acquis Ancienneté : [congesPrec.acquisAnc;strconv=no;protect=no]	<br/>
 							Acquis Hors-Période : [congesPrec.acquisHorsPer;strconv=no;protect=no]	<br/>
@@ -74,8 +76,8 @@
 							<h2>Acquisition des jours</h2>
 							Type acquisition : [rttCourant.typeAcquisition;strconv=no;protect=no]<br/>
 							Mensuel : 	[rttCourant.mensuel;strconv=no;protect=no]<br/>
-							Jour ouvrés annuel :	[rttCourant.annuelCumule;strconv=no;protect=no]<br/>
-							Jour non ouvrés annuel :  	[rttCourant.annuelNonCumule;strconv=no;protect=no]<br/>
+							Jour cumulés annuel :	[rttCourant.annuelCumule;strconv=no;protect=no]<br/>
+							Jour non cumulés annuel :  	[rttCourant.annuelNonCumule;strconv=no;protect=no]<br/>
 						</div>
 					</td>
 				<tr>

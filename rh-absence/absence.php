@@ -36,6 +36,31 @@
 				break;
 
 			case 'delete':
+				$absence->load($ATMdb, $_REQUEST['id']);
+				//$ATMdb->db->debug=true;
+				
+				//avant de supprimer, on récredite les heures d'absences qui avaient été décomptées. 
+				$sqlAbs="SELECT * FROM `llx_rh_absence` where fk_user=".$user->id. " AND rowid=".$absence->getId();
+				$ATMdb->Execute($sqlAbs);
+				$Tab=array();
+				while($ATMdb->Get_line()) {
+							$absenceCourante=new User($db);
+							$absenceCourante->id=$ATMdb->Get_field('rowid');
+							$absenceCourante->type=$ATMdb->Get_field('type');
+							$absenceCourante->dateDebut=$ATMdb->Get_field('date_debut');
+							$absenceCourante->dateFin=$ATMdb->Get_field('date_fin');
+							$absenceCourante->commentaire=$ATMdb->Get_field('commentaire');
+							$absenceCourante->fk_user=$ATMdb->Get_field('fk_user');
+							$Tab[]=$absenceCourante;	
+				}
+
+				$absence->delete($ATMdb);
+				?>
+				<script language="javascript">
+					document.location.href="?delete_ok=1";					
+				</script>
+				<?
+				
 				
 				break;
 		}
@@ -63,10 +88,10 @@ function _liste(&$ATMdb, &$absence) {
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',DATE(r.date_debut) as 'Date début', DATE(r.date_fin) as 'date_fin', 
 			  r.type as 'type',r.fk_user as 'Utilisateur Courant',  r.etat as 'etat'
 		FROM llx_rh_absence as r
-		WHERE r.fk_user=".$user->id;
+		WHERE r.fk_user=".$user->id;//." AND r.entity=".$conf->entity;
 		
 	
-	$TOrder = array('etat'=>'ASC');
+	$TOrder = array('DateCre'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -149,7 +174,6 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				$congeCourant->fk_user=$ATMdb->Get_field('fk_user');
 				$Tab2[]=$congeCourant;	
 	}
-	
 	$congeCourantTotal=$congeCourant->acquisEx+$congeCourant->acquisAnc+$congeCourant->acquisHorsPer;
 	
 	//////////////////////////////récupération des informations des rtt courants (année N) de l'utilisateur courant : 
@@ -169,12 +193,12 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				$rttCourant->fk_user=$ATMdb->Get_field('fk_user');
 				$Tab[]=$rttCourant;	
 	}
-	
 	$rttCourantReste=$rttCourant->acquis-$rttCourant->pris;
 	
+	
 	/////////////////////////////////////récupération des demandes d'absences du collaborateurs
-	$sqlRtt="SELECT * FROM `llx_rh_absence` where fk_user=".$user->id;
-	$ATMdb->Execute($sqlRtt);
+	$sqlAbsence="SELECT * FROM `llx_rh_absence` where fk_user=".$user->id. " AND rowid=".$absence->getId();
+	$ATMdb->Execute($sqlAbsence);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
 				$absenceCourante=new User($db);
@@ -188,8 +212,34 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	}
 	
 	
+	///////calcul durée du congés 
+
 	
-	//print_r($TTypeAbence);
+	$dateF=new DateTime($absenceCourante->dateFin);
+	$dateD=new DateTime($absenceCourante->dateDebut);
+	$dureeAbsenceCourante=date_diff($dateF,$dateD);
+	
+	///////décompte des congés
+	if($absenceCourante->type=="rttcumule"){
+		$sqlDecompte="UPDATE `llx_rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante->format('%a').",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante->format('%a')."  where fk_user=".$user->id;
+		$ATMdb->Execute($sqlDecompte);
+		$rttCourant->pris=$rttCourant->pris-$dureeAbsenceCourante->format('%a');
+		$rttCourant->annuelCumule=$rttCourant->annuelCumule-$dureeAbsenceCourante->format('%a');
+		
+	}else if($absenceCourante->type=="rttnoncumule"){
+		$sqlDecompte="UPDATE `llx_rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante->format('%a').",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule-".$dureeAbsenceCourante->format('%a')." where fk_user=".$user->id;
+		$ATMdb->Execute($sqlDecompte);
+		$rttCourant->pris=$rttCourant->pris-$dureeAbsenceCourante->format('%a');
+		$rttCourant->annuelNonCumule=$rttCourant->annuelNonCumule-$dureeAbsenceCourante->format('%a');
+	}
+	else {	//autre que RTT : décompte les congés
+		$sqlDecompte="UPDATE `llx_rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante->format('%a')." where fk_user=".$user->id;
+		$ATMdb->Execute($sqlDecompte);
+		$congePrecReste=$congePrecReste-$dureeAbsenceCourante->format('%a');
+	}
+	
+	
+	
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/absence.tpl.php'
@@ -245,6 +295,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'idUser'=>$form->texte('','fk_user',$user->id,5,10,'',$class="text", $default='')
 				,'comboType'=>$form->combo('','type',$absence->TTypeAbsence,$absence->type)
 				,'etat'=>$form->hidden('etat',"Avalider")
+				,'duree'=>$form->texte('','duree',$dureeAbsenceCourante->format('%a'),5,10,'',$class="text", $default='')
 				
 			)	
 			,'userCourant'=>array(

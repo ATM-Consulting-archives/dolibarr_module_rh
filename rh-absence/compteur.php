@@ -66,7 +66,7 @@ function _liste(&$ATMdb, &$compteur) {
 	r.acquisAncienneteN as 'Congés Ancienneté', r.acquisExerciceNM1 as 'Conges Acquis N-1', r.congesPrisNM1 as 'Conges Pris N-1',
 			  r.rttAcquis as 'RttAcquis', r.rttPris as 'RttPris', r.fk_user as 'Utilisateur Courant'
 		FROM llx_rh_compteur as r
-		WHERE r.fk_user=".$user->id;
+		WHERE r.fk_user=".$user->id;//." AND r.entity=".$conf->entity;;
 		
 	
 	$TOrder = array('DateCre'=>'ASC');
@@ -138,7 +138,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$congePrecReste=$congePrecTotal-$congePrec->congesPris;
 	
 	//////////////////////////récupération des informations des congés précédents (N-1) de l'utilisateur courant : 
-	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;;
+	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;
 	$ATMdb=new Tdb;
 	$ATMdb->Execute($sqlReqUser2);
 	$Tab2=array();
@@ -194,6 +194,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'total'=>$form->texte('','total',$congePrecTotal,10,50,'',$class="text", $default='')
 				,'reste'=>$form->texte('','reste',$congePrecReste,10,50,'',$class="text", $default='')
 				,'idUser'=>$congePrec->fk_user
+				,'user'=>$form->texte('','fk_user',$congePrec->fk_user,10,50,'',$class="text", $default='')
 			)
 			,'congesCourant'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')

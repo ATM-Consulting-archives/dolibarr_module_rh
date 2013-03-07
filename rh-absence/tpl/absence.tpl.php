@@ -29,8 +29,11 @@
 							Date début : 	[absenceCourante.date_debut;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.ddMoment;strconv=no;protect=no]<br/><br/>
 							Date fin : 		[absenceCourante.date_fin;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]<br/><br/>
 							Commentaire : 	[absenceCourante.commentaire;strconv=no;protect=no]<br/><br/>
-							
+							[onshow;block=begin;when [view.mode]!='edit']
+							Duree : [absenceCourante.duree;strconv=no;protect=no]
+							[onshow;block=end]
 							[absenceCourante.etat;strconv=no;protect=no]
+							
 							
 							
 						</div>
@@ -38,22 +41,40 @@
 				<tr>
 			</table>
 		
+			<table style="margin-left: 150px; display: inline-block; "  border ="1">
+				<tr>
+					<td>
+						<div>
+							<h2>Jours restants</h2>
+							<b>Reste à prendre</b><br/>
+							
+							Congés payés : [congesPrec.reste;strconv=no;protect=no]<br/>
+							RTT cumulés : 	[rttCourant.annuelCumule;strconv=no;protect=no]<br/>
+							RTT non cumulés : 	[rttCourant.annuelNonCumule;strconv=no;protect=no]<br/>
+							RTT mensuels : 	[rttCourant.mensuel;strconv=no;protect=no] <br/>
+
+						</div>
+					</td>
+				<tr>
+			</table>
 			
 
 		
 				
 		  </div>
 		</div>
-			
+		<div id="test"></div>
+		
 			
 		<div class="tabsAction" >
 		[onshow;block=begin;when [view.mode]=='edit']
-			<input type="submit" value="Enregistrer" name="save" class="button">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
+			<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
+			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" href="?id=[absenceCourante.id]&action=view">
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
 			<a class="butAction"  href="?id=[absenceCourante.id]&action=edit">Modifier</a>
+			<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
 		[onshow;block=end]
 		</div>
 
