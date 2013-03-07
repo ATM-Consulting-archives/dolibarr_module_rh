@@ -34,9 +34,11 @@
 	print $TBS->render('./tpl/calendrier.tpl.php'
 		,array()
 		,array(
-			'view'=>array(
+			'ressource'=>array(
+				'id' => $ressource->getId()
+			)
+			,'view'=>array(
 				'mode'=>$mode
-				,'fichierPHP'=>"'../library/wdCalendar/sample.php'"
 				/*,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'calendrier', 'Ressource')
 			)

@@ -12,7 +12,7 @@
         $(document).ready(function() {     
            var view="month";          
            
-            var DATA_FEED_URL = "ressourceCalendarDataFeed.php";
+            var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]"
             var op = {
                 view: view,
                 theme:3,
@@ -25,10 +25,10 @@
                 onAfterRequestData: cal_afterrequest,
                 onRequestDataError: cal_onerror, 
                 autoload:true,
-                url: DATA_FEED_URL + "?method=list",  
-                quickAddUrl: DATA_FEED_URL + "?method=add", 
-                quickUpdateUrl: DATA_FEED_URL + "?method=update",
-                quickDeleteUrl: DATA_FEED_URL + "?method=remove"        
+                url: DATA_FEED_URL + "&method=list",  
+                quickAddUrl: DATA_FEED_URL + "&method=add", 
+                quickUpdateUrl: DATA_FEED_URL + "&method=update",
+                quickDeleteUrl: DATA_FEED_URL + "&method=remove"        
             };
             var $dv = $("#calhead");
             var _MH = document.documentElement.clientHeight;

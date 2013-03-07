@@ -52,21 +52,29 @@ class TRH_Ressource extends TObjetStd {
 			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
 			}	
 	}
+	
 	/**
-	 * charge les évenements associés à cette ressource dans le tableau TEvenements[]
+	 * charge des infos sur les évenements associés à cette ressource dans le tableau TEvenements[]
 	 */
 	function load_evenement(&$ATMdb){
-		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_evenement', array('fk_rh_ressource'=>$this->getId()));
-		$temp =  new TRH_Evenement;
-		foreach($Tab as $k=>$id){
-			$temp->load($ATMdb, $id);
-			$this->TEvenement[$k] = array('id'=>$temp->getId()
-											,'user'=>$temp->TUser[$temp->fk_user]
-											,'date_debut'=>$temp->date_debut
-											,'date_fin'=>$temp->date_fin);
-
-		}
+		$sql = "SELECT e.rowid as 'Rowid', u.name as 'User', e.date_debut as 'Debut' , e.date_fin as 'Fin', 
+		e.motif as 'Motif'
+		FROM ".MAIN_DB_PREFIX."rh_evenement as e,  ".MAIN_DB_PREFIX."user as u
+		WHERE e.fk_rh_ressource=".$this->getId()."
+		AND e.fk_user = u.rowid
+		ORDER BY date_fin";
+		$k = 0;
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()){
+			$this->TEvenement[$k] = array('id'=>$ATMdb->Get_field('Rowid')
+											,'user'=>$ATMdb->Get_field('User')
+											,'date_debut'=>$ATMdb->Get_field('Debut')
+											,'date_fin'=>$ATMdb->Get_field('Fin')
+											,'motif'=>$ATMdb->Get_field('Motif')
+											);
+			$k++;
 		
+		}
 	}
 	
 	

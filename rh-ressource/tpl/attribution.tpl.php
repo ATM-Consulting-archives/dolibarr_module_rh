@@ -9,7 +9,7 @@
 [onshow;block=end] 
 
 <h2>
-	Attribution d'une ressource à un utilisateur
+	Historique des attributions
 </h2>
 
 <table class="border">
@@ -17,12 +17,14 @@
 		<td>Utilisateur</td>
 		<td>Date début</td>
 		<td>Date fin</td>
+		<td>Commentaire</td>
 		<td>Action</td>
 	</tr>	
 	<tr>
 		<td>[historique.user;block=tr;strconv=no;protect=no]</td>
 		<td>[historique.date_debut;strconv=no;protect=no]</td>
 		<td>[historique.date_fin;strconv=no;protect=no]</td>
+		<td>[historique.commentaire;strconv=no;protect=no]</td>
 		<td></td>
 	</tr>
 	
@@ -31,6 +33,7 @@
 		<td>[NEmprunt.fk_user;strconv=no;protect=no]</td>
 		<td>[NEmprunt.date_debut;strconv=no;protect=no]</td>
 		<td>[NEmprunt.date_fin;strconv=no;protect=no]</td>[NEmprunt.fk_rh_ressource;strconv=no;protect=no]
+		<td>[NEmprunt.commentaire;strconv=no;protect=no]</td>
 		<td><input type="submit" value="Ajouter" name="newEmprunt" class="button"></td>
 	</tr>
 	[onshow;block=end]

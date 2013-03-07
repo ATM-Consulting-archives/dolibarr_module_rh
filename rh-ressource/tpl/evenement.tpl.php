@@ -9,20 +9,29 @@
 [onshow;block=end] 
 
 <h2>
-	Evenement sur la ressource
+	Historique des événements sur la ressource
 </h2>
 
 <div>
-				
-	Utilisateur : [evenement.fk_user;strconv=no;protect=no]<br>
-	Type de la ressource : [evenement.fk_rh_ressource_type;strconv=no;protect=no]
-	[onshow;block=begin;when [view.mode]=='edit']
-		<input type="submit" value="Valider" name="validerType" class="butAction">
-	[onshow;block=end]<br>
-	Ressource : [evenement.fk_rh_ressource;strconv=no;protect=no]<br>
-	<br>
-	Dates de la réservation : Du [evenement.date_debut;strconv=no;protect=no] au [evenement.date_fin;strconv=no;protect=no]<br> 
+	<table>			
+	<tr>
+		<td>Date</td>
+		<td>Type</td>
+		<td>Commentaire</td>
+		<td>Montant HT</td>
+		
+	</tr>
+	<tr>
+		<td>[evenement.date;block=tr;strconv=no;protect=no]</td>
+		<td>[evenement.type;block=tr;strconv=no;protect=no]</td>
+		<td>[evenement.motif;block=tr;strconv=no;protect=no]</td>
+		<td>[evenement.montantHT;block=tr;strconv=no;protect=no]</td>
+	</tr>
 	
+
+ 
+	
+	</table>
 	
 </div>
 

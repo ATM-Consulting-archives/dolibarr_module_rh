@@ -1,5 +1,7 @@
 <?php
-echo exec("pwd");
+
+//TODO mettre les chemins en relatifs.
+//echo exec("pwd");
 include_once("../rh-library/wdCalendar/php/dbconfig.php");
 include_once("../rh-library/wdCalendar/php/functions.php");
 /*
@@ -27,9 +29,7 @@ function addCalendar($st, $et, $sub, $ade){
      $ret['Msg'] = $e->getMessage();
   }
   return $ret;
-}*/
-
-/*
+}
 function addDetailedCalendar($st, $et, $sub, $ade, $dscr, $loc, $color, $tz){
   $ret = array();
   try{
@@ -57,9 +57,9 @@ function addDetailedCalendar($st, $et, $sub, $ade, $dscr, $loc, $color, $tz){
      $ret['Msg'] = $e->getMessage();
   }
   return $ret;
-}*/
-
-function listCalendarByRange($sd, $ed){
+}
+*/
+function listCalendarByRange($sd, $ed, $idRessource){
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
@@ -69,8 +69,8 @@ function listCalendarByRange($sd, $ed){
   try{
     $db = new DBConnection();
     $db->getConnection();
-    $sql = "select * from `llx_rh_evenement` where `date_debut` between '"
-      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."'";
+    $sql = "SELECT * FROM `llx_rh_evenement` WHERE `date_debut` between '"
+      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND fk_rh_ressource=".$idRessource;
     $handle = mysql_query($sql);
     //echo $sql;
     while ($row = mysql_fetch_object($handle)) {
@@ -101,7 +101,7 @@ function listCalendarByRange($sd, $ed){
   return $ret;
 }
 
-function listCalendar($day, $type){
+function listCalendar($day, $type, $idRessource){
   $phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
   switch($type){
@@ -122,7 +122,7 @@ function listCalendar($day, $type){
       break;
   }
   //echo $st . "--" . $et;
-  return listCalendarByRange($st, $et);
+  return listCalendarByRange($st, $et, $idRessource);
 }
 /*
 function updateCalendar($id, $st, $et){
@@ -148,8 +148,7 @@ function updateCalendar($id, $st, $et){
   }
   return $ret;
 }
-*/
-/*
+
 function updateDetailedCalendar($id, $st, $et, $sub, $ade, $dscr, $loc, $color, $tz){
   $ret = array();
   try{
@@ -177,8 +176,8 @@ function updateDetailedCalendar($id, $st, $et, $sub, $ade, $dscr, $loc, $color, 
      $ret['Msg'] = $e->getMessage();
   }
   return $ret;
-}*/
-/*
+}
+
 function removeCalendar($id){
   $ret = array();
   try{
@@ -199,9 +198,9 @@ function removeCalendar($id){
   return $ret;
 }
 
-
 */
-//echo 'one : '.$_POST["showdate"]."txo   ".$_POST["viewtype"]."oooo";
+
+
 //header('Content-type:text/javascript;charset=UTF-8');
 $method = $_GET["method"];
 switch ($method) {
@@ -209,9 +208,9 @@ switch ($method) {
         $ret = addCalendar($_POST["CalendarStartTime"], $_POST["CalendarEndTime"], $_POST["CalendarTitle"], $_POST["IsAllDayEvent"]);
         break;
     case "list":
-        $ret = listCalendar($_POST["showdate"], $_POST["viewtype"]);
+        $ret = listCalendar($_POST["showdate"], $_POST["viewtype"], $_REQUEST['id']);
         break;
-  /*  case "update":
+    case "update":
         $ret = updateCalendar($_POST["calendarId"], $_POST["CalendarStartTime"], $_POST["CalendarEndTime"]);
         break; 
     case "remove":
@@ -231,7 +230,7 @@ switch ($method) {
         }        
         break; 
 
-*/
+
 }
 echo json_encode($ret); 
 

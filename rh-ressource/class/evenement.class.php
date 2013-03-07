@@ -29,15 +29,32 @@ class TRH_Evenement  extends TObjetStd {
 		
 		
 		$ATMdb=new Tdb;
-		//chargement d'une liste de tout les types de ressources
-		/*$this->TTypeRessource = array();
-		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource_type";
+		
+		//chargement d'une liste de touts les tiers (pour le combo "tiers")
+		$this->TTiers = array();
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TTypeRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
-			} 
-		*/
-		//chargement d'une liste de touts les tiers (pour le combo "Utilisateur")
+			$this->TTiers[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			}
+		
+		//chargement d'une liste de touts les tiers (pour le combo "agence utilisatrice")
+		$this->TAgence = array();
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup";
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TAgence[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			}
+		
+		//chargement d'une liste de touts les TVA (pour le combo "TVA")
+		$this->TTVA = array();
+		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva";
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
+			}
+		
+		//chargement d'une liste de touts les users (pour le combo "Utilisateur")
 		$this->TUser = array();
 		$sqlReq="SELECT rowid, name FROM ".MAIN_DB_PREFIX."user";
 		$ATMdb->Execute($sqlReq);
@@ -80,9 +97,9 @@ class TRH_Evenement  extends TObjetStd {
 	
 		$this->color = 1;
 		$this->isAllDayEvent = 1;
-		$this->location = "nowhere";
-		$this->subject = "Emprunt de la ressource";
-		$this->description = "pdpom";
+		$this->location = "";
+		$this->subject = "Utilisateur : ".$this->TUser[$this->fk_user];
+		//$this->description = "";
 		
 		
 		

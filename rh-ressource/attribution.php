@@ -148,8 +148,9 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 		$TEmprunts[] = array(
 					'id'=>$even['id']
 					,'user'=>$even['user']
-					,'date_debut'=>date("j/m/Y",$even['date_debut'])
-					,'date_fin'=>date("j/m/Y",$even['date_fin'])
+					,'date_debut'=>date("d/m/Y",(new DateTime($even['date_debut']))->getTimestamp())
+					,'date_fin'=>date("d/m/Y",(new DateTime($even['date_fin']))->getTimestamp())
+					,'commentaire'=>$even['motif']
 		);
 		
 	}
@@ -166,6 +167,7 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 				'id'=>$emprunt->getId()
 				,'fk_user'=>$form->combo('','fk_user',$emprunt->TUser,$emprunt->fk_user)
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
+				,'commentaire'=>$form->texte('','motif',$emprunt->motif, 30,100,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $emprunt->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $emprunt->get_date('date_fin'), 10)
 			)

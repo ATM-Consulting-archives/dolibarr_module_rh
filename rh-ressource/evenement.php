@@ -1,6 +1,7 @@
 <?php
 	require('config.php');
 	require('./class/evenement.class.php');
+	require('./class/ressource.class.php');
 	require('./lib/ressource.lib.php');
 	$langs->load('ressource@ressource');
 	
@@ -19,13 +20,13 @@
 				$evenement->set_values($_REQUEST);
 				//$emprunt->load($ATMdb, 20);
 				$mesg = '<div class="ok">Nouvel événement créé</div>';
-				_fiche($ATMdb, $evenement,'edit');
+				_fiche($ATMdb, $evenement,$ressource,'edit');
 				
 				break;	
 			case 'edit'	:
 				$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $evenement,'edit');
+				_fiche($ATMdb, $evenement,$ressource,'edit');
 				break;
 				
 			case 'save':
@@ -41,13 +42,13 @@
 					$mode = 'edit';	
 				}
 				
-				_fiche($ATMdb, $evenement,$mode);
+				_fiche($ATMdb, $evenement,$ressource,$mode);
 				break;
 			
 			case 'view':
 				$ATMdb->db->debug=true;
 				$evenement->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $evenement,'view');
+				_fiche($ATMdb, $evenement,$ressource,'view');
 				break;
 			
 			case 'delete':
@@ -66,8 +67,8 @@
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {
-		$evenement->load($ATMdb, $_REQUEST['id']);
-		_fiche($ATMdb, $evenement, 'view');
+		$ressource->load($ATMdb, $_REQUEST['id']);
+		_fiche($ATMdb, $evenement,$ressource, 'view');
 	}
 	else {
 		/*
@@ -132,7 +133,7 @@ function _liste(&$ATMdb, &$evenement) {
 	llxFooter();
 }	
 	
-function _fiche(&$ATMdb, &$evenement, $mode) {
+function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	global $db,$user;
 	llxHeader('', 'emprunt');
 
@@ -148,16 +149,18 @@ function _fiche(&$ATMdb, &$evenement, $mode) {
 		,array(
 			'evenement'=>array(
 				'id'=>$evenement->getId()
-				,'fk_user'=>$form->combo('','fk_user',$evenement->TUser,$evenement->fk_user)
-				,'fk_rh_ressource_type'=> count($evenement->TTypeRessource) ? $form->combo('','fk_rh_ressource_type',$evenement->TTypeRessource,$evenement->fk_rh_ressource_type): "Aucun type"
-				,'fk_rh_ressource'=> count($evenement->TRessource) ? $form->combo('','fk_rh_ressource',$evenement->TRessource,$evenement->fk_rh_ressource): "Aucune ressource de ce type"
-				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->get_date('date_fin'), 10)
+				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
+				,'date'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)
+				,'type'=>$form->texte('', 'type', $evenement->type, 20,100)
+				,'motif'=>$form->texte('', 'type', $evenement->motif, 20,100)
+				,'montantHT'=>$form->texte('', 'montant_HT', $evenement->montant_HT, 10,10)
+				,'TVA'=>$form->combo('','TVA',$evenement->TTVA,$evenement->TVA)
+				
 			)
 			,'view'=>array(
 				'mode'=>$mode
 			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
-				//,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource')
+				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource')
 			)
 			
 			
