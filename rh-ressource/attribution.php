@@ -148,8 +148,8 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 		$TEmprunts[] = array(
 					'id'=>$even['id']
 					,'user'=>$even['user']
-					,'date_debut'=>date("d/m/Y",(new DateTime($even['date_debut']))->getTimestamp())
-					,'date_fin'=>date("d/m/Y",(new DateTime($even['date_fin']))->getTimestamp())
+					,'date_debut'=>date("d/m/Y",(new DateTime($even['date_debut'])).getTimestamp())
+					,'date_fin'=>date("d/m/Y",(new DateTime($even['date_fin'])).getTimestamp())
 					,'commentaire'=>$even['motif']
 		);
 		
