@@ -7,7 +7,7 @@
 	//if (!$user->rights->financement->affaire->read)	{ accessforbidden(); }
 	$ATMdb=new Tdb;
 	$evenement=new TRH_Evenement;
-	
+	$ressource = new TRH_Ressource;
 	$mesg = '';
 	$error=false;
 	
@@ -24,7 +24,7 @@
 				break;	
 			case 'edit'	:
 				$ATMdb->db->debug=true;
-				$emprunt->load($ATMdb, $_REQUEST['id']);
+				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $evenement,'edit');
 				break;
 				
@@ -157,7 +157,7 @@ function _fiche(&$ATMdb, &$evenement, $mode) {
 			,'view'=>array(
 				'mode'=>$mode
 			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
-				,'head'=>dol_get_fiche_head(ressourcePrepareHead($evenement, 'ressource')  , 'evenement', 'Ressource')
+				//,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource')
 			)
 			
 			

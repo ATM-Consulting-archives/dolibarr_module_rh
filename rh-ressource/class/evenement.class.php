@@ -9,6 +9,15 @@ class TRH_Evenement  extends TObjetStd {
 		//parent::add_champs('fk_rh_ressource_type','type=entier;index;');	
 		parent::add_champs('fk_user,entity','type=entier;index;');
 
+		//pour le wdCalendar
+		parent::add_champs('color','type=chaine;');
+		parent::add_champs('isAllDayEvent','type=entier;');
+		parent::add_champs('location','type=chaine;');
+		parent::add_champs('subject','type=chaine;');
+		parent::add_champs('description','type=chaine;');
+		parent::add_champs('recurringrule','type=chaine;');
+		
+		//pour un évenement
 		parent::add_champs('type, motif','type=chaine;');
 		parent::add_champs('montant_HT, TVA','type=float;');
 		
@@ -61,6 +70,22 @@ class TRH_Evenement  extends TObjetStd {
 	function save(&$db) {
 		global $conf;
 		$this->entity = $conf->entity;
+		
+		parent::add_champs('color','type=chaine;');
+		parent::add_champs('isAllDayEvent','type=entier;');
+		parent::add_champs('location','type=chaine;');
+		parent::add_champs('subject','type=chaine;');
+		parent::add_champs('description','type=chaine;');
+		parent::add_champs('recurringrule','type=chaine;');
+	
+		$this->color = 1;
+		$this->isAllDayEvent = 1;
+		$this->location = "nowhere";
+		$this->subject = "Emprunt de la ressource";
+		$this->description = "pdpom";
+		
+		
+		
 		parent::save($db);
 	}
 	
