@@ -45,7 +45,7 @@
 							<br/>
 							<b>Total : [congesCourant.total;strconv=no;protect=no]</b><br/>
 
-							<b> Dernière clôture :</b><br/>
+							<b> Dernière clôture : 31/05/[congesPrec.anneePrec;strconv=no;protect=no]</b><br/>
 						</div>
 					</td>
 				<tr>

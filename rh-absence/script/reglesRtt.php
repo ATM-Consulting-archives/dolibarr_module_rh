@@ -20,7 +20,7 @@
 	$mars=date("dM");
 	if($mars=="0103"){
 		//on remet à 0 les compteurs
-		$sqlRaz='UPDATE llx_rh_compteur SET rttAcquis=0 WHERE typeAcquisition="Mensuel"';
+		$sqlRaz='UPDATE llx_rh_compteur SET rttAcquis=0, rttPris=0 WHERE typeAcquisition="Mensuel"';
 		$ATMdb->Execute($sqlRaz);
 	}
 	
@@ -39,7 +39,7 @@
 	////// 1er mars, tous les rtt de l'année N sont données à ceux qui les accumulent par année
 	if($mars=="0103"){
 		//on remet à 0 les compteurs
-		$sqlTransfert='UPDATE llx_rh_compteur SET rttAcquisAnnuelCumule=5, rttAcquisAnnuelNonCumule=7  WHERE typeAcquisition="Annuel"';
+		$sqlTransfert='UPDATE llx_rh_compteur SET rttAcquisAnnuelCumule=5, rttAcquisAnnuelNonCumule=7, rttPris=0  WHERE typeAcquisition="Annuel"';
 		$ATMdb->Execute($sqlTransfert);
 	}
 	

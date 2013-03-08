@@ -12,8 +12,9 @@ class ActionsValideur
     { 
         global $db,$html, $user; 
 		
-        if (in_array('usercard',explode(':',$parameters['context']))) 
-        { 
+		$idUsercourant=$_GET["id"];
+		if (in_array('usercard',explode(':',$parameters['context']))) 
+		{ 
           // do something only for the context 'somecontext'
           
           dol_include_once('/core/class/html.form.class.php');
@@ -22,47 +23,73 @@ class ActionsValideur
 		  
           if($action=='update') {
 	         $fk_user_delegation = GETPOST('fk_user_delegation','int');
-          	 $sql = "UPDATE llx_user SET fk_user_delegation=$fk_user_delegation WHERE rowid=".$object->id;	
+          	 $sql = "UPDATE llx_user SET fk_user_delegation=$fk_user_delegation WHERE rowid=".$idUsercourant;	
 			 $result = $db->query($sql);
-		  }
-		  else {
-				$sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$object->id;	
+		 }
+		 else { //on récupère le numéro du délégateur
+				 $sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$idUsercourant;	
+				 $result = $db->query($sql);
 				 if ($result)
 				 {
-						$obj = $this->db->fetch_object($result);	
-						$fk_user_delegation->$obj->fk_user_delegation;	
-	    	      }
-          
-			
-			}		 
-          
+                    $obj = $db->fetch_object($sql);
+                    if ($obj)
+                    {
+							$fk_user_delegation=$obj->fk_user_delegation;
+
+					}
+					
+			     }	
+		 }		    
            ?><tr>
 			      <td>
-			      	Déléguation Note de Frais      	
+			      	Délégation Note de Frais      	
 			      </td>	
 			      <td>
 			          	<?
-					  	if($action=='edit') {
+					  	if($action=='edit') {				//on affiche la liste déroulante des utilisateurs
 					      	echo $form->select_dolusers($fk_user_delegation, "fk_user_delegation", 1);
-					  	}	
-						else if($action=='update'){
-							echo "salut";
+					  	}
+			 	
+						else if($action=='update'||$action==''){		//on affiche le délégateur courant
+							 if($fk_user_delegation==0){
+						         print "Aucun délégateur choisi";
+							 }else 
+						 	{
+							 $sql = "SELECT name,firstname FROM llx_user WHERE rowid=".$fk_user_delegation;	
+							 $result = $db->query($sql);
+							 if ($result)
+							 {
+									$num = $db->num_rows($result);
+						                $i = 0;
+						                if ($num)
+						                {
+						                        while ($i < $num)
+						                        {
+						                                $obj = $db->fetch_object($sql);
+						                                if ($obj)
+						                                {
+						                                		echo $obj->firstname." ".$obj->name;
+															
+						                                }
+						                                $i++;
+						                        }
+						                }	
+						     }
+							}
 						}
 			          	?>	
 			      </td>
 		      </tr>
 		      <? 
         }
-	else if (in_array('ndfpcard',explode(':',$parameters['context']))) 
+		else if (in_array('ndfpcard',explode(':',$parameters['context']))) 
         {
-        
-			
 			$tabDelegation=array();
 			$k=0;
-			$tabDelegation[$k]=$user->id;
+			$tabDelegation[$k]=$idUsercourant;
 			$k++;
 			 //on récupère les delegateurs du user et on les affiche
-			 $sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$user->id;	
+			 $sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$idUsercourant;	
 			 $result = $db->query($sql);
 			 if ($result)
 			 {
@@ -84,28 +111,25 @@ class ActionsValideur
 				
 					
 		     }
-		
-		
 		 echo $html->select_users($user->id, "fk_user",0,'','',$tabDelegation );
-		
-			
-			return 1;
+		return 1;
 		} 
- 
-        return 0;
 	}
+
+
+
 
 	function doActions($parameters, &$object, &$action, $hookmanager) 
     {
     	global $db, $user, $html;  
-
+		$idUsercourant=$_GET["id"];
 		 dol_include_once('/core/class/html.form.class.php');
 		$tabDelegation=array();
 		$k=0;
 		$tabDelegation[$k]=$user->id;
 		$k++;
 		 //on récupère les delegateurs du user et on les affiche
-		 $sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$user->id;	
+		 $sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$idUsercourant;	
 		 $result = $db->query($sql);
 		 if ($result)
 		 {
@@ -127,12 +151,8 @@ class ActionsValideur
 			
 				
 	     }
-		
-		
 		 echo $html->select_users($user->id, "fk_user",0,'','',$tabDelegation );
-		  
-		
-		return 1;
+		 return 1;
 
 	}
 
