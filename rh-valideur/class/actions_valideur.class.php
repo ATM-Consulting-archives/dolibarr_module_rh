@@ -10,7 +10,7 @@ class ActionsValideur
       
     function formObjectOptions($parameters, &$object, &$action, $hookmanager) 
     { 
-        global $db; 
+        global $db,$html, $user; 
 		
         if (in_array('usercard',explode(':',$parameters['context']))) 
         { 
@@ -25,39 +25,69 @@ class ActionsValideur
           	 $sql = "UPDATE llx_user SET fk_user_delegation=$fk_user_delegation WHERE rowid=".$object->id;	
 			 $result = $db->query($sql);
 		  }
-		else {
-			$sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$object->id;	
-			 if ($result)
-			 {
-					$obj = $this->db->fetch_object($result);	
-					$fk_user_delegation->$obj->fk_user_delegation;	
-    	      }
+		  else {
+				$sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$object->id;	
+				 if ($result)
+				 {
+						$obj = $this->db->fetch_object($result);	
+						$fk_user_delegation->$obj->fk_user_delegation;	
+	    	      }
           
 			
 			}		 
           
            ?><tr>
-		      <td>
-		      	Déléguation Note de Frais      	
-		      </td>	
-		      	<td><?=$action.$fk_user_delegation ?>
-		          	<?
-			  	if($action=='edit') {
-			      	echo $form->select_dolusers($fk_user_delegation, "fk_user_delegation", 1);
-			  	}	
-		          	?>
-		      		
-		      	</td>
+			      <td>
+			      	Déléguation Note de Frais      	
+			      </td>	
+			      <td>
+			          	<?
+					  	if($action=='edit') {
+					      	echo $form->select_dolusers($fk_user_delegation, "fk_user_delegation", 1);
+					  	}	
+						else if($action=='update'){
+							echo "salut";
+						}
+			          	?>	
+			      </td>
 		      </tr>
-		      <?
-		     
+		      <? 
         }
 	else if (in_array('ndfpcard',explode(':',$parameters['context']))) 
         {
         
-			?>
-			liste user + déléguation
-			<?
+			
+			$tabDelegation=array();
+			$k=0;
+			$tabDelegation[$k]=$user->id;
+			$k++;
+			 //on récupère les delegateurs du user et on les affiche
+			 $sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$user->id;	
+			 $result = $db->query($sql);
+			 if ($result)
+			 {
+					$num = $db->num_rows($result);
+		                $i = 0;
+		                if ($num)
+		                {
+		                        while ($i < $num)
+		                        {
+		                                $obj = $db->fetch_object($sql);
+		                                if ($obj)
+		                                {
+											$tabDelegation[$k]=$obj->fk_user_delegation;
+											$k++;
+		                                }
+		                                $i++;
+		                        }
+		                }	
+				
+					
+		     }
+		
+		
+		 echo $html->select_users($user->id, "fk_user",0,'','',$tabDelegation );
+		
 			
 			return 1;
 		} 
@@ -66,38 +96,44 @@ class ActionsValideur
 	}
 
 	function doActions($parameters, &$object, &$action, $hookmanager) 
-    { 
-        if (in_array('usercard',explode(':',$parameters['context']))) 
-        { 
-          // do something only for the context 'somecontext'
-          
-          dol_include_once('/core/class/html.form.class.php');
-          
-		  $form=new Form($db);
-		  
-			$sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$object->id;	
-			 if ($result)
-			 {
-					$obj = $this->db->fetch_object($result);	
-					$fk_user_delegation->$obj->fk_user_delegation;	
-    	      }
-          
-			
-		}		 
-          
-   
-	  	if($action=='create') {
-	      	echo $form->select_dolusers($fk_user_delegation, "fk_user_delegation", 1);
-	  	}	
+    {
+    	global $db, $user, $html;  
 
-		     
-        
-		
+		 dol_include_once('/core/class/html.form.class.php');
+		$tabDelegation=array();
+		$k=0;
+		$tabDelegation[$k]=$user->id;
+		$k++;
+		 //on récupère les delegateurs du user et on les affiche
+		 $sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$user->id;	
+		 $result = $db->query($sql);
+		 if ($result)
+		 {
+				$num = $db->num_rows($result);
+	                $i = 0;
+	                if ($num)
+	                {
+	                        while ($i < $num)
+	                        {
+	                                $obj = $db->fetch_object($sql);
+	                                if ($obj)
+	                                {
+										$tabDelegation[$k]=$obj->fk_user_delegation;
+										$k++;
+	                                }
+	                                $i++;
+	                        }
+	                }	
 			
-			return 1;
+				
+	     }
+		
+		
+		 echo $html->select_users($user->id, "fk_user",0,'','',$tabDelegation );
+		  
+		
+		return 1;
 
 	}
-
-
 
 }
