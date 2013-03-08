@@ -75,7 +75,7 @@ function _liste(&$ATMdb, &$contrat) {
 	global $langs,$conf, $db;
 	llxHeader('','Liste des contrats');
 	getStandartJS();
-	
+	echo date('l jS \of F Y h:i:s A',1362659583);
 	$r = new TSSRenderControler($contrat);
 	$sql= "SELECT c.rowid as 'ID',  DATE(c.date_debut) as 'Date Début',c.libelle as 'Libellé',
 			r.libelle as 'Ressource',c.bail as 'Bail', g.nom as 'Agence',s.nom as 'Fournisseur'

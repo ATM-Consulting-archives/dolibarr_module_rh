@@ -55,26 +55,26 @@ class TRH_Ressource extends TObjetStd {
 	
 	/**
 	 * charge des infos sur les évenements associés à cette ressource dans le tableau TEvenements[]
+	 * Seulement les evenements du type spécifié.
 	 */
-	function load_evenement(&$ATMdb){
-		$sql = "SELECT e.rowid as 'Rowid', u.name as 'User', e.date_debut as 'Debut' , e.date_fin as 'Fin', 
-		e.motif as 'Motif'
-		FROM ".MAIN_DB_PREFIX."rh_evenement as e,  ".MAIN_DB_PREFIX."user as u
-		WHERE e.fk_rh_ressource=".$this->getId()."
-		AND e.fk_user = u.rowid
-		ORDER BY date_fin";
-		$k = 0;
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()){
-			$this->TEvenement[$k] = array('id'=>$ATMdb->Get_field('Rowid')
-											,'user'=>$ATMdb->Get_field('User')
-											,'date_debut'=>$ATMdb->Get_field('Debut')
-											,'date_fin'=>$ATMdb->Get_field('Fin')
-											,'motif'=>$ATMdb->Get_field('Motif')
-											);
-			$k++;
-		
+	function load_evenement(&$ATMdb, $type=array('emprunt')){
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$this->getId();
+		$sql.=" AND ( 0 ";
+		foreach ($type as $value) {
+			 $sql.= "OR type LIKE '".$value."' ";
 		}
+		$sql .= ") ORDER BY date_fin";
+		$ATMdb->Execute($sql);
+		$Tab=array();
+		while($ATMdb->Get_line()){
+			$Tab[]=$ATMdb->Get_field('rowid');
+		}
+		$this->TEvenement = array();
+		foreach($Tab as $k=>$id) {
+			$this->TEvenement[$k] = new TRH_Evenement;
+			$this->TEvenement[$k]->load($ATMdb, $id);
+		}
+		
 	}
 	
 	

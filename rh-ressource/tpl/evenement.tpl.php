@@ -13,20 +13,46 @@
 </h2>
 
 <div>
-	<table>			
+					
+	<table class="border" style="width:100%">			
 	<tr>
 		<td>Date</td>
 		<td>Type</td>
+		<td>Motif</td>
+		<td>Utilisateur</td>
 		<td>Commentaire</td>
 		<td>Montant HT</td>
+		<td>TVA</td>
+		[onshow;block=begin;when [view.mode]=='edit']
+			<td>Action</td>
+		[onshow;block=end]
 		
 	</tr>
 	<tr>
-		<td>[evenement.date;block=tr;strconv=no;protect=no]</td>
-		<td>[evenement.type;block=tr;strconv=no;protect=no]</td>
-		<td>[evenement.motif;block=tr;strconv=no;protect=no]</td>
-		<td>[evenement.montantHT;block=tr;strconv=no;protect=no]</td>
+		<td>[historique.date;block=tr;strconv=no;protect=no]</td>
+		<td>[historique.type;strconv=no;protect=no]</td>
+		<td>[historique.motif;strconv=no;protect=no]</td>
+		<td>[historique.user;strconv=no;protect=no]</td>
+		<td>[historique.commentaire;strconv=no;protect=no]</td>
+		<td>[historique.montantHT;strconv=no;protect=no]</td>
+		<td>[historique.TVA;strconv=no;protect=no]</td>
+		[onshow;block=begin;when [view.mode]=='edit']
+			<td><img src="./img/delete.png"  style="cursor:pointer;" onclick="document.location.href='?id=[ressource.id]&idEvent=[historique.id]&action=deleteEvent'"></td>
+		[onshow;block=end]
 	</tr>
+	
+	[onshow;block=begin;when [view.mode]=='edit']
+	<tr>
+		<td>[NEvent.date;block=tr;strconv=no;protect=no]</td>
+		<td>[NEvent.type;strconv=no;protect=no]</td>
+		<td>[NEvent.motif;strconv=no;protect=no]</td>[NEvent.fk_rh_ressource;strconv=no;protect=no]
+		<td>[NEvent.user;strconv=no;protect=no]</td>
+		<td>[NEvent.commentaire;strconv=no;protect=no]</td>
+		<td>[NEvent.montantHT;strconv=no;protect=no]</td>
+		<td>[NEvent.TVA;strconv=no;protect=no]</td>
+		<td><input type="submit" value="Ajouter" name="newEvent" class="button"></td>
+	</tr>
+	[onshow;block=end]
 	
 
  
@@ -41,11 +67,10 @@
 <div class="tabsAction" >
 		[onshow;block=begin;when [view.mode]=='edit']
 			<input type="submit" value="Enregistrer" name="save" class="button">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[emprunt.id]'">
+			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
 		[onshow;block=end]
 		[onshow;block=begin;when [view.mode]!='edit']
-			<a class="butAction"  href="?id=[emprunt.id]&action=edit">Modifier</a>
-			&nbsp; &nbsp;<a class="butActionDelete"  href="?id=[emprunt.id]&action=delete">Supprimer</a>
+			<a class="butAction"  href="?id=[ressource.id]&action=edit">Modifier</a>
 		[onshow;block=end]
 </div>
 

@@ -12,26 +12,30 @@
 	Historique des attributions
 </h2>
 
-<table class="border">
+<table class="border" style="width:100%">
 	<tr>
-		<td>Utilisateur</td>
-		<td>Date début</td>
-		<td>Date fin</td>
-		<td>Commentaire</td>
-		<td>Action</td>
+		<td style="width:10%">Utilisateur</td>
+		<td style="width:10%">Date début</td>
+		<td style="width:10%">Date fin</td>
+		<td style="width:60%">Commentaire</td>
+		[onshow;block=begin;when [view.mode]=='edit']
+			<td style="width:10%">Action</td>
+		[onshow;block=end] 
 	</tr>	
 	<tr>
-		<td>[historique.user;block=tr;strconv=no;protect=no]</td>
-		<td>[historique.date_debut;strconv=no;protect=no]</td>
-		<td>[historique.date_fin;strconv=no;protect=no]</td>
-		<td>[historique.commentaire;strconv=no;protect=no]</td>
-		<td></td>
+		<td style="width:10%">[historique.user;block=tr;strconv=no;protect=no]</td>
+		<td style="width:10%">[historique.date_debut;strconv=no;protect=no]</td>
+		<td style="width:10%">[historique.date_fin;strconv=no;protect=no]</td>
+		<td style="width:60%">[historique.commentaire;strconv=no;protect=no]</td>
+		[onshow;block=begin;when [view.mode]=='edit']
+			<td style="width:10%"><img src="./img/delete.png"  style="cursor:pointer;" onclick="document.location.href='?id=[ressource.id]&idAttribution=[historique.id]&action=deleteAttribution'"></td>
+		[onshow;block=end] 
 	</tr>
 	
 	[onshow;block=begin;when [view.mode]=='edit']
 	<tr>
 		<td>[NEmprunt.fk_user;strconv=no;protect=no]</td>
-		<td>[NEmprunt.date_debut;strconv=no;protect=no]</td>
+		<td>[NEmprunt.date_debut;strconv=no;protect=no]</td>[NEmprunt.type;strconv=no;protect=no]
 		<td>[NEmprunt.date_fin;strconv=no;protect=no]</td>[NEmprunt.fk_rh_ressource;strconv=no;protect=no]
 		<td>[NEmprunt.commentaire;strconv=no;protect=no]</td>
 		<td><input type="submit" value="Ajouter" name="newEmprunt" class="button"></td>
@@ -52,7 +56,6 @@
 		[onshow;block=end]
 		[onshow;block=begin;when [view.mode]!='edit']
 			<a class="butAction"  href="?id=[ressource.id]&action=edit">Modifier</a>
-			&nbsp; &nbsp;<a class="butActionDelete"  href="?id=[ressource.id]&action=delete">Supprimer</a>
 		[onshow;block=end]
 </div>
 

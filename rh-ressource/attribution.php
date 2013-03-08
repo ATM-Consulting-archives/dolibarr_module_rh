@@ -34,15 +34,15 @@
 				//$ATMdb->db->debug=true;
 				
 				$mesg = '<div class="ok">Modifications effectuées</div>';
-				$mode = 'view';
+				//$mode = 'view';
 				
 				if(isset($_REQUEST['newEmprunt'])){				
 					$emprunt->set_values($_REQUEST);
 					$emprunt->save($ATMdb);
-					$mode = 'edit';	
+					
 				}
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $emprunt,$ressource,$mode);
+				_fiche($ATMdb, $emprunt,$ressource,'view');
 				break;
 			
 			case 'view':
@@ -50,20 +50,18 @@
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $emprunt, $ressource, 'view');
 				break;
-			
-			case 'delete':
+				
+			case 'deleteAttribution':
 				//$ATMdb->db->debug=true;
-				/*$emprunt->load($ATMdb, $_REQUEST['id']);
+				$emprunt->load($ATMdb, $_REQUEST['idAttribution']);
 				$emprunt->delete($ATMdb);
-				*/
-				?>
-				<script language="javascript">
-					document.location.href="?delete_ok=1";					
-				</script>
-				<?
+				$ressource->load($ATMdb, $_REQUEST['id']);
 				
-				
+				$mesg = '<div class="ok">L\'attribution a bien été supprimée.</div>';
+				$mode = 'edit';
+				_fiche($ATMdb, $emprunt, $ressource,$mode);
 				break;
+			
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {
@@ -142,18 +140,20 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 	echo $form->hidden('id', $ressource->getId());
 	echo $form->hidden('action', 'save');
 	
-	$ressource->load_evenement($ATMdb);
+	$ressource->load_evenement($ATMdb, array('emprunt'));
 	$TEmprunts = array();
+	
 	foreach($ressource->TEvenement as $k=>$even){
 		$TEmprunts[] = array(
-					'id'=>$even['id']
-					,'user'=>$even['user']
-					,'date_debut'=>date("d/m/Y",(new DateTime($even['date_debut'])).getTimestamp())
-					,'date_fin'=>date("d/m/Y",(new DateTime($even['date_fin'])).getTimestamp())
-					,'commentaire'=>$even['motif']
+					'id'=>$even->getId()
+					,'user'=>$even->TUser[$even->fk_user]
+					,'date_debut'=>date("d/m/Y",$even->date_debut)
+					,'date_fin'=>date("d/m/Y",$even->date_fin)
+					,'commentaire'=>$even->motif
 		);
-		
+	
 	}
+
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/attribution.tpl.php'
 		,array(
@@ -165,6 +165,7 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 			)
 			,'NEmprunt'=>array(
 				'id'=>$emprunt->getId()
+				,'type'=>$form->hidden('type', 'emprunt')
 				,'fk_user'=>$form->combo('','fk_user',$emprunt->TUser,$emprunt->fk_user)
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
 				,'commentaire'=>$form->texte('','motif',$emprunt->motif, 30,100,'','','-')
