@@ -16,7 +16,7 @@
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'new':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$evenement->set_values($_REQUEST);
 				//$emprunt->load($ATMdb, 20);
 				$mesg = '<div class="ok">Nouvel événement créé</div>';
@@ -24,46 +24,44 @@
 				
 				break;	
 			case 'edit'	:
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $evenement,$ressource,'edit');
 				break;
 				
 			case 'save':
-				$ATMdb->db->debug=true;
-				$evenement->load($ATMdb, $_REQUEST['id']);
-				$evenement->set_values($_REQUEST);
-				$evenement->save($ATMdb);
-				$evenement->load($ATMdb, $_REQUEST['id']);
+				//$ATMdb->db->debug=true;
+				$ressource->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">Modifications effectuées</div>';
 				$mode = 'view';
 				
-				if(isset($_REQUEST['validerType']) ) {
-					$mode = 'edit';	
+				if(isset($_REQUEST['newEvent']) ) {
+					$evenement->set_values($_REQUEST);
+					$evenement->save($ATMdb);
 				}
-				
+				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $evenement,$ressource,$mode);
 				break;
 			
 			case 'view':
-				$ATMdb->db->debug=true;
-				$evenement->load($ATMdb, $_REQUEST['id']);
+				//$ATMdb->db->debug=true;
+				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $evenement,$ressource,'view');
 				break;
 			
-			case 'delete':
+			case 'deleteEvent':
 				//$ATMdb->db->debug=true;
-				$evenement->load($ATMdb, $_REQUEST['id']);
+				$evenement->load($ATMdb, $_REQUEST['idEvent']);
 				$evenement->delete($ATMdb);
+				$ressource->load($ATMdb, $_REQUEST['id']);
 				
-				?>
-				<script language="javascript">
-					document.location.href="?delete_ok=1";					
-				</script>
-				<?
-				
-				
+				$mesg = '<div class="ok">L\'attribution a bien été supprimée.</div>';
+				$mode = 'edit';
+				_fiche($ATMdb, $evenement, $ressource,$mode);
 				break;
+				
+				
+			
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {
@@ -74,7 +72,7 @@
 		/*
 		 * Liste
 		 */
-		 $ATMdb->db->debug=true;
+		 //$ATMdb->db->debug=true;
 		 _liste($ATMdb, $evenement);
 	}
 	
@@ -135,31 +133,51 @@ function _liste(&$ATMdb, &$evenement) {
 	
 function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	global $db,$user;
-	llxHeader('', 'emprunt');
+	llxHeader('', 'Evénement');
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
-	echo $form->hidden('id', $evenement->getId());
+	echo $form->hidden('id', $ressource->getId());
 	echo $form->hidden('action', 'save');
 	
+	$ressource->load_evenement($ATMdb, array('accident', 'reparation'));
+	$TEvents = array();
+	foreach($ressource->TEvenement as $k=>$even){
+		$TEvents[] = array(
+					'id'=>$even->getId()
+					,'user'=>$even->TUser[$even->fk_user]
+					,'date'=>date("d/m/Y",$even->date_debut)
+					,'commentaire'=>$even->description
+					,'motif'=>$even->motif
+					,'type'=> $even->TType[$even->type]
+					,'montantHT'=>$even->montant_HT
+					,'TVA'=>$even->TTVA[$even->TVA]
+		);
+	}
 
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/evenement.tpl.php'
-		,array()
 		,array(
-			'evenement'=>array(
+			'historique'=>$TEvents
+		)
+		,array(
+			'ressource'=>array(
+				'id'=>$ressource->getId()
+			)
+			,'NEvent'=>array(
 				'id'=>$evenement->getId()
+				,'user'=>$form->combo('','fk_user',$evenement->TUser,$evenement->fk_user)
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
+				,'commentaire'=>$form->texte('','description',$evenement->description, 30,100,'','','-')
+				,'motif'=>$form->texte('','motif',$evenement->motif, 30,100,'','','-')
 				,'date'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)
-				,'type'=>$form->texte('', 'type', $evenement->type, 20,100)
-				,'motif'=>$form->texte('', 'type', $evenement->motif, 20,100)
+				,'type'=>$form->combo('', 'type', $evenement->TType, $evenement->type)
 				,'montantHT'=>$form->texte('', 'montant_HT', $evenement->montant_HT, 10,10)
 				,'TVA'=>$form->combo('','TVA',$evenement->TTVA,$evenement->TVA)
-				
 			)
 			,'view'=>array(
 				'mode'=>$mode
-			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
+			/*,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource')
 			)
 			
@@ -174,6 +192,21 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
+		/*,array(
+			'evenement'=>array(
+				'id'=>$evenement->getId()
+				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
+				,'date'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)
+				,'type'=>$form->texte('', 'type', $evenement->type, 20,100)
+				,'motif'=>$form->texte('', 'motif', $evenement->motif, 20,100)
+				,'montantHT'=>$form->texte('', 'montant_HT', $evenement->montant_HT, 10,10)
+				,'TVA'=>$form->combo('','TVA',$evenement->TTVA,$evenement->TVA)
+			)
+			,'view'=>array(
+				'mode'=>$mode
+				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource')
+			)
+			*/
 }
 
 	
