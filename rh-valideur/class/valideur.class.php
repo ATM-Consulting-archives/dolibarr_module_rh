@@ -15,12 +15,10 @@ class TRH_valideur_groupe extends TObjetStd {
 		parent::start();
 		
 		
-		$TType =array();
-		
-		// en fonction des droits
-		$TType['NDFP']='Note de frais';
-		
-		$TType['Ressource']='Ressources';
+		$TType =array(
+			'NDFP'=>'Note de frais'
+			,'Ressource'=>'Ressources'
+		);
 		
 	}
 }
