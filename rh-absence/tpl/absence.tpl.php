@@ -77,6 +77,20 @@
 			<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
 		[onshow;block=end]
 		</div>
+		
+		
+		
+		<script>
+			$(document).ready( function(){
+				//on empêche que la date de début dépasse celle de fin
+				 $('body').click( 	function(){
+					if($("#date_debut").val()>$("#date_fin").val()){
+						$("#date_fin").val($("#date_debut").val());
+					}
+	    		});	
+				
+			});
+		</script>
 
 
 

@@ -64,7 +64,7 @@ function _liste(&$ATMdb, &$compteur) {
 	$r = new TSSRenderControler($compteur);
 	$sql="SELECT anneeN as 'annee', r.rowid as 'ID', r.date_cre as 'DateCre',r.acquisExerciceN as 'Congés acquis N', 
 	r.acquisAncienneteN as 'Congés Ancienneté', r.acquisExerciceNM1 as 'Conges Acquis N-1', r.congesPrisNM1 as 'Conges Pris N-1',
-			  r.rttAcquis as 'RttAcquis', r.rttPris as 'RttPris', r.fk_user as 'Utilisateur Courant'
+			   r.rttPris as 'RttPris', r.fk_user as 'Utilisateur Courant'
 		FROM llx_rh_compteur as r
 		WHERE r.fk_user=".$user->id;//." AND r.entity=".$conf->entity;;
 		
