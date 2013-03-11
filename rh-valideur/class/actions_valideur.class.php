@@ -88,6 +88,7 @@ class ActionsValideur
 	        }
 			else if (in_array('ndfpcard',explode(':',$parameters['context']))) 
 	        {
+	        	//return 0;
 				$tabDelegation=array();
 				$k=0;
 				$tabDelegation[$k]=$user->id;
@@ -116,11 +117,10 @@ class ActionsValideur
 						
 			     }
 				 
-				  
-				  
-			 echo $html->select_users($user->id, "fk_user",0,'','',$tabDelegation );
-			return 1;
+			echo $html->form_users($_SERVER['PHP_SELF'].'?id='.$object->id,$ndfp->fk_user,'fk_user','',$tabDelegation );	
+			
 			} 
+			return 1;
 		}
 		return 0; 
 	}
