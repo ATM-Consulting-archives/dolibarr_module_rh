@@ -41,7 +41,7 @@ class modValideur extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-        global $langs,$conf;
+        global $user,$langs,$conf;
 
         $this->db = $db;
 
@@ -101,7 +101,7 @@ class modValideur extends DolibarrModules
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
-		$this->langfiles = array("ressource@ressource");
+		$this->langfiles = array("valideur@valideur");
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -130,9 +130,8 @@ class modValideur extends DolibarrModules
 		// 'group'            to add a tab in group view
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
-        $this->tabs = array();/*'thirdparty:+creerTypeRessource:CréerTypeRessource:ressource@ressource:/ressource/index.php',  // To add a new tab identified by code tabname1
-                             'thirdparty:+nouvelleRessource:NouvelleRessource:ressource@ressource:/ressource/index.php',
-                                      );*/
+        $this->tabs = array('user:+valideur:Validation:valideur@valideur:/valideur/afficher.php?id='.$user->id // To add a new tab identified by code tabname1
+                                    );
 
         // Dictionnaries
         //if (! isset($conf->ressource->enabled)) $conf->ressource->enabled='1';
@@ -424,7 +423,7 @@ class modValideur extends DolibarrModules
 
 		$result=$this->load_tables();
 
-		$url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/ressource/script/create-maj-base.php";
+		$url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/valideur/script/create-maj-base.php";
 		file_get_contents($url);
 		
 		return $this->_init($sql, $options);
@@ -456,7 +455,7 @@ class modValideur extends DolibarrModules
 	 */
 	function load_tables()
 	{
-		return $this->_load_tables('/ressource/sql/');
+		return $this->_load_tables('/valideur/sql/');
 	}
 }
 

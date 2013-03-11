@@ -1,6 +1,8 @@
 <?php
 
-dol_include_once('/valideur/lib/valideur.lib.php');
+//define('INC_FROM_CRON_SCRIPT', true);
+require('../valideur/config.php');
+require('../valideur/lib/valideur.lib.php');
 
 /**
  *	\file       htdocs/core/triggers/interface_modValideur_ValideurWorkflow.class.php
@@ -75,7 +77,7 @@ class InterfaceValideurWorkflow
     {
         $langs->load("other");
         $langs->load('ndfp@ndfp');
-		/*
+		
 		// Statut 1 : validée
 		if($object->statut==1){
 			// Actions
@@ -90,7 +92,7 @@ class InterfaceValideurWorkflow
 				return send_mail_validate($this->db, $object, $user, $langs,0);
 				
 			}
-		}*/
+		}
 
 		return 0;
     }
