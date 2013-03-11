@@ -1,8 +1,5 @@
 <?php
 
-//define('INC_FROM_CRON_SCRIPT', true);
-require('../valideur/config.php');
-require('../valideur/lib/valideur.lib.php');
 
 /**
  *	\file       htdocs/core/triggers/interface_modValideur_ValideurWorkflow.class.php
@@ -75,6 +72,8 @@ class InterfaceValideurWorkflow
      */
     function run_trigger($action, $object, $user, $langs, $conf)
     {
+        global $db;
+			
         $langs->load("other");
         $langs->load('ndfp@ndfp');
 		
@@ -82,14 +81,23 @@ class InterfaceValideurWorkflow
 		if($object->statut==1){
 			// Actions
 			if ($action == 'NDFP_VALIDATE'){
+				//print_r($object); exit;	
+				
+				define('INC_FROM_DOLIBARR', true);
+				dol_include_once('/valideur/config.php');
+				dol_include_once('/valideur/lib/valideur.lib.php');
+					
+						
+					
+				
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
 				
-				return send_mail_validate($this->db, $object, $user, $langs,1);
+				return send_mail_validate($db, $object, $user, $langs,1);
 				
 			}elseif ($action == 'NDFP_CANCELED'){
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
 				
-				return send_mail_validate($this->db, $object, $user, $langs,0);
+				return send_mail_validate($db, $object, $user, $langs,0);
 				
 			}
 		}
