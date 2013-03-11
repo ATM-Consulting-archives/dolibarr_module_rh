@@ -90,10 +90,10 @@ class ActionsValideur
 	        {
 				$tabDelegation=array();
 				$k=0;
-				$tabDelegation[$k]=$idUsercourant;
+				$tabDelegation[$k]=$user->id;
 				$k++;
 				 //on récupère les delegateurs du user et on les affiche
-				 $sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$idUsercourant;	
+				 $sql = "SELECT rowid FROM llx_user WHERE fk_user_delegation=".$user->id;
 				 $result = $db->query($sql);
 				 if ($result)
 				 {
@@ -106,7 +106,7 @@ class ActionsValideur
 			                                $obj = $db->fetch_object($sql);
 			                                if ($obj)
 			                                {
-												$tabDelegation[$k]=$obj->fk_user_delegation;
+												$tabDelegation[$k]=$obj->rowid;
 												$k++;
 			                                }
 			                                $i++;
