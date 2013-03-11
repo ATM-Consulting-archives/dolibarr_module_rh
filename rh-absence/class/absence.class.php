@@ -16,7 +16,9 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('acquisAncienneteNM1','type=float;');				
 		parent::add_champs('acquisHorsPeriodeNM1','type=float;');				
 		parent::add_champs('reportCongesNM1','type=float;');				
-		parent::add_champs('congesPrisNM1','type=float;');				
+		parent::add_champs('congesPrisNM1','type=float;');			
+		parent::add_champs('congesTotalNM1','type=float;');	
+		parent::add_champs('congesResteNM1','type=float;');
 		parent::add_champs('anneeNM1','type=int;');					
 		parent::add_champs('dureeNM1','type=entier;');				
 		
@@ -56,7 +58,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('type','type=varchar;');				//type de congé
 		parent::add_champs('date_debut,date_fin','type=date;');	//dates debut fin de congés
 		parent::add_champs('ddMoment, dfMoment','type=chaine;');		//moment (matin ou après midi)
-		//parent::add_champs('duree','type=entier;');				//duree en demi-journees
+		parent::add_champs('duree','type=float;');				
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
 		parent::add_champs('etat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
@@ -76,67 +78,53 @@ class TRH_Absence extends TObjetStd {
 		$this->TddMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date début
 		$this->TdfMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date fin
 		
-		function save(&$db,$id) {
-			global $conf;
+		
+		}
+		function save(&$db) {
+			$ATMdb=new Tdb;
+			global $conf, $user;
 			$this->entity = $conf->entity;
 			
-			$sqlAbsence="SELECT * FROM `llx_rh_absence` where fk_user=".$user->id. " AND rowid=".$id;
-			$ATMdb->Execute($sqlAbsence);
-			$Tab=array();
-			while($ATMdb->Get_line()) {
-						$absenceCourante=new User($db);
-						$absenceCourante->id=$ATMdb->Get_field('rowid');
-						$absenceCourante->type=$ATMdb->Get_field('type');
-						$absenceCourante->dateDebut=$ATMdb->Get_field('date_debut');
-						$absenceCourante->dateFin=$ATMdb->Get_field('date_fin');
-						$absenceCourante->commentaire=$ATMdb->Get_field('commentaire');
-						$absenceCourante->ddMoment=$ATMdb->Get_field('ddMoment');
-						$absenceCourante->dfMoment=$ATMdb->Get_field('dfMoment');
-						$absenceCourante->fk_user=$ATMdb->Get_field('fk_user');
-						$Tab[]=$absenceCourante;	
-			}
-			
-			
 			///////calcul durée du congés 
-			$dateF=new DateTime($absenceCourante->dateFin);
-			$dateD=new DateTime($absenceCourante->dateDebut);
-			$diff=date_diff($dateF,$dateD);
-			$dureeAbsenceCourante=$diff->format('%a');
+			$diff=$this->date_fin-$this->date_debut;
+			$dureeAbsenceCourante=$diff/3600/24;
+			
+			//$this->congesTotalNM1=$this->acquisEx+$this->acquisAnc+$this->acquisHorsPer+$this->reportConges;
+			//$this->congesResteNM1=$congePrecTotal-$this->congesPris;
+			
 			//prise en compte du matin et après midi
 			if(isset($_REQUEST['id'])){
-				if($absenceCourante->ddMoment=="matin"&&$absenceCourante->dfMoment=="apresmidi"){
+				if($this->ddMoment=="matin"&&$this->dfMoment=="apresmidi"){
 					$dureeAbsenceCourante+=1;
-				}else if($absenceCourante->ddMoment==$absenceCourante->dfMoment&&$dureeAbsenceCourante==0){
+				}else if($this->ddMoment==$this->dfMoment&&$dureeAbsenceCourante==0){
 					$dureeAbsenceCourante+=0.5;
 				}
 			}
 			
-			
 			///////décompte des congés
-			if($absenceCourante->type=="rttcumule"){
+			if($this->type=="rttcumule"){
 				$sqlDecompte="UPDATE `llx_rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante."  where fk_user=".$user->id;
 				$ATMdb->Execute($sqlDecompte);
-				$rttCourant->pris=$rttCourant->pris-$dureeAbsenceCourante;
-				$rttCourant->annuelCumule=$rttCourant->annuelCumule-$dureeAbsenceCourante;
+				$this->rttPris=$this->rttPris-$dureeAbsenceCourante;
+				$this->rttAcquisAnnuelCumule=$this->rttAcquisAnnuelCumule-$dureeAbsenceCourante;
 				
-			}else if($absenceCourante->type=="rttnoncumule"){
+			}else if($this->type=="rttnoncumule"){
 				$sqlDecompte="UPDATE `llx_rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule-".$dureeAbsenceCourante." where fk_user=".$user->id;
 				$ATMdb->Execute($sqlDecompte);
-				$rttCourant->pris=$rttCourant->pris-$dureeAbsenceCourante;
-				$rttCourant->annuelNonCumule=$rttCourant->annuelNonCumule-$dureeAbsenceCourante;
+				$this->rttPris=$this->rttPris-$dureeAbsenceCourante;
+				$this->rttAcquisAnnuelNonCumule=$this->rttAcquisAnnuelNonCumule-$dureeAbsenceCourante;
 			}
 			else {	//autre que RTT : décompte les congés
 				$sqlDecompte="UPDATE `llx_rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$user->id;
 				$ATMdb->Execute($sqlDecompte);
-				$congePrecReste=$congePrecReste-$dureeAbsenceCourante;
+				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 			}
 	
+			$this->duree=$dureeAbsenceCourante;
 			
 			parent::save($db);
 		}
-		
-		
-	}
+
 }
 
 
