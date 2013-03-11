@@ -54,9 +54,8 @@
 				$evenement->load($ATMdb, $_REQUEST['idEvent']);
 				$evenement->delete($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				
 				$mesg = '<div class="ok">L\'attribution a bien été supprimée.</div>';
-				$mode = 'edit';
+				$mode = 'view';
 				_fiche($ATMdb, $evenement, $ressource,$mode);
 				break;
 				
@@ -89,7 +88,7 @@ function _liste(&$ATMdb, &$evenement) {
 	$r = new TSSRenderControler($evenement);
 	$sql="SELECT e.rowid as 'ID', r.libelle as 'Ressource', u.name as 'Nom', e.date_cre as 'DateCre', 
 		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin'
-		FROM llx_rh_evenement as e, llx_rh_ressource as r, llx_user as u
+		FROM ".MAIN_DB_PREFIX."rh_evenement as e, ".MAIN_DB_PREFIX."rh_ressource as r, ".MAIN_DB_PREFIX."user as u
 		WHERE e.entity=".$conf->entity."
 		AND u.rowid = e.fk_user
 		AND r.rowid = e.fk_rh_ressource

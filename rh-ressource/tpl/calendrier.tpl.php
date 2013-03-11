@@ -166,11 +166,11 @@
             });
             
             //Add a new event
-            $("#faddbtn").click(function(e) {
+/*            $("#faddbtn").click(function(e) {
                 var url ="../wdCalendar/edit.php";
                 OpenModelWindow(url,{ width: 500, height: 400, caption: "Créer un nouveau calendrier"});
             });
-            //go to today
+*/            //go to today
             $("#showtodaybtn").click(function(e) {
                 var p = $("#gridcontainer").gotoDate().BcalGetOp();
                 if (p && p.datestrshow) {
@@ -207,12 +207,12 @@
             </div>          
             
             <div id="caltoolbar" class="ctoolbar">
-              <div id="faddbtn" class="fbutton">
+              <!--<div id="faddbtn" class="fbutton">
                 <div><span title='Click to Create New Event' class="addcal">
 
                 Nouvel Evénement                
                 </span></div>
-            </div>
+            </div>-->
             <div class="btnseparator"></div>
              <div id="showtodaybtn" class="fbutton">
                 <div><span title='Click to back to today ' class="showtoday">
@@ -220,9 +220,9 @@
             </div>
               <div class="btnseparator"></div>
 
-            <div id="showdaybtn" class="fbutton">
+            <!--<div id="showdaybtn" class="fbutton">
                 <div><span title='Day' class="showdayview">Jour</span></div>
-            </div>
+            </div>-->
               <div  id="showweekbtn" class="fbutton fcurrent">
                 <div><span title='Week' class="showweekview">Semaine</span></div>
             </div>
