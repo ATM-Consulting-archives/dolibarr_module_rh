@@ -1522,7 +1522,7 @@
             if (data != null) {
                 if (option.quickDeleteUrl != "" && data[8] == 1 && option.readonly != true) {
                     var csbuddle = '<div id="bbit-cs-buddle" style="z-index: 180; width: 400px;visibility:hidden;" class="bubble"><table class="bubble-table" cellSpacing="0" cellPadding="0"><tbody><tr><td class="bubble-cell-side"><div id="tl1" class="bubble-corner"><div class="bubble-sprite bubble-tl"></div></div><td class="bubble-cell-main"><div class="bubble-top"></div><td class="bubble-cell-side"><div id="tr1" class="bubble-corner"><div class="bubble-sprite bubble-tr"></div></div>  <tr><td class="bubble-mid" colSpan="3"><div style="overflow: hidden" id="bubbleContent1"><div><div></div><div class="cb-root"><table class="cb-table" cellSpacing="0" cellPadding="0"><tbody><tr><td class="cb-value"><div class="textbox-fill-wrapper"><div class="textbox-fill-mid"><div id="bbit-cs-what" title="'
-                    	+ i18n.xgcalendar.click_to_detail + '" class="textbox-fill-div lk" style="cursor:pointer;"></div></div></div></td></tr><tr><td class=cb-value><div id="bbit-cs-buddle-timeshow"></div></td></tr></tbody></table><div class="bbit-cs-split"><input id="bbit-cs-id" type="hidden" value=""/>[ <span id="bbit-cs-delete" class="lk">'
+                    	+ i18n.xgcalendar.click_to_detail + '" class="textbox-fill-div lk" style="cursor:pointer;"></div></div></div></td></tr><tr><td class=cb-value><div id="bbit-cs-buddle-timeshow"></div></td></tr></tbody></table><div id="bbit-cs-split" class="bbit-cs-split"><input id="bbit-cs-id" type="hidden" value=""/>[ <span id="bbit-cs-delete" class="lk">'
                     	+ i18n.xgcalendar.i_delete + '</span> ]&nbsp; <SPAN id="bbit-cs-editLink" class="lk">'
                     	+ i18n.xgcalendar.update_detail + ' <StrONG>&gt;&gt;</StrONG></SPAN></div></div></div></div><tr><td><div id="bl1" class="bubble-corner"><div class="bubble-sprite bubble-bl"></div></div><td><div class="bubble-bottom"></div><td><div id="br1" class="bubble-corner"><div class="bubble-sprite bubble-br"></div></div></tr></tbody></table><div id="bubbleClose2" class="bubble-closebutton"></div><div id="prong1" class="prong"><div class=bubble-sprite></div></div></div>';
                     var bud = $("#bbit-cs-buddle");
@@ -1557,7 +1557,7 @@
                             }
                         });
                         $("#bbit-cs-what").click(function(e) {
-                            if (!option.ViewCmdhandler) {
+                            /*if (!option.ViewCmdhandler) {
                                 alert("ViewCmdhandler" + i18n.xgcalendar.i_undefined);
                             }
                             else {
@@ -1566,7 +1566,12 @@
                                 }
                             }
                             $("#bbit-cs-buddle").css("visibility", "hidden");
-                            return false;
+                            
+                            return false;*/
+                            //TODO 
+                            //http://localhost/dolibarr-rh/htdocs/user/fiche.php?id=4
+                            window.location = '/dolibarr-rh/htdocs/user/fiche.php?id='+data[6];//.;
+                            //user.php&
                         });
                         lbtn.click(function(e) {
                             if (!option.EditCmdhandler) {
@@ -1607,7 +1612,7 @@
                     $("#bbit-cs-id").val(data[0]);
                     bud.data("cdata", data);
                     bud.css({ "visibility": "visible", left: pos.left, top: pos.top });
-
+					$("#bbit-cs-split").hide();
                     $(document).one("click", function() {
                         $("#bbit-cs-buddle").css("visibility", "hidden");
                     });
@@ -2205,7 +2210,7 @@
         }
         function dragMove(e) {
             if (_dragdata) {
-                if (e.pageX < 0 || e.pageY < 0
+                /*if (e.pageX < 0 || e.pageY < 0
 					|| e.pageX > document.documentElement.clientWidth
 					|| e.pageY >= document.documentElement.clientHeight) {
                     dragEnd(e);
@@ -2450,13 +2455,13 @@
                             d.cdi = ndi;
                         }
                         break;
-                }
+                }*/
             }
             return false;
         }
         function dragEnd(e) {
             if (_dragdata) {
-                var d = _dragdata;
+                /*var d = _dragdata;
                 switch (d.type) {
                     case 1: //day view
                         var wrapid = new Date().getTime();
@@ -2475,7 +2480,7 @@
                         var start = strtodate(d.target.attr("abbr") + " " + d.cgh.sh + ":" + d.cgh.sm);
                         var end = strtodate(d.target.attr("abbr") + " " + d.cgh.eh + ":" + d.cgh.em);
                         _dragevent = function() { $("#" + wrapid).remove(); $("#bbit-cal-buddle").css("visibility", "hidden"); };
-                        quickadd(start, end, false, pos);
+                        //quickadd(start, end, false, pos);
                         break;
                     case 2: //week view
                     case 3: //month view					
@@ -2490,7 +2495,7 @@
                             d.fdi = d.sdi = getdi(d.xa, d.ya, d.sx, d.sy);
                             d.lasso = $("<div style='z-index: 10; display: block' class='drag-lasso-container'/>");
                             $(document.body).append(d.lasso);
-                            addlasso(d.lasso, d.sdi, d.fdi, d.xa, d.ya, d.h);
+                            //addlasso(d.lasso, d.sdi, d.fdi, d.xa, d.ya, d.h);
                         }
                         d.lasso.attr("id", lassoid);
                         var si = Math.min(d.fdi.di, d.sdi.di);
@@ -2499,7 +2504,7 @@
                         var start = DateAdd("d", si, firstday);
                         var end = DateAdd("d", ei, firstday);
                         _dragevent = function() { $("#" + lassoid).remove(); };
-                        quickadd(start, end, true, { left: e.pageX, top: e.pageY });
+                        //quickadd(start, end, true, { left: e.pageX, top: e.pageY });
                         break;
                     case 4: // event moving
                         if (d.cpwrap) {
@@ -2513,7 +2518,7 @@
                                 d.target.show();
                             }
                             else {
-                                dayupdate(d.data, start, end);
+                                //dayupdate(d.data, start, end);
                             }
                         }
                         break;
@@ -2553,7 +2558,7 @@
                 }
                 d = _dragdata = null;
                 $('body').noSelect(false);
-                return false;
+                return false;*/
             }
         }
         function getdi(xa, ya, x, y) {

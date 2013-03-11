@@ -29,7 +29,7 @@ class TRH_Evenement  extends TObjetStd {
 		parent::start();
 
 		
-		$this->TType = array('emprunt'=>'Emprunt', 'accident'=>'Accident', 'reparation'=>'Réparation');
+		$this->TType = array('accident'=>'Accident', 'reparation'=>'Réparation');
 		
 		$ATMdb=new Tdb;
 		
@@ -59,10 +59,10 @@ class TRH_Evenement  extends TObjetStd {
 		
 		//chargement d'une liste de touts les users (pour le combo "Utilisateur")
 		$this->TUser = array();
-		$sqlReq="SELECT rowid, name FROM ".MAIN_DB_PREFIX."user";
+		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TUser[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('name');
+			$this->TUser[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name');
 			}
 		
 	}

@@ -88,11 +88,12 @@ function listCalendarByRange($sd, $ed, $idRessource){
         $row->isAllDayEvent,
         0, //more than one day event
         //$row->InstanceType,
-        0,//Recurring event,
+        $row->fk_user,//Recurring event,
         $row->color,
         1,//editable
-        $row->location, 
-        ''//$attends
+        $row->location,
+        '',//$attends
+        $row->fk_user
       );
     }
 	}catch(Exception $e){
