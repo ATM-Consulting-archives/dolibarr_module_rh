@@ -82,7 +82,6 @@ global $user;
 $orgChoisie=isset($_POST["choixAffichage"]) ? $_POST["choixAffichage"] : 'equipe';
 $idUserCourant=$_GET["id"];
 
-
 //////////////////////////////////////récupération des informations de l'utilisateur courant
 $sqlReqUser="SELECT * FROM `llx_user` where rowid=".$idUserCourant;
 $ATMdb->Execute($sqlReqUser);

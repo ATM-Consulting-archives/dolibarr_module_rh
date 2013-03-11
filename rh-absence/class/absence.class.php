@@ -5,6 +5,7 @@
 class TRH_Compteur extends TObjetStd {
 	function __construct() { /* declaration */
 		
+		//conges N
 		parent::set_table(MAIN_DB_PREFIX.'rh_compteur');
 		parent::add_champs('acquisExerciceN','type=float;');				
 		parent::add_champs('acquisAncienneteN','type=float;');				
@@ -12,6 +13,7 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('anneeN','type=int;');					
 		parent::add_champs('dureeN','type=entier;');
 		
+		//conges N-1
 		parent::add_champs('acquisExerciceNM1','type=float;');				
 		parent::add_champs('acquisAncienneteNM1','type=float;');				
 		parent::add_champs('acquisHorsPeriodeNM1','type=float;');				
@@ -22,6 +24,7 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('anneeNM1','type=int;');					
 		parent::add_champs('dureeNM1','type=entier;');				
 		
+		//RTT
 		parent::add_champs('fk_user','type=entier;');			//utilisateur concerné
 		parent::add_champs('rttPris','type=float;');					
 		parent::add_champs('rttTypeAcquisition','type=chaine;');				//heure, jour...
@@ -42,8 +45,6 @@ class TRH_Compteur extends TObjetStd {
 		parent::save($db);
 	}
 }
-
-
 
 
 
@@ -77,9 +78,8 @@ class TRH_Absence extends TObjetStd {
 		//combo pour le choix de matin ou après midi 
 		$this->TddMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date début
 		$this->TdfMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date fin
-		
-		
 		}
+
 		function save(&$db) {
 			$ATMdb=new Tdb;
 			global $conf, $user;
@@ -121,10 +121,9 @@ class TRH_Absence extends TObjetStd {
 			}
 	
 			$this->duree=$dureeAbsenceCourante;
-			
+			$this->etat="Avalider";
 			parent::save($db);
 		}
-
 }
 
 

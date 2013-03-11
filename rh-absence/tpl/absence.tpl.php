@@ -30,10 +30,12 @@
 							Date fin : 		[absenceCourante.date_fin;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]<br/><br/>
 							Commentaire : 	[absenceCourante.commentaire;strconv=no;protect=no]<br/><br/>
 							[onshow;block=begin;when [view.mode]!='edit']
-							Duree : [absenceCourante.duree;strconv=no;protect=no]
+								Duree : [absenceCourante.duree;strconv=no;protect=no]
 							[onshow;block=end]
-							[absenceCourante.etat;strconv=no;protect=no]
 							
+							[onshow;block=begin;when [view.mode]!='edit']<br/><br/>
+								<b>Etat : [absenceCourante.etat;strconv=no;protect=no]</b>
+							[onshow;block=end]
 							
 							
 						</div>
@@ -67,6 +69,12 @@
 		
 			
 		<div class="tabsAction" >
+			
+		[onshow;block=begin;when [view.mode]!='edit']
+			<a class="butAction" id="action-update"  onclick="document.location.href='?action=accept&id=[absenceCourante.id]'">Accepter</a>	
+			<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=refuse&id=[absenceCourante.id]'">Refuser</span>
+		[onshow;block=end]
+		
 		[onshow;block=begin;when [view.mode]=='edit']
 			<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
 			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" href="?id=[absenceCourante.id]&action=view">
@@ -76,6 +84,8 @@
 			<a class="butAction"  href="?id=[absenceCourante.id]&action=edit">Modifier</a>
 			<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
 		[onshow;block=end]
+		
+		
 		</div>
 		
 		

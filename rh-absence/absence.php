@@ -26,7 +26,7 @@
 				$absence->set_values($_REQUEST);
 				$absence->save($ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
-				$mesg = '<div class="ok">Modifications effectuées</div>';
+				$mesg = '<div class="ok">Demande enregistrée</div>';
 				_fiche($ATMdb, $absence,'view');
 			
 				break;
@@ -61,8 +61,24 @@
 					document.location.href="?delete_ok=1";					
 				</script>
 				<?
+				break;
 				
+			case 'accept':
+				$absence->load($ATMdb, $_REQUEST['id']);
+				$sqlEtat="UPDATE `llx_rh_absence` SET etat='Validee' where fk_user=".$user->id. " AND rowid=".$absence->getId();
+				$ATMdb->Execute($sqlEtat);
+				$absence->load($ATMdb, $_REQUEST['id']);
+				$mesg = '<div class="ok">Demande d absence acceptée</div>';
+				_fiche($ATMdb, $absence,'view');
+				break;
 				
+			case 'refuse':
+				$absence->load($ATMdb, $_REQUEST['id']);
+				$sqlEtat="UPDATE `llx_rh_absence` SET etat='Refusee' where fk_user=".$user->id. " AND rowid=".$absence->getId();
+				$ATMdb->Execute($sqlEtat);
+				$absence->load($ATMdb, $_REQUEST['id']);
+				$mesg = '<div class="error">Demande d absence refusée</div>';
+				_fiche($ATMdb, $absence,'view');
 				break;
 		}
 	}
@@ -243,7 +259,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			)
 			,'absenceCourante'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
-				'id'=>$absenceCourante->id
+				'id'=>$absence->getId()
 				,'commentaire'=>$form->texte('','commentaire',$absenceCourante->commentaire,20,500,'',$class="text", $default='')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
@@ -251,7 +267,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
 				,'idUser'=>$form->texte('','fk_user',$user->id,5,10,'',$class="text", $default='')
 				,'comboType'=>$form->combo('','type',$absence->TTypeAbsence,$absence->type)
-				,'etat'=>$form->hidden('etat',"Avalider")
+				,'etat'=>$form->texte('','etat',$absence->etat,5,10,'',$class="text", $default='')
 				,'duree'=>$form->texte('','duree',$absence->duree,5,10,'',$class="text", $default='')
 				
 			)	
