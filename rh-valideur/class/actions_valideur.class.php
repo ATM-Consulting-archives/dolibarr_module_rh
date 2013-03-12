@@ -12,7 +12,14 @@ class ActionsValideur
     { 
         global $db,$html,$user;
 		
-		if($action=='validation'){
+		if($action=='list_validation'){
+			if($object->fk_user==$user->id){
+				return 0;
+			}
+		}
+		
+		if($action=='validation'||$action=='list_validation'){
+			$date_now=date('Y-m-d H:i:s');
 			
 			//On récupère d'abord tous les groupes auxquels appartient l'utilisateur concerné par la note de frais
 			$sql = "SELECT";
@@ -32,13 +39,11 @@ class ActionsValideur
 		                $obj_group = $db->fetch_object($resql_group);
 		                if ($obj_group){
 							//On regarde ensuite pour chaque groupe retourné si l'utilisateur courant en est valideur
-							$sql = "SELECT v.rowid";
+							$sql = "SELECT v.rowid, v.nbjours";
 							$sql.= " FROM ".MAIN_DB_PREFIX."rh_valideur_groupe v";
 							$sql.= " WHERE v.fk_user = ".$user->id;
 							$sql.= " AND v.fk_usergroup =".$obj_group->group_id;
 							$sql.= " AND v.type = 'NDFP'";
-							
-							print $sql;
 							
 							$result = $db->query($sql);
 							if($result)
@@ -46,7 +51,15 @@ class ActionsValideur
 								$obj = $db->fetch_object($sql);
 							    if($obj)
 							    {
-									return 0;
+							    	if($action=='list_validation'){
+							    		$date_affichage=date('Y-m-d H:i:s',strtotime('+'.$obj->nbjours.' days',strtotime($object->tms)));
+										if($date_now>=$date_affichage){
+											return 0;
+										}else{
+											return 1;	
+										}
+									}
+									return 0;	
 								}
 							}
 			                $j++;

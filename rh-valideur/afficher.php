@@ -167,7 +167,7 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 		)
 		,array(
 			'userCourant'=>array(
-				'id'=>$_REQUEST['id']
+				'id'=>$user->id
 			)
 			,'valideur'=>array(
 				'user'=>$form->hidden('fk_user',$_REQUEST['id'])
