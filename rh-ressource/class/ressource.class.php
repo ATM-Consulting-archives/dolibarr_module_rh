@@ -77,7 +77,34 @@ class TRH_Ressource extends TObjetStd {
 		
 	}
 	
+	/**
+	 * La fonction renvoie vrai si les nouvelles date proposé pour un emprunt se chevauchent avec d'autres.
+	 */
 	
+	function nouvelEmpruntSeChevauche(&$ATMdb, $newEmprunt, $idRessource){
+		//echo strtotime($newEmprunt['date_debut'])."<br>";
+		$sqlReq="SELECT date_debut,date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$idRessource."
+		AND type='emprunt'";
+		//echo $sqlReq;
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			/*echo  $newEmprunt['date_debut']." ".date("d/m/Y", strtotime($ATMdb->Get_field('date_debut')))." ".$newEmprunt['date_fin']." ". date("d/m/Y",strtotime($ATMdb->Get_field('date_fin')))."<br>";
+			echo $newEmprunt['date_debut']>date("d/m/Y",$ATMdb->Get_field('date_debut'))."<br>";*/
+			if ($this->dateSeChevauchent($newEmprunt['date_debut'], $newEmprunt['date_fin'],date("d/m/Y",strtotime($ATMdb->Get_field('date_debut'))), date("d/m/Y",strtotime($ATMdb->Get_field('date_fin'))) ))
+						{
+						return true;
+						}
+		}
+		return false;
+	}
+	
+	
+	function dateSeChevauchent($d1d, $d1f, $d2d, $d2f){
+		if (  ( ($d1d>=$d2d) && ($d1d<=$d2f) ) || ( ($d1f>=$d2d)  && ($d1f<=$d2f) )  ) 
+			{return true;}
+		return false;	
+	}
+
 	function load_ressource_type(&$ATMdb) {
 		//on prend le type de ressource associé
 		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type', array('rowid'=>$this->fk_rh_ressource_type));
