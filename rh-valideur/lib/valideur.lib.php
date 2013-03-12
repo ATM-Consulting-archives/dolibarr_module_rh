@@ -76,9 +76,9 @@ function send_mail_validate($db, $object, $user, $langs, $is_validate)
 	$sendto = 'arnaud.pothier@pi.esisar.grenoble-inp.fr';
 	
 	if($is_validate){
-		$message = "Votre note de frais a été validée.";
+		$message = file_get_contents('../valideur/tpl/mail.validation.acceptation.tpl.php', FILE_USE_INCLUDE_PATH);
 	}else{
-		$message = "Votre note de frais a été refusée.";
+		$message = file_get_contents('../valideur/tpl/mail.validation.refus.tpl.php', FILE_USE_INCLUDE_PATH);
 	}
 	
 	$subject = $object->ref;

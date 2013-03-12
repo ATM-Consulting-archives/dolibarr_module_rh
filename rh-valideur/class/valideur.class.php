@@ -35,6 +35,7 @@ class TRH_valideur_groupe extends TObjetStd {
 		while($ATMdb->Get_line()) {
 			$this->TUser[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name');
 			}
+		
 	}
 
 	function save(&$db) {
