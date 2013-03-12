@@ -10,36 +10,7 @@
  */
 function send_mail_validate($db, $object, $user, $langs, $is_validate)
 {
-	// On récupère l'id de l'utilisateur concerné par la note de frais
-	$sql = "SELECT";
-	$sql.= " n.dates as 'dated',";
-	$sql.= " n.datee as 'datef',";
-	$sql.= " n.fk_user";
-	
-    $sql.= " FROM ".MAIN_DB_PREFIX."ndfp as n";
-    $sql.= " WHERE n.rowid = ".$object->id;
-	
-	$resql_ndfp=$db->query($sql);
-	
-	if ($resql_ndfp){
-        $num_ndfp = $db->num_rows($resql_ndfp);
-        $n = 0;
-        if ($num_ndfp){
-            while ($n < $num_ndfp){
-                $obj_ndfp = $db->fetch_object($resql_ndfp);
-				
-                if ($obj_ndfp){
-					$fk_user_ndfp=$obj_ndfp->fk_user;
-				}
-                $n++;
-            }
-        }
-    }else{
-        $error++;
-        dol_print_error($db);
-    }
-	
-	// On récupère maintenant les informations de l'utilisateur
+	// On récupère les informations de l'utilisateur
 	/*$sql = "SELECT";
 	$sql.= " u.name,";
 	$sql.= " u.firstname,";
