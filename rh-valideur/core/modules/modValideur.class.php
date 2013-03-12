@@ -67,7 +67,7 @@ class modValideur extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='ressource@ressource';
+		$this->picto='valideur@valideur';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /mymodule/core/xxxxx) (0=disable, 1=enable)
@@ -130,7 +130,7 @@ class modValideur extends DolibarrModules
 		// 'group'            to add a tab in group view
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
-        $this->tabs = array('user:+valideur:Validation:valideur@valideur:/valideur/afficher.php?id='.$user->id // To add a new tab identified by code tabname1
+        $this->tabs = array('user:+valideur:Validation:valideur@valideur:/valideur/afficher.php?id=__ID__' // To add a new tab identified by code tabname1
                                     );
 
         // Dictionnaries

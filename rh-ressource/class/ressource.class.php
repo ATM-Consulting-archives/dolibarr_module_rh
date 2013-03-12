@@ -39,7 +39,27 @@ class TRH_Ressource extends TObjetStd {
 		
 		$this->TRessource = array('');
 		$this->TEvenement = array();
+		
+		$this->TContratAssocies = array(); //tout les objets rh_contrat_ressource liés à la ressource
+		$this->TContratExaustif = array(); //tout les objets contrats
+		$this->TListeContrat = array(); //liste des id et libellés de tout les contrats
+		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_contrat ";
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TListeContrat[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
+			}
+		
+		/**
+		 * Chargement de tout les contrats
+		 */
+		 $this->TContratExaustif = array();
+		foreach($this->TListeContrat as $k=>$id) {
+			$this->TContratExaustif[$k] = new TRH_Contrat ;
+			$this->TContratExaustif[$k]->load($ATMdb, $k);
 		}
+		
+
+	}
 	
 	function load(&$ATMdb, $id) {
 		parent::load($ATMdb, $id);
@@ -71,13 +91,57 @@ class TRH_Ressource extends TObjetStd {
 		}
 		$this->TEvenement = array();
 		foreach($Tab as $k=>$id) {
-			$this->TEvenement[$k] = new TRH_Evenement;
+			$this->TEvenement[$k] = new TRH_Evenement ;
 			$this->TEvenement[$k]->load($ATMdb, $id);
 		}
 		
 	}
 	
 	
+	/**
+	 * charge tout les contrats associé à cette ressource.
+	 */
+	function load_contrat(&$ATMdb){
+		$sql = "SELECT fk_rh_contrat FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE fk_rh_ressource=".$this->getId();
+		$ATMdb->Execute($sql);
+		$Tab=array();
+		while($ATMdb->Get_line()){
+			$Tab[]=$ATMdb->Get_field('fk_rh_contrat');
+		}
+		$this->TContratAssocies = array();
+		foreach($Tab as $k=>$id) {
+			$this->TContratAssocies[$k] = new TRH_Contrat_Ressource;
+			$this->TContratAssocies[$k]->load($ATMdb, $id);
+		}
+	}
+	/**
+	 * La fonction renvoie vrai si les nouvelles date proposé pour un emprunt se chevauchent avec d'autres.
+	 */
+	
+	function nouvelEmpruntSeChevauche(&$ATMdb, $newEmprunt, $idRessource){
+		//echo strtotime($newEmprunt['date_debut'])."<br>";
+		$sqlReq="SELECT date_debut,date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$idRessource."
+		AND type='emprunt'";
+		//echo $sqlReq;
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			/*echo  $newEmprunt['date_debut']." ".date("d/m/Y", strtotime($ATMdb->Get_field('date_debut')))." ".$newEmprunt['date_fin']." ". date("d/m/Y",strtotime($ATMdb->Get_field('date_fin')))."<br>";
+			echo $newEmprunt['date_debut']>date("d/m/Y",$ATMdb->Get_field('date_debut'))."<br>";*/
+			if ($this->dateSeChevauchent($newEmprunt['date_debut'], $newEmprunt['date_fin'],date("d/m/Y",strtotime($ATMdb->Get_field('date_debut'))), date("d/m/Y",strtotime($ATMdb->Get_field('date_fin'))) ))
+						{
+						return true;
+						}
+		}
+		return false;
+	}
+	
+	
+	function dateSeChevauchent($d1d, $d1f, $d2d, $d2f){
+		if (  ( ($d1d>=$d2d) && ($d1d<=$d2f) ) || ( ($d1f>=$d2d)  && ($d1f<=$d2f) )  ) 
+			{return true;}
+		return false;	
+	}
+
 	function load_ressource_type(&$ATMdb) {
 		//on prend le type de ressource associé
 		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type', array('rowid'=>$this->fk_rh_ressource_type));

@@ -2,16 +2,45 @@
 
 
 <div>
-	Libellé du contrat : [contrat.libelle;strconv=no;protect=no] <br>
-	Type de ressource associée : [contrat.typeRessource;strconv=no;protect=no] <br>
-	Type de contrat : [contrat.typeContrat;strconv=no;protect=no] <br>
-	Tiers :	[contrat.tiersFournisseur;strconv=no;protect=no] <br>
-	Agence concernée : 	[contrat.tiersAgence;strconv=no;protect=no] <br>
-	Date de début : [contrat.date_debut;strconv=no;protect=no] <br>
-	Date de fin : [contrat.date_fin;strconv=no;protect=no] <br>
-	Loyer TTC : [contrat.loyer_TTC;strconv=no;protect=no] <br>
-	TVA : [contrat.TVA;strconv=no;protect=no] <br>
-	Loyer HT : [contrat.loyer_HT;strconv=no;protect=no] <br>
+	<table class="border" style="width:100%">
+		<tr>
+			<td>Libellé du contrat</td>
+			<td>[contrat.libelle;strconv=no;protect=no]</td>
+		</tr>
+	 	<tr>
+	 		<td>Type de ressource associée</td>
+	 		<td>[contrat.typeRessource;strconv=no;protect=no]</td>
+	 	</tr>
+	 	<tr>
+	 		<td>Type de contrat</td>
+	 		<td>[contrat.typeContrat;strconv=no;protect=no]</td>
+	 	</tr>
+	 	<tr>
+	 		<td>Tiers</td>
+	 		<td>[contrat.tiersFournisseur;strconv=no;protect=no]</td>
+	 	</tr>
+	 	<tr>
+	 		<td>Agence concernée</td>
+	 		<td>[contrat.tiersAgence;strconv=no;protect=no]</td>
+	 	</tr>
+	 	<tr>
+	 		<td>Date de début</td>
+	 		<td>[contrat.date_debut;strconv=no;protect=no]</td>
+	 	</tr>
+	 	<tr>
+	 		<td>Date de fin</td>
+	 		<td>[contrat.date_fin;strconv=no;protect=no]</td>
+	 	</tr><tr>
+	 		<td>Loyer TTC</td>
+	 		<td>[contrat.loyer_TTC;strconv=no;protect=no]</td>
+	 	</tr><tr>
+	 		<td>TVA </td>
+	 		<td>[contrat.TVA;strconv=no;protect=no]</td>
+	 	</tr><tr>
+	 		<td>Loyer HT</td>
+	 		<td>[contrat.loyer_HT;strconv=no;protect=no]</td>
+	 	</tr>
+	</table>
 	
 </div>
 

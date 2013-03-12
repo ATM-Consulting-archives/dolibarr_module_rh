@@ -33,16 +33,23 @@
 			case 'save':
 				//$ATMdb->db->debug=true;
 				
-				$mesg = '<div class="ok">Modifications effectuées</div>';
-				//$mode = 'view';
 				
-				if(isset($_REQUEST['newEmprunt'])){				
-					$emprunt->set_values($_REQUEST);
-					$emprunt->save($ATMdb);
-					
+				$mode = 'view';
+				
+				if(isset($_REQUEST['newEmprunt'])){
+					//on vérifie que la date choisie ne superpose pas avec les autres emprunts.
+					if ($ressource->nouvelEmpruntSeChevauche($ATMdb, $_REQUEST ,$_REQUEST['id']) ){
+						$mesg = '<div class="error">Les dates choisies se superposent avec d\'autres attributions.</div>';
+						$mode = 'edit';
+					}
+					else {
+						$mesg = '<div class="ok">Attribution ajoutée.</div>';
+						$emprunt->set_values($_REQUEST);
+						$emprunt->save($ATMdb);
+					}
 				}
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $emprunt,$ressource,'view');
+				_fiche($ATMdb, $emprunt,$ressource,$mode);
 				break;
 			
 			case 'view':
@@ -58,7 +65,7 @@
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				
 				$mesg = '<div class="ok">L\'attribution a bien été supprimée.</div>';
-				$mode = 'edit';
+				$mode = 'view';
 				_fiche($ATMdb, $emprunt, $ressource,$mode);
 				break;
 			
@@ -80,7 +87,8 @@
 	$ATMdb->close();
 	
 	llxFooter();
-	
+
+
 function _liste(&$ATMdb, &$emprunt) {
 	global $langs,$conf, $db;	
 	llxHeader('','Liste des emprunts');
@@ -174,7 +182,7 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
+			/*'userRight'=>((int)$user->rights->financement->affaire->write)*/
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'attribution', 'Ressource')
 			)
 			
