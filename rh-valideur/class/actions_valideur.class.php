@@ -12,7 +12,7 @@ class ActionsValideur
     { 
         global $db,$html,$user;
 		
-<<<<<<< HEAD
+
 	  		
 		$idUsercourant=$_GET["id"];
 		if (in_array('usercard',explode(':',$parameters['context']))) 
@@ -39,7 +39,7 @@ class ActionsValideur
                     {
 							$fk_user_delegation=$obj->fk_user_delegation;
 
-=======
+
 		if($action=='list_validation'){
 			if($object->fk_user==$user->id){
 				return 0;
@@ -117,7 +117,7 @@ class ActionsValideur
                 	$obj = $db->fetch_object($sql);
                     if ($obj){
 						$fk_user_delegation=$obj->fk_user_delegation;
->>>>>>> 0faa8b571cb988f4d109ba15c22d852f1b0bb212
+
 					}
 			    }	
 			}		    
