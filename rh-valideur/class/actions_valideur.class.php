@@ -88,38 +88,74 @@ class ActionsValideur
 	        }
 			else if (in_array('ndfpcard',explode(':',$parameters['context']))) 
 	        {
-	        	//return 0;
-				$tabDelegation=array();
-				$k=0;
-				$tabDelegation[$k]=$user->id;
-				$k++;
-				 //on récupère les delegateurs du user et on les affiche
-				 $sql = "SELECT rowid FROM llx_user WHERE fk_user_delegation=".$user->id;
-				 $result = $db->query($sql);
-				 if ($result)
-				 {
-						$num = $db->num_rows($result);
-			                $i = 0;
-			                if ($num)
-			                {
-			                        while ($i < $num)
-			                        {
-			                                $obj = $db->fetch_object($sql);
-			                                if ($obj)
-			                                {
-												$tabDelegation[$k]=$obj->rowid;
-												$k++;
-			                                }
-			                                $i++;
-			                        }
-			                }	
-					
+	        	if($action=="create"){		//au moment de la création de la ndf et non dans le default
+	        		
+					$tabDelegation=array();
+					$k=0;
+					$tabDelegation[$k]=$user->id;
+					$k++;
+					 //on récupère les delegateurs du user et on les affiche
+					 $sql = "SELECT rowid FROM llx_user WHERE fk_user_delegation=".$user->id;
+					 $result = $db->query($sql);
+					 if ($result)
+					 {
+							$num = $db->num_rows($result);
+				                $i = 0;
+				                if ($num)
+				                {
+				                        while ($i < $num)
+				                        {
+				                                $obj = $db->fetch_object($sql);
+				                                if ($obj)
+				                                {
+													$tabDelegation[$k]=$obj->rowid;
+													$k++;
+				                                }
+				                                $i++;
+				                        }
+				                }	
 						
-			     }
-				 
-			echo $html->form_users($_SERVER['PHP_SELF'].'?id='.$object->id,$ndfp->fk_user,'fk_user','',$tabDelegation );	
+							
+				     }
+					 
+					echo $html->select_users($user->id, "fk_user",0,'','',$tabDelegation );
+	        	
+					}else{ //on est dans le default 
+	        		
+					$tabDelegation=array();
+					$k=0;
+					$tabDelegation[$k]=$user->id;
+					$k++;
+					 //on récupère les delegateurs du user et on les affiche
+					 $sql = "SELECT rowid FROM llx_user WHERE fk_user_delegation=".$user->id;
+					 $result = $db->query($sql);
+					 if ($result)
+					 {
+							$num = $db->num_rows($result);
+				                $i = 0;
+				                if ($num)
+				                {
+				                        while ($i < $num)
+				                        {
+				                                $obj = $db->fetch_object($sql);
+				                                if ($obj)
+				                                {
+													$tabDelegation[$k]=$obj->rowid;
+													$k++;
+				                                }
+				                                $i++;
+				                        }
+				                }	
+						
+							
+				     }
+					 
+					echo $html->form_users($_SERVER['PHP_SELF'].'?id='.$object->id,$ndfp->fk_user,'fk_user','',$tabDelegation );	
+	        	}
+	        	
 			
 			} 
+			 
 			return 1;
 		}
 		return 0; 
