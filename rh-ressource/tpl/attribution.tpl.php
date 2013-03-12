@@ -18,18 +18,16 @@
 		<td style="width:10%">Date début</td>
 		<td style="width:10%">Date fin</td>
 		<td style="width:60%">Commentaire</td>
-		[onshow;block=begin;when [view.mode]=='edit']
-			<td style="width:10%">Action</td>
-		[onshow;block=end] 
+		<td style="width:10%">Action</td>
+
 	</tr>	
 	<tr>
 		<td style="width:10%">[historique.user;block=tr;strconv=no;protect=no]</td>
 		<td style="width:10%">[historique.date_debut;strconv=no;protect=no]</td>
 		<td style="width:10%">[historique.date_fin;strconv=no;protect=no]</td>
 		<td style="width:60%">[historique.commentaire;strconv=no;protect=no]</td>
-		[onshow;block=begin;when [view.mode]=='edit']
-			<td style="width:10%"><img src="./img/delete.png"  style="cursor:pointer;" onclick="document.location.href='?id=[ressource.id]&idAttribution=[historique.id]&action=deleteAttribution'"></td>
-		[onshow;block=end] 
+		<td style="width:10%"><img src="./img/delete.png"  style="cursor:pointer;" onclick="document.location.href='?id=[ressource.id]&idAttribution=[historique.id]&action=deleteAttribution'"></td>
+ 
 	</tr>
 	
 	[onshow;block=begin;when [view.mode]=='edit']
@@ -55,7 +53,7 @@
 			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
 		[onshow;block=end]
 		[onshow;block=begin;when [view.mode]!='edit']
-			<a class="butAction"  href="?id=[ressource.id]&action=edit">Modifier</a>
+			<a class="butAction"  href="?id=[ressource.id]&action=edit">Ajouter</a>
 		[onshow;block=end]
 </div>
 
