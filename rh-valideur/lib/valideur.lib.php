@@ -18,7 +18,7 @@ function send_mail_validate($db, $object, $user, $langs, $is_validate)
 	
     $sql.= " FROM ".MAIN_DB_PREFIX."ndfp as n";
     $sql.= " WHERE n.rowid = ".$object->id;
-	print "Blurp <3";
+	
 	$resql_ndfp=$db->query($sql);
 	
 	if ($resql_ndfp){
@@ -82,13 +82,11 @@ function send_mail_validate($db, $object, $user, $langs, $is_validate)
 	}
 	
 	$subject = $object->ref;
-	print "Heyyy <3";
+	
 	// Send mail
 	$mail = new TReponseMail($from,$sendto,$subject,$message);
-	print "Hop <3";
-    (int)$result = $mail->send();
 	
-	print "Mail envoyé !";
+    (int)$result = $mail->send();
 	
 	return 1;
 }
