@@ -72,12 +72,16 @@ class TRH_Evenement  extends TObjetStd {
 		global $conf;
 		$this->entity = $conf->entity;
 		
+		if ($this->date_fin < $this->date_debut) {
+			$this->date_fin = $this->date_debut;
+		}
+		
 		if ($this->type=='emprunt'){
 			$this->color = 1 ; //couleur rouge
 			$this->subject = "Utilisé par ".$this->TUser[$this->fk_user];
 		}
 		else {
-			$this->color = 6 ; //couleur rouge
+			$this->color = 6 ; //couleur verte moche
 			$this->subject = $this->type." : ".$this->motif;
 	
 		}

@@ -55,14 +55,11 @@ class TRH_Contrat  extends TObjetStd {
 		while($ATMdb->Get_line()) {
 			$this->TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
 			}
-
-			
 	}
 	
 	function save(&$db) {
 		global $conf;
 		$this->entity = $conf->entity;
-		
 		parent::save($db);
 	}
 	
@@ -76,15 +73,22 @@ class TRH_Contrat  extends TObjetStd {
 class TRH_Contrat_Ressource  extends TObjetStd {
 	
 	function __construct(){
-		parent::set_table(MAIN_DB_PREFIX.'rh_association_ressourceimport');
+		parent::set_table(MAIN_DB_PREFIX.'rh_contrat_ressource');
 		parent::add_champs('commentaire','type=chaine;');
 		
 		parent::add_champs('fk_rh_contrat,entity','type=entier;index;');
-		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
+		parent::add_champs('fk_rh_ressource','type=entier;index;');
 		
 		parent::_init_vars();
 		parent::start();
 	}
+	
+	function save(&$db) {
+		global $conf;
+		$this->entity = $conf->entity;
+		parent::save($db);
+	}
+	
 	
 }	
 	
