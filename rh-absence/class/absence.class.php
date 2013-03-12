@@ -31,18 +31,55 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('rttAcquisMensuel','type=float;');	
 		parent::add_champs('rttAcquisAnnuelCumule','type=float;');
 		parent::add_champs('rttAcquisAnnuelNonCumule','type=float;');
+		
+		parent::add_champs('rttAcquisMensuelInit','type=float;');	
+		parent::add_champs('rttAcquisAnnuelCumuleInit','type=float;');
+		parent::add_champs('rttAcquisAnnuelNonCumuleInit','type=float;');
+		
 		parent::add_champs('rttannee','type=int;');	
-		parent::add_champs('rttMetier','type=chaine;');					
+		parent::add_champs('rttMetier','type=chaine;');		
+		
+		parent::add_champs('entity','type=int;');					
+					
 		
 		parent::_init_vars();
 		parent::start();
 	}
-		
+	
+	
 	function save(&$db) {
 		global $conf;
 		$this->entity = $conf->entity;
 		
 		parent::save($db);
+	}
+	
+	function initCompteur($idUser, &$ATMdb){
+		global $conf;
+		$this->entity = $conf->entity;
+		$annee=date('Y');
+		$anneePrec=$annee-1;
+
+		$this->fk_user=$idUser;
+		$this->acquisExerciceN='6';
+		$this->acquisAncienneteN='1';
+		$this->acquisHorsPeriodeN='0';
+		$this->anneeN=$annee;
+		$this->acquisExerciceNM1='25';
+		$this->acquisAncienneteNM1='1';
+		$this->acquisHorsPeriodeNM1='0';
+		$this->reportCongesNM1='0';
+		$this->congesPrisNM1='4';
+		$this->anneeNM1=$anneePrec;
+		$this->rttPris='0';
+		$this->rttTypeAcquisition='Annuel';
+		$this->rttAcquisMensuelInit='0';
+		$this->rttAcquisAnnuelCumuleInit='5';
+		$this->rttAcquisAnnuelNonCumuleInit='7';
+		$this->rttAcquisMensuel='0';
+		$this->rttAcquisAnnuelCumule='5';
+		$this->rttAcquisAnnuelNonCumule='7';
+		$this->rttannee=$annee;
 	}
 }
 
@@ -57,13 +94,16 @@ class TRH_Absence extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence');
 		parent::add_champs('code','type=int;');				//code  congé
 		parent::add_champs('type','type=varchar;');				//type de congé
+		parent::add_champs('libelle','type=varchar;');				//type de congé
 		parent::add_champs('date_debut,date_fin','type=date;');	//dates debut fin de congés
 		parent::add_champs('ddMoment, dfMoment','type=chaine;');		//moment (matin ou après midi)
 		parent::add_champs('duree','type=float;');				
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
 		parent::add_champs('etat','type=chaine;');			//état (à valider, validé...)
+		parent::add_champs('libelleEtat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		
+		parent::add_champs('entity','type=int;');	
 		
 		parent::_init_vars();
 		parent::start();
@@ -88,9 +128,6 @@ class TRH_Absence extends TObjetStd {
 			///////calcul durée du congés 
 			$diff=$this->date_fin-$this->date_debut;
 			$dureeAbsenceCourante=$diff/3600/24;
-			
-			//$this->congesTotalNM1=$this->acquisEx+$this->acquisAnc+$this->acquisHorsPer+$this->reportConges;
-			//$this->congesResteNM1=$congePrecTotal-$this->congesPris;
 			
 			//prise en compte du matin et après midi
 			if(isset($_REQUEST['id'])){
@@ -119,9 +156,12 @@ class TRH_Absence extends TObjetStd {
 				$ATMdb->Execute($sqlDecompte);
 				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 			}
-	
+
+			//autres paramètes à sauvegarder
+			$this->libelle=saveLibelle($this->type);
 			$this->duree=$dureeAbsenceCourante;
 			$this->etat="Avalider";
+			$this->libelleEtat=saveLibelleEtat($this->etat);
 			parent::save($db);
 		}
 }

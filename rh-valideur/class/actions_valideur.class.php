@@ -12,9 +12,7 @@ class ActionsValideur
     { 
         global $db,$html, $user; 
 		
-		
-		
-			  		
+	  		
 		$idUsercourant=$_GET["id"];
 		if (in_array('usercard',explode(':',$parameters['context']))) 
 		{ 

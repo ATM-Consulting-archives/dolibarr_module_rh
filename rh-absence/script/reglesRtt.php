@@ -17,10 +17,10 @@
 	
 	//COMPTEUR MENSUEL
 	////// 1er mars, tous les rtt de l'année N sont remis à 0 pour ceux qui les accumulent par mois
-	$mars=date("dM");
+	$mars=date("dm");
 	if($mars=="0103"){
 		//on remet à 0 les compteurs
-		$sqlRaz='UPDATE llx_rh_compteur SET rttAcquis=0, rttPris=0 WHERE typeAcquisition="Mensuel"';
+		$sqlRaz='UPDATE llx_rh_compteur SET rttAcquis=0, rttPris=0 WHERE rttTypeAcquisition="Mensuel"';
 		$ATMdb->Execute($sqlRaz);
 	}
 	
@@ -29,7 +29,7 @@
 	$jour=date("d");
 	if($jour=="01"){
 		//on incrémente de 1
-		$sqlIncr='UPDATE llx_rh_compteur SET rttAcquisMensuel=rttAcquisMensuel+1 WHERE typeAcquisition="Mensuel"';
+		$sqlIncr='UPDATE llx_rh_compteur SET rttAcquisMensuel=rttAcquisMensuel+1 WHERE rttTypeAcquisition="Mensuel"';
 		$ATMdb->Execute($sqlIncr);
 	}
 	
@@ -43,6 +43,14 @@
 		$ATMdb->Execute($sqlTransfert);
 	}
 	
+	
+	//on incrémente les années
+	$annee=date("dm");
+	if($annee=="0101"){
+		//on transfère les jours N-1 non pris vers jours report
+		$sqlAnnee="UPDATE llx_rh_compteur SET rttannee=rttannee+1";
+		$ATMdb->Execute($sqlAnnee);
+	}
 	
 	
 	

@@ -41,7 +41,7 @@ class modAbsence extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-        global $langs,$conf;
+        global $langs,$conf, $user;
 
         $this->db = $db;
 
@@ -255,9 +255,25 @@ class modAbsence extends DolibarrModules
 		        	'titre'=> $langs->trans('Compteur jours acquis'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/compteur.php',
+					'url'=> '/absence/compteur.php?id='.$user->id.'&action=view',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 104,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
+		
+		$r++;
+		$this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('Administration compteur'),
+		        	'mainmenu'=> '',
+		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/absence/compteur.php',
+					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 105,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
 					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
@@ -363,6 +379,9 @@ class modAbsence extends DolibarrModules
 
 		$url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/absence/script/create-maj-base.php";
 		file_get_contents($url);
+		
+		$url2 ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/absence/script/create-compteur.php";
+		file_get_contents($url2);
 		
 
 		return $this->_init($sql, $options);
