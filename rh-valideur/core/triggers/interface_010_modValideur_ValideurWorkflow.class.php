@@ -81,24 +81,23 @@ class InterfaceValideurWorkflow
 		if($object->statut==1){
 			// Actions
 			if ($action == 'NDFP_VALIDATE'){
-				//print_r($object); exit;	
-				
 				define('INC_FROM_DOLIBARR', true);
 				dol_include_once('/valideur/config.php');
 				dol_include_once('/valideur/lib/valideur.lib.php');
-					
-						
-					
 				
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
 				
 				return send_mail_validate($db, $object, $user, $langs,1);
+			}
+		}elseif($object->statut==3){
+			if ($action == 'NDFP_CANCEL'){
+				define('INC_FROM_DOLIBARR', true);
+				dol_include_once('/valideur/config.php');
+				dol_include_once('/valideur/lib/valideur.lib.php');
 				
-			}elseif ($action == 'NDFP_CANCELED'){
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
 				
 				return send_mail_validate($db, $object, $user, $langs,0);
-				
 			}
 		}
 
