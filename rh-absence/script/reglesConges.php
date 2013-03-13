@@ -16,7 +16,7 @@
 	
 	////// 1er juin, tous les congés de l'année N sont remis à 0, et sont transférés vers le compteur congés N-1
 	$juin=date("dm");
-	if($juin=="0106"){
+	if($juin=="1303"){
 		//on transfère les jours N-1 non pris vers jours report
 		$sqlTransfert="UPDATE llx_rh_compteur SET reportCongesNM1=acquisExerciceNM1+acquisAncienneteNM1+acquisHorsPeriodeNM1";
 		$ATMdb->Execute($sqlTransfert);
@@ -29,7 +29,6 @@
 		//L'ancienneté devra normalement être gérée manuellement. 
 		$sqlRaz="UPDATE llx_rh_compteur SET acquisExerciceN=0, acquisHorsPeriodeN=0";
 		$ATMdb->Execute($sqlRaz);
-		
 	}
 	
 	/////chaque mois, les congés année N sont incrémentés de 2,08
@@ -45,6 +44,6 @@
 	$annee=date("dm");
 	if($annee=="0101"){
 		//on transfère les jours N-1 non pris vers jours report
-		$sqlAnnee="UPDATE llx_rh_compteur SET anneeN=anneN+1, anneeNM1=anneNM1+1";
+		$sqlAnnee="UPDATE llx_rh_compteur SET anneeN=anneeN+1, anneeNM1=anneeNM1+1";
 		$ATMdb->Execute($sqlAnnee);	
 	}

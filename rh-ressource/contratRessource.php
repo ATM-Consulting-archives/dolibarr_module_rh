@@ -17,10 +17,6 @@
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'new':
-				//$ATMdb->db->debug=true;
-				//$association->set_values($_REQUEST);
-				//$emprunt->load($ATMdb, 20);
-				//$mesg = '<div class="ok">Nouvel événement créé</div>';
 				_fiche($ATMdb, $contrat, $association,$ressource,'edit');
 				
 				break;	
@@ -51,8 +47,7 @@
 				break;
 			
 			case 'deleteAssoc':
-				$ATMdb->db->debug=true;
-				echo $_REQUEST['idAssoc'];
+				//$ATMdb->db->debug=true;
 				$association->load($ATMdb, $_REQUEST['idAssoc']);
 				$association->delete($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
@@ -142,11 +137,12 @@ function _fiche(&$ATMdb, &$contrat, &$association, &$ressource,  $mode) {
 	
 	$ressource->load_contrat($ATMdb);
 	$TContrats = array();
-	print_r($ressource->TContratAssocies);
+	//print_r($ressource->TContratExaustif);
+	//print_r($ressource->TContratAssocies);
 	foreach($ressource->TContratAssocies as $assoc){
 		//echo $assoc->fk_rh_contrat;
 		$TContrats[] = array(
-					'id'=>$ressource->TContratExaustif[$assoc->fk_rh_contrat]->getId()
+					'id'=>$assoc->getId()
 					,'libelle'=>$ressource->TContratExaustif[$assoc->fk_rh_contrat]->libelle
 					,'date_debut'=>date("d/m/Y",$ressource->TContratExaustif[$assoc->fk_rh_contrat]->date_debut)
 					,'date_fin'=>date("d/m/Y",$ressource->TContratExaustif[$assoc->fk_rh_contrat]->date_fin)
@@ -159,7 +155,7 @@ function _fiche(&$ATMdb, &$contrat, &$association, &$ressource,  $mode) {
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/contratRessource.tpl.php'
 		,array(
-			'contrats'=>$TContrats
+			'associations'=>$TContrats
 		)
 		,array(
 			'ressource'=>array(
@@ -167,7 +163,7 @@ function _fiche(&$ATMdb, &$contrat, &$association, &$ressource,  $mode) {
 			)
 			,'NAssociation'=>array(
 				'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
-				,'fk_rh_contrat'=>$form->combo('', 'fk_rh_contrat', $ressource->TContratExaustif, $association->fk_rh_contrat)
+				,'fk_rh_contrat'=>$form->combo('', 'fk_rh_contrat', $ressource->TListeContrat, $association->fk_rh_contrat)
 				,'commentaire'=>$form->texte('','motif',$association->commentaire, 30,100,'','','-')
 			
 			)
