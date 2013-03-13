@@ -1,65 +1,20 @@
 <?php
 
-//TODO mettre les chemins en relatifs.
-//echo exec("pwd");
-include_once("../rh-library/wdCalendar/php/dbconfig.php");
+require('config.php');
 include_once("../rh-library/wdCalendar/php/functions.php");
-/*
-function addCalendar($st, $et, $sub, $ade){
-  $ret = array();
-  try{
-    $db = new DBConnection();
-    $db->getConnection();
-    $sql = "insert into `jqcalendar` (`subject`, `starttime`, `endtime`, `isalldayevent`) values ('"
-      .mysql_real_escape_string($sub)."', '"
-      .php2MySqlTime(js2PhpTime($st))."', '"
-      .php2MySqlTime(js2PhpTime($et))."', '"
-      .mysql_real_escape_string($ade)."' )";
-    //echo($sql);
-		if(mysql_query($sql)==false){
-      $ret['IsSuccess'] = false;
-      $ret['Msg'] = mysql_error();
-    }else{
-      $ret['IsSuccess'] = true;
-      $ret['Msg'] = 'add success';
-      $ret['Data'] = mysql_insert_id();
-    }
-	}catch(Exception $e){
-     $ret['IsSuccess'] = false;
-     $ret['Msg'] = $e->getMessage();
-  }
-  return $ret;
+$ATMdb=new TPDOdb;
+
+
+$method = $_GET["method"];
+switch ($method) {
+    case "list":
+        $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_REQUEST['id'], $_REQUEST['idUser']);
+        break;   
+
 }
-function addDetailedCalendar($st, $et, $sub, $ade, $dscr, $loc, $color, $tz){
-  $ret = array();
-  try{
-    $db = new DBConnection();
-    $db->getConnection();
-    $sql = "insert into `jqcalendar` (`subject`, `starttime`, `endtime`, `isalldayevent`, `description`, `location`, `color`) values ('"
-      .mysql_real_escape_string($sub)."', '"
-      .php2MySqlTime(js2PhpTime($st))."', '"
-      .php2MySqlTime(js2PhpTime($et))."', '"
-      .mysql_real_escape_string($ade)."', '"
-      .mysql_real_escape_string($dscr)."', '"
-      .mysql_real_escape_string($loc)."', '"
-      .mysql_real_escape_string($color)."' )";
-    //echo($sql);
-		if(mysql_query($sql)==false){
-      $ret['IsSuccess'] = false;
-      $ret['Msg'] = mysql_error();
-    }else{
-      $ret['IsSuccess'] = true;
-      $ret['Msg'] = 'add success';
-      $ret['Data'] = mysql_insert_id();
-    }
-	}catch(Exception $e){
-     $ret['IsSuccess'] = false;
-     $ret['Msg'] = $e->getMessage();
-  }
-  return $ret;
-}
-*/
-function listCalendarByRange($sd, $ed, $idAbsence, $idUser){
+echo json_encode($ret); 
+
+function listCalendarByRange(&$ATMdb, $sd, $ed, $idAbsence, $idUser){
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
@@ -67,13 +22,13 @@ function listCalendarByRange($sd, $ed, $idAbsence, $idUser){
   $ret["end"] = php2JsTime($ed);
   $ret['error'] = null;
   try{
-    $db = new DBConnection();
-    $db->getConnection();
+    
     $sql = "SELECT * FROM `llx_rh_absence` WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND fk_user=".$idUser;
-    $handle = mysql_query($sql);
+   
+   $ATMdb->Execute($sql);
     //echo $sql;
-    while ($row = mysql_fetch_object($handle)) {
+    while ($row=$ATMdb->Get_line()) {
       //$ret['events'][] = $row;
       //$attends = $row->AttendeeNames;
       //if($row->OtherAttendee){
@@ -101,7 +56,7 @@ function listCalendarByRange($sd, $ed, $idAbsence, $idUser){
   return $ret;
 }
 
-function listCalendar($day, $type, $idAbsence, $idUser){
+function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idUser){
   $phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
   switch($type){
@@ -122,118 +77,6 @@ function listCalendar($day, $type, $idAbsence, $idUser){
       break;
   }
   //echo $st . "--" . $et;
-  return listCalendarByRange($st, $et, $idAbsence, $idUser);
-}
-/*
-function updateCalendar($id, $st, $et){
-  $ret = array();
-  try{
-    $db = new DBConnection();
-    $db->getConnection();
-    $sql = "update `jqcalendar` set"
-      . " `starttime`='" . php2MySqlTime(js2PhpTime($st)) . "', "
-      . " `endtime`='" . php2MySqlTime(js2PhpTime($et)) . "' "
-      . "where `id`=" . $id;
-    //echo $sql;
-		if(mysql_query($sql)==false){
-      $ret['IsSuccess'] = false;
-      $ret['Msg'] = mysql_error();
-    }else{
-      $ret['IsSuccess'] = true;
-      $ret['Msg'] = 'Succefully';
-    }
-	}catch(Exception $e){
-     $ret['IsSuccess'] = false;
-     $ret['Msg'] = $e->getMessage();
-  }
-  return $ret;
+  return listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idUser);
 }
 
-function updateDetailedCalendar($id, $st, $et, $sub, $ade, $dscr, $loc, $color, $tz){
-  $ret = array();
-  try{
-    $db = new DBConnection();
-    $db->getConnection();
-    $sql = "update `jqcalendar` set"
-      . " `starttime`='" . php2MySqlTime(js2PhpTime($st)) . "', "
-      . " `endtime`='" . php2MySqlTime(js2PhpTime($et)) . "', "
-      . " `subject`='" . mysql_real_escape_string($sub) . "', "
-      . " `isalldayevent`='" . mysql_real_escape_string($ade) . "', "
-      . " `description`='" . mysql_real_escape_string($dscr) . "', "
-      . " `location`='" . mysql_real_escape_string($loc) . "', "
-      . " `color`='" . mysql_real_escape_string($color) . "' "
-      . "where `id`=" . $id;
-    //echo $sql;
-		if(mysql_query($sql)==false){
-      $ret['IsSuccess'] = false;
-      $ret['Msg'] = mysql_error();
-    }else{
-      $ret['IsSuccess'] = true;
-      $ret['Msg'] = 'Succefully';
-    }
-	}catch(Exception $e){
-     $ret['IsSuccess'] = false;
-     $ret['Msg'] = $e->getMessage();
-  }
-  return $ret;
-}
-
-function removeCalendar($id){
-  $ret = array();
-  try{
-    $db = new DBConnection();
-    $db->getConnection();
-    $sql = "delete from `jqcalendar` where `id`=" . $id;
-		if(mysql_query($sql)==false){
-      $ret['IsSuccess'] = false;
-      $ret['Msg'] = mysql_error();
-    }else{
-      $ret['IsSuccess'] = true;
-      $ret['Msg'] = 'Succefully';
-    }
-	}catch(Exception $e){
-     $ret['IsSuccess'] = false;
-     $ret['Msg'] = $e->getMessage();
-  }
-  return $ret;
-}
-
-*/
-
-
-//header('Content-type:text/javascript;charset=UTF-8');
-$method = $_GET["method"];
-switch ($method) {
-    case "add":
-        $ret = addCalendar($_POST["CalendarStartTime"], $_POST["CalendarEndTime"], $_POST["CalendarTitle"], $_POST["IsAllDayEvent"]);
-        break;
-    case "list":
-        $ret = listCalendar($_POST["showdate"], $_POST["viewtype"], $_REQUEST['id'], $_REQUEST['idUser']);
-        break;
-    case "update":
-        $ret = updateCalendar($_POST["calendarId"], $_POST["CalendarStartTime"], $_POST["CalendarEndTime"]);
-        break; 
-    case "remove":
-        $ret = removeCalendar( $_POST["calendarId"]);
-        break;
-    case "adddetails":
-        $st = $_POST["stpartdate"] . " " . $_POST["stparttime"];
-        $et = $_POST["etpartdate"] . " " . $_POST["etparttime"];
-        if(isset($_GET["id"])){
-            $ret = updateDetailedCalendar($_GET["id"], $st, $et, 
-                $_POST["Subject"], isset($_POST["IsAllDayEvent"])?1:0, $_POST["Description"], 
-                $_POST["Location"], $_POST["colorvalue"], $_POST["timezone"]);
-        }else{
-            $ret = addDetailedCalendar($st, $et,                    
-                $_POST["Subject"], isset($_POST["IsAllDayEvent"])?1:0, $_POST["Description"], 
-                $_POST["Location"], $_POST["colorvalue"], $_POST["timezone"]);
-        }        
-        break; 
-
-
-}
-echo json_encode($ret); 
-
-
-
-?>

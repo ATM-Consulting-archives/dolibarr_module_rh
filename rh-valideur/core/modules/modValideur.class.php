@@ -130,7 +130,7 @@ class modValideur extends DolibarrModules
 		// 'group'            to add a tab in group view
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
-        $this->tabs = array('user:+valideur:Validation:valideur@valideur:/valideur/afficher.php?id=__ID__' // To add a new tab identified by code tabname1
+        $this->tabs = array('user:+valideur:Validation:valideur@valideur:/valideur/afficher.php?fk_user=__ID__' // To add a new tab identified by code tabname1
                                     );
 
         // Dictionnaries

@@ -10,7 +10,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $langs->load('valideur@valideur');
 $langs->load("users");
 
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 $valideur=new TRH_valideur_groupe;
 $mode = $action;
 
@@ -22,7 +22,7 @@ if(isset($_REQUEST['action'])) {
 		case 'add':
 		case 'new':
 			$valideur->set_values($_REQUEST);
-			$mesg = '<div class="ok">Nouvelle validation créée</div>';
+			//$mesg = '<div class="ok">Nouvelle validation créée</div>';
 			_fiche($ATMdb, $valideur,'edit');
 			
 			break;	
@@ -32,36 +32,29 @@ if(isset($_REQUEST['action'])) {
 			break;
 			
 		case 'save':
-			//$ATMdb->db->debug=true;
+			/*$ATMdb->debug=true;
+			print_r($_REQUEST);*/
 			$valideur->load($ATMdb, $_REQUEST['id']);
 			$valideur->set_values($_REQUEST);
 			$valideur->save($ATMdb);
-			$valideur->load($ATMdb, $_REQUEST['id']);
-			$mesg = '<div class="ok">Modifications effectuées</div>';
+			$mesg = '<div class="ok">Validateur créé</div>';
 			$mode = 'view';
 			
-			_fiche($ATMdb, $valideur, $mode);
-			break;
-		
-		case 'view':
-			$valideur->load($ATMdb, $_REQUEST['id']);
-			_fiche($ATMdb, $valideur,'view');
+			_liste($ATMdb);
 			break;
 
+
 		case 'delete':
-			$valideur->load($ATMdb, $_REQUEST['deleteId']);
-			$valideur->delete($ATMdb);
 			$valideur->load($ATMdb, $_REQUEST['id']);
+			$valideur->delete($ATMdb);
 			
 			$mesg = '<div class="ok">L\'attribution a bien été supprimée.</div>';
-			$mode = 'view';
 			
-			_fiche($ATMdb, $valideur,$mode);
+			_liste($ATMdb);
 			break;
 	}
 }
 elseif(isset($_REQUEST['id'])) {
-	$valideur->load($ATMdb, $_REQUEST['id']);
 	_fiche($ATMdb, $valideur, 'view');
 }
 else {
@@ -69,33 +62,32 @@ else {
 	 * Liste
 	 */
 	 //$ATMdb->db->debug=true;
-	 _liste($ATMdb, $valideur);
+	 _liste($ATMdb);
 }
 
 $ATMdb->close();
 llxFooter();
 
-function _liste(&$ATMdb, &$valideur) {
+function _liste(&$ATMdb) {
 	global $langs,$conf,$db;
 	
 	llxHeader('', 'Liste des validations possibles');
 	
 	$fuser = new User($db);
-	$fuser->fetch($_REQUEST['id']);
+	$fuser->fetch($_REQUEST['fk_user']);
 	$fuser->getrights();
 
 	$head = user_prepare_head($fuser);
-	$current_head = 'valideur';
-	dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
+	dol_fiche_head($head, 'valideur', $langs->trans('Utilisateur'),0, 'user');
 	
-	getStandartJS();
-	
+	$valideur=new TRH_valideur_groupe;
 	$r = new TSSRenderControler($valideur);
-	$sql= "SELECT v.rowid as 'ID', v.type as 'Type', v.nbjours as 'Nbjours', g.nom as 'Group', u.nom as 'Utilisateur'";
-	$sql.= " FROM ".MAIN_DB_PREFIX."rh_valideur as v, ".MAIN_DB_PREFIX."usergroup as g, ".MAIN_DB_PREFIX."user as u";
-	$sql.= " WHERE v.entity=".$conf->entity;
-	$sql.= " AND v.fk_usergroup = g.rowid";
-	$sql.= " AND v.fk_user = ".$_REQUEST['id'];
+	$sql= "SELECT v.rowid as 'ID', v.type as 'Type', v.nbjours as 'Nbjours', g.nom as 'Group', u.name as 'Utilisateur', '' as 'Supprimer'";
+	$sql.= " FROM ((".MAIN_DB_PREFIX."rh_valideur_groupe as v LEFT JOIN ".MAIN_DB_PREFIX."usergroup as g ON (v.fk_usergroup = g.rowid))
+			 		 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (v.fk_user = u.rowid))";
+	$sql.= " WHERE v.entity=".$conf->entity." AND v.fk_user=".$fuser->id;
+	
+	//print $sql;
 	
 	$TOrder = array('ID'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -109,7 +101,8 @@ function _liste(&$ATMdb, &$valideur) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'ID'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'ID'=>'<a href="?id=@ID@&action=edit">@val@</a>'
+			,'Supprimer'=>'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'">Supprimer</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array()
@@ -129,6 +122,8 @@ function _liste(&$ATMdb, &$valideur) {
 		
 	));
 	
+	?><a href="?action=new&fk_user=<?=$fuser->id ?>">Nouveau</a><?
+	
 	llxFooter();
 }
 
@@ -137,9 +132,9 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 	global $langs,$db,$user;
 	
 	llxHeader('', 'Validation');
-	
+	//print_r($valideur);
 	$fuser = new User($db);
-	$fuser->fetch($_REQUEST['id']);
+	$fuser->fetch(isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : $valideur->fk_user);
 	$fuser->getrights();
 	
 	$head = user_prepare_head($fuser);
@@ -148,12 +143,13 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
+	echo $form->hidden('fk_user', $fuser->id);
 	echo $form->hidden('id', $valideur->getId());
 	echo $form->hidden('action', 'save');
 	
 	
 	$TValidations = array();
-	$sqlReq="SELECT r.rowid, g.nom, r.type, r.nbjours FROM ".MAIN_DB_PREFIX."rh_valideur_groupe r, ".MAIN_DB_PREFIX."usergroup g WHERE g.rowid = r.fk_usergroup";
+	/*$sqlReq="SELECT r.rowid, g.nom, r.type, r.nbjours FROM ".MAIN_DB_PREFIX."rh_valideur_groupe r, ".MAIN_DB_PREFIX."usergroup g WHERE g.rowid = r.fk_usergroup";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 		$TValidations[] = array(
@@ -163,7 +159,7 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 			,'nbjours'=>$ATMdb->Get_field('nbjours')
 		);
 	}
-	
+	*/
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/valideur.tpl.php'
 		,array(
@@ -174,8 +170,8 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 				'id'=>$user->id
 			)
 			,'valideur'=>array(
-				'user'=>$form->hidden('fk_user',$_REQUEST['id'])
-				,'group'=>$form->combo('','fk_usergroup',$valideur->TGroup,$valideur->fk_usergroup)
+				
+				'group'=>$form->combo('','fk_usergroup',$valideur->TGroup,$valideur->fk_usergroup)
 				,'type'=> $form->combo('','type',$valideur->TType, $valideur->type)
 				,'nbjours'=> $form->texte('', 'nbjours', $valideur->nbjours, 7,10,'','','-')
 			)
