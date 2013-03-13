@@ -17,6 +17,7 @@ $mode = $action;
 $mesg = '';
 $error=false;
 
+
 if(isset($_REQUEST['action'])) {
 	switch($_REQUEST['action']) {
 		case 'add':
