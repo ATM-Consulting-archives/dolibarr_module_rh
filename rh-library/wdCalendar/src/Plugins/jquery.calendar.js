@@ -1568,9 +1568,8 @@
                             $("#bbit-cs-buddle").css("visibility", "hidden");
                             
                             return false;*/
-                            //TODO 
-                            //http://localhost/dolibarr-rh/htdocs/user/fiche.php?id=4
-                            window.location = '/dolibarr-rh/htdocs/user/fiche.php?id='+data[6];//.;
+							//data[6] contient  la fk_user lié à l'évenement.
+                            window.location = 'user/fiche.php?id='+data[6];
                             //user.php&
                         });
                         lbtn.click(function(e) {
