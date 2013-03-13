@@ -145,7 +145,8 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 		$TEvents[] = array(
 					'id'=>$even->getId()
 					,'user'=>$even->TUser[$even->fk_user]
-					,'date'=>date("d/m/Y",$even->date_debut)
+					,'date_debut'=>date("d/m/Y",$even->date_debut)
+					,'date_fin'=>date("d/m/Y",$even->date_fin)
 					,'commentaire'=>$even->description
 					,'motif'=>$even->motif
 					,'type'=> $even->TType[$even->type]
@@ -169,7 +170,8 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
 				,'commentaire'=>$form->texte('','description',$evenement->description, 30,100,'','','-')
 				,'motif'=>$form->texte('','motif',$evenement->motif, 30,100,'','','-')
-				,'date'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->get_date('date_fin'), 10)
 				,'type'=>$form->combo('', 'type', $evenement->TType, $evenement->type)
 				,'montantHT'=>$form->texte('', 'montant_HT', $evenement->montant_HT, 10,10)
 				,'TVA'=>$form->combo('','TVA',$evenement->TTVA,$evenement->TVA)

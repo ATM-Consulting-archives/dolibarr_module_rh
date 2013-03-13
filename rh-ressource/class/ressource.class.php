@@ -34,7 +34,7 @@ class TRH_Ressource extends TObjetStd {
 			$temp->load($ATMdb, $id);
 			$this->TType[$temp->getId()] = $temp->libelle;
 		}
-		$this->TBail = array('bail'=>'Bail','immo'=>'Immo');
+		$this->TBail = array('bail'=>'Bail','immobilisation'=>'Immobilisation');
 		$this->TStatut = array('nonattribuée'=>'Non attribuée','attribuée'=>'Attribuée');
 		
 		$this->TRessource = array('');
@@ -59,11 +59,12 @@ class TRH_Ressource extends TObjetStd {
 	}
 	
 	function load(&$ATMdb, $id) {
+		global $conf;
 		parent::load($ATMdb, $id);
 		$this->load_ressource_type($ATMdb);
-		
 		//chargement d'une liste de toutes les ressources (pour le combo "ressource associé")
-		$sqlReq="SELECT rowid,libelle FROM ".MAIN_DB_PREFIX."rh_ressource where rowid!=".$this->getId();
+		$sqlReq="SELECT rowid,libelle FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid!=".$this->getId()."
+		AND entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
@@ -75,12 +76,13 @@ class TRH_Ressource extends TObjetStd {
 	 * Seulement les evenements du type spécifié.
 	 */
 	function load_evenement(&$ATMdb, $type=array('emprunt')){
+		global $conf;
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$this->getId();
 		$sql.=" AND ( 0 ";
 		foreach ($type as $value) {
 			 $sql.= "OR type LIKE '".$value."' ";
 		}
-		$sql .= ") ORDER BY date_fin";
+		$sql .= ") AND entity=".$conf->entity." ORDER BY date_fin";
 		$ATMdb->Execute($sql);
 		$Tab=array();
 		while($ATMdb->Get_line()){
@@ -99,12 +101,14 @@ class TRH_Ressource extends TObjetStd {
 	 * charge tout les contrats associé à cette ressource.
 	 */
 	function load_contrat(&$ATMdb){
+		global $conf;
 		foreach($this->TListeContrat as $k=>$id) {
 			$this->TContratExaustif[$k] = new TRH_Contrat ;
 			$this->TContratExaustif[$k]->load($ATMdb, $k);
 		}
 		
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE fk_rh_ressource=".$this->getId();
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE fk_rh_ressource=".$this->getId()."
+		AND entity=".$conf->entity;
 		$ATMdb->Execute($sql);
 		$Tab=array();
 		while($ATMdb->Get_line()){
@@ -121,14 +125,11 @@ class TRH_Ressource extends TObjetStd {
 	 */
 	
 	function nouvelEmpruntSeChevauche(&$ATMdb, $newEmprunt, $idRessource){
-		//echo strtotime($newEmprunt['date_debut'])."<br>";
+		global $conf;
 		$sqlReq="SELECT date_debut,date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$idRessource."
-		AND type='emprunt'";
-		//echo $sqlReq;
+		AND type='emprunt' AND entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			/*echo  $newEmprunt['date_debut']." ".date("d/m/Y", strtotime($ATMdb->Get_field('date_debut')))." ".$newEmprunt['date_fin']." ". date("d/m/Y",strtotime($ATMdb->Get_field('date_fin')))."<br>";
-			echo $newEmprunt['date_debut']>date("d/m/Y",$ATMdb->Get_field('date_debut'))."<br>";*/
 			if ($this->dateSeChevauchent($newEmprunt['date_debut'], $newEmprunt['date_fin'],date("d/m/Y",strtotime($ATMdb->Get_field('date_debut'))), date("d/m/Y",strtotime($ATMdb->Get_field('date_fin'))) ))
 						{
 						return true;
@@ -203,7 +204,7 @@ class TRH_Ressource_type extends TObjetStd {
 	}
 	
 	function load_field(&$ATMdb) {
-		$sqlReq="SELECT rowid FROM llx_rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." ORDER BY ordre ASC;";
+		$sqlReq="SELECT rowid FROM llx_rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." AND entity=".$conf->entity." ORDER BY ordre ASC;";
 		$ATMdb->Execute($sqlReq);
 		
 		$Tab = array();
@@ -278,7 +279,7 @@ class TRH_Ressource_field extends TObjetStd {
 		parent::add_champs('type','type=chaine;');
 		parent::add_champs('obligatoire','type=entier;');
 		parent::add_champs('ordre','type=entier');
-		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
+		parent::add_champs('fk_rh_ressource_type,entity','type=entier;index;');
 		
 		parent::_init_vars();
 		parent::start();
@@ -305,7 +306,7 @@ class TRH_Ressource_Import  extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_association_ressourceimport');
 		parent::add_champs('libelle','type=chaine;');
 		
-		parent::add_champs('fk_rh_import,entity','type=entier;index;');
+		parent::add_champs('fk_rh_import','type=entier;index;');
 		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
 	}
 	

@@ -18,9 +18,7 @@
 			case 'new':
 				//$ATMdb->db->debug=true;
 				$ressource->set_values($_REQUEST);
-	
 				//$ressource->save($ATMdb);
-				$mesg = '<div class="ok">Nouvelle ressource créée</div>';
 				_fiche($ATMdb, $ressource,'edit');
 				
 				break;	

@@ -29,7 +29,8 @@
 		
 	</tr>
 	<tr>
-		<td>[historique.date;block=tr;strconv=no;protect=no]</td>
+		<td>[historique.date_debut;block=tr;strconv=no;protect=no]</td>
+		<td>[historique.date_fin;block=tr;strconv=no;protect=no]</td>
 		<td>[historique.type;strconv=no;protect=no]</td>
 		<td>[historique.motif;strconv=no;protect=no]</td>
 		<td>[historique.user;strconv=no;protect=no]</td>
@@ -60,8 +61,12 @@
 
 <table class="border" style="width:100%">
 	<tr>
-		<td>Date</td>
-		<td>[NEvent.date;block=tr;strconv=no;protect=no]</td>
+		<td>Date début</td>
+		<td>[NEvent.date_debut;block=tr;strconv=no;protect=no]</td>
+	</tr>
+	<tr>
+		<td>Date fin</td>
+		<td>[NEvent.date_fin;strconv=no;protect=no]</td>
 	</tr>
 	<tr>
 		<td>Type</td>

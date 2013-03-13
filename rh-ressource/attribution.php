@@ -150,7 +150,6 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 	
 	$ressource->load_evenement($ATMdb, array('emprunt'));
 	$TEmprunts = array();
-	
 	foreach($ressource->TEvenement as $k=>$even){
 		$TEmprunts[] = array(
 					'id'=>$even->getId()
@@ -159,7 +158,6 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 					,'date_fin'=>date("d/m/Y",$even->date_fin)
 					,'commentaire'=>$even->motif
 		);
-	
 	}
 
 	$TBS=new TTemplateTBS();
