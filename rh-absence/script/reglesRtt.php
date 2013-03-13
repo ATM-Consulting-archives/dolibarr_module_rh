@@ -34,7 +34,6 @@
 	}
 	
 	
-	
 	//COMPTEUR ANNUEL
 	////// 1er mars, tous les rtt de l'année N sont données à ceux qui les accumulent par année
 	if($mars=="0103"){
