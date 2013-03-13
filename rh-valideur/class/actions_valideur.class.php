@@ -54,8 +54,8 @@ class ActionsValideur
 							    {
 							    	if($action=='list_validation'){
 							    		$date_affichage=date('Y-m-d H:i:s',strtotime('+'.$obj->nbjours.' days',strtotime($object->tms)));
-										if($date_now>=$date_affichage){
-											return 0;
+										if($date_now>=$date_affichage && $object->statut==4){
+											return 0; // on affiche
 										}else{
 											return 1;	
 										}
