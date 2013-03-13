@@ -54,9 +54,6 @@
 				$mesg = '<div class="ok">Le lien avec le contrat a été supprimée.</div>';
 				_fiche($ATMdb, $contrat, $association, $ressource,'view');
 				break;
-				
-				
-			
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {
@@ -137,12 +134,14 @@ function _fiche(&$ATMdb, &$contrat, &$association, &$ressource,  $mode) {
 	
 	$ressource->load_contrat($ATMdb);
 	$TContrats = array();
-	//print_r($ressource->TContratExaustif);
+	print_r($ressource->TContratExaustif);
 	//print_r($ressource->TContratAssocies);
 	foreach($ressource->TContratAssocies as $assoc){
-		//echo $assoc->fk_rh_contrat;
+		echo $assoc->fk_rh_contrat;
+		//print_r( $ressource->TContratExaustif[$assoc->fk_rh_contrat]);
 		$TContrats[] = array(
 					'id'=>$assoc->getId()
+					,'idContrat'=>$ressource->TContratExaustif[$assoc->fk_rh_contrat]->getId()
 					,'libelle'=>$ressource->TContratExaustif[$assoc->fk_rh_contrat]->libelle
 					,'date_debut'=>date("d/m/Y",$ressource->TContratExaustif[$assoc->fk_rh_contrat]->date_debut)
 					,'date_fin'=>date("d/m/Y",$ressource->TContratExaustif[$assoc->fk_rh_contrat]->date_fin)

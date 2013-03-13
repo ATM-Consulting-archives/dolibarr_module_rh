@@ -2,6 +2,7 @@
 class TRH_Contrat  extends TObjetStd {
 	
 	function __construct(){
+		global $conf;
 		parent::set_table(MAIN_DB_PREFIX.'rh_contrat');
 		parent::add_champs('libelle','type=chaine;');
 		parent::add_champs('date_debut, date_fin','type=date;');
@@ -13,48 +14,50 @@ class TRH_Contrat  extends TObjetStd {
 		
 		//Un evenement est lié à une ressource et deux tiers (agence utilisatrice et fournisseur)
 		parent::add_champs('fk_tier_utilisateur,entity','type=entier;index;');
-		parent::add_champs('fk_tier_fournisseur','type=entier;index;');
-		parent::add_champs('fk_rh_ressource','type=entier;index;');
+		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
 		
 		parent::_init_vars();
 		parent::start();
 		
-		$this->TBail = array('immo'=>'Immo', 'location'=>'Location');
+		$this->TBail = array('bail'=>'Bail','immobilisation'=>'Immobilisation');
 		
 		$ATMdb=new Tdb;
 		
-		//chargement d'une liste de tout les types de ressources
+
 		$this->TTypeRessource = array();
-		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource_type";
+		$this->TAgence = array();
+		$this->TTVA = array();
+		$this->TRessource = array();
+		
+	}
+	
+	function load_liste(&$ATMdb){
+		global $conf;
+		//chargement des listes pour les combos
+		
+		$this->TTypeRessource = array();
+		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource_type WHERE entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TTypeRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
 			}
 		
-		
-		//chargement d'une liste de touts les tiers (pour le combo "tiers")
-		$this->TTiers = array();
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe";
-		$ATMdb->Execute($sqlReq);
-		while($ATMdb->Get_line()) {
-			$this->TTiers[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
-			}
-		
-		//chargement d'une liste de touts les tiers (pour le combo "tiers")
+		//chargement d'une liste de touts les groupes
 		$this->TAgence = array();
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup";
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TAgence[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
 			}
 		
-		//chargement d'une liste de touts les tiers (pour le combo "tiers")
+		//chargement d'une liste de toutes les TVA
 		$this->TTVA = array();
 		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
 			}
+		
 	}
 	
 	function save(&$db) {
