@@ -16,10 +16,6 @@
 	 		<td>[contrat.typeContrat;strconv=no;protect=no]</td>
 	 	</tr>
 	 	<tr>
-	 		<td>Tiers</td>
-	 		<td>[contrat.tiersFournisseur;strconv=no;protect=no]</td>
-	 	</tr>
-	 	<tr>
 	 		<td>Agence concernée</td>
 	 		<td>[contrat.tiersAgence;strconv=no;protect=no]</td>
 	 	</tr>
