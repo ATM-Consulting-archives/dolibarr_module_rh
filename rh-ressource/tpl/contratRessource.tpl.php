@@ -29,14 +29,14 @@
 	</tr>
 	<tr>
 		
-		<td><a href='contrat.php?id=[contrats.id;block=tr;strconv=no;protect=no]&action=view' >[contrats.libelle;strconv=no;protect=no]</a></td>
-		<td>[contrats.date_debut;strconv=no;protect=no]</td>
-		<td>[contrats.date_fin;strconv=no;protect=no]</td>
-		<td>[contrats.bail;strconv=no;protect=no]</td>
-		<td>[contrats.loyer_TTC;strconv=no;protect=no]</td>
-		<td>[contrats.TVA;strconv=no;protect=no]</td>
+		<td><a href='contrat.php?id=[associations.id;block=tr;strconv=no;protect=no]&action=view' >[associations.libelle;strconv=no;protect=no]</a></td>
+		<td>[associations.date_debut;strconv=no;protect=no]</td>
+		<td>[associations.date_fin;strconv=no;protect=no]</td>
+		<td>[associations.bail;strconv=no;protect=no]</td>
+		<td>[associations.loyer_TTC;strconv=no;protect=no]</td>
+		<td>[associations.TVA;strconv=no;protect=no]</td>
 		<!--que si on a les droits-->
-		<td><img src="./img/delete.png"  style="cursor:pointer;" onclick="document.location.href='?id=[ressource.id;strconv=no;protect=no]&idAssoc=[contrats.id;strconv=no;protect=no]&action=deleteAssoc'"></td>
+		<td><img src="./img/delete.png"  style="cursor:pointer;" onclick="document.location.href='?id=[ressource.id;strconv=no;protect=no]&idAssoc=[associations.id;strconv=no;protect=no]&action=deleteAssoc'"></td>
 		
 	</tr>
 	
