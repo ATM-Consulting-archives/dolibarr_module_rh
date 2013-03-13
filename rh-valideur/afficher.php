@@ -149,12 +149,12 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 	
 	
 	$TValidations = array();
-	$sqlReq="SELECT r.rowid, r.fk_usergroup, r.type, r.nbjours FROM ".MAIN_DB_PREFIX."rh_valideur_groupe r";
+	$sqlReq="SELECT r.rowid, g.nom, r.type, r.nbjours FROM ".MAIN_DB_PREFIX."rh_valideur_groupe r, ".MAIN_DB_PREFIX."usergroup g WHERE g.rowid = r.fk_usergroup";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 		$TValidations[] = array(
 			'id'=>$ATMdb->Get_field('rowid')
-			,'group'=>$ATMdb->Get_field('fk_usergroup')
+			,'group'=>$ATMdb->Get_field('nom')
 			,'type'=>$ATMdb->Get_field('type')
 			,'nbjours'=>$ATMdb->Get_field('nbjours')
 		);

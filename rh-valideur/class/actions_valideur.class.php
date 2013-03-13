@@ -44,6 +44,7 @@ class ActionsValideur
 							$sql.= " WHERE v.fk_user = ".$user->id;
 							$sql.= " AND v.fk_usergroup =".$obj_group->group_id;
 							$sql.= " AND v.type = 'NDFP'";
+							$sql.= " ORDER BY v.nbjours ASC";
 							
 							$result = $db->query($sql);
 							if($result)

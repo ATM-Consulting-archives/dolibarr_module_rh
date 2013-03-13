@@ -1,10 +1,14 @@
 
-
-			<h1 style="text-align:center;">Visualisation de vos jours acquis [userCourant.firstname] [userCourant.lastname]</h1>
-
-        
-        <div class="fiche"> <!-- begin div class="fiche" -->
+	[onshow;block=begin;when [view.mode]=='view']
+        	[view.head;strconv=no]
+     [onshow;block=end] 
+     
+     [onshow;block=begin;when [view.mode]=='edit']
+		<div class="fiche"> <!-- begin div class="fiche" -->
           <div class="tabBar">
+     [onshow;block=end] 
+     
+			<h1 style="text-align:center;">Visualisation de votre demande d'absence [userCourant.firstname] [userCourant.lastname]</h1>
             
             [onshow;block=begin;when [view.mode]=='edit']
             <h1 style="color: #2AA8B9;"> Déclaration d'absence</h1>                         
@@ -34,7 +38,7 @@
 							[onshow;block=end]
 							
 							[onshow;block=begin;when [view.mode]!='edit']<br/><br/>
-								<b>Etat : [absenceCourante.etat;strconv=no;protect=no]</b>
+								<b>Etat : [absenceCourante.libelleEtat;strconv=no;protect=no]</b>
 							[onshow;block=end]
 							
 							
@@ -61,13 +65,6 @@
 			</table>
 			
 
-		
-				
-		  </div>
-		</div>
-		<div id="test"></div>
-		
-			
 		<div class="tabsAction" >
 			
 		[onshow;block=begin;when [view.mode]!='edit']
@@ -87,9 +84,11 @@
 		
 		
 		</div>
+				
+		  </div>
+		</div>
 		
-		
-		
+
 		<script>
 			$(document).ready( function(){
 				//on empêche que la date de début dépasse celle de fin

@@ -75,9 +75,9 @@
 						<div>
 							<h2>Acquisition des jours</h2>
 							Type acquisition : [rttCourant.typeAcquisition;strconv=no;protect=no]<br/>
-							Mensuel : 	[rttCourant.mensuel;strconv=no;protect=no]<br/>
-							Jour cumulés annuel :	[rttCourant.annuelCumule;strconv=no;protect=no]<br/>
-							Jour non cumulés annuel :  	[rttCourant.annuelNonCumule;strconv=no;protect=no]<br/>
+							Mensuel : 	[rttCourant.mensuelInit;strconv=no;protect=no]<br/>
+							Jours cumulés annuel :	[rttCourant.annuelCumuleInit;strconv=no;protect=no]<br/>
+							Jours non cumulés annuel :  	[rttCourant.annuelNonCumuleInit;strconv=no;protect=no]<br/>
 						</div>
 					</td>
 				<tr>
