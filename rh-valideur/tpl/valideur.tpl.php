@@ -41,7 +41,7 @@
 		<td>Nombre de jours avant alerte</td>
 	</tr>
 	<tr>
-		
+		[valideur.user;strconv=no;protect=no]
 		<td>[valideur.group;strconv=no;protect=no]</td>
 		<td>[valideur.type;strconv=no;protect=no]</td>
 		<td>[valideur.nbjours;strconv=no;protect=no]</td>

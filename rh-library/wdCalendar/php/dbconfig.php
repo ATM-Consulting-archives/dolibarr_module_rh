@@ -1,6 +1,5 @@
 <?php
-//print __FILE__;
-print $_SERVER['PHP_SELF'];
+
 require('../../../config.php');
 
 class DBConnection{
