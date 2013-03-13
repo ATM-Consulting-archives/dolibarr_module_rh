@@ -32,13 +32,6 @@
 		
 	}
 	
-	/////chaque mois, les congés année N sont incrémentés de 2,08
-	$jour=date("d");
-	if($jour=="01"){
-		//on remet à 0 les jours année courante
-		$sqlIncr="UPDATE llx_rh_compteur SET acquisExerciceN=acquisExerciceN+2.08";
-		$ATMdb->Execute($sqlIncr);
-	}
 	
 	
 	//on incrémente les années

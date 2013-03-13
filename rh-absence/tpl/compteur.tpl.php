@@ -1,10 +1,11 @@
 
 
-			<h1 style="text-align:center;">Visualisation de vos jours acquis [userCourant.firstname] [userCourant.lastname]</h1>
 
+	[onshow;block=begin;when [view.mode]=='view']
+        	[view.head;strconv=no]
+     [onshow;block=end] 
         
-        <div class="fiche"> <!-- begin div class="fiche" -->
-          <div class="tabBar">
+       
             
             <h1 style="color: #2AA8B9;"> Jours de Congés</h1>                         
 
@@ -12,7 +13,7 @@
 				<tr>
 					<td>
 						<div>
-							<h2>Jours de congés payés N-1 ([congesPrec.anneePrec;strconv=no;protect=no])</h2>
+							<h2>Jours de congés payés année N-1 </h2>
 							<b>Acquis</b><br/>
 							Utilisateur courant : [congesPrec.user;strconv=no;protect=no]<br/>
 							
@@ -36,16 +37,16 @@
 				<tr>
 					<td>
 						<div>
-							<h2>Jours de congés payés N ([congesCourant.anneeCourante;strconv=no;protect=no])</h2>
+							<h2>Jours de congés payés année N </h2>
 							<b>Acquis</b><br/>
 							Acquis Exercice : 	[congesCourant.acquisEx;strconv=no;protect=no]<br/>
 							Acquis Ancienneté : [congesCourant.acquisAnc;strconv=no;protect=no]	<br/>
 							Acquis Hors-Période : [congesCourant.acquisHorsPer;strconv=no;protect=no]	<br/>
-				
+							Acquis Par Mois : [congesCourant.nombreCongesAcquisMensuel;strconv=no;protect=no]	<br/>
 							<br/>
 							<b>Total : [congesCourant.total;strconv=no;protect=no]</b><br/>
 
-							<b> Dernière clôture : 31/05/[congesPrec.anneePrec;strconv=no;protect=no]</b><br/>
+							<b> Dernière clôture Congés : [congesCourant.date_congesCloture;strconv=no;protect=no]</b><br/>
 						</div>
 					</td>
 				<tr>
@@ -78,13 +79,14 @@
 							Mensuel : 	[rttCourant.mensuelInit;strconv=no;protect=no]<br/>
 							Jours cumulés annuel :	[rttCourant.annuelCumuleInit;strconv=no;protect=no]<br/>
 							Jours non cumulés annuel :  	[rttCourant.annuelNonCumuleInit;strconv=no;protect=no]<br/>
+							<b> Dernière clôture RTT : 		[rttCourant.date_rttCloture;strconv=no;protect=no]</b><br/>
+
 						</div>
 					</td>
 				<tr>
 			</table>
 				
-		  </div>
-		</div>
+		<div id="test"></div>
 			
 			
 		<div class="tabsAction" >
@@ -98,6 +100,19 @@
 		[onshow;block=end]
 		</div>
 
+		<script>
+			$(document).ready( function(){
+				//on empêche que la date de début dépasse celle de fin
+				 $('body').click( 	function(){
+					$("#test").html($("#rttCloture").val());
+					//$("#rttCloture").val()
+					//$("#rttCloture").val($("#rttCloture").val());
+						
+					
+	    		});	
+				
+			});
+		</script>
 
 
 
