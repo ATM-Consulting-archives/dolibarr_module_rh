@@ -75,7 +75,7 @@
 		
 	}
 	else {
-		$ATMdb->db->debug=true;
+		//$ATMdb->db->debug=true;
 		_liste($ATMdb, $absence);
 	}
 	
@@ -141,6 +141,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $absence->getId());
 	echo $form->hidden('action', 'save');
+	echo $form->hidden('fk_user', $user->id);
 	
 	
 	$anneeCourante=date('Y');
@@ -219,7 +220,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'congesPris'=>$form->texte('','congesprisNM1',$congePrec->congesPris,10,50,'',$class="text", $default='')
 				,'anneePrec'=>$form->texte('','anneeNM1',$anneePrec,10,50,'',$class="text", $default='')
 				,'total'=>$form->texte('','total',$congePrecTotal,10,50,'',$class="text", $default='')
-				,'reste'=>$form->texte('','reste',$congePrecReste,10,50,'',$class="text", $default='')
+				,'reste'=>$congePrecReste
 				,'idUser'=>$congePrec->fk_user
 			)
 			,'congesCourant'=>array(
@@ -237,9 +238,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'rowid'=>$form->texte('','rowid',$rttCourant->id,10,50,'',$class="text", $default='')
 				,'id'=>$form->texte('','fk_user',$rttCourant->fk_user,10,50,'',$class="text", $default='')
 				,'pris'=>$form->texte('','rttPris',$rttCourant->pris,10,50,'',$class="text", $default='')
-				,'mensuel'=>$form->texte('','rttAcquisMensuel',$rttCourant->mensuel,10,50,'',$class="text", $default='')
-				,'annuelCumule'=>$form->texte('','rttAcquisAnnuelCumule',$rttCourant->annuelCumule,10,50,'',$class="text", $default='')
-				,'annuelNonCumule'=>$form->texte('','rttAcquisAnnuelNonCumule',$rttCourant->annuelNonCumule,10,50,'',$class="text", $default='')
+				,'mensuel'=>$rttCourant->mensuel
+				,'annuelCumule'=>$rttCourant->annuelCumule
+				,'annuelNonCumule'=>$rttCourant->annuelNonCumule
 				,'typeAcquisition'=>$form->texte('','typeAcquisition',$rttCourant->typeAcquisition,10,50,'',$class="text", $default='')
 				,'reste'=>$form->texte('','total',$rttCourantReste,10,50,'',$class="text", $default='')
 				,'idNum'=>$idRttCourant
@@ -254,7 +255,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
-				,'idUser'=>$form->texte('','fk_user',$user->id,5,10,'',$class="text", $default='')
+				,'idUser'=>$user->id
 				,'comboType'=>$form->combo('','type',$absence->TTypeAbsence,$absence->type)
 				,'etat'=>$form->texte('','etat',$absence->etat,5,10,'',$class="text", $default='')
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
@@ -270,6 +271,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			,'view'=>array(
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'fiche', 'Absence')
+				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence')
+				
 			
 			
 			)

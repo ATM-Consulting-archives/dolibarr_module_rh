@@ -48,11 +48,7 @@ class TRH_Ressource extends TObjetStd {
 		while($ATMdb->Get_line()) {
 			$this->TListeContrat[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
 			}
-		
-		/**
-		 * Chargement de tout les contrats
-		 */
-		 $this->TContratExaustif = array();
+
 		
 		
 
@@ -102,6 +98,7 @@ class TRH_Ressource extends TObjetStd {
 	 */
 	function load_contrat(&$ATMdb){
 		global $conf;
+		$this->TContratExaustif = array();
 		foreach($this->TListeContrat as $k=>$id) {
 			$this->TContratExaustif[$k] = new TRH_Contrat ;
 			$this->TContratExaustif[$k]->load($ATMdb, $k);
@@ -116,8 +113,8 @@ class TRH_Ressource extends TObjetStd {
 		}
 		$this->TContratAssocies = array();
 		foreach($Tab as $k=>$id) {
-			$this->TContratAssocies[$k] = new TRH_Contrat_Ressource;
-			$this->TContratAssocies[$k]->load($ATMdb, $id);
+			$this->TContratAssocies[$id] = new TRH_Contrat_Ressource;
+			$this->TContratAssocies[$id]->load($ATMdb, $id);
 		}
 	}
 	/**
@@ -204,6 +201,7 @@ class TRH_Ressource_type extends TObjetStd {
 	}
 	
 	function load_field(&$ATMdb) {
+		global $conf;
 		$sqlReq="SELECT rowid FROM llx_rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." AND entity=".$conf->entity." ORDER BY ordre ASC;";
 		$ATMdb->Execute($sqlReq);
 		

@@ -29,7 +29,7 @@
 	</tr>
 	<tr>
 		
-		<td><a href='contrat.php?id=[associations.id;block=tr;strconv=no;protect=no]&action=view' >[associations.libelle;strconv=no;protect=no]</a></td>
+		<td><a href='contrat.php?id=[associations.idContrat;block=tr;strconv=no;protect=no]&action=view' >[associations.libelle;strconv=no;protect=no]</a></td>
 		<td>[associations.date_debut;strconv=no;protect=no]</td>
 		<td>[associations.date_fin;strconv=no;protect=no]</td>
 		<td>[associations.bail;strconv=no;protect=no]</td>

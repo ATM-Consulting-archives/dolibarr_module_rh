@@ -1569,7 +1569,7 @@
                             
                             return false;*/
 							//data[6] contient  la fk_user lié à l'évenement.
-                            window.location = 'user/fiche.php?id='+data[6];
+                            window.location = '../../user/fiche.php?id='+data[6];
                             //user.php&
                         });
                         lbtn.click(function(e) {

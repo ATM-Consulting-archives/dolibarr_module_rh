@@ -1,6 +1,7 @@
 <?php
 	require('config.php');
 	require('./class/absence.class.php');
+	require('./lib/absence.lib.php');
 	
 	$langs->load('absence@absence');
 	
@@ -22,6 +23,13 @@
 				
 			case 'save':
 				$ATMdb->db->debug=true;
+				//echo "salut".$compteur->rttCloture;
+				//$compteur->rttCloture=date("Y-m-d h:i:s", $compteur->rttCloture);
+				//echo "salut".$compteur->rttCloture;
+				//print_r($compteur);
+				/*$compteur->rttCloture=date($compteur->rttCloture);
+				echo "salut".$compteur->rttCloture;*/
+				
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				$compteur->set_values($_REQUEST);
 				$compteur->save($ATMdb);
@@ -61,7 +69,7 @@ function _liste(&$ATMdb, &$compteur) {
 	getStandartJS();
 	
 	$r = new TSSRenderControler($compteur);
-	$sql="SELECT firstname as 'Prénom', name as 'Nom', anneeN as 'annee', r.rowid as 'ID', r.date_cre as 'DateCre',r.acquisExerciceN as 'Congés acquis N', 
+	$sql="SELECT  r.rowid as 'ID', firstname as 'Prénom', name as 'Nom', anneeN as 'annee', r.date_cre as 'DateCre',r.acquisExerciceN as 'Congés acquis N', 
 	r.acquisAncienneteN as 'Congés Ancienneté', r.acquisExerciceNM1 as 'Conges Acquis N-1', r.congesPrisNM1 as 'Conges Pris N-1',
 			   r.rttPris as 'RttPris', r.fk_user as 'Utilisateur'
 		FROM llx_rh_compteur as r, llx_user as c 
@@ -112,12 +120,13 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $compteur->getId());
 	echo $form->hidden('action', 'save');
+	//echo $form->hidden('fk_user', $_REQUEST['id']);
 	
 	
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
-	$sqlReqUser="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
+	$sqlReqUser="SELECT * FROM `llx_rh_compteur` where fk_user=". $_REQUEST['id']." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -137,7 +146,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$congePrecReste=$congePrecTotal-$congePrec->congesPris;
 	
 	//////////////////////////récupération des informations des congés précédents (N-1) de l'utilisateur courant : 
-	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;
+	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=". $_REQUEST['id']." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;
 	$ATMdb=new Tdb;
 	$ATMdb->Execute($sqlReqUser2);
 	$Tab2=array();
@@ -149,13 +158,14 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				$congeCourant->acquisHorsPer=$ATMdb->Get_field('acquisHorsPeriodeN');
 				$congeCourant->annee=$ATMdb->Get_field('anneeN');
 				$congeCourant->fk_user=$ATMdb->Get_field('fk_user');
+				$congeCourant->nombreCongesAcquisMensuel=$ATMdb->Get_field('nombreCongesAcquisMensuel');
 				$Tab2[]=$congeCourant;	
 	}
 	
 	$congeCourantTotal=$congeCourant->acquisEx+$congeCourant->acquisAnc+$congeCourant->acquisHorsPer;
 	
 	//////////////////////////////récupération des informations des rtt courants (année N) de l'utilisateur courant : 
-	$sqlRtt="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id;
+	$sqlRtt="SELECT * FROM `llx_rh_compteur` where fk_user=". $_REQUEST['id'];
 	$ATMdb->Execute($sqlRtt);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -172,6 +182,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				$rttCourant->mensuelInit=$ATMdb->Get_field('rttAcquisMensuelInit');
 				$rttCourant->annee=substr($ATMdb->Get_field('anneertt'),0,4);
 				$rttCourant->fk_user=$ATMdb->Get_field('fk_user');
+				
 				$Tab[]=$rttCourant;	
 	}
 	
@@ -196,7 +207,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'total'=>$form->texte('','total',$congePrecTotal,10,50,'',$class="text", $default='')
 				,'reste'=>$form->texte('','reste',$congePrecReste,10,50,'',$class="text", $default='')
 				,'idUser'=>$congePrec->fk_user
-				,'user'=>$form->texte('','fk_user',$_REQUEST['id'],10,50,'',$class="text", $default='')
+				,'user'=>$_REQUEST['id']
 			)
 			,'congesCourant'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
@@ -206,6 +217,11 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'anneeCourante'=>$form->texte('','anneeN',$anneeCourante,10,50,'',$class="text", $default='')
 				,'total'=>$form->texte('','total',$congeCourantTotal,10,50,'',$class="text", $default='')
 				,'idUser'=>$congeCourant->fk_user
+				,'date_congesCloture'=>$form->calendrier('', 'date_congesCloture', $compteur->get_date('date_congesCloture'), 10)
+				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',$congeCourant->nombreCongesAcquisMensuel,10,50,'',$class="text", $default='')
+				
+				
+				
 			)
 			,'rttCourant'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
@@ -216,6 +232,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'annuelCumule'=>$form->texte('','rttAcquisAnnuelCumule',$rttCourant->annuelCumule,10,50,'',$class="text", $default='')
 				,'annuelNonCumule'=>$form->texte('','rttAcquisAnnuelNonCumule',$rttCourant->annuelNonCumule,10,50,'',$class="text", $default='')
 				
+				,'date_rttCloture'=>$form->calendrier('', 'date_rttCloture', $compteur->get_date('date_rttCloture'), 10)
+				
 				,'mensuelInit'=>$form->texte('','rttAcquisMensuel',$rttCourant->mensuelInit,10,50,'',$class="text", $default='')
 				,'annuelCumuleInit'=>$form->texte('','rttAcquisAnnuelCumule',$rttCourant->annuelCumuleInit,10,50,'',$class="text", $default='')
 				,'annuelNonCumuleInit'=>$form->texte('','rttAcquisAnnuelNonCumule',$rttCourant->annuelNonCumuleInit,10,50,'',$class="text", $default='')
@@ -223,6 +241,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'typeAcquisition'=>$form->texte('','typeAcquisition',$rttCourant->typeAcquisition,10,50,'',$class="text", $default='')
 				,'reste'=>$form->texte('','total',$rttCourantReste,10,50,'',$class="text", $default='')
 				,'id'=>$compteur->getId()
+				
+				
 
 				
 			)
@@ -234,6 +254,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 			
 			,'view'=>array(
 				'mode'=>$mode
+				,'head'=>dol_get_fiche_head(absencePrepareHead($compteur, 'compteur')  , 'compteur', 'Absence')
 			
 			
 			)
