@@ -17,10 +17,6 @@ $mode = $action;
 $mesg = '';
 $error=false;
 
-$fuser = new User($db);
-$fuser->fetch($id);
-$fuser->getrights();
-
 if(isset($_REQUEST['action'])) {
 	switch($_REQUEST['action']) {
 		case 'add':
@@ -83,6 +79,10 @@ function _liste(&$ATMdb, &$valideur) {
 	global $langs,$conf,$db;
 	
 	llxHeader('', 'Liste des validations possibles');
+	
+	$fuser = new User($db);
+	$fuser->fetch($_REQUEST['id']);
+	$fuser->getrights();
 
 	$head = user_prepare_head($fuser);
 	$current_head = 'valideur';
@@ -137,6 +137,10 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 	global $langs,$db,$user;
 	
 	llxHeader('', 'Validation');
+	
+	$fuser = new User($db);
+	$fuser->fetch($_REQUEST['id']);
+	$fuser->getrights();
 	
 	$head = user_prepare_head($fuser);
 	$current_head = 'valideur';
