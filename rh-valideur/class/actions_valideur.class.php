@@ -12,34 +12,6 @@ class ActionsValideur
     { 
         global $db,$html,$user;
 		
-
-	  		
-		$idUsercourant=$_GET["id"];
-		if (in_array('usercard',explode(':',$parameters['context']))) 
-		{ 
-          // do something only for the context 'somecontext'
-          
-          dol_include_once('/core/class/html.form.class.php');
-          
-		  $form=new Form($db);
-		  
-          if($action=='update') {
-	         $fk_user_delegation = GETPOST('fk_user_delegation','int');
-          	 $sql = "UPDATE llx_user SET fk_user_delegation=$fk_user_delegation WHERE rowid=".$idUsercourant;	
-			 $result = $db->query($sql);
-		 }
-		 else { //on récupère le numéro du délégateur
-		 		
-				 $sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$idUsercourant;	
-				 $result = $db->query($sql);
-				 if ($result)
-				 {
-                    $obj = $db->fetch_object($sql);
-                    if ($obj)
-                    {
-							$fk_user_delegation=$obj->fk_user_delegation;
-
-
 		if($action=='list_validation'){
 			if($object->fk_user==$user->id){
 				return 0;
@@ -72,6 +44,7 @@ class ActionsValideur
 							$sql.= " WHERE v.fk_user = ".$user->id;
 							$sql.= " AND v.fk_usergroup =".$obj_group->group_id;
 							$sql.= " AND v.type = 'NDFP'";
+							$sql.= " ORDER BY v.nbjours ASC";
 							
 							$result = $db->query($sql);
 							if($result)
@@ -117,7 +90,6 @@ class ActionsValideur
                 	$obj = $db->fetch_object($sql);
                     if ($obj){
 						$fk_user_delegation=$obj->fk_user_delegation;
-
 					}
 			    }	
 			}		    
