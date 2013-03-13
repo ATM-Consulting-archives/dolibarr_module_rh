@@ -40,9 +40,9 @@ class TRH_Ressource extends TObjetStd {
 		$this->TRessource = array('');
 		$this->TEvenement = array();
 		
-		$this->TContratAssocies = array(); //tout les objets rh_contrat_ressource liés à la ressource
-		$this->TContratExaustif = array(); //tout les objets contrats
-		$this->TListeContrat = array(); //liste des id et libellés de tout les contrats
+		$this->TContratAssocies = array(); 	//tout les objets rh_contrat_ressource liés à la ressource
+		$this->TContratExaustif = array(); 	//tout les objets contrats
+		$this->TListeContrat = array(); 	//liste des id et libellés de tout les contrats
 		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_contrat ";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
@@ -53,10 +53,7 @@ class TRH_Ressource extends TObjetStd {
 		 * Chargement de tout les contrats
 		 */
 		 $this->TContratExaustif = array();
-		foreach($this->TListeContrat as $k=>$id) {
-			$this->TContratExaustif[$k] = new TRH_Contrat ;
-			$this->TContratExaustif[$k]->load($ATMdb, $k);
-		}
+		
 		
 
 	}
@@ -102,11 +99,16 @@ class TRH_Ressource extends TObjetStd {
 	 * charge tout les contrats associé à cette ressource.
 	 */
 	function load_contrat(&$ATMdb){
-		$sql = "SELECT fk_rh_contrat FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE fk_rh_ressource=".$this->getId();
+		foreach($this->TListeContrat as $k=>$id) {
+			$this->TContratExaustif[$k] = new TRH_Contrat ;
+			$this->TContratExaustif[$k]->load($ATMdb, $k);
+		}
+		
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE fk_rh_ressource=".$this->getId();
 		$ATMdb->Execute($sql);
 		$Tab=array();
 		while($ATMdb->Get_line()){
-			$Tab[]=$ATMdb->Get_field('fk_rh_contrat');
+			$Tab[]=$ATMdb->Get_field('rowid');
 		}
 		$this->TContratAssocies = array();
 		foreach($Tab as $k=>$id) {
