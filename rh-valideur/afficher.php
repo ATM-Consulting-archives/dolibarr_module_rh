@@ -161,6 +161,7 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 		);
 	}
 	*/
+	$valideur->loadListGroup($ATMdb,$fuser->id);
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/valideur.tpl.php'
 		,array(
@@ -171,7 +172,6 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 				'id'=>$user->id
 			)
 			,'valideur'=>array(
-				
 				'group'=>$form->combo('','fk_usergroup',$valideur->TGroup,$valideur->fk_usergroup)
 				,'type'=> $form->combo('','type',$valideur->TType, $valideur->type)
 				,'nbjours'=> $form->texte('', 'nbjours', $valideur->nbjours, 7,10,'','','-')
