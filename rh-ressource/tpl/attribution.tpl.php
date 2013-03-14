@@ -6,46 +6,7 @@
     
             <div class="tabBar">
 	                                
-	
-	
-	<h2>
-		Historique des attributions
-	</h2>
-	
-	<table class="border" style="width:100%">
-		<tr>
-			<td style="width:10%">Utilisateur</td>
-			<td style="width:10%">Date début</td>
-			<td style="width:10%">Date fin</td>
-			<td style="width:60%">Commentaire</td>
-			<td style="width:10%">Action</td>
-	
-		</tr>	
-		<tr>
-			<td style="width:10%">[historique.user;block=tr;strconv=no;protect=no]</td>
-			<td style="width:10%">[historique.date_debut;strconv=no;protect=no]</td>
-			<td style="width:10%">[historique.date_fin;strconv=no;protect=no]</td>
-			<td style="width:60%">[historique.commentaire;strconv=no;protect=no]</td>
-			<td style="width:10%"><img src="./img/delete.png"  style="cursor:pointer;" onclick="document.location.href='?id=[ressource.id]&idAttribution=[historique.id]&action=deleteAttribution'"></td>
-	 
-		</tr>
-	</table>
-	
-		
-	<div class="tabsAction" >	
-		<a class="butAction"  href="?id=[ressource.id]&action=edit">Ajouter</a>
-	</div>
-	
-	
-	</div>
-	</div>
-[onshow;block=end] 
-
-
-[onshow;block=begin;when [view.mode]=='edit']
-	<h2>
-		Nouvelle attribution
-	</h2>
+[onshow;block=end] 	
 	
 	<table class="border" style="width:100%">
 		[NEmprunt.fk_rh_ressource;strconv=no;protect=no]
@@ -70,14 +31,26 @@
 
 	</table>
 	
-		
+			
+
+	
+[onshow;block=begin;when [view.mode]=='view']
 	<div class="tabsAction" >
-		<input type="submit" value="Enregistrer" name="newEmprunt" class="button">
+		<a class="butAction"  href="?id=[ressource.id]&idEven=[NEmprunt.id]&action=edit">Modifier</a>
+		<a class="butActionDelete"  href="?id=[ressource.id]&idEven=[NEmprunt.id]&action=deleteAttribution">Supprimer</a>
+		</div>
+[onshow;block=end] 
+
+[onshow;block=begin;when [view.mode]!='view']
+	<div class="tabsAction" >
+		<input type="submit" value="Enregistrer" name="save" class="button">
 		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
-	</div>	
+	</div>
+[onshow;block=end] 
 
-[onshow;block=end]
 
+	</div>
+	</div>
 
 	
 

@@ -1,6 +1,7 @@
 <?php
 	require('config.php');
 	require('./class/ressource.class.php');
+	require('./class/contrat.class.php');
 	require('./lib/ressource.lib.php');
 	$langs->load('ressource@ressource');
 	

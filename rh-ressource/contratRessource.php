@@ -134,11 +134,7 @@ function _fiche(&$ATMdb, &$contrat, &$association, &$ressource,  $mode) {
 	
 	$ressource->load_contrat($ATMdb);
 	$TContrats = array();
-	print_r($ressource->TContratExaustif);
-	//print_r($ressource->TContratAssocies);
 	foreach($ressource->TContratAssocies as $assoc){
-		echo $assoc->fk_rh_contrat;
-		//print_r( $ressource->TContratExaustif[$assoc->fk_rh_contrat]);
 		$TContrats[] = array(
 					'id'=>$assoc->getId()
 					,'idContrat'=>$ressource->TContratExaustif[$assoc->fk_rh_contrat]->getId()

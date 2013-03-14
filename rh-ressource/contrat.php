@@ -26,7 +26,7 @@
 				break;
 				
 			case 'save':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$contrat->load($ATMdb, $_REQUEST['id']);
 				$contrat->set_values($_REQUEST);
 				$contrat->save($ATMdb);
@@ -62,7 +62,7 @@
 		/*
 		 * Liste
 		 */
-		 $ATMdb->db->debug=true;
+		 //$ATMdb->db->debug=true;
 		 _liste($ATMdb, $contrat);
 	}
 	

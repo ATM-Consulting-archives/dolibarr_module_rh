@@ -124,13 +124,13 @@ class TRH_Ressource extends TObjetStd {
 	function nouvelEmpruntSeChevauche(&$ATMdb, $newEmprunt, $idRessource){
 		global $conf;
 		$sqlReq="SELECT date_debut,date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$idRessource."
-		AND type='emprunt' AND entity=".$conf->entity;
+		AND type='emprunt' AND entity=".$conf->entity." AND rowid != ".$newEmprunt['idEven'];
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			if ($this->dateSeChevauchent($newEmprunt['date_debut'], $newEmprunt['date_fin'],date("d/m/Y",strtotime($ATMdb->Get_field('date_debut'))), date("d/m/Y",strtotime($ATMdb->Get_field('date_fin'))) ))
-						{
-						return true;
-						}
+				{
+				return true;
+				}
 		}
 		return false;
 	}
@@ -166,6 +166,29 @@ class TRH_Ressource extends TObjetStd {
 		$this->entity = $conf->entity;
 		
 		parent::save($db);
+	}
+	
+	function delete(&$ATMdb){
+		global $conf;
+		
+		//avant de supprimer le contrat, on supprime les liaisons contrat-ressource associés.
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE entity=".$conf->entity."
+		AND fk_rh_ressource=".$this->getId();
+		$Tab = array();
+		$temp = new TRH_Contrat_Ressource;
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$Tab[] = $ATMdb->Get_field('rowid');
+			}
+		foreach ($Tab as $key => $id) {
+			$temp->load($ATMdb, $id);
+			$temp->delete($ATMdb);
+		}
+		
+		
+		parent::delete($ATMdb);
+		
+		
 	}
 }
 
