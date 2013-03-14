@@ -20,13 +20,8 @@ class TRH_valideur_groupe extends TObjetStd {
 			,'Ressource'=>'Ressources'
 		);
 		
-		//chargement d'une liste de tous les groupes
+		
 		$this->TGroup = array();
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup";
-		$ATMdb->Execute($sqlReq);
-		while($ATMdb->Get_line()) {
-			$this->TGroup[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
-			}
 		
 		//chargement d'une liste de tous les utilisateurs
 		$this->TUser = array();
@@ -36,6 +31,19 @@ class TRH_valideur_groupe extends TObjetStd {
 			$this->TUser[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name');
 			}
 		
+	}
+
+	//chargement d'une liste de tous les groupes
+	function loadListGroup(&$ATMdb,$user_id){
+		$this->TGroup = array();
+		$sqlReq="SELECT g.rowid AS 'rowid', g.nom AS 'nom'";
+		$sqlReq.=" FROM ".MAIN_DB_PREFIX."usergroup g, ";
+		$sqlReq.=MAIN_DB_PREFIX."usergroup_user a";
+		$sqlReq.=" WHERE a.fk_usergroup=g.rowid AND a.fk_user=".$user_id;
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TGroup[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			}
 	}
 
 	function save(&$db) {
