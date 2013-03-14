@@ -35,17 +35,18 @@
 				
 			case 'save':
 				//$ATMdb->db->debug=true;				
-				if(isset($_REQUEST['newEmprunt'])){
-					//on vérifie que la date choisie ne superpose pas avec les autres emprunts.
-					if ($ressource->nouvelEmpruntSeChevauche($ATMdb, $_REQUEST ,$_REQUEST['id']) ){
-						$mesg = '<div class="error">Les dates choisies se superposent avec d\'autres attributions.</div>';
-						$mode = 'edit';
-					}
-					else {
-						$mesg = '<div class="ok">Attribution ajoutée.</div>';
-						$emprunt->set_values($_REQUEST);
-						$emprunt->save($ATMdb);
-					}
+				//on vérifie que la date choisie ne superpose pas avec les autres emprunts.
+				$ressource->load($ATMdb, $_REQUEST['id']);
+				if ($ressource->nouvelEmpruntSeChevauche($ATMdb, $_REQUEST ,$_REQUEST['id']) ){
+					$mesg = '<div class="error">Impossible d\'attributer la ressource. Les dates choisies se superposent avec d\'autres attributions.</div>';
+				}
+				else {
+					$mesg = '<div class="ok">Attribution ajoutée.</div>';
+					$emprunt->load($ATMdb, $_REQUEST['idEven']);
+					$emprunt->set_values($_REQUEST);
+					$emprunt->save($ATMdb);
+					$ressource->load($ATMdb, $_REQUEST['id']);
+					
 				}
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_liste($ATMdb, $emprunt,$ressource);
@@ -69,7 +70,6 @@
 					document.location.href="?id=<?$_REQUEST['id']?>&delete_ok=1";					
 				</script>
 				<?
-				//_fiche($ATMdb, $emprunt, $ressource,$mode);
 				break;
 			
 		}
@@ -89,6 +89,7 @@
 		 * Liste
 		 */
 		 //$ATMdb->db->debug=true;
+		 $ressource->load($ATMdb, $_REQUEST['id']);
 		 _liste($ATMdb, $emprunt, $ressource);
 	}
 	
@@ -147,7 +148,10 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 		,'orderBy'=>$TOrder
 		
 	));
-	?><a href="?id=<?=$ressource->getId()?>&idEven=<?=$emprunt->getId()?>&action=new">Nouveau</a><?
+	?><a href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
+	
+	global $mesg, $error;
+	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
 }	
 	
@@ -159,7 +163,9 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $ressource->getId());
 	echo $form->hidden('action', 'save');
-	/*
+	echo $form->hidden('idEven',$emprunt->getId());
+	 
+	 /*
 	$ressource->load_evenement($ATMdb, array('emprunt'));
 	$TEmprunts = array();
 	foreach($ressource->TEvenement as $k=>$even){
@@ -181,7 +187,6 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 			)
 			,'NEmprunt'=>array(
 				'id'=>$emprunt->getId() //$form->hidden('idEven', $emprunt->getId())
-				,'idHidden'=>$form->hidden('idEven', $emprunt->getId())
 				,'type'=>$form->hidden('type', 'emprunt')
 				,'fk_user'=>$form->combo('','fk_user',$emprunt->TUser,$emprunt->fk_user)
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())

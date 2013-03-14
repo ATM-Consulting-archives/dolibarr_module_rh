@@ -11,7 +11,6 @@
 	<table class="border" style="width:100%">
 		[NEmprunt.fk_rh_ressource;strconv=no;protect=no]
 		[NEmprunt.type;strconv=no;protect=no]
-		[NEmprunt.idHidden;strconv=no;protect=no]
 		<tr>
 			<td>Utilisateur</td>
 			<td>[NEmprunt.fk_user;strconv=no;protect=no]</td>
@@ -44,7 +43,7 @@
 
 [onshow;block=begin;when [view.mode]!='view']
 	<div class="tabsAction" >
-		<input type="submit" value="Enregistrer" name="newEmprunt" class="button">
+		<input type="submit" value="Enregistrer" name="save" class="button">
 		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
 	</div>
 [onshow;block=end] 
