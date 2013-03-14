@@ -63,11 +63,11 @@
 				//$ATMdb->db->debug=true;
 				$emprunt->load($ATMdb, $_REQUEST['idEven']);
 				$emprunt->delete($ATMdb);
-
+				
 				
 				?>
 				<script language="javascript">
-					document.location.href="?id=<?$_REQUEST['id']?>&delete_ok=1";					
+					document.location.href="?id=<?echo $_REQUEST['id'];?>&delete_ok=1";					
 				</script>
 				<?
 				break;
