@@ -12,6 +12,10 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('acquisHorsPeriodeN','type=float;');											
 		parent::add_champs('anneeN','type=int;');					
 		parent::add_champs('dureeN','type=entier;');
+		parent::add_champs('date_congesCloture','type=date;');	//date de clôture période rtt
+		parent::add_champs('nombreCongesAcquisMensuel','type=float;');
+		
+		
 		
 		//conges N-1
 		parent::add_champs('acquisExerciceNM1','type=float;');				
@@ -38,6 +42,8 @@ class TRH_Compteur extends TObjetStd {
 		
 		parent::add_champs('rttannee','type=int;');	
 		parent::add_champs('rttMetier','type=chaine;');		
+		parent::add_champs('date_rttCloture','type=date;');	//date de clôture période rtt
+		
 		
 		parent::add_champs('entity','type=int;');					
 					
@@ -80,6 +86,7 @@ class TRH_Compteur extends TObjetStd {
 		$this->rttAcquisAnnuelCumule='5';
 		$this->rttAcquisAnnuelNonCumule='7';
 		$this->rttannee=$annee;
+		$this->nombreCongesAcquisMensuel='2.08';
 	}
 }
 

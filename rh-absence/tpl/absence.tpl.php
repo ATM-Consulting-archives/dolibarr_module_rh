@@ -4,65 +4,79 @@
      [onshow;block=end] 
      
      [onshow;block=begin;when [view.mode]=='edit']
-		<div class="fiche"> <!-- begin div class="fiche" -->
-          <div class="tabBar">
+        	[view.head2;strconv=no]
      [onshow;block=end] 
      
-			<h1 style="text-align:center;">Visualisation de votre demande d'absence [userCourant.firstname] [userCourant.lastname]</h1>
-            
-            [onshow;block=begin;when [view.mode]=='edit']
+
+
+
+
+
+
+			[onshow;block=begin;when [view.mode]=='edit']
             <h1 style="color: #2AA8B9;"> Déclaration d'absence</h1>                         
 			[onshow;block=end]
 			 [onshow;block=begin;when [view.mode]!='edit']
             <h1 style="color: #2AA8B9;"> Visualisation absence</h1>                         
 			[onshow;block=end]
-			<table  border ="1" style="display: inline-block; margin-left:20px;">
-				<tr>
-					<td>
-						<div>
-							[onshow;block=begin;when [view.mode]=='edit']
-							<h2> Nouvelle absence </h2><br/>	
-							[onshow;block=end]
-							[onshow;block=begin;when [view.mode]!='edit']
-							<h2> Récapitulatif absence </h2><br/>	
-							[onshow;block=end]
-							
-							
-							id Utilisateur courant :  [absenceCourante.idUser;strconv=no;protect=no]	<br/><br/>	
-							Type d'absence :  [absenceCourante.comboType;strconv=no;protect=no] &nbsp; &nbsp;&nbsp; &nbsp;<br/><br/>
-							Date début : 	[absenceCourante.date_debut;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.ddMoment;strconv=no;protect=no]<br/><br/>
-							Date fin : 		[absenceCourante.date_fin;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]<br/><br/>
-							Commentaire : 	[absenceCourante.commentaire;strconv=no;protect=no]<br/><br/>
-							[onshow;block=begin;when [view.mode]!='edit']
-								Duree : [absenceCourante.duree;strconv=no;protect=no]
-							[onshow;block=end]
-							
-							[onshow;block=begin;when [view.mode]!='edit']<br/><br/>
-								<b>Etat : [absenceCourante.libelleEtat;strconv=no;protect=no]</b>
-							[onshow;block=end]
-							
-							
-						</div>
-					</td>
-				<tr>
-			</table>
-		
-			<table style="margin-left: 150px; display: inline-block; "  border ="1">
-				<tr>
-					<td>
-						<div>
-							<h2>Jours restants</h2>
-							<b>Reste à prendre</b><br/>
-							
-							Congés payés : [congesPrec.reste;strconv=no;protect=no]<br/>
-							RTT cumulés : 	[rttCourant.annuelCumule;strconv=no;protect=no]<br/>
-							RTT non cumulés : 	[rttCourant.annuelNonCumule;strconv=no;protect=no]<br/>
-							RTT mensuels : 	[rttCourant.mensuel;strconv=no;protect=no] <br/>
 
-						</div>
-					</td>
+
+			<table class="border" style="width:30%">
 				<tr>
+					<td>Utilisateur Courant</td>
+					<td>[absenceCourante.idUser;strconv=no;protect=no]</td>
+				</tr>	
+				<tr>
+					<td>Type d'absence</td>
+					<td>[absenceCourante.comboType;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Date début</td>
+					<td>[absenceCourante.date_debut;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.ddMoment;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Date fin</td>
+					<td>[absenceCourante.date_fin;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Commentaire</td>
+					<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
+				</tr>
+				[onshow;block=begin;when [view.mode]!='edit']
+					<tr>
+						<td>Duree</td>
+						<td>[absenceCourante.duree;strconv=no;protect=no]</td>
+					</tr>
+					<tr>
+						<td>Etat</td>
+						<td>[absenceCourante.libelleEtat;strconv=no;protect=no]</td>
+					</tr>
+				[onshow;block=end]
 			</table>
+
+    <br/>
+     <h3 style="color: #2AA8B9;">Jours restants à prendre</h3>
+							
+            <table class="border" style="width:30%">
+				<tr>
+					<td>Congés payés</td>
+					<td>[congesPrec.reste;strconv=no;protect=no]</td>
+				</tr>	
+				<tr>
+					<td>RTT cumulés </td>
+					<td>[rttCourant.annuelCumule;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>RTT non cumulés</td>
+					<td>[rttCourant.annuelNonCumule;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>RTT mensuels</td>
+					<td>[rttCourant.mensuel;strconv=no;protect=no]</td>
+				</tr>
+			</table>
+        <br/>  
+			
 			
 
 		<div class="tabsAction" >
@@ -74,7 +88,7 @@
 		
 		[onshow;block=begin;when [view.mode]=='edit']
 			<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" href="?id=[absenceCourante.id]&action=view">
+			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
@@ -85,8 +99,7 @@
 		
 		</div>
 				
-		  </div>
-		</div>
+
 		
 
 		<script>

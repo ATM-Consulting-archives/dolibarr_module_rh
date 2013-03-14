@@ -1,6 +1,7 @@
 <?php
 class ActionsValideur
-{ 
+{
+	 
      /** Overloading the doActions function : replacing the parent's function with the one below 
       *  @param      parameters  meta datas of the hook (context, etc...) 
       *  @param      object             the object you want to process (an invoice if you are in invoice module, a propale in propale's module, etc...) 
@@ -12,15 +13,91 @@ class ActionsValideur
     { 
         global $db,$html,$user;
 		
-		if($action=='list_validation'){
-			if($object->fk_user==$user->id){
-				return 0;
-			}
+		if($action=='list_test'){
+			$sql = "SELECT n.rowid, n.ref, n.tms, n.total_ht, n.total_ttc, n.fk_user, n.statut, n.fk_soc, n.dates, n.datee,";
+	        $sql.= " u.rowid as uid, u.name, u.firstname, s.nom AS soc_name, s.rowid AS soc_id, u.login, n.total_tva, SUM(p.amount) AS already_paid";
+	        $sql.= " FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v, ".MAIN_DB_PREFIX."usergroup_user as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."ndfp as n";
+	        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = n.fk_soc";
+	        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."ndfp_pay_det as p ON p.fk_ndfp = n.rowid";
+	        $sql.= " WHERE n.entity = ".$object->entity;
+			$sql.= " AND ((n.fk_user = ".$user->id;
+			
+			if ($parameters[0] == 'unpaid')
+	        {
+	            $sql.= " AND n.statut = 1";
+	        }
+			
+			$sql.= ") OR (n.fk_user = a.fk_user";
+			$sql.= " AND u.rowid = a.fk_user";
+			$sql.= " AND a.fk_usergroup = v.fk_usergroup";
+			$sql.= " AND v.fk_user = ".$user->id;
+			$sql.= " AND n.statut = 4";
+			$sql.= " AND NOW() >= ADDDATE(n.tms, v.nbjours)))";
+			
+			if ($parameters[1] > 0)
+	        {
+	            $sql .= " AND n.fk_soc = ".$parameters[1];
+	        }
+			
+	        if ($parameters[2])
+	        {
+	            $sql.= ' AND n.ref LIKE \'%'.$db->escape(trim($parameters[2])).'%\'';
+	        }
+	        if ($parameters[3])
+	        {
+	            $sql.= ' AND s.nom LIKE \'%'.$db->escape(trim($parameters[3])).'%\'';
+	        }
+	        if ($parameters[4])
+	        {
+	            $sql.= ' AND (u.name LIKE \'%'.$db->escape(trim($parameters[4])).'%\' OR u.firstname LIKE \'%'.$db->escape(trim($parameters[4])).'%\')';
+	        }
+	
+	        if ($parameters[5])
+	        {
+	            $sql.= ' AND n.total_ht = '.$db->escape(price2num(trim($parameters[5])));
+	        }
+	        if ($parameters[6])
+	        {
+	            $sql.= ' AND n.total_ttc = '.$db->escape(price2num(trim($parameters[6])));
+	        }
+	        if ($parameters[7])
+	        {
+	            $sql.= ' AND already_paid = '.$db->escape(price2num(trim($parameters[7])));
+	        }
+	
+	        if ($parameters[8] > 0)
+	        {
+	            if ($parameters[9] > 0)
+	            $sql.= " AND n.dates BETWEEN '".$db->idate(dol_get_first_day($parameters[9],$parameters[8],false))."' AND '".$db->idate(dol_get_last_day($parameters[9],$parameters[8],false))."'";
+	            else
+	            $sql.= " AND date_format(n.dates, '%m') = '".$parameters[8]."'";
+	        }
+	        else if ($parameters[9] > 0)
+	        {
+	            $sql.= " AND n.dates BETWEEN '".$db->idate(dol_get_first_day($parameters[9],1,false))."' AND '".$db->idate(dol_get_last_day($parameters[9],12,false))."'";
+	        }
+	
+	        if ($parameters[10] > 0)
+	        {
+	            if ($parameters[11] > 0)
+	            $sql.= " AND n.datee BETWEEN '".$db->idate(dol_get_first_day($parameters[11],$parameters[10],false))."' AND '".$db->idate(dol_get_last_day($parameters[11],$parameters[10],false))."'";
+	            else
+	            $sql.= " AND date_format(n.datee, '%m') = '".$parameters[10]."'";
+	        }
+	        else if ($parameters[11] > 0)
+	        {
+	            $sql.= " AND n.datee BETWEEN '".$db->idate(dol_get_first_day($parameters[11],1,false))."' AND '".$db->idate(dol_get_last_day($parameters[11],12,false))."'";
+	        }
+	
+	        $sql.= ' GROUP BY n.rowid ORDER BY '.$parameters[12].' '.$parameters[13].', n.rowid DESC ';
+	        $sql.= $db->plimit($parameters[14]+1, $parameters[15]);
+			
+			$result = $db->query($sql);
+			
+			return $result;
 		}
 		
-		if($action=='validation'||$action=='list_validation'){
-			$date_now=date('Y-m-d H:i:s');
-			
+		if($action=='validation'){
 			//On récupère d'abord tous les groupes auxquels appartient l'utilisateur concerné par la note de frais
 			$sql = "SELECT";
 			$sql.= " g.fk_usergroup as 'group_id'";
@@ -52,14 +129,6 @@ class ActionsValideur
 								$obj = $db->fetch_object($sql);
 							    if($obj)
 							    {
-							    	if($action=='list_validation'){
-							    		$date_affichage=date('Y-m-d H:i:s',strtotime('+'.$obj->nbjours.' days',strtotime($object->tms)));
-										if($date_now>=$date_affichage && $object->statut==4){
-											return 0; // on affiche
-										}else{
-											return 1;	
-										}
-									}
 									return 0;	
 								}
 							}
