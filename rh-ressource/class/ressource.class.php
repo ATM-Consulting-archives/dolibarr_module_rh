@@ -167,6 +167,29 @@ class TRH_Ressource extends TObjetStd {
 		
 		parent::save($db);
 	}
+	
+	function delete(&$ATMdb){
+		global $conf;
+		
+		//avant de supprimer le contrat, on supprime les liaisons contrat-ressource associés.
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE entity=".$conf->entity."
+		AND fk_rh_ressource=".$this->getId();
+		$Tab = array();
+		$temp = new TRH_Contrat_Ressource;
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$Tab[] = $ATMdb->Get_field('rowid');
+			}
+		foreach ($Tab as $key => $id) {
+			$temp->load($ATMdb, $id);
+			$temp->delete($ATMdb);
+		}
+		
+		
+		parent::delete($ATMdb);
+		
+		
+	}
 }
 
 
