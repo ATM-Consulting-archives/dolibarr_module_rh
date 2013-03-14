@@ -109,7 +109,7 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	
 	$r = new TSSRenderControler($emprunt);
 	$sql="SELECT DISTINCT e.rowid as 'ID', u.name as 'Nom', 
-		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.commentaire as 'Commentaire', '' as 'Supprimer'
+		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.description as 'Commentaire', '' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e 
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
