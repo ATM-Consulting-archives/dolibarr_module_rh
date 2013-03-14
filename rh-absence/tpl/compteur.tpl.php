@@ -1,94 +1,135 @@
 
 
 
-	[onshow;block=begin;when [view.mode]=='view']
+
         	[view.head;strconv=no]
-     [onshow;block=end] 
+
         
        
-            
-            <h1 style="color: #2AA8B9;"> Jours de Congés</h1>                         
-
-			<table  border ="1" style="display: inline-block; margin-left:20px;">
-				<tr>
-					<td>
-						<div>
-							<h2>Jours de congés payés année N-1 </h2>
-							<b>Acquis</b><br/>
-							Utilisateur courant : [congesPrec.user;strconv=no;protect=no]<br/>
-							
-							Acquis Exercice : [congesPrec.acquisEx;strconv=no;protect=no]	<br/>
-							Acquis Ancienneté : [congesPrec.acquisAnc;strconv=no;protect=no]	<br/>
-							Acquis Hors-Période : [congesPrec.acquisHorsPer;strconv=no;protect=no]	<br/>
-							
-							<br/>
-							Report congés non soldés : [congesPrec.reportConges;strconv=no;protect=no]<br/>
-							
-							<br/>
-							<b>Total : [congesPrec.total;strconv=no;protect=no] </b><br/>
-							Pris : [congesPrec.congesPris;strconv=no;protect=no]<br/>
-							<b>Reste à prendre : [congesPrec.reste;strconv=no;protect=no]</b><br/>
-						</div>
-					</td>
-				<tr>
-			</table>
+	<h1 style="color: #2AA8B9;">Congés payés</h1>                             
+	<div style="display:inline-block; margin-top:-20px;">
+		<div style="display:inline-block;">
 		
-			<table style="margin-left: 50px; display: inline-block; "  border ="1">
+        <h2 style="color: #2AA8B9;">Année N-1</h2>                         
+		<table class="border" style="width:100%;"  >
 				<tr>
-					<td>
-						<div>
-							<h2>Jours de congés payés année N </h2>
-							<b>Acquis</b><br/>
-							Acquis Exercice : 	[congesCourant.acquisEx;strconv=no;protect=no]<br/>
-							Acquis Ancienneté : [congesCourant.acquisAnc;strconv=no;protect=no]	<br/>
-							Acquis Hors-Période : [congesCourant.acquisHorsPer;strconv=no;protect=no]	<br/>
-							Acquis Par Mois : [congesCourant.nombreCongesAcquisMensuel;strconv=no;protect=no]	<br/>
-							<br/>
-							<b>Total : [congesCourant.total;strconv=no;protect=no]</b><br/>
-
-							<b> Dernière clôture Congés : [congesCourant.date_congesCloture;strconv=no;protect=no]</b><br/>
-						</div>
-					</td>
+					<td>Utilisateur Courant</td>
+					<td>[congesPrec.user;strconv=no;protect=no]</td>
+				</tr>	
 				<tr>
-			</table>
-
-			
-			<br/><br/><br/>
-			  <h1 style="color: #2AA8B9;"> Jours de RTT</h1> 	
-			
-			<table  border ="1" style="display: inline-block; margin-left:20px;">
+					<td>Acquis Exercice</td>
+					<td>[congesPrec.acquisEx;strconv=no;protect=no]</td>
+				</tr>
 				<tr>
-					<td>
-						<div>
-							<h2>Crédit RTT</h2>
-							<b>Acquis</b><br/>
-							Jours RTT Acquis : [rttCourant.acquis;strconv=no;protect=no]	<br/>
-							Jours RTT Pris : [rttCourant.pris;strconv=no;protect=no]<br/>
-							Jours RTT Restant à prendre :	[rttCourant.reste;strconv=no;protect=no]<br/>
-						</div>
-					</td>
+					<td>Acquis Ancienneté</td>
+					<td> [congesPrec.acquisAnc;strconv=no;protect=no]</td>
+				</tr>
 				<tr>
-			</table>
+					<td>Acquis Hors-Période</td>
+					<td>[congesPrec.acquisHorsPer;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Report congés non soldés</td>
+					<td>[congesPrec.reportConges;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td><b>Total Congés</b></td>
+					<td><b>[congesPrec.total;strconv=no;protect=no] </b></td>
+				</tr>
+				<tr>
+					<td>Congés Pris</td>
+					<td>[congesPrec.congesPris;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td><b>Reste à prendre</b></td>
+					<td><b>[congesPrec.reste;strconv=no;protect=no]</b></td>
+				</tr>
+		</table>
+		</div>
 		
-			<table style="margin-left: 50px; display: inline-block;"  border ="1" >
+		<div style="float:right; display:inline-block; margin-left: 100px;">
+		<h2 style="color: #2AA8B9;">Année N</h2>                         
+		<table class="border" style="width:100%;" >	
 				<tr>
-					<td>
-						<div>
-							<h2>Acquisition des jours</h2>
-							Type acquisition : [rttCourant.typeAcquisition;strconv=no;protect=no]<br/>
-							Mensuel : 	[rttCourant.mensuelInit;strconv=no;protect=no]<br/>
-							Jours cumulés annuel :	[rttCourant.annuelCumuleInit;strconv=no;protect=no]<br/>
-							Jours non cumulés annuel :  	[rttCourant.annuelNonCumuleInit;strconv=no;protect=no]<br/>
-							<b> Dernière clôture RTT : 		[rttCourant.date_rttCloture;strconv=no;protect=no]</b><br/>
+					<td>Acquis Exercice</td>
+					<td>[congesCourant.acquisEx;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Acquis Ancienneté</td>
+					<td>[congesCourant.acquisAnc;strconv=no;protect=no]	</td>
+				</tr>
+				<tr>
+					<td>Acquis Hors-Période</td>
+					<td>[congesCourant.acquisHorsPer;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Acquis Par Mois</td>
+					<td> [congesCourant.nombreCongesAcquisMensuel;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td><b>Total</b></td>
+					<td><b>[congesCourant.total;strconv=no;protect=no]</b></td>
+				</tr>
+				<tr>
+					<td>Dernière clôture Congés</td>
+					<td>[congesCourant.date_congesCloture;strconv=no;protect=no]</td>
+				</tr>
+		</table>
+		</div>
+	</div>
+	
+	<br/><br/><br/><br/>
+	
+	<h1 style="color: #2AA8B9;">RTT</h1>                             
+	<div style="display:inline-block; margin-top:-20px;">
+	    <div style="display:inline-block;">   
+	    <h2 style="color: #2AA8B9;">Compteur de RTT</h2>                         
+		<table class="border" style="width:100%">
+				<tr>
+					<td>Jours RTT Acquis</td>
+					<td>[rttCourant.acquis;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Jours RTT Pris</td>
+					<td>[rttCourant.pris;strconv=no;protect=no]	</td>
+				</tr>
+				<tr>
+					<td>Jours RTT Restant à prendre</td>
+					<td>[rttCourant.reste;strconv=no;protect=no]</td>
+				</tr>
+		</table>
+		</div>
+		
+		<div style="float:right; display:inline-block; margin-left: 90px;">
+		<h2 style="color: #2AA8B9;">Méthode acquisition des jours</h2>                         
+		<table class="border" style="width:100%">
+				<tr>
+					<td>Type acquisition</td>
+					<td> [rttCourant.typeAcquisition;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Mensuel</td>
+					<td>[rttCourant.mensuelInit;strconv=no;protect=no]	</td>
+				</tr>
+				<tr>
+					<td>Jours cumulés annuel</td>
+					<td>[rttCourant.annuelCumuleInit;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Jours non cumulés annuel</td>
+					<td>[rttCourant.annuelNonCumuleInit;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td><b> Dernière clôture RTT</b></td>
+					<td>[rttCourant.date_rttCloture;strconv=no;protect=no]</td>
+				</tr>
+		</table>
+	    </div>  
+	</div>            
+		<br/><br/>
 
-						</div>
-					</td>
-				<tr>
-			</table>
-				
-		<div id="test"></div>
-			
-			
+
+	
 		<div class="tabsAction" >
 		[onshow;block=begin;when [view.mode]=='edit']
 			<input type="submit" value="Enregistrer" name="save" class="button">
@@ -100,19 +141,7 @@
 		[onshow;block=end]
 		</div>
 
-		<script>
-			$(document).ready( function(){
-				//on empêche que la date de début dépasse celle de fin
-				 $('body').click( 	function(){
-					$("#test").html($("#rttCloture").val());
-					//$("#rttCloture").val()
-					//$("#rttCloture").val($("#rttCloture").val());
-						
-					
-	    		});	
-				
-			});
-		</script>
+		
 
 
 

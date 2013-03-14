@@ -198,14 +198,14 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 		,array(
 			'congesPrec'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
-				'acquisEx'=>$form->texte('','acquisExerciceNM1',$congePrec->acquisEx,10,50,'',$class="text", $default='')
-				,'acquisAnc'=>$form->texte('','acquisAncienneteNM1',$congePrec->acquisAnc,10,50,'',$class="text", $default='')
-				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeNM1',$congePrec->acquisHorsPer,10,50,'',$class="text", $default='')
-				,'reportConges'=>$form->texte('','reportcongesNM1',$congePrec->reportConges,10,50,'',$class="text", $default='')
-				,'congesPris'=>$form->texte('','congesprisNM1',$congePrec->congesPris,10,50,'',$class="text", $default='')
-				,'anneePrec'=>$form->texte('','anneeNM1',$anneePrec,10,50,'',$class="text", $default='')
-				,'total'=>$form->texte('','total',$congePrecTotal,10,50,'',$class="text", $default='')
-				,'reste'=>$form->texte('','reste',$congePrecReste,10,50,'',$class="text", $default='')
+				'acquisEx'=>$form->texte('','acquisExerciceNM1',round($congePrec->acquisEx,2),10,50,'',$class="text", $default='')
+				,'acquisAnc'=>$form->texte('','acquisAncienneteNM1',round($congePrec->acquisAnc,2),10,50,'',$class="text", $default='')
+				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeNM1',round($congePrec->acquisHorsPer,2),10,50,'',$class="text", $default='')
+				,'reportConges'=>$form->texte('','reportcongesNM1',round($congePrec->reportConges,2),10,50,'',$class="text", $default='')
+				,'congesPris'=>$form->texte('','congesprisNM1',round($congePrec->congesPris,2),10,50,'',$class="text", $default='')
+				,'anneePrec'=>$form->texte('','anneeNM1',round($anneePrec,2),10,50,'',$class="text", $default='')
+				,'total'=>$form->texte('','total',round($congePrecTotal,2),10,50,'',$class="text", $default='')
+				,'reste'=>$form->texte('','reste',round($congePrecReste,2),10,50,'',$class="text", $default='')
 				,'idUser'=>$congePrec->fk_user
 				,'user'=>$_REQUEST['id']
 			)
