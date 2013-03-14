@@ -147,7 +147,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
-	$sqlReqUser="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
+	$sqlReqUser="SELECT * FROM `llx_rh_compteur` where fk_user=".$_REQUEST['id']." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -167,7 +167,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$congePrecReste=$congePrecTotal-$congePrec->congesPris;
 	
 	//////////////////////////récupération des informations des congés précédents (N-1) de l'utilisateur courant : 
-	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;;
+	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=".$_REQUEST['id']." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;;
 	$ATMdb=new Tdb;
 	$ATMdb->Execute($sqlReqUser2);
 	$Tab2=array();
@@ -184,7 +184,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$congeCourantTotal=$congeCourant->acquisEx+$congeCourant->acquisAnc+$congeCourant->acquisHorsPer;
 	
 	//////////////////////////////récupération des informations des rtt courants (année N) de l'utilisateur courant : 
-	$sqlRtt="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id;
+	$sqlRtt="SELECT * FROM `llx_rh_compteur` where fk_user=".$_REQUEST['id'];
 	$ATMdb->Execute($sqlRtt);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -220,8 +220,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'congesPris'=>$form->texte('','congesprisNM1',$congePrec->congesPris,10,50,'',$class="text", $default='')
 				,'anneePrec'=>$form->texte('','anneeNM1',$anneePrec,10,50,'',$class="text", $default='')
 				,'total'=>$form->texte('','total',$congePrecTotal,10,50,'',$class="text", $default='')
-				,'reste'=>$congePrecReste
-				,'idUser'=>$congePrec->fk_user
+				,'reste'=>round2Virgule($congePrecReste)
+				,'idUser'=>$_REQUEST['id']
 			)
 			,'congesCourant'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
@@ -230,22 +230,20 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeN',$congeCourant->acquisHorsPer,10,50,'',$class="text", $default='')
 				,'anneeCourante'=>$form->texte('','anneeN',$anneeCourante,10,50,'',$class="text", $default='')
 				,'total'=>$form->texte('','total',$congeCourantTotal,10,50,'',$class="text", $default='')
-				,'idUser'=>$congeCourant->fk_user
+				,'idUser'=>$_REQUEST['id']
 			)
 			,'rttCourant'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'acquis'=>$form->texte('','rttAcquis',$rttCourant->acquis,10,50,'',$class="text", $default='')
 				,'rowid'=>$form->texte('','rowid',$rttCourant->id,10,50,'',$class="text", $default='')
-				,'id'=>$form->texte('','fk_user',$rttCourant->fk_user,10,50,'',$class="text", $default='')
+				,'id'=>$form->texte('','fk_user',$_REQUEST['id'],10,50,'',$class="text", $default='')
 				,'pris'=>$form->texte('','rttPris',$rttCourant->pris,10,50,'',$class="text", $default='')
-				,'mensuel'=>$rttCourant->mensuel
-				,'annuelCumule'=>$rttCourant->annuelCumule
-				,'annuelNonCumule'=>$rttCourant->annuelNonCumule
+				,'mensuel'=>round2Virgule($rttCourant->mensuel)
+				,'annuelCumule'=>round2Virgule($rttCourant->annuelCumule)
+				,'annuelNonCumule'=>round2Virgule($rttCourant->annuelNonCumule)
 				,'typeAcquisition'=>$form->texte('','typeAcquisition',$rttCourant->typeAcquisition,10,50,'',$class="text", $default='')
 				,'reste'=>$form->texte('','total',$rttCourantReste,10,50,'',$class="text", $default='')
 				,'idNum'=>$idRttCourant
-				
-				
 			)
 			,'absenceCourante'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
@@ -255,26 +253,21 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
-				,'idUser'=>$user->id
+				,'idUser'=>$_REQUEST['id']
 				,'comboType'=>$form->combo('','type',$absence->TTypeAbsence,$absence->type)
 				,'etat'=>$form->texte('','etat',$absence->etat,5,10,'',$class="text", $default='')
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
-				,'duree'=>$form->texte('','duree',$absence->duree,5,10,'',$class="text", $default='')
-				
+				,'duree'=>$form->texte('','duree',$absence->duree,5,10,'',$class="text", $default='')	
 			)	
 			,'userCourant'=>array(
 				'id'=>$user->id
 				,'lastname'=>$user->lastname
 				,'firstname'=>$user->firstname
 			)
-			
 			,'view'=>array(
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'fiche', 'Absence')
 				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence')
-				
-			
-			
 			)
 			
 			
