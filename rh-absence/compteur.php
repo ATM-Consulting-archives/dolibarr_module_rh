@@ -198,48 +198,45 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 		,array(
 			'congesPrec'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
-				'acquisEx'=>$form->texte('','acquisExerciceNM1',round($congePrec->acquisEx,2),10,50,'',$class="text", $default='')
-				,'acquisAnc'=>$form->texte('','acquisAncienneteNM1',round($congePrec->acquisAnc,2),10,50,'',$class="text", $default='')
-				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeNM1',round($congePrec->acquisHorsPer,2),10,50,'',$class="text", $default='')
-				,'reportConges'=>$form->texte('','reportcongesNM1',round($congePrec->reportConges,2),10,50,'',$class="text", $default='')
-				,'congesPris'=>$form->texte('','congesprisNM1',round($congePrec->congesPris,2),10,50,'',$class="text", $default='')
-				,'anneePrec'=>$form->texte('','anneeNM1',round($anneePrec,2),10,50,'',$class="text", $default='')
-				,'total'=>$form->texte('','total',round($congePrecTotal,2),10,50,'',$class="text", $default='')
-				,'reste'=>$form->texte('','reste',round($congePrecReste,2),10,50,'',$class="text", $default='')
+				'acquisEx'=>$form->texte('','acquisExerciceNM1',round2Virgule($congePrec->acquisEx),10,50,'',$class="text", $default='')
+				,'acquisAnc'=>$form->texte('','acquisAncienneteNM1',round2Virgule($congePrec->acquisAnc),10,50,'',$class="text", $default='')
+				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeNM1',round2Virgule($congePrec->acquisHorsPer),10,50,'',$class="text", $default='')
+				,'reportConges'=>$form->texte('','reportCongesNM1',round2Virgule($congePrec->reportConges),10,50,'',$class="text", $default='')
+				,'congesPris'=>$form->texte('','congesPrisNM1',round2Virgule($congePrec->congesPris),10,50,'',$class="text", $default='')
+				,'anneePrec'=>$form->texte('','anneeNM1',round2Virgule($anneePrec),10,50,'',$class="text", $default='')
+				,'total'=>$form->texte('','total',round2Virgule($congePrecTotal),10,50,'',$class="text", $default='')
+				,'reste'=>$form->texte('','reste',round2Virgule($congePrecReste),10,50,'',$class="text", $default='')
 				,'idUser'=>$congePrec->fk_user
 				,'user'=>$_REQUEST['id']
 			)
 			,'congesCourant'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
-				'acquisEx'=>$form->texte('','acquisExerciceN',$congeCourant->acquisEx,10,50,'',$class="text", $default='')
-				,'acquisAnc'=>$form->texte('','acquisAncienneteN',$congeCourant->acquisAnc,10,50,'',$class="text", $default='')
-				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeN',$congeCourant->acquisHorsPer,10,50,'',$class="text", $default='')
-				,'anneeCourante'=>$form->texte('','anneeN',$anneeCourante,10,50,'',$class="text", $default='')
-				,'total'=>$form->texte('','total',$congeCourantTotal,10,50,'',$class="text", $default='')
+				'acquisEx'=>$form->texte('','acquisExerciceN',round2Virgule($congeCourant->acquisEx),10,50,'',$class="text", $default='')
+				,'acquisAnc'=>$form->texte('','acquisAncienneteN',round2Virgule($congeCourant->acquisAnc),10,50,'',$class="text", $default='')
+				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeN',round2Virgule($congeCourant->acquisHorsPer),10,50,'',$class="text", $default='')
+				,'anneeCourante'=>$form->texte('','anneeN',round2Virgule($anneeCourante),10,50,'',$class="text", $default='')
+				,'total'=>$form->texte('','total',round2Virgule($congeCourantTotal),10,50,'',$class="text", $default='')
 				,'idUser'=>$congeCourant->fk_user
 				,'date_congesCloture'=>$form->calendrier('', 'date_congesCloture', $compteur->get_date('date_congesCloture'), 10)
-				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',$congeCourant->nombreCongesAcquisMensuel,10,50,'',$class="text", $default='')
+				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',round2Virgule($congeCourant->nombreCongesAcquisMensuel),10,50,'',$class="text", $default='')
 				
 				
 				
 			)
 			,'rttCourant'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
-				'acquis'=>$form->texte('','rttAcquis',$rttCourant->acquis,10,50,'',$class="text", $default='')
-				,'rowid'=>$form->texte('','rowid',$rttCourant->id,10,50,'',$class="text", $default='')
-				,'pris'=>$form->texte('','rttPris',$rttCourant->pris,10,50,'',$class="text", $default='')
-				,'mensuel'=>$form->texte('','rttAcquisMensuel',$rttCourant->mensuel,10,50,'',$class="text", $default='')
-				,'annuelCumule'=>$form->texte('','rttAcquisAnnuelCumule',$rttCourant->annuelCumule,10,50,'',$class="text", $default='')
-				,'annuelNonCumule'=>$form->texte('','rttAcquisAnnuelNonCumule',$rttCourant->annuelNonCumule,10,50,'',$class="text", $default='')
-				
+				'acquis'=>$form->texte('','rttAcquis',round2Virgule($rttCourant->acquis),10,50,'',$class="text", $default='')
+				,'rowid'=>$form->texte('','rowid',round2Virgule($rttCourant->id),10,50,'',$class="text", $default='')
+				,'pris'=>$form->texte('','rttPris',round2Virgule($rttCourant->pris),10,50,'',$class="text", $default='')
+				,'mensuel'=>$form->texte('','rttAcquisMensuel',round2Virgule($rttCourant->mensuel),10,50,'',$class="text", $default='')
+				,'annuelCumule'=>$form->texte('','rttAcquisAnnuelCumule',round2Virgule($rttCourant->annuelCumule),10,50,'',$class="text", $default='')
+				,'annuelNonCumule'=>$form->texte('','rttAcquisAnnuelNonCumule',round2Virgule($rttCourant->annuelNonCumule),10,50,'',$class="text", $default='')
 				,'date_rttCloture'=>$form->calendrier('', 'date_rttCloture', $compteur->get_date('date_rttCloture'), 10)
-				
-				,'mensuelInit'=>$form->texte('','rttAcquisMensuel',$rttCourant->mensuelInit,10,50,'',$class="text", $default='')
-				,'annuelCumuleInit'=>$form->texte('','rttAcquisAnnuelCumule',$rttCourant->annuelCumuleInit,10,50,'',$class="text", $default='')
-				,'annuelNonCumuleInit'=>$form->texte('','rttAcquisAnnuelNonCumule',$rttCourant->annuelNonCumuleInit,10,50,'',$class="text", $default='')
-				
-				,'typeAcquisition'=>$form->texte('','typeAcquisition',$rttCourant->typeAcquisition,10,50,'',$class="text", $default='')
-				,'reste'=>$form->texte('','total',$rttCourantReste,10,50,'',$class="text", $default='')
+				,'mensuelInit'=>$form->texte('','rttAcquisMensuel',round2Virgule($rttCourant->mensuelInit),10,50,'',$class="text", $default='')
+				,'annuelCumuleInit'=>$form->texte('','rttAcquisAnnuelCumule',round2Virgule($rttCourant->annuelCumuleInit),10,50,'',$class="text", $default='')
+				,'annuelNonCumuleInit'=>$form->texte('','rttAcquisAnnuelNonCumule',round2Virgule($rttCourant->annuelNonCumuleInit),10,50,'',$class="text", $default='')
+				,'typeAcquisition'=>$form->texte('','typeAcquisition',round2Virgule($rttCourant->typeAcquisition),10,50,'',$class="text", $default='')
+				,'reste'=>$form->texte('','total',round2Virgule($rttCourantReste),10,50,'',$class="text", $default='')
 				,'id'=>$compteur->getId()
 				
 				
