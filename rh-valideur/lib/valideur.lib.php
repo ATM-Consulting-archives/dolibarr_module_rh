@@ -11,7 +11,7 @@
 function send_mail_validate($db, $object, $user, $langs, $is_validate)
 {
 	// On récupère les informations de l'utilisateur
-	/*$sql = "SELECT";
+	$sql = "SELECT";
 	$sql.= " u.name,";
 	$sql.= " u.firstname,";
 	$sql.= " u.email";
@@ -41,18 +41,39 @@ function send_mail_validate($db, $object, $user, $langs, $is_validate)
         dol_print_error($db);
     }
 	
-	$langs->load('mails');*/
+	$langs->load('mails');
 	
 	$from = 'arnaud.pothier@pi.esisar.grenoble-inp.fr';
-	$sendto = 'arnaud.pothier@pi.esisar.grenoble-inp.fr';
+	$sendto = $email;
 	
+	$TBS=new TTemplateTBS();
 	if($is_validate){
-		$message = file_get_contents('../valideur/tpl/mail.validation.acceptation.tpl.php', FILE_USE_INCLUDE_PATH);
+		$subject = $object->ref." - Acceptée";
+		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.acceptation.tpl.php'
+			,array()
+			,array(
+				'validation'=>array(
+					'nom'=>$name
+					,'prenom'=>$firstname
+					,'ref'=>$object->ref
+					,'total_ttc'=>$object->total_ttc
+				)
+			)
+		);
 	}else{
-		$message = file_get_contents('../valideur/tpl/mail.validation.refus.tpl.php', FILE_USE_INCLUDE_PATH);
+		$subject = $object->ref." - Refusée";
+		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.refus.tpl.php'
+			,array()
+			,array(
+				'validation'=>array(
+					'nom'=>$name
+					,'prenom'=>$firstname
+					,'ref'=>$object->ref
+					,'total_ttc'=>$object->total_ttc
+				)
+			)
+		);
 	}
-	
-	$subject = $object->ref;
 	
 	// Send mail
 	$mail = new TReponseMail($from,$sendto,$subject,$message);
