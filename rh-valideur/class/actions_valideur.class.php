@@ -20,7 +20,8 @@ class ActionsValideur
 	        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = n.fk_soc";
 	        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."ndfp_pay_det as p ON p.fk_ndfp = n.rowid";
 	        $sql.= " WHERE n.entity = ".$object->entity;
-			$sql.= " AND ((n.fk_user = ".$user->id;
+			$sql.= " AND ((u.rowid = ".$user->id;
+			$sql.= " AND n.fk_user = u.rowid";
 			
 			if ($parameters[0] == 'unpaid')
 	        {
