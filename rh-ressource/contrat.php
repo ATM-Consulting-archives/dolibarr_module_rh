@@ -16,7 +16,6 @@
 			case 'add':
 			case 'new':
 				$contrat->set_values($_REQUEST);
-				$mesg = '<div class="ok">Nouvelle ressource créée</div>';
 				_fiche($ATMdb, $contrat,'edit');
 				
 				break;	
@@ -31,10 +30,17 @@
 				$contrat->set_values($_REQUEST);
 				$contrat->save($ATMdb);
 				$contrat->load($ATMdb, $_REQUEST['id']);
-				$mesg = '<div class="ok">Modifications effectuées</div>';
-				$mode = 'view';
-				
-				_fiche($ATMdb, $contrat,$mode);
+				if ($_REQUEST['libelle']!=''){
+					
+					$mesg = '<div class="ok">Modifications effectuées</div>';
+					$mode = 'view';
+				}
+				else {
+					$mesg = '<div class="error">Veuillez renseigner un libellé.</div>';
+					$mode = 'edit';
+				}
+
+					_fiche($ATMdb, $contrat,$mode);
 				break;
 			
 			case 'view':

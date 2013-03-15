@@ -1,9 +1,9 @@
-        
+[onshow;block=begin;when [ressource.id]!=0]        
                 <div class="fiche"> <!-- begin div class="fiche" -->
                 [view.head;strconv=no]
                 
                         <div class="tabBar">
-
+[onshow;block=end] 	
 
 <h1>Agenda des ressources</h1>
 		
