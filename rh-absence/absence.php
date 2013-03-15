@@ -255,7 +255,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
 				,'idUser'=>$user->id
 				,'comboType'=>$form->combo('','type',$absence->TTypeAbsence,$absence->type)
-				,'etat'=>$form->texte('','etat',$absence->etat,5,10,'',$class="text", $default='')
+				,'etat'=>$absence->etat
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
 				,'duree'=>$form->texte('','duree',$absence->duree,5,10,'',$class="text", $default='')	
 			)	
