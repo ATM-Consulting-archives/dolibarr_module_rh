@@ -78,27 +78,27 @@
         <br/>  
 			
 			
-
+		[onshow;block=begin;when [absenceCourante.etat]!='Refusee']
+		[onshow;block=begin;when [absenceCourante.etat]!='Validee']
 		<div class="tabsAction" >
+			[onshow;block=begin;when [view.mode]=='edit']
+				<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
+				&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
+			[onshow;block=end]
 			
-		[onshow;block=begin;when [view.mode]!='edit']
-			<a class="butAction" id="action-update"  onclick="document.location.href='?action=accept&id=[absenceCourante.id]'">Accepter</a>	
-			<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=refuse&id=[absenceCourante.id]'">Refuser</span>
-		[onshow;block=end]
-		
-		[onshow;block=begin;when [view.mode]=='edit']
-			<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
-		[onshow;block=end]
-		
-		[onshow;block=begin;when [view.mode]!='edit']
-			<a class="butAction"  href="?id=[absenceCourante.id]&action=edit">Modifier</a>
-			<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
-		[onshow;block=end]
-		
-		
+			
+			[onshow;block=begin;when [view.mode]!='edit']
+				<a class="butAction" id="action-update"  onclick="document.location.href='?action=accept&id=[absenceCourante.id]'">Accepter</a>	
+				<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=refuse&id=[absenceCourante.id]'">Refuser</span>
+			[onshow;block=end]
+			
+			[onshow;block=begin;when [view.mode]!='edit']
+				<a class="butAction"  href="?id=[absenceCourante.id]&action=edit">Modifier</a>
+				<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
+			[onshow;block=end]
 		</div>
-				
+		[onshow;block=end]
+		[onshow;block=end]		
 
 		
 
