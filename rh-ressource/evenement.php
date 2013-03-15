@@ -95,6 +95,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource) {
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 		LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
 		WHERE e.entity=".$conf->entity."
+		AND e.type<>'emprunt'
 		AND e.fk_rh_ressource=".$ressource->getId();
 	
 	$TOrder = array('Date fin'=>'ASC');

@@ -162,8 +162,8 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 	}
 	*/
 	$valideur->loadListGroup($ATMdb,$fuser->id);
+	
 	if (!empty($valideur->TGroup) ){
-		$valideur->loadListGroup($ATMdb,$fuser->id);
 		$TBS=new TTemplateTBS();
 		print $TBS->render('./tpl/valideur.tpl.php'
 			,array(
