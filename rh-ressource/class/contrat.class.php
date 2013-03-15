@@ -63,6 +63,11 @@ class TRH_Contrat  extends TObjetStd {
 	function save(&$db) {
 		global $conf;
 		$this->entity = $conf->entity;
+		
+		if ($this->date_fin < $this->date_debut) {
+			$this->date_fin = $this->date_debut;
+		}
+		
 		parent::save($db);
 	}
 	
