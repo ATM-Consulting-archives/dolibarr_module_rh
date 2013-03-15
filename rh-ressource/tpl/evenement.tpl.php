@@ -36,8 +36,12 @@
 		<td>[NEvent.commentaire;strconv=no;protect=no]</td>
 	</tr>
 	<tr>
-		<td>Montant HT</td>
-		<td>[NEvent.montantHT;strconv=no;protect=no]</td>
+		<td>Coût HT</td>
+		<td>[NEvent.coutHT;strconv=no;protect=no]</td>
+	</tr>
+	<tr>
+		<td>Coût pour l'entreprise HT</td>
+		<td>[NEvent.coutEntrepriseHT;strconv=no;protect=no]</td>
 	</tr>
 	<tr>
 		<td>TVA</td>

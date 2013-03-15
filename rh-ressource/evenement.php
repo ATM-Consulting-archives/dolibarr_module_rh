@@ -88,7 +88,8 @@ function _liste(&$ATMdb, &$evenement, &$ressource) {
 	$r = new TSSRenderControler($evenement);
 	$sql="SELECT DISTINCT e.rowid as 'ID', u.name as 'Utilisateur', 
 		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.type as 'Type',
-		e.motif as 'Motif', e.description as 'Commentaire', e.montant_HT as 'Montant HT', t.taux as 'TVA'
+		e.motif as 'Motif', e.description as 'Commentaire', e.coutHT as 'Coût', 
+		e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
@@ -162,7 +163,8 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->get_date('date_fin'), 10)
 				,'type'=>$form->combo('', 'type', $evenement->TType, $evenement->type)
-				,'montantHT'=>$form->texte('', 'montant_HT', $evenement->montant_HT, 10,10)
+				,'coutHT'=>$form->texte('', 'coutHT', $evenement->coutHT, 10,10)
+				,'coutEntrepriseHT'=>$form->texte('', 'coutEntrepriseHT', $evenement->coutEntrepriseHT, 10,10)
 				,'TVA'=>$form->combo('','TVA',$evenement->TTVA,$evenement->TVA)
 			)
 			,'view'=>array(
