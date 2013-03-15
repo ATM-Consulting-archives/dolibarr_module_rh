@@ -164,7 +164,8 @@ class ActionsValideur
 						$fk_user_delegation=$obj->fk_user_delegation;
 					}
 			    }	
-			}		    
+			}
+			if($action!='create'){	    
 	           ?><tr>
 				      <td>
 				      	Délégation Note de Frais      	
@@ -198,6 +199,7 @@ class ActionsValideur
 				      </td>
 			      </tr>
 			      <? 
+			      }   
 	        }else if (in_array('ndfpcard',explode(':',$parameters['context']))){
 	        	if($action=="create"){		//au moment de la création de la ndf et non dans le default
 					$tabDelegation=array();
