@@ -36,7 +36,6 @@
 			case 'save':
 				//$ATMdb->db->debug=true;				
 				//on vérifie que la date choisie ne superpose pas avec les autres emprunts.
-				$ressource->load($ATMdb, $_REQUEST['id']);
 				if ($ressource->nouvelEmpruntSeChevauche($ATMdb, $_REQUEST ,$_REQUEST['id']) ){
 					$mesg = '<div class="error">Impossible d\'attributer la ressource. Les dates choisies se superposent avec d\'autres attributions.</div>';
 				}
@@ -45,8 +44,6 @@
 					$emprunt->load($ATMdb, $_REQUEST['idEven']);
 					$emprunt->set_values($_REQUEST);
 					$emprunt->save($ATMdb);
-					$ressource->load($ATMdb, $_REQUEST['id']);
-					
 				}
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_liste($ATMdb, $emprunt,$ressource);
