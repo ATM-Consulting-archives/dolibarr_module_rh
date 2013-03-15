@@ -25,17 +25,17 @@ class ActionsValideur
 			
 			$sql.= " OR (n.fk_user = u.rowid AND t.rowid = u.fk_user_delegation AND t.rowid = ".$user->id."))";
 			
-			if ($parameters[0] == 'unpaid')
-	        {
-	            $sql.= " AND n.statut = 1";
-	        }
-			
 			$sql.= ") OR (n.fk_user = a.fk_user";
 			$sql.= " AND u.rowid = a.fk_user";
 			$sql.= " AND a.fk_usergroup = v.fk_usergroup";
 			$sql.= " AND v.fk_user = ".$user->id;
-			$sql.= " AND n.statut = 4";
+			$sql.= " AND n.statut = 4 OR n.statut = 1";
 			$sql.= " AND NOW() >= ADDDATE(n.tms, v.nbjours)))";
+			
+			if ($parameters[0] == 'unpaid')
+	        {
+	            $sql.= " AND n.statut = 1";
+	        }
 			
 			if ($parameters[1] > 0)
 	        {

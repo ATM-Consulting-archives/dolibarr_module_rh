@@ -123,7 +123,9 @@ function _liste(&$ATMdb) {
 		
 	));
 	
-	?><a href="?action=new&fk_user=<?=$fuser->id ?>">Nouveau</a><?
+	?><a class="butAction" href="?action=new&fk_user=<?=$fuser->id ?>">Nouveau</a>
+	<div style="clear:both;"></div>
+	<?
 	
 	llxFooter();
 }
