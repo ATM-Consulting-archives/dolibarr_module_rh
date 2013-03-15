@@ -16,12 +16,14 @@ class ActionsValideur
 		if($action=='list_test'){
 			$sql = "SELECT n.rowid, n.ref, n.tms, n.total_ht, n.total_ttc, n.fk_user, n.statut, n.fk_soc, n.dates, n.datee,";
 	        $sql.= " u.rowid as uid, u.name, u.firstname, s.nom AS soc_name, s.rowid AS soc_id, u.login, n.total_tva, SUM(p.amount) AS already_paid";
-	        $sql.= " FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v, ".MAIN_DB_PREFIX."usergroup_user as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."ndfp as n";
+	        $sql.= " FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v, ".MAIN_DB_PREFIX."usergroup_user as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."user as t, ".MAIN_DB_PREFIX."ndfp as n";
 	        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = n.fk_soc";
 	        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."ndfp_pay_det as p ON p.fk_ndfp = n.rowid";
 	        $sql.= " WHERE n.entity = ".$object->entity;
-			$sql.= " AND ((u.rowid = ".$user->id;
-			$sql.= " AND n.fk_user = u.rowid";
+			$sql.= " AND ((((u.rowid = ".$user->id;
+			$sql.= " AND n.fk_user = u.rowid)";
+			
+			$sql.= " OR (n.fk_user = u.rowid AND t.rowid = u.fk_user_delegation AND t.rowid = ".$user->id."))";
 			
 			if ($parameters[0] == 'unpaid')
 	        {
