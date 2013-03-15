@@ -82,15 +82,14 @@ function _liste(&$ATMdb, &$contrat) {
 	llxHeader('','Liste des contrats');
 	getStandartJS();
 	$r = new TSSRenderControler($contrat);
-	$sql= "SELECT c.rowid as 'ID',  DATE(c.date_debut) as 'Date Début',c.libelle as 'Libellé',
+	$sql= "SELECT c.rowid as 'ID',  CONCAT ('Du ',DATE(c.date_debut),' au ' ,DATE(c.date_fin) ) as 'Date',c.libelle as 'Libellé',
 			t.libelle as 'Type Ressource',c.bail as 'Bail', g.nom as 'Agence'
 			FROM llx_rh_contrat as c, llx_usergroup as g, llx_rh_ressource_type as t
 			WHERE c.entity=".$conf->entity." 
 			AND g.rowid = c.fk_tier_utilisateur
 			AND t.rowid = c.fk_rh_ressource_type";
 	
-	
-	$TOrder = array('Date Début'=>'ASC');
+	$TOrder = array('Date'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				

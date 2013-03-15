@@ -49,10 +49,10 @@ class TRH_Evenement  extends TObjetStd {
 		while($ATMdb->Get_line()) {
 			$this->TAgence[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
 			}
-		
+		global $conf;
 		//chargement d'une liste de touts les TVA (pour le combo "TVA")
 		$this->TTVA = array();
-		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva";
+		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
@@ -76,14 +76,16 @@ class TRH_Evenement  extends TObjetStd {
 		if ($this->date_fin < $this->date_debut) {
 			$this->date_fin = $this->date_debut;
 		}
+		$temp = new TRH_Ressource;
+		$temp->load($db, $this->fk_rh_ressource);
 		
 		if ($this->type=='emprunt'){
 			$this->color = 1 ; //couleur rouge
-			$this->subject = "Utilisé par ".$this->TUser[$this->fk_user];
+			$this->subject = "[ ".$temp->libelle." ] Utilisé par ".$this->TUser[$this->fk_user];
 		}
 		else {
 			$this->color = 6 ; //couleur verte moche
-			$this->subject = $this->type." : ".$this->motif;
+			$this->subject = "[ ".$temp->libelle." ] ".$this->TType[$this->type]." : ".$this->motif;
 	
 		}
 		

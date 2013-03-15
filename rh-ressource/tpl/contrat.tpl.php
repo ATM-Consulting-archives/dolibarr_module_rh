@@ -53,7 +53,7 @@
 	});
 </script>
 	
-<div class="tabsAction" >
+<div class="tabsAction" style="text-align:center;">
 		[onshow;block=begin;when [view.mode]=='edit']
 			<input type="submit" value="Enregistrer" name="save" class="button">
 			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[contrat.id]'">

@@ -47,14 +47,14 @@
 
 	
 [onshow;block=begin;when [view.mode]=='view']
-	<div class="tabsAction" >
+	<div class="tabsAction" style="text-align:center;">
 		<a class="butAction"  href="?id=[ressource.id]&idEven=[NEmprunt.id]&action=edit">Modifier</a>
 		<a class="butActionDelete"  href="?id=[ressource.id]&idEven=[NEmprunt.id]&action=deleteAttribution">Supprimer</a>
 		</div>
 [onshow;block=end] 
 
 [onshow;block=begin;when [view.mode]!='view']
-	<div class="tabsAction" >
+	<div class="tabsAction" style="text-align:center;">
 		<input type="submit" value="Enregistrer" name="save" class="button">
 		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
 	</div>

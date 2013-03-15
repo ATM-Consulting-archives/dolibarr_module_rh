@@ -61,21 +61,18 @@
 	});
 </script>
 
-	
-[onshow;block=begin;when [view.mode]=='view']
-	<div class="tabsAction" >		
+<div class="tabsAction" style="text-align:center;">
+	[onshow;block=begin;when [view.mode]=='view']
 		<a class="butAction"  href="?id=[ressource.id]&idEven=[NEvent.id]&action=edit">Modifier</a>
 		<a class="butActionDelete"  href="?id=[ressource.id]&idEven=[NEvent.id]&action=deleteEvent">Supprimer</a>
-	</div>
-[onshow;block=end]
+	[onshow;block=end]
  
-[onshow;block=begin;when [view.mode]!='view']
-	<div class="tabsAction" >
+	[onshow;block=begin;when [view.mode]!='view']
 		<input type="submit" value="Enregistrer" name="save" class="button">
 		&nbsp; &nbsp; 
 		<input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
-	</div>
-[onshow;block=end] 
-
+	[onshow;block=end]
+	 
+</div>
 </div>
 </div>
