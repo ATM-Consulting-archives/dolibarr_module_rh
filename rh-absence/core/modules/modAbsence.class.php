@@ -84,7 +84,9 @@ class modAbsence extends DolibarrModules
 		//							'hooks' => array('hookcontext1','hookcontext2')  // Set here all hooks context managed by module
 		//							'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE')) // Set here all workflow context managed by module
 		//                        );
-		$this->module_parts = array();
+		$this->module_parts = array(
+			'hooks'=>array('userdao')
+		);
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
@@ -132,7 +134,7 @@ class modAbsence extends DolibarrModules
                                       );*/
 	
         // Dictionnaries
-        if (!isset($conf->ressource->enabled)) @$conf->ressource->enabled=0;
+       // if (!isset($conf->ressource->enabled)) @$conf->ressource->enabled=0;
 		$this->dictionnaries=array();
         /* Example:
         if (! isset($conf->mymodule->enabled)) $conf->mymodule->enabled=0;	// This is to avoid warnings
