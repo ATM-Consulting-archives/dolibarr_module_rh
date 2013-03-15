@@ -22,7 +22,8 @@ class TRH_Evenement  extends TObjetStd {
 		
 		//pour un évenement
 		parent::add_champs('motif','type=chaine;');
-		parent::add_champs('montant_HT','type=float;');
+		parent::add_champs('coutHT','type=float;');
+		parent::add_champs('coutEntrepriseHT','type=float;');
 		parent::add_champs('TVA','type=entier;');
 		
 		parent::_init_vars();
