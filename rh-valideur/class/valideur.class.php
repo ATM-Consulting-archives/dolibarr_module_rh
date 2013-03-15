@@ -36,10 +36,10 @@ class TRH_valideur_groupe extends TObjetStd {
 	//chargement d'une liste de tous les groupes
 	function loadListGroup(&$ATMdb,$user_id){
 		$this->TGroup = array();
-		$sqlReq="SELECT g.rowid AS 'rowid', g.nom AS 'nom'";
-		$sqlReq.=" FROM ".MAIN_DB_PREFIX."usergroup g, ";
-		$sqlReq.=MAIN_DB_PREFIX."usergroup_user a";
-		$sqlReq.=" WHERE a.fk_usergroup=g.rowid AND a.fk_user=".$user_id;
+		$sqlReq="SELECT g.rowid AS 'rowid', g.nom AS 'nom'
+			 FROM ".MAIN_DB_PREFIX."usergroup g, 
+			".MAIN_DB_PREFIX."usergroup_user a
+			 WHERE a.fk_usergroup=g.rowid AND a.fk_user=".$user_id;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TGroup[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
