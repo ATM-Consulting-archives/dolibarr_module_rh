@@ -109,8 +109,8 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	
 	$r = new TSSRenderControler($emprunt);
 	$sql="SELECT DISTINCT e.rowid as 'ID', u.name as 'Nom', 
-		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.description as 'Commentaire', '' as 'Supprimer'
-		FROM ".MAIN_DB_PREFIX."rh_evenement as e 
+		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.description as 'Commentaire'
+		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 		WHERE e.entity=".$conf->entity."
@@ -128,7 +128,6 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=delete"><img="./img/delete.png"  style="cursor:pointer;" ></a>'
 			//'<img="./img/delete.png"  style="cursor:pointer;" >'
 		)
 		,'translate'=>array()
@@ -165,19 +164,6 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('idEven',$emprunt->getId());
 	 
-	 /*
-	$ressource->load_evenement($ATMdb, array('emprunt'));
-	$TEmprunts = array();
-	foreach($ressource->TEvenement as $k=>$even){
-		$TEmprunts[] = array(
-					'id'=>$even->getId()
-					,'user'=>$even->TUser[$even->fk_user]
-					,'date_debut'=>date("d/m/Y",$even->date_debut)
-					,'date_fin'=>date("d/m/Y",$even->date_fin)
-					,'commentaire'=>$even->motif
-		);
-	}
-*/
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/attribution.tpl.php'
 		,array()
@@ -190,7 +176,7 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 				,'type'=>$form->hidden('type', 'emprunt')
 				,'fk_user'=>$form->combo('','fk_user',$emprunt->TUser,$emprunt->fk_user)
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
-				,'commentaire'=>$form->texte('','motif',$emprunt->motif, 30,100,'','','-')
+				,'commentaire'=>$form->texte('','description',$emprunt->description, 30,100,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $emprunt->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $emprunt->get_date('date_fin'), 10)
 			)

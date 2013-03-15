@@ -269,6 +269,7 @@ class modRessource extends DolibarrModules
 					'user'=> 2
         );
 		
+		/*
 		$r++;
         $this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=ressources',			// Put 0 if this is a top menu
@@ -283,7 +284,7 @@ class modRessource extends DolibarrModules
 					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
 					'user'=> 2
-        );
+        );*/
 		
 		
 		//AGENDA
