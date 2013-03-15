@@ -40,6 +40,7 @@ class TRH_Ressource extends TObjetStd {
 		$this->TRessource = array('');
 		$this->TEvenement = array();
 		
+		$this->TTVA = array();
 		$this->TContratAssocies = array(); 	//tout les objets rh_contrat_ressource liés à la ressource
 		$this->TContratExaustif = array(); 	//tout les objets contrats
 		$this->TListeContrat = array(); 	//liste des id et libellés de tout les contrats
@@ -116,6 +117,14 @@ class TRH_Ressource extends TObjetStd {
 			$this->TContratAssocies[$id] = new TRH_Contrat_Ressource;
 			$this->TContratAssocies[$id]->load($ATMdb, $id);
 		}
+		
+		$this->TTVA = array();
+		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva";
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
+			}
+		
 	}
 	/**
 	 * La fonction renvoie vrai si les nouvelles date proposé pour un emprunt se chevauchent avec d'autres.
@@ -253,16 +262,27 @@ class TRH_Ressource_type extends TObjetStd {
 	}
 	
 	function delField(&$ATMdb, $id){
+
 		$toDel = new TRH_Ressource_field;
 		$toDel->load($ATMdb,$id);
 		$toDel->delete($ATMdb);
 	}
 	function delete(&$ATMdb) {
-		$ATMdb->dbdelete(MAIN_DB_PREFIX.'rh_ressource_field', 
-			array('fk_rh_ressource_type'=>$this->id, array(0=>'fk_rh_ressource_type'))
-		);
-		
-		parent::dbdelete($ATMdb);
+		global $conf;
+		//on supprime les champs associés à ce type
+		$sqlReq="SELECT rowid FROM llx_rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." AND entity=".$conf->entity;
+		$ATMdb->Execute($sqlReq);
+		$Tab = array();
+		while($ATMdb->Get_line()) {
+			$Tab[]= $ATMdb->Get_field('rowid');
+		}
+		$temp = new TRH_Ressource_field;
+		foreach ($Tab as $k => $id) {
+			$temp->load($ATMdb, $id);
+			$temp->delete($ATMdb);
+		}
+		//puis on supprime le type
+		parent::delete($ATMdb);
 		
 	}
 	function save(&$db) {

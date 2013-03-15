@@ -143,7 +143,7 @@ function _fiche(&$ATMdb, &$contrat, &$association, &$ressource,  $mode) {
 					,'date_fin'=>date("d/m/Y",$ressource->TContratExaustif[$assoc->fk_rh_contrat]->date_fin)
 					,'bail'=>$ressource->TContratExaustif[$assoc->fk_rh_contrat]->bail
 					,'loyer_TTC'=> $ressource->TContratExaustif[$assoc->fk_rh_contrat]->loyer_TTC
-					,'TVA'=>$assoc->TTVA[$ressource->TContratExaustif[$assoc->fk_rh_contrat]->TVA]
+					,'TVA'=>$ressource->TTVA[$ressource->TContratExaustif[$assoc->fk_rh_contrat]->TVA]
 		);
 	}
 

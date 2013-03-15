@@ -1,62 +1,12 @@
 [onshow;block=begin;when [view.mode]=='view']
-
-        
-                <div class="fiche"> <!-- begin div class="fiche" -->
-                [view.head;strconv=no]
-                
-                        <div class="tabBar">
-                                
+    <div class="fiche"> <!-- begin div class="fiche" -->
+    [view.head;strconv=no]
+        <div class="tabBar">
+[onshow;block=end]                                
 
 
-<h2>
-	Historique des événements sur la ressource
-</h2>
 
-<div>
-
-<table class="border" style="width:100%">			
-	<tr>
-		<td>Date</td>
-		<td>Type</td>
-		<td>Motif</td>
-		<td>Utilisateur</td>
-		<td>Commentaire</td>
-		<td>Montant HT</td>
-		<td>TVA</td>
-		<!--que si on a les droits-->
-			<td>Action</td>
-		
-		
-	</tr>
-	<tr>
-		<td>[historique.date_debut;block=tr;strconv=no;protect=no]</td>
-		<td>[historique.date_fin;block=tr;strconv=no;protect=no]</td>
-		<td>[historique.type;strconv=no;protect=no]</td>
-		<td>[historique.motif;strconv=no;protect=no]</td>
-		<td>[historique.user;strconv=no;protect=no]</td>
-		<td>[historique.commentaire;strconv=no;protect=no]</td>
-		<td>[historique.montantHT;strconv=no;protect=no]</td>
-		<td>[historique.TVA;strconv=no;protect=no]</td>
-		<!--que si on a les droits-->
-			<td><img src="./img/delete.png"  style="cursor:pointer;" onclick="document.location.href='?id=[ressource.id]&idEvent=[historique.id]&action=deleteEvent'"></td>
-		
-	</tr>
-	
-</table>	
-</div>	
-
-<div class="tabsAction" >		
-	<a class="butAction"  href="?id=[ressource.id]&action=edit">Ajouter</a>
-</div>
-
-[onshow;block=end] 
-
-
-[onshow;block=begin;when [view.mode]!='view']
-
-<h2>
-	Nouvel événement sur la ressource
-</h2>
+<h2>Evénement sur la ressource</h2>
 
 
 <table class="border" style="width:100%">
@@ -93,13 +43,19 @@
 		<td>TVA</td>
 		<td>[NEvent.TVA;strconv=no;protect=no]</td>
 	</tr>
-	
-	
-
 </table>
 	
+	
+[onshow;block=begin;when [view.mode]=='view']
+	<div class="tabsAction" >		
+		<a class="butAction"  href="?id=[ressource.id]&idEven=[NEvent.id]&action=edit">Modifier</a>
+		<a class="butActionDelete"  href="?id=[ressource.id]&idEven=[NEvent.id]&action=deleteEvent">Supprimer</a>
+	</div>
+[onshow;block=end]
+ 
+[onshow;block=begin;when [view.mode]!='view']
 	<div class="tabsAction" >
-		<input type="submit" value="Ajouter" name="newEvent" class="button">
+		<input type="submit" value="Enregistrer" name="save" class="button">
 		&nbsp; &nbsp; 
 		<input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
 	</div>
