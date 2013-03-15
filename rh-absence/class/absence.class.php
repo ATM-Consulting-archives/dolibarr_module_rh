@@ -50,6 +50,8 @@ class TRH_Compteur extends TObjetStd {
 		
 		parent::_init_vars();
 		parent::start();
+		
+		$this->TTypeAcquisition = array('Annuel'=>'Annuel','Mensuel'=>'Mensuel');
 	}
 	
 	

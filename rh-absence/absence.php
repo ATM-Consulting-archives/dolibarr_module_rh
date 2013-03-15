@@ -147,7 +147,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
-	$sqlReqUser="SELECT * FROM `llx_rh_compteur` where fk_user=".$_REQUEST['id']." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
+	$sqlReqUser="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -167,7 +167,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$congePrecReste=$congePrecTotal-$congePrec->congesPris;
 	
 	//////////////////////////récupération des informations des congés précédents (N-1) de l'utilisateur courant : 
-	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=".$_REQUEST['id']." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;;
+	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;;
 	$ATMdb=new Tdb;
 	$ATMdb->Execute($sqlReqUser2);
 	$Tab2=array();
@@ -184,7 +184,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$congeCourantTotal=$congeCourant->acquisEx+$congeCourant->acquisAnc+$congeCourant->acquisHorsPer;
 	
 	//////////////////////////////récupération des informations des rtt courants (année N) de l'utilisateur courant : 
-	$sqlRtt="SELECT * FROM `llx_rh_compteur` where fk_user=".$_REQUEST['id'];
+	$sqlRtt="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id;
 	$ATMdb->Execute($sqlRtt);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -248,12 +248,12 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			,'absenceCourante'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'id'=>$absence->getId()
-				,'commentaire'=>$form->texte('','commentaire',$absence->commentaire,20,500,'',$class="text", $default='')
+				,'commentaire'=>$form->texte('','commentaire',$absence->commentaire,23,500,'',$class="text", $default='')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
-				,'idUser'=>$_REQUEST['id']
+				,'idUser'=>$user->id
 				,'comboType'=>$form->combo('','type',$absence->TTypeAbsence,$absence->type)
 				,'etat'=>$form->texte('','etat',$absence->etat,5,10,'',$class="text", $default='')
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')

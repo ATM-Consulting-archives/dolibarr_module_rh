@@ -7,6 +7,9 @@
 	
 	$ATMdb=new Tdb;
 	$compteur=new TRH_Compteur;
+	
+
+
 
 	
 	if(isset($_REQUEST['action'])) {
@@ -35,14 +38,26 @@
 				$compteur->save($ATMdb);
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">Modifications effectuées</div>';
-				$mode = 'view';
 				_fiche($ATMdb, $compteur,'view');
 			
 				break;
 			
 			case 'view':
-				$compteur->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $compteur,'view');
+			
+				if(isset($_REQUEST['id'])){
+					$compteur->load($ATMdb, $_REQUEST['id']);
+					_fiche($ATMdb, $compteur,'view');
+				}else{
+					//récupération compteur en cours
+					$sqlReqUser="SELECT rowid FROM `llx_rh_compteur` where fk_user=".$user->id;
+					$ATMdb->Execute($sqlReqUser);
+					while($ATMdb->Get_line()) {
+								$idComptEnCours=$ATMdb->Get_field('rowid');
+					}
+					$compteur->load($ATMdb, $idComptEnCours);
+					_fiche($ATMdb, $compteur,'view');
+					
+				}
 				break;
 
 			case 'delete':
@@ -69,7 +84,7 @@ function _liste(&$ATMdb, &$compteur) {
 	getStandartJS();
 	
 	$r = new TSSRenderControler($compteur);
-	$sql="SELECT  r.rowid as 'ID', firstname as 'Prénom', name as 'Nom', anneeN as 'annee', r.date_cre as 'DateCre',r.acquisExerciceN as 'Congés acquis N', 
+	$sql="SELECT  r.rowid as 'ID', firstname as 'Prenom', name as 'Nom', anneeN as 'annee', r.date_cre as 'DateCre',r.acquisExerciceN as 'Congés acquis N', 
 	r.acquisAncienneteN as 'Congés Ancienneté', r.acquisExerciceNM1 as 'Conges Acquis N-1', r.congesPrisNM1 as 'Conges Pris N-1',
 			   r.rttPris as 'RttPris', r.fk_user as 'Utilisateur'
 		FROM llx_rh_compteur as r, llx_user as c 
@@ -88,7 +103,8 @@ function _liste(&$ATMdb, &$compteur) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'ID'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'Nom'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			,'Prenom'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')
@@ -126,7 +142,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
-	$sqlReqUser="SELECT * FROM `llx_rh_compteur` where fk_user=". $_REQUEST['id']." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
+	$sqlReqUser="SELECT * FROM `llx_rh_compteur` where fk_user=". $compteur->getId()." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -146,7 +162,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$congePrecReste=$congePrecTotal-$congePrec->congesPris;
 	
 	//////////////////////////récupération des informations des congés précédents (N-1) de l'utilisateur courant : 
-	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=". $_REQUEST['id']." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;
+	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=". $compteur->getId()." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;
 	$ATMdb=new Tdb;
 	$ATMdb->Execute($sqlReqUser2);
 	$Tab2=array();
@@ -165,7 +181,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$congeCourantTotal=$congeCourant->acquisEx+$congeCourant->acquisAnc+$congeCourant->acquisHorsPer;
 	
 	//////////////////////////////récupération des informations des rtt courants (année N) de l'utilisateur courant : 
-	$sqlRtt="SELECT * FROM `llx_rh_compteur` where fk_user=". $_REQUEST['id'];
+	$sqlRtt="SELECT * FROM `llx_rh_compteur` where fk_user=". $compteur->getId();
 	$ATMdb->Execute($sqlRtt);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -204,10 +220,10 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'reportConges'=>$form->texte('','reportCongesNM1',round2Virgule($congePrec->reportConges),10,50,'',$class="text", $default='')
 				,'congesPris'=>$form->texte('','congesPrisNM1',round2Virgule($congePrec->congesPris),10,50,'',$class="text", $default='')
 				,'anneePrec'=>$form->texte('','anneeNM1',round2Virgule($anneePrec),10,50,'',$class="text", $default='')
-				,'total'=>$form->texte('','total',round2Virgule($congePrecTotal),10,50,'',$class="text", $default='')
-				,'reste'=>$form->texte('','reste',round2Virgule($congePrecReste),10,50,'',$class="text", $default='')
+				,'total'=>round2Virgule($congePrecTotal)
+				,'reste'=>round2Virgule($congePrecReste)
 				,'idUser'=>$congePrec->fk_user
-				,'user'=>$_REQUEST['id']
+				,'user'=>$_REQUEST['id']?$_REQUEST['id']:$user->id
 			)
 			,'congesCourant'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
@@ -215,7 +231,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'acquisAnc'=>$form->texte('','acquisAncienneteN',round2Virgule($congeCourant->acquisAnc),10,50,'',$class="text", $default='')
 				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeN',round2Virgule($congeCourant->acquisHorsPer),10,50,'',$class="text", $default='')
 				,'anneeCourante'=>$form->texte('','anneeN',round2Virgule($anneeCourante),10,50,'',$class="text", $default='')
-				,'total'=>$form->texte('','total',round2Virgule($congeCourantTotal),10,50,'',$class="text", $default='')
+				,'total'=>round2Virgule($congeCourantTotal)
 				,'idUser'=>$congeCourant->fk_user
 				,'date_congesCloture'=>$form->calendrier('', 'date_congesCloture', $compteur->get_date('date_congesCloture'), 10)
 				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',round2Virgule($congeCourant->nombreCongesAcquisMensuel),10,50,'',$class="text", $default='')
@@ -235,7 +251,9 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'mensuelInit'=>$form->texte('','rttAcquisMensuel',round2Virgule($rttCourant->mensuelInit),10,50,'',$class="text", $default='')
 				,'annuelCumuleInit'=>$form->texte('','rttAcquisAnnuelCumule',round2Virgule($rttCourant->annuelCumuleInit),10,50,'',$class="text", $default='')
 				,'annuelNonCumuleInit'=>$form->texte('','rttAcquisAnnuelNonCumule',round2Virgule($rttCourant->annuelNonCumuleInit),10,50,'',$class="text", $default='')
-				,'typeAcquisition'=>$form->texte('','typeAcquisition',round2Virgule($rttCourant->typeAcquisition),10,50,'',$class="text", $default='')
+				//,'typeAcquisition'=>$form->texte('','typeAcquisition',$rttCourant->typeAcquisition,10,50,'',$class="text", $default='')
+				,'typeAcquisition'=>$form->combo('','rttTypeAcquisition',$compteur->TTypeAcquisition,$compteur->rttTypeAcquisition)
+				,'rttTypeAcquis'=>$compteur->rttTypeAcquisition
 				,'reste'=>$form->texte('','total',round2Virgule($rttCourantReste),10,50,'',$class="text", $default='')
 				,'id'=>$compteur->getId()
 				

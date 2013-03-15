@@ -105,7 +105,14 @@
 		<table class="border" style="width:100%">
 				<tr>
 					<td>Type acquisition</td>
-					<td> [rttCourant.typeAcquisition;strconv=no;protect=no]</td>
+					
+					<td>[onshow;block=begin;when [view.mode]=='edit'] 
+							[rttCourant.typeAcquisition;strconv=no;protect=no]
+						[onshow;block=end]
+						[onshow;block=begin;when [view.mode]!='edit']
+						 	[rttCourant.rttTypeAcquis;strconv=no;protect=no]
+						[onshow;block=end]
+					 </td>
 				</tr>
 				<tr>
 					<td>Mensuel</td>
