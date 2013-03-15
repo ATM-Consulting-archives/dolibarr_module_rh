@@ -89,6 +89,8 @@ class TRH_Compteur extends TObjetStd {
 		$this->rttAcquisAnnuelNonCumule='7';
 		$this->rttannee=$annee;
 		$this->nombreCongesAcquisMensuel='2.08';
+		$this->date_rttCloture=strtotime('2013-03-01 00:00:00');
+		$this->date_congesCloture=strtotime('2013-06-01 00:00:00');
 	}
 }
 
