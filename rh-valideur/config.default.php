@@ -10,7 +10,6 @@
 	}
 	elseif(!defined('INC_FROM_DOLIBARR')) {
 		include(ROOT."main.inc.php");
-
 		define('DB_HOST',$dolibarr_main_db_host);
 		define('DB_NAME',$dolibarr_main_db_name);
 		define('DB_USER',$dolibarr_main_db_user);
