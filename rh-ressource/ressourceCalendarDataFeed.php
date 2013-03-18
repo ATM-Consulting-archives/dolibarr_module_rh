@@ -44,6 +44,12 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null){
       //  $attends .= $row->OtherAttendee;
       //}
       //echo $row->StartTime;
+      if ($row->type == 'emprunt'){
+      	$lien = 'attribution.php?id='.$row->fk_rh_ressource.'&idEven='.$row->rowid.'&action=view';
+      }
+	  else {
+	  	$lien = 'evenement.php?id='.$row->fk_rh_ressource.'&idEven='.$row->rowid.'&action=view';
+	  }
       $ret['events'][] = array(
        $row->rowid,
         $row->subject,
@@ -55,7 +61,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null){
         $row->fk_user,//Recurring event,
         $row->color,
         1,//editable
-        $row->location,
+        $lien,//$row->location,
         '',//$attends
         $row->fk_user
       );

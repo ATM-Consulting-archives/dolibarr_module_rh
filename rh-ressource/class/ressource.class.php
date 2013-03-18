@@ -5,7 +5,7 @@ class TRH_Ressource extends TObjetStd {
 	function __construct() { /* declaration */
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource');
 		parent::add_champs('libelle','type=chaine;');
-		parent::add_champs('date_achat','type=date;');
+		parent::add_champs('date_achat, date_vente, date_garantie','type=date;');
 		
 		//types énuméré
 		parent::add_champs('statut','type=chaine;');
@@ -49,10 +49,6 @@ class TRH_Ressource extends TObjetStd {
 		while($ATMdb->Get_line()) {
 			$this->TListeContrat[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
 			}
-
-		
-		
-
 	}
 	
 	function load(&$ATMdb, $id) {
@@ -173,6 +169,13 @@ class TRH_Ressource extends TObjetStd {
 	function save(&$db) {
 		global $conf;
 		$this->entity = $conf->entity;
+		
+		//on transforme les champs sensés être entier en int
+		foreach($this->ressourceType->TField as $k=>$field) {
+			if ($field->type=='entier'){
+				$this->{$field->code} = (int) ($this->{$field->code});
+			}
+		}
 		
 		parent::save($db);
 	}
@@ -320,11 +323,21 @@ class TRH_Ressource_field extends TObjetStd {
 		parent::add_champs('type','type=chaine;');
 		parent::add_champs('obligatoire','type=entier;');
 		parent::add_champs('ordre','type=entier');
+		parent::add_champs('options','type=entier');
 		parent::add_champs('fk_rh_ressource_type,entity','type=entier;index;');
 		
+		$this->TListe = array();
 		parent::_init_vars();
 		parent::start();
 		
+	}
+	
+	function load(&$ATMdb, $id){
+		parent::load($ATMdb, $id);
+		$this->TListe = array();
+		foreach (explode(";",$this->options) as $key => $value) {
+			$this->TListe[$value] = $value;
+		}
 	}
 	
 	function save(&$db) {
