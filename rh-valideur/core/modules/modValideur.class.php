@@ -172,7 +172,8 @@ class modValideur extends DolibarrModules
 		$this->rights[$r][2] = 'e';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
-
+        $this->rights[$r][5] = 'valideur';
+		$r++;
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
 		$r=0;
