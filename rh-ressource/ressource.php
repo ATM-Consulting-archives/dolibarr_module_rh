@@ -32,6 +32,7 @@
 			case 'save':
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
+
 				print_r($_REQUEST);
 				//on vérifie que les champs obligatoires sont renseignés
 				foreach($ressource->ressourceType->TField as $k=>$field) {
@@ -71,10 +72,14 @@
 					}
 				}
 				
+
 				$ressource->set_values($_REQUEST);
 				$ressource->save($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
+				$mesg = '<div class="ok">Modifications effectuées</div>';
+				$mode = 'view';
 				
+
 				if ($mesg==''){
 					$mesg .= '<div class="ok">Modifications effectuées</div>';
 					$mode = 'edit';
@@ -84,9 +89,9 @@
 				}
 				else{
 					$mode = 'edit';
+
 				}
-				echo $mesg;
-				$mesg='';
+				
 				_fiche($ATMdb, $ressource,$mode);
 				break;
 			
@@ -192,20 +197,9 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	$TFields=array();
 	
 	foreach($ressource->ressourceType->TField as $k=>$field) {
-		switch ($field->type){
-			case liste:
-				$temp = $form->combo('',$field->code, $field->TListe, $ressource->{$field->code});
-				break;
-			case checkbox:
-				$temp = $form->combo('',$field->code,array(true=>'Oui', false=>'Non'),$ressource->{$field->code});
-				break;
-			default:
-				$temp = $form->texte('', $field->code, $ressource->{$field->code}, 50,255,'','','-');
-				break;
-		}
 		$TFields[$k]=array(
 				'libelle'=>$field->libelle
-				,'valeur'=>$temp//$form->texte('', $field->code, $ressource->{$field->code}, 50,255,'','','-')
+				,'valeur'=>$form->texte('', $field->code, $ressource->{$field->code}, 50,255,'','','-')
 				
 			);
 	}
@@ -224,6 +218,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 		$k++;
 		$reqVide=1;
 	}
+
+
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'

@@ -9,6 +9,7 @@ class ActionsValideur
       *  @return       void 
       */ 
       
+      
     function formObjectOptions($parameters, &$object, &$action, $hookmanager) 
     { 
         global $db,$html,$user;
