@@ -36,18 +36,21 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('rttAcquisAnnuelCumule','type=float;');
 		parent::add_champs('rttAcquisAnnuelNonCumule','type=float;');
 		
-		parent::add_champs('rttAcquisMensuelInit','type=float;');	
-		parent::add_champs('rttAcquisAnnuelCumuleInit','type=float;');
-		parent::add_champs('rttAcquisAnnuelNonCumuleInit','type=float;');
+		
 		
 		parent::add_champs('rttannee','type=int;');	
 		parent::add_champs('rttMetier','type=chaine;');		
 		parent::add_champs('date_rttCloture','type=date;');	//date de clôture période rtt
 		
+		//paramètres globaux
+		parent::add_champs('rttAcquisMensuelInit','type=float;');	
+		parent::add_champs('rttAcquisAnnuelCumuleInit','type=float;');
+		parent::add_champs('rttAcquisAnnuelNonCumuleInit','type=float;');
+		
+		
 		
 		parent::add_champs('entity','type=int;');					
 					
-		
 		parent::_init_vars();
 		parent::start();
 		
@@ -176,6 +179,32 @@ class TRH_Absence extends TObjetStd {
 			parent::save($db);
 		}
 }
+
+
+//définition de la classe pour l'administration des compteurs
+class TRH_AdminCompteur extends TObjetStd {
+	function __construct() { 
+		parent::set_table(MAIN_DB_PREFIX.'rh_admin_compteur');
+		parent::add_champs('congesAcquisMensuelInit','type=float;');
+		parent::add_champs('date_rttClotureInit','type=date;');
+		parent::add_champs('date_congesClotureInit','type=date;');				
+					
+		parent::_init_vars();
+		parent::start();	
+	}
+	
+	
+	function save(&$db) {
+		global $conf;
+		$this->entity = $conf->entity;
+		
+		parent::save($db);
+	}
+}
+
+
+
+
 
 
 

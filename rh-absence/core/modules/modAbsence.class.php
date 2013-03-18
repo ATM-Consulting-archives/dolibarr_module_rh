@@ -93,7 +93,7 @@ class modAbsence extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
-		$this->config_page_url = array("setuppage.php@absence");
+		//$this->config_page_url = array("setuppage.php@absence");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled

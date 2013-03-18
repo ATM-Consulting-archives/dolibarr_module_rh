@@ -7,13 +7,17 @@ $ATMdb=new TPDOdb;
 $method = $_GET["method"];
 switch ($method) {
     case "list":
-        $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_REQUEST['id'], $_REQUEST['idUser']);
+		if (isset($_REQUEST['id'])){
+	       	 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_REQUEST['id']);
+		}else {
+			 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"]);
+		}
         break;   
 
 }
 echo json_encode($ret); 
 
-function listCalendarByRange(&$ATMdb, $sd, $ed, $idAbsence, $idUser){
+function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=1){
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
@@ -23,7 +27,11 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idAbsence, $idUser){
   try{
     
     $sql = "SELECT * FROM `llx_rh_absence` WHERE `date_debut` between '"
-      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND fk_user=".$idUser;
+      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."'"; 
+	  
+	  if ($idAbsence!=null){
+	  	$sql.=" AND fk_user=".$idUser;
+      }
   	$ATMdb->Execute($sql);
     //echo $sql;
     while ($row = $ATMdb->Get_line()) {
@@ -54,7 +62,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idAbsence, $idUser){
   return $ret;
 }
 
-function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idUser){
+function listCalendar(&$ATMdb, $day, $type, $idAbsence){
   $phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
   switch($type){
@@ -75,6 +83,6 @@ function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idUser){
       break;
   }
   //echo $st . "--" . $et;
-  return listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idUser);
+  return listCalendarByRange($ATMdb, $st, $et, $idAbsence);
 }
 
