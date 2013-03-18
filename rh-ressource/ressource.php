@@ -32,36 +32,23 @@
 			case 'save':
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
-
-				print_r($_REQUEST);
 				//on vérifie que les champs obligatoires sont renseignés
 				foreach($ressource->ressourceType->TField as $k=>$field) {
 					if (! $field->obligatoire){
-						//echo $field->libelle.':'.$_REQUEST[$field->code].'<br>';
 						if  ( empty($_REQUEST[$field->code]) ){
 							$mesg .= '<div class="error">Le champs '.$field->libelle.' doit être renseigné.</div>';
 						}
 					}
 				}
 				
-				
 				//ensuite on vérifie ici que les champs sont bien du type attendu
 				if ($mesg == ''){
 					foreach($ressource->ressourceType->TField as $k=>$field) {
 						switch ($field->type){
-							case 'entier':
-								//$ressource->{$field->code} = (intval($_REQUEST[$field->code]));
-								echo $field->code." : ".$_REQUEST[$field->code]."<br>";
-								if (! is_numeric($_REQUEST[$field->code]) ){
-									$mesg .= '<div class="error">Le champs '.$field->libelle.' doit être un entier.</div>';
-									}
-								break;
 							case 'float':
-								$ressource->{$field->code} = (float)($_REQUEST[$field->code]);
-								echo $field->code." : ".$ressource->{$field->code}."<br>";
-								if (! is_numeric($_REQUEST[$field->code])){
-									
-								//if (gettype($ressource->{$field->code}) != 'double' && gettype($ressource->{$field->code}) != 'integer' ){
+							case 'entier':
+								//la conversion en entier se fera lors de la sauvegarde dans l'objet.
+								if (! is_numeric($_REQUEST[$field->code]) ){
 									$mesg .= '<div class="error">Le champs '.$field->libelle.' doit être un nombre.</div>';
 									}
 								break;
@@ -76,12 +63,11 @@
 				$ressource->set_values($_REQUEST);
 				$ressource->save($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				$mesg = '<div class="ok">Modifications effectuées</div>';
 				$mode = 'view';
 				
 
 				if ($mesg==''){
-					$mesg .= '<div class="ok">Modifications effectuées</div>';
+					$mesg = '<div class="ok">Modifications effectuées</div>';
 					$mode = 'edit';
 					if(isset($_REQUEST['validerType']) ) {
 						$mode = 'edit';	
@@ -197,9 +183,21 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	$TFields=array();
 	
 	foreach($ressource->ressourceType->TField as $k=>$field) {
+		switch($field->type){
+			case liste:
+				$temp = $form->combo('',$field->code,$field->TListe,$ressource->{$field->code});
+				break;
+			case checkbox:
+				$temp = $form->combo('',$field->code,array('oui'=>'Oui', 'non'=>'Non'),$ressource->{$field->code});
+				break;
+			default:
+				$temp = $form->texte('', $field->code, $ressource->{$field->code}, 50,255,'','','-');
+				break;
+		}
+		
 		$TFields[$k]=array(
 				'libelle'=>$field->libelle
-				,'valeur'=>$form->texte('', $field->code, $ressource->{$field->code}, 50,255,'','','-')
+				,'valeur'=>$temp
 				
 			);
 	}
