@@ -77,33 +77,27 @@ class InterfaceValideurWorkflow
         $langs->load("other");
         $langs->load('ndfp@ndfp');
 		
-		define('INC_FROM_DOLIBARR', true);
-		dol_include_once('/valideur/config.php');
-		dol_include_once('/valideur/lib/valideur.lib.php');
-		
-		if($object->statut==1){			// Statut 1 : note de frais acceptée
+		// Statut 1 : validée
+		if($object->statut==1){
+			// Actions
 			if ($action == 'NDFP_VALIDATE'){
+				define('INC_FROM_DOLIBARR', true);
+				dol_include_once('/valideur/config.php');
+				dol_include_once('/valideur/lib/valideur.lib.php');
+				
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
 				
-				return send_mail($db, $object, $user, $langs,1);
+				return send_mail_validate($db, $object, $user, $langs,1);
 			}
-		}elseif($object->statut==2){	// Statut 2 : note de frais remboursée
-			if ($action == 'NDFP_PAID'){
-				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
-				
-				return send_mail($db, $object, $user, $langs,2);
-			}
-		}elseif($object->statut==3){	// Statut 3 : note de frais refusée
+		}elseif($object->statut==3){
 			if ($action == 'NDFP_CANCEL'){
+				define('INC_FROM_DOLIBARR', true);
+				dol_include_once('/valideur/config.php');
+				dol_include_once('/valideur/lib/valideur.lib.php');
+				
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
 				
-				return send_mail($db, $object, $user, $langs,3);
-			}
-		}elseif($object->statut==4){	// Statut 4 : note de frais envoyé en soumission de validation
-			if ($action == 'NDFP_VALIDATE'){
-				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
-				
-				return send_mail($db, $object, $user, $langs,4);
+				return send_mail_validate($db, $object, $user, $langs,0);
 			}
 		}
 

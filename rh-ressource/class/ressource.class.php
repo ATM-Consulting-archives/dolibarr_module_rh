@@ -5,7 +5,7 @@ class TRH_Ressource extends TObjetStd {
 	function __construct() { /* declaration */
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource');
 		parent::add_champs('libelle','type=chaine;');
-		parent::add_champs('date_achat','type=date;');
+		parent::add_champs('date_achat','date_vente','date_garantie','type=date;');
 		
 		//types énuméré
 		parent::add_champs('statut','type=chaine;');
@@ -320,19 +320,29 @@ class TRH_Ressource_field extends TObjetStd {
 		parent::add_champs('type','type=chaine;');
 		parent::add_champs('obligatoire','type=entier;');
 		parent::add_champs('ordre','type=entier');
+		parent::add_champs('options','type=entier');
 		parent::add_champs('fk_rh_ressource_type,entity','type=entier;index;');
 		
+		$this->TListe = array();
 		parent::_init_vars();
 		parent::start();
 		
 	}
 	
-	function save(&$db) {
+	function load(&$ATMdb, $id){
+		parent::load($ATMdb, $id);
+		
+		foreach(explode(";",$this->options) as $key=>$value){
+			$this->TListe[$value]=$value;
+		}
+	}
+	
+	function save(&$ATMdb) {
 		global $conf;
 		
 		$this->code = TRH_Ressource_type::code_format(empty($this->code) ? $this->libelle : $this->code);
 		$this->entity = $conf->entity;
-		parent::save($db);
+		parent::save($ATMdb);
 	}
 }
 	
