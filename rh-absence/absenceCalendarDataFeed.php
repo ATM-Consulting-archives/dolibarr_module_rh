@@ -26,11 +26,11 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=1){
   $ret['error'] = null;
   try{
     
-    $sql = "SELECT * FROM `llx_rh_absence` WHERE `date_debut` between '"
-      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."'"; 
-	  
+    $sql = "SELECT r.rowid as rowid, r.libelle, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
+      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
+        
 	  if ($idAbsence!=null){
-	  	$sql.=" AND fk_user=".$idUser;
+	  	$sql.=" AND r.fk_user=".$idUser;
       }
   	$ATMdb->Execute($sql);
     //echo $sql;
@@ -43,7 +43,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=1){
       //echo $row->StartTime;
       $ret['events'][] = array(
         $row->rowid,
-        $row->libelle,
+        $row->libelle." ".$row->name.' '.$row->firstname,
         php2JsTime(mySql2PhpTime($row->date_debut)),
         php2JsTime(mySql2PhpTime($row->date_fin)),
         1,//$row->isAllDayEvent,
@@ -52,7 +52,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=1){
         $row->fk_user,//Recurring event,
         6,//$row->color,
         1,//editable
-        "",//$row->location,
+        "absence.php?id=".$row->rowid."&action=view",//$row->location,
         '',//$attends
       );
     }

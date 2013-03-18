@@ -22,11 +22,7 @@ $formother = new FormOther($db);
 $absence = new TRH_Absence;
 print dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', 'Absence');
 
-?>
-<p align="center">
-	<img src="./img/vacances.jpg" />
-</p>
-<?
+
 
 
 llxfooter();

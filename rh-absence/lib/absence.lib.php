@@ -8,20 +8,28 @@ function absencePrepareHead(&$obj, $type='absence') {
 					array(DOL_URL_ROOT_ALT.'/absence/absence.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
 					,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?id='.$obj->getId(), 'Calendrier','calendrier')
 				);
+				break;
 		case 'index':
 				return array(
 					array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php', 'Calendrier','calendrier')
 				);
+				break;
 		case 'absenceCreation':
 				return array(
 					array(DOL_URL_ROOT_ALT.'/absence/absence.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
 				);
+				break;
 		case 'compteur':
 				return array(
 					array(DOL_URL_ROOT_ALT.'/absence/compteur.php?id='.$obj->getId()."&action=view", 'Compteur','compteur')
 					,array(DOL_URL_ROOT_ALT.'/absence/adminCompteur.php?action=view', 'Administration générale','compteur')
 				);
-			break;
+				break;
+		case 'emploitemps':
+				return array(
+					array(DOL_URL_ROOT_ALT.'/absence/emploitemps.php?id='.$obj->getId()."&action=view", 'Emploi du temps','emploitemps')
+				);
+				break;
 	}
 }
 

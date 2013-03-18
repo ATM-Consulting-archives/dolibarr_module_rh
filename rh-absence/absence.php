@@ -25,6 +25,8 @@
 				$ATMdb->db->debug=true;
 				
 				$absence->load($ATMdb, $_REQUEST['id']);
+				recrediterHeure($absence,$ATMdb);
+
 				$absence->set_values($_REQUEST);
 				$absence->save($ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
@@ -62,6 +64,8 @@
 				break;
 				
 			case 'refuse':
+				$absence->load($ATMdb, $_REQUEST['id']);
+				recrediterHeure($absence,$ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$sqlEtat="UPDATE `llx_rh_absence` SET etat='Refusee', libelleEtat='Refusée' where fk_user=".$user->id. " AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
@@ -268,6 +272,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'fiche', 'Absence')
 				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence')
+				
+				
 			)
 			
 			

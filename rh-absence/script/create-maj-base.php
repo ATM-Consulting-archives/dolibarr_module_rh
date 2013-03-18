@@ -40,3 +40,7 @@
 	$q->date_rttClotureInit=strtotime('2013-06-01 00:00:00');
 	$q->date_congesClotureInit=strtotime('2013-03-01 00:00:00');
 	$q->save($ATMdb);
+	
+	$r=new TRH_EmploiTemps;
+	$r->init_db_by_vars($ATMdb);
+	

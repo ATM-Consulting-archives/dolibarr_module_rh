@@ -1,6 +1,9 @@
 [onshow;block=begin;when [absence.id]!=0]   
     [view.head;strconv=no]
 [onshow;block=end] 	
+[onshow;block=begin;when [absence.id]==0]   
+    [view.head3;strconv=no]
+[onshow;block=end] 	
 <h1>Agenda des absences</h1>
 		
 			<div id="agenda">
