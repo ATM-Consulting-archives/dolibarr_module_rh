@@ -70,7 +70,7 @@ $ATMdb->close();
 llxFooter();
 
 function _liste(&$ATMdb) {
-	global $langs,$conf,$db;
+	global $langs,$conf,$db,$user;
 	
 	llxHeader('', 'Liste des validations possibles');
 	
@@ -81,51 +81,58 @@ function _liste(&$ATMdb) {
 	$head = user_prepare_head($fuser);
 	dol_fiche_head($head, 'valideur', $langs->trans('Utilisateur'),0, 'user');
 	
-	$valideur=new TRH_valideur_groupe;
-	$r = new TSSRenderControler($valideur);
-	$sql= "SELECT v.rowid as 'ID', v.type as 'Type', v.nbjours as 'Nombre de jours', g.nom as 'Groupe', u.name as 'Utilisateur', '' as 'Supprimer'";
-	$sql.= " FROM ((".MAIN_DB_PREFIX."rh_valideur_groupe as v LEFT JOIN ".MAIN_DB_PREFIX."usergroup as g ON (v.fk_usergroup = g.rowid))
-			 		 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (v.fk_user = u.rowid))";
-	$sql.= " WHERE v.entity=".$conf->entity." AND v.fk_user=".$fuser->id;
-	
-	//print $sql;
-	
-	$TOrder = array('ID'=>'DESC');
-	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
-	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
-	
-	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
-	//print $page;
-	$r->liste($ATMdb, $sql, array(
-		'limit'=>array(
-			'page'=>$page
-			,'nbLine'=>'30'
-		)
-		,'link'=>array(
-			'ID'=>'<a href="?id=@ID@&action=edit">@val@</a>'
-			,'Supprimer'=>'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'">Supprimer</a>'
-		)
-		,'translate'=>array()
-		,'hide'=>array()
-		,'type'=>array()
-		,'liste'=>array(
-			'titre'=>'Liste des validations possibles'
-			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
-			,'picto_suivant'=>img_picto('','next.png', '', 0)
-			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucun lien de validation à afficher"
-			,'order_down'=>img_picto('','1downarrow.png', '', 0)
-			,'order_up'=>img_picto('','1uparrow.png', '', 0)
-			
-		)
-		,'orderBy'=>$TOrder
+	if($user->rights->valideur->myactions->valideur=="1"){
+		$valideur=new TRH_valideur_groupe;
+		$r = new TSSRenderControler($valideur);
+		$sql= "SELECT v.rowid as 'ID', v.type as 'Type', v.nbjours as 'Nombre de jours', g.nom as 'Groupe', u.name as 'Utilisateur', '' as 'Supprimer'";
+		$sql.= " FROM ((".MAIN_DB_PREFIX."rh_valideur_groupe as v LEFT JOIN ".MAIN_DB_PREFIX."usergroup as g ON (v.fk_usergroup = g.rowid))
+				 		 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (v.fk_user = u.rowid))";
+		$sql.= " WHERE v.entity=".$conf->entity." AND v.fk_user=".$fuser->id;
 		
-	));
-	
-	?><a class="butAction" href="?action=new&fk_user=<?=$fuser->id ?>">Nouveau</a>
-	<div style="clear:both;"></div>
-	<?
+		//print $sql;
+		
+		$TOrder = array('ID'=>'DESC');
+		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+		
+		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
+		//print $page;
+		$r->liste($ATMdb, $sql, array(
+			'limit'=>array(
+				'page'=>$page
+				,'nbLine'=>'30'
+			)
+			,'link'=>array(
+				'ID'=>'<a href="?id=@ID@&action=edit">@val@</a>'
+				,'Supprimer'=>'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'">Supprimer</a>'
+			)
+			,'translate'=>array()
+			,'hide'=>array()
+			,'type'=>array()
+			,'liste'=>array(
+				'titre'=>'Liste des validations possibles'
+				,'image'=>img_picto('','title.png', '', 0)
+				,'picto_precedent'=>img_picto('','back.png', '', 0)
+				,'picto_suivant'=>img_picto('','next.png', '', 0)
+				,'noheader'=> (int)isset($_REQUEST['socid'])
+				,'messageNothing'=>"Il n'y a aucun lien de validation à afficher"
+				,'order_down'=>img_picto('','1downarrow.png', '', 0)
+				,'order_up'=>img_picto('','1uparrow.png', '', 0)
+				
+			)
+			,'orderBy'=>$TOrder
+			
+		));
+		
+		?><a class="butAction" href="?action=new&fk_user=<?=$fuser->id ?>">Nouveau</a>
+		<div style="clear:both;"></div>
+		<?
+		
+	}else{
+		?>
+		<p>Vous ne disposez pas du droit pour vous déclarer valideur d'un groupe.</p>
+		<?
+	}
 	
 	llxFooter();
 }
@@ -144,53 +151,47 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 	$current_head = 'valideur';
 	dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
 	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
-	$form->Set_typeaff($mode);
-	echo $form->hidden('fk_user', $fuser->id);
-	echo $form->hidden('id', $valideur->getId());
-	echo $form->hidden('action', 'save');
+	if($user->rights->valideur->myactions->valideur=="1"){
 	
-	
-	$TValidations = array();
-	/*$sqlReq="SELECT r.rowid, g.nom, r.type, r.nbjours FROM ".MAIN_DB_PREFIX."rh_valideur_groupe r, ".MAIN_DB_PREFIX."usergroup g WHERE g.rowid = r.fk_usergroup";
-	$ATMdb->Execute($sqlReq);
-	while($ATMdb->Get_line()) {
-		$TValidations[] = array(
-			'id'=>$ATMdb->Get_field('rowid')
-			,'group'=>$ATMdb->Get_field('nom')
-			,'type'=>$ATMdb->Get_field('type')
-			,'nbjours'=>$ATMdb->Get_field('nbjours')
-		);
-	}
-	*/
-	$valideur->loadListGroup($ATMdb,$fuser->id);
-	
-	if (!empty($valideur->TGroup) ){
-		$TBS=new TTemplateTBS();
-		print $TBS->render('./tpl/valideur.tpl.php'
-			,array(
-				'validations'=>$TValidations
-			)
-			,array(
-				'userCourant'=>array(
-					'id'=>$user->id
+		$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
+		$form->Set_typeaff($mode);
+		echo $form->hidden('fk_user', $fuser->id);
+		echo $form->hidden('id', $valideur->getId());
+		echo $form->hidden('action', 'save');
+		
+		$valideur->loadListGroup($ATMdb,$fuser->id);
+		
+		if (!empty($valideur->TGroup) ){
+			$TBS=new TTemplateTBS();
+			print $TBS->render('./tpl/valideur.tpl.php'
+				,array(
 				)
-				,'valideur'=>array(
-					'group'=>$form->combo('','fk_usergroup',$valideur->TGroup,$valideur->fk_usergroup)
-					,'type'=> $form->combo('','type',$valideur->TType, $valideur->type)
-					,'nbjours'=> $form->texte('', 'nbjours', $valideur->nbjours, 7,10,'','','-')
-				)
-				,'view'=>array(
-					'mode'=>$mode
-				)
+				,array(
+					'userCourant'=>array(
+						'id'=>$user->id
+					)
+					,'valideur'=>array(
+						'group'=>$form->combo('','fk_usergroup',$valideur->TGroup,$valideur->fk_usergroup)
+						,'type'=> $form->combo('','type',$valideur->TType, $valideur->type)
+						,'nbjours'=> $form->texte('', 'nbjours', $valideur->nbjours, 7,10,'','','-')
+					)
+					,'view'=>array(
+						'mode'=>$mode
+					)
+					
+				)	
 				
-			)	
-			
-		);
-		echo $form->end_form();
-	}
-	else {
-		?> L'utilisateur n'appartient à aucun groupe. Renseigner un groupe. <?
+			);
+			echo $form->end_form();
+		}
+		else {
+			?> L'utilisateur n'appartient à aucun groupe. Renseigner un groupe. <?
+		}
+	
+	}else{
+		?>
+		<p>Vous ne disposez pas du droit pour vous déclarer valideur d'un groupe.</p>
+		<?
 	}
 	
 	// End of page
