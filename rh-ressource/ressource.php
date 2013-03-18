@@ -49,16 +49,18 @@
 					foreach($ressource->ressourceType->TField as $k=>$field) {
 						switch ($field->type){
 							case 'entier':
-								$ressource->{$field->code} = (intval( $_REQUEST[$field->code]));
-								echo 'entier '.$field->code." : ".$ressource->{$field->code}."<br>";
-								if (is_int($ressource->{$field->code})){
+								//$ressource->{$field->code} = (intval($_REQUEST[$field->code]));
+								echo $field->code." : ".$_REQUEST[$field->code]."<br>";
+								if (! is_numeric($_REQUEST[$field->code]) ){
 									$mesg .= '<div class="error">Le champs '.$field->libelle.' doit être un entier.</div>';
 									}
 								break;
 							case 'float':
-								$ressource->{$field->code} = (float)$_REQUEST[$field->code];
-								echo 'float '.$field->code." : ".$ressource->{$field->code}."<br>";
-								if (gettype($ressource->{$field->code}) != 'double' && gettype($ressource->{$field->code}) != 'integer' ){
+								$ressource->{$field->code} = (float)($_REQUEST[$field->code]);
+								echo $field->code." : ".$ressource->{$field->code}."<br>";
+								if (! is_numeric($_REQUEST[$field->code])){
+									
+								//if (gettype($ressource->{$field->code}) != 'double' && gettype($ressource->{$field->code}) != 'integer' ){
 									$mesg .= '<div class="error">Le champs '.$field->libelle.' doit être un nombre.</div>';
 									}
 								break;
@@ -75,7 +77,7 @@
 				
 				if ($mesg==''){
 					$mesg .= '<div class="ok">Modifications effectuées</div>';
-					$mode = 'view';
+					$mode = 'edit';
 					if(isset($_REQUEST['validerType']) ) {
 						$mode = 'edit';	
 					}
