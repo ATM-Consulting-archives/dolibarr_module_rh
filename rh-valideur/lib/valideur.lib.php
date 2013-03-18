@@ -43,7 +43,7 @@ function send_mail_validate($db, $object, $user, $langs, $is_validate)
 	
 	$langs->load('mails');
 	
-	$from = 'arnaud.pothier@pi.esisar.grenoble-inp.fr';
+	$from = USER_MAIL_SENDER;
 	$sendto = $email;
 	
 	$TBS=new TTemplateTBS();

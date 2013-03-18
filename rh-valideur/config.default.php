@@ -16,10 +16,7 @@
 		define('DB_USER',$dolibarr_main_db_user);
 		define('DB_PASS',$dolibarr_main_db_pass);
 		define('DB_DRIVER','mysqli');
-
-
 	}
-
 
 	define('DOL_PACKAGE', true);
 	define('USE_TBS', true);
@@ -28,3 +25,4 @@
 	
 	define('DOL_ADMIN_USER', 'admin');
 	
+	define('USER_MAIL_SENDER', 'webmaster@atm-consulting.fr');
