@@ -89,7 +89,7 @@
 			Cette ressource est associée à [fk_ressource.fk_rh_ressource].
 		[onshow;block=end]
 
-<div class="tabsAction" >
+<div class="tabsAction" style="text-align:center;" >
 
 		[onshow;block=begin;when [view.mode]=='edit']
 			<input type="submit" value="Enregistrer" name="save" class="button"
