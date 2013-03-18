@@ -1,3 +1,3 @@
-Bonjour [validation.prenom;strconv=no;protect=no] [validation.nom;strconv=no;protect=no] !
+<p>Bonjour [validation.prenom;strconv=no;protect=no] [validation.nom;strconv=no;protect=no] !</p>
 
-Votre note de frais [validation.ref;strconv=no;protect=no], d'un montant de [validation.total_ttc;strconv=no;protect=no], vient d'être refusée.
+<p>Votre note de frais <strong>[validation.ref;strconv=no;protect=no]</strong>, d'un montant de <strong>[validation.total_ttc;strconv=no;protect=no]</strong>, vient d'être <strong>refusée</strong>.</p>

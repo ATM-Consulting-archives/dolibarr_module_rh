@@ -4,11 +4,14 @@
 /**
  *      Fonction envoyant un mail lors de la validation ou du refus d'une note de frais
  *
+ * 		@param      db        	Database
  *      @param      object      Object action is done on
  *      @param      user        Object user
+ * 		@param      langs       Object langs
+ * 		@param      statut      Expense status
  *      @return     int         <0 if KO, 0 if no action are done, >0 if OK
  */
-function send_mail_validate($db, $object, $user, $langs, $is_validate)
+function send_mail($db, $object, $user, $langs, $statut)
 {
 	// On récupère les informations de l'utilisateur
 	$sql = "SELECT";
@@ -47,7 +50,7 @@ function send_mail_validate($db, $object, $user, $langs, $is_validate)
 	$sendto = $email;
 	
 	$TBS=new TTemplateTBS();
-	if($is_validate){
+	if($statut==1){
 		$subject = $object->ref." - Acceptée";
 		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.acceptation.tpl.php'
 			,array()
@@ -60,9 +63,35 @@ function send_mail_validate($db, $object, $user, $langs, $is_validate)
 				)
 			)
 		);
-	}else{
+	}elseif($statut==2){
+		$subject = $object->ref." - Soumis à validation";
+		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.soumission.tpl.php'
+			,array()
+			,array(
+				'validation'=>array(
+					'nom'=>$name
+					,'prenom'=>$firstname
+					,'ref'=>$object->ref
+					,'total_ttc'=>$object->total_ttc
+				)
+			)
+		);
+	}elseif($statut==3){
 		$subject = $object->ref." - Refusée";
 		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.refus.tpl.php'
+			,array()
+			,array(
+				'validation'=>array(
+					'nom'=>$name
+					,'prenom'=>$firstname
+					,'ref'=>$object->ref
+					,'total_ttc'=>$object->total_ttc
+				)
+			)
+		);
+	}elseif($statut==4){
+		$subject = $object->ref." - Remboursée";
+		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.rembourse.tpl.php'
 			,array()
 			,array(
 				'validation'=>array(
