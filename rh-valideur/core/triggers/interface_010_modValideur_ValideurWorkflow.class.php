@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  *	\file       htdocs/core/triggers/interface_modValideur_ValideurWorkflow.class.php
  *	\class      InterfaceValideurWorkflow

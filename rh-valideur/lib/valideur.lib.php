@@ -14,6 +14,7 @@
 function send_mail($db, $object, $user, $langs, $statut)
 {
 	// On récupère les informations de l'utilisateur
+	
 	$sql = "SELECT";
 	$sql.= " u.name,";
 	$sql.= " u.firstname,";
