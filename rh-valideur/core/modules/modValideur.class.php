@@ -167,13 +167,13 @@ class modValideur extends DolibarrModules
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
-		/*$this->rights[$r][0] = 7001;
-		$this->rights[$r][1] = 'Créer un type de ressource';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'typeressource';
-		$this->rights[$r][5] = 'write';
+		$this->rights[$r][0] = 7801;
+		$this->rights[$r][1] = 'Se mettre valideur d\'un groupe';
+		$this->rights[$r][2] = 'e';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'valideur';
 		$r++;
-			*/
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
