@@ -145,7 +145,7 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 		,'orderBy'=>$TOrder
 		
 	));
-	?><a href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a></div><?
+	?><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
 	
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
