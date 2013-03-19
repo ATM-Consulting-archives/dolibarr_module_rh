@@ -9,7 +9,6 @@
 	$ATMdb=new Tdb;
 	$association = new TRH_Contrat_Ressource;
 	$ressource = new TRH_Ressource;
-	$contrat = new TRH_Contrat;
 	$mesg = '';
 	$error=false;
 	
@@ -17,48 +16,50 @@
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'new':
-				_fiche($ATMdb, $contrat, $association,$ressource,'edit');
+				$ressource->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $association,$ressource,'edit');
 				
 				break;	
 			case 'edit'	:
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $contrat, $association, $ressource,'edit');
+				$association->load($ATMdb, $_REQUEST['idAssoc']);
+				_fiche($ATMdb, $association, $ressource,'edit');
 				break;
 				
 			case 'save':
 				//$ATMdb->db->debug=true;
-				$ressource->load($ATMdb, $_REQUEST['id']);
+				$association->load($ATMdb, $_REQUEST['idAssoc']);
 				$mesg = '<div class="ok">Modifications effectuées</div>';
 				$mode = 'view';
 				
-				if(isset($_REQUEST['newAssociation']) ) {
-					$association->set_values($_REQUEST);
-					$association->save($ATMdb);
-				}
+				print_r($_REQUEST);
+				$association->set_values($_REQUEST);
+				$association->save($ATMdb);
+				
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $contrat, $association, $ressource, $mode);
+				$association->load($ATMdb, $_REQUEST['idAssoc']);
+				_fiche($ATMdb, $association, $ressource, $mode);
 				break;
-			
-			case 'view':
-				//$ATMdb->db->debug=true;
-				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $contrat, $association, $ressource,'view');
-				break;
-			
+	
 			case 'deleteAssoc':
 				//$ATMdb->db->debug=true;
 				$association->load($ATMdb, $_REQUEST['idAssoc']);
 				$association->delete($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">Le lien avec le contrat a été supprimée.</div>';
-				_fiche($ATMdb, $contrat, $association, $ressource,'view');
+				_fiche($ATMdb, $association, $ressource,'view');
 				break;
 		}
 	}
+	elseif(isset($_REQUEST['id']) && isset($_REQUEST['idAssoc'])) {
+		$ressource->load($ATMdb, $_REQUEST['id']);
+		$association->load($ATMdb, $_REQUEST['idAssoc']);
+		_fiche($ATMdb, $association, $ressource,'view');
+	}
 	elseif(isset($_REQUEST['id'])) {
 		$ressource->load($ATMdb, $_REQUEST['id']);
-		_fiche($ATMdb, $contrat, $association, $ressource,'view');
+		_liste($ATMdb, $association, $ressource,'view');
 	}
 	else {
 		/*
@@ -73,21 +74,23 @@
 	
 	llxFooter();
 	
-function _liste(&$ATMdb, &$evenement) {
-	global $langs,$conf, $db;	
-	llxHeader('','Liste des emprunts');
+function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
+	global $langs,$conf;	
+	llxHeader('','Liste des contrats');
 	getStandartJS();
+	?><div class="fiche"><?	
+	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'contrats', 'Ressource');
 	
-	$r = new TSSRenderControler($evenement);
-	$sql="SELECT e.rowid as 'ID', r.libelle as 'Ressource', u.name as 'Nom', e.date_cre as 'DateCre', 
-		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin'
-		FROM ".MAIN_DB_PREFIX."rh_evenement as e, ".MAIN_DB_PREFIX."rh_ressource as r, ".MAIN_DB_PREFIX."user as u
-		WHERE e.entity=".$conf->entity."
-		AND u.rowid = e.fk_user
-		AND r.rowid = e.fk_rh_ressource
-		";
+	$r = new TSSRenderControler($association);
+	$sql="SELECT DISTINCT a.rowid as 'ID', c.libelle as 'Libellé', 
+		DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin', c.libelle as 'Commentaire'
+		FROM ".MAIN_DB_PREFIX."rh_contrat_ressource as a
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_contrat as c ON (a.fk_rh_contrat = c.rowid)
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (a.fk_rh_ressource = r.rowid)
+		WHERE a.entity=".$conf->entity."
+		AND a.fk_rh_ressource=".$ressource->getId();
 	
-	$TOrder = array('DateCre'=>'ASC');
+	$TOrder = array('Date début'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -99,7 +102,7 @@ function _liste(&$ATMdb, &$evenement) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'ID'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'ID'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@">@val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')
@@ -119,11 +122,11 @@ function _liste(&$ATMdb, &$evenement) {
 		
 	));
 	
-	
+	?><a href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a></div><?
 	llxFooter();
 }	
 	
-function _fiche(&$ATMdb, &$contrat, &$association, &$ressource,  $mode) {
+function _fiche(&$ATMdb,  &$association, &$ressource,  $mode) {
 	global $db,$user;
 	llxHeader('', 'Contrats');
 
@@ -131,33 +134,25 @@ function _fiche(&$ATMdb, &$contrat, &$association, &$ressource,  $mode) {
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $ressource->getId());
 	echo $form->hidden('action', 'save');
+	echo $form->hidden('idAssoc',$association->getId());
+	
 	
 	$ressource->load_contrat($ATMdb);
-	$TContrats = array();
-	foreach($ressource->TContratAssocies as $assoc){
-		$TContrats[] = array(
-					'id'=>$assoc->getId()
-					,'idContrat'=>$ressource->TContratExaustif[$assoc->fk_rh_contrat]->getId()
-					,'libelle'=>$ressource->TContratExaustif[$assoc->fk_rh_contrat]->libelle
-					,'date_debut'=>date("d/m/Y",$ressource->TContratExaustif[$assoc->fk_rh_contrat]->date_debut)
-					,'date_fin'=>date("d/m/Y",$ressource->TContratExaustif[$assoc->fk_rh_contrat]->date_fin)
-					,'bail'=>$ressource->TContratExaustif[$assoc->fk_rh_contrat]->bail
-					,'loyer_TTC'=> $ressource->TContratExaustif[$assoc->fk_rh_contrat]->loyer_TTC
-					,'TVA'=>$ressource->TTVA[$ressource->TContratExaustif[$assoc->fk_rh_contrat]->TVA]
-		);
-	}
 
+	echo 'liste contrat : ';
+	print_r($ressource->TListeContrat);
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/contratRessource.tpl.php'
 		,array(
-			'associations'=>$TContrats
+			//'associations'=>$TContrats
 		)
 		,array(
 			'ressource'=>array(
 				'id'=>$ressource->getId()
 			)
 			,'NAssociation'=>array(
-				'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
+				'id'=>$association->getId()
+				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
 				,'fk_rh_contrat'=>$form->combo('', 'fk_rh_contrat', $ressource->TListeContrat, $association->fk_rh_contrat)
 				,'commentaire'=>$form->texte('','motif',$association->commentaire, 30,100,'','','-')
 			

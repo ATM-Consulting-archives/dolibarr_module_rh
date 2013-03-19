@@ -171,30 +171,12 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	
 	
 	
-	//Champs
-	$TFields=array();
-	foreach($ressource->TField as $k=>$field) {
-		
-		//print_r($field);
-		
-		$TFields[$k]=array(
-				'id'=>$field->getId()
-				,'code'=>$form->texte('', 'TField['.$k.'][code]', $field->code, 20,255,'','','-')
-				,'libelle'=>$form->texte('', 'TField['.$k.'][libelle]', $field->libelle, 20,255,'','','-')
-				,'indice'=>$k
-				,'ordre'=>$form->hidden('TField['.$k.'][ordre]', $k, 'class="ordre'.$k.'"')
-				,'type'=>$form->combo('','TField['.$k.'][type]',$ressource->TType,$field->type)
-				,'obligatoire'=>$form->combo('','TField['.$k.'][obligatoire]',array('Oui','Non'),$field->obligatoire)
-				,'numero'=>$k
-			);
-	}
+	
 	
 	$TBS=new TTemplateTBS();
 	
 	print $TBS->render('./tpl/ressource.type.tpl.php'
-		,array(
-			'ressourceField'=>$TFields
-		)
+		,array()
 		,array(
 			'ressourceType'=>array(
 				'id'=>$ressource->getId()
