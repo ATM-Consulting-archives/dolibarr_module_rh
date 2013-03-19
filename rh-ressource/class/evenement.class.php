@@ -30,7 +30,7 @@ class TRH_Evenement  extends TObjetStd {
 		parent::start();
 
 		
-		$this->TType = array('accident'=>'Accident', 'reparation'=>'Réparation');
+		$this->TType = array('accident'=>'Accident', 'reparation'=>'Réparation', 'facture'=>'Facture');
 		
 		$ATMdb=new Tdb;
 		

@@ -23,39 +23,46 @@
 </script>
 
 
-[onshow;block=begin;when [view.mode]=='view']
-			<h1>Visualisation de la ressource</h1>
-[onshow;block=end]
 [onshow;block=begin;when [view.mode]!='view']
-			<h1>Créer une ressource </h1>
+			<h2>Créer une ressource </h2>
 [onshow;block=end]
 
 <div>
 
 	<!-- entête du tableau -->
-<table class="border">
+<table class="border" style="width:100%">
 	<tr>
-		<td>Id</td>
+		<td>Numéro Id</td>
+		<td>[ressource.numId;strconv=no;protect=no] </td>
+	</tr>
+	<tr>
 		<td>Libellé</td>
-		<td>Type</td>
-		[onshow;block=begin;when [view.mode]=='edit']
-			<td></td>
-		[onshow;block=end]
-		
-	</tr>
-	
-	<tr>
-		<td>[ressource.id;strconv=no;protect=no] </td>
 		<td>[ressource.libelle;strconv=no;protect=no] </td>
-		<td>[ressource.type;strconv=no;protect=no] </td>
-		[onshow;block=begin;when [view.mode]=='edit']
-			<td><input type="submit" value="Valider" name="validerType" class="butAction"
-				[onshow;block=begin;when [ressource.type]=='Aucun type']
-				disabled
-				[onshow;block=end]
-				></td>
-		[onshow;block=end]
 	</tr>
+	<tr>
+		<td>Type</td>
+		<td>[ressource.type;strconv=no;protect=no]
+			[onshow;block=begin;when [view.mode]!='view']
+				<input type="submit" value="Valider" name="validerType" class="button"
+					[onshow;block=begin;when [ressource.type]=='Aucun type']
+					disabled
+					[onshow;block=end]
+					>
+			[onshow;block=end]
+		</td>
+	</tr>
+	<tr>
+		<td>Date d'achat</td>
+		<td>[ressource.date_achat;strconv=no;protect=no]</td>
+	</tr>
+	<tr>
+		<td>Date de vente</td>
+		<td>[ressource.date_vente;strconv=no;protect=no]</td>
+	</tr>	
+	<tr>
+		<td>Date de garantie</td>
+		<td>[ressource.date_garantie;strconv=no;protect=no]</td>
+	</tr>		
 	
 </table>
 
@@ -63,15 +70,12 @@
 
 <h2>Champs</h2>
 
-<table class="border">
+<table class="border" style="width:50%">
 	<tr>
-	<td>Libellé</td> 
-	<td>Valeur</td>
-	</tr>
-	
-	<tr>
-		<td> [ressourceField.libelle;block=tr;strconv=no;protect=no] </td>
-		<td> [ressourceField.valeur;strconv=no;protect=no] </td>
+		<td style="width:40%" [ressourceField.obligatoire;strconv=no;protect=no]> 
+			[ressourceField.libelle;block=tr;strconv=no;protect=no] 
+		</td>
+		<td style="width:60%"> [ressourceField.valeur;strconv=no;protect=no] </td>
 		
 	</tr>
 </table>
@@ -109,16 +113,16 @@
 </div>
 
 
-<div style="margin-left:70px;">
+<div style="margin-left:70px;text-align:center;">
 
 		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]=='aucune ressource']
 			[onshow;block=begin;when [fk_ressource.reqExiste]=='1']
 				[onshow;block=begin;when [view.mode]=='view']
 				</br>
 				<h2><span style="margin-left:-70px;">Organigramme des ressources associées</span></h2>
-					<div id="organigrammePrincipal">
+					<div id="organigrammePrincipal" style="text-align:center;">
 						<br/>
-						<div id="chart" class="orgChart"></div>
+						<div id="chart" class="orgChart" ></div>
 							<ul id="JQorganigramme" style="display:none;">
 								<li> [ressource.libelle;strconv=no;protect=no]
 									(Ressource courante)
@@ -142,9 +146,9 @@
 			[onshow;block=begin;when [view.mode]=='view']
 				</br>
 				<h2><span style="margin-left:-70px;">Organigramme des ressources associées</span></h2>
-					<div id="organigrammePrincipal">
+					<div id="organigrammePrincipal" style="text-align:center;">
 					<br/>
-					<div id="chart" class="orgChart"></div>
+					<div id="chart" class="orgChart" ></div>
 						<ul id="JQorganigramme" style="display:none;">
 							<li> [fk_ressource.fk_rh_ressource;strconv=no;protect=no]
 								<ul>

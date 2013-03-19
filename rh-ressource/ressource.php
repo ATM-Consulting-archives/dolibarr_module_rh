@@ -20,13 +20,13 @@
 				_fiche($ATMdb, $ressource,'edit');
 				break;	
 			case 'edit'	:
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $ressource,'edit');
 				break;
 				
 			case 'save':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				//on vérifie que les champs obligatoires sont renseignés
 				foreach($ressource->ressourceType->TField as $k=>$field) {
@@ -72,6 +72,7 @@
 				break;
 			
 			case 'view':
+				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $ressource,'view');
 				break;
@@ -188,7 +189,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 		$TFields[$k]=array(
 				'libelle'=>$field->libelle
 				,'valeur'=>$temp
-				
+				,'obligatoire'=>$field->obligatoire ? 'class="field"': 'class="fieldrequired"'
 			);
 	}
 
@@ -218,9 +219,13 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 		,array(
 			'ressource'=>array(
 				'id'=>$ressource->getId()
+				,'numId'=>$form->texte('', 'numId', $ressource->numId, 00,20,'','','-')
 				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 50,255,'','','-')
 				,'type'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type" 
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
+				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
+				,'date_vente'=>$form->calendrier('', 'date_vente', $ressource->get_date('date_vente'), 10)
+				,'date_garantie'=>$form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
 				,'statut'=>$form->combo('','statut',$ressource->TStatut,$ressource->TStatut[0])
 			
 			)

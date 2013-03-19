@@ -5,6 +5,7 @@ class TRH_Ressource extends TObjetStd {
 	function __construct() { /* declaration */
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource');
 		parent::add_champs('libelle','type=chaine;');
+		parent::add_champs('numId','type=chaine;');
 		parent::add_champs('date_achat, date_vente, date_garantie','type=date;');
 		
 		//types énuméré
@@ -54,6 +55,7 @@ class TRH_Ressource extends TObjetStd {
 	function load(&$ATMdb, $id) {
 		global $conf;
 		parent::load($ATMdb, $id);
+
 		$this->load_ressource_type($ATMdb);
 		//chargement d'une liste de toutes les ressources (pour le combo "ressource associé")
 		$sqlReq="SELECT rowid,libelle FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid!=".$this->getId()."
@@ -258,7 +260,7 @@ class TRH_Ressource_type extends TObjetStd {
 		$this->TField[$k]->set_values($TNField);
 		
 		$p=new TRH_Ressource;				
-		$p->add_champs($TNField['code'] ,"type='".$TNField['type']."'" );
+		$p->add_champs($TNField['code'] ,'type=chaine' );
 		$p->init_db_by_vars($ATMdb);
 					
 		return $k;
