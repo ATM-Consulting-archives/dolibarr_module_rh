@@ -31,7 +31,7 @@ class ActionsValideur
 			$result = $db->query($sqlReq);
 			
 			return $result;
-		}elseif($action=='list_test'){
+		}elseif($action=='list_ndf'){
 			$sql = "SELECT n.rowid, n.ref, n.tms, n.total_ht, n.total_ttc, n.fk_user, n.statut, n.fk_soc, n.dates, n.datee,";
 	        $sql.= " u.rowid as uid, u.name, u.firstname, s.nom AS soc_name, s.rowid AS soc_id, u.login, n.total_tva, SUM(p.amount) AS already_paid";
 	        $sql.= " FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v, ".MAIN_DB_PREFIX."usergroup_user as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."user as t, ".MAIN_DB_PREFIX."ndfp as n";
@@ -46,8 +46,8 @@ class ActionsValideur
 			$sql.= ") OR (n.fk_user = a.fk_user";
 			$sql.= " AND u.rowid = a.fk_user";
 			$sql.= " AND a.fk_usergroup = v.fk_usergroup";
-			$sql.= " AND v.fk_user = ".$object->fk_user;
-			$sql.= " AND n.statut = 4 OR n.statut = 1";
+			$sql.= " AND v.fk_user = ".$user->id;
+			$sql.= " AND (n.statut = 4 OR n.statut = 1)";
 			$sql.= " AND NOW() >= ADDDATE(n.tms, v.nbjours)))";
 			
 			if ($parameters[0] == 'unpaid')
@@ -112,7 +112,7 @@ class ActionsValideur
 	
 	        $sql.= ' GROUP BY n.rowid ORDER BY '.$parameters[12].' '.$parameters[13].', n.rowid DESC ';
 	        $sql.= $db->plimit($parameters[14]+1, $parameters[15]);
-			
+			print $sql;
 			$result = $db->query($sql);
 			
 			return $result;
