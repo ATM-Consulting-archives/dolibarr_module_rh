@@ -6,7 +6,7 @@
 	$langs->load('absence@absence');
 	
 	$ATMdb=new Tdb;
-	$absence=new TRH_EmploiTemps;
+	$absence=new TRH_JoursFeries;
 	//global $idUserCompt, $idComptEnCours;
 	
 	if(isset($_REQUEST['action'])) {
@@ -202,7 +202,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	 
 	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/emploitemps.tpl.php'
+	print $TBS->render('./tpl/joursferies.tpl.php'
 		,array(
 			
 			
@@ -273,7 +273,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'emploitemps')  , 'emploitemps', 'Absence')
+				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'emploitemps')  , 'joursferies', 'Absence')
 			)
 			
 		)	

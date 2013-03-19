@@ -23,21 +23,22 @@
 		
 	$ATMdb=new Tdb;
 	$absence=new TRH_absence;
-	$absence->load($ATMdb, $_REQUEST['id']);
+
+	
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'
 		,array()
 		,array(
 			'absence'=>array(
-				'id' => $absence->getId()
-				,'idUser'=>$absence->fk_user
+				'idUser' => $_GET['idUser']
+				//,'idUser'=>
 			)
 			,'view'=>array(
 				'mode'=>$mode
 				/*,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'calendrier', 'Absence')
-				,'head3'=>dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'absence', 'Absence')
+				,'head3'=>dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', 'Absence')
 			)
 			
 			

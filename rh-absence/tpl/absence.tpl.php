@@ -24,7 +24,7 @@
 			<table class="border" style="width:30%">
 				<tr>
 					<td>Utilisateur Courant</td>
-					<td>[absenceCourante.idUser;strconv=no;protect=no]</td>
+					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
 				</tr>	
 				<tr>
 					<td>Type d'absence</td>

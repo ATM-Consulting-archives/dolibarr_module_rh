@@ -195,7 +195,7 @@ class modAbsence extends DolibarrModules
 								'titre'=>$langs->trans('Absence'),
 								'mainmenu'=>'absence',
 								'leftmenu'=>'',
-								'url'=>'/absence/calendrierAbsence.php',
+								'url'=>'/absence/calendrierAbsence.php?idUser=0',
 								'langs'=>'absence@absence',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>100,
 								'enabled'=>'1',	// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
