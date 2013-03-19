@@ -14,7 +14,24 @@ class ActionsValideur
     { 
         global $db,$html,$user;
 		
-		if($action=='list_test'){
+		if($action=='has_vehicle'){
+			$sqlReq="SELECT *";
+			$sqlReq.=" FROM ".MAIN_DB_PREFIX."rh_ressource_type as t, ";
+			$sqlReq.=MAIN_DB_PREFIX."rh_ressource as r, ";
+			$sqlReq.=MAIN_DB_PREFIX."rh_evenement as e";
+			$sqlReq.=" WHERE t.code='voiture'";
+			$sqlReq.=" AND r.fk_rh_ressource_type=t.rowid";
+			$sqlReq.=" AND e.fk_rh_ressource=r.rowid";
+			$sqlReq.=" AND e.type='emprunt'";
+			$sqlReq.=" AND e.fk_user=".$object->fk_user;
+			$sqlReq.=" AND NOT (UNIX_TIMESTAMP(e.date_debut) > ".$object->dates;
+			$sqlReq.=" AND UNIX_TIMESTAMP(e.date_fin) < ".$object->datee.")";
+			$sqlReq.=" GROUP BY t.rowid";
+			
+			$result = $db->query($sqlReq);
+			
+			return $result;
+		}elseif($action=='list_test'){
 			$sql = "SELECT n.rowid, n.ref, n.tms, n.total_ht, n.total_ttc, n.fk_user, n.statut, n.fk_soc, n.dates, n.datee,";
 	        $sql.= " u.rowid as uid, u.name, u.firstname, s.nom AS soc_name, s.rowid AS soc_id, u.login, n.total_tva, SUM(p.amount) AS already_paid";
 	        $sql.= " FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v, ".MAIN_DB_PREFIX."usergroup_user as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."user as t, ".MAIN_DB_PREFIX."ndfp as n";
@@ -99,9 +116,7 @@ class ActionsValideur
 			$result = $db->query($sql);
 			
 			return $result;
-		}
-		
-		if($action=='validation'){
+		}elseif($action=='validation'){
 			//On récupère d'abord tous les groupes auxquels appartient l'utilisateur concerné par la note de frais
 			$sql = "SELECT";
 			$sql.= " g.fk_usergroup as 'group_id'";
