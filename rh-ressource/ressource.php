@@ -16,21 +16,17 @@
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'new':
-				
 				$ressource->set_values($_REQUEST);
-				//$ressource->load($ATMdb, 20);
-				$mesg = '<div class="ok">Nouvelle ressource créée</div>';
 				_fiche($ATMdb, $ressource,'edit');
-				
 				break;	
 			case 'edit'	:
-				
+				$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $ressource,'edit');
 				break;
 				
 			case 'save':
-				//$ATMdb->db->debug=true;
+				$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				//on vérifie que les champs obligatoires sont renseignés
 				foreach($ressource->ressourceType->TField as $k=>$field) {
@@ -53,31 +49,25 @@
 									}
 								break;
 							default :
-								echo $field->code." : ".$_REQUEST[$field->code]."<br>";
 								break;
 						}
 					}
 				}
 				
-
 				$ressource->set_values($_REQUEST);
 				$ressource->save($ATMdb);
-				$ressource->load($ATMdb, $_REQUEST['id']);
-				$mode = 'view';
 				
 
 				if ($mesg==''){
 					$mesg = '<div class="ok">Modifications effectuées</div>';
-					$mode = 'edit';
+					$mode = 'view';
 					if(isset($_REQUEST['validerType']) ) {
-						$mode = 'edit';	
+						$mode = 'edit';
 					}
 				}
-				else{
-					$mode = 'edit';
-
-				}
+				else {$mode = 'edit';}
 				
+				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $ressource,$mode);
 				break;
 			

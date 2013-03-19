@@ -81,7 +81,8 @@
 function _liste(&$ATMdb, &$evenement, &$ressource) {
 	global $langs,$conf, $db;	
 	llxHeader('','Liste des emprunts');
-		
+	
+	?><div class="fiche"><?	
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource');
 	getStandartJS();
 	
@@ -130,7 +131,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource) {
 		
 	));
 	
-	?><a href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
+	?><a href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a></div><?
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
