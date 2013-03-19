@@ -16,17 +16,31 @@
 	
 	$sqlReqUser="SELECT DISTINCT rowid FROM llx_user WHERE rowid NOT IN ( SELECT fk_user from llx_rh_compteur)";
 	$ATMdb->Execute($sqlReqUser);
+	$Tab=array();
 	while($ATMdb->Get_line()) {
 				$Tab[]=$ATMdb->Get_field('rowid');		
 	}
-	foreach ($Tab as $idUserC) {
-		$o=new TRH_Compteur;
-		$o->initCompteur($idUserC, $ATMdb);
-		$o->save($ATMdb);
+	
+	if(!empty($Tab)){
+		
+		foreach ($Tab as $idUserC) {
+			$o=new TRH_Compteur;
+			$o->initCompteur($idUserC, $ATMdb);
+			$o->save($ATMdb);
+		}
 	}
-				
 	
 	
 	$p=new TRH_Absence;
 	$p->init_db_by_vars($ATMdb);
+	
+	$q=new TRH_AdminCompteur;
+	$q->init_db_by_vars($ATMdb);
+	$q->congesAcquisMensuelInit='2.08';
+	$q->date_rttClotureInit=strtotime('2013-06-01 00:00:00');
+	$q->date_congesClotureInit=strtotime('2013-03-01 00:00:00');
+	$q->save($ATMdb);
+	
+	$r=new TRH_EmploiTemps;
+	$r->init_db_by_vars($ATMdb);
 	

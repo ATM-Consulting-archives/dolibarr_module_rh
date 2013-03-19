@@ -1,10 +1,7 @@
 
 
-
-
         	[view.head;strconv=no]
 
-        
        
 	<h1 style="color: #2AA8B9;">Congés payés</h1>                             
 	<div style="display:inline-block; margin-top:-20px;">
@@ -71,7 +68,7 @@
 					<td><b>[congesCourant.total;strconv=no;protect=no]</b></td>
 				</tr>
 				<tr>
-					<td>Dernière clôture Congés</td>
+					<td><b>Dernière clôture Congés</b></td>
 					<td>[congesCourant.date_congesCloture;strconv=no;protect=no]</td>
 				</tr>
 		</table>

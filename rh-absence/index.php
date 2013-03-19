@@ -12,9 +12,7 @@ require('./class/absence.class.php');
 llxHeader();
 
 
-?>
-<h1>Bienvenue sur le module Absences <?= $user->firstname." ".$user->lastname?> !  </h1>
-<?
+
 /*
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -22,13 +20,9 @@ $formother = new FormOther($db);
 
 
 $absence = new TRH_Absence;
-print dol_get_fiche_head(absencePrepareHead($absence)  , 'fiche', 'Absence');
+print dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', 'Absence');
 
-?>
-<p align="center">
-	<img src="./img/vacances.jpg" />
-</p>
-<?
+
 
 
 llxfooter();

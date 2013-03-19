@@ -86,7 +86,7 @@ function _liste(&$ATMdb, &$compteur) {
 	$r = new TSSRenderControler($compteur);
 	$sql="SELECT  r.rowid as 'ID', firstname as 'Prenom', name as 'Nom', anneeN as 'annee', r.date_cre as 'DateCre',r.acquisExerciceN as 'Congés acquis N', 
 	r.acquisAncienneteN as 'Congés Ancienneté', r.acquisExerciceNM1 as 'Conges Acquis N-1', r.congesPrisNM1 as 'Conges Pris N-1',
-			   r.rttPris as 'RttPris', r.fk_user as 'Utilisateur'
+			   r.rttPris as 'RttPris'
 		FROM llx_rh_compteur as r, llx_user as c 
 		WHERE r.entity=".$conf->entity." AND r.fk_user=c.rowid";
 		
@@ -204,6 +204,18 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	
 	$rttCourantReste=$rttCourant->acquis-$rttCourant->pris;
 	
+
+	//récupération des informations globales du compteur
+	$sqlReq="SELECT * FROM `llx_rh_admin_compteur` where rowid=1";	
+	$ATMdb->Execute($sqlReq);
+	while($ATMdb->Get_line()) {
+				$compteurGlobal=new User($db);
+				$compteurGlobal->rowid=$ATMdb->Get_field('rowid');
+				$compteurGlobal->congesAcquisMensuelInit=$ATMdb->Get_field('congesAcquisMensuelInit');
+				$compteurGlobal->date_rttClotureInit=$ATMdb->Get_field('date_rttClotureInit');
+				$compteurGlobal->date_congesClotureInit=$ATMdb->Get_field('date_congesClotureInit');
+	}
+	
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/compteur.tpl.php'
@@ -233,8 +245,9 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'anneeCourante'=>$form->texte('','anneeN',round2Virgule($anneeCourante),10,50,'',$class="text", $default='')
 				,'total'=>round2Virgule($congeCourantTotal)
 				,'idUser'=>$congeCourant->fk_user
-				,'date_congesCloture'=>$form->calendrier('', 'date_congesCloture', $compteur->get_date('date_congesCloture'), 10)
-				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',round2Virgule($congeCourant->nombreCongesAcquisMensuel),10,50,'',$class="text", $default='')
+				//,'date_congesCloture'=>$form->calendrier('', 'date_congesCloture', $compteurGlobal->date_congesClotureInit, 10)
+				,'date_congesCloture'=>$compteurGlobal->date_congesClotureInit
+				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',round2Virgule($compteurGlobal->congesAcquisMensuelInit),10,50,'',$class="text", $default='')
 				
 				
 				
@@ -247,7 +260,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'mensuel'=>$form->texte('','rttAcquisMensuel',round2Virgule($rttCourant->mensuel),10,50,'',$class="text", $default='')
 				,'annuelCumule'=>$form->texte('','rttAcquisAnnuelCumule',round2Virgule($rttCourant->annuelCumule),10,50,'',$class="text", $default='')
 				,'annuelNonCumule'=>$form->texte('','rttAcquisAnnuelNonCumule',round2Virgule($rttCourant->annuelNonCumule),10,50,'',$class="text", $default='')
-				,'date_rttCloture'=>$form->calendrier('', 'date_rttCloture', $compteur->get_date('date_rttCloture'), 10)
+				,'date_rttCloture'=>$compteurGlobal->date_rttClotureInit
 				,'mensuelInit'=>$form->texte('','rttAcquisMensuel',round2Virgule($rttCourant->mensuelInit),10,50,'',$class="text", $default='')
 				,'annuelCumuleInit'=>$form->texte('','rttAcquisAnnuelCumule',round2Virgule($rttCourant->annuelCumuleInit),10,50,'',$class="text", $default='')
 				,'annuelNonCumuleInit'=>$form->texte('','rttAcquisAnnuelNonCumule',round2Virgule($rttCourant->annuelNonCumuleInit),10,50,'',$class="text", $default='')
