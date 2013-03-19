@@ -29,7 +29,7 @@ class ActionsValideur
 			$sql.= ") OR (n.fk_user = a.fk_user";
 			$sql.= " AND u.rowid = a.fk_user";
 			$sql.= " AND a.fk_usergroup = v.fk_usergroup";
-			$sql.= " AND v.fk_user = ".$user->id;
+			$sql.= " AND v.fk_user = ".$object->fk_user;
 			$sql.= " AND n.statut = 4 OR n.statut = 1";
 			$sql.= " AND NOW() >= ADDDATE(n.tms, v.nbjours)))";
 			
