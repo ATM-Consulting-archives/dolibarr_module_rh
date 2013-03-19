@@ -32,8 +32,8 @@
 	<!-- entête du tableau -->
 <table class="border" style="width:100%">
 	<tr>
-		<td>Id</td>
-		<td>[ressource.id;strconv=no;protect=no] </td>
+		<td>Numéro Id</td>
+		<td>[ressource.numId;strconv=no;protect=no] </td>
 	</tr>
 	<tr>
 		<td>Libellé</td>
@@ -50,7 +50,19 @@
 					>
 			[onshow;block=end]
 		</td>
+	</tr>
+	<tr>
+		<td>Date d'achat</td>
+		<td>[ressource.date_achat;strconv=no;protect=no]</td>
+	</tr>
+	<tr>
+		<td>Date de vente</td>
+		<td>[ressource.date_vente;strconv=no;protect=no]</td>
 	</tr>	
+	<tr>
+		<td>Date de garantie</td>
+		<td>[ressource.date_garantie;strconv=no;protect=no]</td>
+	</tr>		
 	
 </table>
 
@@ -58,12 +70,12 @@
 
 <h2>Champs</h2>
 
-<table class="border">
-	
-	
+<table class="border" style="width:50%">
 	<tr>
-		<td style="width:30%"> [ressourceField.libelle;block=tr;strconv=no;protect=no] </td>
-		<td style="width:40%"> [ressourceField.valeur;strconv=no;protect=no] </td>
+		<td style="width:40%" [ressourceField.obligatoire;strconv=no;protect=no]> 
+			[ressourceField.libelle;block=tr;strconv=no;protect=no] 
+		</td>
+		<td style="width:60%"> [ressourceField.valeur;strconv=no;protect=no] </td>
 		
 	</tr>
 </table>
