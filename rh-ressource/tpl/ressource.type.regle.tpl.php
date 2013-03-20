@@ -19,27 +19,65 @@
 <table width="100%" class="border">
 	<tr>
 		<td>Choix d'application</td>
-		<td>Tous/Groupe/User</td>
+		[onshow;block=begin;when [view.mode]=='view']
+		<td>
+			[newRule.choixApplicationViewMode; strconv=no]
+		</td>
+		[onshow;block=end]
+		[onshow;block=begin;when [view.mode]!='view']
+		<td>
+			[newRule.choixApplication; strconv=no]
+		</td>
+		<script>
+			$(document).ready(function(){
+				[onshow;block=begin;when [newRule.choixApplicationViewMode]=='Utilisateur']
+					$('#group').hide();
+				[onshow;block=end]
+				[onshow;block=begin;when [newRule.choixApplicationViewMode]=='Groupe']
+					$('#user').hide();
+				[onshow;block=end]
+				[onshow;block=begin;when [newRule.choixApplicationViewMode]=='Tous']
+					$('#user, #group').hide();
+				[onshow;block=end]
+				
+				$('#choixApplication_3').click(function(){
+					$('#user').show();
+					$('#group').hide();
+				});
+				$('#choixApplication_2').click(function(){
+					$('#group').show();
+					$('#user').hide();
+				})
+				$('#choixApplication_1').click(function(){
+					$('#group').hide();
+					$('#user').hide();
+				})
+			})
+		</script>
+		[onshow;block=end]
 	</tr>
+	
 	<tr>
 		<td>Domaine d'application</td>
 		<td>[newRule.objet; strconv=no]</td>
 	</tr>
-	<tr>
+
+	<tr id="group">
 		<td>Groupe</td>
 		<td>[newRule.fk_group; strconv=no]</td>
 	</tr>
-	<tr>
+	<tr id="user">
 		<td>Utilisateur</td>
 		<td>[newRule.fk_user; strconv=no]</td>
 	</tr>
+	
 	<tr>
-		<td>Durée</td>
-		<td>[newRule.duree; strconv=no]</td>
+		<td>Période d'application</td>
+		<td>[newRule.periode; strconv=no]</td>
 	</tr>
 	<tr>
-		<td>Montant</td>
-		<td>[newRule.montant; strconv=no]</td>
+		<td>Durée</td>
+		<td>[newRule.dureeH;strconv=no]:[newRule.dureeM;strconv=no]    (HH:MM)</td>
 	</tr>
 </table>
 
