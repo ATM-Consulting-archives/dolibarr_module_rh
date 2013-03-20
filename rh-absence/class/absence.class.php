@@ -322,11 +322,15 @@ class TRH_JoursFeries extends TObjetStd {
 		parent::add_champs('date_jourOff','type=date;');
 		parent::add_champs('matin','type=int;');
 		parent::add_champs('apresmidi','type=int;');
+		parent::add_champs('commentaire','type=chaine;');
 		parent::add_champs('entity','type=int;');
 		
 		
 		parent::_init_vars();
 		parent::start();	
+		
+		$this->TFerie=array();
+		
 	}
 	
 	
@@ -336,6 +340,7 @@ class TRH_JoursFeries extends TObjetStd {
 		
 		parent::save($db);
 	}
+	
 }
 
 

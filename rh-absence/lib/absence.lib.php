@@ -28,7 +28,7 @@ function absencePrepareHead(&$obj, $type='absence') {
 		case 'emploitemps':
 				return array(
 					array(DOL_URL_ROOT_ALT.'/absence/emploitemps.php?id='.$obj->getId()."&action=view", 'Emploi du temps','emploitemps')
-				   ,array(DOL_URL_ROOT_ALT.'/absence/joursferies.php?id='.$obj->getId()."&action=view", 'Jours non travaillés','joursferies')
+				   ,array(DOL_URL_ROOT_ALT.'/absence/joursferies.php?id='.$obj->getId(), 'Jours non travaillés','joursferies')
 				);
 				break;
 	}
