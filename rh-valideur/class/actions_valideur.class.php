@@ -48,7 +48,7 @@ class ActionsValideur
 			
 			return $result;
 		}elseif($action=='list_ndf'){
-			$sql = "SELECT n.rowid, n.ref, n.tms, n.total_ht, n.total_ttc, n.fk_user, n.statut, n.fk_soc, n.dates, n.datee,";
+			/*$sql = "SELECT n.rowid, n.ref, n.tms, n.total_ht, n.total_ttc, n.fk_user, n.statut, n.fk_soc, n.dates, n.datee,";
 	        $sql.= " u.rowid as uid, u.name, u.firstname, s.nom AS soc_name, s.rowid AS soc_id, u.login, n.total_tva, SUM(p.amount) AS already_paid";
 	        $sql.= " FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v, ".MAIN_DB_PREFIX."usergroup_user as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."user as t, ".MAIN_DB_PREFIX."ndfp as n";
 	        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = n.fk_soc";
@@ -65,6 +65,34 @@ class ActionsValideur
 			$sql.= " AND v.fk_user = ".$user->id;
 			$sql.= " AND (n.statut = 4 OR n.statut = 1)";
 			$sql.= " AND NOW() >= ADDDATE(n.tms, v.nbjours)))";
+			*/
+			
+		 	/*
+            * Récupération des Ids sur lesquels j'ai les droits
+            */
+            $resUsers=$db->query("SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE fk_user_delegation=".$user->id);
+            $TUser=array($user->id);        
+            while ($obj = $db->fetch_object($resUsers)){
+                 $TUser[] = $obj->rowid;
+            }
+                   
+            $sql = "SELECT n.rowid, n.ref, n.tms, n.total_ht, n.total_ttc, n.fk_user, n.statut, n.fk_soc, n.dates, n.datee,
+			u.rowid as uid, u.name, u.firstname, s.nom AS soc_name, s.rowid AS soc_id, u.login, n.total_tva, SUM(p.amount) AS already_paid 
+			FROM (((((".MAIN_DB_PREFIX."ndfp as n 
+			LEFT JOIN ".MAIN_DB_PREFIX."ndfp_pay_det as p ON (p.fk_ndfp = n.rowid))
+			       LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (n.fk_user = u.rowid))
+			               LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.rowid = n.fk_soc))
+			                       LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (n.fk_user=g.fk_user))
+			                            LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_valideur_groupe as v ON (g.fk_usergroup=v.fk_usergroup)) 
+			                               
+			WHERE n.entity = ".$object->entity." 
+			AND (n.fk_user IN (".implode(',', $TUser).")
+			               OR (v.type='NDFP' AND v.fk_user = ".$user->id."
+			                       AND (n.statut = 4 OR n.statut = 1)
+			                       AND NOW() >= ADDDATE(n.tms, v.nbjours)
+                   )
+           	)";
+			
 			
 			if ($parameters[0] == 'unpaid')
 	        {
