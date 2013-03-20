@@ -6,34 +6,32 @@
 	$langs->load('absence@absence');
 	
 	$ATMdb=new Tdb;
-	$absence=new TRH_JoursFeries;
+	$feries=new TRH_JoursFeries;
 	//global $idUserCompt, $idComptEnCours;
 	
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
 
 			case 'edit'	:
-				$absence->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $absence,'edit');
+				$feries->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $feries,'edit');
 				break;
 				
 			case 'save':
 				$ATMdb->db->debug=true;
-				$absence->load($ATMdb, $_REQUEST['id']);
-				
-				$absence->razCheckbox($ATMdb, $absence);
-				$absence->set_values($_REQUEST);
-				$absence->save($ATMdb);
-				$absence->load($ATMdb, $_REQUEST['id']);
+				$feries->load($ATMdb, $_REQUEST['id']);
+				$feries->set_values($_REQUEST);
+				$feries->save($ATMdb);
+				$feries->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">Demande enregistrée</div>';
-				_fiche($ATMdb, $absence,'view');
+				_fiche($ATMdb, $feries,'view');
 				break;
 			
 			case 'view':
 				if(isset($_REQUEST['id'])){
 					$idComptEnCours=$_REQUEST['id'];
-					$absence->load($ATMdb, $_REQUEST['id']);
-					_fiche($ATMdb, $absence,'view');
+					$feries->load($ATMdb, $_REQUEST['id']);
+					_fiche($ATMdb, $feries,'view');
 				}else{
 					
 					//récupération compteur en cours
@@ -46,8 +44,8 @@
 						//echo $idUserCompt;
 					}
 					//echo 'allo'.$idComptEnCours.$idUserCompt;
-					$absence->load($ATMdb, $idComptEnCours);
-					_fiche($ATMdb, $absence,'view');
+					$feries->load($ATMdb, $idComptEnCours);
+					_fiche($ATMdb, $feries,'view');
 					
 				}
 				break;
@@ -61,7 +59,7 @@
 	}
 	else {
 		//$ATMdb->db->debug=true;
-		_liste($ATMdb, $absence);
+		_liste($ATMdb, $feries);
 	}
 	
 	
@@ -70,12 +68,12 @@
 	llxFooter();
 	
 	
-function _liste(&$ATMdb, &$absence) {
+function _liste(&$ATMdb, $feries) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de vos absences');
 	getStandartJS();
 	
-	$r = new TSSRenderControler($absence);
+	$r = new TSSRenderControler($feries);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',DATE(r.date_debut) as 'Date début', DATE(r.date_fin) as 'Date Fin', 
 			  r.libelle as 'Type absence',r.fk_user as 'Utilisateur Courant',  r.libelleEtat as 'Statut demande'
 		FROM llx_rh_absence as r
