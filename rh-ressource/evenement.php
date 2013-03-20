@@ -87,7 +87,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource) {
 	getStandartJS();
 	
 	$r = new TSSRenderControler($evenement);
-	$sql="SELECT DISTINCT e.rowid as 'ID', u.name as 'Utilisateur', 
+	$sql="SELECT DISTINCT e.rowid as 'ID',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.type as 'Type',
 		e.motif as 'Motif', e.description as 'Commentaire', e.coutHT as 'Coût', 
 		e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'
@@ -113,9 +113,13 @@ function _liste(&$ATMdb, &$evenement, &$ressource) {
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
 		)
-		,'translate'=>array()
-		,'hide'=>array('DateCre')
-		,'type'=>array()
+		,'translate'=>array('Type'=>$evenement->TType)
+		,'hide'=>array()
+		,'type'=>array(
+			'Date début'=>'date'
+			,'Date fin'=>'date'
+			
+		)
 		,'liste'=>array(
 			'titre'=>'Liste des evenements'
 			,'image'=>img_picto('','title.png', '', 0)
@@ -149,6 +153,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('idEven',$evenement->getId());
 
+	$evenement->load_liste($ATMdb);
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/evenement.tpl.php'
 		,array(
