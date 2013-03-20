@@ -341,6 +341,15 @@ class TRH_JoursFeries extends TObjetStd {
 		parent::save($db);
 	}
 	
+	//remet à 0 les checkbox avant la sauvegarde
+	function razCheckbox(&$ATMdb, $absence){
+		global $conf, $user;
+		$this->entity = $conf->entity;
+
+			$this->matin='0';
+			 $this->apresmidi='0';
+	}
+	
 }
 
 

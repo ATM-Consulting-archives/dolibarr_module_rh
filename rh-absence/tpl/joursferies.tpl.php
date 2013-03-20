@@ -1,5 +1,4 @@
 
-
     [view.head;strconv=no]
 
 	<table class="border" style="width:30%">

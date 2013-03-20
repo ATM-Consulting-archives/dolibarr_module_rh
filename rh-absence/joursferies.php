@@ -7,6 +7,7 @@
 	
 	$ATMdb=new Tdb;
 	$feries=new TRH_JoursFeries;
+	
 	//global $idUserCompt, $idComptEnCours;
 	
 	if(isset($_REQUEST['action'])) {
@@ -23,19 +24,11 @@
 				break;
 				
 			case 'save':
-				$feries->load($ATMdb, $_REQUEST['id']);
+				$feries->load($ATMdb, $_REQUEST['id']);			
+				$feries->razCheckbox($ATMdb, $absence);
 				$feries->set_values($_REQUEST);
-				$mesg = '<div class="ok">Modifications effectuées</div>';
+				$mesg = '<div class="ok">Jour non travaillé ajouté</div>';
 				$mode = 'view';
-				if(isset($_REQUEST['TFerie'])){
-				
-					foreach($_REQUEST['TFerie'] as $k=>$jour) {
-						$feries->TFerie[$k]->set_values($jour);					
-					}
-				}
-				if(isset($_REQUEST['newJour'])) {
-					$mode = 'edit';
-				}
 
 				$feries->save($ATMdb);
 				$feries->load($ATMdb, $_REQUEST['id']);
@@ -47,15 +40,14 @@
 				
 				_fiche($ATMdb, $feries,'view');
 				break;
-			case 'deleteJour':
+			case 'delete':
 				//$ATMdb->db->debug=true;
-				$feries->delJour($ATMdb, $_REQUEST['idJour']);
 				$feries->load($ATMdb, $_REQUEST['id']);
-				$mesg = '<div class="ok">Le champs a bien été supprimé</div>';
+				$feries->delete($ATMdb, $_REQUEST['id']);
+				$mesg = '<div class="ok">Le jour a bien été supprimé</div>';
 				$mode = 'edit';
-				_fiche($ATMdb, $feries,$mode);
+				_liste($ATMdb, $feries);
 				break;
-
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {
@@ -75,11 +67,13 @@
 function _liste(&$ATMdb, $feries) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de vos absences');
-	getStandartJS();
+	?><div class="fiche"><?	
+	dol_get_fiche_head(absencePrepareHead($feries, 'emploitemps')  , 'joursferies', 'Absence');
+	//getStandartJS();	
 	
 	$r = new TSSRenderControler($feries);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', 
-			  r.date_jourOff as 'Jour non travaillé',r.matin as 'Matinée',  r.apresmidi as 'Après-midi'
+			  r.date_jourOff,r.matin as 'Matinée',  r.apresmidi as 'Après-midi',  r.commentaire as 'Commentaire', '' as 'Supprimer'
 		FROM  llx_rh_absence_jours_feries as r
 		WHERE r.entity=".$conf->entity;
 		
@@ -90,17 +84,23 @@ function _liste(&$ATMdb, $feries) {
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
 	//print $page;
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
+	
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'ID'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'date_jourOff'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
-		,'translate'=>array()
+		,'translate'=>array(
+			'Matinée'=>array(1=>'Oui')
+			,'Après-midi'=>array(0=>'Non')
+		)
 		,'hide'=>array('DateCre')
-		,'type'=>array()
+		,'type'=>array('date_jourOff'=>'date')
 		,'liste'=>array(
 			'titre'=>'Liste des jours non travaillés'
 			,'image'=>img_picto('','title.png', '', 0)
@@ -110,12 +110,22 @@ function _liste(&$ATMdb, $feries) {
 			,'messageNothing'=>"Aucun jour non travaillé"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			
+		)//theme/rh/img/search.png
+		,'title'=>array(
+			'date_jourOff'=>'Jour non travaillé'
+		)
+		,'search'=>array(
+			'date_jourOff'=>array('recherche'=>'calendar')
 			
 		)
 		,'orderBy'=>$TOrder
 		
 	));
 	?><a class="butAction" href="?id=<?=$feries->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
+	
+	$form->end();
 	
 	llxFooter();
 }	
