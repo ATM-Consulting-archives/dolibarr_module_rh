@@ -14,7 +14,23 @@ class ActionsValideur
     { 
         global $db,$html,$user;
 		
-		if($action=='has_vehicle'){
+		if($action=='list_validateurs_groupe'){
+			$group_id=$parameters[0];
+			$user_id=$object->id;
+			
+			$sqlReq="SELECT *";
+			$sqlReq.=" FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v";
+			$sqlReq.=" WHERE v.fk_user=".$user_id;
+			$sqlReq.=" AND v.fk_usergroup=".$group_id;
+			
+			$result = $db->query($sqlReq);
+			
+			if($result->num_rows > 0){
+				return 1;
+			}else{
+				return 0;
+			}
+		}elseif($action=='has_vehicle'){
 			$sqlReq="SELECT *";
 			$sqlReq.=" FROM ".MAIN_DB_PREFIX."rh_ressource_type as t, ";
 			$sqlReq.=MAIN_DB_PREFIX."rh_ressource as r, ";
@@ -112,7 +128,7 @@ class ActionsValideur
 	
 	        $sql.= ' GROUP BY n.rowid ORDER BY '.$parameters[12].' '.$parameters[13].', n.rowid DESC ';
 	        $sql.= $db->plimit($parameters[14]+1, $parameters[15]);
-			print $sql;
+			
 			$result = $db->query($sql);
 			
 			return $result;
