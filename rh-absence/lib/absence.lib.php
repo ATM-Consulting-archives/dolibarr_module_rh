@@ -6,7 +6,7 @@ function absencePrepareHead(&$obj, $type='absence') {
 		case 'absence':
 				return array(
 					array(DOL_URL_ROOT_ALT.'/absence/absence.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
-					,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?id='.$obj->getId(), 'Calendrier','calendrier')
+					,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?idUser='.$obj->fk_user, 'Calendrier','calendrier')
 				);
 				break;
 		case 'index':
@@ -28,6 +28,7 @@ function absencePrepareHead(&$obj, $type='absence') {
 		case 'emploitemps':
 				return array(
 					array(DOL_URL_ROOT_ALT.'/absence/emploitemps.php?id='.$obj->getId()."&action=view", 'Emploi du temps','emploitemps')
+				   ,array(DOL_URL_ROOT_ALT.'/absence/joursferies.php?id='.$obj->getId()."&action=view", 'Jours non travaillés','joursferies')
 				);
 				break;
 	}
@@ -100,26 +101,6 @@ function saveLibelleEtat($etat){
 
 
 
-
-//recrédite les heures au compteur lors de la suppression d'une absence 
-function recrediterHeure($absence,&$ATMdb){
-	global $user;
-	switch($absence->type){
-		case "rttcumule" : 
-			$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$absence->duree.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule+".$absence->duree."  where fk_user=".$user->id;
-			$ATMdb->Execute($sqlRecredit);
-		break;
-		case "rttnoncumule" : 
-			$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$absence->duree.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule+".$absence->duree."  where fk_user=".$user->id;
-			$ATMdb->Execute($sqlRecredit);
-		break;
-		default :  //dans les autres cas, on recrédite les congés
-			$sqlRecredit="UPDATE `llx_rh_compteur` SET congesPrisNM1=congesPrisNM1-".$absence->duree.",acquisExerciceNM1=acquisExerciceNM1+".$absence->duree."  where fk_user=".$user->id;
-			$ATMdb->Execute($sqlRecredit);
-		break;
-			
-	}
-}
 
 //arrondi variable float à 2 virgules
 function round2Virgule($variable){

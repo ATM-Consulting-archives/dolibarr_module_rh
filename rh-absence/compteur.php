@@ -216,6 +216,16 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				$compteurGlobal->date_congesClotureInit=$ATMdb->Get_field('date_congesClotureInit');
 	}
 	
+	//récupération informations utilisateur dont on modifie le compte
+	$sqlReqUser="SELECT * FROM `llx_user` where rowid=".$rttCourant->fk_user;//AND entity=".$conf->entity;
+	$ATMdb->Execute($sqlReqUser);
+	$Tab=array();
+	while($ATMdb->Get_line()) {
+				$userCourant=new User($db);
+				$userCourant->firstname=$ATMdb->Get_field('firstname');
+				$userCourant->id=$ATMdb->Get_field('rowid');
+				$userCourant->lastname=$ATMdb->Get_field('name');
+	}
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/compteur.tpl.php'
@@ -275,9 +285,9 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				
 			)
 			,'userCourant'=>array(
-				'id'=>$user->id
-				,'lastname'=>$user->lastname
-				,'firstname'=>$user->firstname
+				'id'=>$userCourant->id
+				,'lastname'=>$userCourant->lastname
+				,'firstname'=>$userCourant->firstname
 			)
 			
 			,'view'=>array(

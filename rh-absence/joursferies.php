@@ -6,7 +6,7 @@
 	$langs->load('absence@absence');
 	
 	$ATMdb=new Tdb;
-	$absence=new TRH_EmploiTemps;
+	$absence=new TRH_JoursFeries;
 	//global $idUserCompt, $idComptEnCours;
 	
 	if(isset($_REQUEST['action'])) {
@@ -135,22 +135,58 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$ATMdb->Execute($sqlReq);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
-				$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
-		
 				$emploiTemps=new User($db);
-				foreach ($TJour as $jour) {
-					$emploiTemps->{$jour."am"}=$ATMdb->Get_field($jour.'am');
-					$emploiTemps->{$jour."pm"}=$ATMdb->Get_field($jour.'pm');
-				}
+				$emploiTemps->lundiam=$ATMdb->Get_field('lundiam');
+				$emploiTemps->lundipm=$ATMdb->Get_field('lundipm');
+				$emploiTemps->mardiam=$ATMdb->Get_field('mardiam');
+				$emploiTemps->mardipm=$ATMdb->Get_field('mardipm');
+				$emploiTemps->mercrediam=$ATMdb->Get_field('mercrediam');
+				$emploiTemps->mercredipm=$ATMdb->Get_field('mercredipm');
+				$emploiTemps->jeudiam=$ATMdb->Get_field('jeudiam');
+				$emploiTemps->jeudipm=$ATMdb->Get_field('jeudipm');
+				$emploiTemps->vendrediam=$ATMdb->Get_field('vendrediam');
+				$emploiTemps->vendredipm=$ATMdb->Get_field('vendredipm');
+				$emploiTemps->samediam=$ATMdb->Get_field('samediam');
+				$emploiTemps->samedipm=$ATMdb->Get_field('samedipm');
+				$emploiTemps->dimancheam=$ATMdb->Get_field('dimancheam');
+				$emploiTemps->dimanchepm=$ATMdb->Get_field('dimanchepm');
 				$emploiTemps->fk_user=$ATMdb->Get_field('fk_user');
 				
 				$horaires=new User($db);
-				foreach ($TJour as $jour) {
-					$horaires->{$jour."_heuredam"}=$ATMdb->Get_field($jour.'_heuredam');
-					 $horaires->{$jour."_heurefam"}=$ATMdb->Get_field($jour.'_heurefam');
-					 $horaires->{$jour."_heuredpm"}=$ATMdb->Get_field($jour.'_heuredpm');
-					 $horaires->{$jour."_heurefpm"}=$ATMdb->Get_field($jour.'_heurefpm');
-				}
+				$horaires->lundi_heuredam=$ATMdb->Get_field('lundi_heuredam');
+				$horaires->lundi_heurefam=$ATMdb->Get_field('lundi_heurefam');
+				$horaires->lundi_heuredpm=$ATMdb->Get_field('lundi_heuredpm');
+				$horaires->lundi_heurefpm=$ATMdb->Get_field('lundi_heurefpm');
+				
+				$horaires->mardi_heuredam=$ATMdb->Get_field('mardi_heuredam');
+				$horaires->mardi_heurefam=$ATMdb->Get_field('mardi_heurefam');
+				$horaires->mardi_heuredpm=$ATMdb->Get_field('mardi_heuredpm');
+				$horaires->mardi_heurefpm=$ATMdb->Get_field('mardi_heurefpm');
+				
+				$horaires->mercredi_heuredam=$ATMdb->Get_field('mercredi_heuredam');
+				$horaires->mercredi_heurefam=$ATMdb->Get_field('mercredi_heurefam');
+				$horaires->mercredi_heuredpm=$ATMdb->Get_field('mercredi_heuredpm');
+				$horaires->mercredi_heurefpm=$ATMdb->Get_field('mercredi_heurefpm');
+				
+				$horaires->jeudi_heuredam=$ATMdb->Get_field('jeudi_heuredam');
+				$horaires->jeudi_heurefam=$ATMdb->Get_field('jeudi_heurefam');
+				$horaires->jeudi_heuredpm=$ATMdb->Get_field('jeudi_heuredpm');
+				$horaires->jeudi_heurefpm=$ATMdb->Get_field('jeudi_heurefpm');
+				
+				$horaires->vendredi_heuredam=$ATMdb->Get_field('vendredi_heuredam');
+				$horaires->vendredi_heurefam=$ATMdb->Get_field('vendredi_heurefam');
+				$horaires->vendredi_heuredpm=$ATMdb->Get_field('vendredi_heuredpm');
+				$horaires->vendredi_heurefpm=$ATMdb->Get_field('vendredi_heurefpm');
+				
+				$horaires->samedi_heuredam=$ATMdb->Get_field('samedi_heuredam');
+				$horaires->samedi_heurefam=$ATMdb->Get_field('samedi_heurefam');
+				$horaires->samedi_heuredpm=$ATMdb->Get_field('samedi_heuredpm');
+				$horaires->samedi_heurefpm=$ATMdb->Get_field('samedi_heurefpm');
+				
+				$horaires->dimanche_heuredam=$ATMdb->Get_field('dimanche_heuredam');
+				$horaires->dimanche_heurefam=$ATMdb->Get_field('dimanche_heurefam');
+				$horaires->dimanche_heuredpm=$ATMdb->Get_field('dimanche_heuredpm');
+				$horaires->dimanche_heurefpm=$ATMdb->Get_field('dimanche_heurefpm');
 	}
 	
 	//récupération informations utilisateur dont on modifie le compte
@@ -166,7 +202,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	 
 	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/emploitemps.tpl.php'
+	print $TBS->render('./tpl/joursferies.tpl.php'
 		,array(
 			
 			
@@ -237,7 +273,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'emploitemps')  , 'emploitemps', 'Absence')
+				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'emploitemps')  , 'joursferies', 'Absence')
 			)
 			
 		)	

@@ -65,7 +65,7 @@ class TRH_Compteur extends TObjetStd {
 		parent::save($db);
 	}
 	
-	function initCompteur($idUser, &$ATMdb){
+	function initCompteur(&$ATMdb, $idUser){
 		global $conf;
 		$this->entity = $conf->entity;
 		$annee=date('Y');
@@ -95,6 +95,9 @@ class TRH_Compteur extends TObjetStd {
 		$this->date_rttCloture=strtotime('2013-03-01 00:00:00');
 		$this->date_congesCloture=strtotime('2013-06-01 00:00:00');
 	}
+	
+	
+	
 }
 
 
@@ -178,6 +181,29 @@ class TRH_Absence extends TObjetStd {
 			$this->libelleEtat=saveLibelleEtat($this->etat);
 			parent::save($db);
 		}
+
+		//recrédite les heures au compteur lors de la suppression d'une absence 
+		function recrediterHeure(&$ATMdb){
+			global $conf, $user;
+			$this->entity = $conf->entity;
+			
+			switch($this->type){
+				case "rttcumule" : 
+					$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule+".$this->duree."  where fk_user=".$user->id;
+					$ATMdb->Execute($sqlRecredit);
+				break;
+				case "rttnoncumule" : 
+					$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule+".$this->duree."  where fk_user=".$user->id;
+					$ATMdb->Execute($sqlRecredit);
+				break;
+				default :  //dans les autres cas, on recrédite les congés
+					$sqlRecredit="UPDATE `llx_rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
+					//echo $this->type.$sqlRecredit;exit;
+					$ATMdb->Execute($sqlRecredit);
+				break;
+					
+			}
+		}
 }
 
 
@@ -206,59 +232,24 @@ class TRH_AdminCompteur extends TObjetStd {
 class TRH_EmploiTemps extends TObjetStd {
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_emploitemps');
+		
 		//demi-journées de travail
-		parent::add_champs('lundiam','type=entier;');
-		parent::add_champs('lundipm','type=entier;');
-		parent::add_champs('mardiam','type=entier;');	
-		parent::add_champs('mardipm','type=entier;');
-		parent::add_champs('mercrediam','type=entier;');	
-		parent::add_champs('mercredipm','type=entier;');
-		parent::add_champs('jeudiam','type=entier;');	
-		parent::add_champs('jeudipm','type=entier;');		
-		parent::add_champs('vendrediam','type=entier;');	
-		parent::add_champs('vendredipm','type=entier;');	
-		parent::add_champs('samediam','type=entier;');	
-		parent::add_champs('samedipm','type=entier;');		
-		parent::add_champs('dimancheam','type=entier;');	
-		parent::add_champs('dimanchepm','type=entier;');		
+		$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
+		foreach ($TJour as $jour) {
+			parent::add_champs($jour.'am','type=entier;');
+			parent::add_champs($jour.'pm','type=entier;');		
+		}
 		
 		//horaires de travail
-		parent::add_champs('lundi_heuredam','type=date;');
-		parent::add_champs('lundi_heurefam','type=date;');		
-		parent::add_champs('lundi_heuredpm','type=date;');
-		parent::add_champs('lundi_heurefpm','type=date;');
-		
-		parent::add_champs('mardi_heuredam','type=date;');
-		parent::add_champs('mardi_heurefam','type=date;');		
-		parent::add_champs('mardi_heuredpm','type=date;');
-		parent::add_champs('mardi_heurefpm','type=date;');
-		
-		parent::add_champs('mercredi_heuredam','type=date;');
-		parent::add_champs('mercredi_heurefam','type=date;');		
-		parent::add_champs('mercredi_heuredpm','type=date;');
-		parent::add_champs('mercredi_heurefpm','type=date;');
-		
-		parent::add_champs('jeudi_heuredam','type=date;');
-		parent::add_champs('jeudi_heurefam','type=date;');		
-		parent::add_champs('jeudi_heuredpm','type=date;');
-		parent::add_champs('jeudi_heurefpm','type=date;');
-		
-		parent::add_champs('vendredi_heuredam','type=date;');
-		parent::add_champs('vendredi_heurefam','type=date;');		
-		parent::add_champs('vendredi_heuredpm','type=date;');
-		parent::add_champs('vendredi_heurefpm','type=date;');
-		
-		parent::add_champs('samedi_heuredam','type=date;');
-		parent::add_champs('samedi_heurefam','type=date;');		
-		parent::add_champs('samedi_heuredpm','type=date;');
-		parent::add_champs('samedi_heurefpm','type=date;');
-		
-		parent::add_champs('dimanche_heuredam','type=date;');
-		parent::add_champs('dimanche_heurefam','type=date;');		
-		parent::add_champs('dimanche_heuredpm','type=date;');
-		parent::add_champs('dimanche_heurefpm','type=date;');
+		foreach ($TJour as $jour) {
+			parent::add_champs($jour.'_heuredam','type=chaine;');
+			parent::add_champs($jour.'_heurefam','type=chaine;');		
+			parent::add_champs($jour.'_heuredpm','type=chaine;');
+			parent::add_champs($jour.'_heurefpm','type=chaine;');
+		}
 					
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
+		parent::add_champs('entity','type=int;');
 		
 		parent::_init_vars();
 		parent::start();	
@@ -270,9 +261,72 @@ class TRH_EmploiTemps extends TObjetStd {
 		$this->entity = $conf->entity;
 		parent::save($db);
 	}
+	
+	function initCompteurHoraire (&$ATMdb, $idUser){
+		global $conf;
+		$this->entity = $conf->entity;
+	
+		$this->fk_user=$idUser;
+		$this->lundiam='1';
+		$this->lundipm='1';
+		$this->mardiam='1';
+		$this->mardipm='1';
+		$this->mercrediam='1';
+		$this->mercredipm='1';
+		$this->jeudiam='1';
+		$this->jeudipm='1';
+		$this->vendrediam='1';
+		$this->vendredipm='1';
+		$this->samediam='0';
+		$this->samedipm='0';
+		$this->dimancheam='0';
+		$this->dimancheam='0';
+		
+		$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
+		foreach ($TJour as $jour) {
+			$this->{$jour."_heuredam"}='9:00';
+			 $this->{$jour."_heurefam"}='12:15';
+			 $this->{$jour."_heuredpm"}='14:00';
+			 $this->{$jour."_heurefpm"}='18:00';
+		}
+	}
+	
+	//remet à 0 les checkbox avant la sauvegarde
+	function razCheckbox(&$ATMdb, $absence){
+		global $conf, $user;
+		$this->entity = $conf->entity;
+		
+		$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
+		foreach ($TJour as $jour) {
+			$this->{$jour."am"}='0';
+			 $this->{$jour."pm"}='0';
+		}
+	}
 }
 
 
+//définition de la classe pour l'administration des compteurs
+class TRH_JoursFeries extends TObjetStd {
+	function __construct() { 
+		parent::set_table(MAIN_DB_PREFIX.'rh_absence_jours_feries');
+		parent::add_champs('date_jourOff','type=date;');
+		parent::add_champs('matin','type=int;');
+		parent::add_champs('apresmidi','type=int;');
+		parent::add_champs('entity','type=int;');
+		
+		
+		parent::_init_vars();
+		parent::start();	
+	}
+	
+	
+	function save(&$db) {
+		global $conf;
+		$this->entity = $conf->entity;
+		
+		parent::save($db);
+	}
+}
 
 
 

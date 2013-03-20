@@ -5,6 +5,7 @@ class TRH_Ressource extends TObjetStd {
 	function __construct() { /* declaration */
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource');
 		parent::add_champs('libelle','type=chaine;');
+		parent::add_champs('numId','type=chaine;');
 		parent::add_champs('date_achat, date_vente, date_garantie','type=date;');
 		
 		//types énuméré

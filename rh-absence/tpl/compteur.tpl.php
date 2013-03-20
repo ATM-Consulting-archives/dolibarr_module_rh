@@ -11,7 +11,7 @@
 		<table class="border" style="width:100%;"  >
 				<tr>
 					<td>Utilisateur Courant</td>
-					<td>[congesPrec.user;strconv=no;protect=no]</td>
+					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
 				</tr>	
 				<tr>
 					<td>Acquis Exercice</td>

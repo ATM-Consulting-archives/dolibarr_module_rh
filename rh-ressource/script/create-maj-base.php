@@ -9,6 +9,7 @@
 	require('../class/ressource.class.php');
 	require('../class/contrat.class.php');
 	require('../class/evenement.class.php');
+	require('../class/regle.class.php');
 
 	$ATMdb=new Tdb;
 	$ATMdb->db->debug=true;
@@ -29,4 +30,7 @@
 	$p->init_db_by_vars($ATMdb);
 	
 	$p=new TRH_Evenement;
+	$p->init_db_by_vars($ATMdb);
+	
+	$p=new TRH_Ressource_Regle;
 	$p->init_db_by_vars($ATMdb);
