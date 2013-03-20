@@ -83,7 +83,7 @@ function _liste(&$ATMdb) {
 	if($user->rights->valideur->myactions->valideur=="1"){
 		$valideur=new TRH_valideur_groupe;
 		$r = new TSSRenderControler($valideur);
-		$sql= "SELECT v.rowid as 'ID', v.type as 'Type', v.nbjours as 'Nombre de jours', g.nom as 'Groupe', u.name as 'Utilisateur', '' as 'Supprimer'";
+		$sql= "SELECT v.rowid as 'ID', v.type as 'Type', v.nbjours as 'Nombre de jours', g.nom as 'Groupe', '' as 'Supprimer'";
 		$sql.= " FROM ((".MAIN_DB_PREFIX."rh_valideur_groupe as v LEFT JOIN ".MAIN_DB_PREFIX."usergroup as g ON (v.fk_usergroup = g.rowid))
 				 		 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (v.fk_user = u.rowid))";
 		$sql.= " WHERE v.entity=".$conf->entity." AND v.fk_user=".$fuser->id;
@@ -103,7 +103,7 @@ function _liste(&$ATMdb) {
 			)
 			,'link'=>array(
 				'ID'=>'<a href="?id=@ID@&action=edit">@val@</a>'
-				,'Supprimer'=>'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'">Supprimer</a>'
+				,'Supprimer'=>'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="img/delete.png" /></a>'
 			)
 			,'translate'=>array()
 			,'hide'=>array()

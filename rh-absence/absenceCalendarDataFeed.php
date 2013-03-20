@@ -7,17 +7,25 @@ $ATMdb=new TPDOdb;
 $method = $_GET["method"];
 switch ($method) {
     case "list":
-		if (isset($_REQUEST['id'])){
-	       	 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_REQUEST['id']);
+		/*if (isset($_REQUEST['idUser'])){
+			
+	       	 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_REQUEST['idUser']);
 		}else {
 			 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"]);
 		}
-        break;   
+        break;   */
+        if (isset($_GET['idUser'])){
+				
+	       	 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser']);
+		}else {
+			 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"]);
+		}
+        break; 
 
 }
 echo json_encode($ret); 
 
-function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=1){
+function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
@@ -28,19 +36,22 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=1){
     
     $sql = "SELECT r.rowid as rowid, r.libelle, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
-        
-	  if ($idAbsence!=null){
+    
+	  if ($idUser!=0){
 	  	$sql.=" AND r.fk_user=".$idUser;
       }
+ 	//echo $sql;
   	$ATMdb->Execute($sql);
-    //echo $sql;
+    
     while ($row = $ATMdb->Get_line()) {
+    	//print_r($row);
       //$ret['events'][] = $row;
       //$attends = $row->AttendeeNames;
       //if($row->OtherAttendee){
       //  $attends .= $row->OtherAttendee;
       //}
       //echo $row->StartTime;
+
       $ret['events'][] = array(
         $row->rowid,
         $row->libelle." ".$row->name.' '.$row->firstname,

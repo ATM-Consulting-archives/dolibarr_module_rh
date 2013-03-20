@@ -1,7 +1,7 @@
-[onshow;block=begin;when [absence.id]!=0]   
+[onshow;block=begin;when [absence.idUser]!=0]   
     [view.head;strconv=no]
 [onshow;block=end] 	
-[onshow;block=begin;when [absence.id]==0]   
+[onshow;block=begin;when [absence.idUser]==0]   
     [view.head3;strconv=no]
 [onshow;block=end] 	
 <h1>Agenda des absences</h1>
@@ -11,7 +11,7 @@
         $(document).ready(function() {     
             var view="month";          
            
-            var DATA_FEED_URL = "absenceCalendarDataFeed.php?id=[absence.id;strconv=no]&idUser=[absence.idUser;strconv=no]"
+            var DATA_FEED_URL = "absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&id"
             var op = {
                 view: view,
                 theme:3,

@@ -25,8 +25,7 @@
 				$ATMdb->db->debug=true;
 				
 				$absence->load($ATMdb, $_REQUEST['id']);
-				recrediterHeure($absence,$ATMdb);
-
+				//$absence->recrediterHeure($ATMdb, $absence);
 				$absence->set_values($_REQUEST);
 				$absence->save($ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
@@ -44,7 +43,7 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 				//$ATMdb->db->debug=true;
 				//avant de supprimer, on récredite les heures d'absences qui avaient été décomptées. 
-				recrediterHeure($absence,$ATMdb);
+				$absence->recrediterHeure($ATMdb);
 				$absence->delete($ATMdb);
 				
 				?>
@@ -65,7 +64,7 @@
 				
 			case 'refuse':
 				$absence->load($ATMdb, $_REQUEST['id']);
-				recrediterHeure($absence,$ATMdb);
+				$absence->recrediterHeure($ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$sqlEtat="UPDATE `llx_rh_absence` SET etat='Refusee', libelleEtat='Refusée' where fk_user=".$user->id. " AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
@@ -206,6 +205,16 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	}
 	$rttCourantReste=$rttCourant->acquis-$rttCourant->pris;
 	
+	//récupération informations utilisateur dont on modifie le compte
+	$sqlReqUser="SELECT * FROM `llx_user` where rowid=".$rttCourant->fk_user;//AND entity=".$conf->entity;
+	$ATMdb->Execute($sqlReqUser);
+	$Tab=array();
+	while($ATMdb->Get_line()) {
+				$userCourant=new User($db);
+				$userCourant->firstname=$ATMdb->Get_field('firstname');
+				$userCourant->id=$ATMdb->Get_field('rowid');
+				$userCourant->lastname=$ATMdb->Get_field('name');
+	}
 	
 	
 	$TBS=new TTemplateTBS();
@@ -264,9 +273,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'duree'=>$form->texte('','duree',$absence->duree,5,10,'',$class="text", $default='')	
 			)	
 			,'userCourant'=>array(
-				'id'=>$user->id
-				,'lastname'=>$user->lastname
-				,'firstname'=>$user->firstname
+				'id'=>$userCourant->id
+				,'lastname'=>$userCourant->lastname
+				,'firstname'=>$userCourant->firstname
 			)
 			,'view'=>array(
 				'mode'=>$mode

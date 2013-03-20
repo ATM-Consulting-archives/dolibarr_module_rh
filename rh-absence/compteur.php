@@ -139,10 +139,30 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	//echo $form->hidden('fk_user', $_REQUEST['id']);
 	
 	
+	//récupération informations utilisateur dont on modifie le compte
+	$CompteurActuel=$_GET['id']?$_GET['id']:$compteur->getId();
+	$sqlReqUser="SELECT fk_user FROM `llx_rh_compteur` where rowid=".$CompteurActuel;//AND entity=".$conf->entity;
+	$ATMdb->Execute($sqlReqUser);
+	$Tab=array();
+	while($ATMdb->Get_line()) {
+				$userCompteurActuel=$ATMdb->Get_field('fk_user');
+	}
+	
+	$sqlReqUser="SELECT * FROM `llx_user` where rowid=".$userCompteurActuel;//AND entity=".$conf->entity;
+	$ATMdb->Execute($sqlReqUser);
+	$Tab=array();
+	while($ATMdb->Get_line()) {
+				$userCourant=new User($db);
+				$userCourant->firstname=$ATMdb->Get_field('firstname');
+				$userCourant->id=$ATMdb->Get_field('rowid');
+				$userCourant->lastname=$ATMdb->Get_field('name');
+	}
+	
+	
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
-	$sqlReqUser="SELECT * FROM `llx_rh_compteur` where fk_user=". $compteur->getId()." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
+	$sqlReqUser="SELECT * FROM `llx_rh_compteur` where fk_user=". $userCourant->id." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -162,7 +182,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$congePrecReste=$congePrecTotal-$congePrec->congesPris;
 	
 	//////////////////////////récupération des informations des congés précédents (N-1) de l'utilisateur courant : 
-	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=". $compteur->getId()." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;
+	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=". $userCourant->id." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;
 	$ATMdb=new Tdb;
 	$ATMdb->Execute($sqlReqUser2);
 	$Tab2=array();
@@ -181,7 +201,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$congeCourantTotal=$congeCourant->acquisEx+$congeCourant->acquisAnc+$congeCourant->acquisHorsPer;
 	
 	//////////////////////////////récupération des informations des rtt courants (année N) de l'utilisateur courant : 
-	$sqlRtt="SELECT * FROM `llx_rh_compteur` where fk_user=". $compteur->getId();
+	$sqlRtt="SELECT * FROM `llx_rh_compteur` where fk_user=".$userCourant->id;
 	$ATMdb->Execute($sqlRtt);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -215,6 +235,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				$compteurGlobal->date_rttClotureInit=$ATMdb->Get_field('date_rttClotureInit');
 				$compteurGlobal->date_congesClotureInit=$ATMdb->Get_field('date_congesClotureInit');
 	}
+	
 	
 	
 	$TBS=new TTemplateTBS();
@@ -275,9 +296,9 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				
 			)
 			,'userCourant'=>array(
-				'id'=>$user->id
-				,'lastname'=>$user->lastname
-				,'firstname'=>$user->firstname
+				'id'=>$userCourant->id
+				,'lastname'=>$userCourant->lastname
+				,'firstname'=>$userCourant->firstname
 			)
 			
 			,'view'=>array(
