@@ -232,57 +232,21 @@ class TRH_AdminCompteur extends TObjetStd {
 class TRH_EmploiTemps extends TObjetStd {
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_emploitemps');
+		
 		//demi-journées de travail
-		parent::add_champs('lundiam','type=entier;');
-		parent::add_champs('lundipm','type=entier;');
-		parent::add_champs('mardiam','type=entier;');	
-		parent::add_champs('mardipm','type=entier;');
-		parent::add_champs('mercrediam','type=entier;');	
-		parent::add_champs('mercredipm','type=entier;');
-		parent::add_champs('jeudiam','type=entier;');	
-		parent::add_champs('jeudipm','type=entier;');		
-		parent::add_champs('vendrediam','type=entier;');	
-		parent::add_champs('vendredipm','type=entier;');	
-		parent::add_champs('samediam','type=entier;');	
-		parent::add_champs('samedipm','type=entier;');		
-		parent::add_champs('dimancheam','type=entier;');	
-		parent::add_champs('dimanchepm','type=entier;');		
+		$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
+		foreach ($TJour as $jour) {
+			parent::add_champs($jour.'am','type=entier;');
+			parent::add_champs($jour.'pm','type=entier;');		
+		}
 		
 		//horaires de travail
-		parent::add_champs('lundi_heuredam','type=chaine;');
-		parent::add_champs('lundi_heurefam','type=chaine;');		
-		parent::add_champs('lundi_heuredpm','type=chaine;');
-		parent::add_champs('lundi_heurefpm','type=chaine;');
-		
-		parent::add_champs('mardi_heuredam','type=chaine;');
-		parent::add_champs('mardi_heurefam','type=chaine;');		
-		parent::add_champs('mardi_heuredpm','type=chaine;');
-		parent::add_champs('mardi_heurefpm','type=chaine;');
-		
-		parent::add_champs('mercredi_heuredam','type=chaine;');
-		parent::add_champs('mercredi_heurefam','type=chaine;');		
-		parent::add_champs('mercredi_heuredpm','type=chaine;');
-		parent::add_champs('mercredi_heurefpm','type=chaine;');
-		
-		parent::add_champs('jeudi_heuredam','type=chaine;');
-		parent::add_champs('jeudi_heurefam','type=chaine;');		
-		parent::add_champs('jeudi_heuredpm','type=chaine;');
-		parent::add_champs('jeudi_heurefpm','type=chaine;');
-		
-		parent::add_champs('vendredi_heuredam','type=chaine;');
-		parent::add_champs('vendredi_heurefam','type=chaine;');		
-		parent::add_champs('vendredi_heuredpm','type=chaine;');
-		parent::add_champs('vendredi_heurefpm','type=chaine;');
-		
-		parent::add_champs('samedi_heuredam','type=chaine;');
-		parent::add_champs('samedi_heurefam','type=chaine;');		
-		parent::add_champs('samedi_heuredpm','type=chaine;');
-		parent::add_champs('samedi_heurefpm','type=chaine;');
-		
-		parent::add_champs('dimanche_heuredam','type=chaine;');
-		parent::add_champs('dimanche_heurefam','type=chaine;');		
-		parent::add_champs('dimanche_heuredpm','type=chaine;');
-		parent::add_champs('dimanche_heurefpm','type=chaine;');
+		foreach ($TJour as $jour) {
+			parent::add_champs($jour.'_heuredam','type=chaine;');
+			parent::add_champs($jour.'_heurefam','type=chaine;');		
+			parent::add_champs($jour.'_heuredpm','type=chaine;');
+			parent::add_champs($jour.'_heurefpm','type=chaine;');
+		}
 					
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=int;');
