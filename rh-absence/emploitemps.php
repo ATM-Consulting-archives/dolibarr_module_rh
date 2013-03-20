@@ -6,54 +6,36 @@
 	$langs->load('absence@absence');
 	
 	$ATMdb=new Tdb;
-	$absence=new TRH_EmploiTemps;
+	$emploiTemps=new TRH_EmploiTemps;
 	//global $idUserCompt, $idComptEnCours;
 	
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
 
 			case 'edit'	:
-				$absence->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $absence,'edit');
+				$emploiTemps->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $emploiTemps,'edit');
 				break;
 				
 			case 'save':
 				$ATMdb->db->debug=true;
-				$absence->load($ATMdb, $_REQUEST['id']);
+				$emploiTemps->load($ATMdb, $_REQUEST['id']);
 				
-				$absence->razCheckbox($ATMdb, $absence);
-				$absence->set_values($_REQUEST);
-				$absence->save($ATMdb);
-				$absence->load($ATMdb, $_REQUEST['id']);
+				$emploiTemps->razCheckbox($ATMdb, $emploiTemps);
+				
+				$emploiTemps->set_values($_REQUEST);
+				
+				$emploiTemps->save($ATMdb);
+				
 				$mesg = '<div class="ok">Demande enregistrée</div>';
-				_fiche($ATMdb, $absence,'view');
+				_fiche($ATMdb, $emploiTemps,'view');
 				break;
 			
 			case 'view':
-				if(isset($_REQUEST['id'])){
-					$idComptEnCours=$_REQUEST['id'];
-					$absence->load($ATMdb, $_REQUEST['id']);
-					_fiche($ATMdb, $absence,'view');
-				}else{
-					
-					//récupération compteur en cours
-					$sqlReqUser="SELECT rowid, fk_user FROM `llx_rh_absence_emploitemps` where fk_user=".$user->id;
-					$ATMdb->Execute($sqlReqUser);
-					while($ATMdb->Get_line()) {
-								$idComptEnCours=$ATMdb->Get_field('rowid');
-						//echo $idComptEnCours;
-								$idUserCompt=$ATMdb->Get_field('fk_user');
-						//echo $idUserCompt;
-					}
-					//echo 'allo'.$idComptEnCours.$idUserCompt;
-					$absence->load($ATMdb, $idComptEnCours);
-					_fiche($ATMdb, $absence,'view');
-					
-				}
+					$absence->loadByuser($ATMdb, $_REQUEST['id']);
+					_fiche($ATMdb, $emploiTemps,'view');
 				break;
 
-	
-			
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {
@@ -61,7 +43,14 @@
 	}
 	else {
 		//$ATMdb->db->debug=true;
-		_liste($ATMdb, $absence);
+		$sqlReqUser="SELECT rowid FROM `llx_rh_absence_emploitemps` where fk_user=".$user->id;//AND entity=".$conf->entity;
+		$ATMdb->Execute($sqlReqUser);
+		while($ATMdb->Get_line()) {
+
+				$compteurCourant=$ATMdb->Get_field('rowid');
+		}
+		$emploiTemps->load($ATMdb, $compteurCourant);
+		_fiche($ATMdb, $emploiTemps,'view');
 	}
 	
 	
@@ -70,16 +59,15 @@
 	llxFooter();
 	
 	
-function _liste(&$ATMdb, &$absence) {
+function _liste(&$ATMdb, &$emploiTemps) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de vos absences');
 	getStandartJS();
 	
-	$r = new TSSRenderControler($absence);
-	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',DATE(r.date_debut) as 'Date début', DATE(r.date_fin) as 'Date Fin', 
-			  r.libelle as 'Type absence',r.fk_user as 'Utilisateur Courant',  r.libelleEtat as 'Statut demande'
-		FROM llx_rh_absence as r
-		WHERE r.fk_user=".$user->id." AND r.entity=".$conf->entity;
+	$r = new TSSRenderControler($emploiTemps);
+	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', fk_user as 'Id Utilisateur'
+		FROM llx_rh_absence_emploitemps 
+		WHERE entity=".$conf->entity;
 		
 	
 	$TOrder = array('Statut demande'=>'DESC');
@@ -108,128 +96,49 @@ function _liste(&$ATMdb, &$absence) {
 			,'messageNothing'=>"Il n'y a aucune absence à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
-			
 		)
 		,'orderBy'=>$TOrder
-		
 	));
 	
 	
 	llxFooter();
 }	
 	
-function _fiche(&$ATMdb, &$absence, $mode) {
+function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	global $db,$user,$idUserCompt, $idComptEnCours;
 	llxHeader('','Emploi du temps');
 
-	
+
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
-	echo $form->hidden('id', $absence->getId());
+	echo $form->hidden('id', $_REQUEST['id']);
 	echo $form->hidden('action', 'save');
-	echo $form->hidden('fk_user', $_REQUEST['id']?$_REQUEST['id']:$user->id);
+	echo $form->hidden('fk_user', $emploiTemps->fk_user);
+
+	$userCourant=new User($db);
+	$userCourant->fetch($emploiTemps->fk_user);
+	
+	$TPlanning=array();
+	foreach($emploiTemps->TJour as $jour) {
+		foreach(array('am','pm') as $pm) {
+			$TPlanning[$jour.$pm]=$form->checkbox1('',$jour.$pm,'1',$emploiTemps->{$jour.$pm}==1?true:false);	
+		}
+	} 
+	$THoraire=array();
+	foreach($emploiTemps->TJour as $jour) {
+		foreach(array('dam','fam','dpm','fpm') as $pm) {
+			$THoraire[$jour.'_heure'.$pm]=$form->texte('','date_'.$jour.'_heure'.$pm, date('H:i',$emploiTemps->{'date_'.$jour.'_heure'.$pm}) ,5,5);
+		}
+	} 
 	
 
-	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
-	$sqlReq="SELECT * FROM `llx_rh_absence_emploitemps` where rowid=".$absence->getId();//AND entity=".$conf->entity;
-	$ATMdb->Execute($sqlReq);
-	$Tab=array();
-	while($ATMdb->Get_line()) {
-				$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
-		
-				$emploiTemps=new User($db);
-				foreach ($TJour as $jour) {
-					$emploiTemps->{$jour."am"}=$ATMdb->Get_field($jour.'am');
-					$emploiTemps->{$jour."pm"}=$ATMdb->Get_field($jour.'pm');
-				}
-				$emploiTemps->fk_user=$ATMdb->Get_field('fk_user');
-				
-				$horaires=new User($db);
-				foreach ($TJour as $jour) {
-					$horaires->{$jour."_heuredam"}=$ATMdb->Get_field($jour.'_heuredam');
-					 $horaires->{$jour."_heurefam"}=$ATMdb->Get_field($jour.'_heurefam');
-					 $horaires->{$jour."_heuredpm"}=$ATMdb->Get_field($jour.'_heuredpm');
-					 $horaires->{$jour."_heurefpm"}=$ATMdb->Get_field($jour.'_heurefpm');
-				}
-	}
-	
-	//récupération informations utilisateur dont on modifie le compte
-	$sqlReqUser="SELECT * FROM `llx_user` where rowid=".$emploiTemps->fk_user;//AND entity=".$conf->entity;
-	$ATMdb->Execute($sqlReqUser);
-	$Tab=array();
-	while($ATMdb->Get_line()) {
-				$userCourant=new User($db);
-				$userCourant->firstname=$ATMdb->Get_field('firstname');
-				$userCourant->id=$ATMdb->Get_field('rowid');
-				$userCourant->lastname=$ATMdb->Get_field('name');
-	}
-	
-	 
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/emploitemps.tpl.php'
-		,array(
-			
-			
+		,array(	
 		)
 		,array(
-			'planning'=>array(
-				//checkbox1($pLib,$pName,$pVal,$checked=false,$plus='',$class='',$id='',$order='case_after'){
-				'lundiam'=>$form->checkbox1('','lundiam','1',$emploiTemps->lundiam==1?true:false)
-				,'lundipm'=>$form->checkbox1('','lundipm','1',$emploiTemps->lundipm==1?true:false)
-				,'mardiam'=>$form->checkbox1('','mardiam','1',$emploiTemps->mardiam==1?true:false)
-				,'mardipm'=>$form->checkbox1('','mardipm','1',$emploiTemps->mardipm==1?true:false)
-				,'mercrediam'=>$form->checkbox1('','mercrediam','1',$emploiTemps->mercrediam==1?true:false)
-				,'mercredipm'=>$form->checkbox1('','mercredipm','1',$emploiTemps->mercredipm==1?true:false)
-				,'jeudiam'=>$form->checkbox1('','jeudiam','1',$emploiTemps->jeudiam==1?true:false)
-				,'jeudipm'=>$form->checkbox1('','jeudipm','1',$emploiTemps->jeudipm==1?true:false)
-				,'vendrediam'=>$form->checkbox1('','vendrediam','1',$emploiTemps->vendrediam==1?true:false)
-				,'vendredipm'=>$form->checkbox1('','vendredipm','1',$emploiTemps->vendredipm==1?true:false)
-				,'samediam'=>$form->checkbox1('','samediam','1',$emploiTemps->samediam==1?true:false)
-				,'samedipm'=>$form->checkbox1('','samedipm','1',$emploiTemps->samedipm==1?true:false)
-				,'dimancheam'=>$form->checkbox1('','dimancheam','1',$emploiTemps->dimancheam==1?true:false)
-				,'dimanchepm'=>$form->checkbox1('','dimanchepm','1',$emploiTemps->dimanchepm==1?true:false)
-				,'fk_user'=>$emploiTemps->fk_user
-				,'id'=>$absence->getId()
-			)
-			,'horaires'=>array(
-					'lundi_heuredam'=>$form->texte('','lundi_heuredam',$horaires->lundi_heuredam,10,50,'',$class="text", $default='')
-					,'lundi_heurefam'=>$form->texte('','lundi_heurefam',$horaires->lundi_heurefam,10,50,'',$class="text", $default='')
-					,'lundi_heuredpm'=>$form->texte('','lundi_heuredpm',$horaires->lundi_heuredpm,10,50,'',$class="text", $default='')
-					,'lundi_heurefpm'=>$form->texte('','lundi_heurefpm',$horaires->lundi_heurefpm,10,50,'',$class="text", $default='')
-					
-					,'mardi_heuredam'=>$form->texte('','mardi_heuredam',$horaires->mardi_heuredam,10,50,'',$class="text", $default='')
-					,'mardi_heurefam'=>$form->texte('','mardi_heurefam',$horaires->mardi_heurefam,10,50,'',$class="text", $default='')
-					,'mardi_heuredpm'=>$form->texte('','mardi_heuredpm',$horaires->mardi_heuredpm,10,50,'',$class="text", $default='')
-					,'mardi_heurefpm'=>$form->texte('','mardi_heurefpm',$horaires->mardi_heurefpm,10,50,'',$class="text", $default='')
-					
-					,'mercredi_heuredam'=>$form->texte('','mercredi_heuredam',$horaires->mercredi_heuredam,10,50,'',$class="text", $default='')
-					,'mercredi_heurefam'=>$form->texte('','mercredi_heurefam',$horaires->mercredi_heurefam,10,50,'',$class="text", $default='')
-					,'mercredi_heuredpm'=>$form->texte('','mercredi_heuredpm',$horaires->mercredi_heuredpm,10,50,'',$class="text", $default='')
-					,'mercredi_heurefpm'=>$form->texte('','mercredi_heurefpm',$horaires->mercredi_heurefpm,10,50,'',$class="text", $default='')
-					
-					,'jeudi_heuredam'=>$form->texte('','jeudi_heuredam',$horaires->jeudi_heuredam,10,50,'',$class="text", $default='')
-					,'jeudi_heurefam'=>$form->texte('','jeudi_heurefam',$horaires->jeudi_heurefam,10,50,'',$class="text", $default='')
-					,'jeudi_heuredpm'=>$form->texte('','jeudi_heuredpm',$horaires->jeudi_heuredpm,10,50,'',$class="text", $default='')
-					,'jeudi_heurefpm'=>$form->texte('','jeudi_heurefpm',$horaires->jeudi_heurefpm,10,50,'',$class="text", $default='')
-					
-					,'vendredi_heuredam'=>$form->texte('','vendredi_heuredam',$horaires->vendredi_heuredam,10,50,'',$class="text", $default='')
-					,'vendredi_heurefam'=>$form->texte('','vendredi_heurefam',$horaires->vendredi_heurefam,10,50,'',$class="text", $default='')
-					,'vendredi_heuredpm'=>$form->texte('','vendredi_heuredpm',$horaires->vendredi_heuredpm,10,50,'',$class="text", $default='')
-					,'vendredi_heurefpm'=>$form->texte('','vendredi_heurefpm',$horaires->vendredi_heurefpm,10,50,'',$class="text", $default='')
-					
-					,'samedi_heuredam'=>$form->texte('','samedi_heuredam',$horaires->samedi_heuredam,10,50,'',$class="text", $default='')
-					,'samedi_heurefam'=>$form->texte('','samedi_heurefam',$horaires->samedi_heurefam,10,50,'',$class="text", $default='')
-					,'samedi_heuredpm'=>$form->texte('','samedi_heuredpm',$horaires->samedi_heuredpm,10,50,'',$class="text", $default='')
-					,'samedi_heurefpm'=>$form->texte('','samedi_heurefpm',$horaires->samedi_heurefpm,10,50,'',$class="text", $default='')
-					
-					,'dimanche_heuredam'=>$form->texte('','dimanche_heuredam',$horaires->dimanche_heuredam,10,50,'',$class="text", $default='')
-					,'dimanche_heurefam'=>$form->texte('','dimanche_heurefam',$horaires->dimanche_heurefam,10,50,'',$class="text", $default='')
-					,'dimanche_heuredpm'=>$form->texte('','dimanche_heuredpm',$horaires->dimanche_heuredpm,10,50,'',$class="text", $default='')
-					,'dimanche_heurefpm'=>$form->texte('','dimanche_heurefpm',$horaires->dimanche_heurefpm,10,50,'',$class="text", $default='')
-					
-				
-				
-			)
+			'planning'=>$TPlanning
+			,'horaires'=>$THoraire
 			,'userCourant'=>array(
 				'id'=>$userCourant->id
 				,'lastname'=>$userCourant->lastname
@@ -237,7 +146,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'emploitemps')  , 'emploitemps', 'Absence')
+				,'head'=>dol_get_fiche_head(absencePrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence')
+				,'compteur_id'=>$emploiTemps->getId()
 			)
 			
 		)	

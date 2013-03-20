@@ -72,10 +72,10 @@ function _liste(&$ATMdb, $feries) {
 	//getStandartJS();	
 	
 	$r = new TSSRenderControler($feries);
-	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', 
-			  r.date_jourOff,r.matin as 'Matinée',  r.apresmidi as 'Après-midi',  r.commentaire as 'Commentaire', '' as 'Supprimer'
-		FROM  llx_rh_absence_jours_feries as r
-		WHERE r.entity=".$conf->entity;
+	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
+			  date_jourOff, moment as 'Période',  commentaire as 'Commentaire', '' as 'Supprimer'
+		FROM  llx_rh_absence_jours_feries
+		WHERE entity=".$conf->entity;
 		
 	
 	$TOrder = array('ID'=>'DESC');
@@ -96,8 +96,7 @@ function _liste(&$ATMdb, $feries) {
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array(
-			'Matinée'=>array(1=>'Oui')
-			,'Après-midi'=>array(0=>'Non')
+			'Période'=>array('matin'=>'Matin','apresmidi'=>'Après-midi','allday'=>'Toute la journée')
 		)
 		,'hide'=>array('DateCre')
 		,'type'=>array('date_jourOff'=>'date')
@@ -133,34 +132,12 @@ function _liste(&$ATMdb, $feries) {
 function _fiche(&$ATMdb, $feries, $mode) {
 	global $db,$user,$idUserCompt, $idComptEnCours;
 	llxHeader('','Emploi du temps');
-
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $feries->getId());
 	echo $form->hidden('action', 'save');
-	//echo $form->hidden('fk_user', $_REQUEST['id']?$_REQUEST['id']:$user->id);
-	
 
-	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
-	$sqlReq="SELECT * FROM `llx_rh_absence_jours_feries`//AND entity=".$conf->entity;
-	$ATMdb->Execute($sqlReq);
-	$Tab=array();
-	while($ATMdb->Get_line()) {
-		
-	}
-	
-	//Champs
-	$TFeries=array();
-	foreach($feries->TFerie as $k=>$jour){
-		$TFeries[$k]=array(
-				'id'=>$jour->getId()
-				,'date_jourOff'=>$form->calendrier('', 'TFeries['.$k.'][date_jourOff]', $jour->get_date('date_jourOff'), 10)
-				,'matin'=>$form->checkbox1('','TFeries['.$k.'][matin]','1',$jour->matin==1?true:false)
-				,'apresmidi'=>$form->checkbox1('','TFeries['.$k.'][apresmidi]','1',$jour->apresmidi==1?true:false)
-				,'numero'=>$k
-			);
-	}
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/joursferies.tpl.php'
@@ -171,16 +148,12 @@ function _fiche(&$ATMdb, $feries, $mode) {
 			'joursFeries'=>array(
 				'id'=>$feries->getId()
 				,'date_jourOff'=>$form->calendrier('', 'date_jourOff', $feries->get_date('date_jourOff'), 10)
-				,'matin'=>$form->checkbox1('','matin','1',$feries->matin==1?true:false)
-				,'apresmidi'=>$form->checkbox1('','apresmidi','1',$feries->apresmidi==1?true:false)
+				,'moment'=>$form->combo('','moment',$feries->TMoment,$feries->moment)
+				//,'matin'=>$form->checkbox1('','matin','1',$feries->matin==1?true:false)
+				//,'apresmidi'=>$form->checkbox1('','apresmidi','1',$feries->apresmidi==1?true:false)
 				,'commentaire'=>$form->texte('','commentaire',$feries->commentaire, 30,100,'','','-')
 			)
-			
-			/*,'userCourant'=>array(
-				'id'=>$userCourant->id
-				,'lastname'=>$userCourant->lastname
-				,'firstname'=>$userCourant->firstname
-			)*/
+
 			,'view'=>array(
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(absencePrepareHead($feries, 'emploitemps')  , 'joursferies', 'Absence')

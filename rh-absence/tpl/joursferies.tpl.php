@@ -9,11 +9,7 @@
 		</tr>
 		<tr>
 			<td>Matin</td>
-			<td>[joursFeries.matin;strconv=no;protect=no]</td>
-		</tr>
-		<tr>
-			<td>Après-midi</td>
-			<td>[joursFeries.apresmidi;strconv=no;protect=no]</td>
+			<td>[joursFeries.moment;strconv=no;protect=no]</td>
 		</tr>
 		<tr>
 			<td>Commentaire</td>

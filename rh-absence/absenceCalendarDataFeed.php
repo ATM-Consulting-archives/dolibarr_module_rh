@@ -66,6 +66,34 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
         "absence.php?id=".$row->rowid."&action=view",//$row->location,
         '',//$attends
       );
+     }
+      
+      
+   $sql2 = " SELECT rowid as 'ID', 
+		  date_jourOff, moment 
+	FROM  llx_rh_absence_jours_feries WHERE `date_jourOff` between '"
+      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed);  
+	  
+ 	//echo $sql2;
+  	$ATMdb->Execute($sql2);
+    
+    while ($row = $ATMdb->Get_line()) {
+    	
+      $ret['events'].push(array(
+        $row->rowid,
+        $row->moment,
+        php2JsTime(mySql2PhpTime($row->date_jourOff)),
+        php2JsTime(mySql2PhpTime($row->date_jourOff)),
+        1,//$row->isAllDayEvent,
+        0, //more than one day event
+        //$row->InstanceType,
+       	0,//Recurring event,
+        4,//$row->color,
+        1,//editable
+        //"absence.php?id=".$row->rowid."&action=view",//$row->location,
+        '',//$attends
+      ));
+     
     }
 	}catch(Exception $e){
      $ret['error'] = $e->getMessage();

@@ -2,7 +2,7 @@
         [view.head;strconv=no]
 
 		Utilisateur : [userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]
-		<br/>Compteur : [planning.id;strconv=no;protect=no]
+		<br/>Compteur : [view.compteur_id;strconv=no;protect=no]
 		<br/>
 		<div style=" display:inline-block;">                  
 		<table class="border" style="width:100%;" >	
@@ -87,12 +87,12 @@
 
 	<div class="tabsAction" >
 		[onshow;block=begin;when [view.mode]=='edit']
-			<input type="submit" value="Enregistrer" name="save" class="button"  onclick="document.location.href='?id=[planning.id]&action=view'">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[planning.id]&action=view'">
+			<input type="submit" value="Enregistrer" name="save" class="button"  onclick="document.location.href='?id=[view.compteur_id]&action=view'">
+			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[view.compteur_id]&action=view'">
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
-			<a class="butAction"  href="?id=[planning.id]&action=edit">Modifier</a>
+			<a class="butAction"  href="?id=[view.compteur_id]&action=edit">Modifier</a>
 		[onshow;block=end]
 	</div>
 

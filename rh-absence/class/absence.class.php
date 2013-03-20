@@ -234,18 +234,18 @@ class TRH_EmploiTemps extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_emploitemps');
 		
 		//demi-journées de travail
-		$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
-		foreach ($TJour as $jour) {
+		$this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
+		foreach ($this->TJour as $jour) {
 			parent::add_champs($jour.'am','type=entier;');
 			parent::add_champs($jour.'pm','type=entier;');		
 		}
 		
 		//horaires de travail
-		foreach ($TJour as $jour) {
-			parent::add_champs($jour.'_heuredam','type=chaine;');
-			parent::add_champs($jour.'_heurefam','type=chaine;');		
-			parent::add_champs($jour.'_heuredpm','type=chaine;');
-			parent::add_champs($jour.'_heurefpm','type=chaine;');
+		foreach ($this->TJour as $jour) {
+			parent::add_champs('date_'.$jour.'_heuredam','type=date;');
+			parent::add_champs('date_'.$jour.'_heurefam','type=date;');		
+			parent::add_champs('date_'.$jour.'_heuredpm','type=date;');
+			parent::add_champs('date_'.$jour.'_heurefpm','type=date;');
 		}
 					
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
@@ -255,6 +255,17 @@ class TRH_EmploiTemps extends TObjetStd {
 		parent::start();	
 	}
 	
+	function loadByuser(&$ATMdb, $id_user) {
+		$res = TRequeteCore::get_id_from_what_you_want($ATMdb, $this->get_table(), array('fk_user'=> $id_user));
+		if(!empty($res)) {
+			return $this->load($ATMdb, $res[0]);
+			
+		}
+		else {
+			return false;
+		}
+		
+	}
 	
 	function save(&$db) {
 		global $conf;
@@ -267,38 +278,33 @@ class TRH_EmploiTemps extends TObjetStd {
 		$this->entity = $conf->entity;
 	
 		$this->fk_user=$idUser;
-		$this->lundiam='1';
-		$this->lundipm='1';
-		$this->mardiam='1';
-		$this->mardipm='1';
-		$this->mercrediam='1';
-		$this->mercredipm='1';
-		$this->jeudiam='1';
-		$this->jeudipm='1';
-		$this->vendrediam='1';
-		$this->vendredipm='1';
-		$this->samediam='0';
-		$this->samedipm='0';
-		$this->dimancheam='0';
-		$this->dimancheam='0';
+		$this->lundiam=1;
+		$this->lundipm=1;
+		$this->mardiam=1;
+		$this->mardipm=1;
+		$this->mercrediam=1;
+		$this->mercredipm=1;
+		$this->jeudiam=1;
+		$this->jeudipm=1;
+		$this->vendrediam=1;
+		$this->vendredipm=1;
+		$this->samediam=0;
+		$this->samedipm=0;
+		$this->dimancheam=0;
+		$this->dimancheam=0;
 		
-		$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi');
-		foreach ($TJour as $jour) {
-			$this->{$jour."_heuredam"}='9:00';
-			 $this->{$jour."_heurefam"}='12:15';
-			 $this->{$jour."_heuredpm"}='14:00';
-			 $this->{$jour."_heurefpm"}='18:00';
+		foreach ($this->TJour as $jour) {
+			if($jour!='samedi' && $jour!='dimanche') {
+				 $this->{'date_'.$jour."_heuredam"}= strtotime('9:00');
+				 $this->{'date_'.$jour."_heurefam"}=strtotime('12:15');
+				 $this->{'date_'.$jour."_heuredpm"}=strtotime('14:00');
+				 $this->{'date_'.$jour."_heurefpm"}=strtotime('18:00');
+			}
+				else {
+					$this->{'date_'.$jour."_heuredam"}=$this->{'date_'.$jour."_heurefam"}=$this->{'date_'.$jour."_heuredpm"}=$this->{'date_'.$jour."_heurefpm"}= strtotime('0:00');
+				}
 		}
 
-		$this->samedi_heuredam='0:00';
-		$this->samedi_heurefam='0:00';
-		$this->samedi_heuredpm='0:00';
-		$this->samedi_heurefpm='0:00';
-		
-		$this->dimanche_heuredam='0:00';
-		$this->dimanche_heurefam='0:00';
-		$this->dimanche_heuredpm='0:00';
-		$this->dimanche_heurefpm='0:00';
 	}
 	
 	//remet à 0 les checkbox avant la sauvegarde
@@ -306,10 +312,9 @@ class TRH_EmploiTemps extends TObjetStd {
 		global $conf, $user;
 		$this->entity = $conf->entity;
 		
-		$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
-		foreach ($TJour as $jour) {
-			$this->{$jour."am"}='0';
-			 $this->{$jour."pm"}='0';
+		foreach ($this->TJour as $jour) {
+			$this->{$jour."am"}=0;
+			 $this->{$jour."pm"}=0;
 		}
 	}
 }
@@ -320,8 +325,7 @@ class TRH_JoursFeries extends TObjetStd {
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_jours_feries');
 		parent::add_champs('date_jourOff','type=date;');
-		parent::add_champs('matin','type=int;');
-		parent::add_champs('apresmidi','type=int;');
+		parent::add_champs('moment','type=chaine;');
 		parent::add_champs('commentaire','type=chaine;');
 		parent::add_champs('entity','type=int;');
 		
@@ -330,7 +334,7 @@ class TRH_JoursFeries extends TObjetStd {
 		parent::start();	
 		
 		$this->TFerie=array();
-		
+		$this->TMoment=array('matin'=>'Matin', 'apresmidi'=>'Après-midi', 'allday'=>'Toute La journée');
 	}
 	
 	
@@ -346,8 +350,8 @@ class TRH_JoursFeries extends TObjetStd {
 		global $conf, $user;
 		$this->entity = $conf->entity;
 
-			$this->matin='0';
-			 $this->apresmidi='0';
+			$this->matin=0;
+			 $this->apresmidi=0;
 	}
 	
 }
