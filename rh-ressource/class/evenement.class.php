@@ -20,36 +20,43 @@ class TRH_Evenement  extends TObjetStd {
 		parent::add_champs('description','type=chaine;');
 		parent::add_champs('recurringrule','type=chaine;');
 		
-		//pour un évenement
+		//pour un accident, une réparation
 		parent::add_champs('motif','type=chaine;');
 		parent::add_champs('coutHT','type=float;');
 		parent::add_champs('coutEntrepriseHT','type=float;');
 		parent::add_champs('TVA','type=entier;');
 		
+		//pour un appel
+		parent::add_champs('appelHeure','type=chaine;');
+		parent::add_champs('appelNumero','type=chaine;');
+		parent::add_champs('appelDureeReel','type=chaine;');
+		parent::add_champs('appelDureeFacturee','type=chaine;');
+		parent::add_champs('fk_facture','type=entier;index');
+		
+		
+		
+		//pour une facture téléphonique
+		/*
+		parent::add_champs('appelDate','type=date;');
+		parent::add_champs('appelHeure','type=chaine;');
+		parent::add_champs('appelNumero','type=chaine;');
+		parent::add_champs('appelDureeReel','type=chaine;');
+		parent::add_champs('appelDureeFacturee','type=chaine;');
+		parent::add_champs('fk_facture','type=entier;index');
+		*/
+		
+		
+		
 		parent::_init_vars();
 		parent::start();
 
 		
-		$this->TType = array('accident'=>'Accident', 'reparation'=>'Réparation', 'facture'=>'Facture');
-		
-		$ATMdb=new Tdb;
-		
-		//chargement d'une liste de touts les tiers (pour le combo "tiers")
-		$this->TTiers = array();
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe";
-		$ATMdb->Execute($sqlReq);
-		while($ATMdb->Get_line()) {
-			$this->TTiers[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
-			}
-		
-		//chargement d'une liste de touts les tiers (pour le combo "agence utilisatrice")
-		$this->TAgence = array();
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup";
-		$ATMdb->Execute($sqlReq);
-		while($ATMdb->Get_line()) {
-			$this->TAgence[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
-			}
+		$this->TType = array('accident'=>'Accident', 'reparation'=>'Réparation', 'appel'=>'Appel','factureTel'=>'Facture Téléphone');		
+	}
+
+	function load_liste(&$ATMdb){
 		global $conf;
+		
 		//chargement d'une liste de touts les TVA (pour le combo "TVA")
 		$this->TTVA = array();
 		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
@@ -66,8 +73,8 @@ class TRH_Evenement  extends TObjetStd {
 			$this->TUser[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name');
 			}
 		
+		
 	}
-
 	
 	function save(&$db) {
 		global $conf;

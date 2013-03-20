@@ -105,7 +105,7 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	//getStandartJS();
 	
 	$r = new TSSRenderControler($emprunt);
-	$sql="SELECT DISTINCT e.rowid as 'ID', u.name as 'Nom', 
+	$sql="SELECT DISTINCT e.rowid as 'ID', CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.description as 'Commentaire'
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
@@ -126,11 +126,13 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
-			//'<img="./img/delete.png"  style="cursor:pointer;" >'
 		)
 		,'translate'=>array()
 		,'hide'=>array('IDRessource')
-		,'type'=>array()
+		,'type'=>array(
+			'Date début'=>'date'
+			,'Date fin'=>'date'
+		)
 		,'liste'=>array(
 			'titre'=>'Historique des emprunts'
 			,'image'=>img_picto('','title.png', '', 0)
@@ -161,7 +163,9 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 	echo $form->hidden('id', $ressource->getId());
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('idEven',$emprunt->getId());
-	 
+	
+	$emprunt->load_liste($ATMdb);
+	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/attribution.tpl.php'
 		,array()
