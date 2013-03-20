@@ -201,7 +201,7 @@ class TRH_Absence extends TObjetStd {
 					//echo $this->type.$sqlRecredit;exit;
 					$ATMdb->Execute($sqlRecredit);
 				break;
-					
+	
 			}
 		}
 }
@@ -282,13 +282,23 @@ class TRH_EmploiTemps extends TObjetStd {
 		$this->dimancheam='0';
 		$this->dimancheam='0';
 		
-		$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
+		$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi');
 		foreach ($TJour as $jour) {
 			$this->{$jour."_heuredam"}='9:00';
 			 $this->{$jour."_heurefam"}='12:15';
 			 $this->{$jour."_heuredpm"}='14:00';
 			 $this->{$jour."_heurefpm"}='18:00';
 		}
+
+		$this->samedi_heuredam='0:00';
+		$this->samedi_heurefam='0:00';
+		$this->samedi_heuredpm='0:00';
+		$this->samedi_heurefpm='0:00';
+		
+		$this->dimanche_heuredam='0:00';
+		$this->dimanche_heurefam='0:00';
+		$this->dimanche_heuredpm='0:00';
+		$this->dimanche_heurefpm='0:00';
 	}
 	
 	//remet à 0 les checkbox avant la sauvegarde
@@ -312,11 +322,15 @@ class TRH_JoursFeries extends TObjetStd {
 		parent::add_champs('date_jourOff','type=date;');
 		parent::add_champs('matin','type=int;');
 		parent::add_champs('apresmidi','type=int;');
+		parent::add_champs('commentaire','type=chaine;');
 		parent::add_champs('entity','type=int;');
 		
 		
 		parent::_init_vars();
 		parent::start();	
+		
+		$this->TFerie=array();
+		
 	}
 	
 	
@@ -326,6 +340,16 @@ class TRH_JoursFeries extends TObjetStd {
 		
 		parent::save($db);
 	}
+	
+	//remet à 0 les checkbox avant la sauvegarde
+	function razCheckbox(&$ATMdb, $absence){
+		global $conf, $user;
+		$this->entity = $conf->entity;
+
+			$this->matin='0';
+			 $this->apresmidi='0';
+	}
+	
 }
 
 

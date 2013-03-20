@@ -25,7 +25,6 @@
 			case 'edit'	:
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				
 				_fiche($ATMdb, $ressource,'edit');
 				break;
 				
