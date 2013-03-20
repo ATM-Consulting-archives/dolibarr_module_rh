@@ -65,7 +65,7 @@ class TRH_Compteur extends TObjetStd {
 		parent::save($db);
 	}
 	
-	function initCompteur($idUser, &$ATMdb){
+	function initCompteur(&$ATMdb, $idUser){
 		global $conf;
 		$this->entity = $conf->entity;
 		$annee=date('Y');
@@ -183,20 +183,22 @@ class TRH_Absence extends TObjetStd {
 		}
 
 		//recrédite les heures au compteur lors de la suppression d'une absence 
-		function recrediterHeure(&$ATMdb, $absence){
+		function recrediterHeure(&$ATMdb){
 			global $conf, $user;
 			$this->entity = $conf->entity;
-			switch($absence->type){
+			
+			switch($this->type){
 				case "rttcumule" : 
-					$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$absence->duree.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule+".$absence->duree."  where fk_user=".$user->id;
+					$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule+".$this->duree."  where fk_user=".$user->id;
 					$ATMdb->Execute($sqlRecredit);
 				break;
 				case "rttnoncumule" : 
-					$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$absence->duree.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule+".$absence->duree."  where fk_user=".$user->id;
+					$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule+".$this->duree."  where fk_user=".$user->id;
 					$ATMdb->Execute($sqlRecredit);
 				break;
 				default :  //dans les autres cas, on recrédite les congés
-					$sqlRecredit="UPDATE `llx_rh_compteur` SET congesPrisNM1=congesPrisNM1-".$absence->duree.",acquisExerciceNM1=acquisExerciceNM1+".$absence->duree."  where fk_user=".$user->id;
+					$sqlRecredit="UPDATE `llx_rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
+					//echo $this->type.$sqlRecredit;exit;
 					$ATMdb->Execute($sqlRecredit);
 				break;
 					
@@ -296,10 +298,10 @@ class TRH_EmploiTemps extends TObjetStd {
 		parent::save($db);
 	}
 	
-	function initCompteurHoraire($idUser, &$ATMdb){
+	function initCompteurHoraire (&$ATMdb, $idUser){
 		global $conf;
 		$this->entity = $conf->entity;
-
+	
 		$this->fk_user=$idUser;
 		$this->lundiam='1';
 		$this->lundipm='1';
@@ -316,43 +318,13 @@ class TRH_EmploiTemps extends TObjetStd {
 		$this->dimancheam='0';
 		$this->dimancheam='0';
 		
-		$this->lundi_heuredam='9:00';
-		$this->lundi_heurefam='12:15';
-		$this->lundi_heuredpm='14:00';
-		$this->lundi_heurefpm='18:00';
-		
-		$this->mardi_heuredam='9:00';
-		$this->mardi_heurefam='12:15';
-		$this->mardi_heuredpm='14:00';
-		$this->mardi_heurefpm='18:00';
-		
-		$this->mercredi_heuredam='9:00';
-		$this->mercredi_heurefam='12:15';
-		$this->mercredi_heuredpm='14:00';
-		$this->mercredi_heurefpm='18:00';
-		
-		$this->jeudi_heuredam='9:00';
-		$this->jeudi_heurefam='12:15';
-		$this->jeudi_heuredpm='14:00';
-		$this->jeudi_heurefpm='18:00';
-		
-		$this->vendredi_heuredam='9:00';
-		$this->vendredi_heurefam='12:15';
-		$this->vendredi_heuredpm='14:00';
-		$this->vendredi_heurefpm='18:00';
-		
-		$this->samedi_heuredam='0:00';
-		$this->samedi_heurefam='0:00';
-		$this->samedi_heuredpm='0:00';
-		$this->samedi_heurefpm='0:00';
-		
-		$this->dimanche_heuredam='0:00';
-		$this->dimanche_heurefam='0:00';
-		$this->dimanche_heuredpm='0:00';
-		$this->dimanche_heurefpm='0:00';
-		
-		
-		
+		$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
+		foreach ($TJour as $jour) {
+			$this->{$jour."_heuredam"}='9:00';
+			 $this->{$jour."_heurefam"}='12:15';
+			 $this->{$jour."_heuredpm"}='14:00';
+			 $this->{$jour."_heurefpm"}='18:00';
+		}
 	}
 	
 	//remet à 0 les checkbox avant la sauvegarde
@@ -360,20 +332,11 @@ class TRH_EmploiTemps extends TObjetStd {
 		global $conf, $user;
 		$this->entity = $conf->entity;
 		
-		$this->lundiam='0';
-		$this->lundipm='0';
-		$this->mardiam='0';
-		$this->mardipm='0';
-		$this->mercrediam='0';
-		$this->mercredipm='0';	
-		$this->jeudiam='0';
-		$this->jeudipm='0';	
-		$this->vendrediam='0';
-		$this->vendredipm='0';	
-		$this->samediam='0';
-		$this->samedipm='0';
-		$this->dimancheam='0';
-		$this->dimanchepm='0';
+		$TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
+		foreach ($TJour as $jour) {
+			$this->{$jour."am"}='0';
+			 $this->{$jour."pm"}='0';
+		}
 	}
 }
 

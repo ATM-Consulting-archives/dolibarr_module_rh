@@ -29,7 +29,7 @@
 		
 		foreach ($Tab as $idUserC) {
 			$o=new TRH_Compteur;
-			$o->initCompteur($idUserC, $ATMdb);
+			$o->initCompteur($ATMdb, $idUserC);
 			$o->save($ATMdb);
 		}
 	}
@@ -71,7 +71,7 @@
 		
 		foreach ($Tab as $idUserC) {
 			$r=new TRH_EmploiTemps;
-			$r->initCompteurHoraire($idUserC, $ATMdb);
+			$r->initCompteurHoraire($ATMdb, $idUserC);
 			$r->save($ATMdb);
 		}
 	}

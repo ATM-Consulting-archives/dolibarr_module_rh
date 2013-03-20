@@ -43,7 +43,7 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 				//$ATMdb->db->debug=true;
 				//avant de supprimer, on récredite les heures d'absences qui avaient été décomptées. 
-				$absence->recrediterHeure($ATMdb, $absence);
+				$absence->recrediterHeure($ATMdb);
 				$absence->delete($ATMdb);
 				
 				?>
@@ -64,7 +64,7 @@
 				
 			case 'refuse':
 				$absence->load($ATMdb, $_REQUEST['id']);
-				$absence->recrediterHeure($ATMdb, $absence);
+				$absence->recrediterHeure($ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$sqlEtat="UPDATE `llx_rh_absence` SET etat='Refusee', libelleEtat='Refusée' where fk_user=".$user->id. " AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
