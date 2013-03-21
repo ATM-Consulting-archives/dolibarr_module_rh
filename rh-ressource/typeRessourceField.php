@@ -62,34 +62,19 @@
 		
 			case 'deleteField':
 				//$ATMdb->db->debug=true;
-				$ressource->delField($ATMdb, $_REQUEST['idField']);
+				if ($ressource->delField($ATMdb, $_REQUEST['idField'])){
+					$mesg = '<div class="ok">Le champ a bien été supprimé</div>';
+				}
+				else {
+					$mesg = '<div class="error">Ce champ ne peut pas être supprimé</div>';
+				}
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				
-				$mesg = '<div class="ok">Le champs a bien été supprimé</div>';
+				
 				$mode = 'edit';
 				_fiche($ATMdb, $ressource,$mode);
 				break;
 				
-			case 'delete':
-				$ressource->load($ATMdb, $_REQUEST['id']);
-				//$ATMdb->db->debug=true;
-				
-				//avant de supprimer, on vérifie qu'aucune ressource n'est de ce type. Sinon on ne le supprime pas.
-				if ( ! $ressource->isUsedByRessource($ATMdb)){
-					$ressource->delete($ATMdb);
-					?>
-					<script language="javascript">
-						document.location.href="?delete_ok=1";					
-					</script>
-					<?
-				}
-				else{
-					$mesg = '<div class="ok">Le type de ressource est utilisé par une ressource. Il ne peut pas être supprimé.</div>';
-					_fiche($ATMdb, $ressource, 'view');
-				} 
-				
-				
-				break;
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {

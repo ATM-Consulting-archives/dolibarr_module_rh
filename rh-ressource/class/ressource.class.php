@@ -212,7 +212,7 @@ class TRH_Ressource_type extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource_type');
 		parent::add_champs('libelle,code','type=chaine;');
 		parent::add_champs('entity','type=entier;index;');
-		
+		parent::add_champs('supprimable','type=entier');
 				
 		parent::_init_vars();
 		parent::start();
@@ -267,27 +267,31 @@ class TRH_Ressource_type extends TObjetStd {
 	}
 	
 	function delField(&$ATMdb, $id){
-
 		$toDel = new TRH_Ressource_field;
 		$toDel->load($ATMdb,$id);
-		$toDel->delete($ATMdb);
+		return $toDel->delete($ATMdb);
 	}
+	
 	function delete(&$ATMdb) {
 		global $conf;
-		//on supprime les champs associés à ce type
-		$sqlReq="SELECT rowid FROM llx_rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." AND entity=".$conf->entity;
-		$ATMdb->Execute($sqlReq);
-		$Tab = array();
-		while($ATMdb->Get_line()) {
-			$Tab[]= $ATMdb->Get_field('rowid');
+		if ($this->supprimable){
+			//on supprime les champs associés à ce type
+			$sqlReq="SELECT rowid FROM llx_rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." AND entity=".$conf->entity;
+			$ATMdb->Execute($sqlReq);
+			$Tab = array();
+			while($ATMdb->Get_line()) {
+				$Tab[]= $ATMdb->Get_field('rowid');
+			}
+			$temp = new TRH_Ressource_field;
+			foreach ($Tab as $k => $id) {
+				$temp->load($ATMdb, $id);
+				$temp->delete($ATMdb);
+			}
+			//puis on supprime le type
+			parent::delete($ATMdb);
+			return true;
 		}
-		$temp = new TRH_Ressource_field;
-		foreach ($Tab as $k => $id) {
-			$temp->load($ATMdb, $id);
-			$temp->delete($ATMdb);
-		}
-		//puis on supprime le type
-		parent::delete($ATMdb);
+		else {return false;}
 		
 	}
 	function save(&$db) {
@@ -326,6 +330,7 @@ class TRH_Ressource_field extends TObjetStd {
 		parent::add_champs('obligatoire','type=entier;');
 		parent::add_champs('ordre','type=entier');
 		parent::add_champs('options','type=entier');
+		parent::add_champs('supprimable','type=entier');
 		parent::add_champs('fk_rh_ressource_type,entity','type=entier;index;');
 		
 		$this->TListe = array();
@@ -349,6 +354,20 @@ class TRH_Ressource_field extends TObjetStd {
 		$this->entity = $conf->entity;
 		parent::save($db);
 	}
+
+	function delete(&$ATMdb) {
+		global $conf;
+		
+		//on supprime le champs que si il est par défault.
+		if ($this->supprimable){
+			parent::delete($ATMdb);	
+			return true;
+		}
+		else {return false;}
+		
+		
+	}
+
 }
 	
 /*
