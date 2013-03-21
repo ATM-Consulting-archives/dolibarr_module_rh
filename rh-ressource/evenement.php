@@ -54,23 +54,26 @@
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">L\'attribution a bien été supprimée.</div>';
 				$mode = 'view';
-				_liste($ATMdb, $evenement, $ressource,$mode);
+				_liste($ATMdb, $evenement, $ressource);
 				break;
 				
-				
+			case 'afficherListe':
+				$ressource->load($ATMdb, $_REQUEST['id']);
+				_liste($ATMdb, $evenement, $ressource, $_REQUEST['type']);
+				break;
 			
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {
 		$ressource->load($ATMdb, $_REQUEST['id']);
-		_liste($ATMdb, $evenement,$ressource, 'view');
+		_liste($ATMdb, $evenement,$ressource);
 	}
 	else {
 		/*
 		 * Liste
 		 */
 		 //$ATMdb->db->debug=true;
-		 _liste($ATMdb, $evenement);
+		 _liste($ATMdb, $evenement,$ressource);
 	}
 	
 	
@@ -78,28 +81,79 @@
 	
 	llxFooter();
 	
-function _liste(&$ATMdb, &$evenement, &$ressource) {
-	global $langs,$conf, $db;	
+function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
+	global $conf;	
 	llxHeader('','Liste des emprunts');
 	
 	?><div class="fiche"><?	
+	
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource');
-	getStandartJS();
+	// btsubmit($pLib,$pName,$plus="")
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','POST');
+	//$form->Set_typeaff($mode);
+	echo $form->hidden('action', 'afficherListe');
+	echo $form->hidden('id',$ressource->getId());
+	$TType = array('principal'=>'Accidents, Réparations'
+					,'appel'=>'Appels'
+					,'facture'=>'Facture'
+					);
+	?>
+	<table>
+		<tr>
+			<td> Type d'évenement à afficher : </td>
+			<td> <? echo $form->combo('','type', $TType ,$type) ?> </td>
+			<td> <? echo $form->btsubmit('Valider','afficherListe') ?>	</td>
+		</tr>
+	</table>
+	
+	<?
+	$form->end();
 	
 	$r = new TSSRenderControler($evenement);
-	$sql="SELECT DISTINCT e.rowid as 'ID',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
-		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.type as 'Type',
-		e.motif as 'Motif', e.description as 'Commentaire', e.coutHT as 'Coût', 
-		e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'
-		FROM ".MAIN_DB_PREFIX."rh_evenement as e
-		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
-		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
-		LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
-		WHERE e.entity=".$conf->entity."
-		AND e.type<>'emprunt'
-		AND e.fk_rh_ressource=".$ressource->getId();
+	switch($type){
+		case 'principal' :
+			$sql ="SELECT DISTINCT e.rowid as 'ID',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
+				DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.type as 'Type',
+				e.motif as 'Motif', e.description as 'Commentaire', e.coutHT as 'Coût', 
+				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'
+				FROM ".MAIN_DB_PREFIX."rh_evenement as e
+				LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
+				LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
+				LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
+				WHERE e.entity=".$conf->entity."
+				AND e.fk_rh_ressource=".$ressource->getId()."
+				AND ( e.type='accident' OR e.type='reparation' )";
+			break;
+		 case 'appel' :
+			$sql ="SELECT DISTINCT e.rowid as 'ID',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
+				DATE(e.date_debut) as 'Date', e.appelHeure as 'Heure', e.appelNumero as 'Numéro appelé', 
+				e.appelDureeReel as 'Durée/Volume réel', e.appelDureeFacturee as 'Durée/Volume facturé',
+				e.motif as 'Motif', CONCAT (CAST(e.coutHT as DECIMAL(16,2)), ' €') as 'Montant HT'
+				FROM ".MAIN_DB_PREFIX."rh_evenement as e
+				LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
+				LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
+				LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
+				WHERE e.entity=".$conf->entity."
+				AND e.fk_rh_ressource=".$ressource->getId()."
+				AND e.type='appel' ";
+			break;
+		case 'facture':
+			echo "facture";		
+			$sql ="SELECT DISTINCT e.rowid as 'ID',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
+				DATE(e.date_debut) as 'Date début', e.type as 'Type',
+				e.motif as 'Motif', e.description as 'Commentaire', e.coutHT as 'Coût', 
+				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'
+				FROM ".MAIN_DB_PREFIX."rh_evenement as e
+				LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
+				LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
+				LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
+				WHERE e.entity=".$conf->entity."
+				AND e.fk_rh_ressource=".$ressource->getId()."
+				AND e.type='facture' ";
+			break;
+		}	
 	
-	$TOrder = array('Date fin'=>'ASC');
+	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -118,15 +172,14 @@ function _liste(&$ATMdb, &$evenement, &$ressource) {
 		,'type'=>array(
 			'Date début'=>'date'
 			,'Date fin'=>'date'
-			
 		)
 		,'liste'=>array(
-			'titre'=>'Liste des evenements'
+			'titre'=>'Liste des '.$TType[$type]
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucun emprunt à afficher"
+			,'messageNothing'=>'Il n\'y a aucun événement à afficher'
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			
@@ -156,9 +209,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	$evenement->load_liste($ATMdb);
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/evenement.tpl.php'
-		,array(
-			//'historique'=>$TEvents
-		)
+		,array()
 		,array(
 			'ressource'=>array(
 				'id'=>$ressource->getId()
@@ -167,7 +218,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				'id'=>$evenement->getId()
 				,'user'=>$form->combo('','fk_user',$evenement->TUser,$evenement->fk_user)
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
-				,'commentaire'=>$form->texte('','description',$evenement->description, 30,100,'','','-')
+				,'commentaire'=>$form->texte('','commentaire',$evenement->commentaire, 30,100,'','','-')
 				,'motif'=>$form->texte('','motif',$evenement->motif, 30,100,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->get_date('date_fin'), 10)
@@ -178,11 +229,8 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-			/*,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource')
 			)
-			
-			
 		)	
 		
 	);

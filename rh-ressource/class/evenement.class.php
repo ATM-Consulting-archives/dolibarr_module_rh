@@ -4,21 +4,19 @@ class TRH_Evenement  extends TObjetStd {
 	function __construct(){
 		parent::set_table(MAIN_DB_PREFIX.'rh_evenement');
 		parent::add_champs('date_debut, date_fin','type=date;');
-		
 		parent::add_champs('fk_rh_ressource','type=entier;index;');	
 		parent::add_champs('fk_user,entity','type=entier;index;');
-		parent::add_champs('fk_tier,entity','type=entier;index;');
+		parent::add_champs('motif','type=chaine;');
+		parent::add_champs('commentaire','type=chaine;');
 		
-		//type : accident, répération, ou emprunt
+		//type : accident, répération, emprunt, appel ou facture
 		parent::add_champs('type','type=chaine;');
 
 		//pour le wdCalendar
 		parent::add_champs('color','type=chaine;');
 		parent::add_champs('isAllDayEvent','type=entier;');
-		parent::add_champs('location','type=chaine;');
 		parent::add_champs('subject','type=chaine;');
-		parent::add_champs('description','type=chaine;');
-		parent::add_champs('recurringrule','type=chaine;');
+		
 		
 		//pour un accident, une réparation
 		parent::add_champs('motif','type=chaine;');
@@ -33,25 +31,21 @@ class TRH_Evenement  extends TObjetStd {
 		parent::add_champs('appelDureeFacturee','type=chaine;');
 		parent::add_champs('fk_facture','type=entier;index');
 		
-		
-		
-		//pour une facture téléphonique
-		/*
-		parent::add_champs('appelDate','type=date;');
-		parent::add_champs('appelHeure','type=chaine;');
-		parent::add_champs('appelNumero','type=chaine;');
-		parent::add_champs('appelDureeReel','type=chaine;');
-		parent::add_champs('appelDureeFacturee','type=chaine;');
-		parent::add_champs('fk_facture','type=entier;index');
-		*/
-		
-		
+		//pour une facture
+		parent::add_champs('numFacture','type=chaine;');
+		parent::add_champs('compteFacture','type=chaine;');		
 		
 		parent::_init_vars();
 		parent::start();
 
 		
-		$this->TType = array('accident'=>'Accident', 'reparation'=>'Réparation', 'appel'=>'Appel','factureTel'=>'Facture Téléphone');		
+		$this->TType = array(
+			 'accident'=>'Accident'
+			,'reparation'=>'Réparation'
+			,'appel'=>'Appel'
+			,'facture'=>'Facture'
+		);	
+			
 	}
 
 	function load_liste(&$ATMdb){
@@ -93,14 +87,9 @@ class TRH_Evenement  extends TObjetStd {
 		else {
 			$this->color = 6 ; //couleur verte moche
 			$this->subject = "[ ".$temp->libelle." ] ".$this->TType[$this->type]." : ".$this->motif;
-	
 		}
 		
 		$this->isAllDayEvent = 1;
-		
-		//$this->description = "";
-		
-		
 		
 		parent::save($db);
 	}

@@ -10,7 +10,7 @@
 		
 
 <table width="100%" class="border">
-	<tr><td width="20%">Code</td><td>[ressourceType.code; strconv=no]</td></tr>
+	<tr><td width="20%">Code</td><td>[ressourceType.code; strconv=no]</td></tr>[ressourceType.supprimable; strconv=no]
 	<tr><td width="20%">Libellé</td><td>[ressourceType.libelle; strconv=no]</td></tr>
 </table>
 
