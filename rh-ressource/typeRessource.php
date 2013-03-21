@@ -113,7 +113,7 @@ function _liste(&$ATMdb, &$ressource) {
 	getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
-	$sql="SELECT rowid as 'ID', code as 'Code', libelle as 'Libellé'
+	$sql="SELECT rowid as 'ID', libelle as 'Libellé', code as 'Code', '' as 'Supprimer'
 		FROM @table@
 		WHERE entity=".$conf->entity;
 	
@@ -129,7 +129,8 @@ function _liste(&$ATMdb, &$ressource) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Code'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'Libellé'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array()
@@ -177,10 +178,11 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				'id'=>$ressource->getId()
 				,'code'=>$form->texte('', 'code', $ressource->code, 20,255,'','','à saisir')
 				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 20,255,'','','à saisir') 
+				,'supprimable'=>$form->hidden('supprimable', 1)
 				,'date_maj'=>$ressource->get_date('date_maj','d/m/Y à H:i:s')
 				,'date_cre'=>$ressource->get_date('date_cre','d/m/Y')
 			)
-			,'newField'=>array(
+			/*,'newField'=>array(
 				'hidden'=>$form->hidden('action', 'save')
 				,'code'=>$form->texte('', 'TNField[code]', '', 20,255,'','','-')
 				,'ordre'=>$form->hidden('TNField[ordre]', $k+1, 'class="ordre'.($k+1).'"')
@@ -188,8 +190,9 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 20,255,'','','-')
 				,'type'=>$form->combo('', 'TNField[type]',$ressource->TType, 'texte')
 				,'obligatoire'=>$form->combo('','TNField[obligatoire]',array('Oui','Non'),'0')
+				
 			
-			)
+			)*/
 			,'view'=>array(
 				'mode'=>$mode
 				,'nbChamps'=>count($ressource->TField)
