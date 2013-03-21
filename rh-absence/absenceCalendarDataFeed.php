@@ -68,7 +68,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
       );
      }
       
-      
+     /*
    $sql2 = " SELECT rowid as 'ID', 
 		  date_jourOff, moment 
 	FROM  llx_rh_absence_jours_feries WHERE `date_jourOff` between '"
@@ -94,7 +94,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
         '',//$attends
       ));
      
-    }
+    }*/
 	}catch(Exception $e){
      $ret['error'] = $e->getMessage();
   }
