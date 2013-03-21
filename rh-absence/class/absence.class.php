@@ -95,9 +95,6 @@ class TRH_Compteur extends TObjetStd {
 		$this->date_rttCloture=strtotime('2013-03-01 00:00:00');
 		$this->date_congesCloture=strtotime('2013-06-01 00:00:00');
 	}
-	
-	
-	
 }
 
 
@@ -142,18 +139,8 @@ class TRH_Absence extends TObjetStd {
 			global $conf, $user;
 			$this->entity = $conf->entity;
 			
-			///////calcul durée du congés 
-			$diff=$this->date_fin-$this->date_debut;
-			$dureeAbsenceCourante=$diff/3600/24;
-			
-			//prise en compte du matin et après midi
-			if(isset($_REQUEST['id'])){
-				if($this->ddMoment=="matin"&&$this->dfMoment=="apresmidi"){
-					$dureeAbsenceCourante+=1;
-				}else if($this->ddMoment==$this->dfMoment&&$dureeAbsenceCourante==0){
-					$dureeAbsenceCourante+=0.5;
-				}
-			}
+			$dureeAbsenceCourante=$this->calculDureeAbsence($ATMdb);
+			$dureeAbsenceCourante=$this->calculJoursFeries($ATMdb, $dureeAbsenceCourante);
 			
 			///////décompte des congés
 			if($this->type=="rttcumule"){
@@ -182,6 +169,126 @@ class TRH_Absence extends TObjetStd {
 			parent::save($db);
 		}
 
+		
+		//calcul de la durée initiale de l'absence (sans jours fériés, sans les jours travaillés du salariés)
+		function calculDureeAbsence(&$ATMdb){
+			$diff=$this->date_fin-$this->date_debut;
+			$duree=$diff/3600/24;
+			
+			//prise en compte du matin et après midi
+			if(isset($_REQUEST['id'])){
+				if($this->ddMoment=="matin"&&$this->dfMoment=="apresmidi"){
+					$duree+=1;
+				}
+				else if($this->ddMoment==$this->dfMoment){
+					$duree+=0.5;
+				}
+				
+			}
+			return $duree; 
+		}
+		
+		//calcul la durée de l'absence après le décompte des jours fériés
+		function calculJoursFeries(&$ATMdb, $duree){
+			//echo $duree."salut";
+			$k=0;
+			$dateDebutAbs=$this->php2MySqlTime($this->date_debut);
+			$dateFinAbs=$this->php2MySqlTime($this->date_fin);
+			
+			//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
+			$sql="SELECT rowid, date_jourOff, moment FROM `llx_rh_absence_jours_feries` WHERE date_jourOff between '"
+			.$dateDebutAbs."' and '". $dateFinAbs."'"; 
+			//echo $sql;
+			$ATMdb->Execute($sql);
+			$Tab = array();
+			while($ATMdb->Get_line()) {
+				$Tab[$ATMdb->Get_field('rowid')]= array(
+					'date_jourOff'=>$ATMdb->Get_field('date_jourOff')
+					,'moment'=>$ATMdb->Get_field('moment')
+					);
+			}
+			print "ddmoment =".$this->ddMoment. "   debutAbs".$dateDebutAbs."   fin abs".$dateFinAbs;
+			//traitement pour chaque jour férié
+			foreach ($Tab as $key=>$jour) {
+				//echo $jour['date_jourOff']."        ";
+				//on teste si le jour est égal à l'une des extrémités de la demande d'absence, sinon il n'y a pas de test spécial à faire
+				if($dateDebutAbs==$jour['date_jourOff']&&$dateFinAbs==$jour['date_jourOff']){ //date début absence == jour férié et date fin absence == même jour férié
+					//echo "boucle1";
+					if($this->ddMoment==$this->dfMoment&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
+						$duree-=0.5;
+					}
+					else if($this->ddMoment==$this->dfMoment&&$this->ddMoment=='matin'&&$jour['moment']=='matin'){
+						$duree-=0.5;
+					}
+					else if($this->ddMoment==$this->dfMoment&&$this->ddMoment=='apresmidi'&&$jour['moment']=='apresmidi'){
+						$duree-=0.5;
+					}
+					else if($this->ddMoment=='matin'&&$this->dfMoment=='apresmidi'&&$jour['moment']=='apresmidi'){
+						$duree-=0.5;
+					}
+					else if($this->ddMoment=='matin'&&$this->dfMoment=='apresmidi'&&$jour['moment']=='matin'){
+						$duree-=0.5;
+					}
+					else if($this->ddMoment=='matin'&&$this->dfMoment=='apresmidi'&&$jour['moment']=='allday'){
+						$duree-=1;
+					}
+				}else if($dateDebutAbs==$jour['date_jourOff']){	//si la date début est égale à la date du jour férié
+					//echo "boucle2";
+					if($this->ddMoment=='matin'&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
+						$duree-=1;
+					}
+					else if($this->ddMoment=='matin'&&$jour['moment']=='matin'){ //traite le cas matin et apresmidi
+						$duree-=0.5;
+					}
+					else if($this->ddMoment=='matin'&&$jour['moment']=='apresmidi'){ //traite le cas matin et apresmidi
+						$duree-=0.5;
+					}
+					else if($this->ddMoment=='apresmidi'&&$jour['moment']=='apresmidi'){ //traite le cas matin et apresmidi
+						$duree-=0.5;
+					}
+					else if($this->ddMoment=='apresmidi'&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
+						$duree-=0.5;
+					}
+				}
+				else if($dateFinAbs==$jour['date_jourOff']){	//si la date début est égale à la date du jour férié
+				//	echo "boucle3";
+					if($this->dfMoment=='matin'&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
+						$duree-=0.5;
+					}
+					else if($this->dfMoment=='matin'&&$jour['moment']=='matin'){ //traite le cas matin et apresmidi
+						$duree-=0.5;
+					}
+					else if($this->dfMoment=='matin'&&$jour['moment']=='apresmidi'){ //traite le cas matin et apresmidi
+						$duree-=0.5;
+					}
+					else if($this->dfMoment=='apresmidi'&&$jour['moment']=='apresmidi'){ //traite le cas matin et apresmidi
+						$duree-=0.5;
+					}
+					else if($this->dfMoment=='apresmidi'&&$jour['moment']=='matin'){ //traite le cas matin et apresmidi
+						$duree-=0.5;
+					}
+					else if($this->dfMoment=='apresmidi'&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
+						$duree-=1;
+					}
+				}
+				else{
+					//echo "boucle4";
+					if($jour['date_jourOff']=='allday'){
+						$duree-=1;
+					}else{
+						$duree-=0.5;
+					}
+				}
+				
+			}
+			
+			return $duree;
+		}
+		
+		function php2MySqlTime($phpDate){
+		    return date("Y-m-d H:i:s", $phpDate);
+		}
+		
 		//recrédite les heures au compteur lors de la suppression d'une absence 
 		function recrediterHeure(&$ATMdb){
 			global $conf, $user;
