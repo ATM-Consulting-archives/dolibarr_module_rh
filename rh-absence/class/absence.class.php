@@ -43,8 +43,6 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('rttAcquisAnnuelCumuleInit','type=float;');
 		parent::add_champs('rttAcquisAnnuelNonCumuleInit','type=float;');
 		
-		
-		
 		parent::add_champs('entity','type=int;');					
 					
 		parent::_init_vars();
@@ -288,17 +286,7 @@ class TRH_Absence extends TObjetStd {
 		
 		function calculJoursTravailles(&$ATMdb, $duree){
 			
-			//on récupère les jours travaillés de l'utilisateur
-			$dateDebutAbs=$this->php2Time($this->date_debut);
-			$dateFinAbs=$this->php2Time($this->date_fin);
-			
-			//$jourDebut=$this->jourSemaine($this->date_debut);
-			//$jourFin=$this->jourSemaine($this->date_fin);
-			
-			/*$jourFNM1=$this->date_fin-3600*24;
-			$jourFNM11=$this->php2Time($jourFNM1);
-			echo "salutJM1".$this->jourSemaine($jourFNM11);*/
-			
+						
 			//on cherche les jours travaillés par l'employé
 			$sql="SELECT rowid, lundiam, lundipm, 
 			mardiam, mardipm, mercrediam, mercredipm, 
@@ -318,9 +306,73 @@ class TRH_Absence extends TObjetStd {
 				$rowid=$ATMdb->Get_field($rowid);
 			}			
 			
+			
+			//on traite les jours de début et de fin indépendemment des autres
+			//traitement jour de début
+			$dateDebutAbs=$this->php2Time($this->date_debut);
+			$jourDebutSem=$this->jourSemaine($this->date_debut);
+			
+			//traitement jour de fin
+			$dateFinAbs=$this->php2Time($this->date_fin);
+			$jourFinSem=$this->jourSemaine($this->date_fin);
+			
+			if($this->date_debut==$this->date_fin){	//si les jours de début et de fin sont les mêmes
+				echo "boucle1";
+				if($this->dfMoment=='matin'){		// si la date de fin est le matin, il n'y a donc que le cas matin à traiter
+					if($TTravail[$jourDebutSem.'am']==0){
+						$duree-=0.5;
+					}
+				}else if($this->ddMoment=='apresmidi'){		// si la date de debut est lapres midi, il n'y a donc que le cas pm à traiter
+					if($TTravail[$jourDebutSem.'pm']==0){
+						$duree-=0.5;
+					}
+				}else{	//sinon on traite les cas matin et apres midi
+					if($TTravail[$jourDebutSem.'am']==0){
+						$duree-=0.5;
+					}
+					if($TTravail[$jourDebutSem.'pm']==0){
+						$duree-=0.5;
+					}
+				}
+			}else{	//les jours de début et de fin sont différents
+				//jour de début
+				echo "boucle2";
+				if($this->ddMoment=='matin'){
+					if($TTravail[$jourDebutSem.'am']==0){
+						$duree-=0.5;
+					}
+					if($TTravail[$jourDebutSem.'pm']==0){
+						$duree-=0.5;
+					}
+				}else if($this->ddMoment=='apresmidi'){
+					if($TTravail[$jourDebutSem.'pm']==0){
+						$duree-=0.5;
+					}
+				}
+				//jour de fin
+				if($this->dfMoment=='matin'){
+					if($TTravail[$jourFinSem.'am']==0){
+						$duree-=0.5;
+					}
+				}else if($this->dfMoment=='apresmidi'){
+					if($TTravail[$jourFinSem.'am']==0){
+						$duree-=0.5;
+					}
+					if($TTravail[$jourFinSem.'pm']==0){
+						$duree-=0.5;
+					}
+				}
+			}
+			
+			
+			
+			
+			
+			
+			
 			//pour chaque jour, du début de l'absence jusqu'à sa fin, on teste si l'employé travaille
-			$jourEnCours=$this->date_debut;
-			$jourFin=$this->date_fin+3600*24;
+			$jourEnCours=$this->date_debut+3600*24;
+			$jourFin=$this->date_fin;
 			//$jourm1=$jourFin-3600*24;
 			//echo $jourEnCours." ".$jourFin." ".$jourm1;
 			while($jourEnCours!=$jourFin){
@@ -330,7 +382,9 @@ class TRH_Absence extends TObjetStd {
 				foreach ($this->TJour as $jour) {
 					if($jour==$jourEnCoursSem){
 						foreach(array('am','pm') as $moment) {
-							echo $TTravail[$jour.$moment];
+							if($TTravail[$jour.$moment]==0){
+								$duree-=0.5;
+							}
 						}
 					}
 				}
