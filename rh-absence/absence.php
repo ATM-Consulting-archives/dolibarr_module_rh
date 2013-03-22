@@ -18,6 +18,7 @@
 				break;	
 			case 'edit'	:
 				$absence->load($ATMdb, $_REQUEST['id']);
+				$absence->recrediterHeure($ATMdb, $absence);
 				_fiche($ATMdb, $absence,'edit');
 				break;
 				
@@ -93,20 +94,21 @@ function _liste(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de vos absences');
 	?><div class="fiche"><?	
-	getStandartJS();
+	//getStandartJS();
 	
 	$r = new TSSRenderControler($absence);
-	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',DATE(r.date_debut) as 'Date début', DATE(r.date_fin) as 'Date Fin', 
-			  r.libelle as 'Type absence',r.fk_user as 'Utilisateur Courant',  r.libelleEtat as 'Statut demande', '' as 'Supprimer'
-		FROM llx_rh_absence as r
-		WHERE r.fk_user=".$user->id." AND r.entity=".$conf->entity;
+	$sql="SELECT rowid as 'ID', date_cre as 'DateCre',date_debut , DATE(date_fin) as 'Date Fin', 
+			  libelle as 'Type absence',fk_user as 'Utilisateur Courant',  libelleEtat as 'Statut demande', '' as 'Supprimer'
+		FROM llx_rh_absence 
+		WHERE fk_user=".$user->id." AND entity=".$conf->entity;
 		
 	
 	$TOrder = array('Statut demande'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
-	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');		
 	//print $page;
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
@@ -114,12 +116,12 @@ function _liste(&$ATMdb, &$absence) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'ID'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'date_debut'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')
-		,'type'=>array()
+		,'type'=>array('date_debut'=>'date')
 		,'liste'=>array(
 			'titre'=>'Liste de vos absences'
 			,'image'=>img_picto('','title.png', '', 0)
@@ -129,13 +131,21 @@ function _liste(&$ATMdb, &$absence) {
 			,'messageNothing'=>"Il n'y a aucune absence à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			
+		)
+		,'title'=>array(
+			'date_debut'=>'Date début'
+		)
+		,'search'=>array(
+			'date_debut'=>array('recherche'=>'calendar')
 			
 		)
 		,'orderBy'=>$TOrder
 		
 	));
 	?><a class="butAction" href="?id=<?=$feries->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
-	
+	$form->end();
 	llxFooter();
 }	
 	
