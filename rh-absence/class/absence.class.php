@@ -15,8 +15,6 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('date_congesCloture','type=date;');	//date de clôture période rtt
 		parent::add_champs('nombreCongesAcquisMensuel','type=float;');
 		
-		
-		
 		//conges N-1
 		parent::add_champs('acquisExerciceNM1','type=float;');				
 		parent::add_champs('acquisAncienneteNM1','type=float;');				
@@ -35,8 +33,6 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('rttAcquisMensuel','type=float;');	
 		parent::add_champs('rttAcquisAnnuelCumule','type=float;');
 		parent::add_champs('rttAcquisAnnuelNonCumule','type=float;');
-		
-		
 		
 		parent::add_champs('rttannee','type=int;');	
 		parent::add_champs('rttMetier','type=chaine;');		
@@ -123,6 +119,8 @@ class TRH_Absence extends TObjetStd {
 		parent::start();
 		
 		$this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
+		$this->Tjoursem = array("dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi");
+		
 		
 		//combo box pour le type d'absence
 		$this->TTypeAbsence = array('rttcumule'=>'RTT Cumulé','rttnoncumule'=>'RTT Non Cumulé', 'conges' => 'Congés', 'maladiemaintenue' => 'Maladie maintenue', 
@@ -195,8 +193,8 @@ class TRH_Absence extends TObjetStd {
 		//calcul la durée de l'absence après le décompte des jours fériés
 		function calculJoursFeries(&$ATMdb, $duree){
 
-			$dateDebutAbs=$this->php2MySqlTime($this->date_debut);
-			$dateFinAbs=$this->php2MySqlTime($this->date_fin);
+			$dateDebutAbs=$this->php2Time($this->date_debut);
+			$dateFinAbs=$this->php2Time($this->date_fin);
 			
 			//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
 			$sql="SELECT rowid, date_jourOff, moment FROM `llx_rh_absence_jours_feries` WHERE date_jourOff between '"
@@ -291,22 +289,20 @@ class TRH_Absence extends TObjetStd {
 		function calculJoursTravailles(&$ATMdb, $duree){
 			
 			//on récupère les jours travaillés de l'utilisateur
-			$dateDebutAbs=$this->php2MySqlTime($this->date_debut);
-			$dateFinAbs=$this->php2MySqlTime($this->date_fin);
+			$dateDebutAbs=$this->php2Time($this->date_debut);
+			$dateFinAbs=$this->php2Time($this->date_fin);
 			
+			//$jourDebut=$this->jourSemaine($this->date_debut);
+			//$jourFin=$this->jourSemaine($this->date_fin);
 			
-			$frdate=$this->php2MySqlTime($this->date_debut);
-			$joursem = array("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi");
-			// extraction des jour, mois, an de la date
-			list($jour, $mois, $annee) = explode('/', $frdate);
-			// calcul du timestamp
-			$timestamp = mktime (0, 0, 0, $mois, $jour, $annee);
-			// affichage du jour de la semaine
-			echo $joursem[date("w",$timestamp)];
+			/*$jourFNM1=$this->date_fin-3600*24;
+			$jourFNM11=$this->php2Time($jourFNM1);
+			echo "salutJM1".$this->jourSemaine($jourFNM11);*/
 			
-			
-			//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
-			$sql="SELECT rowid, lundiam, lundipm, mardiam, mardipm, mercrediam, mercredipm, jeudiam, jeudipm, vendrediam, vendredipm,
+			//on cherche les jours travaillés par l'employé
+			$sql="SELECT rowid, lundiam, lundipm, 
+			mardiam, mardipm, mercrediam, mercredipm, 
+			jeudiam, jeudipm, vendrediam, vendredipm,
 			samediam, samedipm, dimancheam, dimanchepm
 			FROM `llx_rh_absence_emploitemps` 
 			WHERE fk_user=".$this->fk_user; 
@@ -322,13 +318,45 @@ class TRH_Absence extends TObjetStd {
 				$rowid=$ATMdb->Get_field($rowid);
 			}			
 			
+			//pour chaque jour, du début de l'absence jusqu'à sa fin, on teste si l'employé travaille
+			$jourEnCours=$this->date_debut;
+			$jourFin=$this->date_fin+3600*24;
+			//$jourm1=$jourFin-3600*24;
+			//echo $jourEnCours." ".$jourFin." ".$jourm1;
+			while($jourEnCours!=$jourFin){
+				echo "boucle1";
+				$jourEnCoursSem=$this->jourSemaine($jourEnCours);
+				echo $jourEnCoursSem;
+				foreach ($this->TJour as $jour) {
+					if($jour==$jourEnCoursSem){
+						foreach(array('am','pm') as $moment) {
+							echo $TTravail[$jour.$moment];
+						}
+					}
+				}
+				$jourEnCours=$jourEnCours+3600*24;
+				
+			}
 			
 		    return $duree;
 		}
 		
-		function php2MySqlTime($phpDate){
+		//renvoie le jour de la semaine correspondant à la date passée en paramètre
+		function jourSemaine($phpDate){
+		    $frdate=$this->php2dmy($phpDate);
+			list($jour, $mois, $annee) = explode('/', $frdate);
+			// calcul du timestamp
+			$timestamp = mktime (0, 0, 0, $mois, $jour, $annee);
+			// affichage du jour de la semaine
+			return $this->Tjoursem[date("w",$timestamp)];
+		}
+		
+		//retourne la date au format "Y-m-d H:i:s"
+		function php2Time($phpDate){
 		    return date("Y-m-d H:i:s", $phpDate);
 		}
+		
+		//retourne la date au format "d/m/Y"
 		function php2dmy($phpDate){
 		    return date("d/m/Y", $phpDate);
 		}
@@ -337,7 +365,6 @@ class TRH_Absence extends TObjetStd {
 		function recrediterHeure(&$ATMdb){
 			global $conf, $user;
 			$this->entity = $conf->entity;
-			
 			if($this->etat!='Refusee'){
 				switch($this->type){
 					case "rttcumule" : 
