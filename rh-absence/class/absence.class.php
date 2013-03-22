@@ -160,7 +160,6 @@ class TRH_Absence extends TObjetStd {
 				$ATMdb->Execute($sqlDecompte);
 				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 			}
-
 			//autres paramètes à sauvegarder
 			$this->libelle=saveLibelle($this->type);
 			$this->duree=$dureeAbsenceCourante;
@@ -183,16 +182,16 @@ class TRH_Absence extends TObjetStd {
 				else if($this->ddMoment==$this->dfMoment){
 					$duree+=0.5;
 				}
-				
 			}
 			return $duree; 
 		}
 		
+		
 		//calcul la durée de l'absence après le décompte des jours fériés
 		function calculJoursFeries(&$ATMdb, $duree){
 
-			$dateDebutAbs=$this->php2Time($this->date_debut);
-			$dateFinAbs=$this->php2Time($this->date_fin);
+			$dateDebutAbs=$this->php2Date($this->date_debut);
+			$dateFinAbs=$this->php2Date($this->date_fin);
 			
 			//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
 			$sql="SELECT rowid, date_jourOff, moment FROM `llx_rh_absence_jours_feries` WHERE date_jourOff between '"
@@ -277,16 +276,31 @@ class TRH_Absence extends TObjetStd {
 						$duree-=0.5;
 					}
 				}
-				
 			}
-			
 			return $duree;
 		}
 
 		
 		function calculJoursTravailles(&$ATMdb, $duree){
 			
-						
+			//traitement jour de début
+			$dateDebutAbs=$this->php2Date($this->date_debut);
+			$jourDebutSem=$this->jourSemaine($this->date_debut);
+			
+			//traitement jour de fin
+			$dateFinAbs=$this->php2Date($this->date_fin);
+			$jourFinSem=$this->jourSemaine($this->date_fin);
+			
+			//on récupère les jours fériés compris dans la demande d'absence
+			$sql="SELECT date_jourOff FROM `llx_rh_absence_jours_feries` WHERE date_jourOff between '"
+			.$dateDebutAbs."' and '". $dateFinAbs."'"; 
+			//echo $sql;
+			$ATMdb->Execute($sql);
+			$TabFerie = array();
+			while($ATMdb->Get_line()) {
+				$TabFerie[]= $ATMdb->Get_field('date_jourOff');
+			}				
+
 			//on cherche les jours travaillés par l'employé
 			$sql="SELECT rowid, lundiam, lundipm, 
 			mardiam, mardipm, mercrediam, mercredipm, 
@@ -306,69 +320,82 @@ class TRH_Absence extends TObjetStd {
 				$rowid=$ATMdb->Get_field($rowid);
 			}			
 			
-			
 			//on traite les jours de début et de fin indépendemment des autres
-			//traitement jour de début
-			$dateDebutAbs=$this->php2Time($this->date_debut);
-			$jourDebutSem=$this->jourSemaine($this->date_debut);
-			
-			//traitement jour de fin
-			$dateFinAbs=$this->php2Time($this->date_fin);
-			$jourFinSem=$this->jourSemaine($this->date_fin);
-			
 			if($this->date_debut==$this->date_fin){	//si les jours de début et de fin sont les mêmes
-				echo "boucle1";
-				if($this->dfMoment=='matin'){		// si la date de fin est le matin, il n'y a donc que le cas matin à traiter
-					if($TTravail[$jourDebutSem.'am']==0){
-						$duree-=0.5;
+				$ferie=0;
+				foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
+		 			if(strtotime($jourFerie)==$this->date_debut){
+		 				$ferie=1;
+		 			}
+		 		}
+				if(!$ferie){
+					echo "boucle1";
+					if($this->dfMoment=='matin'){		// si la date de fin est le matin, il n'y a donc que le cas matin à traiter
+						if($TTravail[$jourDebutSem.'am']==0){
+							$duree-=0.5;
+						}
+					}else if($this->ddMoment=='apresmidi'){		// si la date de debut est lapres midi, il n'y a donc que le cas pm à traiter
+						if($TTravail[$jourDebutSem.'pm']==0){
+							$duree-=0.5;
+						}
+					}else{	//sinon on traite les cas matin et apres midi
+						if($TTravail[$jourDebutSem.'am']==0){
+							$duree-=0.5;
+						}
+						if($TTravail[$jourDebutSem.'pm']==0){
+							$duree-=0.5;
+						}
 					}
-				}else if($this->ddMoment=='apresmidi'){		// si la date de debut est lapres midi, il n'y a donc que le cas pm à traiter
-					if($TTravail[$jourDebutSem.'pm']==0){
-						$duree-=0.5;
-					}
-				}else{	//sinon on traite les cas matin et apres midi
-					if($TTravail[$jourDebutSem.'am']==0){
-						$duree-=0.5;
-					}
-					if($TTravail[$jourDebutSem.'pm']==0){
-						$duree-=0.5;
-					}
+					return $duree;
 				}
+				else return $duree;
+				
 			}else{	//les jours de début et de fin sont différents
-				//jour de début
 				echo "boucle2";
-				if($this->ddMoment=='matin'){
-					if($TTravail[$jourDebutSem.'am']==0){
-						$duree-=0.5;
-					}
-					if($TTravail[$jourDebutSem.'pm']==0){
-						$duree-=0.5;
-					}
-				}else if($this->ddMoment=='apresmidi'){
-					if($TTravail[$jourDebutSem.'pm']==0){
-						$duree-=0.5;
+				//////////////////////////jour de début
+				$ferie=0;		
+				foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
+		 			if(strtotime($jourFerie)==$this->date_debut){
+		 				$ferie=1;
+		 			}
+		 		}
+				if(!$ferie){
+					if($this->ddMoment=='matin'){
+						if($TTravail[$jourDebutSem.'am']==0){
+							$duree-=0.5;
+						}
+						if($TTravail[$jourDebutSem.'pm']==0){
+							$duree-=0.5;
+						}
+					}else if($this->ddMoment=='apresmidi'){
+						if($TTravail[$jourDebutSem.'pm']==0){
+							$duree-=0.5;
+						}
 					}
 				}
-				//jour de fin
-				if($this->dfMoment=='matin'){
-					if($TTravail[$jourFinSem.'am']==0){
-						$duree-=0.5;
-					}
-				}else if($this->dfMoment=='apresmidi'){
-					if($TTravail[$jourFinSem.'am']==0){
-						$duree-=0.5;
-					}
-					if($TTravail[$jourFinSem.'pm']==0){
-						$duree-=0.5;
+				
+				///////////////////////////jour de fin
+				$ferie=0;		
+				foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
+		 			if(strtotime($jourFerie)==$this->date_fin){
+		 				$ferie=1;
+		 			}
+		 		}
+				if(!$ferie){
+					if($this->dfMoment=='matin'){
+						if($TTravail[$jourFinSem.'am']==0){
+							$duree-=0.5;
+						}
+					}else if($this->dfMoment=='apresmidi'){
+						if($TTravail[$jourFinSem.'am']==0){
+							$duree-=0.5;
+						}
+						if($TTravail[$jourFinSem.'pm']==0){
+							$duree-=0.5;
+						}
 					}
 				}
 			}
-			
-			
-			
-			
-			
-			
 			
 			//pour chaque jour, du début de l'absence jusqu'à sa fin, on teste si l'employé travaille
 			$jourEnCours=$this->date_debut+3600*24;
@@ -376,14 +403,22 @@ class TRH_Absence extends TObjetStd {
 			//$jourm1=$jourFin-3600*24;
 			//echo $jourEnCours." ".$jourFin." ".$jourm1;
 			while($jourEnCours!=$jourFin){
+				$ferie=0;
 				echo "boucle1";
-				$jourEnCoursSem=$this->jourSemaine($jourEnCours);
-				echo $jourEnCoursSem;
-				foreach ($this->TJour as $jour) {
-					if($jour==$jourEnCoursSem){
-						foreach(array('am','pm') as $moment) {
-							if($TTravail[$jour.$moment]==0){
-								$duree-=0.5;
+				foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
+		 			if(strtotime($jourFerie)==$jourEnCours){
+		 				$ferie=1;
+		 			}
+		 		}
+				if(!$ferie){
+					$jourEnCoursSem=$this->jourSemaine($jourEnCours);
+					echo $jourEnCoursSem;
+					foreach ($this->TJour as $jour) {
+						if($jour==$jourEnCoursSem){
+							foreach(array('am','pm') as $moment) {
+								if($TTravail[$jour.$moment]==0){
+									$duree-=0.5;
+								}
 							}
 						}
 					}
@@ -395,6 +430,7 @@ class TRH_Absence extends TObjetStd {
 		    return $duree;
 		}
 		
+		
 		//renvoie le jour de la semaine correspondant à la date passée en paramètre
 		function jourSemaine($phpDate){
 		    $frdate=$this->php2dmy($phpDate);
@@ -405,15 +441,18 @@ class TRH_Absence extends TObjetStd {
 			return $this->Tjoursem[date("w",$timestamp)];
 		}
 		
+		
 		//retourne la date au format "Y-m-d H:i:s"
-		function php2Time($phpDate){
+		function php2Date($phpDate){
 		    return date("Y-m-d H:i:s", $phpDate);
 		}
+		
 		
 		//retourne la date au format "d/m/Y"
 		function php2dmy($phpDate){
 		    return date("d/m/Y", $phpDate);
 		}
+		
 		
 		//recrédite les heures au compteur lors de la suppression d'une absence 
 		function recrediterHeure(&$ATMdb){
@@ -436,7 +475,6 @@ class TRH_Absence extends TObjetStd {
 					break;
 				}
 			}
-			
 		}
 }
 
