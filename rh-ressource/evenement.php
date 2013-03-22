@@ -112,47 +112,38 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
 	$r = new TSSRenderControler($evenement);
 	switch($type){
 		case 'principal' :
-			$sql ="SELECT DISTINCT e.rowid as 'ID',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
+			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 				DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.type as 'Type',
 				e.motif as 'Motif', e.description as 'Commentaire', e.coutHT as 'Coût', 
-				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'
-				FROM ".MAIN_DB_PREFIX."rh_evenement as e
-				LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
-				LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
-				LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
-				WHERE e.entity=".$conf->entity."
-				AND e.fk_rh_ressource=".$ressource->getId()."
-				AND ( e.type='accident' OR e.type='reparation' )";
+				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA' ";
+			$jointureType =  " AND ( e.type='accident' OR e.type='reparation' )";
 			break;
 		 case 'appel' :
-			$sql ="SELECT DISTINCT e.rowid as 'ID',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
+			$jointureChamps =" CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 				DATE(e.date_debut) as 'Date', e.appelHeure as 'Heure', e.appelNumero as 'Numéro appelé', 
 				e.appelDureeReel as 'Durée/Volume réel', e.appelDureeFacturee as 'Durée/Volume facturé',
-				e.motif as 'Motif', CONCAT (CAST(e.coutHT as DECIMAL(16,2)), ' €') as 'Montant HT'
-				FROM ".MAIN_DB_PREFIX."rh_evenement as e
-				LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
-				LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
-				LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
-				WHERE e.entity=".$conf->entity."
-				AND e.fk_rh_ressource=".$ressource->getId()."
-				AND e.type='appel' ";
+				e.motif as 'Motif', CONCAT (CAST(e.coutHT as DECIMAL(16,2)), ' €') as 'Montant HT' ";
+			$jointureType = " AND e.type='appel' ";
 			break;
-		case 'facture':
-			echo "facture";		
-			$sql ="SELECT DISTINCT e.rowid as 'ID',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
+		case 'facture':		
+			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 				DATE(e.date_debut) as 'Date début', e.type as 'Type',
 				e.motif as 'Motif', e.description as 'Commentaire', e.coutHT as 'Coût', 
-				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'
-				FROM ".MAIN_DB_PREFIX."rh_evenement as e
-				LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
-				LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
-				LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
-				WHERE e.entity=".$conf->entity."
-				AND e.fk_rh_ressource=".$ressource->getId()."
-				AND e.type='facture' ";
+				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'";
+			$jointureType = " AND e.type='facture' ";
 			break;
 		}	
 	
+	$sql = "SELECT DISTINCT e.rowid as 'ID', ".
+			$jointureChamps.
+			"FROM ".MAIN_DB_PREFIX."rh_evenement as e
+			LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
+			LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
+			LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
+			WHERE e.entity=".$conf->entity."
+			AND e.fk_rh_ressource=".$ressource->getId().
+			$jointureType;
+			
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
