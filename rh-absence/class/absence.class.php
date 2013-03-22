@@ -15,8 +15,6 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('date_congesCloture','type=date;');	//date de clôture période rtt
 		parent::add_champs('nombreCongesAcquisMensuel','type=float;');
 		
-		
-		
 		//conges N-1
 		parent::add_champs('acquisExerciceNM1','type=float;');				
 		parent::add_champs('acquisAncienneteNM1','type=float;');				
@@ -35,8 +33,6 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('rttAcquisMensuel','type=float;');	
 		parent::add_champs('rttAcquisAnnuelCumule','type=float;');
 		parent::add_champs('rttAcquisAnnuelNonCumule','type=float;');
-		
-		
 		
 		parent::add_champs('rttannee','type=int;');	
 		parent::add_champs('rttMetier','type=chaine;');		
@@ -122,6 +118,10 @@ class TRH_Absence extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		
+		$this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
+		$this->Tjoursem = array("dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi");
+		
+		
 		//combo box pour le type d'absence
 		$this->TTypeAbsence = array('rttcumule'=>'RTT Cumulé','rttnoncumule'=>'RTT Non Cumulé', 'conges' => 'Congés', 'maladiemaintenue' => 'Maladie maintenue', 
 		'maladienonmaintenue'=>'Maladie non maintenue','maternite'=>'Maternité', 'paternite'=>'Paternité', 
@@ -139,8 +139,10 @@ class TRH_Absence extends TObjetStd {
 			global $conf, $user;
 			$this->entity = $conf->entity;
 			
+			//on calcule la duree de l'absence, en décomptant jours fériés et jours non travaillés par le collaborateur
 			$dureeAbsenceCourante=$this->calculDureeAbsence($ATMdb);
 			$dureeAbsenceCourante=$this->calculJoursFeries($ATMdb, $dureeAbsenceCourante);
+			$dureeAbsenceCourante=$this->calculJoursTravailles($ATMdb, $dureeAbsenceCourante);
 			
 			///////décompte des congés
 			if($this->type=="rttcumule"){
@@ -190,10 +192,9 @@ class TRH_Absence extends TObjetStd {
 		
 		//calcul la durée de l'absence après le décompte des jours fériés
 		function calculJoursFeries(&$ATMdb, $duree){
-			//echo $duree."salut";
-			$k=0;
-			$dateDebutAbs=$this->php2MySqlTime($this->date_debut);
-			$dateFinAbs=$this->php2MySqlTime($this->date_fin);
+
+			$dateDebutAbs=$this->php2Time($this->date_debut);
+			$dateFinAbs=$this->php2Time($this->date_fin);
 			
 			//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
 			$sql="SELECT rowid, date_jourOff, moment FROM `llx_rh_absence_jours_feries` WHERE date_jourOff between '"
@@ -207,10 +208,9 @@ class TRH_Absence extends TObjetStd {
 					,'moment'=>$ATMdb->Get_field('moment')
 					);
 			}
-			print "ddmoment =".$this->ddMoment. "   debutAbs".$dateDebutAbs."   fin abs".$dateFinAbs;
+			//print "ddmoment =".$this->ddMoment. "   debutAbs".$dateDebutAbs."   fin abs".$dateFinAbs;
 			//traitement pour chaque jour férié
 			foreach ($Tab as $key=>$jour) {
-				//echo $jour['date_jourOff']."        ";
 				//on teste si le jour est égal à l'une des extrémités de la demande d'absence, sinon il n'y a pas de test spécial à faire
 				if($dateDebutAbs==$jour['date_jourOff']&&$dateFinAbs==$jour['date_jourOff']){ //date début absence == jour férié et date fin absence == même jour férié
 					//echo "boucle1";
@@ -284,32 +284,105 @@ class TRH_Absence extends TObjetStd {
 			
 			return $duree;
 		}
+
 		
-		function php2MySqlTime($phpDate){
+		function calculJoursTravailles(&$ATMdb, $duree){
+			
+			//on récupère les jours travaillés de l'utilisateur
+			$dateDebutAbs=$this->php2Time($this->date_debut);
+			$dateFinAbs=$this->php2Time($this->date_fin);
+			
+			//$jourDebut=$this->jourSemaine($this->date_debut);
+			//$jourFin=$this->jourSemaine($this->date_fin);
+			
+			/*$jourFNM1=$this->date_fin-3600*24;
+			$jourFNM11=$this->php2Time($jourFNM1);
+			echo "salutJM1".$this->jourSemaine($jourFNM11);*/
+			
+			//on cherche les jours travaillés par l'employé
+			$sql="SELECT rowid, lundiam, lundipm, 
+			mardiam, mardipm, mercrediam, mercredipm, 
+			jeudiam, jeudipm, vendrediam, vendredipm,
+			samediam, samedipm, dimancheam, dimanchepm
+			FROM `llx_rh_absence_emploitemps` 
+			WHERE fk_user=".$this->fk_user; 
+
+			$ATMdb->Execute($sql);
+			$TTravail = array();
+			while($ATMdb->Get_line()) {
+				foreach ($this->TJour as $jour) {
+					foreach(array('am','pm') as $moment) {
+						$TTravail[$jour.$moment]=$ATMdb->Get_field($jour.$moment);
+					}
+				}
+				$rowid=$ATMdb->Get_field($rowid);
+			}			
+			
+			//pour chaque jour, du début de l'absence jusqu'à sa fin, on teste si l'employé travaille
+			$jourEnCours=$this->date_debut;
+			$jourFin=$this->date_fin+3600*24;
+			//$jourm1=$jourFin-3600*24;
+			//echo $jourEnCours." ".$jourFin." ".$jourm1;
+			while($jourEnCours!=$jourFin){
+				echo "boucle1";
+				$jourEnCoursSem=$this->jourSemaine($jourEnCours);
+				echo $jourEnCoursSem;
+				foreach ($this->TJour as $jour) {
+					if($jour==$jourEnCoursSem){
+						foreach(array('am','pm') as $moment) {
+							echo $TTravail[$jour.$moment];
+						}
+					}
+				}
+				$jourEnCours=$jourEnCours+3600*24;
+				
+			}
+			
+		    return $duree;
+		}
+		
+		//renvoie le jour de la semaine correspondant à la date passée en paramètre
+		function jourSemaine($phpDate){
+		    $frdate=$this->php2dmy($phpDate);
+			list($jour, $mois, $annee) = explode('/', $frdate);
+			// calcul du timestamp
+			$timestamp = mktime (0, 0, 0, $mois, $jour, $annee);
+			// affichage du jour de la semaine
+			return $this->Tjoursem[date("w",$timestamp)];
+		}
+		
+		//retourne la date au format "Y-m-d H:i:s"
+		function php2Time($phpDate){
 		    return date("Y-m-d H:i:s", $phpDate);
+		}
+		
+		//retourne la date au format "d/m/Y"
+		function php2dmy($phpDate){
+		    return date("d/m/Y", $phpDate);
 		}
 		
 		//recrédite les heures au compteur lors de la suppression d'une absence 
 		function recrediterHeure(&$ATMdb){
 			global $conf, $user;
 			$this->entity = $conf->entity;
-			
-			switch($this->type){
-				case "rttcumule" : 
-					$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule+".$this->duree."  where fk_user=".$user->id;
-					$ATMdb->Execute($sqlRecredit);
-				break;
-				case "rttnoncumule" : 
-					$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule+".$this->duree."  where fk_user=".$user->id;
-					$ATMdb->Execute($sqlRecredit);
-				break;
-				default :  //dans les autres cas, on recrédite les congés
-					$sqlRecredit="UPDATE `llx_rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
-					//echo $this->type.$sqlRecredit;exit;
-					$ATMdb->Execute($sqlRecredit);
-				break;
-	
+			if($this->etat!='Refusee'){
+				switch($this->type){
+					case "rttcumule" : 
+						$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule+".$this->duree."  where fk_user=".$user->id;
+						$ATMdb->Execute($sqlRecredit);
+					break;
+					case "rttnoncumule" : 
+						$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule+".$this->duree."  where fk_user=".$user->id;
+						$ATMdb->Execute($sqlRecredit);
+					break;
+					default :  //dans les autres cas, on recrédite les congés
+						$sqlRecredit="UPDATE `llx_rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
+						//echo $this->type.$sqlRecredit;exit;
+						$ATMdb->Execute($sqlRecredit);
+					break;
+				}
 			}
+			
 		}
 }
 

@@ -42,7 +42,8 @@
 			case 'delete':
 				$absence->load($ATMdb, $_REQUEST['id']);
 				//$ATMdb->db->debug=true;
-				//avant de supprimer, on récredite les heures d'absences qui avaient été décomptées. 
+				//avant de supprimer, on récredite les heures d'absences qui avaient été décomptées. (que si l'absence n'a pas été refusée, dans quel cas 
+				//les heures seraient déjà recréditées)
 				$absence->recrediterHeure($ATMdb);
 				$absence->delete($ATMdb);
 				
@@ -91,11 +92,12 @@
 function _liste(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de vos absences');
+	?><div class="fiche"><?	
 	getStandartJS();
 	
 	$r = new TSSRenderControler($absence);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',DATE(r.date_debut) as 'Date début', DATE(r.date_fin) as 'Date Fin', 
-			  r.libelle as 'Type absence',r.fk_user as 'Utilisateur Courant',  r.libelleEtat as 'Statut demande'
+			  r.libelle as 'Type absence',r.fk_user as 'Utilisateur Courant',  r.libelleEtat as 'Statut demande', '' as 'Supprimer'
 		FROM llx_rh_absence as r
 		WHERE r.fk_user=".$user->id." AND r.entity=".$conf->entity;
 		
@@ -113,6 +115,7 @@ function _liste(&$ATMdb, &$absence) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')
@@ -131,7 +134,7 @@ function _liste(&$ATMdb, &$absence) {
 		,'orderBy'=>$TOrder
 		
 	));
-	
+	?><a class="butAction" href="?id=<?=$feries->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
 	
 	llxFooter();
 }	
