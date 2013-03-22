@@ -93,7 +93,6 @@
 			[onshow;block=end]
 			
 			[onshow;block=begin;when [view.mode]!='edit']
-				<a class="butAction"  href="?id=[absenceCourante.id]&action=edit">Modifier</a>
 				<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
 			[onshow;block=end]
 		</div>

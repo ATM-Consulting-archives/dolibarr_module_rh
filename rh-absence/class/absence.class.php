@@ -329,7 +329,7 @@ class TRH_Absence extends TObjetStd {
 		 			}
 		 		}
 				if(!$ferie){
-					echo "boucle1";
+					//echo "boucle1";
 					if($this->dfMoment=='matin'){		// si la date de fin est le matin, il n'y a donc que le cas matin à traiter
 						if($TTravail[$jourDebutSem.'am']==0){
 							$duree-=0.5;
@@ -351,7 +351,7 @@ class TRH_Absence extends TObjetStd {
 				else return $duree;
 				
 			}else{	//les jours de début et de fin sont différents
-				echo "boucle2";
+				//echo "boucle2";
 				//////////////////////////jour de début
 				$ferie=0;		
 				foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
@@ -400,11 +400,10 @@ class TRH_Absence extends TObjetStd {
 			//pour chaque jour, du début de l'absence jusqu'à sa fin, on teste si l'employé travaille
 			$jourEnCours=$this->date_debut+3600*24;
 			$jourFin=$this->date_fin;
-			//$jourm1=$jourFin-3600*24;
-			//echo $jourEnCours." ".$jourFin." ".$jourm1;
 			while($jourEnCours!=$jourFin){
 				$ferie=0;
-				echo "boucle1";
+				//echo "boucle1";
+				
 				foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
 		 			if(strtotime($jourFerie)==$jourEnCours){
 		 				$ferie=1;
@@ -412,7 +411,7 @@ class TRH_Absence extends TObjetStd {
 		 		}
 				if(!$ferie){
 					$jourEnCoursSem=$this->jourSemaine($jourEnCours);
-					echo $jourEnCoursSem;
+					//echo $jourEnCoursSem;
 					foreach ($this->TJour as $jour) {
 						if($jour==$jourEnCoursSem){
 							foreach(array('am','pm') as $moment) {
