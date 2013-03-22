@@ -125,27 +125,26 @@ class TRH_Ressource extends TObjetStd {
 		
 	}
 	/**
-	 * La fonction renvoie le rowid de l'user qui à la ressource à la date T, 0 sinon.
+	 * La fonction renvoie le rowid de l'user qui a la ressource à la date T, 0 sinon.
 	 */
-	function isEmpruntee($jour){
-		$sql = "SELECT u.rowid 
+	function isEmpruntee(&$ATMdb, $jour){
+		global $conf;
+		$sql = "SELECT u.rowid, e.date_debut as 'debut', e.date_fin as 'fin'
 				FROM ".MAIN_DB_PREFIX."user as u
 				LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (e.fk_user = u.rowid)
 				LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 				WHERE e.entity=".$conf->entity."
 				AND r.rowid =".$this->getId()."
-				AND e.type='emprunt'
-				AND e.date_debut<".$jour."
-				AND e.date_fin>".$jour."
-		";
-		
+				AND e.type='emprunt'";
 		$ATMdb->Execute($sql);
 		$Tab=array();
 		while($ATMdb->Get_line()){
-			$Tab[]=$ATMdb->Get_field('rowid');
+			if ( date("Y-m-d",strtotime($ATMdb->Get_field('debut'))) <= $jour 
+				&& date("Y-m-d",strtotime($ATMdb->Get_field('fin'))) >= $jour ){
+				$Tab[]=$ATMdb->Get_field('rowid');	
+			}
+			
 		}
-		
-		print_r($Tab);
 		if (! empty($Tab)){
 			return $Tab[0];}
 		else {

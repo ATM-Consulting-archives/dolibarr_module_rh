@@ -54,7 +54,7 @@
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">L\'attribution a bien été supprimée.</div>';
 				$mode = 'view';
-				_liste($ATMdb, $evenement, $ressource);
+				_liste($ATMdb, $evenement, $ressource, $_REQUEST['type']);
 				break;
 				
 			case 'afficherListe':
@@ -135,8 +135,8 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
 		}	
 	
 	$sql = "SELECT DISTINCT e.rowid as 'ID', ".
-			$jointureChamps.
-			"FROM ".MAIN_DB_PREFIX."rh_evenement as e
+			$jointureChamps.", '' as 'Supprimer' 
+			FROM ".MAIN_DB_PREFIX."rh_evenement as e
 			LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
 			LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 			LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
@@ -157,6 +157,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
+			,'Supprimer'=>'<a href="?id=@ID@&action=deleteEvent"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array('Type'=>$evenement->TType)
 		,'hide'=>array()

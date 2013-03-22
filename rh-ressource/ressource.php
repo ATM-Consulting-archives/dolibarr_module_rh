@@ -118,7 +118,9 @@ function _liste(&$ATMdb, &$ressource) {
 	getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
-	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',r.libelle as 'Libellé', t.libelle as 'Type',  r.statut as 'Statut'		FROM llx_rh_ressource as r, llx_rh_ressource_type as t 
+	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',r.libelle as 'Libellé', t.libelle as 'Type',  
+		r.numId as 'Numéro Id' , r.statut as 'Statut', '' as 'Supprimer'
+		FROM llx_rh_ressource as r, llx_rh_ressource_type as t 
 		WHERE r.entity=".$conf->entity."
 		AND r.fk_rh_ressource_type=t.rowid
 		";
@@ -136,6 +138,7 @@ function _liste(&$ATMdb, &$ressource) {
 		)
 		,'link'=>array(
 			'Libellé'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')
@@ -163,8 +166,6 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	global $db,$user;
 	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
 
-	//llxHeader('','Ressource');
-	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $ressource->getId());

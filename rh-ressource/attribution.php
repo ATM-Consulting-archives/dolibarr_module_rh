@@ -60,7 +60,7 @@
 				//$ATMdb->db->debug=true;
 				$emprunt->load($ATMdb, $_REQUEST['idEven']);
 				$emprunt->delete($ATMdb);
-				
+				$ressource->load($ATMdb, $_REQUEST['id']);
 				
 				?>
 				<script language="javascript">
@@ -103,10 +103,10 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	?><div class="fiche"><?	
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'attribution', 'Ressource');
 	//getStandartJS();
-	
+	//echo $form->hidden('id', $ressource->getId());
 	$r = new TSSRenderControler($emprunt);
 	$sql="SELECT DISTINCT e.rowid as 'ID', CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
-		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.description as 'Commentaire'
+		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.description as 'Commentaire', '' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
@@ -126,6 +126,7 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
+			,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=deleteAttribution"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('IDRessource')
