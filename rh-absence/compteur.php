@@ -26,13 +26,7 @@
 				
 			case 'save':
 				$ATMdb->db->debug=true;
-				//echo "salut".$compteur->rttCloture;
-				//$compteur->rttCloture=date("Y-m-d h:i:s", $compteur->rttCloture);
-				//echo "salut".$compteur->rttCloture;
-				//print_r($compteur);
-				/*$compteur->rttCloture=date($compteur->rttCloture);
-				echo "salut".$compteur->rttCloture;*/
-				
+
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				$compteur->set_values($_REQUEST);
 				$compteur->save($ATMdb);
@@ -80,9 +74,9 @@
 	
 function _liste(&$ATMdb, &$compteur) {
 	global $langs, $conf, $db, $user;	
-	llxHeader('','Liste de vos jours acquis');
+	llxHeader('','Liste des compteurs de congés des collaborateurs');
 	getStandartJS();
-	
+	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Administration des congés');
 	$r = new TSSRenderControler($compteur);
 	$sql="SELECT  r.rowid as 'ID', firstname as 'Prenom', name as 'Nom', anneeN as 'annee', r.date_cre as 'DateCre',r.acquisExerciceN as 'Congés acquis N', 
 	r.acquisAncienneteN as 'Congés Ancienneté', r.acquisExerciceNM1 as 'Conges Acquis N-1', r.congesPrisNM1 as 'Conges Pris N-1',
@@ -110,7 +104,7 @@ function _liste(&$ATMdb, &$compteur) {
 		,'hide'=>array('DateCre')
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste de vos jours acquis'
+			'titre'=>'Liste des compteurs de congés des collaborateurs'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
@@ -299,11 +293,12 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				'id'=>$userCourant->id
 				,'lastname'=>$userCourant->lastname
 				,'firstname'=>$userCourant->firstname
+				,'modifierCompteur'=>$user->rights->absence->myactions->modifierCompteur
 			)
 			
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(absencePrepareHead($compteur, 'compteur')  , 'compteur', 'Absence')
+				,'head'=>dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Absence')
 			
 			
 			)

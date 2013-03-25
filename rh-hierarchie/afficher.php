@@ -131,10 +131,38 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 					afficherSalarieDessous($ATMdb, $user->id,$niveau+1);
 					?></li><?
 				}
-				
-				?></ul><?
-								
+				?></ul><?		
 }
+
+//Fonction qui permet d'afficher un salarié
+function afficherSalarie(&$ATMdb, $idUser, $niveau=1){
+		
+				global $user, $db, $idUserCourant, $userCourant;
+
+				$sqlReq="SELECT rowid FROM `llx_user` where rowid=".$idUser;
+				
+				$ATMdb->Execute($sqlReq);
+				
+				$Tab=array();
+				while($ATMdb->Get_line()) {
+					$user=new User($db);
+					$user->fetch($ATMdb->Get_field('rowid'));
+					
+					$Tab[]=$user;
+				}
+				
+				foreach($Tab as &$user) {
+					?>
+					<li class="utilisateur" rel="<?=$user->id ?>">
+						<a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
+						<? if(!empty($user->office_phone) || !empty($user->user_mobile)) { ?><div class="tel">Tél. : <?=$user->office_phone.' '.$user->user_mobile ?></div><? }
+						if(!empty($user->email) ) { ?><div class="mail">Email : <a href="mailto:<?=$user->email ?>"><?=$user->email ?></div><? }
+					
+					?><?
+				}
+				?><?
+}
+
 
 //Fonction qui permet d'afficher les groupes dans la liste déroulante 
 function afficherGroupes(&$ATMdb){
@@ -158,6 +186,41 @@ function afficherGroupes(&$ATMdb){
 				}
 }
 
+function findFkUserGroup(&$ATMdb, $nomGroupe){
+	$sqlFkGroupe='SELECT fk_usergroup FROM llx_rh_valideur_groupe as v, llx_usergroup as u WHERE u.nom="'.$nomGroupe.'" AND v.fk_usergroup=u.rowid';
+	$ATMdb->Execute($sqlFkGroupe);
+	while($ATMdb->Get_line()) {
+			return $ATMdb->Get_field('fk_usergroup');
+	}
+}
+
+function findIdValideur(&$ATMdb, $fkusergroup){
+	$sqlidValideur='SELECT fk_user FROM llx_rh_valideur_groupe WHERE fk_usergroup='.$fkusergroup;
+	$ATMdb->Execute($sqlidValideur);
+	$Tab=array();
+	while($ATMdb->Get_line()) {
+			//return $ATMdb->Get_field('fk_user');
+			//$idValideurGroupe=findIdValideur($ATMdb,$fkusergroup);
+			$Tab[]=$ATMdb->Get_field('fk_user');
+	}
+	?>
+				<ul id="ul-niveau-1">
+	<?
+	foreach($Tab as $fkuser){
+		afficherSalarie($ATMdb,$fkuser);
+		afficherSalarieDessous($ATMdb,$fkuser,1);
+		print '</li>';
+	}
+	print '</ul>';
+}
+
+function afficherUtilisateurGroupe(&$ATMdb, $nomGroupe){
+			echo $nomGroupe;
+			$fkusergroup=findFkUserGroup($ATMdb, $nomGroupe);	
+			$idValideurGroupe=findIdValideur($ATMdb,$fkusergroup);
+
+			//afficherSalarieDessous($ATMdb,$idValideurGroupe, 1);
+}
 
 ?>
 
@@ -260,12 +323,9 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 		<ul id="JQorganigramme" style="display:none;">
 			<li> 
 		<?php 	
-			//////////////// On considère pour l'instant que l'utilisateur courant est le supérieur hiérarchique du groupe 
-			echo $orgChoisie;	
 			$ATMdb=new Tdb;
-			print '<ul><li>'.$userCourant->firstname." ".$userCourant->lastname."<br/>(Vous-même)";
-			afficherSalarieDessous($ATMdb, $userCourant->id, 1);
-			print "</li></ul>";
+			//on affiche les utilisateurs du groupe en cours
+			afficherUtilisateurGroupe($ATMdb,$orgChoisie);
 			$ATMdb->close();
 		?>
 			</li>

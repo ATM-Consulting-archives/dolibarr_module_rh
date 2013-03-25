@@ -8,6 +8,8 @@
 	$ATMdb=new Tdb;
 	$feries=new TRH_JoursFeries;
 	
+	$emploiTemps=new TRH_EmploiTemps;
+	
 	//global $idUserCompt, $idComptEnCours;
 	
 	if(isset($_REQUEST['action'])) {
@@ -15,15 +17,18 @@
 			case 'add':
 			case 'new':
 				//$ATMdb->db->debug=true;
+				$emploiTemps->load($ATMdb, $_REQUEST['id']);
 				$feries->set_values($_REQUEST);
-				_fiche($ATMdb, $feries,'edit');
+				_fiche($ATMdb, $feries,$emploiTemps, 'edit');
 				break;	
 			case 'edit'	:
+				$emploiTemps->load($ATMdb, $_REQUEST['id']);
 				$feries->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $feries,'edit');
+				_fiche($ATMdb, $feries,$emploiTemps,'edit');
 				break;
 				
 			case 'save':
+				$emploiTemps->load($ATMdb, $_REQUEST['id']);
 				$feries->load($ATMdb, $_REQUEST['id']);			
 				$feries->razCheckbox($ATMdb, $absence);
 				$feries->set_values($_REQUEST);
@@ -32,30 +37,37 @@
 
 				$feries->save($ATMdb);
 				$feries->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $feries,$mode);
+				_fiche($ATMdb, $feries,$emploiTemps,$mode);
 				break;
 			
 			case 'view':
 				$feries->load($ATMdb, $_REQUEST['id']);
+				$emploiTemps->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $feries,$emploiTemps,'view');
 				
-				_fiche($ATMdb, $feries,'view');
+				
 				break;
 			case 'delete':
 				//$ATMdb->db->debug=true;
+				$emploiTemps->load($ATMdb, $_REQUEST['id']);
 				$feries->load($ATMdb, $_REQUEST['id']);
 				$feries->delete($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">Le jour a bien été supprimé</div>';
 				$mode = 'edit';
-				_liste($ATMdb, $feries);
+				_liste($ATMdb, $feries , $emploiTemps);
 				break;
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {
-		_liste($ATMdb, $feries);
+		$emploiTemps->load($ATMdb, $_REQUEST['id']);
+		_liste($ATMdb, $feries , $emploiTemps);
+		
+				
 	}
 	else {
 		//$ATMdb->db->debug=true;
-		_liste($ATMdb, $feries);
+		$emploiTemps->load($ATMdb, $_REQUEST['id']);
+		_liste($ATMdb, $feries, $emploiTemps);
 	}
 	
 	
@@ -64,11 +76,11 @@
 	llxFooter();
 	
 	
-function _liste(&$ATMdb, $feries) {
+function _liste(&$ATMdb, $feries, $emploiTemps ) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de vos absences');
-	?><div class="fiche"><?	
-	dol_get_fiche_head(absencePrepareHead($feries, 'emploitemps')  , 'joursferies', 'Absence');
+	
+	print dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'joursferies', 'Absence');
 	//getStandartJS();	
 	
 	$r = new TSSRenderControler($feries);
@@ -93,7 +105,7 @@ function _liste(&$ATMdb, $feries) {
 		)
 		,'link'=>array(
 			'date_jourOff'=>'<a href="?id=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
+			,'Supprimer'=>$user->rights->absence->myactions->ajoutJourOff?'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>':''
 		)
 		,'translate'=>array(
 			'Période'=>array('matin'=>'Matin','apresmidi'=>'Après-midi','allday'=>'Toute la journée')
@@ -122,14 +134,17 @@ function _liste(&$ATMdb, $feries) {
 		,'orderBy'=>$TOrder
 		
 	));
-	?><a class="butAction" href="?id=<?=$feries->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
-	
+	if($user->rights->absence->myactions->ajoutJourOff=="1"){
+		?>
+		<a class="butAction" href="?id=<?=$feries->getId()?>&action=new">Nouveau</a><div style="clear:both"></div>
+		<?
+	}
 	$form->end();
 	
 	llxFooter();
 }	
 	
-function _fiche(&$ATMdb, $feries, $mode) {
+function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 	global $db,$user,$idUserCompt, $idComptEnCours;
 	llxHeader('','Emploi du temps');
 	
@@ -156,8 +171,9 @@ function _fiche(&$ATMdb, $feries, $mode) {
 
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(absencePrepareHead($feries, 'emploitemps')  , 'joursferies', 'Absence')
+				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'joursferies', 'Absence')
 			)
+			
 			
 		)	
 		

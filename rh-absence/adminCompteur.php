@@ -108,11 +108,12 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				'id'=>$user->id
 				,'lastname'=>$user->lastname
 				,'firstname'=>$user->firstname
+				,'modifierParamGlobalConges'=>$user->rights->absence->myactions->modifierParamGlobalConges
 			)
 			
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(absencePrepareHead($compteur, 'compteur')  , 'compteur', 'Absence')
+				,'head'=>dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur')  , 'adminconges', 'Administration des congés')
 			)
 			
 			

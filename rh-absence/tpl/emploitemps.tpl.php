@@ -18,12 +18,14 @@
 				</tr>
 				<tr>
 					<td>Lundi</td>
-					<td style="text-align:center;">[planning.lundiam;strconv=no;protect=no]</td>
+					
+					<td style="text-align:center;"><b>[planning.lundiam;strconv=no;protect=no]</b></td>
 					<td style="text-align:center;">[planning.lundipm;strconv=no;protect=no]</td>
 					<td style="text-align:center;"> [horaires.lundi_heuredam;strconv=no;protect=no]      </td>
 					<td style="text-align:center;"> [horaires.lundi_heurefam;strconv=no;protect=no]     </td>
 					<td style="text-align:center;"> [horaires.lundi_heuredpm;strconv=no;protect=no]    </td>
 					<td style="text-align:center;"> [horaires.lundi_heurefpm;strconv=no;protect=no]    </td>
+					
 
 				</tr>
 				<tr>
@@ -92,11 +94,30 @@
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
-			<a class="butAction"  href="?id=[view.compteur_id]&action=edit">Modifier</a>
+			[onshow;block=begin;when [droits.modifierEdt]=='1']
+				<a class="butAction"  href="?id=[view.compteur_id]&action=edit">Modifier</a>
+			[onshow;block=end]
 		[onshow;block=end]
 	</div>
 
-		
+	<script>
+		$(document).ready( function(){
+			//on empêche que la date de début dépasse celle de fin
+			 $('body').click( 	function(){
+				//$('#checkBox').attr('checked')
+				
+				if($('#lundiam').attr('checked')!="checked"){
+					$("#date_lundi_heuredam").val("0:00");
+					$("#date_lundi_heurefam").val("0:00");
+				}else{
+					$("#date_lundi_heuredam").val("9:00");
+					$("#date_lundi_heurefam").val("12:15");
+				}
+				
+    		});	
+			
+		});
+	</script>
 
 
 

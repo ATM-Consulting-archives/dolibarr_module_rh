@@ -146,7 +146,7 @@ class TRH_Absence extends TObjetStd {
 			if($this->type=="rttcumule"){
 				$sqlDecompte="UPDATE `llx_rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante."  where fk_user=".$user->id;
 				$ATMdb->Execute($sqlDecompte);
-				$this->rttPris=$this->rttPris-$dureeAbsenceCourante;
+				$this->rttPris=$this->rttPris+$dureeAbsenceCourante;
 				$this->rttAcquisAnnuelCumule=$this->rttAcquisAnnuelCumule-$dureeAbsenceCourante;
 				
 			}else if($this->type=="rttnoncumule"){

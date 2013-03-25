@@ -1,6 +1,6 @@
 
 
-        	[view.head;strconv=no]
+    [view.head;strconv=no]
 
        
 	<h1 style="color: #2AA8B9;">Congés payés</h1>                             
@@ -49,7 +49,9 @@
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
-			<a class="butAction"  href="?id=[compteurGlobal.rowid]&action=edit">Modifier</a>
+			[onshow;block=begin;when [userCourant.modifierParamGlobalConges]=='1']
+				<a class="butAction"  href="?id=[compteurGlobal.rowid]&action=edit">Modifier</a>
+			[onshow;block=end]
 		[onshow;block=end]
 	</div>
 

@@ -7,6 +7,9 @@
 	
 	$ATMdb=new Tdb;
 	$emploiTemps=new TRH_EmploiTemps;
+	
+	
+	
 	//global $idUserCompt, $idComptEnCours;
 	
 	if(isset($_REQUEST['action'])) {
@@ -32,7 +35,7 @@
 				break;
 			
 			case 'view':
-					$absence->loadByuser($ATMdb, $_REQUEST['id']);
+					$emploiTemps->loadByuser($ATMdb, $_REQUEST['id']);
 					_fiche($ATMdb, $emploiTemps,'view');
 				break;
 
@@ -146,9 +149,13 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(absencePrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence')
+				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence')
 				,'compteur_id'=>$emploiTemps->getId()
 			)
+			,'droits'=>array(
+				'modifierEdt'=>$user->rights->absence->myactions->modifierEdt
+			)
+			
 			
 		)	
 		

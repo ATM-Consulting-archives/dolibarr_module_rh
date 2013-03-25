@@ -13,26 +13,17 @@
 			case 'add':
 			case 'new':
 				$absence->set_values($_REQUEST);
-				_fiche($ATMdb, $absence,'edit');
-				
+				_fiche($ATMdb, $absence,'edit');	
 				break;	
-			case 'edit'	:
-				$absence->load($ATMdb, $_REQUEST['id']);
-				$absence->recrediterHeure($ATMdb, $absence);
-				_fiche($ATMdb, $absence,'edit');
-				break;
-				
+
 			case 'save':
 				$ATMdb->db->debug=true;
-				
 				$absence->load($ATMdb, $_REQUEST['id']);
-				//$absence->recrediterHeure($ATMdb, $absence);
 				$absence->set_values($_REQUEST);
 				$absence->save($ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">Demande enregistrée</div>';
 				_fiche($ATMdb, $absence,'view');
-			
 				break;
 			
 			case 'view':
@@ -93,7 +84,7 @@
 function _liste(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de vos absences');
-	?><div class="fiche"><?	
+	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
 	//getStandartJS();
 	
 	$r = new TSSRenderControler($absence);
@@ -144,7 +135,7 @@ function _liste(&$ATMdb, &$absence) {
 		,'orderBy'=>$TOrder
 		
 	));
-	?><a class="butAction" href="?id=<?=$feries->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
+	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new">Nouvelle demande</a><div style="clear:both"></div><?
 	$form->end();
 	llxFooter();
 }	
@@ -289,6 +280,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'id'=>$userCourant->id
 				,'lastname'=>$userCourant->lastname
 				,'firstname'=>$userCourant->firstname
+				,'valideurConges'=>$user->rights->absence->myactions->valideurConges
 			)
 			,'view'=>array(
 				'mode'=>$mode

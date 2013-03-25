@@ -1,36 +1,58 @@
 <?php
 
 function absencePrepareHead(&$obj, $type='absence') {
-	
+	global $user;
 	switch ($type) {
 		case 'absence':
 				return array(
 					array(DOL_URL_ROOT_ALT.'/absence/absence.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
-					,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?idUser='.$obj->fk_user, 'Calendrier','calendrier')
-				);
-				break;
-		case 'index':
-				return array(
-					array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php', 'Calendrier','calendrier')
+					,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?idUser='.$obj->fk_user.'&id='.$obj->getId(), 'Calendrier','calendrier')
 				);
 				break;
 		case 'absenceCreation':
 				return array(
-					array(DOL_URL_ROOT_ALT.'/absence/absence.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
+					array(DOL_URL_ROOT_ALT.'/absence/absence.php?action=new', 'Fiche','fiche')
 				);
 				break;
+		
+		
+	}
+}
+
+function compteurPrepareHead(&$obj, $type='absence') {
+	global $user;
+	switch ($type) {
+		
 		case 'compteur':
-				return array(
+				if($user->rights->absence->myactions->modifierParamGlobalConges=="1"){
+					return array(
+					array(DOL_URL_ROOT_ALT.'/absence/compteur.php', 'Compteur','compteur')
+					,array(DOL_URL_ROOT_ALT.'/absence/adminCompteur.php?action=view', 'Administration générale congés','adminconges')
+					);
+					break;
+				}else{
+					return array(
 					array(DOL_URL_ROOT_ALT.'/absence/compteur.php?id='.$obj->getId()."&action=view", 'Compteur','compteur')
-					,array(DOL_URL_ROOT_ALT.'/absence/adminCompteur.php?action=view', 'Administration générale','compteur')
-				);
-				break;
+					);
+				}
+				
+	}
+}
+
+function edtPrepareHead(&$obj, $type='absence') {
+	global $user;
+	//print '(lol)';
+	//print_r($obj);
+	switch ($type) {
+		
 		case 'emploitemps':
+				
 				return array(
-					array(DOL_URL_ROOT_ALT.'/absence/emploitemps.php?id='.$obj->getId()."&action=view", 'Emploi du temps','emploitemps')
-				   ,array(DOL_URL_ROOT_ALT.'/absence/joursferies.php?id='.$obj->getId(), 'Jours non travaillés','joursferies')
+					array(DOL_URL_ROOT_ALT.'/absence/emploitemps.php?id='.$obj->fk_user."&action=view", 'Emploi du temps','emploitemps')
+				   ,array(DOL_URL_ROOT_ALT.'/absence/joursferies.php?id='.$obj->fk_user, 'Jours non travaillés','joursferies')
 				);
 				break;
+				
 	}
 }
 
