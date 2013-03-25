@@ -18,7 +18,7 @@ while($ATMdb->Get_line()) {
 
 
 $idVoiture = getIdTypeVoiture($ATMdb);
-$nomFichier = "Voitures.csv";
+$nomFichier = "ListeVoitures.csv";
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 
@@ -31,7 +31,7 @@ $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle)) != false){
 		echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=2 && $numLigne<10){
+		if ($numLigne >=2){
 			$infos = explode(';', $data[0]);
 			print_r($infos);
 			
@@ -47,25 +47,18 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->load($ATMdb, $TRessource[$plaque]);
 			}
 			else {
+				//clés externes
+				$temp->fk_rh_ressource_type = (int)$idVoiture;
+				
+				$temp->load_ressource_type($ATMdb);
+				
 				$temp->numId = $plaque;
 				$temp->plaque = (string)$plaque;//plaque;
 				$temp->libelle = $infos[5].' '.$infos[6];
 				$temp->marque = (string)$infos[5];
-				echo $temp->marque;
 				$temp->modle = (string)$infos[6];
 				$temp->bail = (string)$infos[8];
 				
-				//clés externes
-				$temp->fk_rh_ressource_type = (int)$idVoiture;
-				
-				//$temp->fk_user = $TUser[strtolower($infos[2])];
-				
-				//infos faciles à charger
-				$temp->appelHeure= $infos[7];
-				$temp->appelNumero = $infos[1];
-				$temp->appelDureeReel = $infos[9];
-				$temp->appelDureeFacturee = $infos[10];
-				$temp->motif = $infos[11];
 				
 				$temp->save($ATMdb);echo ' : Ajoutee.';
 			}		

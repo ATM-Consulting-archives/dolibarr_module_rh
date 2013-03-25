@@ -45,7 +45,7 @@
 							case 'entier':
 								//la conversion en entier se fera lors de la sauvegarde dans l'objet.
 								if (! is_numeric($_REQUEST[$field->code]) ){
-									$mesg .= '<div class="error">Le champs '.$field->libelle.' doit être un nombre.</div>';
+									$mesg .= '<div class="error">Le champ '.$field->libelle.' doit être un nombre.</div>';
 									}
 								break;
 							default :
