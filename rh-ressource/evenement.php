@@ -53,7 +53,6 @@
 				$evenement->delete($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">L\'attribution a bien été supprimée.</div>';
-				$mode = 'view';
 				_liste($ATMdb, $evenement, $ressource, $_REQUEST['type']);
 				break;
 				
@@ -84,7 +83,6 @@
 function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
 	global $conf;	
 	llxHeader('','Liste des emprunts');
-	
 	?><div class="fiche"><?	
 	
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource');
@@ -95,7 +93,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
 	echo $form->hidden('id',$ressource->getId());
 	$TType = array('principal'=>'Accidents, Réparations'
 					,'appel'=>'Appels'
-					,'facture'=>'Facture'
+					,'facture'=>'Factures'
 					);
 	?>
 	<table>
@@ -127,8 +125,8 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
 			break;
 		case 'facture':		
 			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
-				DATE(e.date_debut) as 'Date début', e.type as 'Type',
-				e.motif as 'Motif', e.description as 'Commentaire', e.coutHT as 'Coût', 
+				DATE(e.date_debut) as 'Date', DATE(e.date_fin) as 'Traité le',
+				e.motif as 'Garage', e.commentaire as 'Commentaire', e.coutHT as 'Coût', 
 				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'";
 			$jointureType = " AND e.type='facture' ";
 			break;
@@ -157,7 +155,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>'<a href="?id=@ID@&action=deleteEvent"><img src="./img/delete.png"></a>'
+			,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&type='.$type.'&action=deleteEvent"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array('Type'=>$evenement->TType)
 		,'hide'=>array()

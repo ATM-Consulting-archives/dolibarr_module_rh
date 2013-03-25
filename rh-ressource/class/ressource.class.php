@@ -139,7 +139,7 @@ class TRH_Ressource extends TObjetStd {
 		$ATMdb->Execute($sql);
 		$Tab=array();
 		while($ATMdb->Get_line()){
-			if ( date("Y-m-d",strtotime($ATMdb->Get_field('debut'))) <= $jour 
+			if ( date("Y-m-d",strtotime($ATMdb->Get_field('debut'))) <= $jour  
 				&& date("Y-m-d",strtotime($ATMdb->Get_field('fin'))) >= $jour ){
 				$Tab[]=$ATMdb->Get_field('rowid');	
 			}
