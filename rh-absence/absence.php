@@ -52,6 +52,7 @@
 				$sqlEtat="UPDATE `llx_rh_absence` SET etat='Validee', libelleEtat='Acceptée' where fk_user=".$user->id. " AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
+				mailConges($absence);
 				$mesg = '<div class="ok">Demande d absence acceptée</div>';
 				_fiche($ATMdb, $absence,'view');
 				break;
@@ -63,6 +64,7 @@
 				$sqlEtat="UPDATE `llx_rh_absence` SET etat='Refusee', libelleEtat='Refusée' where fk_user=".$user->id. " AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
+				mailConges($absence);
 				$mesg = '<div class="error">Demande d absence refusée</div>';
 				_fiche($ATMdb, $absence,'view');
 				break;

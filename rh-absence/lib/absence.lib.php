@@ -131,9 +131,15 @@ function round2Virgule($variable){
 	}else return round($variable,2);
 }
 
+//retourne la date au format "d/m/Y"
+function php2dmy($phpDate){
+    return date("d/m/Y", $phpDate);
+}
+
 
 //fonction permettant l'envoi de mail
 function mailConges(&$absence){
+	
 	
 	$ATMdb=new Tdb;
 	$sql="SELECT * FROM `llx_user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
@@ -142,30 +148,62 @@ function mailConges(&$absence){
 			$sendto=$ATMdb->Get_field('email');
 			$name=$ATMdb->Get_field('name');
 			$firstname=$ATMdb->Get_field('firstname');
+			
 	}
 	$from = USER_MAIL_SENDER;
 
 
 	$TBS=new TTemplateTBS();
-	if($statut=='AValider'){
-		//$subject = $object->ref." - Acceptée";
+	if($absence->etat=='Avalider'){
+		$subject = "Création d'une demande de congés";
+		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.creation.tpl.php'
+			,array()
+			,array(
+				'absence'=>array(
+					'nom'=>$name
+					,'prenom'=>$firstname
+					,'date_debut'=>php2dmy($absence->date_debut)
+					,'date_fin'=>php2dmy($absence->date_fin)
+					,'libelle'=>$absence->libelle
+					,'libelleEtat'=>$absence->libelleEtat
+				)
+				)
+		);
+	}else if($absence->etat=='Validee'){
+		$subject = "Acceptation de votre demande de congés";
 		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.acceptation.tpl.php'
 			,array()
 			,array(
 				'absence'=>array(
 					'nom'=>$name
 					,'prenom'=>$firstname
-					//,'ref'=>$object->ref
-					//,'total_ttc'=>$object->total_ttc
+					,'date_debut'=>php2dmy($absence->date_debut)
+					,'date_fin'=>php2dmy($absence->date_fin)
+					,'libelle'=>$absence->libelle
+					,'libelleEtat'=>$absence->libelleEtat
 				)
 				)
 		);
 	}
-	$mail = new TReponseMail($from,$sendto,'$subject',$message);
-	
+	else if($absence->etat=='Refusee'){
+		$subject = "Refus de votre demande de congés";
+		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.refus.tpl.php'
+			,array()
+			,array(
+				'absence'=>array(
+					'nom'=>$name
+					,'prenom'=>$firstname
+					,'date_debut'=>php2dmy($absence->date_debut)
+					,'date_fin'=>php2dmy($absence->date_fin)
+					,'libelle'=>$absence->libelle
+					,'libelleEtat'=>$absence->libelleEtat
+				)
+				)
+		);
+	}
+	$mail = new TReponseMail($from,$sendto,$subject,$message);
     (int)$result = $mail->send();
-	echo "salut".$result;
-	return $result;
+	return 1;
 	
 }
 
