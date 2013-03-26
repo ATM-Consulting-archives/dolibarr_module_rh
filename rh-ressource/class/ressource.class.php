@@ -241,6 +241,7 @@ class TRH_Ressource_type extends TObjetStd {
 		parent::add_champs('libelle,code','type=chaine;');
 		parent::add_champs('entity','type=entier;index;');
 		parent::add_champs('supprimable','type=entier');
+		parent::add_champs('liste_evenement','type=chaine;');
 				
 		parent::_init_vars();
 		parent::start();
@@ -380,6 +381,7 @@ class TRH_Ressource_field extends TObjetStd {
 		
 		$this->code = TRH_Ressource_type::code_format(empty($this->code) ? $this->libelle : $this->code);
 		$this->entity = $conf->entity;
+		$this->supprimable = 1;
 		parent::save($db);
 	}
 
