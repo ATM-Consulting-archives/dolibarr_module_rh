@@ -163,6 +163,38 @@ function afficherSalarie(&$ATMdb, $idUser, $niveau=1){
 				?><?
 }
 
+//Fonction qui permet d'afficher un salarié
+function afficherGroupeSousValideur(&$ATMdb, $idUser, $fkusergroup, $niveau=1){
+		
+				global $user, $db, $idUserCourant, $userCourant;
+
+				$sqlReq=" SELECT  DISTINCT u.fk_user FROM llx_usergroup_user as u WHERE u.fk_usergroup=".$fkusergroup." AND  u.fk_user NOT IN(SELECT v.fk_user FROM llx_usergroup_user as v WHERE v.fk_user=".$idUser.")";
+				
+				$ATMdb->Execute($sqlReq);
+				
+				$Tab=array();
+				while($ATMdb->Get_line()) {
+					$user=new User($db);
+					$user->fetch($ATMdb->Get_field('fk_user'));
+					
+					$Tab[]=$user;
+				}
+				print "<ul>";
+				foreach($Tab as &$user) {
+					
+					?>
+					<li class="utilisateur" rel="<?=$user->id ?>">
+						<a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
+						<? if(!empty($user->office_phone) || !empty($user->user_mobile)) { ?><div class="tel">Tél. : <?=$user->office_phone.' '.$user->user_mobile ?></div><? }
+						if(!empty($user->email) ) { ?><div class="mail">Email : <a href="mailto:<?=$user->email ?>"><?=$user->email ?></div><? }
+					
+					?><?
+				}
+				print "</ul>";
+				
+				?><?
+}
+
 
 //Fonction qui permet d'afficher les groupes dans la liste déroulante 
 function afficherGroupes(&$ATMdb){
@@ -208,7 +240,9 @@ function findIdValideur(&$ATMdb, $fkusergroup){
 	<?
 	foreach($Tab as $fkuser){
 		afficherSalarie($ATMdb,$fkuser);
-		afficherSalarieDessous($ATMdb,$fkuser,1);
+		//afficherSalarieDessous($ATMdb,$fkuser,1);
+		afficherGroupeSousValideur($ATMdb,$fkuser,$fkusergroup,1);
+		// SELECT  u.rowid FROM llx_user as u WHERE u.rowid NOT IN (SELECT g.fk_user FROM llx_rh_valideur_groupe as g WHERE g.fk_usergroup=2)
 		print '</li>';
 	}
 	print '</ul>';
