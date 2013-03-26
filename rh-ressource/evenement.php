@@ -80,7 +80,7 @@
 	
 	llxFooter();
 	
-function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
+function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	global $conf;	
 	llxHeader('','Liste des emprunts');
 	?><div class="fiche"><?	
@@ -91,15 +91,16 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
 	//$form->Set_typeaff($mode);
 	echo $form->hidden('action', 'afficherListe');
 	echo $form->hidden('id',$ressource->getId());
-	$TType = array('principal'=>'Accidents, Réparations'
+	$evenement->load_liste_type($ATMdb, $ressource);
+	 /*array('principal'=>'Accidents, Réparations'
 					,'appel'=>'Appels'
 					,'facture'=>'Factures'
-					);
+					);*/
 	?>
 	<table>
 		<tr>
 			<td> Type d'évenement à afficher : </td>
-			<td> <? echo $form->combo('','type', $TType ,$type) ?> </td>
+			<td> <? echo $form->combo('','type', $evenement->TType ,$type) ?> </td>
 			<td> <? echo $form->btsubmit('Valider','afficherListe') ?>	</td>
 		</tr>
 	</table>
@@ -109,12 +110,12 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
 	
 	$r = new TSSRenderControler($evenement);
 	switch($type){
-		case 'principal' :
+		case 'all' :
 			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 				DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.type as 'Type',
 				e.motif as 'Motif', e.description as 'Commentaire', e.coutHT as 'Coût', 
 				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA' ";
-			$jointureType =  " AND ( e.type='accident' OR e.type='reparation' )";
+			$jointureType = "";// " AND ( e.type='accident' OR e.type='reparation' )";
 			break;
 		 case 'appel' :
 			$jointureChamps =" CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
@@ -130,6 +131,13 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
 				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'";
 			$jointureType = " AND e.type='facture' ";
 			break;
+		default :
+			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
+				DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin',
+				e.motif as 'Motif', e.commentaire as 'Commentaire', e.coutHT as 'Coût', 
+				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'";
+			$jointureType = " AND e.type='".$type."'";
+		break;
 		}	
 	
 	$sql = "SELECT DISTINCT e.rowid as 'ID', ".
@@ -141,7 +149,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
 			WHERE e.entity=".$conf->entity."
 			AND e.fk_rh_ressource=".$ressource->getId().
 			$jointureType;
-			
+	
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -164,7 +172,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "principal") {
 			,'Date fin'=>'date'
 		)
 		,'liste'=>array(
-			'titre'=>'Liste des '.$TType[$type]
+			'titre'=>'Liste des événements de type '.$evenement->TType[$type]
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
@@ -197,6 +205,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	echo $form->hidden('idEven',$evenement->getId());
 
 	$evenement->load_liste($ATMdb);
+	$evenement->load_liste_type($ATMdb, $ressource);
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/evenement.tpl.php'
 		,array()

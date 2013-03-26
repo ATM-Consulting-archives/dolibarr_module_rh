@@ -183,12 +183,13 @@ class ActionsValideur
 			}
 			
 			return 1;
-		//}else if($parameters['action']=="fiche"){
-		}else if($parameters['action']=="delegation"){
+
+		}elseif($parameters['action']=='delegation'){
+
 			$idUsercourant=$_GET["id"];
 			if (in_array('usercard',explode(':',$parameters['context']))){ 
 	        // do something only for the context 'somecontext'
-	          
+	        
 	        dol_include_once('/core/class/html.form.class.php');
 	          
 			$form=new Form($db);
@@ -207,7 +208,9 @@ class ActionsValideur
 					}
 			    }	
 			}
-			if($parameters['action']=="delegation"){	    
+
+			if($parameters['action']=='delegation'){    
+
 	           ?><tr>
 				      <td>
 				      	Délégation Note de Frais      	
@@ -267,7 +270,9 @@ class ActionsValideur
 						}
 			     	}
 					echo $html->select_users($user->id, "fk_user",0,'','',$tabDelegation );
-					}else if($action=='edituser'){ //on est dans le default 
+
+					}elseif($action=='edituser'){ //on est dans le default 
+
 						$tabDelegation=array();
 						$k=0;
 						$tabDelegation[$k]=$user->id;

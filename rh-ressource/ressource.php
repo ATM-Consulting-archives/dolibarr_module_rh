@@ -118,8 +118,8 @@ function _liste(&$ATMdb, &$ressource) {
 	getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
-	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',r.libelle as 'Libellé', t.libelle as 'Type',  
-		r.numId as 'Numéro Id' , r.statut as 'Statut', '' as 'Supprimer'
+	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',r.libelle , t.libelle as 'Type',  
+		r.numId , r.statut as 'Statut', '' as 'Supprimer'
 		FROM llx_rh_ressource as r, llx_rh_ressource_type as t 
 		WHERE r.entity=".$conf->entity."
 		AND r.fk_rh_ressource_type=t.rowid
@@ -129,7 +129,8 @@ function _liste(&$ATMdb, &$ressource) {
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
-	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');	
 	//print $page;
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
@@ -137,12 +138,12 @@ function _liste(&$ATMdb, &$ressource) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Libellé'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')
-		,'type'=>array()
+		,'type'=>array('libelle'=>'string')
 		,'liste'=>array(
 			'titre'=>'Liste des ressources'
 			,'image'=>img_picto('','title.png', '', 0)
@@ -152,13 +153,18 @@ function _liste(&$ATMdb, &$ressource) {
 			,'messageNothing'=>"Il n'y a aucune ressource à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 			
+		)
+		,'title'=>array(
+			'libelle'=>'Libellé'
+			,'numId'=>'Numéro Id'
 		)
 		,'orderBy'=>$TOrder
 		
 	));
 	
-	
+	$form->end();
 	llxFooter();
 }	
 	

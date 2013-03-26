@@ -65,6 +65,20 @@ class TRH_Evenement  extends TObjetStd {
 		while($ATMdb->Get_line()) {
 			$this->TUser[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name');
 			}
+	}
+
+	function load_liste_type(&$ATMdb, $ressource){
+		global $conf;
+		$sqlReq="SELECT rowid, liste_evenement FROM ".MAIN_DB_PREFIX."rh_ressource_type 
+		WHERE rowid=".$ressource->fk_rh_ressource_type." AND entity=".$conf->entity;
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			foreach (explode(';', $ATMdb->Get_field('liste_evenement')) as $key=>$value) {
+				if (!empty($value)){
+					$this->TType[$value] = $value;
+				}
+			}
+		}
 		
 		
 	}
