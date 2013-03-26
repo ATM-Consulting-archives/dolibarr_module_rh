@@ -104,7 +104,6 @@
 		$(document).ready( function(){
 			//on empêche que la date de début dépasse celle de fin
 			 $('body').click( 	function(){
-				//$('#checkBox').attr('checked')
 				
 				if($('#lundiam').attr('checked')!="checked"){
 					$("#date_lundi_heuredam").val("0:00");
@@ -218,9 +217,7 @@
 					$("#date_dimanche_heuredpm").val("14:00");
 					$("#date_dimanche_heurefpm").val("18:00");
 				}
-				
-				
-				
+
     		});	
 			
 		});

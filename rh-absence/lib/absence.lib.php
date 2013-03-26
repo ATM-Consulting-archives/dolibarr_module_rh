@@ -130,3 +130,42 @@ function round2Virgule($variable){
 		return "0";
 	}else return round($variable,2);
 }
+
+
+//fonction permettant l'envoi de mail
+function mailConges(&$absence){
+	
+	$ATMdb=new Tdb;
+	$sql="SELECT * FROM `llx_user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+			$sendto=$ATMdb->Get_field('email');
+			$name=$ATMdb->Get_field('name');
+			$firstname=$ATMdb->Get_field('firstname');
+	}
+	$from = USER_MAIL_SENDER;
+
+
+	$TBS=new TTemplateTBS();
+	if($statut=='AValider'){
+		//$subject = $object->ref." - Acceptée";
+		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.acceptation.tpl.php'
+			,array()
+			,array(
+				'absence'=>array(
+					'nom'=>$name
+					,'prenom'=>$firstname
+					//,'ref'=>$object->ref
+					//,'total_ttc'=>$object->total_ttc
+				)
+				)
+		);
+	}
+	$mail = new TReponseMail($from,$sendto,'$subject',$message);
+	
+    (int)$result = $mail->send();
+	echo "salut".$result;
+	return $result;
+	
+}
+

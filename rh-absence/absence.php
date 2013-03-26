@@ -22,6 +22,7 @@
 				$absence->set_values($_REQUEST);
 				$absence->save($ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
+				mailConges($absence);
 				$mesg = '<div class="ok">Demande enregistrée</div>';
 				_fiche($ATMdb, $absence,'view');
 				break;
