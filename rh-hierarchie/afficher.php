@@ -261,7 +261,7 @@ function afficherUtilisateurGroupe(&$ATMdb, $nomGroupe){
 
 <form id="form" action="afficher.php?id=<?= $userCourant->id; ?>" method="post">
 	<select id="choixAffichage" name="choixAffichage">
-		<option value="entreprise">Afficher la hiérarchie de l entreprise</option>
+		<option value="entreprise">Afficher la hiérarchie de l'entreprise</option>
 		<option value="equipe">Afficher son équipe</option>
 		<?php
 			afficherGroupes($ATMdb);
