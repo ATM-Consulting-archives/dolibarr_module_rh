@@ -269,9 +269,6 @@ function afficherUtilisateurGroupe(&$ATMdb, $nomGroupe){
 	</select> 
 	<input id="validSelect" type="submit" value="Valider" class="button" />
 </form>
-	
-
-
 
 <?php
 

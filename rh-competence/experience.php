@@ -20,19 +20,14 @@
 				//$ATMdb->db->debug=true;
 				$lignecv->load($ATMdb, $_REQUEST['id']);
 				$lignecv->set_values($_REQUEST);
-				_fiche($ATMdb, $lignecv, 'edit');
+				_ficheCV($ATMdb, $lignecv, 'edit');
 				break;
 			case 'newcompetencecv':
 				//$ATMdb->db->debug=true;
-				/*$emploiTemps->load($ATMdb, $_REQUEST['id']);
-				$feries->set_values($_REQUEST);
-				_fiche($ATMdb, $feries,$emploiTemps, 'edit');*/
+				$lignecv->load($ATMdb, $_REQUEST['id']);
+				$competence->set_values($_REQUEST);
+				_ficheCompetence($ATMdb, $competence, 'edit');
 				break;		
-			case 'edit'	:
-				/*$emploiTemps->load($ATMdb, $_REQUEST['id']);
-				$feries->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $feries,$emploiTemps,'edit');*/
-				break;
 				
 			case 'save':
 				/*$emploiTemps->load($ATMdb, $_REQUEST['id']);
@@ -99,7 +94,7 @@ function _liste(&$ATMdb, $lignecv, $competence ) {
 			  date_debut, date_fin, experience, fk_user, '' as 'Supprimer'
 		FROM   llx_rh_ligne_cv
 		WHERE fk_user=".$user->id." AND entity=".$conf->entity;
-		print $sql;
+
 	$TOrder = array('ID'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -152,12 +147,12 @@ function _liste(&$ATMdb, $lignecv, $competence ) {
 	
 	
 	////////////AFFICHAGE DES  FORMATIONS
-	$r = new TSSRenderControler($lignecv);
+	$r = new TSSRenderControler($competence);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
-			  date_debut, date_fin, experience, fk_user, '' as 'Supprimer'
-		FROM   llx_rh_ligne_cv
-		WHERE entity=".$conf->entity;
-		
+			  date_debut, date_fin, competence, commentaire, fk_user, '' as 'Supprimer'
+		FROM   llx_rh_competence_cv
+		WHERE fk_user=".$user->id." AND entity=".$conf->entity;
+
 	$TOrder = array('ID'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -172,7 +167,7 @@ function _liste(&$ATMdb, $lignecv, $competence ) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'experience'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'competence'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array(
@@ -194,6 +189,7 @@ function _liste(&$ATMdb, $lignecv, $competence ) {
 		,'title'=>array(
 			'date_debut'=>'Date début'
 			,'date_fin'=>'Date Fin'
+			,'competence'=>'Compétences'
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
@@ -202,46 +198,52 @@ function _liste(&$ATMdb, $lignecv, $competence ) {
 		,'orderBy'=>$TOrder
 		
 	));
+	?>
+		<a class="butAction" href="?id=<?=$competence->getId()?>&action=newcompetencecv">Ajouter une formation</a><div style="clear:both"></div>
+	<?
 	llxFooter();
 }	
+
 	
-function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
-	global $db,$user,$idUserCompt, $idComptEnCours;
-	llxHeader('','Emploi du temps');
+function _ficheCV(&$ATMdb, $lignecv,  $mode) {
+	global $db,$user,$langs;
+	llxHeader('','Lignes de CV');
+	
+	$fuser = new User($db);
+	$fuser->fetch($user->id);
+	$fuser->getrights();
+	
+	$head = user_prepare_head($fuser);
+	$current_head = 'competence';
+	dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
-	echo $form->hidden('id', $feries->getId());
+	echo $form->hidden('id', $lignecv->getId());
 	echo $form->hidden('action', 'save');
 
 	
 	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/joursferies.tpl.php'
+	print $TBS->render('./tpl/cv.tpl.php'
 		,array(
-			
 		)
 		,array(
-			'joursFeries'=>array(
-				'id'=>$feries->getId()
-				,'date_jourOff'=>$form->calendrier('', 'date_jourOff', $feries->get_date('date_jourOff'), 10)
-				,'moment'=>$form->combo('','moment',$feries->TMoment,$feries->moment)
-				//,'matin'=>$form->checkbox1('','matin','1',$feries->matin==1?true:false)
-				//,'apresmidi'=>$form->checkbox1('','apresmidi','1',$feries->apresmidi==1?true:false)
-				,'commentaire'=>$form->texte('','commentaire',$feries->commentaire, 30,100,'','','-')
+			'cv'=>array(
+				'id'=>$lignecv->getId()
+				,'date_debut'=>$form->calendrier('', 'date_debut', $lignecv->get_date('date_debut'), 10)
+				,'date_fin'=>$form->calendrier('', 'date_fin', $lignecv->get_date('date_fin'), 10)
+				,'experience'=>$form->texte('','commentaire',$lignecv->exeperience, 30,100,'','','-')
 			)
-
+			,'userCourant'=>array(
+				'id'=>$user->id
+			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'joursferies', 'Absence')
 			)
-			
-			
 		)	
-		
 	);
 	
 	echo $form->end_form();
-	// End of page
 	
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
@@ -251,3 +253,46 @@ function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 
 	
 	
+function _ficheCompetence(&$ATMdb, $competence,  $mode) {
+	global $db,$user, $langs;
+	llxHeader('','Compétences');
+
+	$fuser = new User($db);
+	$fuser->fetch($user->id);
+	$fuser->getrights();
+	
+	$head = user_prepare_head($fuser);
+	$current_head = 'competence';
+	dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
+	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
+	$form->Set_typeaff($mode);
+	echo $form->hidden('id', $competence->getId());
+	echo $form->hidden('action', 'save');
+
+	
+	$TBS=new TTemplateTBS();
+	print $TBS->render('./tpl/competence.tpl.php'
+		,array(
+		)
+		,array(
+			'competence'=>array(
+				'id'=>$competence->getId()
+				,'date_debut'=>$form->calendrier('', 'date_debut', $competence->get_date('date_debut'), 10)
+				,'date_fin'=>$form->calendrier('', 'date_fin', $competence->get_date('date_fin'), 10)
+				,'competence'=>$form->texte('','competence',$competence->competence, 30,100,'','','-')
+				,'commentaire'=>$form->texte('','commentaire',$competence->commentaire, 30,100,'','','-')
+			)
+			,'view'=>array(
+				'mode'=>$mode
+			)
+		)	
+	);
+	
+	echo $form->end_form();
+	
+	global $mesg, $error;
+	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	llxFooter();
+}
+

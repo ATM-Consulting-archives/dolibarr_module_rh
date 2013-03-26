@@ -25,6 +25,7 @@ class TRH_competence_cv extends TObjetStd {
 		parent::add_champs('date_debut,date_fin','type=date;');		//dates de début et de fin de la formation suivie
 		parent::add_champs('competence','type=chaine;');		//compétences acquises sous forme de chaine de caractères
 		parent::add_champs('commentaire','type=chaine;');		//commentaire associé
+		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=entier;');
 		parent::_init_vars();
 		parent::start();
