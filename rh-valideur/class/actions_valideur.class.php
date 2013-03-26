@@ -183,7 +183,8 @@ class ActionsValideur
 			}
 			
 			return 1;
-		}else{
+		//}else if($parameters['action']=="fiche"){
+		}else if($parameters['action']=="delegation"){
 			$idUsercourant=$_GET["id"];
 			if (in_array('usercard',explode(':',$parameters['context']))){ 
 	        // do something only for the context 'somecontext'
@@ -206,7 +207,7 @@ class ActionsValideur
 					}
 			    }	
 			}
-			if($action!='create'){	    
+			if($parameters['action']=="delegation"){	    
 	           ?><tr>
 				      <td>
 				      	Délégation Note de Frais      	
@@ -266,7 +267,7 @@ class ActionsValideur
 						}
 			     	}
 					echo $html->select_users($user->id, "fk_user",0,'','',$tabDelegation );
-					}else{ //on est dans le default 
+					}else if($action=='edituser'){ //on est dans le default 
 						$tabDelegation=array();
 						$k=0;
 						$tabDelegation[$k]=$user->id;
@@ -302,9 +303,8 @@ class ActionsValideur
     {
     	global $db, $user, $html;  
 		
-		
 		$idUsercourant=$user->id;
-		 dol_include_once('/core/class/html.form.class.php');
+		dol_include_once('/core/class/html.form.class.php');
 		$tabDelegation=array();
 		$k=0;
 		$tabDelegation[$k]=$user->id;

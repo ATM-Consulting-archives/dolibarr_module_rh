@@ -221,7 +221,9 @@ class modCompetence extends DolibarrModules
 	{
 		$sql = array();
 
-
+		$url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/competence/script/create-maj-base.php";
+		file_get_contents($url);
+		
 		return $this->_init($sql, $options);
 	}
 
