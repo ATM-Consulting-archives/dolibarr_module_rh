@@ -35,9 +35,10 @@
 				$mesg = '<div class="ok">Modifications effectuées</div>';
 				$mode = 'view';
 				if(isset($_REQUEST['TField'])){
-				
-					foreach($_REQUEST['TField'] as $k=>$field) {
-						$ressource->TField[$k]->set_values($field);					
+					if (!empty($ressource->TField)){
+						foreach($_REQUEST['TField'] as $k=>$field) {
+							$ressource->TField[$k]->set_values($field);					
+						}
 					}
 				}
 				
@@ -172,7 +173,6 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'numero'=>$k
 			);
 	}
-	
 	$TBS=new TTemplateTBS();
 	
 	print $TBS->render('./tpl/ressource.type.field.tpl.php'
