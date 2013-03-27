@@ -14,17 +14,14 @@ $moisdatee=$datee[1];
 $anneedatee=$datee[2];
 
 $sqlReq="SELECT *";
-$sqlReq.=" FROM ".MAIN_DB_PREFIX."rh_ressource_type as t, ";
-$sqlReq.=MAIN_DB_PREFIX."rh_ressource as r, ";
-$sqlReq.=MAIN_DB_PREFIX."rh_evenement as e";
+$sqlReq.=" FROM ".MAIN_DB_PREFIX."rh_ressource_type as t";
+$sqlReq.=" LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON r.fk_rh_ressource_type=t.rowid";
+$sqlReq.=" LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=r.rowid";
 $sqlReq.=" WHERE t.code='voiture'";
-$sqlReq.=" AND r.fk_rh_ressource_type=t.rowid";
-$sqlReq.=" AND e.fk_rh_ressource=r.rowid";
 $sqlReq.=" AND e.type='emprunt'";
 $sqlReq.=" AND e.fk_user=".$_REQUEST['fk_user'];
 $sqlReq.=" AND NOT (UNIX_TIMESTAMP(e.date_debut) > ".mktime(0, 0, 0, $moisdatee, $jourdatee, $anneedatee);
 $sqlReq.=" OR UNIX_TIMESTAMP(e.date_fin) < ".mktime(0, 0, 0, $moisdates, $jourdates, $anneedates).")";
-$sqlReq.=" GROUP BY t.rowid";
 
 $result = $db->query($sqlReq);
 

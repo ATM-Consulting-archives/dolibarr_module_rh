@@ -27,8 +27,25 @@ class ActionsRessource
 							fk_user = $('#fk_user option:selected').val();
 							dates = $('#d').val();
 							datee = $('#f').val();
+							
+							$.ajax({
+								url : '<?=DOL_URL_ROOT_ALT ?>/ressource/script/utilisateur-a-un-vehicule.php?fk_user='+fk_user+'&dates='+dates+'&datee='+datee
+								,dataType: 'json'
+								,data: {
+									json:1
+								}
+								
+							})
+							.then(function ( vehicule ) {
+								if(vehicule.result=="0") {
+									$('select[name=fk_cat]').parent().parent().show();
+								}else{
+									$('select[name=fk_cat]').val(4);
+									$('select[name=fk_cat]').parent().parent().hide();
+								}
+							});
 						});
-					
+						
 						$.ajax({
 							url : '<?=DOL_URL_ROOT_ALT ?>/ressource/script/utilisateur-a-un-vehicule.php?fk_user='+fk_user+'&dates='+dates+'&datee='+datee
 							,dataType: 'json'
@@ -39,7 +56,7 @@ class ActionsRessource
 						})
 						.then(function ( vehicule ) {
 							if(vehicule.result=="0") {
-								null;
+								$('select[name=fk_cat]').parent().parent().show();
 							}else{
 								$('select[name=fk_cat]').val(4);
 								$('select[name=fk_cat]').parent().parent().hide();
@@ -60,8 +77,6 @@ class ActionsRessource
 				$sqlReq.=" AND NOT (UNIX_TIMESTAMP(e.date_debut) > ".$object->datee;
 				$sqlReq.=" OR UNIX_TIMESTAMP(e.date_fin) < ".$object->dates.")";
 				$sqlReq.=" GROUP BY t.rowid";
-				
-				print $sqlReq;
 				
 				$resultReq = $db->query($sqlReq);
 				
