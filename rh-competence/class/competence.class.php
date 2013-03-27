@@ -7,10 +7,30 @@ class TRH_ligne_cv extends TObjetStd {
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_ligne_cv');
 		parent::add_champs('date_debut,date_fin','type=date;');		//dates de début et de fin de la formation suivie
-		parent::add_champs('experience','type=chaine'); 	//formation suivie
+		parent::add_champs('libelleExperience','type=chaine'); 	//formation suivie
+		parent::add_champs('descriptionExperience','type=chaine'); 	//formation suivie
+		parent::add_champs('lieuExperience','type=chaine'); 	//formation suivie
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=entier;');
 		
+		parent::_init_vars();
+		parent::start();
+	}
+}
+
+//TRH_COMPETENCES
+//définition de la classe pour rentrer les compétences d'un utilisateur
+class TRH_formation_cv extends TObjetStd {
+	function __construct() { 
+		
+		parent::set_table(MAIN_DB_PREFIX.'rh_formation_cv');
+		parent::add_champs('date_debut,date_fin','type=date;');		//dates de début et de fin de la formation suivie
+		parent::add_champs('libelleFormation','type=chaine;');		
+		parent::add_champs('competenceFormation','type=chaine;');	
+		parent::add_champs('commentaireFormation','type=chaine;');		//commentaire associé	
+		parent::add_champs('lieuFormation','type=chaine;');		
+		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
+		parent::add_champs('entity','type=entier;');
 		parent::_init_vars();
 		parent::start();
 	}
@@ -22,16 +42,14 @@ class TRH_competence_cv extends TObjetStd {
 	function __construct() { 
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_competence_cv');
-		parent::add_champs('date_debut,date_fin','type=date;');		//dates de début et de fin de la formation suivie
-		parent::add_champs('competence','type=chaine;');		//compétences acquises sous forme de chaine de caractères
-		parent::add_champs('commentaire','type=chaine;');		//commentaire associé
-		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
+		
+		parent::add_champs('libelleCompetence','type=chaine;');		
+		parent::add_champs('fk_user_formation','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=entier;');
 		parent::_init_vars();
 		parent::start();
 	}
 }
-
 
 
 /*

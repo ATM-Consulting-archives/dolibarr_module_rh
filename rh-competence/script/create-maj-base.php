@@ -14,8 +14,11 @@
 	$o=new TRH_ligne_cv;
 	$o->init_db_by_vars($ATMdb);
 	
-	$p=new TRH_competence_cv;
+	$p=new TRH_formation_cv;
 	$p->init_db_by_vars($ATMdb);
+	
+	$q=new TRH_competence_cv;
+	$q->init_db_by_vars($ATMdb);
 	
 	
 	

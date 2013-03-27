@@ -91,7 +91,7 @@ class modCompetence extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
-		$this->config_page_url = array("setuppage.php@competence");
+		//$this->config_page_url = array("setuppage.php@competence");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
@@ -128,8 +128,8 @@ class modCompetence extends DolibarrModules
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
         $this->tabs = array(
-        	'user:+experience:Expérience:competence@competence:/competence/experience.php'  // To add a new tab identified by code tabname1
-           ,'user:+formation:Formation:competence@competence:/competence/formation.php'
+        	'user:+competence:Expérience:competence@competence:/competence/experience.php?fk_user=__ID__'  // To add a new tab identified by code tabname1
+           ,'user:+formation:Formation:competence@competence:/competence/formation.php?fk_user=__ID__'
        	);
 
         // Dictionnaries

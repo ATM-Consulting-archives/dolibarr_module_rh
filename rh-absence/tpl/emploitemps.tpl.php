@@ -106,113 +106,113 @@
 			 $('body').click( 	function(){
 				
 				if($('#lundiam').attr('checked')!="checked"){
-					$("#date_lundi_heuredam").val("0:00");
-					$("#date_lundi_heurefam").val("0:00");
+					$("#date_lundi_heuredam").val("00:00");
+					$("#date_lundi_heurefam").val("00:00");
 				}else{
-					$("#date_lundi_heuredam").val("9:00");
+					$("#date_lundi_heuredam").val("09:00");
 					$("#date_lundi_heurefam").val("12:15");
 					//$("p").wrapInner(document.createElement("b"));
 				}
 				
 				if($('#lundipm').attr('checked')!="checked"){
-					$("#date_lundi_heuredpm").val("0:00");
-					$("#date_lundi_heurefpm").val("0:00");
+					$("#date_lundi_heuredpm").val("00:00");
+					$("#date_lundi_heurefpm").val("00:00");
 				}else{
 					$("#date_lundi_heuredpm").val("14:00");
 					$("#date_lundi_heurefpm").val("18:00");
 				}
 				
 				if($('#mardiam').attr('checked')!="checked"){
-					$("#date_mardi_heuredam").val("0:00");
-					$("#date_mardi_heurefam").val("0:00");
+					$("#date_mardi_heuredam").val("00:00");
+					$("#date_mardi_heurefam").val("00:00");
 				}else{
-					$("#date_mardi_heuredam").val("9:00");
+					$("#date_mardi_heuredam").val("09:00");
 					$("#date_mardi_heurefam").val("12:15");
 				}
 				
 				if($('#mardipm').attr('checked')!="checked"){
-					$("#date_mardi_heuredpm").val("0:00");
-					$("#date_mardi_heurefpm").val("0:00");
+					$("#date_mardi_heuredpm").val("00:00");
+					$("#date_mardi_heurefpm").val("00:00");
 				}else{
 					$("#date_mardi_heuredpm").val("14:00");
 					$("#date_mardi_heurefpm").val("18:00");
 				}
 				
 				if($('#mercrediam').attr('checked')!="checked"){
-					$("#date_mercredi_heuredam").val("0:00");
-					$("#date_mercredi_heurefam").val("0:00");
+					$("#date_mercredi_heuredam").val("00:00");
+					$("#date_mercredi_heurefam").val("00:00");
 				}else{
-					$("#date_mercredi_heuredam").val("9:00");
+					$("#date_mercredi_heuredam").val("09:00");
 					$("#date_mercredi_heurefam").val("12:15");
 				}
 				
 				if($('#mercredipm').attr('checked')!="checked"){
-					$("#date_mercredi_heuredpm").val("0:00");
-					$("#date_mercredi_heurefpm").val("0:00");
+					$("#date_mercredi_heuredpm").val("00:00");
+					$("#date_mercredi_heurefpm").val("00:00");
 				}else{
 					$("#date_mercredi_heuredpm").val("14:00");
 					$("#date_mercredi_heurefpm").val("18:00");
 				}
 				
 				if($('#jeudiam').attr('checked')!="checked"){
-					$("#date_jeudi_heuredam").val("0:00");
-					$("#date_jeudi_heurefam").val("0:00");
+					$("#date_jeudi_heuredam").val("00:00");
+					$("#date_jeudi_heurefam").val("00:00");
 				}else{
-					$("#date_jeudi_heuredam").val("9:00");
+					$("#date_jeudi_heuredam").val("09:00");
 					$("#date_jeudi_heurefam").val("12:15");
 				}
 				
 				if($('#jeudipm').attr('checked')!="checked"){
-					$("#date_jeudi_heuredpm").val("0:00");
-					$("#date_jeudi_heurefpm").val("0:00");
+					$("#date_jeudi_heuredpm").val("00:00");
+					$("#date_jeudi_heurefpm").val("00:00");
 				}else{
 					$("#date_jeudi_heuredpm").val("14:00");
 					$("#date_jeudi_heurefpm").val("18:00");
 				}
 				
 				if($('#vendrediam').attr('checked')!="checked"){
-					$("#date_vendredi_heuredam").val("0:00");
-					$("#date_vendredi_heurefam").val("0:00");
+					$("#date_vendredi_heuredam").val("00:00");
+					$("#date_vendredi_heurefam").val("00:00");
 				}else{
-					$("#date_vendredi_heuredam").val("9:00");
+					$("#date_vendredi_heuredam").val("09:00");
 					$("#date_vendredi_heurefam").val("12:15");
 				}
 				
 				if($('#vendredipm').attr('checked')!="checked"){
-					$("#date_vendredi_heuredpm").val("0:00");
-					$("#date_vendredi_heurefpm").val("0:00");
+					$("#date_vendredi_heuredpm").val("00:00");
+					$("#date_vendredi_heurefpm").val("00:00");
 				}else{
 					$("#date_vendredi_heuredpm").val("14:00");
 					$("#date_vendredi_heurefpm").val("18:00");
 				}
 				
 				if($('#samediam').attr('checked')!="checked"){
-					$("#date_samedi_heuredam").val("0:00");
-					$("#date_samedi_heurefam").val("0:00");
+					$("#date_samedi_heuredam").val("00:00");
+					$("#date_samedi_heurefam").val("00:00");
 				}else{
-					$("#date_samedi_heuredam").val("9:00");
+					$("#date_samedi_heuredam").val("09:00");
 					$("#date_samedi_heurefam").val("12:15");
 				}
 				
 				if($('#samedipm').attr('checked')!="checked"){
-					$("#date_samedi_heuredpm").val("0:00");
-					$("#date_samedi_heurefpm").val("0:00");
+					$("#date_samedi_heuredpm").val("00:00");
+					$("#date_samedi_heurefpm").val("00:00");
 				}else{
 					$("#date_samedi_heuredpm").val("14:00");
 					$("#date_samedi_heurefpm").val("18:00");
 				}
 				
 				if($('#dimancheam').attr('checked')!="checked"){
-					$("#date_dimanche_heuredam").val("0:00");
-					$("#date_dimanche_heurefam").val("0:00");
+					$("#date_dimanche_heuredam").val("00:00");
+					$("#date_dimanche_heurefam").val("00:00");
 				}else{
-					$("#date_dimanche_heuredam").val("9:00");
+					$("#date_dimanche_heuredam").val("09:00");
 					$("#date_dimanche_heurefam").val("12:15");
 				}
 				
 				if($('#dimanchepm').attr('checked')!="checked"){
-					$("#date_dimanche_heuredpm").val("0:00");
-					$("#date_dimanche_heurefpm").val("0:00");
+					$("#date_dimanche_heuredpm").val("00:00");
+					$("#date_dimanche_heurefpm").val("00:00");
 				}else{
 					$("#date_dimanche_heuredpm").val("14:00");
 					$("#date_dimanche_heurefpm").val("18:00");
