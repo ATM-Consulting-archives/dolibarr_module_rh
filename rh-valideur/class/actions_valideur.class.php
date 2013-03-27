@@ -164,9 +164,9 @@ class ActionsValideur
 							$sql.= " FROM ".MAIN_DB_PREFIX."rh_valideur_groupe v";
 							$sql.= " WHERE v.fk_user = ".$user->id;
 							$sql.= " AND v.fk_usergroup =".$obj_group->group_id;
-							$sql.= " AND v.type = 'NDFP'";
+							$sql.= " AND v.type = 'Note de frais'";
 							$sql.= " ORDER BY v.nbjours ASC";
-							
+							//print $sql;
 							$result = $db->query($sql);
 							if($result)
 							{
