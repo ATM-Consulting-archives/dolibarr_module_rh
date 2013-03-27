@@ -68,7 +68,7 @@ class ActionsValideur
 			                               
 			WHERE n.entity = ".$object->entity." 
 			AND (n.fk_user IN (".implode(',', $TUser).")
-			               OR (v.type='NDFP' AND v.fk_user = ".$user->id."
+			               OR (v.type='Note de Frais' AND v.fk_user = ".$user->id."
 			                       AND (n.statut = 4 OR n.statut = 1)
 			                       AND NOW() >= ADDDATE(n.tms, v.nbjours)
                    )
@@ -183,7 +183,9 @@ class ActionsValideur
 			}
 			
 			return 1;
+
 		}elseif($parameters['action']=='delegation'){
+
 			$idUsercourant=$_GET["id"];
 			if (in_array('usercard',explode(':',$parameters['context']))){ 
 	        // do something only for the context 'somecontext'
@@ -206,7 +208,9 @@ class ActionsValideur
 					}
 			    }	
 			}
+
 			if($parameters['action']=='delegation'){    
+
 	           ?><tr>
 				      <td>
 				      	Délégation Note de Frais      	
@@ -266,7 +270,9 @@ class ActionsValideur
 						}
 			     	}
 					echo $html->select_users($user->id, "fk_user",0,'','',$tabDelegation );
+
 					}elseif($action=='edituser'){ //on est dans le default 
+
 						$tabDelegation=array();
 						$k=0;
 						$tabDelegation[$k]=$user->id;
@@ -302,9 +308,8 @@ class ActionsValideur
     {
     	global $db, $user, $html;  
 		
-		
 		$idUsercourant=$user->id;
-		 dol_include_once('/core/class/html.form.class.php');
+		dol_include_once('/core/class/html.form.class.php');
 		$tabDelegation=array();
 		$k=0;
 		$tabDelegation[$k]=$user->id;
