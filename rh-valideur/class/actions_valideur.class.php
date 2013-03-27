@@ -14,7 +14,21 @@ class ActionsValideur
     { 
         global $db,$html,$user;
 		
-		if($action=='list_validateurs_groupe'){
+		if($action=='is_validator'){
+			$user_id=$user->id;
+			
+			$sqlReq="SELECT *";
+			$sqlReq.=" FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v";
+			$sqlReq.=" WHERE v.fk_user=".$user_id;
+			
+			$result = $db->query($sqlReq);
+			
+			if($result->num_rows > 0){
+				return 1;
+			}else{
+				return 0;
+			}
+		}elseif($action=='list_validateurs_groupe'){
 			$group_id=$parameters[0];
 			$user_id=$object->id;
 			
@@ -166,7 +180,7 @@ class ActionsValideur
 							$sql.= " AND v.fk_usergroup =".$obj_group->group_id;
 							$sql.= " AND v.type = 'Note de frais'";
 							$sql.= " ORDER BY v.nbjours ASC";
-							//print $sql;
+							
 							$result = $db->query($sql);
 							if($result)
 							{
