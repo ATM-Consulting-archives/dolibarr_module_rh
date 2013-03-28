@@ -81,7 +81,7 @@ class ActionsValideur
 			                               
 			WHERE n.entity = ".$object->entity." 
 			AND (n.fk_user IN (".implode(',', $TUser).")
-			               OR (v.type='Note de Frais' AND v.fk_user = ".$user->id."
+			               OR (v.type='NDFP' AND v.fk_user = ".$user->id."
 			                       AND (n.statut = 4 OR n.statut = 1)
 			                       AND NOW() >= ADDDATE(n.tms, v.nbjours)
                    )
@@ -177,7 +177,7 @@ class ActionsValideur
 							$sql.= " FROM ".MAIN_DB_PREFIX."rh_valideur_groupe v";
 							$sql.= " WHERE v.fk_user = ".$user->id;
 							$sql.= " AND v.fk_usergroup =".$obj_group->group_id;
-							$sql.= " AND v.type = 'Note de frais'";
+							$sql.= " AND v.type = 'NDFP'";
 							$sql.= " ORDER BY v.nbjours ASC";
 							
 							$result = $db->query($sql);
@@ -314,6 +314,7 @@ class ActionsValideur
 			}
 			return 0; 
 		}
+		return 1;
 	}
 
 
