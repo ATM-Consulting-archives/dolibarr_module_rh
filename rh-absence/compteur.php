@@ -276,9 +276,9 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'annuelCumule'=>$form->texte('','rttAcquisAnnuelCumule',round2Virgule($rttCourant->annuelCumule),10,50,'',$class="text", $default='')
 				,'annuelNonCumule'=>$form->texte('','rttAcquisAnnuelNonCumule',round2Virgule($rttCourant->annuelNonCumule),10,50,'',$class="text", $default='')
 				,'date_rttCloture'=>$compteurGlobal->date_rttClotureInit
-				,'mensuelInit'=>$form->texte('','rttAcquisMensuel',round2Virgule($rttCourant->mensuelInit),10,50,'',$class="text", $default='')
-				,'annuelCumuleInit'=>$form->texte('','rttAcquisAnnuelCumule',round2Virgule($rttCourant->annuelCumuleInit),10,50,'',$class="text", $default='')
-				,'annuelNonCumuleInit'=>$form->texte('','rttAcquisAnnuelNonCumule',round2Virgule($rttCourant->annuelNonCumuleInit),10,50,'',$class="text", $default='')
+				,'mensuelInit'=>$form->texte('','rttAcquisMensuelInit',round2Virgule($rttCourant->mensuelInit),10,50,'',$class="text", $default='')
+				,'annuelCumuleInit'=>$form->texte('','rttAcquisAnnuelCumuleInit',round2Virgule($rttCourant->annuelCumuleInit),10,50,'',$class="text", $default='')
+				,'annuelNonCumuleInit'=>$form->texte('','rttAcquisAnnuelNonCumuleInit',round2Virgule($rttCourant->annuelNonCumuleInit),10,50,'',$class="text", $default='')
 				//,'typeAcquisition'=>$form->texte('','typeAcquisition',$rttCourant->typeAcquisition,10,50,'',$class="text", $default='')
 				,'typeAcquisition'=>$form->combo('','rttTypeAcquisition',$compteur->TTypeAcquisition,$compteur->rttTypeAcquisition)
 				,'rttTypeAcquis'=>$compteur->rttTypeAcquisition

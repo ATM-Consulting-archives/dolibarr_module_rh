@@ -113,7 +113,7 @@ function _liste(&$ATMdb, &$absence) {
 			'date_debut'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
-		,'translate'=>array()
+		,'translate'=>array('Statut demande'=>array('Refusée'=>'<b style="color:#FF0000">Refusée</b>','En attente de validation'=>'<b style="color:#0000FF">	En attente de validation</b>' , 'Acceptée'=>'<b style="color:#04B404">Acceptée</b>'))
 		,'hide'=>array('DateCre')
 		,'type'=>array('date_debut'=>'date')
 		,'liste'=>array(
