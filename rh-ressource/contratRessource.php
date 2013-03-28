@@ -32,8 +32,7 @@
 				$association->load($ATMdb, $_REQUEST['idAssoc']);
 				$mesg = '<div class="ok">Modifications effectuées</div>';
 				$mode = 'view';
-				
-				print_r($_REQUEST);
+			
 				$association->set_values($_REQUEST);
 				$association->save($ATMdb);
 				
@@ -108,12 +107,12 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 		,'hide'=>array('DateCre')
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste des evenements'
+			'titre'=>'Liste des contrats'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucun emprunt à afficher"
+			,'messageNothing'=>"Il n'y a aucun contrat à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			
@@ -138,9 +137,6 @@ function _fiche(&$ATMdb,  &$association, &$ressource,  $mode) {
 	
 	
 	$ressource->load_contrat($ATMdb);
-
-	echo 'liste contrat : ';
-	print_r($ressource->TListeContrat);
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/contratRessource.tpl.php'
 		,array(

@@ -15,10 +15,6 @@
 
 <table class="border" style="width:50%">
 	<tr>
-		<td>Id</td>
-		<td>[NAssociation.id;strconv=no;protect=no]</td>
-	</tr>
-	<tr>
 		<td>Contrat</td>
 		<td>[NAssociation.fk_rh_contrat;strconv=no;protect=no]</td>[NAssociation.fk_rh_ressource;strconv=no;protect=no]
 	</tr>
