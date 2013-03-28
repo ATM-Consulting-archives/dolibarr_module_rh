@@ -29,6 +29,7 @@ class TRH_formation_cv extends TObjetStd {
 		parent::add_champs('competenceFormation','type=chaine;');	
 		parent::add_champs('commentaireFormation','type=chaine;');		//commentaire associé	
 		parent::add_champs('lieuFormation','type=chaine;');		
+		parent::add_champs('date_formationEcheance','type=date;');	
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=entier;');
 		parent::_init_vars();

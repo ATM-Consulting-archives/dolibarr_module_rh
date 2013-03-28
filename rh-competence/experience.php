@@ -30,12 +30,17 @@
 				_ficheFormation($ATMdb, $formation, $tagCompetence, 'edit');
 				break;		
 				
+			case 'editFormation'	:
+				//$ATMdb->db->debug=true;
+				$formation->load($ATMdb, $_REQUEST['id']);
+				_ficheFormation($ATMdb, $formation,$tagCompetence,'edit');
+				break;
+				
 			case 'savecv':
 				
 				$lignecv->load($ATMdb, $_REQUEST['id']);
 				$lignecv->set_values($_REQUEST);
 				$mesg = '<div class="ok">Ligne de CV ajoutée</div>';
-				$mode = 'view';
 
 				$lignecv->save($ATMdb);
 				_liste($ATMdb, $lignecv , $formation);
@@ -68,7 +73,6 @@
 				$lignecv->load($ATMdb, $_REQUEST['id']);
 				$lignecv->delete($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">La ligne de CV a bien été supprimée</div>';
-				$mode = 'edit';
 				_liste($ATMdb, $lignecv , $formation);
 				break;
 				
@@ -77,8 +81,16 @@
 				$formation->load($ATMdb, $_REQUEST['id']);
 				$formation->delete($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">La ligne de compétence a bien été supprimée</div>';
-				$mode = 'edit';
 				_liste($ATMdb, $lignecv , $formation);
+				break;
+				
+			case 'deleteCompetence':
+				//$ATMdb->db->debug=true;
+				$tagCompetence->load($ATMdb, $_REQUEST['idForm']);
+				$tagCompetence->delete($ATMdb, $_REQUEST['idForm']);
+				$formation->load($ATMdb, $_REQUEST['id']);
+				$mesg = '<div class="ok">Le tag de formation a bien été supprimé</div>';
+				_ficheFormation($ATMdb, $formation, $tagCompetence,'edit');
 				break;
 		}
 	}
@@ -175,7 +187,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 	////////////AFFICHAGE DES  FORMATIONS
 	$r = new TSSRenderControler($formation);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
-			  date_debut, date_fin, libelleFormation, competenceFormation, commentaireFormation,lieuFormation, fk_user, '' as 'Supprimer'
+			  date_debut, date_fin, libelleFormation,  commentaireFormation,lieuFormation, date_formationEcheance, fk_user, '' as 'Supprimer'
 		FROM   llx_rh_formation_cv
 		WHERE fk_user=".$user->id." AND entity=".$conf->entity;
 
@@ -199,7 +211,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 		,'translate'=>array(
 		)
 		,'hide'=>array('DateCre','fk_user', 'commentaireFormation')
-		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
+		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date', 'date_formationEcheance'=>'date')
 		,'liste'=>array(
 			'titre'=>'LISTE DE VOS FORMATIONS'
 			,'image'=>img_picto('','title.png', '', 0)
@@ -219,6 +231,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 			,'competenceFormation'=>'Compétences'
 			,'commentaireFormation'=>'Commentaires'
 			,'lieuFormation'=>'Lieu'
+			,'date_formationEcheance'=>'Date d\'échéance'
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
@@ -305,24 +318,28 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	echo $form->hidden('fk_user', $user->id);
 	echo $form->hidden('entity', $conf->entity);
 
-	$sql="SELECT libelleCompetence FROM llx_rh_competence_cv WHERE fk_user_formation=".$formation->getID();
+	$sql="SELECT c.rowid, c.libelleCompetence FROM llx_rh_competence_cv as c, llx_rh_formation_cv as f 
+	WHERE c.fk_user_formation=".$formation->getID(). " AND fk_user_formation=f.rowid";
+
 	$ATMdb->Execute($sql);
 	$TTagCompetence=array();
 	while($ATMdb->Get_line()) {
-			$TTagCompetence[]=$form->texte('','libelleCompetence',$tagCompetence->libelleCompetence, 30,100,'','','-');
+			$TTagCompetence[]=array(
+				'id'=>$ATMdb->Get_field('rowid')
+				,'libelleCompetence'=>$form->texte('','libelleCompetence',$ATMdb->Get_field('libelleCompetence'), 30,100,'','','-')
+				
+			);
+		
 	}
 	
-	/*$THoraire=array();
-	foreach($emploiTemps->TJour as $jour) {
-		foreach(array('dam','fam','dpm','fpm') as $pm) {
-			$THoraire[$jour.'_heure'.$pm]=$form->texte('','date_'.$jour.'_heure'.$pm, date('H:i',$emploiTemps->{'date_'.$jour.'_heure'.$pm}) ,5,5);
-		}
-	} */
+	
+	
 	
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/formation.tpl.php'
 		,array(
+			'TCompetence'=>$TTagCompetence
 		)
 		,array(
 			'formation'=>array(
@@ -330,9 +347,9 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				,'date_debut'=>$form->calendrier('', 'date_debut', $formation->get_date('date_debut'), 10)
 				,'date_fin'=>$form->calendrier('', 'date_fin', $formation->get_date('date_fin'), 10)
 				,'libelleFormation'=>$form->texte('','libelleFormation',$formation->libelleFormation, 30,100,'','','-')
-				,'competenceFormation'=>$form->texte('','competenceFormation',$formation->competenceFormation, 30,100,'','','-')
 				,'commentaireFormation'=>$form->texte('','commentaireFormation',$formation->commentaireFormation, 50,300,'style="width:400px;height:80px;"','','-')
 				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 30,100,'','','-')
+				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->get_date('date_formationEcheance'), 10)
 			)
 			,'userCourant'=>array(
 				'id'=>$user->id

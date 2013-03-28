@@ -23,15 +23,15 @@
 	
 [onshow;block=begin;when [view.mode]=='view']
 	<div class="tabsAction" style="text-align:center;">
-		<a class="butAction"  href="?id=[joursFeries.id]&action=edit">Modifier</a>
-		<a class="butActionDelete"  href="?id=[joursFeries.id]&action=delete">Supprimer</a>
+		<a class="butAction"  href="?idJour=[joursFeries.id]&id=[userCourant.id]&action=edit">Modifier</a>
+		<a class="butActionDelete"  href="?idJour=[joursFeries.id]&id=[userCourant.id]&action=delete">Supprimer</a>
 		</div>
 [onshow;block=end] 
 
 [onshow;block=begin;when [view.mode]!='view']
 	<div class="tabsAction" style="text-align:center;">
 		<input type="submit" value="Enregistrer" name="save" class="button">
-		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[joursFeries.id]'">
+		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[userCourant.id]'">
 	</div>
 [onshow;block=end] 
 

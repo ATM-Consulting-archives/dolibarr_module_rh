@@ -1,49 +1,92 @@
-[onshow;block=begin;when [view.mode]=='view'] 
+
 <div class="fiche">
     <div class="tabBar">
-		<div>				
+		<div>			
+			<h2 style="color: #2AA8B9;">Description de la formation</h2>	
 			<table class="border" style="width:100%">			
 				<tr>
-					<td>Date début</td>
-					<td>Date fin</td>
-					<td>Compétence</td>
-					<td>Commentaire</td>
-					<td>Supprimer</td>
+					<td><b>Date début</b></td>
+					<td><b>Date fin</b></td>
+					<td><b>Date d'échéance de la formation</b></td>
+					<td><b>Libellé de la formation</b></td>
+					<td><b>Lieu de la formation</b></td>
 				</tr>
 				<tr>
-					<td>[competence.date_debut;block=tr;strconv=no;protect=no]</td>
-					<td>[competence.date_fin;strconv=no;protect=no]</td>
-					<td>[competence.competence;strconv=no;protect=no]</td>
-					<td>[competence.commentaire;strconv=no;protect=no]</td>
-					<td><img src="./img/delete.png"  style="cursor:pointer;" onclick="document.location.href='?fk_user=[userCourant.id]&deleteId=[cv.id]&action=delete'"></td>
+					<td>[formation.date_debut;block=tr;strconv=no;protect=no]</td>
+					<td>[formation.date_fin;strconv=no;protect=no]</td>
+					<td>[formation.date_formationEcheance;strconv=no;protect=no]</td>
+					<td>[formation.libelleFormation;strconv=no;protect=no]</td>
+					<td>[formation.lieuFormation;strconv=no;protect=no]</td>
 				</tr>
+			</table>
+		
+			
+			<br/><br/>
+			<table class="border" style="width:100%">
+				<tr>
+					<td><b>Commentaires</b></td>
+				</tr>
+				<tr>
+					<td>[formation.commentaireFormation;strconv=no;protect=no]</td>
+				</tr>
+					
+			</table>
+			<br/><br/>
+			
+			<table class="border" style="width:30%">
+				<tr>
+					<td><b>Compétences acquises</b></td>
+				</tr>
+				
+				<tr>
+					<td>
+					[TCompetence.libelleCompetence;block=tr;strconv=no;protect=no]
+					</td>
+					[onshow;block=begin;when [view.mode]=='edit']
+					<td>
+					<a href="?id=[formation.id;strconv=no;protect=no]&idForm=[TCompetence.id;block=tr;strconv=no;protect=no]&action=deleteCompetence"><img src="./img/delete.png"></a>
+					</td>
+					[onshow;block=end]
+				</tr>	
+			</table>
+			
+			<br/><br/>
+			[onshow;block=begin;when [view.mode]=='edit']
+			<table class="border" style="width:30%">
+				<tr>
+					<input class="" type="text"  size="31" size="255" >
+					<input type="submit" value="Ajouter Compétences" name="save" class="button" >
+				</tr>	
+			</table>
+			[onshow;block=end]
+			
+			
+			<br/><br/>
+			
+			<table class="border" style="width:100%;">
+				[onshow;block=begin;when [view.mode]=='view']
+				<span  style="float:right;" class="butActionDelete" id="action-delete" onclick="document.location.href='?fk_user=[userCourant.id]&deleteId=[formation.id]&action=deleteFormation'">Supprimer</span>
+				<a style="float:right;" class="butAction" href="?fk_user=[userCourant.id]">Annuler</a>
+				<a style="float:right;" href="?id=[formation.id]&action=editFormation" class="butAction">Modifier</a>
+				
+				[onshow;block=end]	
 			</table>
 		</div>
 	</div>
 </div>
-[onshow;block=end] 
 
 
+
+
+
+	
+	
 [onshow;block=begin;when [view.mode]=='edit']
-<h2 style="color: #2AA8B9;">Nouvelle ligne de formation </h2>
-<table
-	<tr>
-		<td>Date début</td>
-		<td>Date fin</td>
-		<td>Expérience</td>
-		<td>Commentaire</td>
-	</tr>
-	<tr>
-		<td>[competence.date_debut;block=tr;strconv=no;protect=no]</td>
-		<td>[competence.date_fin;strconv=no;protect=no]</td>
-		<td>[competence.competence;strconv=no;protect=no]</td>
-		<td>[competence.commentaire;strconv=no;protect=no]</td>
-	</tr>
-</table>
-
-<div class="tabsAction" >
-	<input type="submit" value="Enregistrer" name="save" class="button">
-	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?fk_user=[userCourant.id]'">
+	<div class="tabsAction" style="text-align:center">
+		<input type="submit" value="Enregistrer" name="save" class="button">
+		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?fk_user=[userCourant.id]'">
+	</div>
+	
 </div>
 [onshow;block=end]
 
