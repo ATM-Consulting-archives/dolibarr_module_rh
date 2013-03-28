@@ -24,7 +24,6 @@ class ActionsValideur
 			$sqlReq.=" AND v.fk_usergroup=".$group_id;
 			
 			$result = $db->query($sqlReq);
-			
 			if($result->num_rows > 0){
 				return 1;
 			}else{
