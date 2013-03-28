@@ -14,7 +14,21 @@ class ActionsValideur
     { 
         global $db,$html,$user;
 		
-		if($action=='list_validateurs_groupe'){
+		if($action=='is_validator'){
+			$user_id=$user->id;
+			
+			$sqlReq="SELECT *";
+			$sqlReq.=" FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v";
+			$sqlReq.=" WHERE v.fk_user=".$user_id;
+			
+			$result = $db->query($sqlReq);
+			
+			if($result->num_rows > 0){
+				return 1;
+			}else{
+				return 0;
+			}
+		}elseif($action=='list_validateurs_groupe'){
 			$group_id=$parameters[0];
 			$user_id=$object->id;
 			
@@ -67,7 +81,7 @@ class ActionsValideur
 			                               
 			WHERE n.entity = ".$object->entity." 
 			AND (n.fk_user IN (".implode(',', $TUser).")
-			               OR (v.type='NDFP' AND v.fk_user = ".$user->id."
+			               OR (v.type='Note de Frais' AND v.fk_user = ".$user->id."
 			                       AND (n.statut = 4 OR n.statut = 1)
 			                       AND NOW() >= ADDDATE(n.tms, v.nbjours)
                    )
@@ -163,7 +177,7 @@ class ActionsValideur
 							$sql.= " FROM ".MAIN_DB_PREFIX."rh_valideur_groupe v";
 							$sql.= " WHERE v.fk_user = ".$user->id;
 							$sql.= " AND v.fk_usergroup =".$obj_group->group_id;
-							$sql.= " AND v.type = 'NDFP'";
+							$sql.= " AND v.type = 'Note de frais'";
 							$sql.= " ORDER BY v.nbjours ASC";
 							
 							$result = $db->query($sql);
@@ -182,11 +196,13 @@ class ActionsValideur
 			}
 			
 			return 1;
-		}else{
+
+		}elseif($parameters['action']=='delegation'){
+
 			$idUsercourant=$_GET["id"];
 			if (in_array('usercard',explode(':',$parameters['context']))){ 
 	        // do something only for the context 'somecontext'
-	          
+	        
 	        dol_include_once('/core/class/html.form.class.php');
 	          
 			$form=new Form($db);
@@ -205,7 +221,9 @@ class ActionsValideur
 					}
 			    }	
 			}
-			if($action!='create'){	    
+
+			if($parameters['action']=='delegation'){    
+
 	           ?><tr>
 				      <td>
 				      	Délégation Note de Frais      	
@@ -265,7 +283,9 @@ class ActionsValideur
 						}
 			     	}
 					echo $html->select_users($user->id, "fk_user",0,'','',$tabDelegation );
-					}else{ //on est dans le default 
+
+					}elseif($action=='edituser'){ //on est dans le default 
+
 						$tabDelegation=array();
 						$k=0;
 						$tabDelegation[$k]=$user->id;
@@ -301,9 +321,8 @@ class ActionsValideur
     {
     	global $db, $user, $html;  
 		
-		
 		$idUsercourant=$user->id;
-		 dol_include_once('/core/class/html.form.class.php');
+		dol_include_once('/core/class/html.form.class.php');
 		$tabDelegation=array();
 		$k=0;
 		$tabDelegation[$k]=$user->id;
