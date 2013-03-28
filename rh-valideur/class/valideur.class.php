@@ -16,7 +16,7 @@ class TRH_valideur_groupe extends TObjetStd {
 		parent::start();
 		
 		$this->TType = array(
-			'Note de frais'=>'NDFP'
+			'NDFP'=>'Note de frais'
 			,'Congés'=>'Congés'
 		);
 		
