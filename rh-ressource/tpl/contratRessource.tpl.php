@@ -27,7 +27,7 @@
 [onshow;block=begin;when [view.mode]=='view']
 	<div class="tabsAction" style="text-align:center;">
 		<a class="butAction"  href="?id=[ressource.id]&idAssoc=[NAssociation.id]&action=edit">Modifier</a>
-		<a class="butActionDelete"  href="?id=[ressource.id]&idAssoc=[NAssociation.id]&action=deleteAttribution">Supprimer</a>
+		<a class="butActionDelete"  href="?id=[ressource.id]&idAssoc=[NAssociation.id]&action=deleteAssoc">Supprimer</a>
 		</div>
 [onshow;block=end] 
 

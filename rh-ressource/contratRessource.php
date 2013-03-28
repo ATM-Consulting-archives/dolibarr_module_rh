@@ -47,7 +47,7 @@
 				$association->delete($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">Le lien avec le contrat a été supprimée.</div>';
-				_fiche($ATMdb, $association, $ressource,'view');
+				_liste($ATMdb, $association, $ressource,'view');
 				break;
 		}
 	}
@@ -82,7 +82,8 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 	
 	$r = new TSSRenderControler($association);
 	$sql="SELECT DISTINCT a.rowid as 'ID', c.libelle as 'Libellé', 
-		DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin', a.commentaire as 'Commentaire'
+		DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin', a.commentaire as 'Commentaire',
+		'' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_contrat_ressource as a
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_contrat as c ON (a.fk_rh_contrat = c.rowid)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (a.fk_rh_ressource = r.rowid)
@@ -102,6 +103,7 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@">@val@</a>'
+			,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@&action=deleteAssoc"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')
