@@ -53,10 +53,16 @@
 			<br/><br/>
 			[onshow;block=begin;when [view.mode]=='edit']
 			<table class="border" style="width:30%">
+				
+				<tr>	
+						[newCompetence.hidden;strconv=no;protect=no]
+						[newCompetence.fk_user_formation;strconv=no;protect=no]
+						[newCompetence.libelleCompetence;strconv=no;protect=no]
+				</tr>
 				<tr>
-					<input class="" type="text"  size="31" size="255" >
-					<input type="submit" value="Ajouter Compétences" name="save" class="button" >
-				</tr>	
+					<input type="submit" value="Ajouter" name="newCompetence" class="button">
+				</tr>
+			
 			</table>
 			[onshow;block=end]
 			
