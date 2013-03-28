@@ -82,7 +82,7 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 	
 	$r = new TSSRenderControler($association);
 	$sql="SELECT DISTINCT a.rowid as 'ID', c.libelle as 'Libellé', 
-		DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin', c.libelle as 'Commentaire'
+		DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin', a.commentaire as 'Commentaire'
 		FROM ".MAIN_DB_PREFIX."rh_contrat_ressource as a
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_contrat as c ON (a.fk_rh_contrat = c.rowid)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (a.fk_rh_ressource = r.rowid)
@@ -150,7 +150,7 @@ function _fiche(&$ATMdb,  &$association, &$ressource,  $mode) {
 				'id'=>$association->getId()
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
 				,'fk_rh_contrat'=>$form->combo('', 'fk_rh_contrat', $ressource->TListeContrat, $association->fk_rh_contrat)
-				,'commentaire'=>$form->texte('','motif',$association->commentaire, 30,100,'','','-')
+				,'commentaire'=>$form->texte('','commentaire',$association->commentaire, 30,100,'','','-')
 			
 			)
 			,'view'=>array(
