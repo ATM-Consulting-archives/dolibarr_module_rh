@@ -17,6 +17,9 @@
 
 	<h2>Champs de la ressource</h2>
 
+<dd> Si le type est Liste, séparer les élements par ';' .<br> <u>Exemple :</u> Si Marque est de type liste, mettre "Ford;Citroën;Peugeot" dans les options.
+<br><br></dd>
+
 <div>
 	<!-- entête du tableau -->
 		[onshow;block=begin;when [view.mode]=='edit']

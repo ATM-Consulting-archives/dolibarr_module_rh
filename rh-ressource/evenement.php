@@ -115,7 +115,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 				DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.type as 'Type',
 				e.motif as 'Motif', e.description as 'Commentaire', e.coutHT as 'Coût', 
 				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA' ";
-			$jointureType = "";// " AND ( e.type='accident' OR e.type='reparation' )";
+			$jointureType = " AND e.type<>'emprunt' ";
 			break;
 		 case 'appel' :
 			$jointureChamps =" CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 

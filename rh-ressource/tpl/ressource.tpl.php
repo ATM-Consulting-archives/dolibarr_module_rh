@@ -82,7 +82,7 @@
 
 <br>
 
-<h2>Ressource associé </h2>
+<h2>Ressource associée </h2>
 <div>
 	
 		[onshow;block=begin;when [view.mode]=='edit']

@@ -241,7 +241,8 @@ class TRH_Ressource_type extends TObjetStd {
 		parent::add_champs('libelle,code','type=chaine;');
 		parent::add_champs('entity','type=entier;index;');
 		parent::add_champs('supprimable','type=entier');
-		parent::add_champs('liste_evenement','type=chaine;');
+		parent::add_champs('liste_evenement_value','type=chaine;');
+		parent::add_champs('liste_evenement_key','type=chaine;');
 				
 		parent::_init_vars();
 		parent::start();
@@ -329,6 +330,13 @@ class TRH_Ressource_type extends TObjetStd {
 		$this->entity = $conf->entity;
 		$this->code = TRH_Ressource_type::code_format(empty($this->code) ? $this->libelle : $this->code);
 		
+		//on transforme la liste des évenements en liste valide pour être des clés d'un tableau
+		$temp = array();
+		foreach (explode(';', $this->liste_evenement_value) as $value) {
+			$temp[] = TRH_Ressource_type::code_format($value);
+		}
+		$this->liste_evenement_key = implode(';',$temp);
+		
 		parent::save($db);
 		
 		foreach($this->TField as $field) {
@@ -358,7 +366,7 @@ class TRH_Ressource_field extends TObjetStd {
 		parent::add_champs('type','type=chaine;');
 		parent::add_champs('obligatoire','type=entier;');
 		parent::add_champs('ordre','type=entier');
-		parent::add_champs('options','type=entier');
+		parent::add_champs('options','type=chaine');
 		parent::add_champs('supprimable','type=entier');
 		parent::add_champs('fk_rh_ressource_type,entity','type=entier;index;');
 		
@@ -380,6 +388,7 @@ class TRH_Ressource_field extends TObjetStd {
 		global $conf;
 		
 		$this->code = TRH_Ressource_type::code_format(empty($this->code) ? $this->libelle : $this->code);
+		
 		$this->entity = $conf->entity;
 		$this->supprimable = 1;
 		parent::save($db);

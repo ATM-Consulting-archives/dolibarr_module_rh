@@ -17,17 +17,15 @@
 		$ressourceType->load($ATMdb, $_REQUEST['id']);
 		if (isset($_REQUEST['action'])){
 		if ($_REQUEST['action'] == 'save'){
-			$ressourceType->liste_evenement = implode(';', $_REQUEST['TEvenements']);
-			//echo $ressourceType->liste_evenement;
+			$ressourceType->liste_evenement_value = implode(';', $_REQUEST['TEvenements']);
 			$ressourceType->save($ATMdb);
 			$mesg = '<div class="ok">Modifications effectuées</div>';
 			$mode = 'view';
 		}
 		if ($_REQUEST['action'] == 'delete'){
-			$TEvenements = explode(';',$ressourceType->liste_evenement);
+			$TEvenements = explode(';',$ressourceType->liste_evenement_value);
 			unset($TEvenements[$_REQUEST[key]]);
-			$ressourceType->liste_evenement = implode(';', $TEvenements);
-			//echo $ressourceType->liste_evenement;
+			$ressourceType->liste_evenement_value = implode(';', $TEvenements);
 			$ressourceType->save($ATMdb);
 			
 		}
@@ -42,7 +40,7 @@
 		
 		//on récupère le champs 
 		
-		$TEvenements = empty($ressourceType->liste_evenement) ? array() : explode(';',$ressourceType->liste_evenement);
+		$TEvenements = empty($ressourceType->liste_evenement_value) ? array() : explode(';',$ressourceType->liste_evenement_value);
 		$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 		$form->Set_typeaff($mode);
 		echo $form->hidden('id', $ressourceType->getId());

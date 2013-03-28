@@ -39,7 +39,8 @@ class TRH_Evenement  extends TObjetStd {
 
 		
 		$this->TType = array(
-			 'accident'=>'Accident'
+			'all'=>''
+			 ,'accident'=>'Accident'
 			,'reparation'=>'Réparation'
 			,'appel'=>'Appel'
 			,'facture'=>'Facture'
@@ -69,13 +70,15 @@ class TRH_Evenement  extends TObjetStd {
 
 	function load_liste_type(&$ATMdb, $ressource){
 		global $conf;
-		$sqlReq="SELECT rowid, liste_evenement FROM ".MAIN_DB_PREFIX."rh_ressource_type 
+		$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
 		WHERE rowid=".$ressource->fk_rh_ressource_type." AND entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			foreach (explode(';', $ATMdb->Get_field('liste_evenement')) as $key=>$value) {
+			$keys = explode(';', $ATMdb->Get_field('liste_evenement_key'));
+			$values = explode(';', $ATMdb->Get_field('liste_evenement_value'));
+			foreach ($values as $key=>$value) {
 				if (!empty($value)){
-					$this->TType[$value] = $value;
+					$this->TType[$keys[$key]] = $values[$key];
 				}
 			}
 		}

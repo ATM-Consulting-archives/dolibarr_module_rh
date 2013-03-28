@@ -192,7 +192,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'indice'=>$k+1
 				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 20,255,'','','-')
 				,'type'=>$form->combo('', 'TNField[type]',$ressource->TType, 'texte')
-				,'options'=>$form->texte('', 'TField['.$k.'][options]', $field->options, 20,255,'','','-')
+				,'options'=>$form->texte('', 'TNField[options]', '', 20,255,'','','-')
 				,'obligatoire'=>$form->combo('','TNField[obligatoire]',array('Oui','Non'),'0')
 			
 			)
