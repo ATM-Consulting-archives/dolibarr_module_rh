@@ -13,6 +13,7 @@
 					<td>Groupe</td>
 					<td>Type</td>
 					<td>Nombre de jours avant alerte</td>
+					<td>Montant avant alerte</td>
 					<td>Action</td>
 					
 				</tr>
@@ -20,6 +21,7 @@
 					<td>[validations.group;block=tr;strconv=no;protect=no]</td>
 					<td>[validations.type;strconv=no;protect=no]</td>
 					<td>[validations.nbjours;strconv=no;protect=no]</td>
+					<td>[validations.montant;strconv=no;protect=no]€</td>
 					<td><img src="./img/delete.png"  style="cursor:pointer;" onclick="document.location.href='?fk_user=[userCourant.id]&deleteId=[validations.id]&action=delete'"></td>
 				</tr>
 			</table>
@@ -39,11 +41,13 @@
 		<td>Groupe</td>
 		<td>Type</td>
 		<td>Nombre de jours avant alerte</td>
+		<td>Montant avant alerte</td>
 	</tr>
 	<tr>
 		<td>[valideur.group;strconv=no;protect=no]</td>
 		<td>[valideur.type;strconv=no;protect=no]</td>
 		<td>[valideur.nbjours;strconv=no;protect=no]</td>
+		<td>[valideur.montant;strconv=no;protect=no]€</td>
 	</tr>
 </table>
 

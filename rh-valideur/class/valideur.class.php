@@ -10,6 +10,7 @@ class TRH_valideur_groupe extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_valideur_groupe');
 		parent::add_champs('type','type=chaine;');				//type de valideur
 		parent::add_champs('nbjours','type=entier;');			//nbjours avant alerte
+		parent::add_champs('montant','type=float;');			//montant avant alerte
 		parent::add_champs('fk_user,fk_usergroup,entity','type=entier;index;');	//utilisateur ou groupe concerné
 		
 		parent::_init_vars();

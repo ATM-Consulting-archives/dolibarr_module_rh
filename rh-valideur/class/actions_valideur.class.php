@@ -83,7 +83,7 @@ class ActionsValideur
 			AND (n.fk_user IN (".implode(',', $TUser).")
 			               OR (v.type='NDFP' AND v.fk_user = ".$user->id."
 			                       AND (n.statut = 4 OR n.statut = 1)
-			                       AND NOW() >= ADDDATE(n.tms, v.nbjours)
+			                       AND ((NOW() >= ADDDATE(n.tms, v.nbjours)) OR (n.total_ttc > v.montant))
                    )
            	)";
 			
