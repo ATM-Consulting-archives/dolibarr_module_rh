@@ -35,7 +35,16 @@
 				$formation->load($ATMdb, $_REQUEST['id']);
 				_ficheFormation($ATMdb, $formation,$tagCompetence,'edit');
 				break;
-				
+			/*case 'save':
+				if ($_REQUEST['TNComp']['libelleCompetence']!=''){
+					$tagCompetence->set_values($_REQUEST);
+					$tagCompetence->save($ATMdb);
+					
+				}
+				echo "à modifier";
+				echo $_REQUEST['TNComp']['libelleCompetence'];
+				break;*/
+		
 			case 'savecv':
 				
 				$lignecv->load($ATMdb, $_REQUEST['id']);
@@ -56,6 +65,23 @@
 
 				$formation->save($ATMdb);
 				_liste($ATMdb, $lignecv , $formation);
+				//_ficheCV($ATMdb, $competence,$mode);
+				break;
+				
+			/*case 'savecompetence':
+				
+				$tagCompetence->load($ATMdb, $_REQUEST['addId']);
+				$tagCompetence->set_values($_REQUEST);
+				print_r($tagCompetence);
+				$tagCompetence->save($ATMdb);
+				$formation->load($ATMdb, $_REQUEST['idForm']);
+				$formation->set_values($_REQUEST);
+				$formation->save($ATMdb);
+				$mesg = '<div class="ok">Nouvelle compétence ajoutée</div>';
+				$mode = 'view';
+
+				
+				_ficheFormation($ATMdb, $formation , $tagCompetence, 'edit');*/
 				//_ficheCV($ATMdb, $competence,$mode);
 				break;
 			
@@ -206,6 +232,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 		)
 		,'link'=>array(
 			'libelleFormation'=>'<a href="?id=@ID@&action=viewFormation">@val@</a>'
+			,'ID'=>'<a href="?id=@ID@&action=viewFormation">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=deleteFormation&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array(
@@ -321,6 +348,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	$sql="SELECT c.rowid, c.libelleCompetence FROM llx_rh_competence_cv as c, llx_rh_formation_cv as f 
 	WHERE c.fk_user_formation=".$formation->getID(). " AND fk_user_formation=f.rowid";
 
+	$k=0;
 	$ATMdb->Execute($sql);
 	$TTagCompetence=array();
 	while($ATMdb->Get_line()) {
@@ -329,7 +357,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				,'libelleCompetence'=>$form->texte('','libelleCompetence',$ATMdb->Get_field('libelleCompetence'), 30,100,'','','-')
 				
 			);
-		
+		$k++;
 	}
 	
 	
@@ -356,6 +384,12 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
+			)
+			,'newCompetence'=>array(
+				//'hidden'=>$form->hidden('action', 'save')
+				'id'=>$k
+				,'libelleCompetence'=>$form->texte('','TNComp[libelleCompetence]','', 30,100,'','','-')
+				,'fk_user_formation'=>$form->hidden('TNComp[fk_user_formation]', $formation->getId())
 			)
 		)	
 	);
