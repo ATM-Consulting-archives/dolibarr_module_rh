@@ -90,11 +90,13 @@ function _liste(&$ATMdb, &$absence) {
 	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
 	//getStandartJS();
 	
+	//LISTE D'ABSENCES DU COLLABORATEUR
 	$r = new TSSRenderControler($absence);
-	$sql="SELECT rowid as 'ID', date_cre as 'DateCre',date_debut , DATE(date_fin) as 'Date Fin', 
-			  libelle as 'Type absence',fk_user as 'Utilisateur Courant',  libelleEtat as 'Statut demande', '' as 'Supprimer'
-		FROM llx_rh_absence 
-		WHERE fk_user=".$user->id." AND entity=".$conf->entity;
+	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , DATE(a.date_fin) as 'Date Fin', 
+			  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant', u.firstname as 'Prénom', u.name as 'Nom',
+			   a.libelleEtat as 'Statut demande', '' as 'Supprimer'
+		FROM llx_rh_absence as a, llx_user as u
+		WHERE a.fk_user=".$user->id." AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
 		
 	
 	$TOrder = array('Statut demande'=>'DESC');
@@ -113,7 +115,7 @@ function _liste(&$ATMdb, &$absence) {
 			'date_debut'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
-		,'translate'=>array('Statut demande'=>array('Refusée'=>'<b style="color:#FF0000">Refusée</b>','En attente de validation'=>'<b style="color:#0000FF">	En attente de validation</b>' , 'Acceptée'=>'<b style="color:#04B404">Acceptée</b>'))
+		,'translate'=>array('Statut demande'=>array('Refusée'=>'<b style="color:#A72947">Refusée</b>','En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 'Acceptée'=>'<b style="color:#30B300">Acceptée</b>'))
 		,'hide'=>array('DateCre')
 		,'type'=>array('date_debut'=>'date')
 		,'liste'=>array(
@@ -140,6 +142,74 @@ function _liste(&$ATMdb, &$absence) {
 	));
 	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new">Nouvelle demande</a><div style="clear:both"></div><?
 	$form->end();
+	
+	
+ 
+ 	//LISTE ABSENCES À VALIDER
+	$sql=" SELECT DISTINCT u.fk_user FROM `llx_rh_valideur_groupe` as v, llx_usergroup_user as u 
+			WHERE v.fk_user=1 
+			AND v.type='Conges'
+			AND v.fk_usergroup=u.fk_usergroup
+			AND u.fk_user NOT IN (SELECT a.fk_user FROM llx_rh_absence as a where a.fk_user=1)
+			AND v.entity=".$conf->entity;
+		
+	$ATMdb->Execute($sql);
+	$TabUser=array();
+	while($ATMdb->Get_line()) {
+				$TabUser[]=$ATMdb->Get_field('fk_user');
+	}
+	
+	
+	
+	//LISTE DES ABSENCES À VALIDER
+	$r = new TSSRenderControler($absence);
+	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , DATE(a.date_fin) as 'Date Fin', 
+			  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  u.firstname as 'Prenom', u.name as 'Nom',
+			  a.libelleEtat as 'Statut demande', '' as 'Supprimer'
+		FROM llx_rh_absence as a, llx_user as u
+		WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
+	
+	$TOrder = array('Statut demande'=>'DESC');
+	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+				
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');		
+	//print $page;
+	$r->liste($ATMdb, $sql, array(
+		'limit'=>array(
+			'page'=>$page
+			,'nbLine'=>'30'
+		)
+		,'link'=>array(
+			'date_debut'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
+		)
+		,'translate'=>array('Statut demande'=>array('Refusée'=>'<b style="color:#A72947">Refusée</b>','En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 'Acceptée'=>'<b style="color:#30B300">Acceptée</b>'))
+		,'hide'=>array('DateCre')
+		,'type'=>array('date_debut'=>'date')
+		,'liste'=>array(
+			'titre'=>'Liste des absences à valider'
+			,'image'=>img_picto('','title.png', '', 0)
+			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_suivant'=>img_picto('','next.png', '', 0)
+			,'noheader'=> (int)isset($_REQUEST['socid'])
+			,'messageNothing'=>"Il n'y a aucune absence à afficher"
+			,'order_down'=>img_picto('','1downarrow.png', '', 0)
+			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			
+		)
+		,'title'=>array(
+			'date_debut'=>'Date début'
+		)
+		,'search'=>array(
+			'date_debut'=>array('recherche'=>'calendar')
+			
+		)
+		,'orderBy'=>$TOrder
+		
+	));
 	llxFooter();
 }	
 	
@@ -213,7 +283,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$rttCourantReste=$rttCourant->acquis-$rttCourant->pris;
 	
 	//récupération informations utilisateur dont on modifie le compte
-	$sqlReqUser="SELECT * FROM `llx_user` where rowid=".$rttCourant->fk_user;//AND entity=".$conf->entity;
+	$sqlReqUser="SELECT * FROM `llx_user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -223,12 +293,11 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				$userCourant->lastname=$ATMdb->Get_field('name');
 	}
 	
+	$estValideur=$absence->estValideur($ATMdb,$user->id);
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/absence.tpl.php'
 		,array(
-			
-			
 		)
 		,array(
 			'congesPrec'=>array(
@@ -283,7 +352,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'id'=>$userCourant->id
 				,'lastname'=>$userCourant->lastname
 				,'firstname'=>$userCourant->firstname
-				,'valideurConges'=>$user->rights->absence->myactions->valideurConges
+				,'valideurConges'=>$user->rights->absence->myactions->valideurConges&&$estValideur
+				
 			)
 			,'view'=>array(
 				'mode'=>$mode

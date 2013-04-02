@@ -475,6 +475,35 @@ class TRH_Absence extends TObjetStd {
 				}
 			}
 		}
+
+		//fonction qui va renvoyer 1 si l'utilisateur est valideur de l'absence courante
+		function estValideur(&$ATMdb,$idUser){
+			
+			if($this->fk_user==$idUser) return 0;
+			//on récupère les groupes auxquels appartient l'utilisateur ayant créé l'absence
+			$sql="SELECT fk_usergroup FROM `llx_usergroup_user` WHERE fk_user=".$this->fk_user;
+			$ATMdb->Execute($sql);
+			$TGroupesUser = array();
+			while($ATMdb->Get_line()) {
+				$TGroupesUser[]= $ATMdb->Get_field('fk_usergroup');
+			}
+			
+			//on récupère les groupes dont l'utilisateur courant est valideur de congés
+			$sql2="SELECT fk_usergroup FROM llx_rh_valideur_groupe WHERE fk_user=".$idUser." AND type='Conges'";
+			$ATMdb->Execute($sql2);
+			$TGroupesValideur = array();
+			while($ATMdb->Get_line()) {
+				$TGroupesValideur[]= $ATMdb->Get_field('fk_usergroup');
+			}
+			
+			//on regarde si l'utilisateur courant peut valider la demande d'absence
+			foreach($TGroupesUser as $grUser){
+				foreach($TGroupesValideur as $grValideur){
+					if($grUser==$grValideur) return 1;
+				}
+			}	
+			return 0;
+		}
 }
 
 

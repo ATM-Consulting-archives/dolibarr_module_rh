@@ -64,7 +64,7 @@
 	$(document).ready( function(){
 
 		$('#type').change(function () {
-      		  if($("#type option:selected").val()=="Congés"){
+      		  if($("#type option:selected").val()=="Conges"){
       		  		$('#textMontant').hide();
       		  		$('#textMontant2').hide();
       		  }
