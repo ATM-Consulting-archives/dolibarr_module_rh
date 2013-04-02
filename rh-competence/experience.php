@@ -215,7 +215,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 		,'hide'=>array('DateCre', 'fk_user')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
-			'titre'=>'LISTE DE VOS EXPERIENCES PROFESSIONNELLES'
+			'titre'=>'VISUALISATION DE VOTRE CV'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
@@ -278,7 +278,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 		,'hide'=>array('DateCre','fk_user', 'commentaireFormation')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date', 'date_formationEcheance'=>'date')
 		,'liste'=>array(
-			'titre'=>'LISTE DE VOS FORMATIONS'
+			'titre'=>'LISTE DE VOS FORMATIONS EFFECTUEES'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)

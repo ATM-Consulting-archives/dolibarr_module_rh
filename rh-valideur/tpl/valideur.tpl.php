@@ -32,6 +32,8 @@
 		</div>
 	</div>
 </div>
+
+
 [onshow;block=end] 
 
 
@@ -41,13 +43,13 @@
 		<td>Groupe</td>
 		<td>Type</td>
 		<td>Nombre de jours avant alerte</td>
-		<td>Montant avant alerte</td>
+		<td id="textMontant">Montant avant alerte</td>
 	</tr>
 	<tr>
 		<td>[valideur.group;strconv=no;protect=no]</td>
 		<td>[valideur.type;strconv=no;protect=no]</td>
 		<td>[valideur.nbjours;strconv=no;protect=no]</td>
-		<td>[valideur.montant;strconv=no;protect=no]€</td>
+		<td id="textMontant2">[valideur.montant;strconv=no;protect=no]€</td>
 	</tr>
 </table>
 
@@ -56,4 +58,29 @@
 	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?fk_user=[userCourant.id]'">
 </div>
 [onshow;block=end]
+
+
+<script>
+	$(document).ready( function(){
+
+		$('#type').change(function () {
+      		  if($("#type option:selected").val()=="Congés"){
+      		  		$('#textMontant').hide();
+      		  		$('#textMontant2').hide();
+      		  }
+      		  else{
+      		  		$("#textMontant").show();
+      		  		$('#textMontant2').show();
+      		  }
+   		})
+   		 
+		$('#montant').click( 	function(){
+			//if($("#date_debut").val()>$("#date_fin").val()){
+			
+			
+		});	
+		
+	});
+</script>
+
 
