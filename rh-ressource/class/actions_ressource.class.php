@@ -38,10 +38,9 @@ class ActionsRessource
 							})
 							.then(function ( vehicule ) {
 								if(vehicule.result=="0") {
-									$('select[name=fk_cat]').parent().parent().show();
+									$('#has_a_vehicle').hide();
 								}else{
-									$('select[name=fk_cat]').val(4);
-									$('select[name=fk_cat]').parent().parent().hide();
+									$('#has_a_vehicle').text("Vous disposez d'un véhicule de la société.");
 								}
 							});
 						});
@@ -56,16 +55,15 @@ class ActionsRessource
 						})
 						.then(function ( vehicule ) {
 							if(vehicule.result=="0") {
-								$('select[name=fk_cat]').parent().parent().show();
+								$('#has_a_vehicle').hide();
 							}else{
-								$('select[name=fk_cat]').val(4);
-								$('select[name=fk_cat]').parent().parent().hide();
+								$('#has_a_vehicle').text("Vous disposez d'un véhicule de la société.");
 							}
 						});
 					});
 				</script><?
 			}elseif($action=="vehiculeAttributed"){
-				$sqlReq="SELECT *";
+				/*$sqlReq="SELECT *";
 				$sqlReq.=" FROM ".MAIN_DB_PREFIX."rh_ressource_type as t, ";
 				$sqlReq.=MAIN_DB_PREFIX."rh_ressource as r, ";
 				$sqlReq.=MAIN_DB_PREFIX."rh_evenement as e";
@@ -107,6 +105,42 @@ class ActionsRessource
 			    	<?
 					
 					return 0;
+				}*/
+				
+				$sqlReq="SELECT *";
+				$sqlReq.=" FROM ".MAIN_DB_PREFIX."ndfp as n";
+				$sqlReq.=" WHERE n.rowid=".$object->id;
+				$sqlReq.=" AND n.fk_cat = 0";
+				
+				$resultReq = $db->query($sqlReq);
+				
+				$sql="SELECT e.rowid";
+				$sql.=" FROM ".MAIN_DB_PREFIX."c_exp as e";
+				$sql.=" WHERE e.code='EX_KME'";
+				
+				$result = $db->query($sql);
+				$obj = $db->fetch_object($sql);
+				
+				if($resultReq->num_rows > 0){
+					?>
+			    	<script>
+			    	$(document).ready(function(){
+			    		$('#fk_exp option[value='+ <? echo $obj->rowid ?> +']').hide();
+			    	});
+			    	</script>
+			    	<?
+					
+					return $resultReq->num_rows;
+				}else{
+					?>
+			    	<script>
+			    	$(document).ready(function(){
+			    		$('#fk_exp option[value='+ <? echo $obj->rowid ?> +']').show();
+			    	});
+			    	</script>
+			    	<?
+					
+					return $resultReq->num_rows;
 				}
 			}
 		
