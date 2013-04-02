@@ -18,7 +18,7 @@ class TRH_ligne_cv extends TObjetStd {
 	}
 }
 
-//TRH_COMPETENCES
+//TRH_FORMATION
 //définition de la classe pour rentrer les compétences d'un utilisateur
 class TRH_formation_cv extends TObjetStd {
 	function __construct() { 
@@ -51,6 +51,31 @@ class TRH_competence_cv extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 	}
+	
+	//fonction permettant de donner les utilisateurs ayant une compétence recherchée
+	function findProfile(&$ATMdb, $competence){
+
+			global $conf;
+			
+			$competence=str_replace(' ','%',$competence);
+			$competence="%".$competence."%";
+	
+			$TUser=array();
+			
+			$sql="SELECT * FROM llx_rh_competence_cv WHERE libelleCompetence LIKE '".$competence."'
+				AND entity=".$conf->entity;
+			$ATMdb->Execute($sql);
+			$TUser=array();
+			$k=0;
+			while($ATMdb->Get_line()) {
+						$TUser[$k]['libelleCompetence']=$ATMdb->Get_field('libelleCompetence');
+						$TUser[$k]['fk_user']=$ATMdb->Get_field('fk_user');
+						$TUser[$k]['fk_user_formation']=$ATMdb->Get_field('fk_user_formation');
+						$k++;
+			}
+			return $TUser;
+		}
+	
 }
 
 

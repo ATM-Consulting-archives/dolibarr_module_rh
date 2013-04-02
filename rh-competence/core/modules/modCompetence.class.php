@@ -130,6 +130,7 @@ class modCompetence extends DolibarrModules
         $this->tabs = array(
         	'user:+competence:Expérience:competence@competence:/competence/experience.php?fk_user=__ID__'  // To add a new tab identified by code tabname1
            ,'user:+formation:Formation:competence@competence:/competence/formation.php?fk_user=__ID__'
+           ,'user:+recherche:Recherche Profil:competence@competence:/competence/rechercheProfil.php?fk_user=__ID__'
        	);
 
         // Dictionnaries
