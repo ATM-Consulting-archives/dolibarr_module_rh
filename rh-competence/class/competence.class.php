@@ -45,7 +45,8 @@ class TRH_competence_cv extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_competence_cv');
 		
 		parent::add_champs('libelleCompetence','type=chaine;');		
-		parent::add_champs('fk_user_formation','type=entier;');	//utilisateur concerné
+		parent::add_champs('fk_user_formation','type=entier;');	
+		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=entier;');
 		parent::_init_vars();
 		parent::start();

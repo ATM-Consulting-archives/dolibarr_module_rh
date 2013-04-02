@@ -55,14 +55,16 @@
 			<table class="border" style="width:30%">
 				
 				<tr>	
+						
 						[newCompetence.hidden;strconv=no;protect=no]
 						[newCompetence.fk_user_formation;strconv=no;protect=no]
 						[newCompetence.libelleCompetence;strconv=no;protect=no]
 				</tr>
 				<tr>
-					<input type="submit" value="Ajouter" name="newCompetence" class="button">
+					<input  type="submit" value="Ajouter" name="newCompetence" class="button">
 				</tr>
-			
+				
+				
 			</table>
 			[onshow;block=end]
 			
@@ -71,7 +73,7 @@
 			
 			<table class="border" style="width:100%;">
 				[onshow;block=begin;when [view.mode]=='view']
-				<span  style="float:right;" class="butActionDelete" id="action-delete" onclick="document.location.href='?fk_user=[userCourant.id]&deleteId=[formation.id]&action=deleteFormation'">Supprimer</span>
+				<span  style="float:right;" class="butActionDelete" id="action-delete" onclick="document.location.href='?fk_user=[userCourant.id]&id=[formation.id]&action=deleteFormation'">Supprimer</span>
 				<a style="float:right;" class="butAction" href="?fk_user=[userCourant.id]">Annuler</a>
 				<a style="float:right;" href="?id=[formation.id]&action=editFormation" class="butAction">Modifier</a>
 				
