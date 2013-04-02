@@ -130,7 +130,7 @@ class ActionsRessource
 			    	</script>
 			    	<?
 					
-					return 1;
+					return $resultReq->num_rows;
 				}else{
 					?>
 			    	<script>
@@ -140,7 +140,7 @@ class ActionsRessource
 			    	</script>
 			    	<?
 					
-					return 0;
+					return $resultReq->num_rows;
 				}
 			}
 		
