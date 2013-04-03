@@ -1,13 +1,13 @@
 #GLOBAL
 Ressource=Ressource
-nouveauTypeRessource =Nouveau
-listeTypeRessource =Liste
+nouveauTypeRessource=Nouveau
+listeTypeRessource=Liste
 nouvelleRessource=Nouvelle ressource
 attribuerRessource=Attribuer ressource
 listeRessource=Liste des ressources
 nouvelEvenement=Nouvel événement
 listeContrat=Liste des contrats
 nouveauContrat=Nouveau contrat
-calendrierRessource = Calendrier des ressources
+calendrierRessource=Calendrier des ressources
 agenda=Agenda
 typeRessource=Types de ressource
