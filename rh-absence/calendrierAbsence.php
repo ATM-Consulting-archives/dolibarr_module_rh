@@ -22,16 +22,22 @@
 	);
 		
 	$ATMdb=new Tdb;
+	global $user;
 	$absence=new TRH_absence;
-	$absence->load($ATMdb, $_REQUEST['id']);
+	if(isset($_REQUEST['id'])){
+		$absence->load($ATMdb, $_REQUEST['id']);
+	}else{
+		$absence->load($ATMdb, $user->id);
+	}
+	
+	
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'
 		,array()
 		,array(
 			'absence'=>array(
-				'idUser' => $_GET['idUser']
-				//,'idUser'=>
+				'idUser' =>  $_REQUEST['id']? $_REQUEST['id']:$user->id
 			)
 			,'view'=>array(
 				'mode'=>$mode

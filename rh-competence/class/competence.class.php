@@ -52,14 +52,19 @@ class TRH_competence_cv extends TObjetStd {
 		parent::start();
 	}
 	
+	
+	//mise en forme de la recherche : suppression des espaces, rajout des %
+	function miseEnForme($competence){
+		$competence=str_replace(' ','%',$competence);
+		return "%".$competence."%";
+	}
+	
+	
 	//fonction permettant de donner les utilisateurs ayant une compétence recherchée
 	function findProfile(&$ATMdb, $competence){
 
 			global $conf;
 			
-			$competence=str_replace(' ','%',$competence);
-			$competence="%".$competence."%";
-	
 			$TUser=array();
 			
 			$sql="SELECT * FROM llx_rh_competence_cv WHERE libelleCompetence LIKE '".$competence."'
@@ -68,10 +73,11 @@ class TRH_competence_cv extends TObjetStd {
 			$TUser=array();
 			$k=0;
 			while($ATMdb->Get_line()) {
-						$TUser[$k]['libelleCompetence']=$ATMdb->Get_field('libelleCompetence');
+						/*$TUser[$k]['libelleCompetence']=$ATMdb->Get_field('libelleCompetence');
 						$TUser[$k]['fk_user']=$ATMdb->Get_field('fk_user');
 						$TUser[$k]['fk_user_formation']=$ATMdb->Get_field('fk_user_formation');
-						$k++;
+						$k++;*/
+						$TUser[]=$ATMdb->Get_field('fk_user');
 			}
 			return $TUser;
 		}
