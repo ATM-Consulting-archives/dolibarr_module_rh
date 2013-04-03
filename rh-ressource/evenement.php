@@ -57,7 +57,6 @@
 				break;
 				
 			case 'afficherListe':
-				print_r($_REQUEST);
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_liste($ATMdb, $evenement, $ressource, $_REQUEST['type']);
 				break;
@@ -88,7 +87,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource');
 	// btsubmit($pLib,$pName,$plus="")
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','POST');
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
 	//$form->Set_typeaff($mode);
 	echo $form->hidden('action', 'afficherListe');
 	echo $form->hidden('id',$ressource->getId());

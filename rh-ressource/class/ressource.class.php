@@ -31,9 +31,11 @@ class TRH_Ressource extends TObjetStd {
 		//chargement d'une liste de tout les types de ressources
 		$temp = new TRH_Ressource_type;
 		$this->TType = array();
+		$this->TTypeAvecClef = array();
 		foreach($Tab as $k=>$id){
 			$temp->load($ATMdb, $id);
 			$this->TType[$temp->getId()] = $temp->libelle;
+			$this->TTypeAvecClef[$temp->code] = $temp->libelle;
 		}
 		$this->TBail = array('bail'=>'Bail','immobilisation'=>'Immobilisation');
 		$this->TStatut = array('libre'=>'Libre','attribuee'=>'Attribuée', 'reservee'=>'Reservée');
@@ -125,12 +127,13 @@ class TRH_Ressource extends TObjetStd {
 		
 	}
 	
+
 	/**
 	 * en fonction du jour, on affecte le statut de la ressource. 3 cas :
-	 * si un emprunt est sur le jour : statut attribuee A
+	 * si un emprunt est sur le jour : statut attribuee 
 	 * sinon :
-	 * 		si un emprunt est futur : statut reservee B
-	 * 		sinon : statut libre C
+	 * 		si un emprunt est futur : statut reservee 
+	 * 		sinon : statut libre 
 	 */
 	function setStatut(&$ATMdb, $jour){
 		global $conf;
