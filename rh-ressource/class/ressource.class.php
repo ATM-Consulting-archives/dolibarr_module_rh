@@ -36,7 +36,7 @@ class TRH_Ressource extends TObjetStd {
 			$this->TType[$temp->getId()] = $temp->libelle;
 		}
 		$this->TBail = array('bail'=>'Bail','immobilisation'=>'Immobilisation');
-		$this->TStatut = array('nonattribuée'=>'Non attribuée','attribuée'=>'Attribuée');
+		$this->TStatut = array('libre'=>'Libre','attribuee'=>'Attribuée', 'reservee'=>'Reservée');
 		
 		$this->TRessource = array('');
 		$this->TEvenement = array();
@@ -124,6 +124,33 @@ class TRH_Ressource extends TObjetStd {
 			}
 		
 	}
+	
+	/**
+	 * en fonction du jour, on affecte le statut de la ressource. 3 cas :
+	 * si un emprunt est sur le jour : statut attribuee A
+	 * sinon :
+	 * 		si un emprunt est futur : statut reservee B
+	 * 		sinon : statut libre C
+	 */
+	function setStatut(&$ATMdb, $jour){
+		global $conf;
+		$sqlReq="SELECT rowid, date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$this->getId()."
+		AND entity=".$conf->entity;
+		
+		$ATMdb->Execute($sqlReq);
+		$this->statut = 'libre';
+		while($ATMdb->Get_line()) {
+			echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
+			if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
+				&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
+					$this->statut='attribuee';
+					break;
+			}
+			if (date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) >= $jour ){
+					$this->statut='reservee';
+				}
+		}			
+	}
 	/**
 	 * La fonction renvoie le rowid de l'user qui a la ressource à la date T, 0 sinon.
 	 */
@@ -199,6 +226,8 @@ class TRH_Ressource extends TObjetStd {
 	function save(&$db) {
 		global $conf;
 		$this->entity = $conf->entity;
+		
+		$this->setStatut($db, date("Y-m-d"));
 		
 		//on transforme les champs sensés être entier en int
 		foreach($this->ressourceType->TField as $k=>$field) {

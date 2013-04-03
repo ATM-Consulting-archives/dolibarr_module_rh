@@ -141,7 +141,7 @@ function _liste(&$ATMdb, &$ressource) {
 			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
-		,'translate'=>array()
+		,'translate'=>array('Statut'=>$ressource->TStatut)
 		,'hide'=>array('DateCre')
 		,'type'=>array('libelle'=>'string')
 		,'liste'=>array(

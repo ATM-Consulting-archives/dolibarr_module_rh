@@ -57,6 +57,7 @@
 				break;
 				
 			case 'afficherListe':
+				print_r($_REQUEST);
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_liste($ATMdb, $evenement, $ressource, $_REQUEST['type']);
 				break;
@@ -92,21 +93,17 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	echo $form->hidden('action', 'afficherListe');
 	echo $form->hidden('id',$ressource->getId());
 	$evenement->load_liste_type($ATMdb, $ressource);
-	 /*array('principal'=>'Accidents, Réparations'
-					,'appel'=>'Appels'
-					,'facture'=>'Factures'
-					);*/
+
 	?>
 	<table>
 		<tr>
 			<td> Type d'évenement à afficher : </td>
 			<td> <? echo $form->combo('','type', $evenement->TType ,$type) ?> </td>
-			<td> <? echo $form->btsubmit('Valider','afficherListe') ?>	</td>
+			<td> <? echo $form->btsubmit('Valider','Valider'); ?>	</td>
 		</tr>
 	</table>
-	
 	<?
-	$form->end();
+	//'onclick=\'document.location.href="?id='.$ressource->getId().'&action=afficherListe "\''
 	
 	$r = new TSSRenderControler($evenement);
 	switch($type){
@@ -155,7 +152,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
-	//print $page;
+	print 'lol'.$page;
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
@@ -180,6 +177,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 			,'messageNothing'=>'Il n\'y a aucun événement à afficher'
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			//,'id'=>$ressource->getId()
 			
 		)
 		,'orderBy'=>$TOrder
@@ -189,6 +187,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	?><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a>
 	
 	<div style="clear:both"></div></div><?
+	$form->end();
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();

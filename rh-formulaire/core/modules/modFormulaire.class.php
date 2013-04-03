@@ -160,14 +160,14 @@ class modFormulaire extends DolibarrModules
 		*/
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
+		/*$this->rights = array();		// Permission array used by this module
 		$r=0;
 		$this->rights[$r][0] = 7301;
 		$this->rights[$r][1] = 'Créer un type de ressource';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'formulaire';
 		$this->rights[$r][5] = 'read';
-		$r++;
+		$r++;*/
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
 		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
