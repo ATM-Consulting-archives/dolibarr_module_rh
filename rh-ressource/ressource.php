@@ -118,20 +118,19 @@ function _liste(&$ATMdb, &$ressource) {
 	getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
-	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',r.libelle , t.libelle as 'Type',  
+	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.libelle, r.fk_rh_ressource_type,
 		r.numId , r.statut as 'Statut', '' as 'Supprimer'
 		FROM llx_rh_ressource as r, llx_rh_ressource_type as t 
 		WHERE r.entity=".$conf->entity."
 		AND r.fk_rh_ressource_type=t.rowid
 		";
-	
+		
 	$TOrder = array('DateCre'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');	
-	//print $page;
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
@@ -141,7 +140,13 @@ function _liste(&$ATMdb, &$ressource) {
 			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
-		,'translate'=>array('Statut'=>$ressource->TStatut)
+		,'eval'=>array(
+			//'Statut'=>'fonction(@ID@)'
+		)
+		,'translate'=>array(
+			'Statut'=>$ressource->TStatut
+			,'fk_rh_ressource_type'=>$ressource->TType
+			)
 		,'hide'=>array('DateCre')
 		,'type'=>array('libelle'=>'string')
 		,'liste'=>array(
@@ -159,6 +164,13 @@ function _liste(&$ATMdb, &$ressource) {
 		,'title'=>array(
 			'libelle'=>'Libellé'
 			,'numId'=>'Numéro Id'
+			, 'fk_rh_ressource_type'=> 'Type'
+			
+		)
+		,'search'=>array(
+			'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
+			,'numId'=>true
+			
 		)
 		,'orderBy'=>$TOrder
 		

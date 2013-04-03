@@ -104,8 +104,6 @@ class TRH_Evenement  extends TObjetStd {
 		$temp = new TRH_Ressource;
 		$temp->load($db, $this->fk_rh_ressource);
 		
-		
-		
 		if ($this->type=='emprunt'){
 			$this->color = 1 ; //couleur rouge
 			$this->subject = "[ ".$temp->libelle." ] Utilisé par ".$this->TUser[$this->fk_user];
@@ -118,7 +116,7 @@ class TRH_Evenement  extends TObjetStd {
 		$this->isAllDayEvent = 1;
 		
 		parent::save($db);
-		$temp->save($db);	//ça met le statut à jour
+		$temp->save($db);	//ça met le statut de la ressource liée à jour
 	}
 	
 }	
