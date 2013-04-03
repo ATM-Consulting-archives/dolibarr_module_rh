@@ -159,6 +159,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$sqlReqUser="SELECT * FROM `llx_rh_compteur` where fk_user=". $userCourant->id." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
+	
 	while($ATMdb->Get_line()) {
 				$congePrec=new User($db);
 				$congePrec->id=$ATMdb->Get_field('rowid');

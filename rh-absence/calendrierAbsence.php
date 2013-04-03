@@ -37,7 +37,7 @@
 		,array()
 		,array(
 			'absence'=>array(
-				'idUser' =>  $_REQUEST['id']? $_REQUEST['id']:$user->id
+				'idUser' =>  $_REQUEST['idUser']? $_REQUEST['idUser']:$user->id
 			)
 			,'view'=>array(
 				'mode'=>$mode

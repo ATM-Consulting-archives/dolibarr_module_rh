@@ -7,13 +7,6 @@ $ATMdb=new TPDOdb;
 $method = $_GET["method"];
 switch ($method) {
     case "list":
-		/*if (isset($_REQUEST['idUser'])){
-			
-	       	 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_REQUEST['idUser']);
-		}else {
-			 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"]);
-		}
-        break;   */
         if (isset($_GET['idUser'])){
 				
 	       	 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser']);
@@ -26,22 +19,68 @@ switch ($method) {
 echo json_encode($ret); 
 
 function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
+  	global $conf;
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
   $ret["start"] = php2JsTime($sd);
   $ret["end"] = php2JsTime($ed);
   $ret['error'] = null;
+  
   try{
-    
-    $sql = "SELECT r.rowid as rowid, r.libelle, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
+   
+    //LISTE USERS À VALIDER
+	$sql=" SELECT DISTINCT u.fk_user FROM `llx_rh_valideur_groupe` as v, llx_usergroup_user as u 
+			WHERE v.fk_user=".$idUser." 
+			AND v.type='Conges'
+			AND v.fk_usergroup=u.fk_usergroup
+			AND v.entity=".$conf->entity;
+		//echo $sql;
+	$ATMdb->Execute($sql);
+	$TabUser=array();
+	$k=0;
+	while($ATMdb->Get_line()) {
+				$TabUser[]=$ATMdb->Get_field('fk_user');
+				$k++;
+	}
+	//print_r($TabUser);
+	
+	if($k==0){
+		$sql1 = "SELECT r.rowid as rowid, r.libelle, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
     
 	  if ($idUser!=0){
-	  	$sql.=" AND r.fk_user=".$idUser;
+	  	$sql1.=" AND r.fk_user=".$idUser;
       }
+	}else{
+		$sql1 = "SELECT r.rowid as rowid, r.libelle, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
+      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
+    
+	  if ($idUser!=0){
+	  	$sql1.=" AND r.fk_user IN(".implode(',', $TabUser).")";
+      }
+		
+	}
+	
+	//LISTE DES ABSENCES À VALIDER
+	
+	/*$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , DATE(a.date_fin) as 'Date Fin', 
+			  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  u.firstname as 'Prenom', u.name as 'Nom',
+			  a.libelleEtat as 'Statut demande', '' as 'Supprimer'
+		FROM llx_rh_absence as a, llx_user as u
+		WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";*/
+   
+   
+   /*
+    $sql1 = "SELECT r.rowid as rowid, r.libelle, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
+      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
+    
+	  if ($idUser!=0){
+	  	$sql1.=" AND r.fk_user IN(".implode(',', $TabUser).")";
+      }*/
+	  
  	//echo $sql;
-  	$ATMdb->Execute($sql);
+  	$ATMdb->Execute($sql1);
     
     while ($row = $ATMdb->Get_line()) {
     	//print_r($row);
@@ -68,33 +107,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
       );
      }
       
-     /*
-   $sql2 = " SELECT rowid as 'ID', 
-		  date_jourOff, moment 
-	FROM  llx_rh_absence_jours_feries WHERE `date_jourOff` between '"
-      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed);  
-	  
- 	//echo $sql2;
-  	$ATMdb->Execute($sql2);
-    
-    while ($row = $ATMdb->Get_line()) {
-    	
-      $ret['events'].push(array(
-        $row->rowid,
-        $row->moment,
-        php2JsTime(mySql2PhpTime($row->date_jourOff)),
-        php2JsTime(mySql2PhpTime($row->date_jourOff)),
-        1,//$row->isAllDayEvent,
-        0, //more than one day event
-        //$row->InstanceType,
-       	0,//Recurring event,
-        4,//$row->color,
-        1,//editable
-        //"absence.php?id=".$row->rowid."&action=view",//$row->location,
-        '',//$attends
-      ));
      
-    }*/
 	}catch(Exception $e){
      $ret['error'] = $e->getMessage();
   }
