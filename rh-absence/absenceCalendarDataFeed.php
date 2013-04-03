@@ -46,14 +46,14 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
 	//print_r($TabUser);
 	
 	if($k==0){
-		$sql1 = "SELECT r.rowid as rowid, r.libelle, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
+		$sql1 = "SELECT r.rowid as rowid, r.libelle, r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
     
 	  if ($idUser!=0){
 	  	$sql1.=" AND r.fk_user=".$idUser;
       }
 	}else{
-		$sql1 = "SELECT r.rowid as rowid, r.libelle, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
+		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
     
 	  if ($idUser!=0){
@@ -62,45 +62,62 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
 		
 	}
 	
-	//LISTE DES ABSENCES À VALIDER
 	
-	/*$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , DATE(a.date_fin) as 'Date Fin', 
-			  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  u.firstname as 'Prenom', u.name as 'Nom',
-			  a.libelleEtat as 'Statut demande', '' as 'Supprimer'
-		FROM llx_rh_absence as a, llx_user as u
-		WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";*/
-   
-   
-   /*
-    $sql1 = "SELECT r.rowid as rowid, r.libelle, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
-      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
-    
-	  if ($idUser!=0){
-	  	$sql1.=" AND r.fk_user IN(".implode(',', $TabUser).")";
-      }*/
-	  
- 	//echo $sql;
   	$ATMdb->Execute($sql1);
     
     while ($row = $ATMdb->Get_line()) {
-    	//print_r($row);
-      //$ret['events'][] = $row;
-      //$attends = $row->AttendeeNames;
-      //if($row->OtherAttendee){
-      //  $attends .= $row->OtherAttendee;
-      //}
-      //echo $row->StartTime;
+    	switch($row->type){
+			case 'rttcumule' : 
+				$color=6;
+				break;
+			case 'rttnoncumule':
+				$color=8;
+				break;
+			case 'conges':
+				$color=10;
+				break;
+			case 'maladiemaintenue':
+				$color=12;
+				break;
+			case 'maladienonmaintenue':
+				$color=14;
+				break;
+			case 'maternite':
+				$color=16;
+				break;
+			case 'paternite':
+				$color=18;
+				break;
+			case 'nonremuneree':
+				$color=15;
+				break;
+			case 'accidentdetravail':
+				$color=2;
+				break;
+			case 'maladieprofessionnelle':
+				$color=4;
+				break;
+			case 'congeparental':
+				$color=19;
+				break;
+			case 'accidentdetrajet':
+				$color=17;
+				break;
+			case 'mitempstherapeutique':
+				$color=0;
+				break;
+    	}
 
       $ret['events'][] = array(
         $row->rowid,
-        $row->libelle." ".$row->name.' '.$row->firstname,
+        $row->libelle." ".$row->name.' '.$row->firstname.$row->type,
         php2JsTime(mySql2PhpTime($row->date_debut)),
         php2JsTime(mySql2PhpTime($row->date_fin)),
         1,//$row->isAllDayEvent,
         0, //more than one day event
         //$row->InstanceType,
         $row->fk_user,//Recurring event,
-        6,//$row->color,
+        $color,//$row->color,
         1,//editable
         "absence.php?id=".$row->rowid."&action=view",//$row->location,
         '',//$attends

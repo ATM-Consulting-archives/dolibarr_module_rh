@@ -166,7 +166,7 @@ function _liste(&$ATMdb, &$absence) {
 	}else{
 		//LISTE DES ABSENCES À VALIDER
 		$r = new TSSRenderControler($absence);
-		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , DATE(a.date_fin) as 'Date Fin', 
+		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',DATE(a.date_debut) , DATE(a.date_fin) as 'Date Fin', 
 				  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  u.firstname as 'Prenom', u.name as 'Nom',
 				  a.libelleEtat as 'Statut demande', '' as 'Supprimer'
 			FROM llx_rh_absence as a, llx_user as u
