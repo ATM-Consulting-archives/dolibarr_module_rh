@@ -85,6 +85,14 @@ class TRH_Evenement  extends TObjetStd {
 		
 		
 	}
+	function delete(&$db){
+		parent::delete($db);
+		
+		$temp = new TRH_Ressource;
+		$temp->load($db, $this->fk_rh_ressource);
+		$temp->save($db);	//ça met le statut de la ressource à jour
+		
+	}
 	
 	function save(&$db) {
 		global $conf;
@@ -95,6 +103,8 @@ class TRH_Evenement  extends TObjetStd {
 		}
 		$temp = new TRH_Ressource;
 		$temp->load($db, $this->fk_rh_ressource);
+		
+		
 		
 		if ($this->type=='emprunt'){
 			$this->color = 1 ; //couleur rouge
@@ -108,6 +118,7 @@ class TRH_Evenement  extends TObjetStd {
 		$this->isAllDayEvent = 1;
 		
 		parent::save($db);
+		$temp->save($db);	//ça met le statut à jour
 	}
 	
 }	

@@ -169,27 +169,28 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][1] = 'Créer un type de ressource';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'typeressource';
-		$this->rights[$r][5] = 'write';
+		$this->rights[$r][5] = 'createType';
 		$r++;
 		$this->rights[$r][0] = 7002;
 		$this->rights[$r][1] = 'Voir les types de ressource';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'typeressource';
-		$this->rights[$r][5] = 'read';
+		$this->rights[$r][5] = 'viewType';
 		$r++;
 		
 		$this->rights[$r][0] = 7003;
 		$this->rights[$r][1] = 'Créer une ressource';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'ressource';
-		$this->rights[$r][5] = 'write';
+		$this->rights[$r][5] = 'createRessource';
 		$r++;
 		$this->rights[$r][0] = 7004;
 		$this->rights[$r][1] = 'Voir les ressource';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'ressource';
-		$this->rights[$r][5] = 'read';
+		$this->rights[$r][5] = 'viewRessource';
 		$r++;
+		
 				// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
 		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
