@@ -24,8 +24,6 @@
 			case 'edit':
 				
 				break;
-				
-			
 		}
 	}
 	elseif(($_REQUEST['libelleCompetence'])!="") {
