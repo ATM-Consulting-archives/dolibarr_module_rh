@@ -9,7 +9,7 @@
 					<td><b>Prénom</b></td>
 					<td><b>Date début</b></td>
 					<td><b>Date fin</b></td>
-					<td><b>Date d'échéance de la formation</b></td>
+					<td><b>Date d'expiration de la formation</b></td>
 				</tr>
 				<tr>
 					<td>[userCourant.nom;block=tr;strconv=no;protect=no]</td>
