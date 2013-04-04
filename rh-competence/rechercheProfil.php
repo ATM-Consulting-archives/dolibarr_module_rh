@@ -27,7 +27,7 @@
 		}
 	}
 	elseif(($_REQUEST['libelleCompetence'])!="") {
-		$recherche=$tagCompetence->miseEnForme($_REQUEST['libelleCompetence']);
+		$recherche=$tagCompetence->deleteEspace($_REQUEST['libelleCompetence']);
 		$TCompetence=$tagCompetence->findProfile($ATMdb, $recherche);
 		//print_r($TCompetence);
 		_liste($ATMdb, $TCompetence, $tagCompetence, $recherche);

@@ -52,11 +52,20 @@ class TRH_competence_cv extends TObjetStd {
 		parent::start();
 	}
 	
+	function deleteEspace($competence){
+		$compSansEspace=str_replace(' ','%',$competence);
+		return "%".$compSansEspace."%";
+	}
 	
 	//mise en forme de la recherche : suppression des espaces, rajout des %
 	function miseEnForme($competence){
-		$competence=str_replace(' ','%',$competence);
-		return "%".$competence."%";
+		print_r($competence);
+		$Tcompetence=array();
+		foreach ($competence as $comp){
+			
+			$Tcompetence[]="%".$comp."%";
+		}
+		return $Tcompetence;
 	}
 	
 	
@@ -64,24 +73,36 @@ class TRH_competence_cv extends TObjetStd {
 	function findProfile(&$ATMdb, $competenceInit){
 
 			global $conf;
-			echo $competenceInit;
-			$competenceEt=separerEt($competenceInit);
-			echo $competenceEt;
-			/* $TUser=array();
-			  $sql="SELECT * FROM llx_rh_competence_cv WHERE libelleCompetence LIKE '".$competence."'
-				AND entity=".$conf->entity;
+			
+			$competenceEt=$this->separerOu($competenceInit);
+			print_r($competenceEt);
+			$TUser=array();
+			  $sql="SELECT * FROM llx_rh_competence_cv WHERE entity=".$conf->entity." AND ";
+			  $k=0;
+			 foreach($competenceEt as $comp){
+			 	if($k==0){
+			 		$sql.=" libelleCompetence LIKE '".$comp."'";
+			 	}else{
+			 		$sql.=" OR libelleCompetence LIKE '".$comp."'";
+			 	}
+				$k++;
+			 	
+			 }
+			echo $sql;
 			$ATMdb->Execute($sql);
 			$TUser=array();
 			$k=0;
 			while($ATMdb->Get_line()) {
 						$TUser[]=$ATMdb->Get_field('fk_user');
 			}
-			return $TUser;*/
-			return $competence;
+			print_r($TUser);
+			return $TUser;
+
 		}
 
-	function separerEt($competenceEt){
-		
+	function separerOu($competenceEt){
+		$competenceEt=explode("%ou%",$competenceEt); 
+		return $competenceEt=$this->miseEnForme($competenceEt);
 	}
 	
 }
