@@ -55,14 +55,13 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
 	}else{
 		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
-    
 	  if ($idUser!=0){
 	  	$sql1.=" AND r.fk_user IN(".implode(',', $TabUser).")";
       }
 		
 	}
 	
-	
+	//echo $sql1;
   	$ATMdb->Execute($sql1);
     
     while ($row = $ATMdb->Get_line()) {
@@ -122,6 +121,32 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
         "absence.php?id=".$row->rowid."&action=view",//$row->location,
         '',//$attends
       );
+	  
+	  }  
+	  
+	  //récupération des jours fériés 
+	$sql2=" SELECT * FROM  llx_rh_absence_jours_feries
+	 WHERE entity=".$conf->entity;
+	 //echo $sql2;
+  	 $ATMdb->Execute($sql2);
+   
+     while ($row = $ATMdb->Get_line()) {
+
+	      $ret['events'][] = array(
+	        $row->rowid,
+	        "Férié ".$row->commentaire." ".$row->moment,
+	        php2JsTime(mySql2PhpTime($row->date_jourOff)),
+	        php2JsTime(mySql2PhpTime($row->date_jourOff)),
+	        1,//$row->isAllDayEvent,
+	        0, //more than one day event
+	        //$row->InstanceType,
+	        $row->rowid,//Recurring event,
+	        1,//$row->color,
+	        1,//editable
+	        "joursferies.php?idJour=".$row->rowid."&action=view",//$row->location,
+	        '',//$attends
+	      );
+	  
      }
       
      

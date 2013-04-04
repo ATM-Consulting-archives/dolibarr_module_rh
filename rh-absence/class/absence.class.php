@@ -634,7 +634,7 @@ class TRH_JoursFeries extends TObjetStd {
 		parent::start();	
 		
 		$this->TFerie=array();
-		$this->TMoment=array('matin'=>'Matin', 'apresmidi'=>'Après-midi', 'allday'=>'Toute La journée');
+		$this->TMoment=array('allday'=>'Toute La journée', 'matin'=>'Matin', 'apresmidi'=>'Après-midi');
 	}
 	
 	
