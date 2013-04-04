@@ -109,8 +109,8 @@
 	
 	
 	$ATMdb->close();
-	
 	llxFooter();
+	
 	
 function _liste(&$ATMdb, &$ressource) {
 	global $langs,$conf, $db;	
@@ -141,10 +141,11 @@ function _liste(&$ATMdb, &$ressource) {
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'eval'=>array(
-			//'Statut'=>'getStatut($ATMdb,@ID@, date("Y-m-d"))'
+			'Statut'=>'getStatut(@ID@, date("Y-m-d"))'
 		)
 		,'translate'=>array(
 			'fk_rh_ressource_type'=>$ressource->TType
+			,'Statut'=>$ressource->TStatut
 			)
 		,'hide'=>array('DateCre')
 		,'type'=>array('libelle'=>'string')
@@ -165,10 +166,13 @@ function _liste(&$ATMdb, &$ressource) {
 			,'numId'=>'Numéro Id'
 			,'fk_rh_ressource_type'=> 'Type'
 			
+			
 		)
 		,'search'=>array(
 			'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
 			,'numId'=>true
+			,'libelle'=>true
+			,'Statut'=>array('recherche'=>$ressource->TStatut)
 			
 		)
 		,'orderBy'=>$TOrder
@@ -178,18 +182,16 @@ function _liste(&$ATMdb, &$ressource) {
 	$form->end();
 	llxFooter();
 }	
-/*
-function getStatut(&$ATMdb, $id, $jour){
+
+function getStatut($id, $jour){
 	global $conf;
-	echo $ATMdb;
-	print_r ($ATMdb);
+	$ATMdb=new Tdb;
 	$sqlReq="SELECT rowid, date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$id."
 	AND entity=".$conf->entity;
-	echo 'lol'.$id;
 	$ATMdb->Execute($sqlReq);
 	$return = 'libre';
 	while($ATMdb->Get_line()) {
-		echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
+		//echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
 		if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
 			&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
 				return 'attribuee';
@@ -199,9 +201,13 @@ function getStatut(&$ATMdb, $id, $jour){
 				$return='reservee';
 			}
 	}
+	$ATMdb->close();
 	return $return;			
 	}
-*/
+
+
+
+
 function _fiche(&$ATMdb, &$ressource, $mode) {
 	global $db,$user;
 	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
