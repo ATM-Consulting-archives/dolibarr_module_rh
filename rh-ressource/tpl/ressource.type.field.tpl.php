@@ -23,12 +23,12 @@
 <div>
 	<!-- entête du tableau -->
 		[onshow;block=begin;when [view.mode]=='edit']
-			<c style="margin-left : 40px; width:80px;display : inline-block;" ></c>
+			<c style="margin-left : 0px; width:80px;display : inline-block;" ></c>
 		[onshow;block=end]
 		[onshow;block=begin;when [view.mode]!='edit']
 			<c style="width:35px;display : inline-block;" ></c>
 		[onshow;block=end]
-		<c style="width:220px;display : inline-block;" >Code</c>
+		<c style="width:160px;display : inline-block;" >Code</c>
 		<c style="width:220px;display : inline-block;">Libellé</c>
 		<c style="width:140px;display : inline-block;">Type</c>
 		<c style="width:220px;display : inline-block;">Options</c>
@@ -43,9 +43,9 @@
 	<li id="[ressourceField.indice;block=li;strconv=no;protect=no]" >
 		[ressourceField.ordre;strconv=no;protect=no]
 		[onshow;block=begin;when [view.mode]=='edit']
-			<c style="width:80px;display : inline-block;">Déplacer</c>
+			<c style="margin-left : -30px;width:60px;display : inline-block;">Déplacer</c>
 		[onshow;block=end]
-		<c style="width:220px;display : inline-block;">[ressourceField.code;strconv=no;protect=no]</c>
+		<c style="width:160px;display : inline-block;">[ressourceField.code;strconv=no;protect=no]</c>
 		<c style="width:220px;display : inline-block;">[ressourceField.libelle;strconv=no;protect=no]</c>
 		<c style="width:140px;display : inline-block;">[ressourceField.type;strconv=no;protect=no]</c>
 		<c style="width:220px;display : inline-block;">[ressourceField.options;strconv=no;protect=no]</c>
@@ -61,8 +61,8 @@
 	<!-- Nouveau field-->
 	<li id="[newField.indice;strconv=no;protect=no]">
 		[newField.ordre;strconv=no;protect=no]
-		<c style="width:80px;display : inline-block;">Nouveau</c>
-		<c style="width:220px;display : inline-block;">[newField.code;strconv=no;protect=no]</c>
+		<c style="margin-left : -30px;width:60px;display : inline-block;">Nouveau</c>
+		<c style="width:160px;display : inline-block;">[newField.code;strconv=no;protect=no]</c>
 		<c style="width:220px;display : inline-block;">[newField.libelle;strconv=no;protect=no]</c>
 		<c style="width:140px;display : inline-block;">[newField.type;strconv=no;protect=no]</c>
 		<c style="width:220px;display : inline-block;">[newField.options;strconv=no;protect=no]</c>
