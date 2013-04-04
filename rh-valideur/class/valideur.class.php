@@ -21,6 +21,8 @@ class TRH_valideur_groupe extends TObjetStd {
 			,'Conges'=>'Conges'
 		);
 		
+		$sqlReq="ALTER TABLE `llx_user` ADD code_analytique INT DEFAULT 0";
+		$ATMdb->Execute($sqlReq);
 		
 		$this->TGroup = array();
 		

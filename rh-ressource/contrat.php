@@ -129,7 +129,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 	global $db,$user, $conf;
 	llxHeader('', 'Contrat');
 
-	
+	$html=new Form($db);
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $contrat->getId());
@@ -144,7 +144,8 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 				,'libelle'=>$form->texte('', 'libelle', $contrat->libelle, 50,255,'','','-')
 				,'typeContrat'=> $form->combo('','bail',$contrat->TBail, $contrat->bail)
 				,'typeRessource'=> $form->combo('','fk_rh_ressource_type',$contrat->TTypeRessource, $contrat->fk_rh_ressource_type)
-				//,'tiersFournisseur'=> $form->combo('','fk_tier_fournisseur',$contrat->TTiers,$contrat->fk_tier_fournisseur)
+				//,'tiersFournisseur'=> ($mode=='edit') ? $html->select_company('','fk_tier_fournisseur','',0, 0,1) : $contrat->fk_tier_fournisseur
+				,'tiersFournisseur'=> $form->combo('','fk_tier_fournisseur',$contrat->TFournisseur,$contrat->fk_tier_fournisseur)
 				,'tiersAgence'=> $form->combo('','fk_tier_utilisateur',$contrat->TAgence,$contrat->fk_tier_utilisateur)
 				,'date_debut'=> $form->calendrier('', 'date_debut', $contrat->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $contrat->get_date('date_fin'), 10)
@@ -161,6 +162,8 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 		
 	);
 	
+	
+	//liste des ressources associés
 	$r = new TSSRenderControler($contrat);
 	$sql= "SELECT r.rowid as ID, r.libelle as 'Libellé' , r.numId as 'Numéro Id'
 			FROM ".MAIN_DB_PREFIX."rh_ressource as r, ".MAIN_DB_PREFIX."rh_contrat_ressource as l 
@@ -198,9 +201,51 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 		,'orderBy'=>$TOrder
 		
 	));
+	
+	
+	//liste des adresses liés au contrat
+	$r = new TSSRenderControler($contrat);
+	$sql= "SELECT s.rowid as ID , s.name as 'Nom', CONCAT(s.address, ' ', s.cp, ' ',s.ville) as 'Adresse',
+			s.phone as 'Tél pro.', s.phone_mobile as 'Tél portable', s.fax as 'Fax', s.email as 'EMail'
+			FROM ".MAIN_DB_PREFIX."socpeople as s
+			LEFT JOIN	".MAIN_DB_PREFIX."rh_contrat as c ON (s.fk_soc = c.fk_tier_fournisseur)
+			WHERE s.entity=".$conf->entity."
+			AND c.rowid =".$contrat->getId();
+	$TOrder = array('ID'=>'ASC');
+	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+				
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
+	$r->liste($ATMdb, $sql, array(
+		'limit'=>array(
+			'page'=>$page
+			,'nbLine'=>'30'
+		)
+		,'link'=>array(
+			'Nom'=>'<a href="../../contact/fiche.php?id=@ID@">@val@</a>'
+		)
+		,'translate'=>array()
+		,'hide'=>array()
+		,'type'=>array()
+		,'liste'=>array(
+			'titre'=>'Liste des agences à contacter en cas de problème'
+			,'image'=>img_picto('','title.png', '', 0)
+			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_suivant'=>img_picto('','next.png', '', 0)
+			,'noheader'=> (int)isset($_REQUEST['socid'])
+			,'messageNothing'=>"Il n'y a aucune agence liée"
+			,'order_down'=>img_picto('','1downarrow.png', '', 0)
+			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			
+		)
+		,'orderBy'=>$TOrder
+		
+	));
+	
+	
+	
 	echo $form->end_form();
 	// End of page
-	
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();

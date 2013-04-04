@@ -13,7 +13,8 @@ class TRH_Contrat  extends TObjetStd {
 		parent::add_champs('loyer_TTC','type=float;');
 		
 		//Un evenement est lié à une ressource et deux tiers (agence utilisatrice et fournisseur)
-		parent::add_champs('fk_tier_utilisateur,entity','type=entier;index;');
+		//parent::add_champs('fk_tier_utilisateur,entity','type=entier;index;');
+		parent::add_champs('fk_tier_fournisseur,entity','type=entier;index;');
 		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
 		
 		parent::_init_vars();
@@ -49,6 +50,15 @@ class TRH_Contrat  extends TObjetStd {
 		while($ATMdb->Get_line()) {
 			$this->TAgence[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
 			}
+		
+		//chargement d'une liste des tiers
+		$this->TFournisseur = array();
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity=".$conf->entity;
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TFournisseur[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			}
+		
 		
 		//chargement d'une liste de toutes les TVA
 		$this->TTVA = array();
