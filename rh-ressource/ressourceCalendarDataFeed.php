@@ -9,10 +9,10 @@ $method = $_GET["method"];
 switch ($method) {
     case "list": 
 		if ($_REQUEST['id']!=0){
-			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_REQUEST['id']);	
+			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_REQUEST['id'], false);	
 		}
 		else {
-			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"]);	
+			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_REQUEST['type'], true);
 		}
         
         break;   
@@ -20,7 +20,7 @@ switch ($method) {
 }
 echo json_encode($ret); 
 
-function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null){
+function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null, $typeRessource=false){
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
@@ -29,14 +29,20 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null){
   $ret['error'] = null;
   try{
     
-	$sql = "SELECT * FROM `llx_rh_evenement` WHERE `date_debut` between '"
+	$sql = "SELECT * 
+	FROM ".MAIN_DB_PREFIX."rh_evenement as e 
+	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
+	WHERE ";
+	if ($typeRessource) {$sql .= "r.fk_rh_ressource_type=". $idRessource." AND ";}
+	
+	$sql .= " `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."'";
-    if ($idRessource!=null){
-    	$sql.=" AND fk_rh_ressource=".$idRessource;
+    if (! $typeRessource){
+    	$sql.=" AND e.fk_rh_ressource=".$idRessource;
 	}
+	
 	//echo $sql;
    $ATMdb->Execute($sql);
-    //echo $sql;
     while ($row=$ATMdb->Get_line()) {
       //$ret['events'][] = $row;
       //$attends = $row->AttendeeNames;
@@ -72,7 +78,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null){
   return $ret;
 }
 
-function listCalendar(&$ATMdb, $day, $type, $idRessource=null){
+function listCalendar(&$ATMdb, $day, $type, $idRessource=null, $typeRessource=false){
   $phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
   switch($type){
@@ -92,13 +98,9 @@ function listCalendar(&$ATMdb, $day, $type, $idRessource=null){
       $et = mktime(0, 0, -1, date("m", $phpTime), date("d", $phpTime)+1, date("Y", $phpTime));
       break;
   }
-  //echo $st . "--" . $et;
-  if( $idRessource != null){
-  		return listCalendarByRange($ATMdb, $st, $et, $idRessource);
-  }
-  else {
-  		return listCalendarByRange($ATMdb, $st, $et);
-  }
+ 
+	return listCalendarByRange($ATMdb, $st, $et, $idRessource, $typeRessource);
+  
 
 }
 

@@ -129,7 +129,6 @@ class modCompetence extends DolibarrModules
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
         $this->tabs = array(
         	'user:+competence:Expérience:competence@competence:/competence/experience.php?fk_user=__ID__'  // To add a new tab identified by code tabname1
-           ,'user:+formation:Formation:competence@competence:/competence/formation.php?fk_user=__ID__'
            ,'user:+recherche:Recherche Profil:competence@competence:/competence/rechercheProfil.php?fk_user=__ID__'
        	);
 

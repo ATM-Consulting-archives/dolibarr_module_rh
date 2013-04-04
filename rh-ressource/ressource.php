@@ -109,8 +109,8 @@
 	
 	
 	$ATMdb->close();
-	
 	llxFooter();
+	
 	
 function _liste(&$ATMdb, &$ressource) {
 	global $langs,$conf, $db;	
@@ -118,20 +118,19 @@ function _liste(&$ATMdb, &$ressource) {
 	getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
-	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre',r.libelle , t.libelle as 'Type',  
-		r.numId , r.statut as 'Statut', '' as 'Supprimer'
+	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.libelle, r.fk_rh_ressource_type,
+		r.numId , '' as 'Statut', '' as 'Supprimer'
 		FROM llx_rh_ressource as r, llx_rh_ressource_type as t 
 		WHERE r.entity=".$conf->entity."
 		AND r.fk_rh_ressource_type=t.rowid
 		";
-	
+		
 	$TOrder = array('DateCre'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');	
-	//print $page;
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
@@ -141,7 +140,13 @@ function _liste(&$ATMdb, &$ressource) {
 			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
-		,'translate'=>array('Statut'=>$ressource->TStatut)
+		,'eval'=>array(
+			'Statut'=>'getStatut(@ID@, date("Y-m-d"))'
+		)
+		,'translate'=>array(
+			'fk_rh_ressource_type'=>$ressource->TType
+			,'Statut'=>$ressource->TStatut
+			)
 		,'hide'=>array('DateCre')
 		,'type'=>array('libelle'=>'string')
 		,'liste'=>array(
@@ -159,6 +164,16 @@ function _liste(&$ATMdb, &$ressource) {
 		,'title'=>array(
 			'libelle'=>'Libellé'
 			,'numId'=>'Numéro Id'
+			,'fk_rh_ressource_type'=> 'Type'
+			
+			
+		)
+		,'search'=>array(
+			'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
+			,'numId'=>true
+			,'libelle'=>true
+			,'Statut'=>array('recherche'=>$ressource->TStatut)
+			
 		)
 		,'orderBy'=>$TOrder
 		
@@ -167,7 +182,32 @@ function _liste(&$ATMdb, &$ressource) {
 	$form->end();
 	llxFooter();
 }	
-	
+
+function getStatut($id, $jour){
+	global $conf;
+	$ATMdb=new Tdb;
+	$sqlReq="SELECT rowid, date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$id."
+	AND entity=".$conf->entity;
+	$ATMdb->Execute($sqlReq);
+	$return = 'libre';
+	while($ATMdb->Get_line()) {
+		//echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
+		if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
+			&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
+				return 'attribuee';
+				break;
+		}
+		if (date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) >= $jour ){
+				$return='reservee';
+			}
+	}
+	$ATMdb->close();
+	return $return;			
+	}
+
+
+
+
 function _fiche(&$ATMdb, &$ressource, $mode) {
 	global $db,$user;
 	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));

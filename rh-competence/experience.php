@@ -418,7 +418,9 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->get_date('date_formationEcheance'), 10)
 			)
 			,'userCourant'=>array(
-				'id'=>$user->id
+				'id'=>$fuser->id
+				,'nom'=>$fuser->lastname
+				,'prenom'=>$fuser->firstname
 			)
 			,'view'=>array(
 				'mode'=>$mode

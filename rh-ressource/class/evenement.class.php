@@ -85,14 +85,6 @@ class TRH_Evenement  extends TObjetStd {
 		
 		
 	}
-	function delete(&$db){
-		parent::delete($db);
-		
-		$temp = new TRH_Ressource;
-		$temp->load($db, $this->fk_rh_ressource);
-		$temp->save($db);	//ça met le statut de la ressource à jour
-		
-	}
 	
 	function save(&$db) {
 		global $conf;
@@ -103,22 +95,40 @@ class TRH_Evenement  extends TObjetStd {
 		}
 		$temp = new TRH_Ressource;
 		$temp->load($db, $this->fk_rh_ressource);
+		$this->load_liste($db);
 		
-		
+		switch($this->type){
+			case 'accident':
+				$this->color= 2; //rose clair
+				break;
+			case 'reparation':
+				$this->color= 3; //violet clair
+				break;
+			case 'appel' :
+				$this->color= 4; //violet foncé
+				break;
+			case 'facture':
+				$this->color= 5; //bleu-vert moche
+				break;
+			case 'emprunt' :
+			 	$this->color= 1; //couleur rouge
+				break;
+			default :
+			 	$this->color= 7; //bleu-vert clair vif
+				break;
+		}
 		
 		if ($this->type=='emprunt'){
-			$this->color = 1 ; //couleur rouge
 			$this->subject = "[ ".$temp->libelle." ] Utilisé par ".$this->TUser[$this->fk_user];
 		}
 		else {
-			$this->color = 6 ; //couleur verte moche
 			$this->subject = "[ ".$temp->libelle." ] ".$this->TType[$this->type]." : ".$this->motif;
 		}
 		
 		$this->isAllDayEvent = 1;
 		
 		parent::save($db);
-		$temp->save($db);	//ça met le statut à jour
+		$temp->save($db);	//ça met le statut de la ressource liée à jour
 	}
 	
 }	
