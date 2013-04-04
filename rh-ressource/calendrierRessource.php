@@ -30,12 +30,22 @@
 	$ressource=new TRH_ressource;
 	$ressource->load($ATMdb, $_REQUEST['id']);
 	
+	$type = isset($_REQUEST['type']) ? $_REQUEST['type'] : 1;
+	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
+	echo $form->hidden('action', 'afficher');
+	echo $form->hidden('id',$ressource->getId());
+	
+	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'
 		,array()
 		,array(
 			'ressource'=>array(
 				'id' => $ressource->getId()
+				,'type'=>$form->combo('', 'type', $ressource->TType, $type)
+				,'typeAAfficher'=>$type
+				,'btValider'=>$form->btsubmit('Valider', 'valider')
 			)
 			,'view'=>array(
 				'mode'=>$mode
@@ -48,6 +58,7 @@
 		
 	);
 	
+	$form->end();
 
 	llxFooter();
 

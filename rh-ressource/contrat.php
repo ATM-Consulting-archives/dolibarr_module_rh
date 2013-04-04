@@ -162,7 +162,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 	);
 	
 	$r = new TSSRenderControler($contrat);
-	$sql= "SELECT r.rowid as ID, r.libelle as 'Libellé' 
+	$sql= "SELECT r.rowid as ID, r.libelle as 'Libellé' , r.numId as 'Numéro Id'
 			FROM ".MAIN_DB_PREFIX."rh_ressource as r, ".MAIN_DB_PREFIX."rh_contrat_ressource as l 
 			WHERE r.entity=".$conf->entity."
 			AND l.fk_rh_contrat =".$contrat->getId()."

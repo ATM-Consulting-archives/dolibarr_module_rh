@@ -5,6 +5,14 @@
                         <div class="tabBar">
 [onshow;block=end] 	
 
+[onshow;block=begin;when [ressource.id]=0]
+		<br> 
+		Spécifier le type de ressource à afficher :  
+                [ressource.type;strconv=no;protect=no]
+                [ressource.btValider;strconv=no;protect=no]
+[onshow;block=end] 	
+
+
 <h1>Agenda des ressources</h1>
 		
 			<div id="agenda">
@@ -12,7 +20,16 @@
         $(document).ready(function() {     
            var view="month";          
            
-            var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]"
+           [onshow;block=begin;when [ressource.id]!=0]        
+                var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]";
+			[onshow;block=end]
+			
+			[onshow;block=begin;when [ressource.id]=0]
+					 var DATA_FEED_URL = "ressourceCalendarDataFeed.php?type=[ressource.typeAAfficher;strconv=no]";
+			[onshow;block=end]
+
+            //var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]&type=[ressource.typeAAfficher;strconv=no]"
+            //alert(DATA_FEED_URL);
             var op = {
                 view: view,
                 theme:3,
