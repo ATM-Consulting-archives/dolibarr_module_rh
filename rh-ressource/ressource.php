@@ -119,7 +119,7 @@ function _liste(&$ATMdb, &$ressource) {
 	
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.libelle, r.fk_rh_ressource_type,
-		r.numId , r.statut as 'Statut', '' as 'Supprimer'
+		r.numId , '' as 'Statut', '' as 'Supprimer'
 		FROM llx_rh_ressource as r, llx_rh_ressource_type as t 
 		WHERE r.entity=".$conf->entity."
 		AND r.fk_rh_ressource_type=t.rowid
@@ -141,11 +141,10 @@ function _liste(&$ATMdb, &$ressource) {
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'eval'=>array(
-			//'Statut'=>'fonction(@ID@)'
+			//'Statut'=>'getStatut($ATMdb,@ID@, date("Y-m-d"))'
 		)
 		,'translate'=>array(
-			'Statut'=>$ressource->TStatut
-			,'fk_rh_ressource_type'=>$ressource->TType
+			'fk_rh_ressource_type'=>$ressource->TType
 			)
 		,'hide'=>array('DateCre')
 		,'type'=>array('libelle'=>'string')
@@ -164,7 +163,7 @@ function _liste(&$ATMdb, &$ressource) {
 		,'title'=>array(
 			'libelle'=>'Libellé'
 			,'numId'=>'Numéro Id'
-			, 'fk_rh_ressource_type'=> 'Type'
+			,'fk_rh_ressource_type'=> 'Type'
 			
 		)
 		,'search'=>array(
@@ -179,7 +178,30 @@ function _liste(&$ATMdb, &$ressource) {
 	$form->end();
 	llxFooter();
 }	
-	
+/*
+function getStatut(&$ATMdb, $id, $jour){
+	global $conf;
+	echo $ATMdb;
+	print_r ($ATMdb);
+	$sqlReq="SELECT rowid, date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$id."
+	AND entity=".$conf->entity;
+	echo 'lol'.$id;
+	$ATMdb->Execute($sqlReq);
+	$return = 'libre';
+	while($ATMdb->Get_line()) {
+		echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
+		if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
+			&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
+				return 'attribuee';
+				break;
+		}
+		if (date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) >= $jour ){
+				$return='reservee';
+			}
+	}
+	return $return;			
+	}
+*/
 function _fiche(&$ATMdb, &$ressource, $mode) {
 	global $db,$user;
 	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));

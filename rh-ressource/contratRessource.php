@@ -81,7 +81,7 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'contrats', 'Ressource');
 	
 	$r = new TSSRenderControler($association);
-	$sql="SELECT DISTINCT a.rowid as 'ID', c.libelle as 'Libellé', 
+	$sql="SELECT DISTINCT a.rowid as 'ID',  c.rowid as 'IDContrat' , c.libelle as 'Libellé',
 		DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin', a.commentaire as 'Commentaire',
 		'' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_contrat_ressource as a
@@ -103,10 +103,11 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@">@val@</a>'
+			,'Libellé'=>'<a href="contrat.php?id=@IDContrat@">@val@</a>'
 			,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@&action=deleteAssoc"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()
-		,'hide'=>array('DateCre')
+		,'hide'=>array('DateCre', 'IDContrat')
 		,'type'=>array()
 		,'liste'=>array(
 			'titre'=>'Liste des contrats'

@@ -151,7 +151,6 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
-	print 'lol'.$page;
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
