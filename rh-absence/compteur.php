@@ -78,7 +78,7 @@ function _liste(&$ATMdb, &$compteur) {
 	getStandartJS();
 	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Administration des congés');
 	$r = new TSSRenderControler($compteur);
-	$sql="SELECT  r.rowid as 'ID', firstname as 'Prenom', name as 'Nom', anneeN as 'annee', r.date_cre as 'DateCre',r.acquisExerciceN as 'Congés acquis N', 
+	$sql="SELECT  r.rowid as 'ID', CONCAT(c.firstname,' ',c.name) as 'Utilisateur', anneeN as 'annee', r.date_cre as 'DateCre',r.acquisExerciceN as 'Congés acquis N', 
 	r.acquisAncienneteN as 'Congés Ancienneté', r.acquisExerciceNM1 as 'Conges Acquis N-1', r.congesPrisNM1 as 'Conges Pris N-1',
 			   r.rttPris as 'RttPris'
 		FROM llx_rh_compteur as r, llx_user as c 
@@ -97,8 +97,8 @@ function _liste(&$ATMdb, &$compteur) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Nom'=>'<a href="?id=@ID@&action=view">@val@</a>'
-			,'Prenom'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'Utilisateur'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			//'Prenom'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')

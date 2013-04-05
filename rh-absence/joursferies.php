@@ -30,7 +30,7 @@
 			case 'save':
 				$emploiTemps->load($ATMdb, $_REQUEST['id']);
 				$feries->load($ATMdb, $_REQUEST['idJour']);	
-				print_r($feries);		
+				//print_r($feries);		
 				$feries->set_values($_REQUEST);
 				$mesg = '<div class="ok">Jour non travaillé ajouté</div>';
 				$mode = 'view';

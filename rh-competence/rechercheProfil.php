@@ -28,9 +28,13 @@
 	}
 	elseif(($_REQUEST['libelleCompetence'])!="") {
 		$recherche=$tagCompetence->deleteEspace($_REQUEST['libelleCompetence']);
-		$TCompetence=$tagCompetence->findProfile($ATMdb, $recherche);
+		print($recherche);print "<br/>";
+		$competenceOu=$tagCompetence->separerOu($recherche);
+		print_r($competenceOu);print "<br/>";
+		$TUserCompetence=$tagCompetence->findProfile($ATMdb, $competenceOu);
+		print_r($TUserCompetence);print "<br/>";
 		//print_r($TCompetence);
-		_liste($ATMdb, $TCompetence, $tagCompetence, $recherche);
+		_liste($ATMdb, $TUserCompetence, $tagCompetence, $competenceOu);
 	}
 	else {
 		//$ATMdb->db->debug=true;
@@ -56,13 +60,24 @@ function _liste(&$ATMdb, $TComp, $tagCompetence, $recherche ) {
 	////////////AFFICHAGE DES LIGNES DE CV 
 	$r = new TSSRenderControler($tagCompetence);
 	$sql="SELECT c.fk_user_formation as 'ID' , c.rowid , c.date_cre as 'DateCre', 
-			  u.firstname, u.name ,c.libelleCompetence
+			  CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence
 			 , c.fk_user
 		FROM   llx_rh_competence_cv as c, llx_user as u 
 		WHERE c.fk_user IN(".implode(',', $TComp).") 
-		AND c.libelleCompetence LIKE '".$recherche."'
-		AND c.entity=".$conf->entity. " AND c.fk_user=u.rowid";
-	
+		
+		AND c.entity=".$conf->entity. " AND c.fk_user=u.rowid AND( ";
+		//AND c.libelleCompetence LIKE '".$recherche."'";
+	$k=0;
+	foreach($recherche as $tagRecherche){
+		if($k==0){
+	 		$sql.=" libelleCompetence LIKE '".$tagRecherche."'";
+	 	}else{
+	 		$sql.=" OR libelleCompetence LIKE '".$tagRecherche."'";
+	 	}
+		$k++;
+	}
+	$sql.=")";
+	echo $sql;
 	$TOrder = array('ID'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -98,8 +113,8 @@ function _liste(&$ATMdb, $TComp, $tagCompetence, $recherche ) {
 		)
 		,'title'=>array(
 			'libelleCompetence'=>'Libellé Compétence'
-			,'name'=>'Nom'
-			,'firstname'=>'Prénom'
+			,'name'=>'Utilisateur'
+			//,'firstname'=>'Prénom'
 			
 		)
 		,'search'=>array(
