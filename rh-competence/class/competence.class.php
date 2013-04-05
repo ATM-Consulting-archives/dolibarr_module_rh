@@ -52,98 +52,58 @@ class TRH_competence_cv extends TObjetStd {
 		parent::start();
 	}
 	
+	function deleteEspace($competence){
+		$compSansEspace=str_replace(' ','%',$competence);
+		return "%".$compSansEspace."%";
+	}
 	
 	//mise en forme de la recherche : suppression des espaces, rajout des %
 	function miseEnForme($competence){
-		$competence=str_replace(' ','%',$competence);
-		return "%".$competence."%";
+		print_r($competence);
+		$Tcompetence=array();
+		foreach ($competence as $comp){
+			
+			$Tcompetence[]="%".$comp."%";
+		}
+		return $Tcompetence;
 	}
 	
 	
 	//fonction permettant de donner les utilisateurs ayant une compétence recherchée
-	function findProfile(&$ATMdb, $competence){
+	function findProfile(&$ATMdb, $competenceInit){
 
 			global $conf;
 			
+			$competenceEt=$this->separerOu($competenceInit);
+			print_r($competenceEt);
 			$TUser=array();
-			
-			$sql="SELECT * FROM llx_rh_competence_cv WHERE libelleCompetence LIKE '".$competence."'
-				AND entity=".$conf->entity;
+			  $sql="SELECT * FROM llx_rh_competence_cv WHERE entity=".$conf->entity." AND ";
+			  $k=0;
+			 foreach($competenceEt as $comp){
+			 	if($k==0){
+			 		$sql.=" libelleCompetence LIKE '".$comp."'";
+			 	}else{
+			 		$sql.=" OR libelleCompetence LIKE '".$comp."'";
+			 	}
+				$k++;
+			 	
+			 }
+			echo $sql;
 			$ATMdb->Execute($sql);
 			$TUser=array();
 			$k=0;
 			while($ATMdb->Get_line()) {
-						/*$TUser[$k]['libelleCompetence']=$ATMdb->Get_field('libelleCompetence');
-						$TUser[$k]['fk_user']=$ATMdb->Get_field('fk_user');
-						$TUser[$k]['fk_user_formation']=$ATMdb->Get_field('fk_user_formation');
-						$k++;*/
 						$TUser[]=$ATMdb->Get_field('fk_user');
 			}
+			print_r($TUser);
 			return $TUser;
+
 		}
+
+	function separerOu($competenceEt){
+		$competenceEt=explode("%ou%",$competenceEt); 
+		return $competenceEt=$this->miseEnForme($competenceEt);
+	}
 	
 }
 
-
-/*
-//TRH_FORMULAIRE
-//classe pour la création d'un formulaire
-class TRH_Formulaire extends TObjetStd {
-	function __construct() { /* declaration 
-		
-		parent::set_table(MAIN_DB_PREFIX.'rh_formulaire');
-		parent::add_champs('annee','type=date;');	//dates debut fin de congés
-		
-		parent::_init_vars();
-		parent::start();
-		
-	}
-}
-//TRH_QUESTION
-//Définiton classe pour une question d'un formulaire 
-class TRH_Question extends TObjetStd {
-	function __construct() { 
-		
-		parent::set_table(MAIN_DB_PREFIX.'rh_question');
-		parent::add_champs('question','type=chaine;');		//question à poser
-		parent::add_champs('type','type=varchar;'); 	//type de la question
-		parent::add_champs('fk_formulaire','type=entier;');		//formulaire dont dépend la question
-		
-		parent::_init_vars();
-		parent::start();
-		
-	}
-}
-
-//TRH_REPONSE
-//définition de la classe pour la réponse à une question
-class TRH_Reponse extends TObjetStd {
-	function __construct() { 
-		
-		parent::set_table(MAIN_DB_PREFIX.'rh_reponse');
-		parent::add_champs('reponse','type=chaine;');		//réponse donnée à la question
-		parent::add_champs('fk_utilisateur','type=entier;');	//utilisateur concerné
-		parent::add_champs('fk_question','type=entier;');	//question concernée par la réponse
-		
-		parent::_init_vars();
-		parent::start();
-		
-	}
-}
-
-//TRH_SCAN
-//définition de la classe pour l'enregistrement des jours non travaillés dans l'année (fériés etc...)
-class TRH_Scan extends TObjetStd {
-	function __construct() { 
-		
-		parent::set_table(MAIN_DB_PREFIX.'rh_scan');
-		parent::add_champs('chemin_fichier','type=chaine;');		//chemin d'acces au fichier 
-		parent::add_champs('date','type=date;');	//date du fichier
-		parent::add_champs('fk_utilisateur','type=entier;');	//utilisateur concerné
-		parent::add_champs('fk_formulaire','type=entier;');	//formulaire concerné par le scan
-			
-		parent::_init_vars();
-		parent::start();
-		
-	}
-}*/

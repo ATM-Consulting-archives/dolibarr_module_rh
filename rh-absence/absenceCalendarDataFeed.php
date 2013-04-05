@@ -125,22 +125,32 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
 	  }  
 	  
 	  //récupération des jours fériés 
-	$sql2=" SELECT * FROM  llx_rh_absence_jours_feries
+	$sql2=" SELECT DISTINCT * FROM  llx_rh_absence_jours_feries
 	 WHERE entity=".$conf->entity;
 	 //echo $sql2;
   	 $ATMdb->Execute($sql2);
-   
+   		
      while ($row = $ATMdb->Get_line()) {
-
+		  switch($row->moment){
+			case 'apresmidi' : 
+				$moment="Après-midi";
+				break;
+			case 'matin':
+				$moment="Matin";
+				break;
+			case 'allday':
+				$moment="Toute la journée";
+				break;
+    	}
 	      $ret['events'][] = array(
 	        $row->rowid,
-	        "Férié ".$row->commentaire." ".$row->moment,
+	        "Férié ".$moment." ".$row->commentaire,
 	        php2JsTime(mySql2PhpTime($row->date_jourOff)),
-	        php2JsTime(mySql2PhpTime($row->date_jourOff)),
+	       	php2JsTime(mySql2PhpTime($row->date_jourOff)),
 	        1,//$row->isAllDayEvent,
 	        0, //more than one day event
 	        //$row->InstanceType,
-	        $row->rowid,//Recurring event,
+	        0,//Recurring event,
 	        1,//$row->color,
 	        1,//editable
 	        "joursferies.php?idJour=".$row->rowid."&action=view",//$row->location,
