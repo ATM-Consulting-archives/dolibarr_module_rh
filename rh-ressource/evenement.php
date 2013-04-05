@@ -109,8 +109,8 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		case 'all' :
 			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 				DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.type as 'Type',
-				e.motif as 'Motif', e.commentaire as 'Commentaire', e.coutHT as 'Coût', 
-				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA' ";
+				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutHT as DECIMAL(16,2)), ' €') as 'Coût', 
+				CONCAT (CAST(e.coutEntrepriseHT as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise', t.taux as 'TVA' ";
 			$jointureType = " AND e.type<>'emprunt' ";
 			break;
 		 case 'appel' :
@@ -123,15 +123,15 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		case 'facture':		
 			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 				DATE(e.date_debut) as 'Date', DATE(e.date_fin) as 'Traité le',
-				e.motif as 'Garage', e.commentaire as 'Commentaire', e.coutHT as 'Coût', 
-				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'";
+				e.motif as 'Garage', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutHT as DECIMAL(16,2)), ' €') as 'Coût', 
+				CONCAT (CAST(e.coutEntrepriseHT as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise', t.taux as 'TVA'";
 			$jointureType = " AND e.type='facture' ";
 			break;
 		default :
 			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 				DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin',
-				e.motif as 'Motif', e.commentaire as 'Commentaire', e.coutHT as 'Coût', 
-				e.coutEntrepriseHT as 'Coût pour l\'entreprise', t.taux as 'TVA'";
+				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutHT as DECIMAL(16,2)), ' €') as 'Coût', 
+				CONCAT (CAST(e.coutEntrepriseHT as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise', t.taux as 'TVA'";
 			$jointureType = " AND e.type='".$type."'";
 		break;
 		}	
