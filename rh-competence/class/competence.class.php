@@ -44,12 +44,15 @@ class TRH_competence_cv extends TObjetStd {
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_competence_cv');
 		
-		parent::add_champs('libelleCompetence','type=chaine;');		
+		parent::add_champs('libelleCompetence','type=chaine;');	
+		parent::add_champs('niveauCompetence','type=chaine;');			
 		parent::add_champs('fk_user_formation','type=entier;');	
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=entier;');
 		parent::_init_vars();
 		parent::start();
+		
+		$this->TNiveauCompetence = array('faible'=>'Faible','moyen'=>'Moyen','bon'=>'Bon','excellent'=>'Excellent');
 	}
 	
 	function deleteEspace($competence){
@@ -67,17 +70,76 @@ class TRH_competence_cv extends TObjetStd {
 		return $Tcompetence;
 	}
 	
+	function separerOu($competenceOu){
+		$competenceOu=explode("%ou%",$competenceOu); 
+		return $competenceOu=$this->miseEnForme($competenceOu);
+	}
 	
-	//fonction permettant de donner les utilisateurs ayant une compétence recherchée
-	/*function separerOu(&$ATMdb, $competenceInit){
-
-			global $conf;
+	function findNiveau($competence){
+		
+		return $competence;
+	}
+	
+	//renvoie la requête finale de la recherche
+	function requeteRecherche(&$ATMdb, $TComp, $recherche){
+		global $conf;
+		$sql="SELECT c.fk_user_formation as 'ID' , c.rowid , c.date_cre as 'DateCre', 
+			  CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence
+			 , c.fk_user
+		FROM   llx_rh_competence_cv as c, llx_user as u 
+		WHERE c.fk_user IN(".implode(',', $TComp).") 
+		
+		AND c.entity=".$conf->entity. " AND c.fk_user=u.rowid AND( ";
+		//AND c.libelleCompetence LIKE '".$recherche."'";
+		$k=0;
+		foreach($recherche as $tagRecherche){
+			if($k==0){
+		 		$sql.=" libelleCompetence LIKE '".$tagRecherche."'";
+		 	}else{
+		 		$sql.=" OR libelleCompetence LIKE '".$tagRecherche."'";
+		 	}
+			$k++;
+		}
+		$sql.=")";
+		
+		$ATMdb->Execute($sql);
+		$TUser=array();
+		$k=0;
+		while($ATMdb->Get_line()) {
+			$k++;
+		}
+		if($k==0){
+			$sql="SELECT c.fk_user_formation as 'ID' , c.rowid , c.date_cre as 'DateCre', 
+				  CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence
+				 , c.fk_user
+			FROM   llx_rh_competence_cv as c, llx_user as u 
+			WHERE c.fk_user IN(".implode(',', $TComp).") 
 			
-			$competenceOu=$this->separerOu($competenceInit);
-			//print_r($competenceOu);
-			return $competenceOu;
+			AND c.entity=".$conf->entity. " AND c.fk_user=u.rowid AND( ";
+			//AND c.libelleCompetence LIKE '".$recherche."'";
+			$k=0;
 			
-		}*/
+			
+			$tagRecherche=explode("%",$tagRecherche); 
+			print_r($tagRecherche);
+			foreach($tagRecherche as $tagRecherche){
+				if($tagRecherche!=''){
+					if($k==0){
+			 		$sql.=" libelleCompetence LIKE '%".$tagRecherche."%'";
+			 	}else{
+			 		$sql.=" OR libelleCompetence LIKE '%".$tagRecherche."%'";
+			 	}
+				$k++;
+				}
+				
+			}
+			$sql.=")";
+		}else{
+			
+		}
+		
+		return $sql;
+	}
 	
 	//fonction permettant de donner les utilisateurs ayant une compétence recherchée
 	function findProfile(&$ATMdb, $competenceOu){
@@ -110,10 +172,7 @@ class TRH_competence_cv extends TObjetStd {
 
 		}
 
-	function separerOu($competenceOu){
-		$competenceOu=explode("%ou%",$competenceOu); 
-		return $competenceOu=$this->miseEnForme($competenceOu);
-	}
+	
 	
 }
 

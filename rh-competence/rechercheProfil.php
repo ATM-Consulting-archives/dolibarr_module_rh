@@ -59,24 +59,9 @@ function _liste(&$ATMdb, $TComp, $tagCompetence, $recherche ) {
 	
 	////////////AFFICHAGE DES LIGNES DE CV 
 	$r = new TSSRenderControler($tagCompetence);
-	$sql="SELECT c.fk_user_formation as 'ID' , c.rowid , c.date_cre as 'DateCre', 
-			  CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence
-			 , c.fk_user
-		FROM   llx_rh_competence_cv as c, llx_user as u 
-		WHERE c.fk_user IN(".implode(',', $TComp).") 
-		
-		AND c.entity=".$conf->entity. " AND c.fk_user=u.rowid AND( ";
-		//AND c.libelleCompetence LIKE '".$recherche."'";
-	$k=0;
-	foreach($recherche as $tagRecherche){
-		if($k==0){
-	 		$sql.=" libelleCompetence LIKE '".$tagRecherche."'";
-	 	}else{
-	 		$sql.=" OR libelleCompetence LIKE '".$tagRecherche."'";
-	 	}
-		$k++;
-	}
-	$sql.=")";
+	
+	$sql=$tagCompetence->requeteRecherche($ATMdb, $TComp, $recherche);
+	
 	echo $sql;
 	$TOrder = array('ID'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');

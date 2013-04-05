@@ -98,7 +98,6 @@ function _liste(&$ATMdb, &$compteur) {
 		)
 		,'link'=>array(
 			'Utilisateur'=>'<a href="?id=@ID@&action=view">@val@</a>'
-			//'Prenom'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')

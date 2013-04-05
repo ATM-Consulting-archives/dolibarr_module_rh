@@ -17,7 +17,7 @@
 				break;	
 
 			case 'save':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->set_values($_REQUEST);
 				$absence->save($ATMdb);
@@ -49,7 +49,7 @@
 				
 			case 'accept':
 				$absence->load($ATMdb, $_REQUEST['id']);
-				$sqlEtat="UPDATE `llx_rh_absence` SET etat='Validee', libelleEtat='Acceptée' where fk_user=".$user->id. " AND rowid=".$absence->getId();
+				$sqlEtat="UPDATE `llx_rh_absence` SET etat='Validee', libelleEtat='Acceptée' where fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
@@ -112,7 +112,7 @@ function _liste(&$ATMdb, &$absence) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'date_debut'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'Type absence'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array('Statut demande'=>array('Refusée'=>'<b style="color:#A72947">Refusée</b>','En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 'Acceptée'=>'<b style="color:#30B300">Acceptée</b>'))
@@ -166,7 +166,7 @@ function _liste(&$ATMdb, &$absence) {
 	}else{
 		//LISTE DES ABSENCES À VALIDER
 		$r = new TSSRenderControler($absence);
-		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',DATE(a.date_debut) , DATE(a.date_fin) as 'Date Fin', 
+		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',DATE(a.date_debut) as 'date_debut', DATE(a.date_fin) as 'Date Fin', 
 				  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
 				  a.libelleEtat as 'Statut demande', '' as 'Supprimer'
 			FROM llx_rh_absence as a, llx_user as u
@@ -185,7 +185,7 @@ function _liste(&$ATMdb, &$absence) {
 				,'nbLine'=>'30'
 			)
 			,'link'=>array(
-				'date_debut'=>'<a href="?id=@ID@&action=view">@val@</a>'
+				'Type absence'=>'<a href="?id=@ID@&action=view">@val@</a>'
 				,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 			)
 			,'translate'=>array('Statut demande'=>array('Refusée'=>'<b style="color:#A72947">Refusée</b>','En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 'Acceptée'=>'<b style="color:#30B300">Acceptée</b>'))
