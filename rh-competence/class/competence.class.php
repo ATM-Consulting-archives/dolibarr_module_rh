@@ -59,7 +59,6 @@ class TRH_competence_cv extends TObjetStd {
 	
 	//mise en forme de la recherche : suppression des espaces, rajout des %
 	function miseEnForme($competence){
-		print_r($competence);
 		$Tcompetence=array();
 		foreach ($competence as $comp){
 			
@@ -70,16 +69,27 @@ class TRH_competence_cv extends TObjetStd {
 	
 	
 	//fonction permettant de donner les utilisateurs ayant une compétence recherchée
-	function findProfile(&$ATMdb, $competenceInit){
+	/*function separerOu(&$ATMdb, $competenceInit){
 
 			global $conf;
 			
-			$competenceEt=$this->separerOu($competenceInit);
-			print_r($competenceEt);
+			$competenceOu=$this->separerOu($competenceInit);
+			//print_r($competenceOu);
+			return $competenceOu;
+			
+		}*/
+	
+	//fonction permettant de donner les utilisateurs ayant une compétence recherchée
+	function findProfile(&$ATMdb, $competenceOu){
+
+			global $conf;
+			
+			
 			$TUser=array();
+			
 			  $sql="SELECT * FROM llx_rh_competence_cv WHERE entity=".$conf->entity." AND ";
 			  $k=0;
-			 foreach($competenceEt as $comp){
+			 foreach($competenceOu as $comp){
 			 	if($k==0){
 			 		$sql.=" libelleCompetence LIKE '".$comp."'";
 			 	}else{
@@ -88,21 +98,21 @@ class TRH_competence_cv extends TObjetStd {
 				$k++;
 			 	
 			 }
-			echo $sql;
+			//echo $sql;
 			$ATMdb->Execute($sql);
 			$TUser=array();
 			$k=0;
 			while($ATMdb->Get_line()) {
 						$TUser[]=$ATMdb->Get_field('fk_user');
 			}
-			print_r($TUser);
+			
 			return $TUser;
 
 		}
 
-	function separerOu($competenceEt){
-		$competenceEt=explode("%ou%",$competenceEt); 
-		return $competenceEt=$this->miseEnForme($competenceEt);
+	function separerOu($competenceOu){
+		$competenceOu=explode("%ou%",$competenceOu); 
+		return $competenceOu=$this->miseEnForme($competenceOu);
 	}
 	
 }
