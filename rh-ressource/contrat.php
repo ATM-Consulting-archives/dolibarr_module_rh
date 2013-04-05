@@ -16,7 +16,7 @@
 			case 'add':
 			case 'new':
 				$contrat->set_values($_REQUEST);
-				_fiche($ATMdb, $contrat,'edit');
+				_fiche($ATMdb, $contrat,'new');
 				
 				break;	
 			case 'edit'	:
@@ -82,13 +82,12 @@ function _liste(&$ATMdb, &$contrat) {
 	llxHeader('','Liste des contrats');
 	getStandartJS();
 	$r = new TSSRenderControler($contrat);
-	$sql= "SELECT c.rowid as 'ID',  CONCAT ('Du ',DATE(c.date_debut),' au ' ,DATE(c.date_fin) ) as 'Date',c.libelle as 'Libellé',
-			t.libelle as 'Type Ressource',c.bail as 'Bail', g.nom as 'Agence'
-			FROM llx_rh_contrat as c, llx_usergroup as g, llx_rh_ressource_type as t
-			WHERE c.entity=".$conf->entity." 
-			AND g.rowid = c.fk_tier_utilisateur
-			AND t.rowid = c.fk_rh_ressource_type";
-	
+	$sql= "SELECT c.rowid as 'ID', c.libelle as 'Libellé', CONCAT ('Du ',DATE(c.date_debut),' au ' ,DATE(c.date_fin) ) as 'Date',
+			t.libelle as 'Type Ressource',c.bail as 'Bail', g.nom as 'Fournisseur', '' as Supprimer
+			FROM ".MAIN_DB_PREFIX."rh_contrat as c
+			LEFT JOIN ".MAIN_DB_PREFIX."societe as g ON (c.fk_tier_fournisseur = g.rowid)
+			LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON (c.fk_rh_ressource_type = t.rowid)
+			WHERE c.entity=".$conf->entity;
 	$TOrder = array('Date'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -102,6 +101,7 @@ function _liste(&$ATMdb, &$contrat) {
 		)
 		,'link'=>array(
 			'Libellé'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array()

@@ -36,16 +36,20 @@
 		<td>[NEvent.commentaire;strconv=no;protect=no]</td>
 	</tr>
 	<tr>
-		<td>Coût HT</td>
-		<td>[NEvent.coutHT;strconv=no;protect=no]</td>
+		<td>Coût TTC</td>
+		<td>[NEvent.coutTTC;strconv=no;protect=no]</td>
 	</tr>
 	<tr>
-		<td>Coût pour l'entreprise HT</td>
-		<td>[NEvent.coutEntrepriseHT;strconv=no;protect=no]</td>
+		<td>Coût pour l'entreprise TTC</td>
+		<td>[NEvent.coutEntrepriseTTC;strconv=no;protect=no]</td>
 	</tr>
 	<tr>
 		<td>TVA</td>
 		<td>[NEvent.TVA;strconv=no;protect=no]</td>
+	</tr>
+	<tr>
+		<td>Coût pour l'entreprise HT</td>
+		<td>[NEvent.coutEntrepriseHT;strconv=no;protect=no]</td>
 	</tr>
 </table>
 

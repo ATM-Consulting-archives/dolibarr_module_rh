@@ -145,7 +145,6 @@ function _liste(&$ATMdb, &$ressource) {
 		)
 		,'translate'=>array(
 			'fk_rh_ressource_type'=>$ressource->TType
-			,'Statut'=>$ressource->TStatut
 			)
 		,'hide'=>array('DateCre')
 		,'type'=>array('libelle'=>'string')
@@ -172,7 +171,7 @@ function _liste(&$ATMdb, &$ressource) {
 			'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
 			,'numId'=>true
 			,'libelle'=>true
-			,'Statut'=>array('recherche'=>$ressource->TStatut)
+			,'Statut'=>array('recherche'=>array('Libre','Attribuée', 'Réservée'))
 			
 		)
 		,'orderBy'=>$TOrder
@@ -183,24 +182,37 @@ function _liste(&$ATMdb, &$ressource) {
 	llxFooter();
 }	
 
+/**
+ * Retourne un statut selon le jour donnée. Prend en compte la ressource associé éventuelle (si celle ci est attribué, elle le devient aussi)
+ */
 function getStatut($id, $jour){
 	global $conf;
 	$ATMdb=new Tdb;
-	$sqlReq="SELECT rowid, date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$id."
+	$sqlReq="SELECT rowid, date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$id." 
 	AND entity=".$conf->entity;
 	$ATMdb->Execute($sqlReq);
-	$return = 'libre';
+	$return = 'Libre';
 	while($ATMdb->Get_line()) {
 		//echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
 		if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
 			&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
-				return 'attribuee';
+				return 'Attribuée';
 				break;
 		}
 		if (date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) >= $jour ){
-				$return='reservee';
+				$return='Réservée';
 			}
 	}
+	
+	
+	//le statut est égal est celui de la ressource attribué.
+	$sqlReq="SELECT fk_rh_ressource FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid=".$id." AND entity=".$conf->entity;
+	$ATMdb->Execute($sqlReq);
+	while($row=$ATMdb->Get_line()){
+		if ($ATMdb->Get_field('fk_rh_ressource') !=  0){
+			$return = getStatut($ATMdb->Get_field('fk_rh_ressource'), $jour);}
+	}
+	
 	$ATMdb->close();
 	return $return;			
 	}
@@ -273,7 +285,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
 				,'date_vente'=>$form->calendrier('', 'date_vente', $ressource->get_date('date_vente'), 10)
 				,'date_garantie'=>$form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
-				,'statut'=>$form->combo('','statut',$ressource->TStatut,$ressource->TStatut[0])
+				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TAgence,$ressource->fk_proprietaire)
+				//,'statut'=>$form->combo('','statut',$ressource->TStatut,$ressource->TStatut[0])
 			
 			)
 			,'fk_ressource'=>array(

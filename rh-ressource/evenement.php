@@ -109,8 +109,8 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		case 'all' :
 			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 				DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.type as 'Type',
-				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutHT as DECIMAL(16,2)), ' €') as 'Coût', 
-				CONCAT (CAST(e.coutEntrepriseHT as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise', t.taux as 'TVA' ";
+				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutTTC as DECIMAL(16,2)), ' €') as 'Coût TTC', 
+				CONCAT (CAST(e.coutEntrepriseTTC as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise TTC', t.taux as 'TVA' ";
 			$jointureType = " AND e.type<>'emprunt' ";
 			break;
 		 case 'appel' :
@@ -123,19 +123,20 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		case 'facture':		
 			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 				DATE(e.date_debut) as 'Date', DATE(e.date_fin) as 'Traité le',
-				e.motif as 'Garage', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutHT as DECIMAL(16,2)), ' €') as 'Coût', 
-				CONCAT (CAST(e.coutEntrepriseHT as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise', t.taux as 'TVA'";
+				e.motif as 'Garage', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutTTC as DECIMAL(16,2)), ' €') as 'Coût TTC', 
+				CONCAT (CAST(e.coutEntrepriseTTC as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise TTC', t.taux as 'TVA'";
 			$jointureType = " AND e.type='facture' ";
 			break;
 		default :
 			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 				DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin',
-				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutHT as DECIMAL(16,2)), ' €') as 'Coût', 
-				CONCAT (CAST(e.coutEntrepriseHT as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise', t.taux as 'TVA'";
+				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutTTC as DECIMAL(16,2)), ' €') as 'Coût', 
+				CONCAT (CAST(e.coutEntrepriseTTC as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise TTC', t.taux as 'TVA' ,
+				CONCAT (CAST(e.coutEntrepriseHT as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise HT'";
 			$jointureType = " AND e.type='".$type."'";
 		break;
-		}	
-	
+		}
+
 	$sql = "SELECT DISTINCT e.rowid as 'ID', ".
 			$jointureChamps.", '' as 'Supprimer' 
 			FROM ".MAIN_DB_PREFIX."rh_evenement as e
@@ -145,7 +146,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 			WHERE e.entity=".$conf->entity."
 			AND e.fk_rh_ressource=".$ressource->getId().
 			$jointureType;
-	
+	//echo $sql;
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -190,7 +191,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
 }	
-	
+
 function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	global $db,$user;
 	llxHeader('', 'Evénement');
@@ -204,12 +205,14 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	$evenement->load_liste($ATMdb);
 	$evenement->load_liste_type($ATMdb, $ressource);
 	$TBS=new TTemplateTBS();
+	$tab = array_splice ( $evenement->TType , 1);
 	print $TBS->render('./tpl/evenement.tpl.php'
 		,array()
 		,array(
 			'ressource'=>array(
 				'id'=>$ressource->getId()
 			)
+			
 			,'NEvent'=>array(
 				'id'=>$evenement->getId()
 				,'user'=>$form->combo('','fk_user',$evenement->TUser,$evenement->fk_user)
@@ -218,10 +221,11 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				,'motif'=>$form->texte('','motif',$evenement->motif, 30,100,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->get_date('date_fin'), 10)
-				,'type'=>$form->combo('', 'type', $evenement->TType, $evenement->type)
-				,'coutHT'=>$form->texte('', 'coutHT', $evenement->coutHT, 10,10)
-				,'coutEntrepriseHT'=>$form->texte('', 'coutEntrepriseHT', $evenement->coutEntrepriseHT, 10,10)
+				,'type'=>$form->combo('', 'type', $tab, $evenement->type)
+				,'coutTTC'=>$form->texte('', 'coutTTC', $evenement->coutTTC, 10,10)
+				,'coutEntrepriseTTC'=>$form->texte('', 'coutEntrepriseTTC', $evenement->coutEntrepriseTTC, 10,10)
 				,'TVA'=>$form->combo('','TVA',$evenement->TTVA,$evenement->TVA)
+				,'coutEntrepriseHT'=>($evenement->coutEntrepriseTTC)*(1-(0.01*$evenement->TTVA[$evenement->TVA]))
 			)
 			,'view'=>array(
 				'mode'=>$mode

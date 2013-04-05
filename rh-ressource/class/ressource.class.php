@@ -11,6 +11,8 @@ class TRH_Ressource extends TObjetStd {
 		//types énuméré
 		parent::add_champs('statut','type=chaine;');
 		
+		//clé étrangere : groupe propriétaire
+		parent::add_champs('fk_proprietaire','type=chaine;index;');
 		//clé étrangère : société
 		parent::add_champs('fk_soc,entity','type=entier;index;');//fk_soc_leaser
 		//clé étrangère : type de la ressource
@@ -36,11 +38,16 @@ class TRH_Ressource extends TObjetStd {
 			$this->TType[$temp->getId()] = $temp->libelle;
 		}
 		$this->TBail = array('bail'=>'Bail','immobilisation'=>'Immobilisation');
-		$this->TStatut = array('libre'=>'Libre','attribuee'=>'Attribuée', 'reservee'=>'Reservée');
 		
 		$this->TRessource = array('');
 		$this->TEvenement = array();
 		
+		$this->TAgence = array();
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup ";
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TAgence[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			}
 		$this->TTVA = array();
 		$this->TContratAssocies = array(); 	//tout les objets rh_contrat_ressource liés à la ressource
 		$this->TContratExaustif = array(); 	//tout les objets contrats
@@ -127,33 +134,6 @@ class TRH_Ressource extends TObjetStd {
 	
 
 	/**
-	 * en fonction du jour, on affecte le statut de la ressource. 3 cas :
-	 * si un emprunt est sur le jour : statut attribuee 
-	 * sinon :
-	 * 		si un emprunt est futur : statut reservee 
-	 * 		sinon : statut libre 
-	 */
-	static function setStatut(&$ATMdb, $id, $jour){
-		global $conf;
-		$sqlReq="SELECT rowid, date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$this->getId()."
-		AND entity=".$conf->entity;
-		echo 'lol';
-		$ATMdb->Execute($sqlReq);
-		$return = 'libre';
-		while($ATMdb->Get_line()) {
-			echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
-			if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
-				&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
-					return 'attribuee';
-					break;
-			}
-			if (date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) >= $jour ){
-					$return='reservee';
-				}
-		}
-		return $return;			
-	}
-	/**
 	 * La fonction renvoie le rowid de l'user qui a la ressource à la date T, 0 sinon.
 	 */
 	function isEmpruntee(&$ATMdb, $jour){
@@ -219,7 +199,7 @@ class TRH_Ressource extends TObjetStd {
 	
 	function init_variables(&$ATMdb) {
 		foreach($this->ressourceType->TField as $field) {
-			$this->add_champs($field->code);
+			$this->add_champs($field->code, 'type=chaine');
 		}
 		$this->init_db_by_vars($ATMdb);
 		parent::load($ATMdb, $this->getId());

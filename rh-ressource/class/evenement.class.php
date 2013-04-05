@@ -19,9 +19,10 @@ class TRH_Evenement  extends TObjetStd {
 		
 		
 		//pour un accident, une réparation
-		parent::add_champs('coutHT','type=float;');
+		parent::add_champs('coutTTC','type=float;');
+		parent::add_champs('coutEntrepriseTTC','type=float;');
+		parent::add_champs('TVA','type=entier;'); //indice de la TVA dans le tableau $this->TTVA
 		parent::add_champs('coutEntrepriseHT','type=float;');
-		parent::add_champs('TVA','type=entier;');
 		
 		//pour un appel
 		parent::add_champs('appelHeure','type=chaine;');
@@ -40,9 +41,8 @@ class TRH_Evenement  extends TObjetStd {
 		
 		$this->TType = array(
 			'all'=>''
-			 ,'accident'=>'Accident'
+			,'accident'=>'Accident'
 			,'reparation'=>'Réparation'
-			,'appel'=>'Appel'
 			,'facture'=>'Facture'
 		);	
 			
@@ -96,6 +96,7 @@ class TRH_Evenement  extends TObjetStd {
 		$temp = new TRH_Ressource;
 		$temp->load($db, $this->fk_rh_ressource);
 		$this->load_liste($db);
+		$this->load_liste_type($db, $temp);
 		
 		switch($this->type){
 			case 'accident':
@@ -126,7 +127,7 @@ class TRH_Evenement  extends TObjetStd {
 		}
 		
 		$this->isAllDayEvent = 1;
-		
+		$this->coutEntrepriseHT = ($this->coutEntrepriseTTC)*(1-(0.01*$this->TTVA[$this->TVA]));
 		parent::save($db);
 		$temp->save($db);	//ça met le statut de la ressource liée à jour
 	}
