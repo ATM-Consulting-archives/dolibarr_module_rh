@@ -163,7 +163,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 		
 		$TFields[$k]=array(
 				'id'=>$field->getId()
-				,'code'=>$form->texte('', 'TField['.$k.'][code]', $field->code, 15,255,'','','-')
+				,'code'=>$form->texte('', 'TField['.$k.'][code]', $field->code, 20,255,'','','-')
 				,'libelle'=>$form->texte('', 'TField['.$k.'][libelle]', $field->libelle, 20,255,'','','-')
 				,'indice'=>$k
 				,'ordre'=>$form->hidden('TField['.$k.'][ordre]', $k, 'class="ordre'.$k.'"')
@@ -173,6 +173,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'numero'=>$k
 			);
 	}
+	
 	$TBS=new TTemplateTBS();
 	
 	print $TBS->render('./tpl/ressource.type.field.tpl.php'
@@ -186,8 +187,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'libelle'=> $ressource->libelle
 			)
 			,'newField'=>array(
-				'hidden'=>$form->hidden('action', 'save')
-				,'code'=>$form->texte('', 'TNField[code]', '', 15,255,'','','-')
+				//'hidden'=>$form->hidden('action', 'save')
+				'code'=>$form->texte('', 'TNField[code]', '', 20,255)
 				,'ordre'=>$form->hidden('TNField[ordre]', $k+1, 'class="ordre'.($k+1).'"')
 				,'indice'=>$k+1
 				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 20,255,'','','-')
