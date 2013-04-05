@@ -189,6 +189,7 @@ function getStatut($id, $jour){
 	global $conf;
 	$ATMdb=new Tdb;
 	$sqlReq="SELECT rowid, date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$id." 
+	AND type='emprunt'
 	AND entity=".$conf->entity;
 	$ATMdb->Execute($sqlReq);
 	$return = 'Libre';
