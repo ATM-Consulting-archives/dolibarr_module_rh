@@ -17,7 +17,7 @@
 	
 	//on récupère la date de fin de cloture des RTT
 	$k=0;
-	$sqlReqCloture="SELECT fk_user, date_rttCloture FROM `llx_rh_compteur`";
+	$sqlReqCloture="SELECT fk_user, date_rttCloture FROM `".MAIN_DB_PREFIX."rh_compteur`";
 	$ATMdb->Execute($sqlReqCloture);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -35,7 +35,7 @@
 		$mars=date("dm");
 		if($mars==$dateMD){
 			//on remet à 0 les compteurs
-			$sqlRaz='UPDATE llx_rh_compteur SET rttAcquisMensuel=0, rttPris=0 WHERE rttTypeAcquisition="Mensuel" WHERE fk_user ='.$idUser;
+			$sqlRaz='UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttAcquisMensuel=0, rttPris=0 WHERE rttTypeAcquisition="Mensuel" WHERE fk_user ='.$idUser;
 			$ATMdb->Execute($sqlRaz);
 		}
 		
@@ -44,7 +44,7 @@
 		////// 1er mars, tous les rtt de l'année N sont données à ceux qui les accumulent par année
 		if($mars==$dateMD){
 			//on remet à 5 et à 7 des rtt cumules/noncumules les compteurs
-			$sqlTransfert='UPDATE llx_rh_compteur SET rttAcquisAnnuelCumule=5, rttAcquisAnnuelNonCumule=7, rttPris=0  WHERE rttTypeAcquisition="Annuel" WHERE fk_user ='.$idUser;
+			$sqlTransfert='UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttAcquisAnnuelCumule=5, rttAcquisAnnuelNonCumule=7, rttPris=0  WHERE rttTypeAcquisition="Annuel" WHERE fk_user ='.$idUser;
 			$ATMdb->Execute($sqlTransfert);
 		}	
 			    
@@ -55,7 +55,7 @@
 	$jour=date("d");
 	if($jour=="01"){
 		//on incrémente de 1
-		$sqlIncr='UPDATE llx_rh_compteur SET rttAcquisMensuel=rttAcquisMensuel+1 WHERE rttTypeAcquisition="Mensuel"';
+		$sqlIncr='UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttAcquisMensuel=rttAcquisMensuel+1 WHERE rttTypeAcquisition="Mensuel"';
 		$ATMdb->Execute($sqlIncr);
 	}
 
@@ -64,7 +64,7 @@
 	$annee=date("dm");
 	if($annee=="0101"){
 		//on transfère les jours N-1 non pris vers jours report
-		$sqlAnnee="UPDATE llx_rh_compteur SET rttannee=rttannee+1";
+		$sqlAnnee="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttannee=rttannee+1";
 		$ATMdb->Execute($sqlAnnee);
 	}
 	

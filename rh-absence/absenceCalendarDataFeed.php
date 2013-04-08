@@ -30,7 +30,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
   try{
    
     //LISTE USERS À VALIDER
-	$sql=" SELECT DISTINCT u.fk_user FROM `llx_rh_valideur_groupe` as v, llx_usergroup_user as u 
+	$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
 			WHERE v.fk_user=".$idUser." 
 			AND v.type='Conges'
 			AND v.fk_usergroup=u.fk_usergroup
@@ -46,14 +46,14 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
 	//print_r($TabUser);
 	
 	if($k==0){
-		$sql1 = "SELECT r.rowid as rowid, r.libelle, r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
+		$sql1 = "SELECT r.rowid as rowid, r.libelle, r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
     
 	  if ($idUser!=0){
 	  	$sql1.=" AND r.fk_user=".$idUser;
       }
 	}else{
-		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `llx_rh_absence` as r, `llx_user` as u WHERE `date_debut` between '"
+		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
 	  if ($idUser!=0){
 	  	$sql1.=" AND r.fk_user IN(".implode(',', $TabUser).")";
@@ -125,7 +125,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
 	  }  
 	  
 	  //récupération des jours fériés 
-	$sql2=" SELECT DISTINCT * FROM  llx_rh_absence_jours_feries
+	$sql2=" SELECT DISTINCT * FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
 	 WHERE entity=".$conf->entity;
 	 //echo $sql2;
   	 $ATMdb->Execute($sql2);

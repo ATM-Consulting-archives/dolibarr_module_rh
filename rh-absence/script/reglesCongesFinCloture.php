@@ -18,7 +18,7 @@
 	
 	//on récupère la date de fin de cloture des congés
 	$k=0;
-	$sqlReqCloture="SELECT fk_user, date_congesCloture FROM `llx_rh_compteur`";
+	$sqlReqCloture="SELECT fk_user, date_congesCloture FROM `".MAIN_DB_PREFIX."rh_compteur`";
 	$ATMdb->Execute($sqlReqCloture);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -35,16 +35,16 @@
 		$juin=date("dm");
 		if($juin==$dateMD){
 			//on transfère les jours N-1 non pris vers jours report
-			$sqlTransfert="UPDATE llx_rh_compteur SET reportCongesNM1=acquisExerciceNM1+acquisAncienneteNM1+acquisHorsPeriodeNM1 WHERE fk_user =".$idUser;
+			$sqlTransfert="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET reportCongesNM1=acquisExerciceNM1+acquisAncienneteNM1+acquisHorsPeriodeNM1 WHERE fk_user =".$idUser;
 			$ATMdb->Execute($sqlTransfert);
 			
 			//on transfère les jours acquis N vers N-1
-			$sqlTransfert2="UPDATE llx_rh_compteur SET acquisExerciceNM1=acquisExerciceN, acquisAncienneteNM1=acquisAncienneteN,acquisHorsPeriodeNM1=acquisHorsPeriodeN WHERE fk_user =".$idUser;
+			$sqlTransfert2="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET acquisExerciceNM1=acquisExerciceN, acquisAncienneteNM1=acquisAncienneteN,acquisHorsPeriodeNM1=acquisHorsPeriodeN WHERE fk_user =".$idUser;
 			$ATMdb->Execute($sqlTransfert2);
 			
 			//on remet à 0 les jours année courante
 			//L'ancienneté devra normalement être gérée manuellement. 
-			$sqlRaz="UPDATE llx_rh_compteur SET acquisExerciceN=0, acquisHorsPeriodeN=0 WHERE fk_user =".$idUser;
+			$sqlRaz="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET acquisExerciceN=0, acquisHorsPeriodeN=0 WHERE fk_user =".$idUser;
 			$ATMdb->Execute($sqlRaz);
 			
 		}
@@ -56,6 +56,6 @@
 	$annee=date("dm");
 	if($annee=="0101"){
 		//on transfère les jours N-1 non pris vers jours report
-		$sqlAnnee="UPDATE llx_rh_compteur SET anneeN=anneN+1, anneeNM1=anneNM1+1";
+		$sqlAnnee="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET anneeN=anneN+1, anneeNM1=anneNM1+1";
 		$ATMdb->Execute($sqlAnnee);	
 	}

@@ -46,7 +46,7 @@
 	}
 	else {
 		//$ATMdb->db->debug=true;
-		$sqlReqUser="SELECT rowid FROM `llx_rh_absence_emploitemps` where fk_user=".$user->id;//AND entity=".$conf->entity;
+		$sqlReqUser="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` where fk_user=".$user->id;//AND entity=".$conf->entity;
 		$ATMdb->Execute($sqlReqUser);
 		while($ATMdb->Get_line()) {
 
@@ -69,7 +69,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	
 	$r = new TSSRenderControler($emploiTemps);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', fk_user as 'Id Utilisateur'
-		FROM llx_rh_absence_emploitemps 
+		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps 
 		WHERE entity=".$conf->entity;
 		
 	
