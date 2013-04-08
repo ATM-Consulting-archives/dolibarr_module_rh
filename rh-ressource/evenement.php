@@ -81,7 +81,7 @@
 	llxFooter();
 	
 function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
-	global $conf;	
+	global $conf,$user;	
 	llxHeader('','Liste des emprunts');
 	?><div class="fiche"><?	
 	
