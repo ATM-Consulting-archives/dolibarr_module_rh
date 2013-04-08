@@ -45,15 +45,16 @@
 		
 	}
 	else {
+		_liste($ATMdb, $emploiTemps);
 		//$ATMdb->db->debug=true;
-		$sqlReqUser="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` where fk_user=".$user->id;//AND entity=".$conf->entity;
+	/*	$sqlReqUser="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` where fk_user=".$user->id;//AND entity=".$conf->entity;
 		$ATMdb->Execute($sqlReqUser);
 		while($ATMdb->Get_line()) {
 
 				$compteurCourant=$ATMdb->Get_field('rowid');
 		}
 		$emploiTemps->load($ATMdb, $compteurCourant);
-		_fiche($ATMdb, $emploiTemps,'view');
+		_fiche($ATMdb, $emploiTemps,'view');*/
 	}
 	
 	
@@ -71,14 +72,15 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', fk_user as 'Id Utilisateur'
 		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps 
 		WHERE entity=".$conf->entity;
-		
+	if($user->rights->absence->myactions->modifierEdt!="1"){
+		$sql.=" AND fk_user=".$user->id;
+	}
 	
-	$TOrder = array('Statut demande'=>'DESC');
+	$TOrder = array('ID'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
-	//print $page;
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
@@ -91,42 +93,47 @@ function _liste(&$ATMdb, &$emploiTemps) {
 		,'hide'=>array('DateCre')
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste de vos absences'
+			'titre'=>'Liste des emplois du temps des collaborateurs'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucune absence à afficher"
+			,'messageNothing'=>"Il n'y a aucun emploi du temps à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 		)
 		,'orderBy'=>$TOrder
 	));
-	
-	
 	llxFooter();
 }	
 	
 function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	global $db,$user,$idUserCompt, $idComptEnCours;
 	llxHeader('','Emploi du temps');
-
-
+	$emploiTemps->load($ATMdb, $_REQUEST['id']);
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $_REQUEST['id']);
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('fk_user', $emploiTemps->fk_user);
 
-	$userCourant=new User($db);
-	$userCourant->fetch($emploiTemps->fk_user);
+	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$emploiTemps->fk_user;//AND entity=".$conf->entity;
+	$ATMdb->Execute($sqlReqUser);
+	$Tab=array();
+	while($ATMdb->Get_line()) {
+				$userCourant=new User($db);
+				$userCourant->firstname=$ATMdb->Get_field('firstname');
+				$userCourant->id=$ATMdb->Get_field('rowid');
+				$userCourant->lastname=$ATMdb->Get_field('name');
+	}
 	
 	$TPlanning=array();
 	foreach($emploiTemps->TJour as $jour) {
 		foreach(array('am','pm') as $pm) {
 			$TPlanning[$jour.$pm]=$form->checkbox1('',$jour.$pm,'1',$emploiTemps->{$jour.$pm}==1?true:false);	
 		}
-	} 
+	}
+	 
 	$THoraire=array();
 	foreach($emploiTemps->TJour as $jour) {
 		foreach(array('dam','fam','dpm','fpm') as $pm) {
