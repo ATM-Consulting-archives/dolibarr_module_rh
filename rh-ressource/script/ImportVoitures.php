@@ -31,7 +31,7 @@ $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle)) != false){
 		echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=2){
+		if ($numLigne >=2 && $numLigne < 15){
 			$infos = explode(';', $data[0]);
 			print_r($infos);
 			
