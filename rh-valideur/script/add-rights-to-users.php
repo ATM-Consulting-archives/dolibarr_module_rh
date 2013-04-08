@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 	define('INC_FROM_CRON_SCRIPT', true);
@@ -11,7 +12,10 @@
 		$user=new User($db);
 		
 		$user->fetch($id);
-		
+	
+		/*
+		 * Ajout des droit NDF pour user standart
+		 */	
 		$user->addrights(70301);
 		$user->addrights(70302);
 		$user->addrights(70303);
