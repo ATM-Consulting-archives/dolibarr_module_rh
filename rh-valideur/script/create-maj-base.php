@@ -13,3 +13,6 @@
 
 	$o=new TRH_valideur_groupe;
 	$o->init_db_by_vars($ATMdb);
+	
+	
+	$ATMdb->Execute("ALTER TABLE `llx_user` ADD code_analytique INT DEFAULT 0");
