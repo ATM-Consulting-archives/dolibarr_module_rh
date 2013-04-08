@@ -50,6 +50,7 @@
 				<tr>
 					<td>
 					[TCompetence.libelleCompetence;block=tr;strconv=no;protect=no]
+					[TCompetence.niveauCompetence;block=tr;strconv=no;protect=no]
 					</td>
 					
 				</tr>	

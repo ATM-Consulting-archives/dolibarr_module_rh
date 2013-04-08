@@ -12,9 +12,23 @@
 				[onshow;block=begin;when [view.mode]=='edit']
 					<input type="submit" value="Rechercher" name="save" class="button">
 				[onshow;block=end]
+				
+				<br/><br/><br/><br/>
+				Exemples de recherches prises en compte : 
+				<div style="margin-left:40px">
+			
+					<li>	Excel</li>
+					<li>Excel niveau</li> avec (niveau = {Faible, Bon, Moyen, Excellent})
+					<li>Excel niveau ou Word</li>
+					<li>Excel niveau ou Word niveau ou...</li>
+				</div>
+
 				</td>
 			</tr>
+			
 		</table>
+		
+					
 	</div>
 
 
