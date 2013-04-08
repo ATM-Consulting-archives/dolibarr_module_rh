@@ -83,7 +83,7 @@ $orgChoisie=isset($_POST["choixAffichage"]) ? $_POST["choixAffichage"] : 'equipe
 $idUserCourant=$_GET["id"];
 
 //////////////////////////////////////récupération des informations de l'utilisateur courant
-$sqlReqUser="SELECT * FROM `llx_user` where rowid=".$idUserCourant;
+$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$idUserCourant;
 $ATMdb->Execute($sqlReqUser);
 $Tab=array();
 while($ATMdb->Get_line()) {
@@ -109,7 +109,7 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 				<ul id="ul-niveau-<?=$niveau ?>">
 				<?
 				
-				$sqlReq="SELECT rowid FROM `llx_user` where fk_user=".$idBoss;
+				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where fk_user=".$idBoss;
 				
 				$ATMdb->Execute($sqlReq);
 				
@@ -139,7 +139,7 @@ function afficherSalarie(&$ATMdb, $idUser, $niveau=1){
 		
 				global $user, $db, $idUserCourant, $userCourant;
 
-				$sqlReq="SELECT rowid FROM `llx_user` where rowid=".$idUser;
+				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where rowid=".$idUser;
 				
 				$ATMdb->Execute($sqlReq);
 				
@@ -168,7 +168,7 @@ function afficherGroupeSousValideur(&$ATMdb, $idUser, $fkusergroup, $niveau=1){
 		
 				global $user, $db, $idUserCourant, $userCourant;
 
-				$sqlReq=" SELECT  DISTINCT u.fk_user FROM llx_usergroup_user as u WHERE u.fk_usergroup=".$fkusergroup." AND  u.fk_user NOT IN(SELECT v.fk_user FROM llx_usergroup_user as v WHERE v.fk_user=".$idUser.")";
+				$sqlReq=" SELECT  DISTINCT u.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as u WHERE u.fk_usergroup=".$fkusergroup." AND  u.fk_user NOT IN(SELECT v.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as v WHERE v.fk_user=".$idUser.")";
 				
 				$ATMdb->Execute($sqlReq);
 				
@@ -200,13 +200,13 @@ function afficherGroupeSousValideur(&$ATMdb, $idUser, $fkusergroup, $niveau=1){
 function afficherGroupes(&$ATMdb){
 				global $user, $db, $idUserCourant, $userCourant;
 				//récupère les id des différents groupes de l'utilisateur
-				$sqlReq="SELECT fk_usergroup FROM `llx_usergroup_user` where fk_user=".$userCourant->id;
+				$sqlReq="SELECT fk_usergroup FROM `".MAIN_DB_PREFIX."usergroup_user` where fk_user=".$userCourant->id;
 				$ATMdb->Execute($sqlReq);
 				$Tab=array();
 				while($ATMdb->Get_line()) {
 					//récupère les id des différents nom des  groupes de l'utilisateur
 					$ATMdb1=new Tdb;
-					$sqlReq1="SELECT nom FROM `llx_usergroup` where rowid=".$ATMdb->Get_field('fk_usergroup');
+					$sqlReq1="SELECT nom FROM `".MAIN_DB_PREFIX."usergroup` where rowid=".$ATMdb->Get_field('fk_usergroup');
 					$ATMdb1->Execute($sqlReq1);
 					
 					$Tab1=array();
@@ -219,7 +219,7 @@ function afficherGroupes(&$ATMdb){
 }
 
 function findFkUserGroup(&$ATMdb, $nomGroupe){
-	$sqlFkGroupe='SELECT fk_usergroup FROM llx_rh_valideur_groupe as v, llx_usergroup as u WHERE u.nom="'.$nomGroupe.'" AND v.fk_usergroup=u.rowid';
+	$sqlFkGroupe='SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v, ".MAIN_DB_PREFIX."usergroup as u WHERE u.nom="'.$nomGroupe.'" AND v.fk_usergroup=u.rowid';
 	$ATMdb->Execute($sqlFkGroupe);
 	while($ATMdb->Get_line()) {
 			return $ATMdb->Get_field('fk_usergroup');
@@ -227,7 +227,7 @@ function findFkUserGroup(&$ATMdb, $nomGroupe){
 }
 
 function findIdValideur(&$ATMdb, $fkusergroup){
-	$sqlidValideur='SELECT fk_user FROM llx_rh_valideur_groupe WHERE fk_usergroup='.$fkusergroup;
+	$sqlidValideur='SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe WHERE fk_usergroup='.$fkusergroup;
 	$ATMdb->Execute($sqlidValideur);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -242,7 +242,7 @@ function findIdValideur(&$ATMdb, $fkusergroup){
 		afficherSalarie($ATMdb,$fkuser);
 		//afficherSalarieDessous($ATMdb,$fkuser,1);
 		afficherGroupeSousValideur($ATMdb,$fkuser,$fkusergroup,1);
-		// SELECT  u.rowid FROM llx_user as u WHERE u.rowid NOT IN (SELECT g.fk_user FROM llx_rh_valideur_groupe as g WHERE g.fk_usergroup=2)
+		// SELECT  u.rowid FROM ".MAIN_DB_PREFIX."user as u WHERE u.rowid NOT IN (SELECT g.fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as g WHERE g.fk_usergroup=2)
 		print '</li>';
 	}
 	print '</ul>';
@@ -315,7 +315,7 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 			$ATMdb=new Tdb;
 			if($userCourant->fk_user!="0"){		// si on a un supérieur hiérarchique, on affiche son nom, puis l'équipe 
 			
-				$sqlReq="SELECT name,firstname FROM `llx_user` where rowid=".$userCourant->fk_user;
+				$sqlReq="SELECT name,firstname FROM `".MAIN_DB_PREFIX."user` where rowid=".$userCourant->fk_user;
 				$ATMdb->Execute($sqlReq);
 				$Tab=array();
 				while($ATMdb->Get_line()) {

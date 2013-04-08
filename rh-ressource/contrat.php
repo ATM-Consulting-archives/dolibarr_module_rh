@@ -16,7 +16,7 @@
 			case 'add':
 			case 'new':
 				$contrat->set_values($_REQUEST);
-				_fiche($ATMdb, $contrat,'edit');
+				_fiche($ATMdb, $contrat,'new');
 				
 				break;	
 			case 'edit'	:
@@ -83,11 +83,15 @@ function _liste(&$ATMdb, &$contrat) {
 	getStandartJS();
 	
 	$r = new TSSRenderControler($contrat);
-	$sql= "SELECT c.rowid as 'ID',  CONCAT ('Du ',DATE(c.date_debut),' au ' ,DATE(c.date_fin) ) as 'Date',c.libelle as 'Libellé',
-			t.libelle as 'Type Ressource',c.bail as 'Bail', g.nom as 'Agence'";
+	
+	$sql= "SELECT c.rowid as 'ID', c.libelle as 'Libellé', CONCAT ('Du ',DATE(c.date_debut),' au ' ,DATE(c.date_fin) ) as 'Date',
+			t.libelle as 'Type Ressource',c.bail as 'Bail', g.nom as 'Fournisseur'";
+	if($user->rights->ressource->contrat->createContract){
+		$sql.=", '' as Supprimer";
+	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_contrat as c";
-	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."usergroup as g ON g.rowid = c.fk_tier_utilisateur";
-	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON t.rowid = c.fk_rh_ressource_type";
+	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."societe as g ON (c.fk_tier_fournisseur = g.rowid)";
+	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON (c.fk_rh_ressource_type = t.rowid)";
 	if(!$user->rights->ressource->contrat->viewContract){
 		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON r.rowid = c.fk_rh_ressource";
 		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=r.rowid";
@@ -111,6 +115,7 @@ function _liste(&$ATMdb, &$contrat) {
 		)
 		,'link'=>array(
 			'Libellé'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array()

@@ -39,7 +39,7 @@
 					_fiche($ATMdb, $compteur,'view');
 				}else{
 					//récupération compteur en cours
-					$sqlReqUser="SELECT rowid FROM `llx_rh_compteur` where fk_user=".$user->id;
+					$sqlReqUser="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$user->id;
 					$ATMdb->Execute($sqlReqUser);
 					while($ATMdb->Get_line()) {
 								$idComptEnCours=$ATMdb->Get_field('rowid');
@@ -80,7 +80,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 
 	
 	//////////////////////////récupération des informations des congés précédents (N-1) de l'utilisateur courant : 
-	$sqlReq="SELECT * FROM `llx_rh_admin_compteur` where rowid=1";
+	$sqlReq="SELECT * FROM `".MAIN_DB_PREFIX."rh_admin_compteur` where rowid=1";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 				$compteurGlobal=new User($db);

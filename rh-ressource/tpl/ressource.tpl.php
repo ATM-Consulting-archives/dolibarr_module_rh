@@ -62,6 +62,10 @@
 	<tr>
 		<td>Date de garantie</td>
 		<td>[ressource.date_garantie;strconv=no;protect=no]</td>
+	</tr>	
+	<tr>
+		<td>Agence Propriétaire</td>
+		<td>[ressource.fk_proprietaire;strconv=no;protect=no]</td>
 	</tr>		
 	
 </table>

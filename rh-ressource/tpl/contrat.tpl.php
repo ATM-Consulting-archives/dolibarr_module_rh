@@ -60,8 +60,13 @@
 			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[contrat.id]'">
 		[onshow;block=end]
 		[onshow;block=begin;when [view.mode]!='edit']
-			<a class="butAction"  href="?id=[contrat.id]&action=edit">Modifier</a>
-			&nbsp; &nbsp;<a class="butActionDelete"  href="?id=[contrat.id]&action=delete">Supprimer</a>
+			[onshow;block=begin;when [view.mode]=='new']
+				<input type="submit" value="Enregistrer" name="save" class="button">
+			[onshow;block=end]
+			[onshow;block=begin;when [view.mode]!='new']
+				<a class="butAction"  href="?id=[contrat.id]&action=edit">Modifier</a>
+				&nbsp; &nbsp;<a class="butActionDelete"  href="?id=[contrat.id]&action=delete">Supprimer</a>
+			[onshow;block=end]
 		[onshow;block=end]
 </div>
 [onshow;block=end]

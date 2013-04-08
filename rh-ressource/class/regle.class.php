@@ -76,6 +76,12 @@ class TRH_Ressource_Regle  extends TObjetStd {
 			case 'group':$this->fk_user = NULL;break;
 			default : echo'pbchoixapplication';break;				
 		}
+		if (!is_numeric($this->dureeM)){
+			$this->dureeM = "00";
+		}
+		if (!is_numeric($this->dureeH)){
+			$this->dureeH = "02";
+		}
 		$this->dureeM = substr($this->dureeM,0, 2);
 		$this->dureeH = substr($this->dureeH,0, 2);
 		parent::save($ATMdb);

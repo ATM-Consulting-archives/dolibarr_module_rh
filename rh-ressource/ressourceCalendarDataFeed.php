@@ -29,7 +29,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null, $typeRessourc
   $ret['error'] = null;
   try{
     
-	$sql = "SELECT * 
+	$sql = "SELECT e.rowid,  date_debut, date_fin, isAllDayEvent, fk_user, color, type, subject
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 	WHERE ";
@@ -41,7 +41,6 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null, $typeRessourc
     	$sql.=" AND e.fk_rh_ressource=".$idRessource;
 	}
 	
-	//echo $sql;
    $ATMdb->Execute($sql);
     while ($row=$ATMdb->Get_line()) {
       //$ret['events'][] = $row;
@@ -49,12 +48,11 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null, $typeRessourc
       //if($row->OtherAttendee){
       //  $attends .= $row->OtherAttendee;
       //}
-      //echo $row->StartTime;
       if ($row->type == 'emprunt'){
-      	$lien = 'attribution.php?id='.$row->fk_rh_ressource.'&idEven='.$row->rowid.'&action=view';
+      	$lien = 'attribution.php?id='.$idRessource.'&idEven='.$row->rowid.'&action=view';
       }
 	  else {
-	  	$lien = 'evenement.php?id='.$row->fk_rh_ressource.'&idEven='.$row->rowid.'&action=view';
+	  	$lien = 'evenement.php?id='.$idRessource.'&idEven='.$row->rowid.'&action=view';
 	  }
       $ret['events'][] = array(
        $row->rowid,

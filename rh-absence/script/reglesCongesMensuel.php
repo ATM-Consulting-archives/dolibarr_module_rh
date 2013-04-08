@@ -19,7 +19,7 @@
 	$jour=date("d");
 	if($jour=="01"){
 		$k=0;
-		$sqlReqUser="SELECT fk_user, nombreCongesAcquisMensuel FROM `llx_rh_compteur`";
+		$sqlReqUser="SELECT fk_user, nombreCongesAcquisMensuel FROM `".MAIN_DB_PREFIX."rh_compteur`";
 		$ATMdb->Execute($sqlReqUser);
 		$Tab=array();
 		while($ATMdb->Get_line()) {
@@ -29,7 +29,7 @@
 		foreach($Tab as $idUser => $nombreConges )
 		{
 		    //on incrémente chaque mois les jours de congés
-			$sqlIncr="UPDATE llx_rh_compteur SET acquisExerciceN=acquisExerciceN+".$nombreConges." WHERE fk_user=".$idUser;
+			$sqlIncr="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET acquisExerciceN=acquisExerciceN+".$nombreConges." WHERE fk_user=".$idUser;
 			$ATMdb->Execute($sqlIncr);
 		}
 		

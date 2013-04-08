@@ -11,10 +11,12 @@ class TRH_Ressource extends TObjetStd {
 		//types énuméré
 		parent::add_champs('statut','type=chaine;');
 		
+		//clé étrangere : groupe propriétaire
+		parent::add_champs('fk_proprietaire','type=chaine;index;');
 		//clé étrangère : société
 		parent::add_champs('fk_soc,entity','type=entier;index;');//fk_soc_leaser
 		//clé étrangère : type de la ressource
-		parent::add_champs('fk_rh_ressource_type','type=chaine;index;');
+		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
 		//clé étrangère : ressource associé
 		parent::add_champs('fk_rh_ressource','type=entier;index;');
 		
@@ -36,11 +38,16 @@ class TRH_Ressource extends TObjetStd {
 			$this->TType[$temp->getId()] = $temp->libelle;
 		}
 		$this->TBail = array('bail'=>'Bail','immobilisation'=>'Immobilisation');
-		$this->TStatut = array('libre'=>'Libre','attribuee'=>'Attribuée', 'reservee'=>'Reservée');
 		
 		$this->TRessource = array('');
 		$this->TEvenement = array();
 		
+		$this->TAgence = array();
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup ";
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TAgence[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			}
 		$this->TTVA = array();
 		$this->TContratAssocies = array(); 	//tout les objets rh_contrat_ressource liés à la ressource
 		$this->TContratExaustif = array(); 	//tout les objets contrats
@@ -51,6 +58,8 @@ class TRH_Ressource extends TObjetStd {
 			$this->TListeContrat[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
 			}
 	}
+	
+
 	
 	function load(&$ATMdb, $id) {
 		global $conf;
@@ -127,33 +136,6 @@ class TRH_Ressource extends TObjetStd {
 	
 
 	/**
-	 * en fonction du jour, on affecte le statut de la ressource. 3 cas :
-	 * si un emprunt est sur le jour : statut attribuee 
-	 * sinon :
-	 * 		si un emprunt est futur : statut reservee 
-	 * 		sinon : statut libre 
-	 */
-	static function setStatut(&$ATMdb, $id, $jour){
-		global $conf;
-		$sqlReq="SELECT rowid, date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$this->getId()."
-		AND entity=".$conf->entity;
-		echo 'lol';
-		$ATMdb->Execute($sqlReq);
-		$return = 'libre';
-		while($ATMdb->Get_line()) {
-			echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
-			if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
-				&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
-					return 'attribuee';
-					break;
-			}
-			if (date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) >= $jour ){
-					$return='reservee';
-				}
-		}
-		return $return;			
-	}
-	/**
 	 * La fonction renvoie le rowid de l'user qui a la ressource à la date T, 0 sinon.
 	 */
 	function isEmpruntee(&$ATMdb, $jour){
@@ -219,7 +201,7 @@ class TRH_Ressource extends TObjetStd {
 	
 	function init_variables(&$ATMdb) {
 		foreach($this->ressourceType->TField as $field) {
-			$this->add_champs($field->code);
+			$this->add_champs($field->code, 'type=chaine');
 		}
 		$this->init_db_by_vars($ATMdb);
 		parent::load($ATMdb, $this->getId());
@@ -271,7 +253,7 @@ class TRH_Ressource_type extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource_type');
 		parent::add_champs('libelle,code','type=chaine;');
 		parent::add_champs('entity','type=entier;index;');
-		parent::add_champs('supprimable','type=entier');
+		parent::add_champs('supprimable','type=entier;');
 		parent::add_champs('liste_evenement_value','type=chaine;');
 		parent::add_champs('liste_evenement_key','type=chaine;');
 				
@@ -281,7 +263,14 @@ class TRH_Ressource_type extends TObjetStd {
 		$this->TType=array('chaine'=>'Texte','entier'=>'Entier','float'=>'Float',"liste"=>'Liste',"checkbox"=>'Case à cocher');
 	}
 	
-
+	function chargement($libelle, $code, $supprimable, $liste_evenement_value, $liste_evenement_key){
+		$this->libelle = $libelle;
+		$this->code = $code;
+		$this->supprimable = $supprimable;
+		$this->liste_evenement_value = $liste_evenement_value;
+		$this->liste_evenement_key = $liste_evenement_key;
+	}
+	
 	function load(&$ATMdb, $id) {
 		parent::load($ATMdb, $id);
 		$this->load_field($ATMdb);
@@ -396,15 +385,29 @@ class TRH_Ressource_field extends TObjetStd {
 		parent::add_champs('code,libelle','type=chaine;');
 		parent::add_champs('type','type=chaine;');
 		parent::add_champs('obligatoire','type=entier;');
-		parent::add_champs('ordre','type=entier');
-		parent::add_champs('options','type=chaine');
-		parent::add_champs('supprimable','type=entier');
+		parent::add_champs('ordre','type=entier;');
+		parent::add_champs('options','type=chaine;');
+		parent::add_champs('supprimable','type=entier;');
 		parent::add_champs('fk_rh_ressource_type,entity','type=entier;index;');
 		
 		$this->TListe = array();
 		parent::_init_vars();
 		parent::start();
 		
+	}
+	
+	function chargement(&$db, $libelle, $code, $type, $obligatoire, $ordre, $options, $supprimable, $fk_rh_ressource_type){
+		$this->libelle = $libelle;
+		$this->code = $code;
+		$this->type = $type;
+		$this->obligatoire = $obligatoire;
+		$this->ordre = $ordre;
+		$this->options = $options;
+		$this->supprimable = $supprimable;
+		$this->fk_rh_ressource_type = $fk_rh_ressource_type;
+		
+		
+		$this->save($db);
 	}
 	
 	function load(&$ATMdb, $id){

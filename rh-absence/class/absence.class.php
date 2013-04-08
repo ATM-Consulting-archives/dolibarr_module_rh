@@ -142,21 +142,22 @@ class TRH_Absence extends TObjetStd {
 			$dureeAbsenceCourante=$this->calculJoursFeries($ATMdb, $dureeAbsenceCourante);
 			$dureeAbsenceCourante=$this->calculJoursTravailles($ATMdb, $dureeAbsenceCourante);
 			
+			
 			///////décompte des congés
 			if($this->type=="rttcumule"){
-				$sqlDecompte="UPDATE `llx_rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante."  where fk_user=".$user->id;
+				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante."  where fk_user=".$user->id;
 				$ATMdb->Execute($sqlDecompte);
 				$this->rttPris=$this->rttPris+$dureeAbsenceCourante;
 				$this->rttAcquisAnnuelCumule=$this->rttAcquisAnnuelCumule-$dureeAbsenceCourante;
 				
 			}else if($this->type=="rttnoncumule"){
-				$sqlDecompte="UPDATE `llx_rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule-".$dureeAbsenceCourante." where fk_user=".$user->id;
+				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule-".$dureeAbsenceCourante." where fk_user=".$user->id;
 				$ATMdb->Execute($sqlDecompte);
 				$this->rttPris=$this->rttPris-$dureeAbsenceCourante;
 				$this->rttAcquisAnnuelNonCumule=$this->rttAcquisAnnuelNonCumule-$dureeAbsenceCourante;
 			}
 			else {	//autre que RTT : décompte les congés
-				$sqlDecompte="UPDATE `llx_rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$user->id;
+				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$user->id;
 				$ATMdb->Execute($sqlDecompte);
 				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 			}
@@ -194,7 +195,7 @@ class TRH_Absence extends TObjetStd {
 			$dateFinAbs=$this->php2Date($this->date_fin);
 			
 			//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
-			$sql="SELECT rowid, date_jourOff, moment FROM `llx_rh_absence_jours_feries` WHERE date_jourOff between '"
+			$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
 			.$dateDebutAbs."' and '". $dateFinAbs."'"; 
 			//echo $sql;
 			$ATMdb->Execute($sql);
@@ -292,7 +293,7 @@ class TRH_Absence extends TObjetStd {
 			$jourFinSem=$this->jourSemaine($this->date_fin);
 			
 			//on récupère les jours fériés compris dans la demande d'absence
-			$sql="SELECT date_jourOff FROM `llx_rh_absence_jours_feries` WHERE date_jourOff between '"
+			$sql="SELECT date_jourOff FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
 			.$dateDebutAbs."' and '". $dateFinAbs."'"; 
 			//echo $sql;
 			$ATMdb->Execute($sql);
@@ -306,7 +307,7 @@ class TRH_Absence extends TObjetStd {
 			mardiam, mardipm, mercrediam, mercredipm, 
 			jeudiam, jeudipm, vendrediam, vendredipm,
 			samediam, samedipm, dimancheam, dimanchepm
-			FROM `llx_rh_absence_emploitemps` 
+			FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` 
 			WHERE fk_user=".$this->fk_user; 
 
 			$ATMdb->Execute($sql);
@@ -457,18 +458,19 @@ class TRH_Absence extends TObjetStd {
 		function recrediterHeure(&$ATMdb){
 			global $conf, $user;
 			$this->entity = $conf->entity;
+			
 			if($this->etat!='Refusee'){
 				switch($this->type){
 					case "rttcumule" : 
-						$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule+".$this->duree."  where fk_user=".$user->id;
+						$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule+".$this->duree."  where fk_user=".$user->id;
 						$ATMdb->Execute($sqlRecredit);
 					break;
 					case "rttnoncumule" : 
-						$sqlRecredit="UPDATE `llx_rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule+".$this->duree."  where fk_user=".$user->id;
+						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule+".$this->duree."  where fk_user=".$user->id;
 						$ATMdb->Execute($sqlRecredit);
 					break;
 					default :  //dans les autres cas, on recrédite les congés
-						$sqlRecredit="UPDATE `llx_rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
+						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
 						//echo $this->type.$sqlRecredit;exit;
 						$ATMdb->Execute($sqlRecredit);
 					break;
@@ -481,7 +483,7 @@ class TRH_Absence extends TObjetStd {
 			
 			if($this->fk_user==$idUser) return 0;
 			//on récupère les groupes auxquels appartient l'utilisateur ayant créé l'absence
-			$sql="SELECT fk_usergroup FROM `llx_usergroup_user` WHERE fk_user=".$this->fk_user;
+			$sql="SELECT fk_usergroup FROM `".MAIN_DB_PREFIX."usergroup_user` WHERE fk_user=".$this->fk_user;
 			$ATMdb->Execute($sql);
 			$TGroupesUser = array();
 			while($ATMdb->Get_line()) {
@@ -489,7 +491,7 @@ class TRH_Absence extends TObjetStd {
 			}
 			
 			//on récupère les groupes dont l'utilisateur courant est valideur de congés
-			$sql2="SELECT fk_usergroup FROM llx_rh_valideur_groupe WHERE fk_user=".$idUser." AND type='Conges'";
+			$sql2="SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."rh_valideur_groupe WHERE fk_user=".$idUser." AND type='Conges'";
 			$ATMdb->Execute($sql2);
 			$TGroupesValideur = array();
 			while($ATMdb->Get_line()) {

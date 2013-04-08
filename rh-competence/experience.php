@@ -138,7 +138,7 @@
 			case 'deleteFormation':
 				//$ATMdb->db->debug=true;
 				//on supprime tous les tags de compétences associés à cette formation
-				$sql="DELETE FROM llx_rh_competence_cv WHERE fk_user_formation =".$_REQUEST['id'];
+				$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_competence_cv WHERE fk_user_formation =".$_REQUEST['id'];
 				$ATMdb->Execute($sql);
 				
 				$formation->load($ATMdb, $_REQUEST['id']);
@@ -190,7 +190,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 	$r = new TSSRenderControler($lignecv);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
 			  date_debut, date_fin, libelleExperience, descriptionExperience,lieuExperience, fk_user, '' as 'Supprimer'
-		FROM   llx_rh_ligne_cv
+		FROM   ".MAIN_DB_PREFIX."rh_ligne_cv
 		WHERE fk_user=".$user->id." AND entity=".$conf->entity;
 
 	$TOrder = array('ID'=>'DESC');
@@ -252,7 +252,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 	$r = new TSSRenderControler($formation);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
 			  date_debut, date_fin, libelleFormation,  commentaireFormation,lieuFormation, date_formationEcheance, fk_user, '' as 'Supprimer'
-		FROM   llx_rh_formation_cv
+		FROM   ".MAIN_DB_PREFIX."rh_formation_cv
 		WHERE fk_user=".$user->id." AND entity=".$conf->entity;
 
 	$TOrder = array('ID'=>'DESC');
@@ -383,7 +383,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	echo $form->hidden('fk_user', $user->id);
 	echo $form->hidden('entity', $conf->entity);
 
-	$sql="SELECT c.rowid, c.libelleCompetence FROM llx_rh_competence_cv as c, llx_rh_formation_cv as f 
+	$sql="SELECT c.rowid, c.libelleCompetence, c.niveauCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."rh_formation_cv as f 
 	WHERE c.fk_user_formation=".$formation->getID(). " AND c.fk_user_formation=f.rowid AND c.fk_user=".$fuser->id;
 
 	$k=0;
@@ -393,6 +393,8 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 			$TTagCompetence[]=array(
 				'id'=>$ATMdb->Get_field('rowid')
 				,'libelleCompetence'=>$form->texte('','libelleCompetence',$ATMdb->Get_field('libelleCompetence'), 30,100,'','','-')
+				,'niveauCompetence'=>$form->texte('','niveauCompetence',$ATMdb->Get_field('niveauCompetence'), 10,50,'','','-')
+				
 				
 			);
 		$k++;
@@ -416,6 +418,8 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				,'commentaireFormation'=>$form->texte('','commentaireFormation',$formation->commentaireFormation, 50,300,'style="width:400px;height:80px;"','','-')
 				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 30,100,'','','-')
 				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->get_date('date_formationEcheance'), 10)
+				
+				
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id
@@ -428,8 +432,9 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 			,'newCompetence'=>array(
 				'hidden'=>$form->hidden('action', 'newCompetence')
 				,'id'=>$k
-				,'libelleCompetence'=>$form->texte('','TNComp[libelle]','', 30,100,'','','-')
+				,'libelleCompetence'=>$form->texte('Libellé','TNComp[libelle]','', 30,100,'','','-')
 				,'fk_user_formation'=>$form->hidden('TNComp[fk_user_formation]', $formation->getId())
+				,'niveauCompetence'=>$form->combo(' Niveau ','niveauCompetence',$tagCompetence->TNiveauCompetence,'')
 			)
 		)	
 	);

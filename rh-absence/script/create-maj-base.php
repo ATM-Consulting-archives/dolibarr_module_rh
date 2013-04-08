@@ -18,7 +18,7 @@
 	$o=new TRH_Compteur;
 	$o->init_db_by_vars($ATMdb);
 	
-	$sqlReqUser="SELECT DISTINCT rowid FROM llx_user WHERE rowid NOT IN ( SELECT fk_user from llx_rh_compteur)";
+	$sqlReqUser="SELECT DISTINCT rowid FROM ".MAIN_DB_PREFIX."user WHERE rowid NOT IN ( SELECT fk_user from ".MAIN_DB_PREFIX."rh_compteur)";
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -60,7 +60,7 @@
 	
 	$r=new TRH_EmploiTemps;
 	$r->init_db_by_vars($ATMdb);
-	$sqlReq="SELECT DISTINCT rowid FROM llx_user WHERE rowid NOT IN ( SELECT fk_user from llx_rh_absence_emploitemps)";
+	$sqlReq="SELECT DISTINCT rowid FROM ".MAIN_DB_PREFIX."user WHERE rowid NOT IN ( SELECT fk_user from ".MAIN_DB_PREFIX."rh_absence_emploitemps)";
 	$ATMdb->Execute($sqlReq);
 	$Tab=array();
 	while($ATMdb->Get_line()) {

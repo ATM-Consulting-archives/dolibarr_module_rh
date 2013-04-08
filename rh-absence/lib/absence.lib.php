@@ -142,7 +142,7 @@ function mailConges(&$absence){
 	
 	
 	$ATMdb=new Tdb;
-	$sql="SELECT * FROM `llx_user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
+	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 			$sendto=$ATMdb->Get_field('email');

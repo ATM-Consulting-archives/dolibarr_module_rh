@@ -87,7 +87,7 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 	$r = new TSSRenderControler($feries);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
 			  date_jourOff, moment as 'Période',  commentaire as 'Commentaire', '' as 'Supprimer'
-		FROM  llx_rh_absence_jours_feries
+		FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
 		WHERE entity=".$conf->entity;
 		
 	
