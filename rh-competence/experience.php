@@ -383,7 +383,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	echo $form->hidden('fk_user', $user->id);
 	echo $form->hidden('entity', $conf->entity);
 
-	$sql="SELECT c.rowid, c.libelleCompetence FROM llx_rh_competence_cv as c, llx_rh_formation_cv as f 
+	$sql="SELECT c.rowid, c.libelleCompetence, c.niveauCompetence FROM llx_rh_competence_cv as c, llx_rh_formation_cv as f 
 	WHERE c.fk_user_formation=".$formation->getID(). " AND c.fk_user_formation=f.rowid AND c.fk_user=".$fuser->id;
 
 	$k=0;
@@ -393,6 +393,8 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 			$TTagCompetence[]=array(
 				'id'=>$ATMdb->Get_field('rowid')
 				,'libelleCompetence'=>$form->texte('','libelleCompetence',$ATMdb->Get_field('libelleCompetence'), 30,100,'','','-')
+				,'niveauCompetence'=>$form->texte('','niveauCompetence',$ATMdb->Get_field('niveauCompetence'), 10,50,'','','-')
+				
 				
 			);
 		$k++;
@@ -416,6 +418,8 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				,'commentaireFormation'=>$form->texte('','commentaireFormation',$formation->commentaireFormation, 50,300,'style="width:400px;height:80px;"','','-')
 				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 30,100,'','','-')
 				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->get_date('date_formationEcheance'), 10)
+				
+				
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id
@@ -428,8 +432,9 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 			,'newCompetence'=>array(
 				'hidden'=>$form->hidden('action', 'newCompetence')
 				,'id'=>$k
-				,'libelleCompetence'=>$form->texte('','TNComp[libelle]','', 30,100,'','','-')
+				,'libelleCompetence'=>$form->texte('Libellé','TNComp[libelle]','', 30,100,'','','-')
 				,'fk_user_formation'=>$form->hidden('TNComp[fk_user_formation]', $formation->getId())
+				,'niveauCompetence'=>$form->combo(' Niveau ','niveauCompetence',$tagCompetence->TNiveauCompetence,'')
 			)
 		)	
 	);

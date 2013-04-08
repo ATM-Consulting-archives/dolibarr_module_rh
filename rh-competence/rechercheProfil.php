@@ -28,13 +28,11 @@
 	}
 	elseif(($_REQUEST['libelleCompetence'])!="") {
 		$recherche=$tagCompetence->deleteEspace($_REQUEST['libelleCompetence']);
-		print($recherche);print "<br/>";
+		//print($recherche);print "<br/>";
 		$competenceOu=$tagCompetence->separerOu($recherche);
-		print_r($competenceOu);print "<br/>";
-		$TUserCompetence=$tagCompetence->findProfile($ATMdb, $competenceOu);
-		print_r($TUserCompetence);print "<br/>";
-		//print_r($TCompetence);
-		_liste($ATMdb, $TUserCompetence, $tagCompetence, $competenceOu);
+		//print_r($competenceOu);print "<br/>";
+
+		_liste($ATMdb,  $tagCompetence, $competenceOu);
 	}
 	else {
 		//$ATMdb->db->debug=true;
@@ -46,7 +44,7 @@
 	llxFooter();
 	
 	
-function _liste(&$ATMdb, $TComp, $tagCompetence, $recherche ) {
+function _liste(&$ATMdb,  $tagCompetence, $recherche ) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Résultat de la recherche');
 	
@@ -59,24 +57,9 @@ function _liste(&$ATMdb, $TComp, $tagCompetence, $recherche ) {
 	
 	////////////AFFICHAGE DES LIGNES DE CV 
 	$r = new TSSRenderControler($tagCompetence);
-	$sql="SELECT c.fk_user_formation as 'ID' , c.rowid , c.date_cre as 'DateCre', 
-			  CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence
-			 , c.fk_user
-		FROM   llx_rh_competence_cv as c, llx_user as u 
-		WHERE c.fk_user IN(".implode(',', $TComp).") 
-		
-		AND c.entity=".$conf->entity. " AND c.fk_user=u.rowid AND( ";
-		//AND c.libelleCompetence LIKE '".$recherche."'";
-	$k=0;
-	foreach($recherche as $tagRecherche){
-		if($k==0){
-	 		$sql.=" libelleCompetence LIKE '".$tagRecherche."'";
-	 	}else{
-	 		$sql.=" OR libelleCompetence LIKE '".$tagRecherche."'";
-	 	}
-		$k++;
-	}
-	$sql.=")";
+	
+	$sql=$tagCompetence->requeteRecherche($ATMdb, $recherche);
+	
 	echo $sql;
 	$TOrder = array('ID'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -197,7 +180,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	echo $form->hidden('fk_user', $user->id);
 	echo $form->hidden('entity', $conf->entity);
 
-	$sql="SELECT c.rowid, c.libelleCompetence FROM llx_rh_competence_cv as c, llx_rh_formation_cv as f 
+	$sql="SELECT c.rowid, c.libelleCompetence, c.niveauCompetence FROM llx_rh_competence_cv as c, llx_rh_formation_cv as f 
 	WHERE c.fk_user_formation=".$formation->getID(). " AND c.fk_user_formation=f.rowid AND c.fk_user=".$fuser->id;
 
 	$k=0;
@@ -207,6 +190,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 			$TTagCompetence[]=array(
 				'id'=>$ATMdb->Get_field('rowid')
 				,'libelleCompetence'=>$form->texte('','libelleCompetence',$ATMdb->Get_field('libelleCompetence'), 30,100,'','','-')
+				,'niveauCompetence'=>$form->texte('','niveauCompetence',$ATMdb->Get_field('niveauCompetence'), 10,50,'','','-')
 				
 			);
 		$k++;
@@ -244,6 +228,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				,'id'=>$k
 				,'libelleCompetence'=>$form->texte('','TNComp[libelle]','', 30,100,'','','-')
 				,'fk_user_formation'=>$form->hidden('TNComp[fk_user_formation]', $formation->getId())
+				,'niveauCompetence'=>$form->combo(' Niveau ','niveauCompetence',$tagCompetence->TNiveauCompetence,'')
 			)
 		)	
 	);

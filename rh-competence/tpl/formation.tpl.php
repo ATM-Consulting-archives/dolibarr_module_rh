@@ -43,14 +43,15 @@
 			</table>
 			<br/><br/>
 			
-			<table class="border" style="width:30%">
+			<table class="border" style="width:40%">
 				<tr>
-					<td><b>Compétences acquises</b></td>
+					<td><b>Compétences acquises et Niveau acquis</b></td>
 				</tr>
 				
 				<tr>
 					<td>
 					[TCompetence.libelleCompetence;block=tr;strconv=no;protect=no]
+					[TCompetence.niveauCompetence;block=tr;strconv=no;protect=no]
 					</td>
 					[onshow;block=begin;when [view.mode]=='edit']
 					<td>
@@ -69,6 +70,7 @@
 						[newCompetence.hidden;strconv=no;protect=no]
 						[newCompetence.fk_user_formation;strconv=no;protect=no]
 						[newCompetence.libelleCompetence;strconv=no;protect=no]
+						[newCompetence.niveauCompetence;strconv=no;protect=no]
 				</tr>
 				<tr>
 					<input  type="submit" value="Ajouter" name="newCompetence" class="button">
