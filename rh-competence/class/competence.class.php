@@ -129,9 +129,5 @@ class TRH_competence_cv extends TObjetStd {
 		return $sql;
 	}
 	
-
-
-	
-	
 }
 

@@ -12,7 +12,7 @@
 		include(ROOT."main.inc.php");
 	}
 
-	if (!empty($dolibarr_main_db_host)){
+	if(!empty($dolibarr_main_db_host) && !defined('DB_HOST')) {
 		define('DB_HOST',$dolibarr_main_db_host);
 		define('DB_NAME',$dolibarr_main_db_name);
 		define('DB_USER',$dolibarr_main_db_user);
