@@ -74,7 +74,7 @@
 	llxFooter();
 	
 function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
-	global $langs,$conf;	
+	global $langs,$conf,$user;	
 	llxHeader('','Liste des contrats');
 	getStandartJS();
 	?><div class="fiche"><?	
