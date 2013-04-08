@@ -49,7 +49,7 @@
 				
 			case 'accept':
 				$absence->load($ATMdb, $_REQUEST['id']);
-				$sqlEtat="UPDATE `llx_rh_absence` SET etat='Validee', libelleEtat='Acceptée' where fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
+				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` SET etat='Validee', libelleEtat='Acceptée' where fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
@@ -61,7 +61,7 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->recrediterHeure($ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
-				$sqlEtat="UPDATE `llx_rh_absence` SET etat='Refusee', libelleEtat='Refusée' where fk_user=".$user->id. " AND rowid=".$absence->getId();
+				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` SET etat='Refusee', libelleEtat='Refusée' where fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
@@ -95,7 +95,7 @@ function _liste(&$ATMdb, &$absence) {
 	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , DATE(a.date_fin) as 'Date Fin', 
 			  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur' ,
 			   a.libelleEtat as 'Statut demande', '' as 'Supprimer'
-		FROM llx_rh_absence as a, llx_user as u
+		FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 		WHERE a.fk_user=".$user->id." AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
 		
 	
@@ -146,11 +146,11 @@ function _liste(&$ATMdb, &$absence) {
 	
  
  	//LISTE USERS À VALIDER
-	$sql=" SELECT DISTINCT u.fk_user FROM `llx_rh_valideur_groupe` as v, llx_usergroup_user as u 
+	$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
 			WHERE v.fk_user=".$user->id." 
 			AND v.type='Conges'
 			AND v.fk_usergroup=u.fk_usergroup
-			AND u.fk_user NOT IN (SELECT a.fk_user FROM llx_rh_absence as a where a.fk_user=1)
+			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=1)
 			AND v.entity=".$conf->entity;
 		
 	$ATMdb->Execute($sql);
@@ -169,7 +169,7 @@ function _liste(&$ATMdb, &$absence) {
 		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',DATE(a.date_debut) as 'date_debut', DATE(a.date_fin) as 'Date Fin', 
 				  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
 				  a.libelleEtat as 'Statut demande', '' as 'Supprimer'
-			FROM llx_rh_absence as a, llx_user as u
+			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
 		
 		$TOrder = array('Statut demande'=>'DESC');
@@ -234,67 +234,61 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
-	$sqlReqUser="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
+	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$user->id." AND anneeNM1=".$anneePrec;//."AND entity=".$conf->entity;
 	$ATMdb->Execute($sqlReqUser);
-	$Tab=array();
+	$congePrec=array();
 	while($ATMdb->Get_line()) {
-				$congePrec=new User($db);
-				$congePrec->id=$ATMdb->Get_field('rowid');
-				$congePrec->acquisEx=$ATMdb->Get_field('acquisExerciceNM1');
-				$congePrec->acquisAnc=$ATMdb->Get_field('acquisAncienneteNM1');
-				$congePrec->acquisHorsPer=$ATMdb->Get_field('acquisHorsPeriodeNM1');
-				$congePrec->reportConges=$ATMdb->Get_field('reportCongesNM1');
-				$congePrec->congesPris=$ATMdb->Get_field('congesPrisNM1');
-				$congePrec->annee=$ATMdb->Get_field('anneeNM1');
-				$congePrec->fk_user=$ATMdb->Get_field('fk_user');
-				$Tab[]=$congePrec;	
+				$congePrec['id']=$ATMdb->Get_field('rowid');
+				$congePrec['acquisEx']=$ATMdb->Get_field('acquisExerciceNM1');
+				$congePrec['acquisAnc']=$ATMdb->Get_field('acquisAncienneteNM1');
+				$congePrec['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeNM1');
+				$congePrec['reportConges']=$ATMdb->Get_field('reportCongesNM1');
+				$congePrec['congesPris']=$ATMdb->Get_field('congesPrisNM1');
+				$congePrec['annee']=$ATMdb->Get_field('anneeNM1');
+				$congePrec['fk_user']=$ATMdb->Get_field('fk_user');
 	}
 	
-	$congePrecTotal=$congePrec->acquisEx+$congePrec->acquisAnc+$congePrec->acquisHorsPer+$congePrec->reportConges;
-	$congePrecReste=$congePrecTotal-$congePrec->congesPris;
+	$congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+$congePrec['acquisHorsPer']+$congePrec['reportConges'];
+	$congePrecReste=$congePrecTotal-$congePrec['congesPris'];
 	
 	//////////////////////////récupération des informations des congés précédents (N-1) de l'utilisateur courant : 
-	$sqlReqUser2="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;;
+	$sqlReqUser2="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$user->id." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;;
 	$ATMdb=new Tdb;
 	$ATMdb->Execute($sqlReqUser2);
-	$Tab2=array();
+	$congeCourant=array();
 	while($ATMdb->Get_line()) {
-				$congeCourant=new User($db);
-				$congeCourant->id=$ATMdb->Get_field('rowid');
-				$congeCourant->acquisEx=$ATMdb->Get_field('acquisExerciceN');
-				$congeCourant->acquisAnc=$ATMdb->Get_field('acquisAncienneteN');
-				$congeCourant->acquisHorsPer=$ATMdb->Get_field('acquisHorsPeriodeN');
-				$congeCourant->annee=$ATMdb->Get_field('anneeN');
-				$congeCourant->fk_user=$ATMdb->Get_field('fk_user');
-				$Tab2[]=$congeCourant;	
+				$congeCourant['id']=$ATMdb->Get_field('rowid');
+				$congeCourant['acquisEx']=$ATMdb->Get_field('acquisExerciceN');
+				$congeCourant['acquisAnc']=$ATMdb->Get_field('acquisAncienneteN');
+				$congeCourant['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeN');
+				$congeCourant['annee']=$ATMdb->Get_field('anneeN');
+				$congeCourant['fk_user']=$ATMdb->Get_field('fk_user');
 	}
-	$congeCourantTotal=$congeCourant->acquisEx+$congeCourant->acquisAnc+$congeCourant->acquisHorsPer;
+	$congeCourantTotal=$congeCourant['acquisEx']+$congeCourant['acquisAnc']+$congeCourant['acquisHorsPer'];
 	
 	//////////////////////////////récupération des informations des rtt courants (année N) de l'utilisateur courant : 
-	$sqlRtt="SELECT * FROM `llx_rh_compteur` where fk_user=".$user->id;
+	$sqlRtt="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$user->id;
 	$ATMdb->Execute($sqlRtt);
-	$Tab=array();
+	$rttCourant=array();
 	while($ATMdb->Get_line()) {
-				$rttCourant=new User($db);
-				$rttCourant->id=$ATMdb->Get_field('rowid');
-				$rttCourant->acquis=$ATMdb->Get_field('rttAcquisMensuel')+$ATMdb->Get_field('rttAcquisAnnuelCumule')+$ATMdb->Get_field('rttAcquisAnnuelNonCumule');
-				$rttCourant->pris=$ATMdb->Get_field('rttPris');
-				$rttCourant->mensuel=$ATMdb->Get_field('rttAcquisMensuel');
-				$rttCourant->annuelCumule=$ATMdb->Get_field('rttAcquisAnnuelCumule');
-				$rttCourant->annuelNonCumule=$ATMdb->Get_field('rttAcquisAnnuelNonCumule');
-				$rttCourant->typeAcquisition=$ATMdb->Get_field('rttTypeAcquisition');
-				$rttCourant->annee=substr($ATMdb->Get_field('anneertt'),0,4);
-				$rttCourant->fk_user=$ATMdb->Get_field('fk_user');
-				$Tab[]=$rttCourant;	
+				$rttCourant['id']=$ATMdb->Get_field('rowid');
+				$rttCourant['acquis']=$ATMdb->Get_field('rttAcquisMensuel')+$ATMdb->Get_field('rttAcquisAnnuelCumule')+$ATMdb->Get_field('rttAcquisAnnuelNonCumule');
+				$rttCourant['pris']=$ATMdb->Get_field('rttPris');
+				$rttCourant['mensuel']=$ATMdb->Get_field('rttAcquisMensuel');
+				$rttCourant['annuelCumule']=$ATMdb->Get_field('rttAcquisAnnuelCumule');
+				$rttCourant['annuelNonCumule']=$ATMdb->Get_field('rttAcquisAnnuelNonCumule');
+				$rttCourant['typeAcquisition']=$ATMdb->Get_field('rttTypeAcquisition');
+				$rttCourant['annee']=substr($ATMdb->Get_field('anneertt'),0,4);
+				$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
 	}
-	$rttCourantReste=$rttCourant->acquis-$rttCourant->pris;
+	$rttCourantReste=$rttCourant['acquis']-$rttCourant['pris'];
 	
 	//récupération informations utilisateur dont on observe l'absence, ou la crée
 	if($absence->fk_user!=0){
-		$sqlReqUser="SELECT * FROM `llx_user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
+		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
 	}
 	else{
-		$sqlReqUser="SELECT * FROM `llx_user` where rowid=".$user->id;//AND entity=".$conf->entity;
+		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$user->id;//AND entity=".$conf->entity;
 	}
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
@@ -314,11 +308,11 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		,array(
 			'congesPrec'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
-				'acquisEx'=>$form->texte('','acquisExerciceNM1',$congePrec->acquisEx,10,50,'',$class="text", $default='')
-				,'acquisAnc'=>$form->texte('','acquisAncienneteNM1',$congePrec->acquisAnc,10,50,'',$class="text", $default='')
-				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeNM1',$congePrec->acquisHorsPer,10,50,'',$class="text", $default='')
-				,'reportConges'=>$form->texte('','reportcongesNM1',$congePrec->reportConges,10,50,'',$class="text", $default='')
-				,'congesPris'=>$form->texte('','congesprisNM1',$congePrec->congesPris,10,50,'',$class="text", $default='')
+				'acquisEx'=>$form->texte('','acquisExerciceNM1',$congePrec['acquisEx'],10,50,'',$class="text", $default='')
+				,'acquisAnc'=>$form->texte('','acquisAncienneteNM1',$congePre['acquisAnc'],10,50,'',$class="text", $default='')
+				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeNM1',$congePrec['acquisHorsPer'],10,50,'',$class="text", $default='')
+				,'reportConges'=>$form->texte('','reportcongesNM1',$congePrec['reportConges'],10,50,'',$class="text", $default='')
+				,'congesPris'=>$form->texte('','congesprisNM1',$congePrec['congesPris'],10,50,'',$class="text", $default='')
 				,'anneePrec'=>$form->texte('','anneeNM1',$anneePrec,10,50,'',$class="text", $default='')
 				,'total'=>$form->texte('','total',$congePrecTotal,10,50,'',$class="text", $default='')
 				,'reste'=>round2Virgule($congePrecReste)
@@ -326,23 +320,23 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			)
 			,'congesCourant'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
-				'acquisEx'=>$form->texte('','acquisExerciceN',$congeCourant->acquisEx,10,50,'',$class="text", $default='')
-				,'acquisAnc'=>$form->texte('','acquisAncienneteN',$congeCourant->acquisAnc,10,50,'',$class="text", $default='')
-				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeN',$congeCourant->acquisHorsPer,10,50,'',$class="text", $default='')
+				'acquisEx'=>$form->texte('','acquisExerciceN',$congeCourant['acquisEx'],10,50,'',$class="text", $default='')
+				,'acquisAnc'=>$form->texte('','acquisAncienneteN',$congeCourant['acquisAnc'],10,50,'',$class="text", $default='')
+				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeN',$congeCourant['acquisHorsPer'],10,50,'',$class="text", $default='')
 				,'anneeCourante'=>$form->texte('','anneeN',$anneeCourante,10,50,'',$class="text", $default='')
 				,'total'=>$form->texte('','total',$congeCourantTotal,10,50,'',$class="text", $default='')
 				,'idUser'=>$_REQUEST['id']
 			)
 			,'rttCourant'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
-				'acquis'=>$form->texte('','rttAcquis',$rttCourant->acquis,10,50,'',$class="text", $default='')
-				,'rowid'=>$form->texte('','rowid',$rttCourant->id,10,50,'',$class="text", $default='')
+				'acquis'=>$form->texte('','rttAcquis',$rttCourant['acquis'],10,50,'',$class="text", $default='')
+				,'rowid'=>$form->texte('','rowid',$rttCourant['id'],10,50,'',$class="text", $default='')
 				,'id'=>$form->texte('','fk_user',$_REQUEST['id'],10,50,'',$class="text", $default='')
-				,'pris'=>$form->texte('','rttPris',$rttCourant->pris,10,50,'',$class="text", $default='')
-				,'mensuel'=>round2Virgule($rttCourant->mensuel)
-				,'annuelCumule'=>round2Virgule($rttCourant->annuelCumule)
-				,'annuelNonCumule'=>round2Virgule($rttCourant->annuelNonCumule)
-				,'typeAcquisition'=>$form->texte('','typeAcquisition',$rttCourant->typeAcquisition,10,50,'',$class="text", $default='')
+				,'pris'=>$form->texte('','rttPris',$rttCourant['pris'],10,50,'',$class="text", $default='')
+				,'mensuel'=>round2Virgule($rttCourant['mensuel'])
+				,'annuelCumule'=>round2Virgule($rttCourant['annuelCumule'])
+				,'annuelNonCumule'=>round2Virgule($rttCourant['annuelNonCumule'])
+				,'typeAcquisition'=>$form->texte('','typeAcquisition',$rttCourant['typeAcquisition'],10,50,'',$class="text", $default='')
 				,'reste'=>$form->texte('','total',$rttCourantReste,10,50,'',$class="text", $default='')
 				,'idNum'=>$idRttCourant
 			)

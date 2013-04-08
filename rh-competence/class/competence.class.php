@@ -113,7 +113,7 @@ class TRH_competence_cv extends TObjetStd {
 		$sql="SELECT c.fk_user_formation as 'ID' , c.rowid , c.date_cre as 'DateCre', 
 			  CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence
 			 , c.fk_user
-		FROM   llx_rh_competence_cv as c, llx_user as u 
+		FROM   ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."user as u 
 		WHERE  c.entity=".$conf->entity. " AND c.fk_user=u.rowid AND(( ";
 		//AND c.libelleCompetence LIKE '".$recherche."'";
 		$k=0;
