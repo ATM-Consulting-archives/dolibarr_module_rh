@@ -166,7 +166,7 @@ class modRessource extends DolibarrModules
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
 		$this->rights[$r][0] = 7001;
-		$this->rights[$r][1] = 'Créer un type de ressource';
+		$this->rights[$r][1] = 'Créer/Modifier un type de ressource';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'typeressource';
 		$this->rights[$r][5] = 'createType';
@@ -178,7 +178,7 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][5] = 'viewType';
 		$r++;
 		$this->rights[$r][0] = 7003;
-		$this->rights[$r][1] = 'Créer une ressource';
+		$this->rights[$r][1] = 'Créer/Modifier une ressource';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'ressource';
 		$this->rights[$r][5] = 'createRessource';
@@ -190,7 +190,7 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][5] = 'viewRessource';
 		$r++;
 		$this->rights[$r][0] = 7005;
-		$this->rights[$r][1] = 'Créer un contrat';
+		$this->rights[$r][1] = 'Créer/Modifier un contrat';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'contrat';
 		$this->rights[$r][5] = 'createContract';
@@ -206,6 +206,18 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'agenda';
 		$this->rights[$r][5] = 'viewAgenda';
+		$r++;
+		$this->rights[$r][0] = 7008;
+		$this->rights[$r][1] = 'Gérer l\'attribution des ressources';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'manageAttribution';
+		$r++;
+		$this->rights[$r][0] = 7009;
+		$this->rights[$r][1] = 'Gérer les événements sur les ressources';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'manageEvents';
 		$r++;
 
 		// Main menu entries
@@ -224,7 +236,7 @@ class modRessource extends DolibarrModules
 								'langs'=>'ressource@ressource',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>100,
 								'enabled'=>'1',	// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
-								'perms'=>'$user->rights->ressource->typeressource->viewType || $user->rights->ressource->ressource->viewRessource || $user->rights->ressource->contrat->viewContract || $user->rights->ressource->agenda->viewAgenda',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
+								'perms'=>'',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>0);						                // 0=Menu for internal users, 1=external users, 2=both
 		
@@ -240,7 +252,7 @@ class modRessource extends DolibarrModules
 						'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						'position'=> 101,
 						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-						'perms'=> '$user->rights->ressource->ressource->viewRessource',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						'target'=> '',
 						'user'=> 2	// 0=Menu for internal users, 1=external users, 2=both
         );
@@ -256,7 +268,7 @@ class modRessource extends DolibarrModules
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 102,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-					'perms'=> '$user->rights->ressource->ressource->viewRessource',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
 					'user'=> 2
         );
@@ -305,7 +317,7 @@ class modRessource extends DolibarrModules
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 106,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-					'perms'=> '$user->rights->ressource->contrat->viewContract',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
 					'user'=> 2
         );

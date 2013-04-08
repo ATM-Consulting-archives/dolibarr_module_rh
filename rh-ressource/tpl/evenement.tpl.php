@@ -61,6 +61,7 @@
 	});
 </script>
 
+[onshow;block=begin;when [view.userRight]==1]
 <div class="tabsAction" style="text-align:center;">
 	[onshow;block=begin;when [view.mode]=='view']
 		<a class="butAction"  href="?id=[ressource.id]&idEven=[NEvent.id]&action=edit">Modifier</a>
@@ -74,5 +75,6 @@
 	[onshow;block=end]
 	 
 </div>
+[onshow;block=end]
 </div>
 </div>

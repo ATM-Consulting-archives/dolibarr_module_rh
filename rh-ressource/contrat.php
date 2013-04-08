@@ -78,16 +78,25 @@
 	llxFooter();
 	
 function _liste(&$ATMdb, &$contrat) {
-	global $langs,$conf, $db;
+	global $langs,$conf,$db,$user;
 	llxHeader('','Liste des contrats');
 	getStandartJS();
+	
 	$r = new TSSRenderControler($contrat);
 	$sql= "SELECT c.rowid as 'ID',  CONCAT ('Du ',DATE(c.date_debut),' au ' ,DATE(c.date_fin) ) as 'Date',c.libelle as 'Libellé',
-			t.libelle as 'Type Ressource',c.bail as 'Bail', g.nom as 'Agence'
-			FROM llx_rh_contrat as c, llx_usergroup as g, llx_rh_ressource_type as t
-			WHERE c.entity=".$conf->entity." 
-			AND g.rowid = c.fk_tier_utilisateur
-			AND t.rowid = c.fk_rh_ressource_type";
+			t.libelle as 'Type Ressource',c.bail as 'Bail', g.nom as 'Agence'";
+	$sql.=" FROM ".MAIN_DB_PREFIX."rh_contrat as c";
+	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."usergroup as g ON g.rowid = c.fk_tier_utilisateur";
+	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON t.rowid = c.fk_rh_ressource_type";
+	if(!$user->rights->ressource->contrat->viewContract){
+		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON r.rowid = c.fk_rh_ressource";
+		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=r.rowid";
+	}
+	$sql.=" WHERE c.entity=".$conf->entity;
+	if(!$user->rights->ressource->contrat->viewContract){
+		$sql.=" AND e.type ='emprunt'";
+		$sql.=" AND e.fk_user=".$user->id;
+	}
 	
 	$TOrder = array('Date'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -155,6 +164,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
+				,'userRight'=>((int)$user->rights->ressource->contrat->createContract)
 			)
 			
 			
@@ -162,46 +172,46 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 		
 	);
 	
-	
-	//liste des ressources associés
-	$r = new TSSRenderControler($contrat);
-	$sql= "SELECT r.rowid as ID, r.libelle as 'Libellé' , r.numId as 'Numéro Id'
-			FROM ".MAIN_DB_PREFIX."rh_ressource as r, ".MAIN_DB_PREFIX."rh_contrat_ressource as l 
-			WHERE r.entity=".$conf->entity."
-			AND l.fk_rh_contrat =".$contrat->getId()."
-			AND l.fk_rh_ressource = r.rowid	";
-	$TOrder = array('ID'=>'ASC');
-	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
-	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+	if($user->rights->ressource->contrat->viewContract){
+		//liste des ressources associés
+		$r = new TSSRenderControler($contrat);
+		$sql= "SELECT r.rowid as ID, r.libelle as 'Libellé' , r.numId as 'Numéro Id'
+				FROM ".MAIN_DB_PREFIX."rh_ressource as r, ".MAIN_DB_PREFIX."rh_contrat_ressource as l 
+				WHERE r.entity=".$conf->entity."
+				AND l.fk_rh_contrat =".$contrat->getId()."
+				AND l.fk_rh_ressource = r.rowid	";
+		$TOrder = array('ID'=>'ASC');
+		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+					
+		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
+		//print $page;
+		$r->liste($ATMdb, $sql, array(
+			'limit'=>array(
+				'page'=>$page
+				,'nbLine'=>'30'
+			)
+			,'link'=>array(
+				'Libellé'=>'<a href="ressource.php?id=@ID@&action=view">@val@</a>'
+			)
+			,'translate'=>array()
+			,'hide'=>array()
+			,'type'=>array()
+			,'liste'=>array(
+				'titre'=>'Liste des ressources associés'
+				,'image'=>img_picto('','title.png', '', 0)
+				,'picto_precedent'=>img_picto('','back.png', '', 0)
+				,'picto_suivant'=>img_picto('','next.png', '', 0)
+				,'noheader'=> (int)isset($_REQUEST['socid'])
+				,'messageNothing'=>"Il n'y a aucune ressource associée"
+				,'order_down'=>img_picto('','1downarrow.png', '', 0)
+				,'order_up'=>img_picto('','1uparrow.png', '', 0)
 				
-	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
-	//print $page;
-	$r->liste($ATMdb, $sql, array(
-		'limit'=>array(
-			'page'=>$page
-			,'nbLine'=>'30'
-		)
-		,'link'=>array(
-			'Libellé'=>'<a href="ressource.php?id=@ID@&action=view">@val@</a>'
-		)
-		,'translate'=>array()
-		,'hide'=>array()
-		,'type'=>array()
-		,'liste'=>array(
-			'titre'=>'Liste des ressources associés'
-			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
-			,'picto_suivant'=>img_picto('','next.png', '', 0)
-			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucune ressource associée"
-			,'order_down'=>img_picto('','1downarrow.png', '', 0)
-			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			)
+			,'orderBy'=>$TOrder
 			
-		)
-		,'orderBy'=>$TOrder
-		
-	));
-	
+		));
+	}
 	
 	//liste des adresses liés au contrat
 	$r = new TSSRenderControler($contrat);

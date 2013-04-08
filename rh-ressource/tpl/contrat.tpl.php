@@ -52,7 +52,8 @@
 		
 	});
 </script>
-	
+
+[onshow;block=begin;when [view.userRight]==1]
 <div class="tabsAction" style="text-align:center;">
 		[onshow;block=begin;when [view.mode]=='edit']
 			<input type="submit" value="Enregistrer" name="save" class="button">
@@ -63,5 +64,4 @@
 			&nbsp; &nbsp;<a class="butActionDelete"  href="?id=[contrat.id]&action=delete">Supprimer</a>
 		[onshow;block=end]
 </div>
-
-
+[onshow;block=end]

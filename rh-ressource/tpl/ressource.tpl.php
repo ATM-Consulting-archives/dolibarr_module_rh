@@ -93,6 +93,7 @@
 			Cette ressource est associée à [fk_ressource.fk_rh_ressource].
 		[onshow;block=end]
 
+[onshow;block=begin;when [view.userRight]==1]
 <div class="tabsAction" style="text-align:center;" >
 
 		[onshow;block=begin;when [view.mode]=='edit']
@@ -111,7 +112,7 @@
 
 		[onshow;block=end]
 </div>
-
+[onshow;block=end]
 
 <div style="margin-left:70px;text-align:center;">
 

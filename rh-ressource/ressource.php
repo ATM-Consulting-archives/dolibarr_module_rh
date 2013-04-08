@@ -113,17 +113,26 @@
 	
 	
 function _liste(&$ATMdb, &$ressource) {
-	global $langs,$conf, $db;	
+	global $langs,$conf,$db,$user;	
 	llxHeader('','Liste des ressources');
 	getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.libelle, r.fk_rh_ressource_type,
-		r.numId , '' as 'Statut', '' as 'Supprimer'
-		FROM llx_rh_ressource as r, llx_rh_ressource_type as t 
-		WHERE r.entity=".$conf->entity."
-		AND r.fk_rh_ressource_type=t.rowid
-		";
+		r.numId , '' as 'Statut'";
+	if($user->rights->ressource->ressource->createRessource){
+		$sql.=", '' as 'Supprimer'";
+	}
+	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r";
+	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON r.fk_rh_ressource_type=t.rowid";
+	if(!$user->rights->ressource->ressource->viewRessource){
+		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=r.rowid";
+	}
+	$sql.=" WHERE r.entity=".$conf->entity;
+	if(!$user->rights->ressource->ressource->viewRessource){
+		$sql.=" AND e.type ='emprunt'";
+		$sql.=" AND e.fk_user=".$user->id;
+	}
 		
 	$TOrder = array('DateCre'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -284,7 +293,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			
 			,'view'=>array(
 				'mode'=>$mode
-				/*,'userRight'=>((int)$user->rights->financement->affaire->write)*/
+				,'userRight'=>((int)$user->rights->ressource->ressource->createRessource)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'fiche', 'Ressource')
 			)
 			

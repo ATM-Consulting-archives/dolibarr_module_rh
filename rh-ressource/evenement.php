@@ -136,15 +136,19 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		break;
 		}	
 	
-	$sql = "SELECT DISTINCT e.rowid as 'ID', ".
-			$jointureChamps.", '' as 'Supprimer' 
-			FROM ".MAIN_DB_PREFIX."rh_evenement as e
+	$sql = "SELECT DISTINCT e.rowid as 'ID', ".$jointureChamps;
+	if($user->rights->ressource->ressource->manageEvents){
+		$sql.=",'' as 'Supprimer'";
+	}
+	$sql.=" FROM ".MAIN_DB_PREFIX."rh_evenement as e
 			LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
 			LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 			LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
 			WHERE e.entity=".$conf->entity."
-			AND e.fk_rh_ressource=".$ressource->getId().
-			$jointureType;
+			AND e.fk_rh_ressource=".$ressource->getId().$jointureType;
+	if(!$user->rights->ressource->ressource->manageEvents){
+		$sql.=" AND e.fk_user=".$user->id;
+	}
 	
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -182,8 +186,10 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		
 	));
 	
-	?><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a>
-	
+	if($user->rights->ressource->ressource->manageEvents){
+	?><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
+	}
+	?>
 	<div style="clear:both"></div></div><?
 	$form->end();
 	global $mesg, $error;
@@ -225,6 +231,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
+				,'userRight'=>((int)$user->rights->ressource->ressource->manageEvents)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource')
 			)
 		)	

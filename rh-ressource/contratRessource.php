@@ -82,12 +82,14 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 	
 	$r = new TSSRenderControler($association);
 	$sql="SELECT DISTINCT a.rowid as 'ID',  c.rowid as 'IDContrat' , c.libelle as 'Libellé',
-		DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin', a.commentaire as 'Commentaire',
-		'' as 'Supprimer'
-		FROM ".MAIN_DB_PREFIX."rh_contrat_ressource as a
+		DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin', a.commentaire as 'Commentaire'";
+	if($user->rights->ressource->contrat->createContract){
+		$sql.=", '' as 'Supprimer'";
+	}
+	$sql.=" FROM ".MAIN_DB_PREFIX."rh_contrat_ressource as a
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_contrat as c ON (a.fk_rh_contrat = c.rowid)
-		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (a.fk_rh_ressource = r.rowid)
-		WHERE a.entity=".$conf->entity."
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (a.fk_rh_ressource = r.rowid)";
+	$sql.=" WHERE a.entity=".$conf->entity."
 		AND a.fk_rh_ressource=".$ressource->getId();
 	
 	$TOrder = array('Date début'=>'ASC');
@@ -124,7 +126,10 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 		
 	));
 	
+	if($user->rights->ressource->contrat->createContract){
 	?><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
+	}
+	
 	llxFooter();
 }	
 	

@@ -97,24 +97,28 @@
 
 
 function _liste(&$ATMdb, &$emprunt, &$ressource) {
-	global $langs,$conf, $db;
-	
+	global $langs, $conf, $db, $user;
 	
 	llxHeader('','Liste des attributions');
 	?><div class="fiche"><?	
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'attribution', 'Ressource');
-	//getStandartJS();
-	//echo $form->hidden('id', $ressource->getId());
+	
 	$r = new TSSRenderControler($emprunt);
 	$sql="SELECT DISTINCT e.rowid as 'ID', CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
-		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.commentaire as 'Commentaire', '' as 'Supprimer'
-		FROM ".MAIN_DB_PREFIX."rh_evenement as e
+		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.commentaire as 'Commentaire'";
+	if($user->rights->ressource->ressource->manageAttribution){
+		$sql.=",'' as 'Supprimer'";
+	}
+	$sql.=" FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
-		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
-		WHERE e.entity=".$conf->entity."
-		AND type='emprunt'
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)";
+	$sql.=" WHERE e.entity=".$conf->entity."
+		AND e.type='emprunt'
 		AND e.fk_rh_ressource=".$ressource->getId();
-	//echo $sql;
+	if(!$user->rights->ressource->ressource->manageAttribution){
+		$sql.=" AND e.fk_user=".$user->id;
+	}
+	
 	$TOrder = array('Date fin'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -149,7 +153,10 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 		,'orderBy'=>$TOrder
 		
 	));
+	
+	if($user->rights->ressource->ressource->manageAttribution){
 	?><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
+	}
 	
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
@@ -186,7 +193,7 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-			/*'userRight'=>((int)$user->rights->financement->affaire->write)*/
+				,'userRight'=>((int)$user->rights->ressource->ressource->manageAttribution)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'attribution', 'Ressource')
 			)
 			
