@@ -16,7 +16,7 @@ class TRH_Ressource extends TObjetStd {
 		//clé étrangère : société
 		parent::add_champs('fk_soc,entity','type=entier;index;');//fk_soc_leaser
 		//clé étrangère : type de la ressource
-		parent::add_champs('fk_rh_ressource_type','type=chaine;index;');
+		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
 		//clé étrangère : ressource associé
 		parent::add_champs('fk_rh_ressource','type=entier;index;');
 		
@@ -253,7 +253,7 @@ class TRH_Ressource_type extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource_type');
 		parent::add_champs('libelle,code','type=chaine;');
 		parent::add_champs('entity','type=entier;index;');
-		parent::add_champs('supprimable','type=entier');
+		parent::add_champs('supprimable','type=entier;');
 		parent::add_champs('liste_evenement_value','type=chaine;');
 		parent::add_champs('liste_evenement_key','type=chaine;');
 				
