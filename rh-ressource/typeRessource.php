@@ -77,12 +77,12 @@
 					}
 					else{
 						$mesg = '<div class="error">Ce type de ressource ne peut pas être supprimé.</div>';
-						_fiche($ATMdb, $ressource, 'view');
+						_liste($ATMdb, $ressource);
 					}
 				}
 				else{
 					$mesg = '<div class="error">Le type de ressource est utilisé par une ressource. Il ne peut pas être supprimé.</div>';
-					_fiche($ATMdb, $ressource, 'view');
+					_liste($ATMdb, $ressource);
 				} 
 				
 				
@@ -150,7 +150,8 @@ function _liste(&$ATMdb, &$ressource) {
 		
 	));
 	
-	
+	global $mesg, $error;
+	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
 }	
 	

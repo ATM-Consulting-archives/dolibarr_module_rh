@@ -59,6 +59,8 @@ class TRH_Ressource extends TObjetStd {
 			}
 	}
 	
+
+	
 	function load(&$ATMdb, $id) {
 		global $conf;
 		parent::load($ATMdb, $id);
@@ -261,7 +263,14 @@ class TRH_Ressource_type extends TObjetStd {
 		$this->TType=array('chaine'=>'Texte','entier'=>'Entier','float'=>'Float',"liste"=>'Liste',"checkbox"=>'Case à cocher');
 	}
 	
-
+	function chargement($libelle, $code, $supprimable, $liste_evenement_value, $liste_evenement_key){
+		$this->libelle = $libelle;
+		$this->code = $code;
+		$this->supprimable = $supprimable;
+		$this->liste_evenement_value = $liste_evenement_value;
+		$this->liste_evenement_key = $liste_evenement_key;
+	}
+	
 	function load(&$ATMdb, $id) {
 		parent::load($ATMdb, $id);
 		$this->load_field($ATMdb);
@@ -376,15 +385,29 @@ class TRH_Ressource_field extends TObjetStd {
 		parent::add_champs('code,libelle','type=chaine;');
 		parent::add_champs('type','type=chaine;');
 		parent::add_champs('obligatoire','type=entier;');
-		parent::add_champs('ordre','type=entier');
-		parent::add_champs('options','type=chaine');
-		parent::add_champs('supprimable','type=entier');
+		parent::add_champs('ordre','type=entier;');
+		parent::add_champs('options','type=chaine;');
+		parent::add_champs('supprimable','type=entier;');
 		parent::add_champs('fk_rh_ressource_type,entity','type=entier;index;');
 		
 		$this->TListe = array();
 		parent::_init_vars();
 		parent::start();
 		
+	}
+	
+	function chargement(&$db, $libelle, $code, $type, $obligatoire, $ordre, $options, $supprimable, $fk_rh_ressource_type){
+		$this->libelle = $libelle;
+		$this->code = $code;
+		$this->type = $type;
+		$this->obligatoire = $obligatoire;
+		$this->ordre = $ordre;
+		$this->options = $options;
+		$this->supprimable = $supprimable;
+		$this->fk_rh_ressource_type = $fk_rh_ressource_type;
+		
+		
+		$this->save($db);
 	}
 	
 	function load(&$ATMdb, $id){

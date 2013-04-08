@@ -234,7 +234,7 @@ class ActionsValideur
 						      	echo $form->select_dolusers($fk_user_delegation, "fk_user_delegation", 1);
 						  	}else if($action=='update'||$action==''){		//on affiche le délégateur courant
 								if($fk_user_delegation==0){
-							    	print "Aucun délégateur choisi";
+							    	print "Aucun délégué choisi";
 								}else{
 									$sql = "SELECT name,firstname FROM llx_user WHERE rowid=".$fk_user_delegation;	
 									$result = $db->query($sql);

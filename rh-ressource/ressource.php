@@ -249,7 +249,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 		$TFields[$k]=array(
 				'libelle'=>$field->libelle
 				,'valeur'=>$temp
-				,'obligatoire'=>$field->obligatoire ? 'class="field"': 'class="fieldrequired"'
+				//champs obligatoire : 0 = obligatoire ; 1 = non obligatoire
+				,'obligatoire'=>$field->obligatoire ? 'class="field"': 'class="fieldrequired"' 
 			);
 	}
 
