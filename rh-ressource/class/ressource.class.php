@@ -37,7 +37,7 @@ class TRH_Ressource extends TObjetStd {
 			$temp->load($ATMdb, $id);
 			$this->TType[$temp->getId()] = $temp->libelle;
 		}
-		$this->TBail = array('bail'=>'Bail','immobilisation'=>'Immobilisation');
+		$this->TBail = array('location'=>'Location','immobilisation'=>'Immobilisation');
 		
 		$this->TRessource = array('');
 		$this->TEvenement = array();

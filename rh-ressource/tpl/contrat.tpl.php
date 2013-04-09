@@ -11,10 +11,7 @@
 	 		<td>Type de ressource associée</td>
 	 		<td>[contrat.typeRessource;strconv=no;protect=no]</td>
 	 	</tr>
-	 	<tr>
-	 		<td>Type de contrat</td>
-	 		<td>[contrat.typeContrat;strconv=no;protect=no]</td>
-	 	</tr>
+	 	
 	 	<tr>
 	 		<td>Fournisseur concerné</td>
 	 		<td>[contrat.tiersFournisseur;strconv=no;protect=no]</td>
