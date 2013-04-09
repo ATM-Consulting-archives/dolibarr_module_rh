@@ -94,8 +94,11 @@
 			[onshow;block=end]
 			
 			[onshow;block=begin;when [view.mode]!='edit']
-				<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
+				[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
+					<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
+				[onshow;block=end]
 			[onshow;block=end]
+			
 		</div>
 		[onshow;block=end]
 		[onshow;block=end]		

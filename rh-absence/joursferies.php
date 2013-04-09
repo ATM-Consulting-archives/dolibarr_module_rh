@@ -172,6 +172,7 @@ function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 			)
 			,'userCourant'=>array(
 				'id'=>$user->id
+				,'droitAjoutJour'=>$user->rights->absence->myactions->ajoutJourOff
 			)
 			,'view'=>array(
 				'mode'=>$mode

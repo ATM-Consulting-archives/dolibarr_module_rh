@@ -152,6 +152,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 			)
 			,'droits'=>array(
 				'modifierEdt'=>$user->rights->absence->myactions->modifierEdt
+				,'modifierSonEdt'=>$user->rights->absence->myactions->modifierSonEdt
 			)
 			
 			

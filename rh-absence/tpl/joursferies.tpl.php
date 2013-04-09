@@ -22,10 +22,12 @@
 
 	
 [onshow;block=begin;when [view.mode]=='view']
-	<div class="tabsAction" style="text-align:center;">
-		<a class="butAction"  href="?idJour=[joursFeries.id]&id=[userCourant.id]&action=edit">Modifier</a>
-		<a class="butActionDelete"  href="?idJour=[joursFeries.id]&id=[userCourant.id]&action=delete">Supprimer</a>
+		[onshow;block=begin;when [userCourant.droitAjoutJour]=='1']
+		<div class="tabsAction" style="text-align:center;">
+			<a class="butAction"  href="?idJour=[joursFeries.id]&id=[userCourant.id]&action=edit">Modifier</a>
+			<a class="butActionDelete"  href="?idJour=[joursFeries.id]&id=[userCourant.id]&action=delete">Supprimer</a>
 		</div>
+		[onshow;block=end] 
 [onshow;block=end] 
 
 [onshow;block=begin;when [view.mode]!='view']
