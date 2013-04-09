@@ -17,8 +17,8 @@
 			case 'add':
 			case 'new':
 				_fiche($ATMdb, $compteur,'edit');
-				
 				break;	
+				
 			case 'edit'	:
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $compteur,'edit');

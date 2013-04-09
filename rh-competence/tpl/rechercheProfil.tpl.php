@@ -19,8 +19,9 @@
 			
 					<li>	Excel</li>
 					<li>Excel niveau</li> avec (niveau = {Faible, Bon, Moyen, Excellent})
-					<li>Excel niveau ou Word</li>
-					<li>Excel niveau ou Word niveau ou...</li>
+					<li>Excel niveau OU Word</li>
+					<li>Excel niveau OU Word niveau OU...</li>
+					<li>Excel niveau ET Word niveau OU...</li>
 				</div>
 
 				</td>

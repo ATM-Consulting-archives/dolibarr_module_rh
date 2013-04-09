@@ -105,8 +105,8 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'date_jourOff'=>'<a href="?idJour=@ID@&id='.$user->id.'&action=view">@val@</a>'
-			,'Supprimer'=>$user->rights->absence->myactions->ajoutJourOff?'<a href="?idJour=@ID@&id='.$user->id.'&action=delete"><img src="./img/delete.png"></a>':''
+			'date_jourOff'=>'<a href="?idJour=@ID@&fk_user='.$user->id.'&action=view">@val@</a>'
+			,'Supprimer'=>$user->rights->absence->myactions->ajoutJourOff?'<a href="?idJour=@ID@&fk_user='.$user->id.'&action=delete"><img src="./img/delete.png"></a>':''
 		)
 		,'translate'=>array(
 			'Période'=>array('matin'=>'Matin','apresmidi'=>'Après-midi','allday'=>'Toute la journée')

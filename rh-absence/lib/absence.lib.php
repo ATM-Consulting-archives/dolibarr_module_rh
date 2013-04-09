@@ -48,8 +48,8 @@ function edtPrepareHead(&$obj, $type='absence') {
 		case 'emploitemps':
 				
 				return array(
-					array(DOL_URL_ROOT_ALT.'/absence/emploitemps.php?id='.$obj->fk_user."&action=view", 'Emploi du temps','emploitemps')
-				   ,array(DOL_URL_ROOT_ALT.'/absence/joursferies.php?id='.$obj->fk_user, 'Jours non travaillés','joursferies')
+					array(DOL_URL_ROOT_ALT.'/absence/emploitemps.php?id='.$obj->fk_user."&action=view&fk_user=".$user->id, 'Emploi du temps','emploitemps')
+				   ,array(DOL_URL_ROOT_ALT.'/absence/joursferies.php?&fk_user='.$user->id, 'Jours non travaillés','joursferies')
 				);
 				break;
 				
