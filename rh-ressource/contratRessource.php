@@ -106,11 +106,15 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@">@val@</a>'
 			,'Libellé'=>'<a href="contrat.php?id=@IDContrat@">@val@</a>'
+			,'Commentaire'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@">@val@</a>'
 			,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@&action=deleteAssoc"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre', 'IDContrat')
-		,'type'=>array()
+		,'type'=>array(
+			'Date début'=>'date'
+			,'Date fin'=>'date'
+			)
 		,'liste'=>array(
 			'titre'=>'Liste des contrats'
 			,'image'=>img_picto('','title.png', '', 0)

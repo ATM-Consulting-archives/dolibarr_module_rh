@@ -7,22 +7,18 @@
 	
 	$ATMdb=new Tdb;
 	$emploiTemps=new TRH_EmploiTemps;
-	
-	
-	
-	//global $idUserCompt, $idComptEnCours;
-	
+
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
 
 			case 'edit'	:
-				$emploiTemps->load($ATMdb, $_REQUEST['id']);
+				$emploiTemps->load($ATMdb, $_REQUEST['fk_user']);
 				_fiche($ATMdb, $emploiTemps,'edit');
 				break;
 				
 			case 'save':
 				$ATMdb->db->debug=true;
-				$emploiTemps->load($ATMdb, $_REQUEST['id']);
+				$emploiTemps->load($ATMdb, $_REQUEST['fk_user']);
 				
 				$emploiTemps->razCheckbox($ATMdb, $emploiTemps);
 				
@@ -35,7 +31,7 @@
 				break;
 			
 			case 'view':
-					$emploiTemps->loadByuser($ATMdb, $_REQUEST['id']);
+					$emploiTemps->loadByuser($ATMdb, $_REQUEST['fk_user']);
 					_fiche($ATMdb, $emploiTemps,'view');
 				break;
 
@@ -45,16 +41,8 @@
 		
 	}
 	else {
+		$emploiTemps->load($ATMdb, $_REQUEST['fk_user']);
 		_liste($ATMdb, $emploiTemps);
-		//$ATMdb->db->debug=true;
-	/*	$sqlReqUser="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` where fk_user=".$user->id;//AND entity=".$conf->entity;
-		$ATMdb->Execute($sqlReqUser);
-		while($ATMdb->Get_line()) {
-
-				$compteurCourant=$ATMdb->Get_field('rowid');
-		}
-		$emploiTemps->load($ATMdb, $compteurCourant);
-		_fiche($ATMdb, $emploiTemps,'view');*/
 	}
 	
 	
@@ -67,13 +55,15 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de vos absences');
 	getStandartJS();
+	print dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence');
 	
 	$r = new TSSRenderControler($emploiTemps);
-	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', fk_user as 'Id Utilisateur'
-		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps 
-		WHERE entity=".$conf->entity;
+	$sql="SELECT e.rowid as 'ID', e.date_cre as 'DateCre', e.fk_user as 'Id Utilisateur', CONCAT(u.firstname,' ', u.name) as 'Utilisateur'
+		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."user as u
+		WHERE e.entity=".$conf->entity." AND u.rowid=e.fk_user";
+
 	if($user->rights->absence->myactions->modifierEdt!="1"){
-		$sql.=" AND fk_user=".$user->id;
+		$sql.=" AND e.fk_user=".$user->id;
 	}
 	
 	$TOrder = array('ID'=>'DESC');
@@ -87,7 +77,8 @@ function _liste(&$ATMdb, &$emploiTemps) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'ID'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'ID'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'">@val@</a>'
+			,'Utilisateur'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'">@val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')
@@ -161,6 +152,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 			)
 			,'droits'=>array(
 				'modifierEdt'=>$user->rights->absence->myactions->modifierEdt
+				,'modifierSonEdt'=>$user->rights->absence->myactions->modifierSonEdt
 			)
 			
 			

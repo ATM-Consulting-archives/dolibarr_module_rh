@@ -85,10 +85,11 @@ class TRH_competence_cv extends TObjetStd {
 				$sql.= "c.libelleCompetence LIKE '".$this->separerNiveau($Comp);
 				
 			}else{
-				$sql.= " AND (c.libelleCompetence LIKE '".$this->separerNiveau($Comp).")";
+				$sql.= " OR c.libelleCompetence LIKE '".$this->separerNiveau($Comp);
 			}
 						$k++;
 		}
+	
 		return $sql;
 	}
 	
@@ -110,6 +111,7 @@ class TRH_competence_cv extends TObjetStd {
 	//renvoie la requête finale de la recherche
 	function requeteRecherche(&$ATMdb,  $recherche){
 		global $conf;
+		/*
 		$sql="SELECT c.fk_user_formation as 'ID' , c.rowid , c.date_cre as 'DateCre', 
 			  CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence
 			 , c.fk_user
@@ -126,8 +128,42 @@ class TRH_competence_cv extends TObjetStd {
 			$k++;
 		}
 		$sql.=")";
+		return $sql;*/
+		$k=0;
+		print_r($recherche);
+		$sql="";
+		foreach($recherche as $tagRecherche){
+			if($k==0){
+				echo "<br/>salut";
+				$sql.="SELECT c.fk_user_formation as 'ID' , c.rowid , c.date_cre as 'DateCre', 
+			 	CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence, c.fk_user, COUNT(*) as 'Niveau'
+				FROM   ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."user as u 
+				WHERE  c.entity=".$conf->entity. " AND c.fk_user=u.rowid AND( ";
+		 		$sql.=$this->separerEt($tagRecherche). ") GROUP BY c.fk_user ";
+		 		
+		 	}else{
+		 		$sql.=" UNION SELECT c.fk_user_formation as 'ID' , c.rowid , c.date_cre as 'DateCre', 
+			 	CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence, c.fk_user, COUNT(*) as 'Niveau'
+				FROM   ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."user as u 
+				WHERE  c.entity=".$conf->entity. " AND c.fk_user=u.rowid AND( ";
+		 		$sql.=$this->separerEt($tagRecherche). ") GROUP BY c.fk_user ";
+		 	}
+			$k++;
+		}
+		//$sql.=")";
+		print $sql;
+		//AND c.libelleCompetence LIKE '".$recherche."'";
+		$k=0;
+		
+		
 		return $sql;
 	}
+	
+	/*SELECT c.fk_user_formation as 'ID' , c.rowid , CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence , c.fk_user, COUNT(*) 
+	FROM llx_rh_competence_cv as c, llx_user as u WHERE c.entity=1 AND c.fk_user=u.rowid 
+	AND( c.libelleCompetence LIKE '%%%word%' OR (c.libelleCompetence LIKE '%excel%%') ) GROUP BY c.fk_user 
+	UNION SELECT c.fk_user_formation as 'ID' , c.rowid , CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence , c.fk_user, COUNT(*) 
+	FROM llx_rh_competence_cv as c, llx_user as u WHERE c.entity=1 AND c.fk_user=u.rowid AND( c.libelleCompetence LIKE '%%%tomate%' ) GROUP BY c.fk_user*/
 	
 }
 

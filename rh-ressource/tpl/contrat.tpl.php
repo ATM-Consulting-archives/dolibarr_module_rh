@@ -11,10 +11,7 @@
 	 		<td>Type de ressource associée</td>
 	 		<td>[contrat.typeRessource;strconv=no;protect=no]</td>
 	 	</tr>
-	 	<tr>
-	 		<td>Type de contrat</td>
-	 		<td>[contrat.typeContrat;strconv=no;protect=no]</td>
-	 	</tr>
+	 	
 	 	<tr>
 	 		<td>Fournisseur concerné</td>
 	 		<td>[contrat.tiersFournisseur;strconv=no;protect=no]</td>
@@ -28,13 +25,13 @@
 	 		<td>[contrat.date_fin;strconv=no;protect=no]</td>
 	 	</tr><tr>
 	 		<td>Loyer TTC</td>
-	 		<td>[contrat.loyer_TTC;strconv=no;protect=no]</td>
+	 		<td>[contrat.loyer_TTC;strconv=no;protect=no] €</td>
 	 	</tr><tr>
 	 		<td>TVA </td>
-	 		<td>[contrat.TVA;strconv=no;protect=no]</td>
+	 		<td>[contrat.TVA;strconv=no;protect=no] %</td>
 	 	</tr><tr>
 	 		<td>Loyer HT</td>
-	 		<td>[contrat.loyer_HT;strconv=no;protect=no]</td>
+	 		<td>[contrat.loyer_HT;strconv=no;protect=no] €</td>
 	 	</tr>
 	</table>
 	
@@ -44,11 +41,11 @@
 <script>
 	$(document).ready( function(){
 		//on empêche que la date de début dépasse celle de fin
-		 $('body').click( 	function(){
+		/* $('body').click( 	function(){
 			if($("#date_debut").val()>$("#date_fin").val()){
 				$("#date_fin").val($("#date_debut").val());
 			}
-		});	
+		});	*/
 		
 	});
 </script>

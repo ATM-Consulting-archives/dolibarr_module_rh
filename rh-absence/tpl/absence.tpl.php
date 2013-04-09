@@ -94,8 +94,11 @@
 			[onshow;block=end]
 			
 			[onshow;block=begin;when [view.mode]!='edit']
-				<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
+				[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
+					<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
+				[onshow;block=end]
 			[onshow;block=end]
+			
 		</div>
 		[onshow;block=end]
 		[onshow;block=end]		
@@ -103,7 +106,7 @@
 		
 
 		<script>
-			$(document).ready( function(){
+			/*$(document).ready( function(){
 				//on empêche que la date de début dépasse celle de fin
 				 $('body').click( 	function(){
 					if($("#date_debut").val()>$("#date_fin").val()){
@@ -111,7 +114,7 @@
 					}
 	    		});	
 				
-			});
+			});*/
 		</script>
 
 

@@ -93,7 +93,7 @@ function _liste(&$ATMdb, &$absence) {
 	//LISTE D'ABSENCES DU COLLABORATEUR
 	$r = new TSSRenderControler($absence);
 	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , DATE(a.date_fin) as 'Date Fin', 
-			  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur' ,
+			  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  a.fk_user, CONCAT(u.firstname,' ',u.name) as 'Utilisateur' ,
 			   a.libelleEtat as 'Statut demande', '' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 		WHERE a.fk_user=".$user->id." AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
@@ -186,7 +186,6 @@ function _liste(&$ATMdb, &$absence) {
 			)
 			,'link'=>array(
 				'Type absence'=>'<a href="?id=@ID@&action=view">@val@</a>'
-				,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 			)
 			,'translate'=>array('Statut demande'=>array('Refusée'=>'<b style="color:#A72947">Refusée</b>','En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 'Acceptée'=>'<b style="color:#30B300">Acceptée</b>'))
 			,'hide'=>array('DateCre')
@@ -353,6 +352,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'etat'=>$absence->etat
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
+				,'fk_user'=>$absence->fk_user
 			)	
 			,'userCourant'=>array(
 				'id'=>$userCourant->id

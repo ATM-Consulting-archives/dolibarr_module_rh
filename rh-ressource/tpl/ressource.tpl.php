@@ -6,7 +6,7 @@
                 <div class="fiche"> <!-- begin div class="fiche" -->
                 [view.head;strconv=no]
                 
-                        <div class="tabBar">
+                        
                                 
 [onshow;block=end]  
 
@@ -32,24 +32,17 @@
 	<!-- entête du tableau -->
 <table class="border" style="width:100%">
 	<tr>
+		<td>Type</td>
+		<td>[ressource.type;strconv=no;protect=no]</td>
+	</tr>
+	
+	<tr>
 		<td>Numéro Id</td>
 		<td>[ressource.numId;strconv=no;protect=no] </td>
 	</tr>
 	<tr>
 		<td>Libellé</td>
 		<td>[ressource.libelle;strconv=no;protect=no] </td>
-	</tr>
-	<tr>
-		<td>Type</td>
-		<td>[ressource.type;strconv=no;protect=no]
-			[onshow;block=begin;when [view.mode]!='view']
-				<input type="submit" value="Valider" name="validerType" class="button"
-					[onshow;block=begin;when [ressource.type]=='Aucun type']
-					disabled
-					[onshow;block=end]
-					>
-			[onshow;block=end]
-		</td>
 	</tr>
 	<tr>
 		<td>Date d'achat</td>
@@ -86,27 +79,28 @@
 
 <br>
 
-<h2>Ressource associée </h2>
-<div>
+
 	
 		[onshow;block=begin;when [view.mode]=='edit']
-			 [fk_ressource.liste_fk_rh_ressource;strconv=no;protect=no]
+			<h2>Ressource associée </h2>
+			<div>
+				[fk_ressource.liste_fk_rh_ressource;strconv=no;protect=no]
+			</div>
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
-			Cette ressource est associée à [fk_ressource.fk_rh_ressource].
+			[onshow;block=begin;when [fk_ressource.fk_rh_ressource]!='aucune ressource']
+				<h2>Ressource associée </h2>
+				<div>
+					Cette ressource est associée à [fk_ressource.fk_rh_ressource].
+				</div>
+			[onshow;block=end]
 		[onshow;block=end]
 
 [onshow;block=begin;when [view.userRight]==1]
 <div class="tabsAction" style="text-align:center;" >
-
 		[onshow;block=begin;when [view.mode]=='edit']
-			<input type="submit" value="Enregistrer" name="save" class="button"
-				[onshow;block=begin;when [ressource.type]=='Aucun type']
-				disabled
-				[onshow;block=end]
-			
-			>
+			<input type="submit" value="Enregistrer" name="save" class="button">
 			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
 		[onshow;block=end]
 		[onshow;block=begin;when [view.mode]!='edit']

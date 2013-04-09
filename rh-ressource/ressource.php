@@ -2,6 +2,7 @@
 	require('config.php');
 	require('./class/ressource.class.php');
 	require('./class/contrat.class.php');
+	require('./class/evenement.class.php');
 	require('./lib/ressource.lib.php');
 	$langs->load('ressource@ressource');
 	
@@ -17,13 +18,22 @@
 			case 'add':
 			case 'new':
 				$ressource->set_values($_REQUEST);
-				_fiche($ATMdb, $ressource,'edit');
+				_choixType($ATMdb, $ressource,'new');
 				break;	
 			case 'edit'	:
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $ressource,'edit');
 				break;
+			
+			case 'type':
+				$ressource->set_values($_REQUEST);
+				$ressource->save($ATMdb);
+				$ressource->load($ATMdb, $_REQUEST['id']);
+				$ressource->fk_rh_ressource_type=$_REQUEST['fk_rh_ressource_type'];
+				_fiche($ATMdb, $ressource,'edit');
+				break;
+			
 				
 			case 'save':
 				//$ATMdb->db->debug=true;
@@ -126,7 +136,7 @@ function _liste(&$ATMdb, &$ressource) {
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r";
 	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON r.fk_rh_ressource_type=t.rowid";
 	if(!$user->rights->ressource->ressource->viewRessource){
-		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=r.rowid";
+		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource)";
 	}
 	$sql.=" WHERE r.entity=".$conf->entity;
 	if(!$user->rights->ressource->ressource->viewRessource){
@@ -197,20 +207,26 @@ function _liste(&$ATMdb, &$ressource) {
 function getStatut($id, $jour){
 	global $conf;
 	$ATMdb=new Tdb;
-	$sqlReq="SELECT rowid, date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$id." 
+	$sqlReq="SELECT e.date_debut, e.date_fin , firstname, name 
+	FROM ".MAIN_DB_PREFIX."rh_evenement as e  
+	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user=u.rowid) 
+	WHERE fk_rh_ressource=".$id."
 	AND type='emprunt'
-	AND entity=".$conf->entity;
+	AND e.entity=".$conf->entity."
+	ORDER BY date_debut";
+	
 	$ATMdb->Execute($sqlReq);
 	$return = 'Libre';
 	while($ATMdb->Get_line()) {
 		//echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
 		if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
 			&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
-				return 'Attribuée';
+				return 'Attribuée à '.$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name');
 				break;
 		}
 		if (date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) >= $jour ){
-				$return='Réservée';
+				$return='Réservée à '.$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name');
+				break;
 			}
 	}
 	
@@ -227,6 +243,47 @@ function getStatut($id, $jour){
 	return $return;			
 	}
 
+
+/*
+ * à la création de la ressource, on choisi premierement le type
+ */
+function _choixType(&$ATMdb, &$ressource, $mode) {
+	global $db,$user;
+	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
+
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','GET');
+	$form->Set_typeaff($mode);
+	//echo $form->hidden('id', $ressource->getId());
+	echo $form->hidden('action', 'type');
+	
+	$TBS=new TTemplateTBS();
+	print $TBS->render('./tpl/ressource.new.tpl.php'
+		,array()
+		,array(
+			'ressource'=>array(
+				'id'=>$ressource->getId()
+				,'type'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type" 
+				
+			)
+			,'view'=>array(
+				'mode'=>$mode
+				,'userRight'=>((int)$user->rights->ressource->ressource->createRessource)
+				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'fiche', 'Ressource')
+			)
+			
+			
+		)	
+		
+	);
+	
+	echo $form->end_form();
+	// End of page
+	
+	global $mesg, $error;
+	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	llxFooter();
+	
+}
 
 
 
@@ -279,7 +336,6 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	}
 
 
-	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
 		,array(
@@ -291,14 +347,14 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				'id'=>$ressource->getId()
 				,'numId'=>$form->texte('', 'numId', $ressource->numId, 00,20,'','','-')
 				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 50,255,'','','-')
-				,'type'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type" 
+				//,'type'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type" 
+				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
 				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
-				,'date_vente'=>$form->calendrier('', 'date_vente', $ressource->get_date('date_vente'), 10)
+				,'date_vente'=>$form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
 				,'date_garantie'=>$form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TAgence,$ressource->fk_proprietaire)
-				//,'statut'=>$form->combo('','statut',$ressource->TStatut,$ressource->TStatut[0])
-			
+
 			)
 			,'fk_ressource'=>array(
 				'liste_fk_rh_ressource'=>$form->combo('','fk_rh_ressource',$ressource->TRessource,$ressource->fk_rh_ressource)
