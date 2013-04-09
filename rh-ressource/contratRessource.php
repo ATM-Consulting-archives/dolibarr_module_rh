@@ -106,6 +106,7 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@">@val@</a>'
 			,'Libellé'=>'<a href="contrat.php?id=@IDContrat@">@val@</a>'
+			,'Commentaire'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@">@val@</a>'
 			,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@&action=deleteAssoc"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()

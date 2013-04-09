@@ -36,7 +36,7 @@
 		?><div class="fiche"><?	
 		dol_fiche_head(ressourcePrepareHead($ressourceType, 'type-ressource')  , 'event', 'Type de ressource');
 	
-		?><h2>Créer des type d'événements associés au type de la ressource</h2><?	
+		?><h2>Créer des types d'événements associés au type de la ressource</h2><?	
 		
 		//on récupère le champs 
 		
