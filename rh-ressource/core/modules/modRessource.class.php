@@ -224,6 +224,11 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'ressource';
 		$this->rights[$r][5] = 'uploadFiles';
+		$r++;
+		$this->rights[$r][0] = 7011;
+		$this->rights[$r][1] = 'Consulter les fichiers';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'download';
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
