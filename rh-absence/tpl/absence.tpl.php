@@ -103,7 +103,7 @@
 		
 
 		<script>
-			$(document).ready( function(){
+			/*$(document).ready( function(){
 				//on empêche que la date de début dépasse celle de fin
 				 $('body').click( 	function(){
 					if($("#date_debut").val()>$("#date_fin").val()){
@@ -111,7 +111,7 @@
 					}
 	    		});	
 				
-			});
+			});*/
 		</script>
 
 
