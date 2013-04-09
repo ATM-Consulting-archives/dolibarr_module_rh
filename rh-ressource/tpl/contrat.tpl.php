@@ -8,10 +8,7 @@
                 
                         
                                 
-[onshow;block=end]  
-
-<h1>Contrat</h1>
-
+[onshow;block=end]
 
 <div>
 	<table class="border" style="width:100%">
