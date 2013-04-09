@@ -186,7 +186,7 @@ function _liste(&$ATMdb, &$absence) {
 			)
 			,'link'=>array(
 				'Type absence'=>'<a href="?id=@ID@&action=view">@val@</a>'
-				,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
+				,'Supprimer'=>$user->id==$absence->fk_user?'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>':''
 			)
 			,'translate'=>array('Statut demande'=>array('Refusée'=>'<b style="color:#A72947">Refusée</b>','En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 'Acceptée'=>'<b style="color:#30B300">Acceptée</b>'))
 			,'hide'=>array('DateCre')
