@@ -23,7 +23,7 @@
 	//$tempField->chargement($libelle, $code, $type, $obligatoire, $ordre, $options, $supprimable, $fk_rh_ressource_type)
 	$tempField->chargement($ATMdb, 'Immatriculation', 'immatriculation','chaine', 0, 0, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Marque', 'marqueVoit', 'liste',0, 1, 'Peugeot;Citroën;Renault;Fiat', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Marque', 'marqueVoit', 'chaine',0, 1, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Modèle', 'modleVoit', 'chaine',0, 2, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
