@@ -20,7 +20,7 @@ class TRH_Contrat  extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		
-		$this->TBail = array('bail'=>'Bail','immobilisation'=>'Immobilisation');
+		$this->TBail = array('location'=>'Location','immobilisation'=>'Immobilisation');
 		
 		$ATMdb=new Tdb;
 		
