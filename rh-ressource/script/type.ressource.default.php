@@ -27,11 +27,13 @@
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Modèle', 'modleVoit', 'chaine',0, 2, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Puissance Fiscale', 'pf', 'chaine',0, 3, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Bail', 'bailVoit', 'chaine',0, 3, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Clé', 'cle', 'checkbox',1, 4, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Puissance Fiscale', 'pf', 'chaine',0, 4, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Kit de Sécurité', 'kit', 'checkbox',1, 5, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Clé', 'cle', 'checkbox',1, 5, '', 1, $tempType->rowid);
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Kit de Sécurité', 'kit', 'checkbox',1, 6, '', 1, $tempType->rowid);
 	
 //CARTE
 	$tempType = new TRH_Ressource_type;

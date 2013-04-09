@@ -82,7 +82,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 
 			echo ' : Ajoutee.';
-			//$temp->save($ATMdb);		
+			$temp->save($ATMdb);		
 		}
 		
 		echo '<br>';

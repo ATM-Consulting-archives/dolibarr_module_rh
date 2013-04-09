@@ -52,12 +52,14 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				$temp->load_ressource_type($ATMdb);
 				
+				
+				
 				$temp->numId = $plaque;
-				$temp->plaque = (string)$plaque;//plaque;
+				$temp->immatriculation = (string)$plaque;//plaque;
 				$temp->libelle = $infos[5].' '.$infos[6];
-				$temp->marque = (string)$infos[5];
-				$temp->modle = (string)$infos[6];
-				$temp->bail = (string)$infos[8];
+				$temp->marqueVoit = (string)$infos[5];
+				$temp->modleVoit = (string)$infos[6];
+				$temp->bailVoit = (string)$infos[8];
 				
 				
 				$temp->save($ATMdb);echo ' : Ajoutee.';
