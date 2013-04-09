@@ -2,6 +2,7 @@
 	require('config.php');
 	require('./class/ressource.class.php');
 	require('./class/contrat.class.php');
+	require('./class/evenement.class.php');
 	require('./lib/ressource.lib.php');
 	$langs->load('ressource@ressource');
 	
@@ -24,6 +25,15 @@
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $ressource,'edit');
 				break;
+			
+			case 'type':
+				$ressource->set_values($_REQUEST);
+				$ressource->save($ATMdb);
+				$ressource->load($ATMdb, $_REQUEST['id']);
+				$ressource->fk_rh_ressource_type=$_REQUEST['fk_rh_ressource_type'];
+				_fiche($ATMdb, $ressource,'edit');
+				break;
+			
 				
 			case 'save':
 				//$ATMdb->db->debug=true;
@@ -243,8 +253,8 @@ function _choixType(&$ATMdb, &$ressource, $mode) {
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','GET');
 	$form->Set_typeaff($mode);
-	echo $form->hidden('id', $ressource->getId());
-	echo $form->hidden('action', 'save');
+	//echo $form->hidden('id', $ressource->getId());
+	echo $form->hidden('action', 'type');
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.new.tpl.php'
@@ -281,7 +291,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	global $db,$user;
 	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
 
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','GET');
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $ressource->getId());
 	echo $form->hidden('action', 'save');
@@ -326,7 +336,6 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	}
 
 
-	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
 		,array(
@@ -342,14 +351,14 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
 				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
-				,'date_vente'=>$form->calendrier('', 'date_vente', ($mode=='new') ? '' : $ressource->get_date('date_vente') , 10)
-				,'date_garantie'=>$form->calendrier('', 'date_garantie', ($mode=='new') ? '' : $ressource->get_date('date_garantie'), 10)
+				,'date_vente'=>$form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
+				,'date_garantie'=>$form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TAgence,$ressource->fk_proprietaire)
 
 			)
 			,'fk_ressource'=>array(
 				'liste_fk_rh_ressource'=>$form->combo('','fk_rh_ressource',$ressource->TRessource,$ressource->fk_rh_ressource)
-				,'fk_rh_ressource'=>$ressource->fk_rh_ressource ? $ressource->TRessource[$ressource->fk_rh_ressource] : "0"
+				,'fk_rh_ressource'=>$ressource->fk_rh_ressource ? $ressource->TRessource[$ressource->fk_rh_ressource] : "aucune ressource"
 				,'reqExiste'=>$reqVide
 			)
 			

@@ -35,11 +35,11 @@
 <script>
 	$(document).ready( function(){
 		//on empêche que la date de début dépasse celle de fin
-		 $('body').click( 	function(){
+		/* $('body').click( 	function(){
 			if($("#date_debut").val()>$("#date_fin").val()){
 				$("#date_fin").val($("#date_debut").val());
 			}
-		});	
+		});	*/
 		
 	});
 </script>

@@ -203,7 +203,7 @@ class TRH_Ressource extends TObjetStd {
 	
 	function init_variables(&$ATMdb) {
 		foreach($this->ressourceType->TField as $field) {
-			$this->add_champs($field->code, 'type=chaine');
+			$this->add_champs($field->code, 'type=chaine;');
 		}
 		$this->init_db_by_vars($ATMdb);
 		parent::load($ATMdb, $this->getId());
@@ -233,6 +233,20 @@ class TRH_Ressource extends TObjetStd {
 		AND fk_rh_ressource=".$this->getId();
 		$Tab = array();
 		$temp = new TRH_Contrat_Ressource;
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$Tab[] = $ATMdb->Get_field('rowid');
+			}
+		foreach ($Tab as $key => $id) {
+			$temp->load($ATMdb, $id);
+			$temp->delete($ATMdb);
+		}
+		
+		//on supprime aussi les évenements associés
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_evenement WHERE entity=".$conf->entity."
+		AND fk_rh_ressource=".$this->getId();
+		$Tab = array();
+		$temp = new TRH_Evenement;
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
 			$Tab[] = $ATMdb->Get_field('rowid');

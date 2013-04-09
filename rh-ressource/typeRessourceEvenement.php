@@ -10,7 +10,7 @@
 	$ressourceType=new TRH_ressource_type;
 	$mesg = '';
 	$error=false;
-	llxHeader('','Règle sur les Ressources', '', '', 0, 0);
+	llxHeader('','Type d\'événement sur le type', '', '', 0, 0);
 	
 	
 	if(isset($_REQUEST['id'])){
@@ -36,7 +36,7 @@
 		?><div class="fiche"><?	
 		dol_fiche_head(ressourcePrepareHead($ressourceType, 'type-ressource')  , 'event', 'Type de ressource');
 	
-		?><h2>Créer des événements associés au type de la ressource</h2><?	
+		?><h2>Créer des type d'événements associés au type de la ressource</h2><?	
 		
 		//on récupère le champs 
 		
