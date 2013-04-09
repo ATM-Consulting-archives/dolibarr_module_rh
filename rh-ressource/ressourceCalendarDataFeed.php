@@ -21,6 +21,8 @@ switch ($method) {
 echo json_encode($ret); 
 
 function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null, $typeRessource=false){
+  global $user;
+
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
@@ -39,6 +41,9 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null, $typeRessourc
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."'";
     if (! $typeRessource){
     	$sql.=" AND e.fk_rh_ressource=".$idRessource;
+	}
+	if (!$user->rights->ressource->agenda->viewAgenda){
+    	$sql.=" AND e.fk_user=".$user->id;
 	}
 	
    $ATMdb->Execute($sql);

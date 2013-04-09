@@ -227,18 +227,20 @@ class modRessource extends DolibarrModules
 		// Add here entries to declare new menus
 		//
 		// Example to declare a new Top Menu entry and its Left menu entry:
-		$this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
-								'type'=>'top',			                // This is a Top menu entry
-								'titre'=>$langs->trans('Ressource'),
-								'mainmenu'=>'ressource',
-								'leftmenu'=>'',
-								'url'=>'/ressource/ressource.php?idmenu=100',
-								'langs'=>'ressource@ressource',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>100,
-								'enabled'=>'1',	// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
-								'perms'=>'',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
-								'target'=>'',
-								'user'=>0);						                // 0=Menu for internal users, 1=external users, 2=both
+		$this->menu[$r]=array(	
+						'fk_menu'=>0,			                // Put 0 if this is a top menu
+						'type'=>'top',			                // This is a Top menu entry
+						'titre'=>$langs->trans('Ressource'),
+						'mainmenu'=>'ressource',
+						'leftmenu'=>'',
+						'url'=>'/ressource/ressource.php?idmenu=100',
+						'langs'=>'ressource@ressource',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+						'position'=>100,
+						'enabled'=>'1',							// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
+						'perms'=>'',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
+						'target'=>'',
+						'user'=>0								// 0=Menu for internal users, 1=external users, 2=both
+		);
 		
 		//RESSOURCES
 		$r++;
@@ -262,8 +264,8 @@ class modRessource extends DolibarrModules
 		            'fk_menu'=>'fk_mainmenu=ressource,fk_leftmenu=ressources',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
 		        	'titre'=> $langs->trans('listeRessource'),
-		        	'mainmenu'=> 'ressource',
-		        	'leftmenu'=> 'ressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+		        	'mainmenu'=> '',
+		        	'leftmenu'=> '',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/ressource/ressource.php',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 102,
@@ -279,7 +281,7 @@ class modRessource extends DolibarrModules
 		        	'type'=> 'left',			// This is a Top menu entry
 		        	'titre'=> $langs->trans('nouvelleRessource'),
 		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'ressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+		        	'leftmenu'=> '',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/ressource/ressource.php?action=new',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 103,
@@ -299,9 +301,9 @@ class modRessource extends DolibarrModules
 		        	'leftmenu'=> 'agenda',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/ressource/calendrierRessource.php',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-					'position'=> 105,
+					'position'=> 104,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-					'perms'=> '$user->rights->ressource->agenda->viewAgenda',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
 					'user'=> 2
         );
@@ -315,7 +317,7 @@ class modRessource extends DolibarrModules
 		        	'leftmenu'=> '',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/ressource/contrat.php',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-					'position'=> 106,
+					'position'=> 105,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
 					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
@@ -331,14 +333,12 @@ class modRessource extends DolibarrModules
 		        	'leftmenu'=> '',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/ressource/contrat.php?action=new',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-					'position'=> 107,
+					'position'=> 106,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
 					'perms'=> '$user->rights->ressource->contrat->createContract',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
 					'user'=> 2
         );
-		
-		
 		
 		//TYPES RESSOURCES
 		$r++;
@@ -350,7 +350,7 @@ class modRessource extends DolibarrModules
 		        	'leftmenu'=> 'typeressource',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/ressource/typeRessource.php',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-					'position'=> 108,
+					'position'=> 107,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
 					'perms'=> '$user->rights->ressource->typeressource->viewType',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
@@ -366,7 +366,7 @@ class modRessource extends DolibarrModules
 		        	'leftmenu'=> 'typeressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/ressource/typeRessource.php',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-					'position'=> 109,
+					'position'=> 108,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
 					'perms'=> '$user->rights->ressource->typeressource->viewType',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
@@ -382,7 +382,7 @@ class modRessource extends DolibarrModules
 		        	'leftmenu'=> 'typeressources',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/ressource/typeRessource.php?action=new',
 					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-					'position'=> 110,
+					'position'=> 109,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
 					'perms'=> '$user->rights->ressource->typeressource->createType',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
