@@ -1,6 +1,7 @@
 <?php
 	require('config.php');
 	require('./class/contrat.class.php');
+	require('./lib/ressource.lib.php');
 	
 	$langs->load('ressource@ressource');
 	
@@ -172,6 +173,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 			,'view'=>array(
 				'mode'=>$mode
 				,'userRight'=>((int)$user->rights->ressource->contrat->createContract)
+				,'head'=>dol_get_fiche_head(ressourcePrepareHead($contrat, 'contrat')  , 'fiche', 'Contrat')
 			)
 			
 			
@@ -180,6 +182,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 	);
 	
 	if($user->rights->ressource->contrat->viewContract){
+		print "<br/>";
 		//liste des ressources associés
 		$r = new TSSRenderControler($contrat);
 		$sql= "SELECT r.rowid as ID, r.libelle as 'Libellé' , r.numId as 'Numéro Id'
@@ -219,7 +222,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 			
 		));
 	}
-	
+	print "<br/>";
 	//liste des adresses liés au contrat
 	$r = new TSSRenderControler($contrat);
 	$sql= "SELECT s.rowid as ID , s.name as 'Nom', CONCAT(s.address, ' ', s.cp, ' ',s.ville) as 'Adresse',

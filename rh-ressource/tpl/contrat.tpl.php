@@ -1,3 +1,15 @@
+<?php 	llxHeader('', 'Liste des contrats');
+?>
+[onshow;block=begin;when [view.mode]=='view']
+
+        
+                <div class="fiche"> <!-- begin div class="fiche" -->
+                [view.head;strconv=no]
+                
+                        
+                                
+[onshow;block=end]  
+
 <h1>Contrat</h1>
 
 

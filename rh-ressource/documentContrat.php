@@ -1,7 +1,6 @@
 <?php
 	require('config.php');
 	require('./class/contrat.class.php');
-	require('./class/ressource.class.php');
 	require('./lib/ressource.lib.php');
 	
 	require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
@@ -14,17 +13,17 @@
 	$langs->load('other');
 	
 	$ATMdb=new Tdb;
-	$ressource=new TRH_ressource;
+	$contrat=new TRH_contrat;
 	
 	if(isset($_REQUEST['id'])) {
-		$ressource->load($ATMdb, $_REQUEST['id']);
-		_fiche($ATMdb, $ressource);
+		$contrat->load($ATMdb, $_REQUEST['id']);
+		_fiche($ATMdb, $contrat);
 	}
 	
 	$ATMdb->close();
 	llxFooter();
 	
-	function _fiche(&$ATMdb, &$ressource) {
+	function _fiche(&$ATMdb, &$contrat) {
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers joints');
 		?><div class="fiche"><?	
@@ -41,7 +40,7 @@
 		
 		if ($_REQUEST["sendit"])
 		{
-			$upload_dir = DIR_DOC_OUTPUT.'ressource/'.dol_sanitizeFileName($ressource->getId());
+			$upload_dir = DIR_DOC_OUTPUT.'contrat/'.dol_sanitizeFileName($contrat->getId());
 		
 			if (dol_mkdir($upload_dir) >= 0)
 			{
@@ -77,7 +76,7 @@
 		// Delete
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		{
-			$upload_dir = DIR_DOC_OUTPUT.'ressource/'.dol_sanitizeFileName($ressource->getId());
+			$upload_dir = DIR_DOC_OUTPUT.'contrat/'.dol_sanitizeFileName($contrat->getId());
 		
 			$file = $upload_dir . '/' . $_REQUEST['urlfile'];
 			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $object);
@@ -103,7 +102,7 @@
 		if (!$sortfield) $sortfield = "name";
 		
 		
-		$upload_dir = DIR_DOC_OUTPUT.'ressource/'.dol_sanitizeFileName($ressource->getId());
+		$upload_dir = DIR_DOC_OUTPUT.'contrat/'.dol_sanitizeFileName($contrat->getId());
 		
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$totalsize = 0;
@@ -114,22 +113,22 @@
 		
 		if ($action == 'delete')
 		{
-			$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"].'?id='.$ressource->getId().'&urlfile='.urldecode($_REQUEST['urlfile']), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 0);
+			$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"].'?id='.$contrat->getId().'&urlfile='.urldecode($_REQUEST['urlfile']), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 0);
 		}
 		
 		$can_upload = 1;
 		
-		echo dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource'), 'document', 'Ressource');
+		echo dol_get_fiche_head(ressourcePrepareHead($contrat, 'contrat'), 'document', 'Contrat');
 		
 		echo ($message ? dol_htmloutput_mesg($message, '', ($error ? 'error' : 'ok'), 0) : '');
 
 		echo ($formconfirm ? $formconfirm : '');
 		
 		if($user->rights->ressource->ressource->uploadFiles){
-			$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$ressource->getId(), '', 0, 0, $can_upload);
-			$formfile->list_of_documents($filearray, $ressource, 'ressource', '&id='.$ressource->getId(),0,'ressource/'.$ressource->getId().'/',1);
+			$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$contrat->getId(), '', 0, 0, $can_upload);
+			$formfile->list_of_documents($filearray, $contrat, 'ressource', '&id='.$contrat->getId(),0,'contrat/'.$contrat->getId().'/',1);
 		}else{
-			$formfile->list_of_documents($filearray, $ressource, 'ressource', '&id='.$ressource->getId(),0,'ressource/'.$ressource->getId().'/',0);
+			$formfile->list_of_documents($filearray, $contrat, 'ressource', '&id='.$contrat->getId(),0,'contrat/'.$contrat->getId().'/',0);
 		}
 		
 		?><div style="clear:both"></div></div><?

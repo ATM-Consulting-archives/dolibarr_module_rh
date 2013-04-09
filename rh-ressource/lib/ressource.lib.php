@@ -23,8 +23,13 @@ function ressourcePrepareHead(&$obj, $type='type-ressource') {
 				);
 			
 			break;
-	
-		
+		case 'contrat':
+				return array(
+					array(DOL_URL_ROOT_ALT.'/ressource/contrat.php?id='.$obj->getId(), 'Fiche','fiche')
+					,array(DOL_URL_ROOT_ALT.'/ressource/documentContrat.php?id='.$obj->getId(), 'Fichiers joints','document')
+				);
+			
+			break;
 		
 	}
 	
