@@ -136,7 +136,7 @@ function _liste(&$ATMdb, &$ressource) {
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r";
 	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON r.fk_rh_ressource_type=t.rowid";
 	if(!$user->rights->ressource->ressource->viewRessource){
-		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=r.rowid";
+		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource)";
 	}
 	$sql.=" WHERE r.entity=".$conf->entity;
 	if(!$user->rights->ressource->ressource->viewRessource){
