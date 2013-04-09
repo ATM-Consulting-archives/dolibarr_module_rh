@@ -219,6 +219,11 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][4] = 'ressource';
 		$this->rights[$r][5] = 'manageEvents';
 		$r++;
+		$this->rights[$r][0] = 7010;
+		$this->rights[$r][1] = 'Importer des fichiers';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'uploadFiles';
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
