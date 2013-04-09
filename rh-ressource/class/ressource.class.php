@@ -52,11 +52,7 @@ class TRH_Ressource extends TObjetStd {
 		$this->TContratAssocies = array(); 	//tout les objets rh_contrat_ressource liés à la ressource
 		$this->TContratExaustif = array(); 	//tout les objets contrats
 		$this->TListeContrat = array(); 	//liste des id et libellés de tout les contrats
-		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_contrat ";
-		$ATMdb->Execute($sqlReq);
-		while($ATMdb->Get_line()) {
-			$this->TListeContrat[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
-			}
+		
 	}
 	
 
@@ -67,11 +63,11 @@ class TRH_Ressource extends TObjetStd {
 
 		$this->load_ressource_type($ATMdb);
 		//chargement d'une liste de toutes les ressources (pour le combo "ressource associé")
-		$sqlReq="SELECT rowid,libelle FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid!=".$this->getId()."
+		$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid!=".$this->getId()."
 		AND entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
+			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle').' '.$ATMdb->Get_field('numId');
 			}	
 	}
 	
@@ -132,6 +128,12 @@ class TRH_Ressource extends TObjetStd {
 			$this->TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
 			}
 		
+		$this->TListeContrat = array(); 	//liste des id et libellés de tout les contrats
+		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_contrat WHERE fk_rh_ressource_type =".$this->fk_rh_ressource_type;
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TListeContrat[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
+			}
 	}
 	
 

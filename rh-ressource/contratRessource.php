@@ -110,7 +110,10 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre', 'IDContrat')
-		,'type'=>array()
+		,'type'=>array(
+			'Date début'=>'date'
+			,'Date fin'=>'date'
+			)
 		,'liste'=>array(
 			'titre'=>'Liste des contrats'
 			,'image'=>img_picto('','title.png', '', 0)

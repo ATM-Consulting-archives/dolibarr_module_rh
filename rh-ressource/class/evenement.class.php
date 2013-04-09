@@ -100,22 +100,22 @@ class TRH_Evenement  extends TObjetStd {
 		
 		switch($this->type){
 			case 'accident':
-				$this->color= 2; //rose clair
+				$this->color= 8; 
 				break;
 			case 'reparation':
-				$this->color= 3; //violet clair
+				$this->color= 11;
 				break;
 			case 'appel' :
-				$this->color= 4; //violet foncé
+				$this->color= 14;
 				break;
 			case 'facture':
-				$this->color= 5; //bleu-vert moche
+				$this->color= 17; 
 				break;
 			case 'emprunt' :
-			 	$this->color= 1; //couleur rouge
+			 	$this->color= 6; //bleu-vert clair vif
 				break;
 			default :
-			 	$this->color= 7; //bleu-vert clair vif
+			 	$this->color= 1; //couleur rouge
 				break;
 		}
 		

@@ -84,17 +84,17 @@ function _liste(&$ATMdb, &$contrat) {
 	
 	$r = new TSSRenderControler($contrat);
 	
-	$sql= "SELECT c.rowid as 'ID', c.libelle as 'Libellé', CONCAT ('Du ',DATE(c.date_debut),' au ' ,DATE(c.date_fin) ) as 'Date',
-			t.libelle as 'Type Ressource',c.bail as 'Bail', g.nom as 'Fournisseur'";
+	$sql= "SELECT c.rowid as 'ID', c.libelle as 'Libellé', DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin',
+			t.libelle as 'Type Ressource',c.bail as 'Bail', s.nom as 'Fournisseur'";
 	if($user->rights->ressource->contrat->createContract){
 		$sql.=", '' as Supprimer";
 	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_contrat as c";
-	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."societe as g ON (c.fk_tier_fournisseur = g.rowid)";
+	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (c.fk_tier_fournisseur = s.rowid)";
 	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON (c.fk_rh_ressource_type = t.rowid)";
 	if(!$user->rights->ressource->contrat->viewContract){
-		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON r.rowid = c.fk_rh_ressource";
-		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=r.rowid";
+		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_contrat_ressource as cr ON cr.fk_rh_contrat = c.rowid";
+		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=cr.fk_rh_ressource";
 	}
 	$sql.=" WHERE c.entity=".$conf->entity;
 	if(!$user->rights->ressource->contrat->viewContract){
@@ -102,12 +102,11 @@ function _liste(&$ATMdb, &$contrat) {
 		$sql.=" AND e.fk_user=".$user->id;
 	}
 	
-	$TOrder = array('Date'=>'ASC');
+	$TOrder = array('Date début'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
-	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
-	//print $page;
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
@@ -119,7 +118,10 @@ function _liste(&$ATMdb, &$contrat) {
 		)
 		,'translate'=>array()
 		,'hide'=>array()
-		,'type'=>array()
+		,'type'=>array(
+			'Date début'=>'date'
+			,'Date fin'=>'date'
+			)
 		,'liste'=>array(
 			'titre'=>'Liste des contrats'
 			,'image'=>img_picto('','title.png', '', 0)
