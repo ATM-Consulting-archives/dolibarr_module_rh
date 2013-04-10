@@ -204,7 +204,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 }	
 
 function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
-	global $db,$user;
+	global $db,$user,$conf;
 	llxHeader('', 'Evénement');
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
