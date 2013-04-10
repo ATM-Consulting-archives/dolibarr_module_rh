@@ -51,9 +51,14 @@
 				//$ATMdb->db->debug=true;
 				$evenement->load($ATMdb, $_REQUEST['idEven']);
 				$evenement->delete($ATMdb);
-				$ressource->load($ATMdb, $_REQUEST['id']);
+				?>
+				<script language="javascript">
+					document.location.href="?id=<?echo $_REQUEST['id'];?>&delete_ok=1";					
+				</script>
+				<?
+				/*$ressource->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">L\'attribution a bien été supprimée.</div>';
-				_liste($ATMdb, $evenement, $ressource, $_REQUEST['type']);
+				_liste($ATMdb, $evenement, $ressource, $_REQUEST['type']);*/
 				break;
 				
 			case 'afficherListe':
