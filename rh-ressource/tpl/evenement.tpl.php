@@ -1,12 +1,7 @@
 [onshow;block=begin;when [view.mode]=='view']
     <div class="fiche"> <!-- begin div class="fiche" -->
     [view.head;strconv=no]
-        <div class="tabBar">
 [onshow;block=end]                                
-
-
-
-<h2>Evénement sur la ressource</h2>
 
 
 <table class="border" style="width:100%">
@@ -112,5 +107,4 @@
 	 
 </div>
 [onshow;block=end]
-</div>
 </div>
