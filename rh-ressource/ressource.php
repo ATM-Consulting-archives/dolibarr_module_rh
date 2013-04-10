@@ -323,7 +323,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 
 	//requete pour avoir toutes les ressources associées à la ressource concernées
 	$k=0;
-	$sqlReq="SELECT libelle FROM `llx_rh_ressource` where fk_rh_ressource=".$ressource->rowid;
+	$sqlReq="SELECT libelle FROM ".MAIN_DB_PREFIX."rh_ressource where fk_rh_ressource=".$ressource->rowid;
 	$ATMdb->Execute($sqlReq);
 	$Tab=array();
 	$Tab_sous_ressource=array();

@@ -305,7 +305,7 @@ class TRH_Ressource_type extends TObjetStd {
 	
 	function load_field(&$ATMdb) {
 		global $conf;
-		$sqlReq="SELECT rowid FROM llx_rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." AND entity=".$conf->entity." ORDER BY ordre ASC;";
+		$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." AND entity=".$conf->entity." ORDER BY ordre ASC;";
 		$ATMdb->Execute($sqlReq);
 		
 		$Tab = array();
@@ -342,7 +342,7 @@ class TRH_Ressource_type extends TObjetStd {
 		global $conf;
 		if ($this->supprimable){
 			//on supprime les champs associés à ce type
-			$sqlReq="SELECT rowid FROM llx_rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." AND entity=".$conf->entity;
+			$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." AND entity=".$conf->entity;
 			$ATMdb->Execute($sqlReq);
 			$Tab = array();
 			while($ATMdb->Get_line()) {
