@@ -1,6 +1,13 @@
 
 [view.head3;strconv=no]
 
+ 	[onshow;block=begin;when [absence.voirToutesAbsences]=='1']
+		<br> 
+		Filtre par utilisateur :  
+                [absence.TUser;strconv=no;protect=no]
+                [absence.btValider;strconv=no;protect=no]
+        <br> 
+	[onshow;block=end]
 
 <h1>Agenda des absences</h1>
 		
@@ -9,7 +16,7 @@
         $(document).ready(function() {     
             var view="month";          
            
-            var DATA_FEED_URL = "absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&id"
+            var DATA_FEED_URL = "absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idAfficher=[absence.idAfficher;strconv=no;protect=no]"
             var op = {
                 view: view,
                 theme:3,

@@ -22,7 +22,7 @@
 	);
 		
 	$ATMdb=new Tdb;
-	global $user;
+	global $user, $conf;
 	$absence=new TRH_absence;
 	if(isset($_REQUEST['id'])){
 		$absence->load($ATMdb, $_REQUEST['id']);
@@ -30,7 +30,9 @@
 		$absence->load($ATMdb, $user->id);
 	}
 	
-	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
+	echo $form->hidden('action', 'afficher');
+	echo $form->hidden('id',$absence->getId());
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'
@@ -38,6 +40,10 @@
 		,array(
 			'absence'=>array(
 				'idUser' =>  $_REQUEST['idUser']? $_REQUEST['idUser']:$user->id
+				,'TUser'=>$form->combo('', 'rowid', $absence->TUser,  $absence->TUser)
+				,'btValider'=>$form->btsubmit('Valider', 'valider')
+				,'idAfficher'=>$_REQUEST['rowid']? $_REQUEST['rowid']:0
+				,'voirToutesAbsences'=>$user->rights->absence->myactions->voirToutesAbsences
 			)
 			,'view'=>array(
 				'mode'=>$mode
