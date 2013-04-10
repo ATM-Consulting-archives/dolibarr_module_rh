@@ -51,9 +51,14 @@
 				//$ATMdb->db->debug=true;
 				$evenement->load($ATMdb, $_REQUEST['idEven']);
 				$evenement->delete($ATMdb);
-				$ressource->load($ATMdb, $_REQUEST['id']);
+				?>
+				<script language="javascript">
+					document.location.href="?id=<?echo $_REQUEST['id'];?>&delete_ok=1";					
+				</script>
+				<?
+				/*$ressource->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">L\'attribution a bien été supprimée.</div>';
-				_liste($ATMdb, $evenement, $ressource, $_REQUEST['type']);
+				_liste($ATMdb, $evenement, $ressource, $_REQUEST['type']);*/
 				break;
 				
 			case 'afficherListe':
@@ -236,7 +241,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 			,'view'=>array(
 				'mode'=>$mode
 				,'userRight'=>((int)$user->rights->ressource->ressource->manageEvents)
-				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource')
+				,'head'=>dol_get_fiche_head(ressourcePrepareHead($evenement, 'evenement', $ressource)  , 'fiche', 'Evénement')
 			)
 		)	
 		
