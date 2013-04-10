@@ -50,6 +50,7 @@ function edtPrepareHead(&$obj, $type='absence') {
 				return array(
 					array(DOL_URL_ROOT_ALT.'/absence/emploitemps.php?id='.$obj->fk_user."&action=view&fk_user=".$user->id, 'Emploi du temps','emploitemps')
 				   ,array(DOL_URL_ROOT_ALT.'/absence/joursferies.php?&fk_user='.$user->id, 'Jours non travaillés','joursferies')
+				   ,array(DOL_URL_ROOT_ALT.'/absence/pointage.php?&fk_user='.$user->id, 'Pointage Collaborateurs','pointage')
 				);
 				break;
 				
