@@ -130,7 +130,18 @@ class TRH_Absence extends TObjetStd {
 		//combo pour le choix de matin ou après midi 
 		$this->TddMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date début
 		$this->TdfMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date fin
+		
+		//on crée un tableau des utilisateurs pour l'afficher en combo box, et ensuite sélectionner quelles absences afficher
+		$ATMdb=new Tdb;
+		global $conf;
+		$this->TUser=array();
+		$sqlReqUser="SELECT rowid, name, firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
+		$ATMdb->Execute($sqlReqUser);
+
+		while($ATMdb->Get_line()) {
+			$this->TUser[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('name')." ".$ATMdb->Get_field('firstname');
 		}
+	}
 
 		function save(&$db) {
 			$ATMdb=new Tdb;
@@ -506,6 +517,8 @@ class TRH_Absence extends TObjetStd {
 			}	
 			return 0;
 		}
+		
+		
 }
 
 

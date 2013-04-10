@@ -7,18 +7,21 @@ $ATMdb=new TPDOdb;
 $method = $_GET["method"];
 switch ($method) {
     case "list":
+		
         if (isset($_GET['idUser'])){
-				
-	       	 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser']);
+			 if (isset($_GET['idAfficher'])){
+	       	 	$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser'], $_GET['idAfficher']);
+			 }else $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser']);
 		}else {
 			 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"]);
 		}
+		
         break; 
 
 }
 echo json_encode($ret); 
 
-function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
+function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idAfficher=0){
   	global $conf;
   $ret = array();
   $ret['events'] = array();
@@ -49,13 +52,18 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
 		$sql1 = "SELECT r.rowid as rowid, r.libelle, r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
     
-	  if ($idUser!=0){
+	  if ($idAfficher!=0){
+	  	$sql1.=" AND r.fk_user=".$idAfficher;
+      }else   if ($idUser!=0){
 	  	$sql1.=" AND r.fk_user=".$idUser;
       }
+	  
 	}else{
 		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
-	  if ($idUser!=0){
+	  if ($idAfficher!=0){
+	  	$sql1.=" AND r.fk_user=".$idAfficher;
+      }else if ($idUser!=0){
 	  	$sql1.=" AND r.fk_user IN(".implode(',', $TabUser).")";
       }
 		
@@ -166,7 +174,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0){
   return $ret;
 }
 
-function listCalendar(&$ATMdb, $day, $type, $idAbsence){
+function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idAfficher){
   $phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
   switch($type){
@@ -187,6 +195,6 @@ function listCalendar(&$ATMdb, $day, $type, $idAbsence){
       break;
   }
   //echo $st . "--" . $et;
-  return listCalendarByRange($ATMdb, $st, $et, $idAbsence);
+  return listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idAfficher);
 }
 

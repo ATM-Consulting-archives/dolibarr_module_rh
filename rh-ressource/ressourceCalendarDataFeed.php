@@ -22,7 +22,7 @@ echo json_encode($ret);
 
 function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null, $typeRessource=false){
   global $user;
-
+	
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;

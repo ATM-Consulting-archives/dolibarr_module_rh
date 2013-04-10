@@ -83,18 +83,18 @@ $orgChoisie=isset($_POST["choixAffichage"]) ? $_POST["choixAffichage"] : 'equipe
 $idUserCourant=$_GET["id"];
 
 //////////////////////////////////////récupération des informations de l'utilisateur courant
-$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$idUserCourant;
-$ATMdb->Execute($sqlReqUser);
-$Tab=array();
-while($ATMdb->Get_line()) {
-			$userCourant=new User($db);
-			$userCourant->id=$ATMdb->Get_field('rowid');
-			$userCourant->lastname=$ATMdb->Get_field('name');
-			$userCourant->firstname=$ATMdb->Get_field('firstname');
-			$userCourant->fk_user=$ATMdb->Get_field('fk_user');
-			$Tab[]=$userCourant;
-			
-}
+	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$idUserCourant;
+	$ATMdb->Execute($sqlReqUser);
+	$Tab=array();
+	$ATMdb->Get_line();
+	$userCourant=new User($db);
+	$userCourant->id=$ATMdb->Get_field('rowid');
+	$userCourant->lastname=$ATMdb->Get_field('name');
+	$userCourant->firstname=$ATMdb->Get_field('firstname');
+	$userCourant->fk_user=$ATMdb->Get_field('fk_user');
+	$Tab[]=$userCourant;
+				
+
 //print "salut".$userCourant->rowid.$userCourant->lastname.$userCourant->firstname.$userCourant->fk_user;
 
 
@@ -103,13 +103,13 @@ while($ATMdb->Get_line()) {
 //Fonction qui permet d'afficher les utilisateurs qui sont en dessous hiérarchiquement du salarié passé en paramètre
 function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 		
-				global $user, $db, $idUserCourant, $userCourant;
+				global $user, $db, $idUserCourant, $userCourant, $conf;
 				
 				?>
 				<ul id="ul-niveau-<?=$niveau ?>">
 				<?
 				
-				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where fk_user=".$idBoss;
+				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where fk_user=".$idBoss." AND entity=".$conf->entity;
 				
 				$ATMdb->Execute($sqlReq);
 				
