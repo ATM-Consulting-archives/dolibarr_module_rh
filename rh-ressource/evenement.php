@@ -236,7 +236,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 			,'view'=>array(
 				'mode'=>$mode
 				,'userRight'=>((int)$user->rights->ressource->ressource->manageEvents)
-				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource')
+				,'head'=>dol_get_fiche_head(ressourcePrepareHead($evenement, 'evenement', $ressource)  , 'fiche', 'Evénement')
 			)
 		)	
 		

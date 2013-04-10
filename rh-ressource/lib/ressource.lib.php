@@ -1,6 +1,6 @@
 <?php
 
-function ressourcePrepareHead(&$obj, $type='type-ressource') {
+function ressourcePrepareHead(&$obj, $type='type-ressource',&$param=null) {
 	
 	switch ($type) {
 		case 'type-ressource':
@@ -30,7 +30,13 @@ function ressourcePrepareHead(&$obj, $type='type-ressource') {
 				);
 			
 			break;
-		
+		case 'evenement':
+				return array(
+					array(DOL_URL_ROOT_ALT.'/ressource/evenement.php?id='.$param->getId().'&idEven='.$obj->getId().'&action=view', 'Fiche','fiche')
+					,array(DOL_URL_ROOT_ALT.'/ressource/documentEvenement.php?id='.$param->getId().'&idEven='.$obj->getId(), 'Fichiers joints','document')
+				);
+			
+			break;
 	}
 	
 	
