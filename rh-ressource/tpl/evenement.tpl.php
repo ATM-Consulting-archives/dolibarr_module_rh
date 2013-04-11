@@ -60,21 +60,18 @@
 			mf = parseInt($("#date_fin").val().substr(3,2));
 			af = parseInt($("#date_fin").val().substr(6,4));
 			if(af<ad){
-				alert('année');
 				$("#date_fin").val($("#date_debut").val());
 				return;
 			}
 			else if(af==ad){
 				
 				if(mf<md){
-					alert('mois');
 					$("#date_fin").val($("#date_debut").val());
 					return;}
 					
 				else if(mf==md){
 					
 					if(jf<jd){
-						alert('jour');
 						$("#date_fin").val($("#date_debut").val());
 						return;}
 					else if(jf=jd){return;}
