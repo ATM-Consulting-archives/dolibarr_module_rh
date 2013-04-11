@@ -130,7 +130,18 @@ class TRH_Absence extends TObjetStd {
 		//combo pour le choix de matin ou après midi 
 		$this->TddMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date début
 		$this->TdfMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date fin
+		
+		//on crée un tableau des utilisateurs pour l'afficher en combo box, et ensuite sélectionner quelles absences afficher
+		$ATMdb=new Tdb;
+		global $conf;
+		$this->TUser=array();
+		$sqlReqUser="SELECT rowid, name, firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
+		$ATMdb->Execute($sqlReqUser);
+
+		while($ATMdb->Get_line()) {
+			$this->TUser[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('name')." ".$ATMdb->Get_field('firstname');
 		}
+	}
 
 		function save(&$db) {
 			$ATMdb=new Tdb;
@@ -506,6 +517,8 @@ class TRH_Absence extends TObjetStd {
 			}	
 			return 0;
 		}
+		
+		
 }
 
 
@@ -658,51 +671,38 @@ class TRH_JoursFeries extends TObjetStd {
 	
 }
 
-
-
-
-
-//définition de la classe pour la notion de pointage
-class TRH_Pointage extends TObjetStd {
-	function __construct() { /* declaration */
-		
-		parent::set_table(MAIN_DB_PREFIX.'rh_pointage');
-		parent::add_champs('date','type=date;');		//date de pointage
-		parent::add_champs('present','type=entier'); 	//collaborateur présent ou non
-		
-		parent::_init_vars();
-		parent::start();
-		
-	}
-}
-
-//TODO  A terminer de definir...
-//Définiton classe d'export vers la comptabilité + export bilan social individuel annuel 
-class TRH_Export extends TObjetStd {
-	function __construct() { /* declaration */
-		
-		parent::set_table(MAIN_DB_PREFIX.'rh_export');
-		parent::add_champs('date','type=date;');		//date de l'export
-		parent::add_champs('nb_rtt','type=entier'); 	//nombre de Rtt à décompter
-		parent::add_champs('nb_conge_paye','type=entier'); 	//nombre de congés payés à décompter
-		parent::add_champs('nb_absence_autre','type=entier'); 	//nombre d'absences de type autres (deuil, maladie etc...) à décompter
-		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
-		
-		parent::_init_vars();
-		parent::start();
-		
-	}
-}
-
 //définition de la table pour l'enregistrement des jours non travaillés dans l'année (fériés etc...)
-class TRH_Jour_non_travaille extends TObjetStd {
+class TRH_Pointage extends TObjetStd {
 	function __construct() { /* declaration */
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_jour_non_travaille');
 		parent::add_champs('date','type=date;');		//date du jour non travaillé
+		parent::add_champs('matin','type=entier;');	//utilisateur concerné
+		parent::add_champs('apresmidi','type=entier;');	//utilisateur concerné
+		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
+		
 		
 		parent::_init_vars();
 		parent::start();
 		
+		$ATMdb=new Tdb;
+		global $conf,$user;
+		
+		//LISTE USERS À VALIDER
+		$sql=" SELECT DISTINCT u.fk_user, s.name FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, 
+		".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s
+				WHERE v.fk_user=".$user->id." 
+				AND v.type='Conges'
+				AND s.rowid=u.fk_user
+				AND v.fk_usergroup=u.fk_usergroup
+				AND v.entity=".$conf->entity;
+				
+		$ATMdb->Execute($sql);
+		$this->TabUser=array();
+		$k=0;
+		while($ATMdb->Get_line()) {
+					$TabUser[]=$ATMdb->Get_field('fk_user');
+					$k++;
+		}
 	}
 }

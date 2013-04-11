@@ -213,6 +213,13 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierSonEdt';
 		$r++;
+		
+		$this->rights[$r][0] = 7108;
+		$this->rights[$r][1] = 'Voir les absences de tous les collaborateurs';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'voirToutesAbsences';
+		$r++;
 		// Permissions
 		/*$this->rights = array();		// Permission array used by this module
 		$r=0;
