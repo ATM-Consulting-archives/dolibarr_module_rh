@@ -57,11 +57,6 @@
 		[onshow;block=end]
 	</tr>
 	
-	<tr>
-		<td>Domaine d'application</td>
-		<td>[newRule.objet; strconv=no]</td>
-	</tr>
-
 	<tr id="group">
 		<td>Groupe</td>
 		<td>[newRule.fk_group; strconv=no]</td>
@@ -70,14 +65,21 @@
 		<td>Utilisateur</td>
 		<td>[newRule.fk_user; strconv=no]</td>
 	</tr>
-	
 	<tr>
-		<td>Période d'application</td>
-		<td>[newRule.periode; strconv=no]</td>
+		<td>Limite Interne</td>
+		<td>[newRule.dureeHInt;strconv=no]:[newRule.dureeMInt;strconv=no]    (HH:MM)</td>
 	</tr>
 	<tr>
-		<td>Durée</td>
-		<td>[newRule.dureeH;strconv=no]:[newRule.dureeM;strconv=no]    (HH:MM)</td>
+		<td>Limite Externe</td>
+		<td>[newRule.dureeHExt;strconv=no]:[newRule.dureeMExt;strconv=no]    (HH:MM)</td>
+	</tr>
+	<tr>
+		<td>Limite SMS</td>
+		<td>[newRule.limSMS;strconv=no]</td>
+	</tr>
+	<tr>
+		<td>Numéros Exclus (les séparer par des ";")</td>
+		<td>[newRule.numeroExclus;strconv=no]</td>
 	</tr>
 </table>
 
