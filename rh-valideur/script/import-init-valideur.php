@@ -82,7 +82,7 @@
 			$v->fk_user=$valideur->id;
 			$v->fk_usergroup=$idGroup;
 			$v->save($ATMdb);
-			/*
+			
 			foreach($TUser as $iduser=>$dummy) {
 				
 				$fuser = new User($db);
@@ -91,6 +91,6 @@
 				print "Ajout de ".$fuser->firstname." ".$fuser->nom." au groupe <br>"; flush();
 				
 				$fuser->SetInGroup($idGroup, 0);
-			}*/
+			}
 		
 	}
