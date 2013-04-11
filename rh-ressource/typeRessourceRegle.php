@@ -96,8 +96,10 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 	dol_fiche_head(ressourcePrepareHead($ressourceType, 'type-ressource')  , 'regle', 'Type de ressource');
 	
 	$r = new TSSRenderControler($ressourceType);
-	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.name) as 'Utilisateur', g.nom as 'Groupe', r.periode as 'Période',r.objet as 'Sur',
-		CONCAT(r.dureeH,':',r.dureeM) as 'Durée'
+	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.name) as 'Utilisateur', g.nom as 'Groupe',
+		CONCAT(r.dureeHInt,':',r.dureeMInt) as 'Limite Interne',
+		CONCAT(r.dureeHExt,':',r.dureeMExt) as 'Limite Externe',
+		r.limSMS as 'Limite SMS' 
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup as g ON (r.fk_usergroup = g.rowid)
@@ -169,17 +171,18 @@ function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 				'id'=>$regle->getId()
 				,'choixApplication'=>$form->radiodiv('','choixApplication',$regle->TChoixApplication, $regle->choixApplication)
 				,'choixApplicationViewMode'=>$regle->TChoixApplication[$regle->choixApplication]
-				,'periode'=>$form->combo('', 'periode',$regle->TPeriode, $regle->periode)
-				,'objet'=>$form->combo('', 'objet',$regle->TObjet, $regle->objet)
 				,'fk_user'=>$form->combo('', 'fk_user',$regle->TUser, $regle->fk_user)
 				,'fk_group'=>$form->combo('', 'fk_usergroup',$regle->TGroup, $regle->fk_usergroup)
-				,'dureeH'=>$form->texte('', 'dureeH', $regle->dureeH, 2,2,'','','')
-				,'dureeM'=>$form->texte('', 'dureeM', $regle->dureeM, 2,2,'','','')
-			
+				,'dureeHInt'=>$form->texte('', 'dureeHInt', $regle->dureeHInt, 2,2,'','','')
+				,'dureeMInt'=>$form->texte('', 'dureeMInt', $regle->dureeMInt, 2,2,'','','')
+				,'dureeHExt'=>$form->texte('', 'dureeHExt', $regle->dureeHExt, 2,2,'','','')
+				,'dureeMExt'=>$form->texte('', 'dureeMExt', $regle->dureeMExt, 2,2,'','','')
+				,'limSMS'=>$form->texte('', 'limSMS', $regle->limSMS,5 ,5,'','','')
+				,'numeroExclus'=>$form->texte('', 'numeroExclus', $regle->numeroExclus,30 ,255,'','','')
+		
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'nbChamps'=>count($ressourceType->TField)
 			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressourceType)  , 'regle', 'Type de ressource')
 			)
