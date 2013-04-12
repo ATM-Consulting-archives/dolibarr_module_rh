@@ -272,6 +272,7 @@ function afficherUtilisateurGroupe(&$ATMdb, $nomGroupe){
 			afficherGroupes($ATMdb);
 		?>
 	</select> 
+	<input  name="id" value="<?=$_REQUEST['id'] ?>" type="hidden" />
 	<input id="validSelect" type="submit" value="Valider" class="button" />
 </form>
 
