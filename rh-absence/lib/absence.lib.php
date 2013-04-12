@@ -140,18 +140,23 @@ function php2dmy($phpDate){
 
 //fonction permettant l'envoi de mail
 function mailConges(&$absence){
+		
+	$from = USER_MAIL_SENDER;
 	
-	
+
 	$ATMdb=new Tdb;
+	
+	/*
+	 * Mail destinataire
+	 */
 	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
 	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-			$sendto=$ATMdb->Get_field('email');
-			$name=$ATMdb->Get_field('name');
-			$firstname=$ATMdb->Get_field('firstname');
-			
-	}
-	$from = USER_MAIL_SENDER;
+	$ATMdb->Get_line();
+
+	$sendto=$ATMdb->Get_field('email');
+	$name=$ATMdb->Get_field('name');
+	$firstname=$ATMdb->Get_field('firstname');
+		
 
 
 	$TBS=new TTemplateTBS();
