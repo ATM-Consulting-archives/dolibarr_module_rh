@@ -9,6 +9,7 @@ class TRH_Evenement  extends TObjetStd {
 		parent::add_champs('motif','type=chaine;');
 		parent::add_champs('commentaire','type=chaine;');
 		
+		
 		//type : accident, répération, emprunt, appel ou facture
 		parent::add_champs('type','type=chaine;');
 
@@ -19,6 +20,7 @@ class TRH_Evenement  extends TObjetStd {
 		
 		
 		//pour un accident, une réparation
+		parent::add_champs('responsabilite','type=entier;');
 		parent::add_champs('coutTTC','type=float;');
 		parent::add_champs('coutEntrepriseTTC','type=float;');
 		parent::add_champs('TVA','type=entier;'); //indice de la TVA dans le tableau $this->TTVA

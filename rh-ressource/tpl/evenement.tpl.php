@@ -25,7 +25,13 @@
 			<td>Utilisateur</td>
 			<td>[NEvent.user;strconv=no;protect=no]</td>
 		</tr>
-		
+		<tr>
+			<td>Responsabilité</td>
+			<td>[NEvent.responsabilite;strconv=no;protect=no]%</td>
+			<script>
+				$(document).ready(function(){$('#responsabilite').val(100);})
+			</script>
+		</tr>
 		<tr>
 			<td>Commentaire</td>
 			<td>[NEvent.commentaire;strconv=no;protect=no]</td>
