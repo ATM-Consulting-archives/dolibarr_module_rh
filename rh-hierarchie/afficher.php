@@ -109,7 +109,7 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 				<ul id="ul-niveau-<?=$niveau ?>">
 				<?
 				
-				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where fk_user=".$idBoss." AND entity=".$conf->entity;
+				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where fk_user=".$idBoss." AND entity=IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity;
 				
 				$ATMdb->Execute($sqlReq);
 				
@@ -321,7 +321,7 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 				while($ATMdb->Get_line()) {
 					//récupère les id des différents nom des  groupes de l'utilisateur
 					
-					print '<ul><li>'.$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name')."<br/>(Votre supérieur)";
+					print '<ul><li>'.$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name')/*."<br/>(Votre supérieur)"*/;
 					
 				}
 				afficherSalarieDessous($ATMdb,$userCourant->fk_user);
