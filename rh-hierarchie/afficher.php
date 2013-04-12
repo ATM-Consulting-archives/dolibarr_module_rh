@@ -79,7 +79,7 @@ dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
 <?
 global $user;
 
-$orgChoisie=isset($_POST["choixAffichage"]) ? $_POST["choixAffichage"] : 'equipe';
+$orgChoisie=isset($_REQUEST["choixAffichage"]) ? $_REQUEST["choixAffichage"] : 'equipe';
 $idUserCourant=$_GET["id"];
 
 //////////////////////////////////////récupération des informations de l'utilisateur courant
@@ -138,7 +138,7 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 function afficherSalarie(&$ATMdb, $idUser, $niveau=1){
 		
 				global $user, $db, $idUserCourant, $userCourant;
-
+/*
 				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where rowid=".$idUser;
 				
 				$ATMdb->Execute($sqlReq);
@@ -152,6 +152,10 @@ function afficherSalarie(&$ATMdb, $idUser, $niveau=1){
 				}
 				
 				foreach($Tab as &$user) {
+ * */
+ 					$user=new User($db);
+					$user->fetch($idUser);
+ 
 					?>
 					<li class="utilisateur" rel="<?=$user->id ?>">
 						<a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
@@ -159,8 +163,8 @@ function afficherSalarie(&$ATMdb, $idUser, $niveau=1){
 						if(!empty($user->email) ) { ?><div class="mail">Email : <a href="mailto:<?=$user->email ?>"><?=$user->email ?></div><? }
 					
 					?><?
-				}
-				?><?
+				/*}*/
+		
 }
 
 //Fonction qui permet d'afficher un salarié
@@ -168,7 +172,10 @@ function afficherGroupeSousValideur(&$ATMdb, $idUser, $fkusergroup, $niveau=1){
 		
 				global $user, $db, $idUserCourant, $userCourant;
 
-				$sqlReq=" SELECT  DISTINCT u.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as u WHERE u.fk_usergroup=".$fkusergroup." AND  u.fk_user NOT IN(SELECT v.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as v WHERE v.fk_user=".$idUser.")";
+				$sqlReq=" SELECT  DISTINCT u.fk_user 
+				FROM ".MAIN_DB_PREFIX."usergroup_user as u 
+				WHERE u.fk_usergroup=".$fkusergroup." 
+				AND  u.fk_user NOT IN(SELECT v.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as v WHERE v.fk_user=".$idUser.")";
 				
 				$ATMdb->Execute($sqlReq);
 				
