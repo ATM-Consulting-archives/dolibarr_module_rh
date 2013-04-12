@@ -60,24 +60,31 @@ function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 	
 	$nbrNdf=$ATMdb->Get_field('nbrNdf');
 	
-	$from = USER_MAIL_SENDER;
+	if($nbrNdf>0) {
+		/*
+		 * S'il y a des ntoe de frais en attente
+		 */
+		$from = USER_MAIL_SENDER;
+			
+			$TBS=new TTemplateTBS();
+			$subject = "Alerte - Validation de notes de frais en attente (".$nbrNdf.")";
+			$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.attente.tpl.php'
+				,array()
+				,array(
+					'validation'=>array(
+						'nom'=>$name
+						,'prenom'=>$firstname
+						,'nbr'=>$nbrNdf
+					)
+				)
+			);
+			
+			// Send mail
+			$mail = new TReponseMail($from,$sendto,$subject,$message);
+			
+		    (int)$result = $mail->send();		
+	}
 	
-	$TBS=new TTemplateTBS();
-	$subject = "Alerte - Validation de notes de frais en attente";
-	$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.attente.tpl.php'
-		,array()
-		,array(
-			'validation'=>array(
-				'nom'=>$name
-				,'prenom'=>$firstname
-				,'nbr'=>$nbrNdf
-			)
-		)
-	);
 	
-	// Send mail
-	$mail = new TReponseMail($from,$sendto,$subject,$message);
-	exit( "$from,$sendto,$subject,$message" );
-    (int)$result = $mail->send();
 	
 }
