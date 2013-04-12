@@ -321,7 +321,7 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 				while($ATMdb->Get_line()) {
 					//récupère les id des différents nom des  groupes de l'utilisateur
 					
-					print '<ul><li>'.$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name')."<br/>(Votre supérieur)";
+					print '<ul><li>'.$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name')/*."<br/>(Votre supérieur)"*/;
 					
 				}
 				afficherSalarieDessous($ATMdb,$userCourant->fk_user);
