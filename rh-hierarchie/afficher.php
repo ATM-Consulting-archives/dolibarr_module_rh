@@ -203,30 +203,24 @@ function afficherGroupeSousValideur(&$ATMdb, $idUser, $fkusergroup, $niveau=1){
 function afficherGroupes(&$ATMdb){
 				global $user, $db, $idUserCourant, $userCourant;
 				//récupère les id des différents groupes de l'utilisateur
-				$sqlReq="SELECT fk_usergroup FROM `".MAIN_DB_PREFIX."usergroup_user` where fk_user=".$userCourant->id;
+				$sqlReq="SELECT g.nom
+					 FROM `".MAIN_DB_PREFIX."usergroup_user` ug LEFT JOIN ".MAIN_DB_PREFIX."usergroup g ON (g.rowid=ug.fk_usergroup)
+					WHERE ug.fk_user=".$userCourant->id;
 				$ATMdb->Execute($sqlReq);
-				$Tab=array();
 				while($ATMdb->Get_line()) {
-					//récupère les id des différents nom des  groupes de l'utilisateur
-					$ATMdb1=new Tdb;
-					$sqlReq1="SELECT nom FROM `".MAIN_DB_PREFIX."usergroup` where rowid=".$ATMdb->Get_field('fk_usergroup');
-					$ATMdb1->Execute($sqlReq1);
-					
-					$Tab1=array();
-					
-					while($ATMdb1->Get_line()) {
 						//affichage des groupes concernant l'utilisateur 
-						print '<option value="'.$ATMdb1->Get_field('nom').'">'.$ATMdb1->Get_field('nom').'</option>';
-					}			
+						print '<option value="'.$ATMdb->Get_field('nom').'">'.$ATMdb->Get_field('nom').'</option>';
 				}
 }
 
 function findFkUserGroup(&$ATMdb, $nomGroupe){
-	$sqlFkGroupe='SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v, ".MAIN_DB_PREFIX."usergroup as u WHERE u.nom="'.$nomGroupe.'" AND v.fk_usergroup=u.rowid';
+	$sqlFkGroupe="SELECT fk_usergroup 
+	FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v, ".MAIN_DB_PREFIX."usergroup as u 
+	WHERE u.nom='".addslashes($nomGroupe)."' AND v.fk_usergroup=u.rowid LIMIT 1";
 	$ATMdb->Execute($sqlFkGroupe);
-	while($ATMdb->Get_line()) {
-			return $ATMdb->Get_field('fk_usergroup');
-	}
+	$ATMdb->Get_line();
+	return $ATMdb->Get_field('fk_usergroup');
+	
 }
 
 function findIdValideur(&$ATMdb, $fkusergroup){
@@ -258,7 +252,7 @@ function afficherUtilisateurGroupe(&$ATMdb, $nomGroupe){
 			$fkusergroup=findFkUserGroup($ATMdb, $nomGroupe);	
 			$idValideurGroupe=findIdValideur($ATMdb,$fkusergroup);
 
-			//afficherSalarieDessous($ATMdb,$idValideurGroupe, 1);
+			afficherSalarieDessous($ATMdb,$idValideurGroupe, 1);
 }
 
 ?>
@@ -362,7 +356,7 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 		<?php 	
 			$ATMdb=new Tdb;
 			//on affiche les utilisateurs du groupe en cours
-			afficherUtilisateurGroupe($ATMdb,$orgChoisie);
+		 	afficherUtilisateurGroupe($ATMdb,$orgChoisie);
 			$ATMdb->close();
 		?>
 			</li>
