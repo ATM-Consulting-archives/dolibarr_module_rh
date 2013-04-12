@@ -163,7 +163,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 		
 		$TFields[$k]=array(
 				'id'=>$field->getId()
-				,'code'=>$form->texte('', 'TField['.$k.'][code]', $field->code, 20,255,'','','-')
+				,'code'=>$field->code //$form->texte('', 'TField['.$k.'][code]', $field->code, 20,255,'','','-')
 				,'libelle'=>$form->texte('', 'TField['.$k.'][libelle]', $field->libelle, 20,255,'','','-')
 				,'indice'=>$k
 				,'ordre'=>$form->hidden('TField['.$k.'][ordre]', $k, 'class="ordre'.$k.'"')
