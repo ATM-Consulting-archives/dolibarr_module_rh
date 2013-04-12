@@ -4,11 +4,13 @@ class TRH_Ressource_Regle  extends TObjetStd {
 	function __construct(){
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource_regle');
 		
-		parent::add_champs('objet','type=chaine;');
 		parent::add_champs('choixApplication','type=chaine;');
-		parent::add_champs('periode','type=chaine;');
-		parent::add_champs('dureeH','type=chaine;');
-		parent::add_champs('dureeM','type=chaine;');
+		parent::add_champs('dureeHInt','type=chaine;');
+		parent::add_champs('dureeMInt','type=chaine;');
+		parent::add_champs('dureeHExt','type=chaine;');
+		parent::add_champs('dureeMExt','type=chaine;');
+		parent::add_champs('limSMS','type=chaine;');
+		parent::add_champs('numeroExclus','type=chaine;');
 		
 		parent::add_champs('fk_user','type=entier;index;');
 		parent::add_champs('fk_usergroup','type=entier;index;');
@@ -19,7 +21,6 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		
 		$this->choixApplication = 'all';
 		
-		$this->TPeriode = array('mois'=>'Mois', 'annee'=>'Année');
 		$this->TObjet = array('limInterne'=>'Limite interne', 'limExterne'=>'Limite externe');
 		$this->TUser = array();
 		$this->TGroup  = array();
@@ -76,19 +77,28 @@ class TRH_Ressource_Regle  extends TObjetStd {
 			case 'group':$this->fk_user = NULL;break;
 			default : echo'pbchoixapplication';break;				
 		}
-		if (!is_numeric($this->dureeM)){
-			$this->dureeM = "00";
+		if (!is_numeric($this->dureeMInt)){
+			$this->dureeMInt = "00";
 		}
-		if (!is_numeric($this->dureeH)){
-			$this->dureeH = "02";
+		if (!is_numeric($this->dureeHInt)){
+			$this->dureeHInt = "02";
 		}
-		$this->dureeM = substr($this->dureeM,0, 2);
-		$this->dureeH = substr($this->dureeH,0, 2);
+		if (!is_numeric($this->dureeMExt)){
+			$this->dureeMExt = "00";
+		}
+		if (!is_numeric($this->dureeHExt)){
+			$this->dureeHExt = "02";
+		}
+		
+		$this->dureeMInt = substr($this->dureeMInt,0, 2);
+		$this->dureeHInt = substr($this->dureeHInt,0, 2);
+		$this->dureeMExt = substr($this->dureeMExt,0, 2);
+		$this->dureeHExt = substr($this->dureeHExt,0, 2);
 		parent::save($ATMdb);
 	}
 	
 	
-	
-	
-	
 }	
+
+
+

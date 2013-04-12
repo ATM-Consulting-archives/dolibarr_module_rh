@@ -80,3 +80,6 @@
 	
 	$s=new TRH_JoursFeries;
 	$s->init_db_by_vars($ATMdb);
+	
+	$t=new TRH_Pointage;
+	$t->init_db_by_vars($ATMdb);

@@ -373,6 +373,8 @@ class TRH_Ressource_type extends TObjetStd {
 		}
 		$this->liste_evenement_key = implode(';',$temp);
 		
+		$this->code = TRH_Ressource_type::code_format(empty($this->code) ? $this->libelle : $this->code);
+		
 		parent::save($db);
 		
 		foreach($this->TField as $field) {

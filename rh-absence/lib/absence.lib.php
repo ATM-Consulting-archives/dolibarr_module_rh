@@ -50,6 +50,7 @@ function edtPrepareHead(&$obj, $type='absence') {
 				return array(
 					array(DOL_URL_ROOT_ALT.'/absence/emploitemps.php?id='.$obj->fk_user."&action=view&fk_user=".$user->id, 'Emploi du temps','emploitemps')
 				   ,array(DOL_URL_ROOT_ALT.'/absence/joursferies.php?&fk_user='.$user->id, 'Jours non travaillés','joursferies')
+				   ,array(DOL_URL_ROOT_ALT.'/absence/pointage.php?&fk_user='.$user->id, 'Pointage Collaborateurs','pointage')
 				);
 				break;
 				
@@ -139,18 +140,23 @@ function php2dmy($phpDate){
 
 //fonction permettant l'envoi de mail
 function mailConges(&$absence){
+		
+	$from = USER_MAIL_SENDER;
 	
-	
+
 	$ATMdb=new Tdb;
+	
+	/*
+	 * Mail destinataire
+	 */
 	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
 	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-			$sendto=$ATMdb->Get_field('email');
-			$name=$ATMdb->Get_field('name');
-			$firstname=$ATMdb->Get_field('firstname');
-			
-	}
-	$from = USER_MAIL_SENDER;
+	$ATMdb->Get_line();
+
+	$sendto=$ATMdb->Get_field('email');
+	$name=$ATMdb->Get_field('name');
+	$firstname=$ATMdb->Get_field('firstname');
+		
 
 
 	$TBS=new TTemplateTBS();
