@@ -94,7 +94,7 @@ function send_mail($db, $object, $user, $langs, $statut)
 	
 	 dol_syslog("Valideur::sendmail content=$from,$sendto,$subject,$message", LOG_DEBUG);
 	
-    (int)$result = $mail->send();
+    (int)$result = $mail->send(true, 'utf-8');
 	//exit("SENDF MAIL $from,$sendto,$subject,$message");
 	return 1;
 }

@@ -82,7 +82,7 @@ function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 			// Send mail
 			$mail = new TReponseMail($from,$sendto,$subject,$message);
 			
-		    (int)$result = $mail->send();		
+		    (int)$result = $mail->send(true, 'utf-8');		
 	}
 	
 	
