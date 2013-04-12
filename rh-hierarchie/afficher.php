@@ -115,26 +115,23 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 				$Tab=array();
 				while($ATMdb->Get_line()) {
 					$user=new User($db);
-					$user->fetch($ATMdb->Get_field('rowid'));
+					$user->fetch();
 					
-					$Tab[]=$user;
+					$Tab[]=$ATMdb->Get_field('rowid');
 				}
 				
-				foreach($Tab as &$user) {
+				foreach($Tab as $userid) {
 					?>
-					<li class="utilisateur" rel="<?=$user->id ?>">
-						<a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
-						<? if(!empty($user->office_phone) || !empty($user->user_mobile)) { ?><div class="tel">Tél. : <?=$user->office_phone.' '.$user->user_mobile ?></div><? }
-						if(!empty($user->email) ) { ?><div class="mail">Email : <a href="mailto:<?=$user->email ?>"><?=$user->email ?></div><? }
-					
-					afficherSalarieDessous($ATMdb, $user->id,$niveau+1);
+					<li class="utilisateur" rel="<?=$userid ?>"><?
+					afficherSalarie($ATMdb, $userid);
+					afficherSalarieDessous($ATMdb, $userid,$niveau+1);
 					?></li><?
 				}
 				?></ul><?		
 }
 
 //Fonction qui permet d'afficher un salarié
-function afficherSalarie(&$ATMdb, $idUser, $niveau=1){
+function afficherSalarie(&$ATMdb, $idUser){
 		
 				global $user, $db, $idUserCourant, $userCourant;
 /*
@@ -156,10 +153,10 @@ function afficherSalarie(&$ATMdb, $idUser, $niveau=1){
 					$user->fetch($idUser);
  
 					?>
-					<li class="utilisateur" rel="<?=$user->id ?>">
 						<a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
 						<? if(!empty($user->office_phone) || !empty($user->user_mobile)) { ?><div class="tel">Tél. : <?=$user->office_phone.' '.$user->user_mobile ?></div><? }
-						if(!empty($user->email) ) { ?><div class="mail">Email : <a href="mailto:<?=$user->email ?>"><?=$user->email ?></div><? }
+						if(!empty($user->email) ) { ?><div class="mail">Email : <a href="mailto:<?=$user->email ?>"><?=$user->email ?></a></div><? }
+						if(!empty($user->job) ) { ?><div><?=$user->job ?></div><? }
 					
 					?><?
 				/*}*/
@@ -245,6 +242,8 @@ function findIdValideur(&$ATMdb, $fkusergroup){
 				<ul id="ul-niveau-1">
 	<?
 	foreach($Tab as $fkuser){
+		print '<li class="utilisateur" rel="'.$fkuser.'">';
+		
 		afficherSalarie($ATMdb,$fkuser);
 		//afficherSalarieDessous($ATMdb,$fkuser,1);
 		afficherGroupeSousValideur($ATMdb,$fkuser,$fkusergroup,1);
