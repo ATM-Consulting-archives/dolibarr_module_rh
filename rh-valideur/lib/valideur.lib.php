@@ -16,7 +16,7 @@ function send_mail($db, $object, $user, $langs, $statut)
 	// On récupère les informations de l'utilisateur
 	
 	$sql = "SELECT name,firstname,email FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$object->fk_user;
-	print $sql;
+	//print $sql;
 	$resql_user=$db->query($sql);
 	if ($resql_user){
         $obj_user = $db->fetch_object($resql_user);
