@@ -1,6 +1,7 @@
 <?php
 
 function ressourcePrepareHead(&$obj, $type='type-ressource',&$param=null) {
+	global $user;
 	
 	switch ($type) {
 		case 'type-ressource':
@@ -19,6 +20,7 @@ function ressourcePrepareHead(&$obj, $type='type-ressource',&$param=null) {
 					,array(DOL_URL_ROOT_ALT.'/ressource/evenement.php?id='.$obj->getId(), 'Evénement','evenement')
 					,array(DOL_URL_ROOT_ALT.'/ressource/calendrierRessource.php?id='.$obj->getId(), 'Calendrier','calendrier')
 					,array(DOL_URL_ROOT_ALT.'/ressource/document.php?id='.$obj->getId(), 'Fichiers joints','document')
+					,$user->rights->ressource->ressource->viewFilesRestricted?array(DOL_URL_ROOT_ALT.'/ressource/documentConfidentiel.php?id='.$obj->getId(), 'Fichiers confidentiels','documentConfidentiel'):''
 					,array(DOL_URL_ROOT_ALT.'/ressource/contratRessource.php?id='.$obj->getId(), 'Contrats','contrats')
 				);
 			

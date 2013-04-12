@@ -229,6 +229,18 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][1] = 'Consulter les fichiers';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'download';
+		$r++;
+		$this->rights[$r][0] = 7012;
+		$this->rights[$r][1] = 'Importer des fichiers confidentiels';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'uploadFilesRestricted';
+		$r++;
+		$this->rights[$r][0] = 7013;
+		$this->rights[$r][1] = 'Consulter les fichiers confidentiels';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'viewFilesRestricted';
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
