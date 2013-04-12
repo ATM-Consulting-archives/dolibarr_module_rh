@@ -109,7 +109,7 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 				<ul id="ul-niveau-<?=$niveau ?>">
 				<?
 				
-				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where fk_user=".$idBoss." AND entity=".$conf->entity;
+				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where fk_user=".$idBoss." AND entity=IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity;
 				
 				$ATMdb->Execute($sqlReq);
 				
