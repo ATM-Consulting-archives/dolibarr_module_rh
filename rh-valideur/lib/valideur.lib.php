@@ -108,6 +108,8 @@ function send_mail($db, $object, $user, $langs, $statut)
 	// Send mail
 	$mail = new TReponseMail($from,$sendto,$subject,$message);
 	
+	 dol_syslog("Valideur::sendmail content=$from,$sendto,$subject,$message", LOG_DEBUG);
+	
     (int)$result = $mail->send();
 	
 	return 1;
