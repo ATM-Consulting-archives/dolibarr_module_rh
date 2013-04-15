@@ -209,7 +209,7 @@ class ActionsValideur
 			  
 	        if($action=='update') {
 		        $fk_user_delegation = GETPOST('fk_user_delegation','int');
-	          	$sql = "UPDATE llx_user SET fk_user_delegation=$fk_user_delegation WHERE rowid=".$idUsercourant;	
+	          	$sql = "UPDATE llx_user SET fk_user_delegation=".$fk_user_delegation." WHERE rowid=".$idUsercourant;	
 				$result = $db->query($sql);
 			}else{ //on récupère le numéro du délégateur
 				$sql = "SELECT fk_user_delegation FROM llx_user WHERE rowid=".$idUsercourant;	
