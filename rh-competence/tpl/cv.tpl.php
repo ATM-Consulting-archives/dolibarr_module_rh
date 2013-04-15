@@ -1,6 +1,6 @@
 [onshow;block=begin;when [view.mode]=='view'] 
 <div class="fiche">
-    <div class="tabBar">
+
 		<div>				
 			<h2 style="color: #2AA8B9;">Description de l'expérience Professionnelle</h2>
 
@@ -29,7 +29,7 @@
 				[onshow;block=end]	
 			</table>
 		</div>
-	</div>
+
 </div>
 [onshow;block=end] 
 

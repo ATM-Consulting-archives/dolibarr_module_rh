@@ -12,9 +12,9 @@
 	$langs->load('mails');
 	
 	$sql = "SELECT u.rowid, u.name,u.firstname,u.email 
-	FROM ".MAIN_DB_PREFIX."user u LEFT JOIN  llx_rh_valideur_groupe v ON (v.fk_user=u.rowid)
+	FROM ".MAIN_DB_PREFIX."user u LEFT JOIN llx_rh_valideur_groupe v ON (v.fk_user=u.rowid)
 	WHERE u.email!=''
-	";
+	AND v.type='NDFP'";
 	$ATMdb->Execute($sql);
 	$TValideur = array();
 	while($ATMdb->Get_line()) {
