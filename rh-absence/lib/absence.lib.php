@@ -208,3 +208,13 @@ function mailConges(&$absence){
 	
 }
 
+
+
+function supprimerAccent($chaine){
+	$chaine = strtr($chaine,"ÀÂÄÇÈÉÊËÌÎÏÑÒÔÕÖÙÛÜ","AAACEEEEIIINOOOOUUU");
+	$chaine = strtr($chaine,"àáâãäåçèéêëìíîïñòóôõöùúûüýÿ","aaaaaaceeeeiiiinooooouuuuyy");
+	return $chaine;
+}
+
+
+

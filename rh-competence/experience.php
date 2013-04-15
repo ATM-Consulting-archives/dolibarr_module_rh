@@ -193,7 +193,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 		FROM   ".MAIN_DB_PREFIX."rh_ligne_cv
 		WHERE fk_user=".$user->id." AND entity=".$conf->entity;
 
-	$TOrder = array('ID'=>'DESC');
+	$TOrder = array('date_fin'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -242,7 +242,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 	));
 
 		?>
-		<a class="butAction" href="?id=<?=$lignecv->getId()?>&action=newlignecv&fk_user=<?=$fuser->id?>">Ajouter une expérience</a><div style="clear:both"></div>
+		<a class="butAction" href="?id=0&action=newlignecv&fk_user=<?=$fuser->id?>">Ajouter une expérience</a><div style="clear:both"></div>
 		<br/><br/><br/><br/><br/>
 		<?
 	$form->end();
@@ -392,10 +392,8 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	while($ATMdb->Get_line()) {
 			$TTagCompetence[]=array(
 				'id'=>$ATMdb->Get_field('rowid')
-				,'libelleCompetence'=>$form->texte('','libelleCompetence',$ATMdb->Get_field('libelleCompetence'), 30,100,'','','-')
-				,'niveauCompetence'=>$form->texte('','niveauCompetence',$ATMdb->Get_field('niveauCompetence'), 10,50,'','','-')
-				
-				
+				,'libelleCompetence'=>$ATMdb->Get_field('libelleCompetence')
+				,'niveauCompetence'=>$ATMdb->Get_field('niveauCompetence')
 			);
 		$k++;
 	}

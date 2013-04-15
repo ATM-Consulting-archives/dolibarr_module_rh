@@ -6,7 +6,7 @@
 	$langs->load('absence@absence');
 	
 	$ATMdb=new Tdb;
-	$feries=new TRH_Pointage;
+	$pointage=new TRH_Pointage;
 	
 	
 	if(isset($_REQUEST['action'])) {
@@ -14,58 +14,53 @@
 			case 'add':
 			case 'new':
 				//$ATMdb->db->debug=true;
-				$emploiTemps->load($ATMdb, $_REQUEST['id']);
-				$feries->set_values($_REQUEST);
-				_fiche($ATMdb, $feries,$emploiTemps, 'edit');
+				$pointage->load($ATMdb, $_REQUEST['id']);
+				$pointage->set_values($_REQUEST);
+				_fiche($ATMdb, $pointage, 'edit');
 				break;	
 			case 'edit'	:
-				$emploiTemps->load($ATMdb, $_REQUEST['id']);
-				$feries->load($ATMdb, $_REQUEST['idJour']);
-				_fiche($ATMdb, $feries,$emploiTemps,'edit');
+				$pointage->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $pointage,'edit');
 				break;
 				
 			case 'save':
-				$emploiTemps->load($ATMdb, $_REQUEST['id']);
-				$feries->load($ATMdb, $_REQUEST['idJour']);	
-				//print_r($feries);		
-				$feries->set_values($_REQUEST);
+				$pointage->load($ATMdb, $_REQUEST['id']);
+				$pointage->set_values($_REQUEST);
 				$mesg = '<div class="ok">Jour non travaillé ajouté</div>';
 				$mode = 'view';
 				
-				$feries->save($ATMdb);
-				$feries->load($ATMdb, $_REQUEST['idJour']);
-				_liste($ATMdb, $feries , $emploiTemps);
+				$pointage->save($ATMdb);
+				$pointage->load($ATMdb, $_REQUEST['id']);
+				_liste($ATMdb, $pointage);
 				break;
 			
 			case 'view':
-				$feries->load($ATMdb, $_REQUEST['idJour']);
-				$emploiTemps->load($ATMdb, $_REQUEST['id']);
+				$pointage->load($ATMdb, $_REQUEST['id']);
+				$pointage->load($ATMdb, $_REQUEST['id']);
 				
-				_fiche($ATMdb, $feries,$emploiTemps,'view');
-				
+				_fiche($ATMdb, $pointage,'view');
 				
 				break;
 			case 'delete':
 				//$ATMdb->db->debug=true;
-				$emploiTemps->load($ATMdb, $_REQUEST['id']);
-				$feries->load($ATMdb, $_REQUEST['idJour']);
-				$feries->delete($ATMdb, $_REQUEST['idJour']);
+				$pointage->load($ATMdb, $_REQUEST['id']);
+				$pointage->delete($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">Le jour a bien été supprimé</div>';
 				$mode = 'edit';
-				_liste($ATMdb, $feries , $emploiTemps);
+				_liste($ATMdb, $pointage);
 				break;
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {
-		$emploiTemps->load($ATMdb, $_REQUEST['id']);
-		_liste($ATMdb, $feries , $emploiTemps);
+		$pointage->load($ATMdb, $_REQUEST['id']);
+		_liste($ATMdb, $pointage);
 		
 				
 	}
 	else {
 		//$ATMdb->db->debug=true;
-		$emploiTemps->load($ATMdb, $_REQUEST['id']);
-		_liste($ATMdb, $feries, $emploiTemps);
+		$pointage->load($ATMdb, $_REQUEST['id']);
+		_liste($ATMdb, $pointage);
 	}
 	
 	
@@ -74,14 +69,14 @@
 	llxFooter();
 	
 	
-function _liste(&$ATMdb, $feries, $emploiTemps ) {
+function _liste(&$ATMdb, $pointage) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de vos absences');
 	
-	print dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'joursferies', 'Absence');
+	print dol_get_fiche_head(edtPrepareHead($pointage, 'emploitemps')  , 'joursferies', 'Absence');
 	//getStandartJS();	
 	
-	$r = new TSSRenderControler($feries);
+	$r = new TSSRenderControler($pointage);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
 			  date_jourOff, moment as 'Période',  commentaire as 'Commentaire', '' as 'Supprimer'
 		FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
@@ -142,19 +137,18 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 	llxFooter();
 }	
 	
-function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
-	global $db,$user,$idUserCompt, $idComptEnCours;
-	llxHeader('','Emploi du temps');
+function _fiche(&$ATMdb, $pointage, $mode) {
+	global $db,$user;
+	llxHeader('','Pointage collaborateurs');
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
-	echo $form->hidden('idJour', $feries->getId());
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('id', $user->id);
 
 	
 	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/joursferies.tpl.php'
+	print $TBS->render('./tpl/pointage.tpl.php'
 		,array(
 			
 		)
