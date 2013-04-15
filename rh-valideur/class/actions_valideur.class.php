@@ -231,7 +231,7 @@ class ActionsValideur
 				      <td>
 				          	<?
 						  	if($action=='edit'){				//on affiche la liste déroulante des utilisateurs
-						      	echo $form->select_dolusers($fk_user_delegation, "fk_user_delegation", 1);
+						      	echo $form->select_dolusers($fk_user_delegation, "fk_user_delegation", 1,$idUsercourant,0,'','', empty($conf->multicompany->transverse_mode) ? $user->entity : 1 );
 						  	}else if($action=='update'||$action==''){		//on affiche le délégateur courant
 								if($fk_user_delegation==0){
 							    	print "Aucun délégué choisi";
