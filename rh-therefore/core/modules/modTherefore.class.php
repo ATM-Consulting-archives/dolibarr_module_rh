@@ -128,7 +128,7 @@ class modTherefore extends DolibarrModules
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
         $this->tabs = array(
-        	'ndfp:+getTherefor:Therefore:therefore@therefore:/therefore/index.php?categorie=72&ndfp&id=__ID__'  // To add a new tab identified by code tabname1
+        	'ndfp:+therefore:Therefore:therefore@therefore:$user->rights->therefore->therefore->read:/therefore/index.php?categorie=72&ndfp&id=__ID__'  // To add a new tab identified by code tabname1
         );
 	
         // Dictionnaries
@@ -169,7 +169,8 @@ class modTherefore extends DolibarrModules
 		$this->rights[$r][4] = 'therefore';
         $this->rights[$r][5] = 'read';
 		$r++;
-		$this->rights[$r][0] = 477101;
+		
+		$this->rights[$r][0] = 477102;
 		$this->rights[$r][1] = 'Déposer des document';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'therefore';
