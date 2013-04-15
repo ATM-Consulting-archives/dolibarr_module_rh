@@ -1,6 +1,6 @@
 
 <div class="fiche">
-    <div class="tabBar">
+
 		<div>			
 			<h2 style="color: #2AA8B9;">Description de la formation correspondant à la compétence recherchée</h2>	
 			<table class="border" style="width:100%">			
@@ -63,7 +63,7 @@
 				[onshow;block=end]	
 			</table>
 		</div>
-	</div>
+
 </div>
 
 

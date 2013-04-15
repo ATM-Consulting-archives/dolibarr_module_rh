@@ -152,12 +152,11 @@ function mailConges(&$absence){
 	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
 	$ATMdb->Execute($sql);
 	$ATMdb->Get_line();
-
+	
 	$sendto=$ATMdb->Get_field('email');
 	$name=$ATMdb->Get_field('name');
 	$firstname=$ATMdb->Get_field('firstname');
 		
-
 
 	$TBS=new TTemplateTBS();
 	if($absence->etat=='Avalider'){
