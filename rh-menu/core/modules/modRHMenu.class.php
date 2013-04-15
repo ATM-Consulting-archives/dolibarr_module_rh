@@ -211,7 +211,8 @@ class modRHMenu extends DolibarrModules
 		dolibarr_set_const($db, 'THEME_RH_LOGO', defined('THEME_LOGO') ? THEME_LOGO : DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logo.png', 'chaine', 1, 'Logo imposé par RHMenu', $conf->entity);
 		dolibarr_set_const($db, 'THEME_RH_BACKGROUND', defined('THEME_BACKGROUND') ? THEME_BACKGROUND : DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/background-galet.jpg', 'chaine', 1, 'fond imposé par RHMenu', $conf->entity);
 		dolibarr_set_const($db, 'NDFP_USE_ACCEPT_STATUS', 1, 'entier', 1, 'Mode Status en attende de validation pour NDFP+', $conf->entity);
-
+		dolibarr_set_const($db, 'NDFP_USE_ONE_DATE_PER_LINE', 1, 'entier', 1, 'Limit à une date par ligne pour NDFP+', $conf->entity);
+		
 
 
 		return $this->_init($sql, $options);
