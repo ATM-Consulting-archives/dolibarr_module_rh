@@ -10,6 +10,6 @@
 	}
 
 	define('THEREFORE_READ','http://srvtherefore/TWA/Client/TheGetDoc.aspx?CtgryNo=[categorie]&Id_Dolibarr=[id]');
-	define('THEREFORE_LOADER','\\SRVTHEREFORE\Scan\Loader');
+	define('THEREFORE_LOADER','//SRVTHEREFORE/Scan/Loader');
 	
 	
