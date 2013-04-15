@@ -5,10 +5,11 @@
 
 	if(isset($_REQUEST['ndfp'])) {
 		dol_include_once("/ndfp/lib/ndfp.lib.php");
-
+		$langs->load('ndfp@ndfp');
+		
 		$head = ndfp_prepare_head($_REQUEST['id']);
 		llxHeader('',$langs->trans('Therefore'));
-		print_fiche_titre($langs->trans("Therefore (en développement)"));
+		dol_fiche_head($head, 'therefore', $langs->trans('Ndfp'));
 	}
 
 	$url = strtr(THEREFORE_READ,array(
