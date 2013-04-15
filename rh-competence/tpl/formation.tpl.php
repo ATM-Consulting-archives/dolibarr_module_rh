@@ -1,6 +1,6 @@
 
 <div class="fiche">
-    <div class="tabBar">
+
 		<div>			
 			<h2 style="color: #2AA8B9;">Description de la formation</h2>	
 			<table class="border" style="width:100%">			
@@ -45,14 +45,15 @@
 			
 			<table class="border" style="width:40%">
 				<tr>
-					<td><b>Compétences acquises et Niveau acquis</b></td>
+					<td><b>Compétences acquises</b></td>
+					<td><b> Niveau acquis</b></td>
 				</tr>
 				
 				<tr>
-					<td>
-					[TCompetence.libelleCompetence;block=tr;strconv=no;protect=no]
-					[TCompetence.niveauCompetence;block=tr;strconv=no;protect=no]
-					</td>
+					
+					<td>[TCompetence.libelleCompetence;block=tr;strconv=no;protect=no]</td>
+					<td>[TCompetence.niveauCompetence;block=tr;strconv=no;protect=no]</td>
+					
 					[onshow;block=begin;when [view.mode]=='edit']
 					<td>
 					<a href="?id=[formation.id;strconv=no;protect=no]&idForm=[TCompetence.id;block=tr;strconv=no;protect=no]&action=deleteCompetence"><img src="./img/delete.png"></a>
@@ -91,7 +92,7 @@
 				
 				[onshow;block=end]	
 			</table>
-		</div>
+
 	</div>
 </div>
 

@@ -79,7 +79,7 @@ dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
 <?
 global $user;
 
-$orgChoisie=isset($_POST["choixAffichage"]) ? $_POST["choixAffichage"] : 'equipe';
+$orgChoisie=isset($_REQUEST["choixAffichage"]) ? $_REQUEST["choixAffichage"] : 'equipe';
 $idUserCourant=$_GET["id"];
 
 //////////////////////////////////////récupération des informations de l'utilisateur courant
@@ -109,36 +109,32 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 				<ul id="ul-niveau-<?=$niveau ?>">
 				<?
 				
-				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where fk_user=".$idBoss." AND entity=IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity;
-				
+				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where fk_user=".$idBoss." AND entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
 				$ATMdb->Execute($sqlReq);
 				
 				$Tab=array();
 				while($ATMdb->Get_line()) {
 					$user=new User($db);
-					$user->fetch($ATMdb->Get_field('rowid'));
+					$user->fetch();
 					
-					$Tab[]=$user;
+					$Tab[]=$ATMdb->Get_field('rowid');
 				}
 				
-				foreach($Tab as &$user) {
+				foreach($Tab as $userid) {
 					?>
-					<li class="utilisateur" rel="<?=$user->id ?>">
-						<a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
-						<? if(!empty($user->office_phone) || !empty($user->user_mobile)) { ?><div class="tel">Tél. : <?=$user->office_phone.' '.$user->user_mobile ?></div><? }
-						if(!empty($user->email) ) { ?><div class="mail">Email : <a href="mailto:<?=$user->email ?>"><?=$user->email ?></div><? }
-					
-					afficherSalarieDessous($ATMdb, $user->id,$niveau+1);
+					<li class="utilisateur" rel="<?=$userid ?>"><?
+					afficherSalarie($ATMdb, $userid);
+					afficherSalarieDessous($ATMdb, $userid,$niveau+1);
 					?></li><?
 				}
 				?></ul><?		
 }
 
 //Fonction qui permet d'afficher un salarié
-function afficherSalarie(&$ATMdb, $idUser, $niveau=1){
+function afficherSalarie(&$ATMdb, $idUser){
 		
 				global $user, $db, $idUserCourant, $userCourant;
-
+/*
 				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where rowid=".$idUser;
 				
 				$ATMdb->Execute($sqlReq);
@@ -152,15 +148,19 @@ function afficherSalarie(&$ATMdb, $idUser, $niveau=1){
 				}
 				
 				foreach($Tab as &$user) {
+ * */
+ 					$user=new User($db);
+					$user->fetch($idUser);
+ 
 					?>
-					<li class="utilisateur" rel="<?=$user->id ?>">
 						<a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
 						<? if(!empty($user->office_phone) || !empty($user->user_mobile)) { ?><div class="tel">Tél. : <?=$user->office_phone.' '.$user->user_mobile ?></div><? }
-						if(!empty($user->email) ) { ?><div class="mail">Email : <a href="mailto:<?=$user->email ?>"><?=$user->email ?></div><? }
+						if(!empty($user->email) ) { ?><div class="mail">Email : <a href="mailto:<?=$user->email ?>"><?=$user->email ?></a></div><? }
+						if(!empty($user->job) ) { ?><div><?=$user->job ?></div><? }
 					
 					?><?
-				}
-				?><?
+				/*}*/
+		
 }
 
 //Fonction qui permet d'afficher un salarié
@@ -168,7 +168,10 @@ function afficherGroupeSousValideur(&$ATMdb, $idUser, $fkusergroup, $niveau=1){
 		
 				global $user, $db, $idUserCourant, $userCourant;
 
-				$sqlReq=" SELECT  DISTINCT u.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as u WHERE u.fk_usergroup=".$fkusergroup." AND  u.fk_user NOT IN(SELECT v.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as v WHERE v.fk_user=".$idUser.")";
+				$sqlReq=" SELECT  DISTINCT u.fk_user 
+				FROM ".MAIN_DB_PREFIX."usergroup_user as u 
+				WHERE u.fk_usergroup=".$fkusergroup." 
+				AND  u.fk_user NOT IN(SELECT v.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as v WHERE v.fk_user=".$idUser.")";
 				
 				$ATMdb->Execute($sqlReq);
 				
@@ -200,30 +203,24 @@ function afficherGroupeSousValideur(&$ATMdb, $idUser, $fkusergroup, $niveau=1){
 function afficherGroupes(&$ATMdb){
 				global $user, $db, $idUserCourant, $userCourant;
 				//récupère les id des différents groupes de l'utilisateur
-				$sqlReq="SELECT fk_usergroup FROM `".MAIN_DB_PREFIX."usergroup_user` where fk_user=".$userCourant->id;
+				$sqlReq="SELECT g.nom
+					 FROM `".MAIN_DB_PREFIX."usergroup_user` ug LEFT JOIN ".MAIN_DB_PREFIX."usergroup g ON (g.rowid=ug.fk_usergroup)
+					WHERE ug.fk_user=".$userCourant->id;
 				$ATMdb->Execute($sqlReq);
-				$Tab=array();
 				while($ATMdb->Get_line()) {
-					//récupère les id des différents nom des  groupes de l'utilisateur
-					$ATMdb1=new Tdb;
-					$sqlReq1="SELECT nom FROM `".MAIN_DB_PREFIX."usergroup` where rowid=".$ATMdb->Get_field('fk_usergroup');
-					$ATMdb1->Execute($sqlReq1);
-					
-					$Tab1=array();
-					
-					while($ATMdb1->Get_line()) {
 						//affichage des groupes concernant l'utilisateur 
-						print '<option value="'.$ATMdb1->Get_field('nom').'">'.$ATMdb1->Get_field('nom').'</option>';
-					}			
+						print '<option value="'.$ATMdb->Get_field('nom').'">'.$ATMdb->Get_field('nom').'</option>';
 				}
 }
 
 function findFkUserGroup(&$ATMdb, $nomGroupe){
-	$sqlFkGroupe='SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v, ".MAIN_DB_PREFIX."usergroup as u WHERE u.nom="'.$nomGroupe.'" AND v.fk_usergroup=u.rowid';
+	$sqlFkGroupe="SELECT fk_usergroup 
+	FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v, ".MAIN_DB_PREFIX."usergroup as u 
+	WHERE u.nom='".addslashes($nomGroupe)."' AND v.fk_usergroup=u.rowid LIMIT 1";
 	$ATMdb->Execute($sqlFkGroupe);
-	while($ATMdb->Get_line()) {
-			return $ATMdb->Get_field('fk_usergroup');
-	}
+	$ATMdb->Get_line();
+	return $ATMdb->Get_field('fk_usergroup');
+	
 }
 
 function findIdValideur(&$ATMdb, $fkusergroup){
@@ -239,6 +236,8 @@ function findIdValideur(&$ATMdb, $fkusergroup){
 				<ul id="ul-niveau-1">
 	<?
 	foreach($Tab as $fkuser){
+		print '<li class="utilisateur" rel="'.$fkuser.'">';
+		
 		afficherSalarie($ATMdb,$fkuser);
 		//afficherSalarieDessous($ATMdb,$fkuser,1);
 		afficherGroupeSousValideur($ATMdb,$fkuser,$fkusergroup,1);
@@ -253,13 +252,13 @@ function afficherUtilisateurGroupe(&$ATMdb, $nomGroupe){
 			$fkusergroup=findFkUserGroup($ATMdb, $nomGroupe);	
 			$idValideurGroupe=findIdValideur($ATMdb,$fkusergroup);
 
-			//afficherSalarieDessous($ATMdb,$idValideurGroupe, 1);
+			afficherSalarieDessous($ATMdb,$idValideurGroupe, 1);
 }
 
 ?>
 
 
-<form id="form" action="afficher.php?id=<?= $userCourant->id; ?>" method="post">
+<form id="form" action="afficher.php?id=<?= $userCourant->id; ?>" method="get">
 	<select id="choixAffichage" name="choixAffichage">
 		<option value="entreprise">Afficher la hiérarchie de l'entreprise</option>
 		<option value="equipe">Afficher son équipe</option>
@@ -267,6 +266,7 @@ function afficherUtilisateurGroupe(&$ATMdb, $nomGroupe){
 			afficherGroupes($ATMdb);
 		?>
 	</select> 
+	<input  name="id" value="<?=$_REQUEST['id'] ?>" type="hidden" />
 	<input id="validSelect" type="submit" value="Valider" class="button" />
 </form>
 
@@ -356,7 +356,7 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 		<?php 	
 			$ATMdb=new Tdb;
 			//on affiche les utilisateurs du groupe en cours
-			afficherUtilisateurGroupe($ATMdb,$orgChoisie);
+		 	afficherUtilisateurGroupe($ATMdb,$orgChoisie);
 			$ATMdb->close();
 		?>
 			</li>

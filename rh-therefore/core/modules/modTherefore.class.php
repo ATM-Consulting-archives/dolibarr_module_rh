@@ -32,7 +32,7 @@ include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 /**
  *  Description and activation class for module MyModule
  */
-class modRHMenu extends DolibarrModules
+class modTherefore extends DolibarrModules
 {
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
@@ -41,15 +41,15 @@ class modRHMenu extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-        global $langs,$conf;
+        global $langs,$conf, $user;
 
         $this->db = $db;
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 7700;
+		$this->numero = 477100;
 		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'rhmenu';
+		$this->rights_class = 'therefore';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
@@ -57,7 +57,7 @@ class modRHMenu extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-		$this->description = "Menu personnalisé RH";
+		$this->description = "GED Therefore";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -67,7 +67,7 @@ class modRHMenu extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='absence@rh-absence';
+		$this->picto='therefore@therefore';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /mymodule/core/xxxxx) (0=disable, 1=enable)
@@ -84,24 +84,21 @@ class modRHMenu extends DolibarrModules
 		//							'hooks' => array('hookcontext1','hookcontext2')  // Set here all hooks context managed by module
 		//							'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE')) // Set here all workflow context managed by module
 		//                        );
-		$this->module_parts = array(
-			'menus'=>DOL_DOCUMENT_ROOT_ALT.'rhmenu/core/menus/'
-			,'hooks' => array('productcard')
-		);
+		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
-		$this->config_page_url = array();
+		//$this->config_page_url = array("setuppage.php@absence");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
-		$this->langfiles = array("menu@rh-menu");
+		$this->langfiles = array("therefore@therefore");
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -130,12 +127,12 @@ class modRHMenu extends DolibarrModules
 		// 'group'            to add a tab in group view
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
-        $this->tabs = array();/*'thirdparty:+creerTypeRessource:CréerTypeRessource:ressource@ressource:/ressource/index.php',  // To add a new tab identified by code tabname1
-                             'thirdparty:+nouvelleRessource:NouvelleRessource:ressource@ressource:/ressource/index.php',
-                                      );*/
-
+        $this->tabs = array(
+        	'ndfp:+therefore:Therefore:therefore@therefore:$user->rights->therefore->therefore->read:/therefore/index.php?categorie=72&ndfp&id=__ID__'  // To add a new tab identified by code tabname1
+        );
+	
         // Dictionnaries
-        if (!isset($conf->menurh->enabled)) @$conf->menurh->enabled=0;
+       // if (!isset($conf->ressource->enabled)) @$conf->ressource->enabled=0;
 		$this->dictionnaries=array();
         /* Example:
         if (! isset($conf->mymodule->enabled)) $conf->mymodule->enabled=0;	// This is to avoid warnings
@@ -165,17 +162,28 @@ class modRHMenu extends DolibarrModules
 		$r++;
 		*/
 
-		// Permissions
-		$this->rights = array();		// Permission array used by this module
 		
+		$this->rights[$r][0] = 477101;
+		$this->rights[$r][1] = 'Afficher des document';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'therefore';
+        $this->rights[$r][5] = 'read';
+		$r++;
+		
+		$this->rights[$r][0] = 477102;
+		$this->rights[$r][1] = 'Déposer des document';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'therefore';
+        $this->rights[$r][5] = 'write';
+		$r++;
+		
+
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
 		$r=0;
 
-		// Add here entries to declare new menus
-		//
-		
+
 		// Exports
 		$r=1;
 
@@ -203,17 +211,11 @@ class modRHMenu extends DolibarrModules
 	 */
 	function init($options='')
 	{
-		global $db,$conf;
-		
 		$sql = array();
-
-		dolibarr_set_const($db, 'MAIN_APPLICATION_TITLE', 'SimpleRH', 'chaine', 1, 'Nom imposé par RHMenu', $conf->entity);
-		dolibarr_set_const($db, 'THEME_RH_LOGO', defined('THEME_LOGO') ? THEME_LOGO : DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logo.png', 'chaine', 1, 'Logo imposé par RHMenu', $conf->entity);
-		dolibarr_set_const($db, 'THEME_RH_BACKGROUND', defined('THEME_BACKGROUND') ? THEME_BACKGROUND : DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/background-galet.jpg', 'chaine', 1, 'fond imposé par RHMenu', $conf->entity);
-		dolibarr_set_const($db, 'NDFP_USE_ACCEPT_STATUS', 1, 'entier', 1, 'Mode Status en attende de validation pour NDFP+', $conf->entity);
-		dolibarr_set_const($db, 'NDFP_USE_ONE_DATE_PER_LINE', 1, 'entier', 1, 'Limit à une date par ligne pour NDFP+', $conf->entity);
 		
+		$result=$this->load_tables();
 
+		
 
 		return $this->_init($sql, $options);
 	}
@@ -233,8 +235,10 @@ class modRHMenu extends DolibarrModules
 		return $this->_remove($sql, $options);
 	}
 
+	function load_tables()
+	{
+		return $this->_load_tables('/therefore/sql/');
+	}
 
 
 }
-
-?>

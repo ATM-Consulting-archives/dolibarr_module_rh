@@ -1,0 +1,1 @@
+smbclient -N //SRVTHEREFORE/Scan/Loader/ -Wmshome -c "put monfichier"
