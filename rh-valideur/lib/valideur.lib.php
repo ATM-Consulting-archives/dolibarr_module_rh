@@ -15,34 +15,18 @@ function send_mail($db, $object, $user, $langs, $statut)
 {
 	// On récupère les informations de l'utilisateur
 	
-	$sql = "SELECT";
-	$sql.= " u.name,";
-	$sql.= " u.firstname,";
-	$sql.= " u.email";
-	
-    $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE u.rowid = ".$object->fk_user;
-	
+	$sql = "SELECT name,firstname,email FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$object->fk_user;
+	//print $sql;
 	$resql_user=$db->query($sql);
-	
 	if ($resql_user){
-        $num_user = $db->num_rows($resql_user);
-        $m = 0;
-        if ($num_user){
-            while ($m < $num_user){
-                $obj_user = $db->fetch_object($resql_user);
-
-                if ($obj_user){
-					$name=$obj_user->name;
-					$firstname=$obj_user->firstname;
-					$email=$obj_user->email;
-				}
-                $m++;
-            }
-        }
-    }else{
-        $error++;
-        dol_print_error($db);
+        $obj_user = $db->fetch_object($resql_user);
+		$name=$obj_user->name;
+		$firstname=$obj_user->firstname;
+		$email=$obj_user->email;
+    }
+    else{
+    	print "Envois email impossible -- user not found";
+        return 0;
     }
 	
 	$langs->load('mails');
@@ -108,7 +92,9 @@ function send_mail($db, $object, $user, $langs, $statut)
 	// Send mail
 	$mail = new TReponseMail($from,$sendto,$subject,$message);
 	
-    (int)$result = $mail->send();
+	 dol_syslog("Valideur::sendmail content=$from,$sendto,$subject,$message", LOG_DEBUG);
 	
+    (int)$result = $mail->send(true, 'utf-8');
+	//exit("SENDF MAIL $from,$sendto,$subject,$message");
 	return 1;
 }
