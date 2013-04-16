@@ -20,6 +20,9 @@
 	$q=new TRH_competence_cv;
 	$q->init_db_by_vars($ATMdb);
 	
+	$r=new TRH_remuneration;
+	$r->init_db_by_vars($ATMdb);
+	
 	
 	
 	
