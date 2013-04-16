@@ -251,7 +251,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 	////////////AFFICHAGE DES  FORMATIONS
 	$r = new TSSRenderControler($formation);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
-			  date_debut, date_fin, libelleFormation,  commentaireFormation,lieuFormation, date_formationEcheance, fk_user, '' as 'Supprimer'
+			  date_debut, date_fin, libelleFormation,  commentaireFormation,lieuFormation, date_formationEcheance, CONCAT(coutFormation,' €') as 'Coût pour l\'entreprise', fk_user, '' as 'Supprimer'
 		FROM   ".MAIN_DB_PREFIX."rh_formation_cv
 		WHERE fk_user=".$user->id." AND entity=".$conf->entity;
 
@@ -413,11 +413,10 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				,'date_debut'=>$form->calendrier('', 'date_debut', $formation->get_date('date_debut'), 10)
 				,'date_fin'=>$form->calendrier('', 'date_fin', $formation->get_date('date_fin'), 10)
 				,'libelleFormation'=>$form->texte('','libelleFormation',$formation->libelleFormation, 30,100,'','','-')
+				,'coutFormation'=>$form->texte('','coutFormation',$formation->coutFormation, 30,100,'','','-')
 				,'commentaireFormation'=>$form->texte('','commentaireFormation',$formation->commentaireFormation, 50,300,'style="width:400px;height:80px;"','','-')
 				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 30,100,'','','-')
 				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->get_date('date_formationEcheance'), 10)
-				
-				
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id
