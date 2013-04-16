@@ -92,7 +92,7 @@
 			[onshow;block=begin;when [fk_ressource.fk_rh_ressource]!='aucune ressource']
 				<h2>Ressource associée </h2>
 				<div>
-					Cette ressource est associée à [fk_ressource.fk_rh_ressource].
+					Cette ressource est associée à <a href='ressource.php?id=[fk_ressource.id]'>[fk_ressource.fk_rh_ressource]</a>.
 				</div>
 			[onshow;block=end]
 		[onshow;block=end]

@@ -30,7 +30,11 @@ $nomFichier = "./fichierImports/fichier facture area.CSV";
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 $TRessource = chargeVoiture($ATMdb);
+$TEmprunts = chargeEmprunts($ATMdb);
+print_r($TEmprunts);
+$TAssocies = chargeAssocies($ATMdb);
 
+echo '<br>';
 //print_r($TRessource);
 
 //début du parsing
@@ -38,57 +42,61 @@ $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle, 0,'\r')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=1 ){
-			$infos = explode(';', $data[0]);
-			
-			$temp = new TRH_Evenement;
-			$temp->load_liste($ATMdb);
-			$temp->load_liste_type($ATMdb, $temp);
-			if (strpos((string) $infos[10], 'Trajet') === FALSE ){
-				echo 'Ligne sans informations à traiter.<br>';
+		$infos = explode(';', $data[0]);
+		
+		$temp = new TRH_Evenement;
+		$temp->load_liste($ATMdb);
+		$temp->load_liste_type($ATMdb, $temp);
+		if (strpos((string) $infos[10], 'Trajet') !== FALSE ){
+			if (! array_key_exists ( $infos[6] , $TRessource )){
+				echo 'Pas de carte correspondante : '.$infos[6].'<br>';
 			}
 			else {
-				if (! array_key_exists ( $infos[6] , $TRessource )){
-					echo 'Pas de carte correspondante : '.$infos[6].'<br>';
-				}
-				else {
-					//print_r($infos);
-					$temp->fk_rh_ressource = $TRessource[$infos[6]];
-					$temp->type = 'trajet';
-
-					//$temp->fk_user = $TUser[strtolower($infos[12])];
-					$temp->set_date('date_debut', $infos[11]);
-					$temp->set_date('date_fin', $infos[16]);
-					$temp->coutEntrepriseHT = strtr($infos[22], ',','.');
-					$temp->coutTTC = strtr($infos[24], ',','.');
-					$temp->coutEntrepriseTTC = strtr($infos[24], ',','.');
-					
-					$ttva = array_keys($temp->TTVA , floatval(strtr($infos[21], ',','.')));
-					$temp->TVA = $ttva[0];
-					
-					$temp->numFacture = $infos[4];
-					$temp->compteFacture = $infos[13];
-					
-					$temp->motif = htmlentities('Trajet de '.strtolower($infos[14]).' à '.strtolower($infos[19]), ENT_COMPAT , 'UTF-8');
-					
-					if ($infos[15]=='WE'){
-						$temp->commentaire = 'Utilisation de la carte durant un WE !';	
+				//print_r($infos);
+				$temp->fk_rh_ressource = $TRessource[$infos[6]];
+				$temp->type = 'trajet';
+				
+				if ($infos[11]!= '')
+					{$temp->set_date('date_debut', $infos[11]);}
+				else {$temp->set_date('date_debut', $infos[16]);}
+				$temp->set_date('date_fin', $infos[16]);
+				$temp->coutEntrepriseHT = strtr($infos[22], ',','.');
+				$temp->coutTTC = strtr($infos[24], ',','.');
+				$temp->coutEntrepriseTTC = strtr($infos[24], ',','.');
+				
+				if (!empty($TEmprunts)){
+					if ($TAssocies[$temp->fk_rh_ressource] != 0 ){
+						$temp->fk_user = getUser($TEmprunts, $TAssocies[$temp->fk_rh_ressource], $temp->date_fin);
 					}
 					else {
-						$temp->commentaire = '';	
+						$temp->fk_user = getUser($TEmprunts, $temp->fk_rh_ressource, $temp->date_debut);
 					}
-					
-					
-					$temp->save($ATMdb);
-					//echo ' : Ajoutee: sur la carte '.$infos[9];
 				}
+				if ($temp->fk_user==0){
+					echo 'La carte '.$infos[6].' n\'est pas attribuée sur la période utilisé !<br>';
+				}
+				$ttva = array_keys($temp->TTVA , floatval(strtr($infos[21], ',','.')));
+				$temp->TVA = $ttva[0];
+				$temp->numFacture = $infos[4];
+				$temp->compteFacture = $infos[13];
+				$temp->motif = htmlentities('Trajet de '.strtolower($infos[14]).' à '.strtolower($infos[19]), ENT_COMPAT , 'UTF-8');
+				
+				if ($infos[15]=='WE'){
+					$temp->commentaire = 'Utilisation de la carte durant un WE !';
+					//TODO un envoi de mail ici ?
+				}
+				else {
+					$temp->commentaire = '';	
+				}
+				
+				
+				$temp->save($ATMdb);
 			}
+			
 		}
 		
-		//echo ;
 		$numLigne++;
 		
-		//print_r(explode('\n', $data));
 	}
 
 	//Fin du code PHP : Afficher le temps d'éxecution
@@ -98,6 +106,52 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	
 }
 
+function chargeAssocies(&$ATMdb){
+	global $conf;
+	$sqlReq="SELECT rowid, fk_rh_ressource 
+	FROM ".MAIN_DB_PREFIX."rh_ressource 
+	WHERE entity=".$conf->entity;
+	$TAssoc = array();
+	$ATMdb->Execute($sqlReq);
+	while($ATMdb->Get_line()) {
+		$TAssoc[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('fk_rh_ressource');
+	}
+	return $TAssoc;
+	
+	
+}
+
+function getUser(&$listeEmprunts , $id, $jour){
+	if (empty($listeEmprunts[$id])){return 0;}
+	foreach ($listeEmprunts[$id] as $k => $value) {
+		if ( ($value['debut'] <= date("Y-m-d",$jour))  
+			&& ($value['fin'] >= date("Y-m-d",$jour)) ){
+				return $value['fk_user'];
+		}
+	}
+	return 0;
+}
+
+function chargeEmprunts(&$ATMdb){
+	global $conf;
+	$sqlReq="SELECT DISTINCT e.date_debut, e.date_fin , e.fk_user, e.fk_rh_ressource, firstname, name 
+	FROM ".MAIN_DB_PREFIX."rh_evenement as e  
+	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user=u.rowid) 
+	WHERE e.type='emprunt'
+	AND e.entity=".$conf->entity."
+	ORDER BY date_debut";
+	$TUsers = array();
+	$ATMdb->Execute($sqlReq);
+	while($ATMdb->Get_line()) {
+		$TUsers[$ATMdb->Get_field('fk_rh_ressource')][] = array(
+			'debut'=>$ATMdb->Get_field('date_debut')
+			,'fin'=>$ATMdb->Get_field('date_fin')
+			,'fk_user'=>$ATMdb->Get_field('fk_user')
+			,'user'=>$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name')
+		);
+	}
+	return $TUsers;
+}
 
 function chargeVoiture(&$ATMdb){
 	global $conf;
