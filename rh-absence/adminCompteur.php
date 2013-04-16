@@ -22,7 +22,7 @@
 				break;
 				
 			case 'save':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				$compteur->set_values($_REQUEST);
 				$compteur->save($ATMdb);

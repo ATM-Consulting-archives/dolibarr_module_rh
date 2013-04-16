@@ -25,8 +25,7 @@
 				break;
 				
 			case 'save':
-				$ATMdb->db->debug=true;
-
+				//$ATMdb->db->debug=true;
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				$compteur->set_values($_REQUEST);
 				$compteur->save($ATMdb);
@@ -63,7 +62,7 @@
 		
 	}
 	else {
-		$ATMdb->db->debug=true;
+		//$ATMdb->db->debug=true;
 		_liste($ATMdb, $compteur);
 	}
 
@@ -279,8 +278,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 			
 			,'userCourant'=>array(
 				'id'=>$userCourant->id
-				,'lastname'=>$userCourant->lastname
-				,'firstname'=>$userCourant->firstname
+				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
+				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
 				,'modifierCompteur'=>$user->rights->absence->myactions->modifierCompteur
 			)
 			

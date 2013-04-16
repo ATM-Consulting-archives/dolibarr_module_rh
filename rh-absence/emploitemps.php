@@ -142,8 +142,8 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 			,'horaires'=>$THoraire
 			,'userCourant'=>array(
 				'id'=>$userCourant->id
-				,'lastname'=>$userCourant->lastname
-				,'firstname'=>$userCourant->firstname
+				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
+				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
 			)
 			,'view'=>array(
 				'mode'=>$mode
