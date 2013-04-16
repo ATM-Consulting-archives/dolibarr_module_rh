@@ -16,7 +16,7 @@
 
 //VOITURE
 	$tempType = new TRH_Ressource_type;
-	$tempType->chargement('Voiture', 'voiture', 1, '', '');
+	$tempType->chargement('Voiture', 'voiture', 1, 'Changement de pneus', 'changementdepneus');
 	$tempType->save($ATMdb);
 	
 	$tempField = new TRH_Ressource_field;
