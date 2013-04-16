@@ -53,7 +53,17 @@
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="ok">Demande d absence acceptée</div>';
+				$mesg = '<div class="ok">Demande d\'absence acceptée</div>';
+				_fiche($ATMdb, $absence,'view');
+				break;
+				
+			case 'envoyerpaie':
+				$absence->load($ATMdb, $_REQUEST['id']);
+				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` SET etat='Enregistree', libelleEtat='Enregistrée dans la paie' where fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
+				$ATMdb->Execute($sqlEtat);
+				$absence->load($ATMdb, $_REQUEST['id']);
+				mailConges($absence);
+				$mesg = '<div class="ok">Demande d\'absence enregistrée dans la paie</div>';
 				_fiche($ATMdb, $absence,'view');
 				break;
 				
@@ -65,7 +75,7 @@
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="error">Demande d absence refusée</div>';
+				$mesg = '<div class="error">Demande d\'absence refusée</div>';
 				_fiche($ATMdb, $absence,'view');
 				break;
 		}
@@ -92,9 +102,9 @@ function _liste(&$ATMdb, &$absence) {
 	
 	//LISTE D'ABSENCES DU COLLABORATEUR
 	$r = new TSSRenderControler($absence);
-	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , DATE(a.date_fin) as 'Date Fin', 
-			  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  a.fk_user, CONCAT(u.firstname,' ',u.name) as 'Utilisateur' ,
-			   a.libelleEtat as 'Statut demande', '' as 'Supprimer'
+	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
+			  a.libelle as 'Type absence',a.fk_user,  a.fk_user, CONCAT(u.firstname,' ',u.name) as 'Utilisateur' ,
+			   a.libelleEtat as 'Statut demande'
 		FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 		WHERE a.fk_user=".$user->id." AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
 		
@@ -113,11 +123,16 @@ function _liste(&$ATMdb, &$absence) {
 		)
 		,'link'=>array(
 			'Type absence'=>'<a href="?id=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
-		,'translate'=>array('Statut demande'=>array('Refusée'=>'<b style="color:#A72947">Refusée</b>','En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 'Acceptée'=>'<b style="color:#30B300">Acceptée</b>'))
-		,'hide'=>array('DateCre')
-		,'type'=>array('date_debut'=>'date')
+		,'translate'=>array('Statut demande'=>array(
+			'Refusée'=>'<b style="color:#A72947">Refusée</b>',
+			'En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 
+			'Enregistrée dans la paie'=>'<b style="color:#9A69E3">	Acceptée et Enregistrée dans la paie</b>' , 
+			'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
+			
+		)
+		,'hide'=>array('DateCre', 'fk_user')
+		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
 			'titre'=>'Liste de vos absences'
 			,'image'=>img_picto('','title.png', '', 0)
@@ -132,6 +147,8 @@ function _liste(&$ATMdb, &$absence) {
 		)
 		,'title'=>array(
 			'date_debut'=>'Date début'
+			,'date_fin'=>'Date fin'
+			
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
@@ -140,12 +157,13 @@ function _liste(&$ATMdb, &$absence) {
 		,'orderBy'=>$TOrder
 		
 	));
-	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new">Nouvelle demande</a><div style="clear:both"></div><?
+	?><br/><a class="butAction" href="?id=<?=$absence->getId()?>&action=new">Nouvelle demande</a><div style="clear:both"></div><br/><?
 	$form->end();
 	
 	
  
  	//LISTE USERS À VALIDER
+ 	
 	$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
 			WHERE v.fk_user=".$user->id." 
 			AND v.type='Conges'
@@ -166,9 +184,9 @@ function _liste(&$ATMdb, &$absence) {
 	}else{
 		//LISTE DES ABSENCES À VALIDER
 		$r = new TSSRenderControler($absence);
-		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',DATE(a.date_debut) as 'date_debut', DATE(a.date_fin) as 'Date Fin', 
-				  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
-				  a.libelleEtat as 'Statut demande', '' as 'Supprimer'
+		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
+				  a.libelle as 'Type absence',a.fk_user,  CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
+				  a.libelleEtat as 'Statut demande'
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
 		
@@ -187,9 +205,14 @@ function _liste(&$ATMdb, &$absence) {
 			,'link'=>array(
 				'Type absence'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			)
-			,'translate'=>array('Statut demande'=>array('Refusée'=>'<b style="color:#A72947">Refusée</b>','En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 'Acceptée'=>'<b style="color:#30B300">Acceptée</b>'))
-			,'hide'=>array('DateCre')
-			,'type'=>array('date_debut'=>'date')
+			,'translate'=>array('Statut demande'=>array(
+				'Refusée'=>'<b style="color:#A72947">Refusée</b>',
+				'En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 
+				'Enregistrée dans la paie'=>'<b style="color:#9A69E3">	Acceptée et Enregistrée dans la paie</b>' , 
+				'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
+			)			
+			,'hide'=>array('DateCre','fk_user')
+			,'type'=>array('date_debut'=>'date','date_fin'=>'date')
 			,'liste'=>array(
 				'titre'=>'Liste des absences à valider'
 				,'image'=>img_picto('','title.png', '', 0)
@@ -204,11 +227,10 @@ function _liste(&$ATMdb, &$absence) {
 			)
 			,'title'=>array(
 				'date_debut'=>'Date début'
-			)
-			,'search'=>array(
-				'date_debut'=>array('recherche'=>'calendar')
+				,'date_fin'=>'Date fin'
 				
 			)
+			
 			,'orderBy'=>$TOrder
 			
 		));
@@ -356,9 +378,10 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			)	
 			,'userCourant'=>array(
 				'id'=>$userCourant->id
-				,'lastname'=>$userCourant->lastname
-				,'firstname'=>$userCourant->firstname
+				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
+				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
 				,'valideurConges'=>$user->rights->absence->myactions->valideurConges&&$estValideur
+				,'enregistrerPaieAbsences'=>$user->rights->absence->myactions->enregistrerPaieAbsences&&$estValideur
 				
 			)
 			,'view'=>array(
