@@ -7,6 +7,9 @@
 	
 	require('../config.php');
 	require('../class/valideur.class.php');
+	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+	
+	global $db;
 
 	$ATMdb=new Tdb;
 	$ATMdb->db->debug=true;
@@ -16,3 +19,7 @@
 	
 	
 	$ATMdb->Execute("ALTER TABLE `llx_user` ADD code_analytique INT DEFAULT 0");
+	
+	$extrafields = new ExtraFields($db);
+
+	$extrafields->addExtraField ('CODE_ANA', 'Code analytique', 'int', 0, 10, 'user', 0, 0);
