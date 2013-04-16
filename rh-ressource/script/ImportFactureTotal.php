@@ -6,9 +6,9 @@
  * et une évenement de type facture
  */
  
-require('../config.php');
-require('../class/evenement.class.php');
-require('../class/ressource.class.php');
+//require('./config.php');
+//require('./class/evenement.class.php');
+//require('./class/ressource.class.php');
 
 global $conf;
 
@@ -23,7 +23,7 @@ while($ATMdb->Get_line()) {
 
 		
 $idVoiture = getIdTypeVoiture($ATMdb);
-$nomFichier = "./fichierImports/fichier facture total.csv";
+if (empty($nomFichier)){$nomFichier = "./fichierImports/fichier facture total.csv";}
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 $TRessource = chargeVoiture($ATMdb);
@@ -34,7 +34,7 @@ $TRessource = chargeVoiture($ATMdb);
 $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle, 0,'\r')) != false){
-		echo 'Traitement de la ligne '.$numLigne.'...';
+		//echo 'Traitement de la ligne '.$numLigne.'...';
 		if ($numLigne >=1 ){
 			$infos = explode(';', $data[0]);
 			
@@ -45,7 +45,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$temp->load_liste($ATMdb);
 			$temp->load_liste_type($ATMdb, $temp);
 			if (! array_key_exists ( $infos[9] , $TRessource )){
-				echo 'pas de carte correspondante : '.$infos[9];
+				echo 'Pas de carte correspondante : '.$infos[9].'<br>';
 			}
 			else {
 				$temp->fk_rh_ressource = $TRessource[$infos[9]];
@@ -76,12 +76,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$temp->commentaire = $infos[30];	
 				}
 				
-				$temp->save($ATMdb);echo ' : Ajoutee: sur la carte '.$infos[9];
+				$temp->save($ATMdb);
 			}
 			
 		}
-		
-		echo '<br>';
 		$numLigne++;
 		
 		//print_r(explode('\n', $data));

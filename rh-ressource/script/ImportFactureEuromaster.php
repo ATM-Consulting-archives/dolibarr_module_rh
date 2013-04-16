@@ -6,9 +6,9 @@
  * et une évenement de type facture
  */
  
-require('../config.php');
-require('../class/evenement.class.php');
-require('../class/ressource.class.php');
+//require('../config.php');
+//require('./class/evenement.class.php');
+//require('./class/ressource.class.php');
 
 global $conf;
 
@@ -25,14 +25,8 @@ while($ATMdb->Get_line()) {
 }
 $idVoiture = getIdTypeVoiture($ATMdb);
 $TRessource = chargeVoiture($ATMdb);
-print_r($TUser);
 if (empty($nomFichier)){$nomFichier = "./fichierImports/fichier facture euromaster.csv";}
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
-
-
-
-echo '<br>';
-//print_r($TRessource);
 
 //début du parsing
 $numLigne = 0;
@@ -42,8 +36,6 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		$infos = explode(';', $data[0]);
 		
 		$temp = new TRH_Evenement;
-		//$temp->load_liste($ATMdb);
-		//$temp->load_liste_type($ATMdb, $temp);
 		
 		if (! array_key_exists ( $infos[0] , $TRessource )){
 			echo 'Pas de voiture correspondante : '.$infos[0].'<br>';
@@ -77,9 +69,6 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			$temp->save($ATMdb);
 		}
-			
-		echo '<br><br>';
-		
 		$numLigne++;
 		
 	}

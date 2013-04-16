@@ -1,6 +1,7 @@
 <?php
 	require('config.php');
 	require('./class/ressource.class.php');
+	require('./class/evenement.class.php');
 	require('./lib/ressource.lib.php');
 	
 	require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
@@ -46,6 +47,7 @@
 				
 		        if (is_numeric($resupload) && $resupload > 0)
 				{
+					
 					$nomFichier= $upload_dir . "/" . $_FILES['userfile']['name'];
 					include("./script/".$_REQUEST["typeImport"]);
 					
@@ -126,7 +128,11 @@
 		
 		$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 		
-		$liste_types_imports=array('fichier1' => 'TOTAL','fichier2' => 'AREA','fichier3' => 'Euromaster','fichier4' => 'Parcours','fichier5' => 'Orange');
+		$liste_types_imports=array('ImportFactureTotal.php' => 'Total'
+									,'ImportFactureArea.php' => 'Area'
+									,'ImportFactureEuromaster.php' => 'Euromaster'
+									,'ImportFactureParcours.php' => 'Parcours'
+									,'ImportFactureOrange.php' => 'Orange');
 		
 		$TBS=new TTemplateTBS();
 		$select_types_imports = $TBS->render('./tpl/documentSupplier.tpl.php'
@@ -144,7 +150,8 @@
 		echo $form->end_form();
 		
 		$formfile->form_attach_new_file($_SERVER["PHP_SELF"], '', 0, 0, $can_upload);
-		
+		$formfile->list_of_documents($filearray, $ressource, 'import_fournisseurs', '',0,'import_fournisseurs/',1);
+
 		?>
 		<script>
 			$(document).ready(function(){
