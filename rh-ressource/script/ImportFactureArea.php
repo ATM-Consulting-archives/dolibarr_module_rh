@@ -6,9 +6,9 @@
  * et une évenement de type facture
  */
  
-require('../config.php');
-require('../class/evenement.class.php');
-require('../class/ressource.class.php');
+//require('../config.php');
+//require('../class/evenement.class.php');
+//require('../class/ressource.class.php');
 
 global $conf;
 
@@ -26,15 +26,13 @@ while($ATMdb->Get_line()) {
 
 		
 $idVoiture = getIdTypeVoiture($ATMdb);
-$nomFichier = "./fichierImports/fichier facture area.CSV";
+if (empty($nomFichier)){$nomFichier = "./fichierImports/fichier facture area.CSV";}
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 $TRessource = chargeVoiture($ATMdb);
 $TEmprunts = chargeEmprunts($ATMdb);
-print_r($TEmprunts);
 $TAssocies = chargeAssocies($ATMdb);
 
-echo '<br>';
 //print_r($TRessource);
 
 //début du parsing
@@ -46,7 +44,6 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		
 		$temp = new TRH_Evenement;
 		$temp->load_liste($ATMdb);
-		$temp->load_liste_type($ATMdb, $temp);
 		if (strpos((string) $infos[10], 'Trajet') !== FALSE ){
 			if (! array_key_exists ( $infos[6] , $TRessource )){
 				echo 'Pas de carte correspondante : '.$infos[6].'<br>';
