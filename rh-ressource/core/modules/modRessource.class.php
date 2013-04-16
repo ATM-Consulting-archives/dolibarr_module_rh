@@ -241,6 +241,12 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'ressource';
 		$this->rights[$r][5] = 'viewFilesRestricted';
+		$r++;
+		$this->rights[$r][0] = 7014;
+		$this->rights[$r][1] = 'Importer les fichiers fournisseurs';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'uploadFilesSupplier';
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
@@ -407,6 +413,23 @@ class modRessource extends DolibarrModules
 					'position'=> 109,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
 					'perms'=> '$user->rights->ressource->typeressource->createType',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
+		
+		//IMPORTS
+		$r++;
+        $this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=ressource',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('ImportFournisseurs'),
+		        	'mainmenu'=> 'ressource',
+		        	'leftmenu'=> 'import',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/ressource/documentSupplier.php',
+					'langs'=> 'ressource@ressource',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 110,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '$user->rights->ressource->ressource->uploadFilesSupplier',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
 					'user'=> 2
         );
