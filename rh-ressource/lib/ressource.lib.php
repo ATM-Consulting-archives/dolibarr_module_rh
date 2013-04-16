@@ -16,7 +16,7 @@ function ressourcePrepareHead(&$obj, $type='type-ressource',&$param=null) {
 		case 'ressource':
 				return array(
 					array(DOL_URL_ROOT_ALT.'/ressource/ressource.php?id='.$obj->getId(), 'Fiche','fiche')
-					,array(DOL_URL_ROOT_ALT.'/ressource/attribution.php?id='.$obj->getId(), 'Attribution','attribution')
+					,($obj->fk_rh_ressource == 0)  ? array(DOL_URL_ROOT_ALT.'/ressource/attribution.php?id='.$obj->getId(), 'Attribution','attribution'):null
 					,array(DOL_URL_ROOT_ALT.'/ressource/evenement.php?id='.$obj->getId(), 'Evénement','evenement')
 					,array(DOL_URL_ROOT_ALT.'/ressource/calendrierRessource.php?id='.$obj->getId(), 'Calendrier','calendrier')
 					,array(DOL_URL_ROOT_ALT.'/ressource/document.php?id='.$obj->getId(), 'Fichiers joints','document')
