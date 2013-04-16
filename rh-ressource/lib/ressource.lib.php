@@ -39,6 +39,12 @@ function ressourcePrepareHead(&$obj, $type='type-ressource',&$param=null) {
 				);
 			
 			break;
+		case 'import':
+				return array(
+					array(DOL_URL_ROOT_ALT.'/ressource/documentSupplier.php', 'Fiche','fiche')
+				);
+			
+			break;
 	}
 	
 	

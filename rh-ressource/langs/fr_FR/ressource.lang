@@ -15,3 +15,4 @@ FileTransferComplete=Le fichier a été correctement transféré
 ErrorFileNotUploaded=Le fichier n'a pas été transféré. Vérifiez que sa taille ne dépasse pas le maximum autorisé, que l'espace disque est disponible et qu'un fichier du même nom n'existe pas déjà.
 ErrorFileIsInfectedWithAVirus=L'antivirus n'a pas pu valider ce fichier (il est probablement infecté par un virus) !
 FileHasBeenRemoved=Le fichier a été effacé
+ImportFournisseurs=Import fournisseurs
