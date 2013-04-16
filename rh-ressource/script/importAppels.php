@@ -96,11 +96,11 @@ while($ATMdb->Get_line()) {
 
 
 function modifierLimites(&$TLimites, $fk_user, $Hint, $Mint, $Hext, $Mext, $limSMS){
-	if ($TLimites[$fk_user]['limInterne'] > (intval($Hint)*60+intval($Mint)) ){
-		$TLimites[$fk_user]['limInterne'] = intval($Hint)*60+intval($Mint);
+	if ($TLimites[$fk_user]['limInterne'] > (intval($Hint)*3600+intval($Mint)*60) ){
+		$TLimites[$fk_user]['limInterne'] = intval($Hint)*3600+intval($Mint)*60;
 	}
-	if ($TLimites[$fk_user]['limExterne'] > (intval($Hext)*60+intval($Mext)) ){
-		$TLimites[$fk_user]['limExterne'] = intval($Hext)*60+intval($Mext);
+	if ($TLimites[$fk_user]['limExterne'] > (intval($Hext)*3600+intval($Mext)*60) ){
+		$TLimites[$fk_user]['limExterne'] = intval($Hext)*3600+intval($Mext)*60;
 	}
 	if ($TLimites[$fk_user]['limSMS'] > intval($limSMS) ){
 		$TLimites[$fk_user]['limSMS'] = intval($limSMS);
@@ -198,7 +198,17 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	echo 'Fin du traitement. '.($numLigne).' lignes rajoutés à la table.<br><br>';	
 }
 
-
+foreach ($TUser as $key => $value) {
+	echo $key.' : ';	
+	print_r($TLimites[$value]);
+	echo '<br>';
+}
+echo '<br><br>';
+foreach ($TUser as $key => $value) {
+	echo $key.' : ';	
+	print_r($TCompteurs[$value]);
+	echo '<br>';
+}
 
 //------------FIN DU TRAITEMENT DES LIGNES----------------------------------------------------------
 

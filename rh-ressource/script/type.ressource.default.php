@@ -31,25 +31,27 @@
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Puissance Fiscale', 'pf', 'chaine',0, 4, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Type de véhicule', 'typeVehicule', 'liste',0, 5, 'VU;VP', 1, $tempType->rowid);
+	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Clé', 'cle', 'checkbox',1, 5, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Kit de Sécurité', 'kit', 'checkbox',1, 6, '', 1, $tempType->rowid);
 	
-//CARTE
+//CARTE TOTAL
 	$tempType = new TRH_Ressource_type;
-	$tempType->chargement('Carte', 'carte', 1, '', '');
+	$tempType->chargement('Carte Total', 'carte', 1, 'Péage;Plein d\'essence', 'peage;plein');
 	$tempType->save($ATMdb);
 	
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Numéro carte', 'numCarte', 'chaine',0, 0, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Numéro carte', 'numcarte', 'chaine',0, 0, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Immatriculation carte', 'immCarte', 'chaine',0, 1, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Code carte', 'codeCarte', 'chaine',1, 2, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Code carte', 'codecarte', 'chaine',1, 2, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Libellé estampé', 'libCarte', 'chaine',1, 3, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Libellé estampé', 'libcarte', 'chaine',1, 3, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Compte support', 'compteSupport', 'chaine',1, 4, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Compte support', 'comptesupport', 'chaine',1, 4, '', 1, $tempType->rowid);
 	
 //TELEPHONE
 	$tempType = new TRH_Ressource_type;
@@ -57,9 +59,9 @@
 	$tempType->save($ATMdb);
 	
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Marque', 'marqueTel', 'chaine',0, 0, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Marque', 'marquetel', 'chaine',0, 0, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Modèle', 'modleTel', 'chaine',0, 1, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Modèle', 'modletel', 'chaine',0, 1, '', 1, $tempType->rowid);
 	
 	
 //CARTE SIM
