@@ -359,6 +359,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			,'fk_ressource'=>array(
 				'liste_fk_rh_ressource'=>$form->combo('','fk_rh_ressource',$ressource->TRessource,$ressource->fk_rh_ressource)
 				,'fk_rh_ressource'=>$ressource->fk_rh_ressource ? $ressource->TRessource[$ressource->fk_rh_ressource] : "aucune ressource"
+				,'id'=>$ressource->fk_rh_ressource
 				,'reqExiste'=>$reqVide
 			)
 			
