@@ -133,7 +133,6 @@ function _fiche(&$ATMdb,$tagCompetence, $mode) {
 	echo $form->hidden('fk_user', $user->id);
 	echo $form->hidden('entity', $conf->entity);
 
-	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/rechercheProfil.tpl.php'
 		,array(
@@ -145,6 +144,8 @@ function _fiche(&$ATMdb,$tagCompetence, $mode) {
 			)
 			,'userCourant'=>array(
 				'id'=>$user->id
+				,'droitRecherche'=>$user->rights->curriculumvitae->myactions->rechercheProfil
+				
 			)
 			,'view'=>array(
 				'mode'=>$mode

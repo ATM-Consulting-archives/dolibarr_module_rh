@@ -129,7 +129,7 @@ class TRH_Evenement  extends TObjetStd {
 		}
 		
 		$this->isAllDayEvent = 1;
-		$this->coutEntrepriseHT = ($this->coutEntrepriseTTC)*(1-(0.01*$this->TTVA[$this->TVA]));
+		if (empty($this->coutEntrepriseHT)) {$this->coutEntrepriseHT = ($this->coutEntrepriseTTC)*(1-(0.01*$this->TTVA[$this->TVA]));}
 		parent::save($db);
 		$temp->save($db);	//ça met le statut de la ressource liée à jour
 	}

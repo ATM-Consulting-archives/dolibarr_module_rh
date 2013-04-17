@@ -152,9 +152,24 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 	echo $form->hidden('id', $contrat->getId());
 	echo $form->hidden('action', 'save');
 	$contrat->load_liste($ATMdb);
+	
+	$TExtras = array();
+	$TKeys = explode(';', $contrat->extraFieldNom);
+	$TValues = explode(';', $contrat->extraFieldValeur);
+	$TUnites = explode(';', $contrat->extraFieldUnite);
+	foreach ($TKeys as $k => $key) {
+		$TExtras[] = array(
+			'nom'=>$key
+			,'valeur'=>$TValues[$k]
+			,'unite'=>$TUnites[$k]
+		);
+	}
+	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/contrat.tpl.php'
-		,array()
+		,array(
+			'extraFields'=>$TExtras
+		)
 		,array(
 			'contrat'=>array(
 				'id'=>$contrat->getId()

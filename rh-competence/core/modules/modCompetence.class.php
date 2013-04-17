@@ -47,7 +47,7 @@ class modCompetence extends DolibarrModules
 
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-		$this->numero = 7100;
+		$this->numero = 7900;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'curriculumvitae';
 
@@ -163,7 +163,23 @@ class modCompetence extends DolibarrModules
 		$this->boxes[$r][1] = "myboxb.php";
 		$r++;
 		*/
-
+		
+		$r=0;
+		$this->rights[$r][0] = 7951;
+		$this->rights[$r][1] = 'Rechercher un profil';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'rechercheProfil';
+		$r++;
+		
+		
+		$this->rights[$r][0] = 7952;
+		$this->rights[$r][1] = 'Ajouter/Supprimer une ligne de rémunération';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'ajoutRemuneration';
+		$r++;
+		
 		// Permissions
 		/*$this->rights = array();		// Permission array used by this module
 		$r=0;
