@@ -83,7 +83,7 @@ function _liste(&$ATMdb) {
 	if($user->rights->valideur->myactions->valideur=="1"){
 		$valideur=new TRH_valideur_groupe;
 		$r = new TSSRenderControler($valideur);
-		$sql= "SELECT v.rowid as 'ID', v.type as 'Type', v.nbjours as 'Nombre de jours', CONCAT (CAST(v.montant as DECIMAL(16,2)), ' €') as 'Montant TTC', g.rowid as 'GroupeID', g.nom as 'Groupe', '' as 'Supprimer'";
+		$sql= "SELECT v.rowid as 'ID', v.type as 'Type', v.nbjours as 'Nombre de jours', CONCAT (CAST(v.montant as DECIMAL(16,2)), ' €') as 'Montant TTC', g.rowid as 'GroupeID', g.nom as 'Groupe',v.validate_himself as 'Se valide lui-même ?', '' as 'Supprimer'";
 		$sql.= " FROM ((".MAIN_DB_PREFIX."rh_valideur_groupe as v LEFT JOIN ".MAIN_DB_PREFIX."usergroup as g ON (v.fk_usergroup = g.rowid))
 				 		 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (v.fk_user = u.rowid))";
 		$sql.= " WHERE v.entity=".$conf->entity." AND v.fk_user=".$fuser->id;
@@ -105,7 +105,7 @@ function _liste(&$ATMdb) {
 				,'Groupe'=>'<a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id=@GroupeID@">@val@</a>'
 				,'Supprimer'=>'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="img/delete.png" /></a>'
 			)
-			,'translate'=>array()
+			,'translate'=>array('Se valide lui-même ?'=>$valideur->TValidate_himself)
 			,'hide'=>array('GroupeID')
 			,'type'=>array()
 			,'liste'=>array(
@@ -174,6 +174,7 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 						,'type'=> $form->combo('','type',$valideur->TType, $valideur->type)
 						,'nbjours'=> $form->texte('', 'nbjours', $valideur->nbjours, 7,10,'','','-')
 						,'montant'=> $form->texte('', 'montant', $valideur->montant, 7,10,'','','-')
+						,'validate_himself'=>$form->combo('','validate_himself', $valideur->TValidate_himself, $valideur->validate_himself )
 					)
 					,'view'=>array(
 						'mode'=>$mode
