@@ -90,7 +90,7 @@
 				[onshow;block=begin;when [view.mode]=='view']
 				<span  style="float:right;" class="butActionDelete" id="action-delete" onclick="document.location.href='?fk_user=[userCourant.id]&id=[formation.id]&action=deleteFormation'">Supprimer</span>
 				<a style="float:right;" class="butAction" href="?fk_user=[userCourant.id]">Annuler</a>
-				<a style="float:right;" href="?id=[formation.id]&action=editFormation" class="butAction">Modifier</a>
+				<a style="float:right;" href="?id=[formation.id]&action=editFormation&fk_user=[userCourant.id]" class="butAction">Modifier</a>
 				
 				[onshow;block=end]	
 			</table>

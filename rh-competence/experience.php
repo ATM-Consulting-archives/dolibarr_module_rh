@@ -80,6 +80,7 @@
 				if ($_REQUEST['TNComp']['libelle']!=''){
 					
 					if($_REQUEST['id']!=0){
+						
 						$formation->load($ATMdb, $_REQUEST['id']);
 						$formation->set_values($_REQUEST);
 						$formation->save($ATMdb);
@@ -180,7 +181,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 	llxHeader('','Liste de vos expériences');
 	
 	$fuser = new User($db);
-	$fuser->fetch($_REQUEST['fk_user']);
+	$fuser->fetch($_REQUEST['fk_user']?$_REQUEST['fk_user']:$user->id);
 	$fuser->getrights();
 
 	$head = user_prepare_head($fuser);
@@ -191,7 +192,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
 			  date_debut, date_fin, libelleExperience, descriptionExperience,lieuExperience, fk_user, '' as 'Supprimer'
 		FROM   ".MAIN_DB_PREFIX."rh_ligne_cv
-		WHERE fk_user=".$user->id." AND entity=".$conf->entity;
+		WHERE fk_user=".$_REQUEST['fk_user']." AND entity=".$conf->entity;
 
 	$TOrder = array('date_fin'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -207,7 +208,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'libelleExperience'=>'<a href="?id=@ID@&action=viewCV">@val@</a>'
+			'libelleExperience'=>'<a href="?id=@ID@&action=viewCV&fk_user='.$fuser->id.'">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=deleteCV&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array(
@@ -253,7 +254,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
 			  date_debut, date_fin, libelleFormation,  commentaireFormation,lieuFormation, date_formationEcheance, CONCAT(coutFormation,' €') as 'Coût pour l\'entreprise', fk_user, '' as 'Supprimer'
 		FROM   ".MAIN_DB_PREFIX."rh_formation_cv
-		WHERE fk_user=".$user->id." AND entity=".$conf->entity;
+		WHERE fk_user=".$_REQUEST['fk_user']." AND entity=".$conf->entity;
 
 	$TOrder = array('ID'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -269,8 +270,8 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'libelleFormation'=>'<a href="?id=@ID@&action=viewFormation">@val@</a>'
-			,'ID'=>'<a href="?id=@ID@&action=viewFormation">@val@</a>'
+			'libelleFormation'=>'<a href="?id=@ID@&action=viewFormation&fk_user='.$fuser->id.'">@val@</a>'
+			,'ID'=>'<a href="?id=@ID@&action=viewFormation&fk_user='.$fuser->id.'">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=deleteFormation&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array(
@@ -327,7 +328,7 @@ function _ficheCV(&$ATMdb, $lignecv,  $mode) {
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $lignecv->getId());
-	echo $form->hidden('fk_user', $user->id);
+	echo $form->hidden('fk_user', $_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id);
 	echo $form->hidden('entity', $conf->entity);
 	echo $form->hidden('action', 'savecv');
 
@@ -346,7 +347,7 @@ function _ficheCV(&$ATMdb, $lignecv,  $mode) {
 				,'lieuExperience'=>$form->texte('','lieuExperience',$lignecv->lieuExperience, 30,100,'','','-')
 			)
 			,'userCourant'=>array(
-				'id'=>$user->id
+				'id'=>$_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id
 			)
 			,'view'=>array(
 				'mode'=>$mode
@@ -380,12 +381,12 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $formation->getId());
 	echo $form->hidden('action', 'saveformation');
-	echo $form->hidden('fk_user', $user->id);
+	echo $form->hidden('fk_user',$_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id);
 	echo $form->hidden('entity', $conf->entity);
 
 	$sql="SELECT c.rowid, c.libelleCompetence, c.niveauCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."rh_formation_cv as f 
 	WHERE c.fk_user_formation=".$formation->getID(). " AND c.fk_user_formation=f.rowid AND c.fk_user=".$fuser->id;
-
+	
 	$k=0;
 	$ATMdb->Execute($sql);
 	$TTagCompetence=array();
@@ -399,8 +400,6 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	}
 	
 	$TNComp=array();
-	
-	
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/formation.tpl.php'
