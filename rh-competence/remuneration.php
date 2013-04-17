@@ -83,7 +83,7 @@ function _liste(&$ATMdb, $remuneration) {
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.anneeRemuneration, CONCAT(u.firstname,' ',u.name) as 'Utilisateur' ,
 			  CONCAT( ROUND(r.bruteAnnuelle,2),' €') as 'Rémunération brute annuelle',  CONCAT( ROUND(r.salaireMensuel,2),' €') as 'Salaire mensuel', r.fk_user, '' as 'Supprimer'
 		FROM   ".MAIN_DB_PREFIX."rh_remuneration as r, ".MAIN_DB_PREFIX."user as u
-		WHERE r.fk_user=".$user->id." AND r.entity=".$conf->entity." AND u.rowid=r.fk_user";
+		WHERE r.fk_user=".$_REQUEST['fk_user']." AND r.entity=".$conf->entity." AND u.rowid=r.fk_user";
 
 	$TOrder = array('anneeRemuneration'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -98,8 +98,8 @@ function _liste(&$ATMdb, $remuneration) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'anneeRemuneration'=>'<a href="?id=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>'
+			'anneeRemuneration'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
+			,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
 		)
 		,'translate'=>array(
 			
@@ -125,11 +125,12 @@ function _liste(&$ATMdb, $remuneration) {
 		,'orderBy'=>$TOrder
 		
 	));
-
+		if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
 		?>
 		<a class="butAction" href="?&action=new&fk_user=<?=$fuser->id?>">Ajouter une rémunération</a><div style="clear:both"></div>
-		<br/><br/>
+		
 		<?
+		}
 	$form->end();
 	
 	llxFooter();
@@ -151,7 +152,7 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $remuneration->getId());
-	echo $form->hidden('fk_user', $user->id);
+	echo $form->hidden('fk_user', $_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id);
 	echo $form->hidden('entity', $conf->entity);
 	echo $form->hidden('action', 'save');
 
@@ -183,7 +184,8 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 				,'lieuExperience'=>$form->texte('','lieuExperience',$remuneration->lieuExperience, 30,100,'','','-')
 			)
 			,'userCourant'=>array(
-				'id'=>$user->id
+				'id'=>$_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id
+				,'ajoutRem'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration
 			)
 			,'view'=>array(
 				'mode'=>$mode

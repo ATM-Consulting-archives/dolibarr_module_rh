@@ -1,11 +1,10 @@
-
+[onshow;block=begin;when [userCourant.droitRecherche]=='1']
 	<div>			
 		<h2 style="color: #2AA8B9;">Recherche d'un profil</h2>	
 		<br/>
 		<table class="border" style="width:100%">	
 			<tr>
-				<td><b>Veuillez saisir les compétences du collaborateur recherché</b></td>
-					
+				<td><b>Veuillez saisir les compétences du collaborateur recherché</b></td>	
 			</tr>
 			<tr>
 				<td>[recherche.libelle;block=tr;strconv=no;protect=no]
@@ -27,12 +26,13 @@
 				</td>
 			</tr>
 			
-		</table>
-		
-					
+		</table>	
 	</div>
+[onshow;block=end]
 
-
+[onshow;block=begin;when [userCourant.droitRecherche]!='1']
+		Vous ne possédez pas les droits pour effectuer une recherche de profil.		
+[onshow;block=end]
 
 
 
