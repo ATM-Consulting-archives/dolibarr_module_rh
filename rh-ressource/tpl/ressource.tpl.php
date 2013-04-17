@@ -112,14 +112,14 @@
 </div>
 [onshow;block=end]
 
-<div style="margin-left:70px;text-align:center;">
+<div>
 
 		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]=='aucune ressource']
 			[onshow;block=begin;when [fk_ressource.reqExiste]=='1']
 				[onshow;block=begin;when [view.mode]=='view']
 				</br>
-				<h2><span style="margin-left:-70px;">Organigramme des ressources associées</span></h2>
-					<div id="organigrammePrincipal" style="text-align:center;">
+				<h2>Organigramme des ressources associées</h2>
+					<div id="organigrammePrincipal" style="margin-left:70px;text-align:center;">
 						<br/>
 						<div id="chart" class="orgChart" ></div>
 							<ul id="JQorganigramme" style="display:none;">
@@ -144,8 +144,8 @@
 		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]!='aucune ressource']
 			[onshow;block=begin;when [view.mode]=='view']
 				</br>
-				<h2><span style="margin-left:-70px;">Organigramme des ressources associées</span></h2>
-					<div id="organigrammePrincipal" style="text-align:center;">
+				<h2>Organigramme des ressources associées</h2>
+					<div id="organigrammePrincipal" style="margin-left:70px;text-align:center;">
 					<br/>
 					<div id="chart" class="orgChart" ></div>
 						<ul id="JQorganigramme" style="display:none;">

@@ -173,12 +173,17 @@ class ActionsValideur
 		                $obj_group = $db->fetch_object($resql_group);
 		                if ($obj_group){
 							//On regarde ensuite pour chaque groupe retourné si l'utilisateur courant en est valideur
-							$sql = "SELECT v.rowid, v.nbjours";
-							$sql.= " FROM ".MAIN_DB_PREFIX."rh_valideur_groupe v";
-							$sql.= " WHERE v.fk_user = ".$user->id;
-							$sql.= " AND v.fk_usergroup =".$obj_group->group_id;
-							$sql.= " AND v.type = 'NDFP'";
-							$sql.= " ORDER BY v.nbjours ASC";
+							
+							
+							$sql = "SELECT v.rowid, v.nbjours
+								FROM ".MAIN_DB_PREFIX."rh_valideur_groupe v
+								WHERE v.fk_user=".$user->id." AND (v.validate_himself=1 OR v.fk_user!=".$object->fk_user." )
+								AND v.fk_usergroup =".$obj_group->group_id."
+								AND v.type = 'NDFP'
+								ORDER BY v.nbjours ASC";
+							
+						//print $sql;
+							
 							
 							$result = $db->query($sql);
 							if($result)

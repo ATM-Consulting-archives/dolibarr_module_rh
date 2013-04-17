@@ -22,6 +22,7 @@
 					<td>[validations.type;strconv=no;protect=no]</td>
 					<td>[validations.nbjours;strconv=no;protect=no]</td>
 					<td>[validations.montant;strconv=no;protect=no]€</td>
+					<td>[validations.validate_himself;strconv=no;protect=no]</td>
 					<td><img src="./img/delete.png"  style="cursor:pointer;" onclick="document.location.href='?fk_user=[userCourant.id]&deleteId=[validations.id]&action=delete'"></td>
 				</tr>
 			</table>
@@ -50,6 +51,7 @@
 		<td>[valideur.type;strconv=no;protect=no]</td>
 		<td>[valideur.nbjours;strconv=no;protect=no]</td>
 		<td id="textMontant2">[valideur.montant;strconv=no;protect=no]€</td>
+		<td id="textMontant2">[valideur.validate_himself;strconv=no;protect=no]€</td>
 	</tr>
 </table>
 

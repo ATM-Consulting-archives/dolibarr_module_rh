@@ -135,11 +135,11 @@ class TRH_Absence extends TObjetStd {
 		$ATMdb=new Tdb;
 		global $conf;
 		$this->TUser=array();
-		$sqlReqUser="SELECT rowid, name, firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
+		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
 		$ATMdb->Execute($sqlReqUser);
 
 		while($ATMdb->Get_line()) {
-			$this->TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$this->TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 		}
 	}
 

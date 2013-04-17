@@ -11,7 +11,6 @@
 					<td>Libellé Expérience</td>
 					<td>Description </td>
 					<td>Lieu Expérience</td>
-					<td>Supprimer</td>
 				</tr>
 				<tr>
 					<td>[cv.date_debut;block=tr;strconv=no;protect=no]</td>
@@ -19,7 +18,6 @@
 					<td>[cv.libelleExperience;strconv=no;protect=no]</td>
 					<td>[cv.descriptionExperience;strconv=no;protect=no]</td>
 					<td>[cv.lieuExperience;strconv=no;protect=no]</td>
-					<td><img src="./img/delete.png"  style="cursor:pointer;" onclick="document.location.href='?fk_user=[userCourant.id]&deleteId=[cv.id]&action=deleteCV'"></td>
 				</tr>
 			</table>
 			<table class="border" style="width:100%;">

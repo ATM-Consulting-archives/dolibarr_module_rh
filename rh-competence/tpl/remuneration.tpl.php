@@ -89,8 +89,10 @@
 			<table class="border" style="width:100%;">
 				[onshow;block=begin;when [view.mode]=='view']
 				<a style="text-align:center;width:20%;" class="butAction" href="?fk_user=[userCourant.id]">Retour</a>
-				<a style="text-align:center;width:20%;" class="butAction" href="?fk_user=[userCourant.id]&action=edit&id=[remuneration.id;block=tr;strconv=no;protect=no]">Modifier</a>
-				<a  style="text-align:center;width:20%;" class="butActionDelete" id="action-delete" onclick="document.location.href='?fk_user=[userCourant.id]&id=[remuneration.id;block=tr;strconv=no;protect=no]&action=delete'">Supprimer</a>
+				[onshow;block=begin;when [userCourant.ajoutRem]=='1']
+					<a style="text-align:center;width:20%;" class="butAction" href="?fk_user=[userCourant.id]&action=edit&id=[remuneration.id;block=tr;strconv=no;protect=no]">Modifier</a>
+					<a  style="text-align:center;width:20%;" class="butActionDelete" id="action-delete" onclick="document.location.href='?fk_user=[userCourant.id]&id=[remuneration.id;block=tr;strconv=no;protect=no]&action=delete'">Supprimer</a>
+				[onshow;block=end]
 				[onshow;block=end]	
 			</table>
 		</div>
