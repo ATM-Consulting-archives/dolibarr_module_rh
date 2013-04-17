@@ -330,7 +330,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 	$reqVide=0;	//variable permettant de savoir si la requete existe, et donc au final si on affichera l'organigramme
 	while($ATMdb->Get_line()) {
 		//récupère les id des différents nom des  groupes de l'utilisateur
-		$Tab_sous_ressource[$k]=array('libelle'=>$ATMdb->Get_field('libelle'));
+		$Tab_sous_ressource[$k]=array('libelle'=>'<a>'.$ATMdb->Get_field('libelle').'</a>');
 		$k++;
 		$reqVide=1;
 	}
@@ -359,6 +359,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			,'fk_ressource'=>array(
 				'liste_fk_rh_ressource'=>$form->combo('','fk_rh_ressource',$ressource->TRessource,$ressource->fk_rh_ressource)
 				,'fk_rh_ressource'=>$ressource->fk_rh_ressource ? $ressource->TRessource[$ressource->fk_rh_ressource] : "aucune ressource"
+				,'id'=>$ressource->fk_rh_ressource
 				,'reqExiste'=>$reqVide
 			)
 			

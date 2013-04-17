@@ -220,15 +220,15 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirToutesAbsences';
 		$r++;
-		// Permissions
-		/*$this->rights = array();		// Permission array used by this module
-		$r=0;
-		$this->rights[$r][0] = 7101;
-		$this->rights[$r][1] = 'Afficher sa hiérarchie';
+		
+		$this->rights[$r][0] = 7109;
+		$this->rights[$r][1] = 'Notifier une absence comme étant Enregistrée dans la paie';
 		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'mydossier';
-		$this->rights[$r][5] = 'write';
-		$r++;*/
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'enregistrerPaieAbsences';
+		$r++;
+		
+		
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
 		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)

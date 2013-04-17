@@ -10,6 +10,7 @@
 					<td><b>Date début</b></td>
 					<td><b>Date fin</b></td>
 					<td><b>Date d'expiration de la formation</b></td>
+					<td><b>Coût de la formation</b></td>
 				</tr>
 				<tr>
 					<td>[userCourant.nom;block=tr;strconv=no;protect=no]</td>
@@ -17,6 +18,7 @@
 					<td>[formation.date_debut;block=tr;strconv=no;protect=no]</td>
 					<td>[formation.date_fin;strconv=no;protect=no]</td>
 					<td>[formation.date_formationEcheance;strconv=no;protect=no]</td>
+					<td>[formation.coutFormation;strconv=no;protect=no]€</td>
 				</tr>
 			</table>
 			<br/><br/>

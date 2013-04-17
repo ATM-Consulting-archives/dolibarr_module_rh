@@ -1,0 +1,1 @@
+<span style="margin-right:10px;">[import.typeImport;strconv=no;protect=no]</span>

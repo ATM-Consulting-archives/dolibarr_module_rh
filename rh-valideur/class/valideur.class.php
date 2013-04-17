@@ -11,7 +11,7 @@ class TRH_valideur_groupe extends TObjetStd {
 		parent::add_champs('type','type=chaine;');				//type de valideur
 		parent::add_champs('nbjours','type=entier;');			//nbjours avant alerte
 		parent::add_champs('montant','type=float;');			//montant avant alerte
-		parent::add_champs('fk_user,fk_usergroup,entity','type=entier;index;');	//utilisateur ou groupe concerné
+		parent::add_champs('fk_user,fk_usergroup,entity,validate_himself','type=entier;index;');	//utilisateur ou groupe concerné
 		
 		parent::_init_vars();
 		parent::start();
@@ -20,6 +20,8 @@ class TRH_valideur_groupe extends TObjetStd {
 			'NDFP'=>'Note de frais'
 			,'Conges'=>'Conges'
 		);
+		
+		$this->TValidate_himself=array(0=>'Non',1=>'Oui');
 		
 		$this->TGroup = array();
 		

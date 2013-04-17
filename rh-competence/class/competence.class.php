@@ -29,6 +29,7 @@ class TRH_formation_cv extends TObjetStd {
 		parent::add_champs('competenceFormation','type=chaine;');	
 		parent::add_champs('commentaireFormation','type=chaine;');		//commentaire associé	
 		parent::add_champs('lieuFormation','type=chaine;');		
+		parent::add_champs('coutFormation','type=chaine;');		
 		parent::add_champs('date_formationEcheance','type=date;');	
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=entier;');
@@ -143,3 +144,34 @@ class TRH_competence_cv extends TObjetStd {
 	
 }
 
+
+//TRH_REMUNERATION
+//définition de la classe pour rentrer les compétences d'un utilisateur
+class TRH_remuneration extends TObjetStd {
+	function __construct() { 
+		
+		parent::set_table(MAIN_DB_PREFIX.'rh_remuneration');
+		parent::add_champs('date_entreeEntreprise','type=date;');
+		parent::add_champs('anneeRemuneration','type=entier;');	
+			
+		parent::add_champs('bruteAnnuelle','type=float;');		
+		parent::add_champs('salaireMensuel','type=float;');		
+		parent::add_champs('primeAnciennete','type=float;');	
+		parent::add_champs('primeSemestrielle','type=float;');			
+		parent::add_champs('primeExceptionnelle','type=float;');
+		
+		parent::add_champs('prevoyancePartSalariale','type=chaine;');	
+		parent::add_champs('prevoyancePartPatronale','type=chaine;');	
+		parent::add_champs('urssafPartSalariale','type=chaine;');	
+		parent::add_champs('urssafPartPatronale','type=chaine;');
+		parent::add_champs('retraitePartSalariale','type=chaine;');	
+		parent::add_champs('retraitePartPatronale','type=chaine;');
+		
+		parent::add_champs('commentaire','type=chaine;');		
+		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
+		parent::add_champs('entity','type=entier;');
+		
+		parent::_init_vars();
+		parent::start();
+	}
+}

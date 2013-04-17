@@ -12,7 +12,7 @@
             <h1 style="color: #2AA8B9;"> Déclaration d'absence</h1>                         
 			[onshow;block=end]
 			 [onshow;block=begin;when [view.mode]!='edit']
-            <h1 style="color: #2AA8B9;"> Visualisation absence</h1>                         
+            <h1 style="color: #2AA8B9;"> Visualisation de la demande d'absence</h1>                         
 			[onshow;block=end]
 
 
@@ -75,29 +75,41 @@
 			
 		[onshow;block=begin;when [absenceCourante.etat]!='Refusee']
 		[onshow;block=begin;when [absenceCourante.etat]!='Validee']
-		<div class="tabsAction" >
-			[onshow;block=begin;when [view.mode]=='edit']
-				<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
-			[onshow;block=end]
-			
-			
-			[onshow;block=begin;when [view.mode]!='edit']
-				[onshow;block=begin;when [userCourant.valideurConges]=='1']
-					<a class="butAction" id="action-update"  onclick="document.location.href='?action=accept&id=[absenceCourante.id]'">Accepter</a>	
-					<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=refuse&id=[absenceCourante.id]'">Refuser</span>
+		[onshow;block=begin;when [absenceCourante.etat]!='Enregistree']
+			<div class="tabsAction" >
+				[onshow;block=begin;when [view.mode]=='edit']
+					<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
 				[onshow;block=end]
-			[onshow;block=end]
-			
-			[onshow;block=begin;when [view.mode]!='edit']
-				[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
-					<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
+				
+				
+				[onshow;block=begin;when [view.mode]!='edit']
+					[onshow;block=begin;when [userCourant.valideurConges]=='1']
+						<a class="butAction" id="action-update"  onclick="document.location.href='?action=accept&id=[absenceCourante.id]'">Accepter</a>	
+						<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=refuse&id=[absenceCourante.id]'">Refuser</span>
+					[onshow;block=end]
 				[onshow;block=end]
-			[onshow;block=end]
-			
-		</div>
+				
+				
+				[onshow;block=begin;when [view.mode]!='edit']
+					[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
+						<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
+					[onshow;block=end]
+				[onshow;block=end]
+			</div>
 		[onshow;block=end]
-		[onshow;block=end]		
+		[onshow;block=end]	
+		[onshow;block=end]	
 
+		
+		[onshow;block=begin;when [absenceCourante.etat]=='Validee']
+		[onshow;block=begin;when [view.mode]!='edit']
+				[onshow;block=begin;when [userCourant.enregistrerPaieAbsences]=='1']
+					<span style="width:30%"class="butAction" id="action-update"  onclick="document.location.href='?action=envoyerpaie&id=[absenceCourante.id]'">Marquer comme Enregistrée dans la paie</span>
+				<br/><br/><br/><br/><br/>
+				[onshow;block=end]
+		[onshow;block=end]
+		[onshow;block=end]
+			
 		
 
 		<script>

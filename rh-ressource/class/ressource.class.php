@@ -165,17 +165,31 @@ class TRH_Ressource extends TObjetStd {
 	}
 	
 	
+	
+	/**
+	 * retourne le timestamp d'une chaine au format jj/mm/aaaa
+	 * Utile pour la comparaison.
+	 */
+	function strToTimestamp($chaine){
+		$a = strptime ($chaine, "%d/%m/%Y");
+		$timestamp = mktime(0, 0, 0, $a['tm_mon']+1, $a['tm_mday'], $a['tm_year']+1900);
+		return $timestamp;
+	}
+	
+	
 	/**
 	 * La fonction renvoie vrai si les nouvelles date proposé pour un emprunt se chevauchent avec d'autres.
 	 */
-	
 	function nouvelEmpruntSeChevauche(&$ATMdb, $newEmprunt, $idRessource){
 		global $conf;
 		$sqlReq="SELECT date_debut,date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$idRessource."
 		AND type='emprunt' AND entity=".$conf->entity." AND rowid != ".$newEmprunt['idEven'];
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			if ($this->dateSeChevauchent($newEmprunt['date_debut'], $newEmprunt['date_fin'],date("d/m/Y",strtotime($ATMdb->Get_field('date_debut'))), date("d/m/Y",strtotime($ATMdb->Get_field('date_fin'))) ))
+			if ($this->dateSeChevauchent($this->strToTimestamp($newEmprunt['date_debut'])
+										,$this->strToTimestamp($newEmprunt['date_fin'])
+										,$this->strToTimestamp(date("d/m/Y",strtotime($ATMdb->Get_field('date_debut'))))
+										,$this->strToTimestamp(date("d/m/Y",strtotime($ATMdb->Get_field('date_fin'))))))
 				{
 				return true;
 				}
@@ -263,6 +277,9 @@ class TRH_Ressource extends TObjetStd {
 	}
 }
 
+
+
+	
 
 class TRH_Ressource_type extends TObjetStd {
 	function __construct() { /* declaration */
@@ -477,5 +494,3 @@ class TRH_Ressource_Import  extends TObjetStd {
 	}
 	
 }	
-	
-	

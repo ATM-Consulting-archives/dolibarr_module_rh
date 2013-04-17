@@ -16,7 +16,7 @@
 
 //VOITURE
 	$tempType = new TRH_Ressource_type;
-	$tempType->chargement('Voiture', 'voiture', 1, '', '');
+	$tempType->chargement('Voiture', 'voiture', 1, 'Changement de pneus', 'changementdepneus');
 	$tempType->save($ATMdb);
 	
 	$tempField = new TRH_Ressource_field;
@@ -52,6 +52,19 @@
 	$tempField->chargement($ATMdb,'Libellé estampé', 'libcarte', 'chaine',1, 3, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Compte support', 'comptesupport', 'chaine',1, 4, '', 1, $tempType->rowid);
+
+//CARTE AREA
+	$tempType = new TRH_Ressource_type;
+	$tempType->chargement('Carte Area', 'cartearea', 1, 'Trajet', 'trajet');
+	$tempType->save($ATMdb);
+	
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Numéro carte', 'numcarte', 'chaine',0, 0, '', 1, $tempType->rowid);
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Immatriculation carte', 'immCarte', 'chaine',0, 1, '', 1, $tempType->rowid);
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Compte support', 'comptesupport', 'chaine',1, 4, '', 1, $tempType->rowid);
+	
 	
 //TELEPHONE
 	$tempType = new TRH_Ressource_type;
