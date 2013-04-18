@@ -10,7 +10,7 @@ class ActionsValideur
       */ 
       
       
-    function formObjectOptions($parameters, &$object, &$action, $hookmanager) 
+    function formObjectOptions(&$parameters, &$object, &$action, $hookmanager) 
     { 
         global $db,$html,$user;
 		
@@ -83,7 +83,7 @@ class ActionsValideur
 			AND (n.fk_user IN (".implode(',', $TUser).")
 			               OR (v.type='NDFP' AND v.fk_user = ".$user->id."
 			                       AND (n.statut = 4 OR n.statut = 1)
-			                       AND ((NOW() >= ADDDATE(n.tms, v.nbjours)) OR (n.total_ttc > v.montant))
+			                       AND ((NOW() >= ADDDATE(n.tms, v.nbjours)) OR (n.total_ttc > v.montant) OR v.level=n.alertLevel)
                    )
            	)";
 			
@@ -202,7 +202,12 @@ class ActionsValideur
 			
 			return 1;
 
-		}elseif($parameters['action']=='delegation'){
+		}
+		else if($action=='buttons') {
+			$parameters['buttons'][]= '<a class="butActionDelete" href="javascript:ndfp_alert_next_level('.$object->id.')">Montrer au valideur + 1</a>';
+		}
+		
+		elseif($parameters['action']=='delegation'){
 
 			$idUsercourant=$_GET["id"];
 			if (in_array('usercard',explode(':',$parameters['context']))){ 
