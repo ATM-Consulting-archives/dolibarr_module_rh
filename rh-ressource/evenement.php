@@ -127,9 +127,9 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 			break;
 		case 'facture':		
 			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
-				DATE(e.date_debut) as 'Date', DATE(e.date_fin) as 'Traité le',
-				e.motif as 'Garage', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutTTC as DECIMAL(16,2)), ' €') as 'Coût TTC', 
-				CONCAT (CAST(e.coutEntrepriseTTC as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise TTC', t.taux as 'TVA'";
+				DATE(e.date_debut) as 'Date', DATE(e.date_fin) as 'Traité le', e.numFacture as 'Facture',
+				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutTTC as DECIMAL(16,2)), ' €') as 'Coût TTC', 
+				t.taux as 'TVA', CONCAT (CAST(e.coutEntrepriseHT as DECIMAL(16,2)), ' €') as 'Coût HT' ";
 			$jointureType = " AND e.type='facture' ";
 			break;
 		default :
@@ -175,6 +175,9 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		,'type'=>array(
 			'Date début'=>'date'
 			,'Date fin'=>'date'
+			,'Date'=>'date'
+			,'Traité le'=>'date'
+			
 		)
 		,'liste'=>array(
 			'titre'=>'Liste des événements de type '.$evenement->TType[$type]
