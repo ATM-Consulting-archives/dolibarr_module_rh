@@ -5,7 +5,7 @@
 		<br/>Compteur : [view.compteur_id;strconv=no;protect=no]
 		<br/>
 		<div style=" display:inline-block;">                  
-		<table class="border" style="width:100%;" >	
+		<table class="border" style="width:200%;" >	
 				<br/><br/>
 				<tr>
 					<td>       </td>

@@ -36,6 +36,12 @@
 				_ficheFormation($ATMdb, $formation,$tagCompetence,'edit');
 				break;
 				
+			case 'editCv'	:
+				//$ATMdb->db->debug=true;
+				$lignecv->load($ATMdb, $_REQUEST['id']);
+				_ficheCV($ATMdb, $lignecv, 'edit');
+				break;
+				
 			case 'savecv':
 				
 				$lignecv->load($ATMdb, $_REQUEST['id']);
@@ -343,7 +349,8 @@ function _ficheCV(&$ATMdb, $lignecv,  $mode) {
 				,'date_debut'=>$form->calendrier('', 'date_debut', $lignecv->get_date('date_debut'), 10)
 				,'date_fin'=>$form->calendrier('', 'date_fin', $lignecv->get_date('date_fin'), 10)
 				,'libelleExperience'=>$form->texte('','libelleExperience',$lignecv->libelleExperience, 30,100,'','','-')
-				,'descriptionExperience'=>$form->texte('','descriptionExperience',$lignecv->descriptionExperience, 50,300,'style="width:400px;height:80px;"','','-')
+				,'descriptionExperience'=>$form->zonetexte('','descriptionExperience',$lignecv->descriptionExperience, 40,3,'','','-')
+				//zonetexte($pLib,$pName,$pVal,$pTaille,$pHauteur=5,$plus='',$class='text',$pId='')
 				,'lieuExperience'=>$form->texte('','lieuExperience',$lignecv->lieuExperience, 30,100,'','','-')
 			)
 			,'userCourant'=>array(
@@ -413,7 +420,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				,'date_fin'=>$form->calendrier('', 'date_fin', $formation->get_date('date_fin'), 10)
 				,'libelleFormation'=>$form->texte('','libelleFormation',$formation->libelleFormation, 30,100,'','','-')
 				,'coutFormation'=>$form->texte('','coutFormation',$formation->coutFormation, 30,100,'','','-')
-				,'commentaireFormation'=>$form->texte('','commentaireFormation',$formation->commentaireFormation, 50,300,'style="width:400px;height:80px;"','','-')
+				,'commentaireFormation'=>$form->zonetexte('','commentaireFormation',$lignecv->commentaireFormation, 40,3,'','','-')
 				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 30,100,'','','-')
 				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->get_date('date_formationEcheance'), 10)
 			)
