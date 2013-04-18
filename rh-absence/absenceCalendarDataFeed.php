@@ -117,7 +117,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idAfficher=0){
 
       $ret['events'][] = array(
         $row->rowid,
-        $row->libelle." ".$row->name.' '.$row->firstname,
+        $row->libelle." ".htmlentities($row->name, ENT_COMPAT , 'ISO8859-1').' '.htmlentities($row->firstname, ENT_COMPAT , 'ISO8859-1'),
         php2JsTime(mySql2PhpTime($row->date_debut)),
         php2JsTime(mySql2PhpTime($row->date_fin)),
         1,//$row->isAllDayEvent,
