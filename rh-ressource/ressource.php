@@ -38,6 +38,12 @@
 			case 'save':
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
+				//on vérifie que le libellé est renseigné
+				if  ( empty($_REQUEST['libelle']) ){
+					$mesg .= '<div class="error">Le libellé doit être renseigné.</div>';
+				}
+				
+				
 				//on vérifie que les champs obligatoires sont renseignés
 				foreach($ressource->ressourceType->TField as $k=>$field) {
 					if (! $field->obligatoire){

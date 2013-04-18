@@ -2,6 +2,7 @@
 	require('config.php');
 	require('./class/ressource.class.php');
 	require('./class/evenement.class.php');
+	require('./class/contrat.class.php');
 	require('./lib/ressource.lib.php');
 	
 	require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
