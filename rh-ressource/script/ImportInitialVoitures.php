@@ -6,7 +6,8 @@ require('../class/ressource.class.php');
 global $conf;
 
 $ATMdb=new Tdb;
-
+// relever le point de départ
+$timestart=microtime(true);
 		
 //on charge quelques listes pour avoir les clés externes.
 $TUser = array();
@@ -18,28 +19,23 @@ while($ATMdb->Get_line()) {
 
 
 $idVoiture = getIdTypeVoiture($ATMdb);
-echo exec('pwd').'<br>';
 $TFichier = array("CPRO GROUPE - PRELVT DU 05.04.13.csv",
 "CPRO INFORMATIQUE PREL 05 04 13.csv",
 "CPRO - PRELVT DU 05 04 13.csv" 
 );
 
+echo 'Import initial des voitures.<br><br>';
+$cpt = 0;
 foreach ($TFichier as $nomFichier) {
-	
+echo 'Traitement du fichier '.$nomFichier.' : <br>';
 
-echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
-
-
-
-//Société utilisatrice;Payeur;Nom de l'utilisateur;Marque;Modèle;Immatriculation;Location Crédit-Bail Immo;TVS;Type;frais restitution
-//CPRO INFORMATIQUE;;Restitution à ALD le 18/02/09;Renault;Mégane;8910 XF 26;21-avr.-06;;;
 
 //début du parsing
 $numLigne = 0;
 if (($handle = fopen("./fichierImports/".$nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle, 0,'\r')) != false){
-		echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=1 && $numLigne<=3){
+		//echo 'Traitement de la ligne '.$numLigne.'...';
+		if ($numLigne >=1){
 			$infos = explode(';', $data[0]);
 			//print_r($infos);
 			
@@ -49,23 +45,29 @@ if (($handle = fopen("./fichierImports/".$nomFichier, "r")) !== FALSE) {
 			$plaque = strtoupper(str_replace('-','',$infos[8]));
 			//on regarde si la plaque d'immatriculation est dans la base
 			if (array_key_exists($plaque, $TRessource)){
-				echo $plaque.' existe déjà<br>';
+				//echo $plaque.' existe déjà<br>';
 				$temp->load($ATMdb, $TRessource[$plaque]);
+			}
+			else if (empty($plaque)){
+				null;
 			}
 			else {
 				//clés externes
 				$temp->fk_rh_ressource_type = (int)$idVoiture;
 				$temp->load_ressource_type($ATMdb);
 				$temp->numId = $plaque;
+				$temp->set_date('date_vente', '');
+				$temp->set_date('date_garantie', '');
 				$temp->immatriculation = (string)$plaque;//plaque;
 				$temp->libelle = $infos[40].' '.$infos[41];
 				$temp->marquevoit = (string)$infos[40];
 				$temp->modlevoit = (string)$infos[41];
-				$temp->bailvoit = 'location';
-				$temp->typevehicule = strtolower($infos[9]);
-				
+				$temp->bailvoit = 'Location';
+				$temp->typevehicule = $infos[9];
+				$cpt ++;
 				$temp->save($ATMdb);echo $plaque.' : Ajoutee.';
 				
+				//si il trouve la personne, il sauvegarde une attribution
 				$t = explode(' ',$infos[7]);
 				if (array_key_exists(strtolower($t[0]), $TUser)){
 					$emprunt = new TRH_Evenement;
@@ -80,16 +82,23 @@ if (($handle = fopen("./fichierImports/".$nomFichier, "r")) !== FALSE) {
 			}		
 		}
 		
-		echo '<br>';
-		$numLigne++;
 		
+		$numLigne++;
 		//print_r(explode('\n', $data));
 	}
 	
-	echo 'Fin du traitement. '.($numLigne-3).' lignes rajoutés à la table.';
 	
 }
+
+
+	
 }
+
+//Fin du code PHP : Afficher le temps d'éxecution
+$timeend=microtime(true);
+$page_load_time = number_format($timeend-$timestart, 3);
+echo $cpt.' voitures importés.<br>';
+echo 'Fin du traitement. Durée : '.$page_load_time . " sec";
 
 function chargeVoiture(&$ATMdb){
 	global $conf;
