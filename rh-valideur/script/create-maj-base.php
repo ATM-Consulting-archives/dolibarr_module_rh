@@ -17,9 +17,9 @@
 	$o=new TRH_valideur_groupe;
 	$o->init_db_by_vars($ATMdb);
 	
+	$ATMdb->Execute("ALTER TABLE `llx_ndfp` ADD alertLevel INT DEFAULT 1");
 	
-	$ATMdb->Execute("ALTER TABLE `llx_user` ADD code_analytique INT DEFAULT 0");
+	//$ATMdb->Execute("ALTER TABLE `llx_user` ADD code_analytique INT DEFAULT 0");
 	
 	$extrafields = new ExtraFields($db);
-
 	$extrafields->addExtraField ('CODE_ANA', 'Code analytique', 'int', 0, 10, 'user', 0, 0);

@@ -22,8 +22,9 @@
 			</table>
 			<table class="border" style="width:100%;">
 				[onshow;block=begin;when [view.mode]=='view']
-				<a style="float:right;" class="butAction" href="?fk_user=[userCourant.id]">Annuler</a>
 				<a  style="float:right;" class="butActionDelete" id="action-delete" onclick="document.location.href='?fk_user=[userCourant.id]&id=[cv.id]&action=deleteCV'">Supprimer</a>
+				<a style="float:right;" class="butAction" href="?fk_user=[userCourant.id]">Annuler</a>
+				<a style="float:right;" href="?id=[cv.id]&action=editCv&fk_user=[userCourant.id]" class="butAction">Modifier</a>
 				[onshow;block=end]	
 			</table>
 		</div>
