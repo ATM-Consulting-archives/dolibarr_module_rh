@@ -17,7 +17,7 @@
 				break;
 				
 			case 'save':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$emploiTemps->load($ATMdb, $_REQUEST['fk_user']);
 				
 				$emploiTemps->razCheckbox($ATMdb, $emploiTemps);

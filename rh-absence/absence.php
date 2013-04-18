@@ -23,8 +23,10 @@
 				$absence->save($ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
+				//echo "test".$absence->difheure('16:00','17:30');
 				$mesg = '<div class="ok">Demande enregistrée</div>';
 				_fiche($ATMdb, $absence,'view');
+				
 				break;
 			
 			case 'view':
