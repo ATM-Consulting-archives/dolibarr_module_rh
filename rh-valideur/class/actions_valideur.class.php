@@ -181,8 +181,8 @@ class ActionsValideur
 								AND v.fk_usergroup =".$obj_group->group_id."
 								AND v.type = 'NDFP'
 								ORDER BY v.nbjours ASC";
-							
-						//print $sql;
+									
+						if(isset($_REQUEST['DEBUG'])) print $sql.'<br>'.$object->statut.'<br>';
 							
 							
 							$result = $db->query($sql);
