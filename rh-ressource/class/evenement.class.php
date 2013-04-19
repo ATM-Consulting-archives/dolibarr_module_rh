@@ -9,7 +9,6 @@ class TRH_Evenement  extends TObjetStd {
 		parent::add_champs('motif','type=chaine;');
 		parent::add_champs('commentaire','type=chaine;');
 		
-		
 		//type : accident, répération, emprunt, appel ou facture
 		parent::add_champs('type','type=chaine;');
 
@@ -35,7 +34,9 @@ class TRH_Evenement  extends TObjetStd {
 		
 		//pour une facture
 		parent::add_champs('numFacture','type=chaine;');
-		parent::add_champs('compteFacture','type=chaine;');		
+		parent::add_champs('compteFacture','type=chaine;');
+		parent::add_champs('numContrat','type=chaine;');
+		parent::add_champs('fk_contrat','type=entier;index');
 		
 		parent::_init_vars();
 		parent::start();

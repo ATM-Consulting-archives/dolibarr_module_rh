@@ -5,16 +5,18 @@
  * On créé un évenement par ligne de ce fichier
  * et une évenement de type facture
  */
- 
+
 require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');
 require('../class/contrat.class.php');
 
-
 global $conf;
 
 $ATMdb=new Tdb;
+
+// relever le point de départ
+$timestart=microtime(true);
 
 $TUser = array();
 $sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
@@ -34,15 +36,14 @@ while($ATMdb->Get_line()) {
 		
 $idVoiture = getIdTypeVoiture($ATMdb);
 $idParcours = getIdParcours($ATMdb);
-if ($idParcours == 0){echo 'Aucun fournisseur du nom de "Parcours" ';exit;}
+if ($idParcours == 0){echo 'Aucun fournisseur du nom de "Parcours" ! ';exit;}
 
-if (empty($nomFichier)){$nomFichier = "./fichierImports/CPRO GROUPE - PRELVT DU 05.04.13.csv";}
+if (empty($nomFichier)){$nomFichier = "./fichierImports/CPRO INFORMATIQUE PREL 05 04 13.csv";}
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
-
+$cptContrat = 0;
+$cptFacture = 0;
+$cptNoVoiture = 0;
 $TRessource = chargeVoiture($ATMdb);
-
-//print_r($TRessource);
-$TFacture = array();		
 
 //début du parsing
 $numLigne = 0;
@@ -60,50 +61,41 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$plaque = str_replace('-','',$infos[8]);
 			if (! array_key_exists ( $plaque , $TRessource )){
 				if ($plaque != '')
-					{echo 'Pas de voiture correspondante : '.$plaque.'<br>';}
+					{//echo 'Pas de voiture correspondante : '.$plaque.'<br>';
+					$cptNoVoiture ++;
+					}
 			}
 			else {
-				echo 'Traitement de la Voiture '.$plaque.'<br>';
+				//echo 'Traitement de la Voiture '.$plaque.'<br>';
 				$numFacture = $infos[2];
 				$numContrat = $infos[4];
-				print_r($infos);
-				//FACTURE
-				if (! array_key_exists ( $numFacture , $TFacture )){
-					$TFacture[$numFacture] = new TRH_Evenement;
-					$TFacture[$numFacture]->type = 'facture';
-					$TFacture[$numFacture]->numFacture = $numFacture;
-					$TFacture[$numFacture]->coutTTC= 0;
-					$TFacture[$numFacture]->coutEntrepriseTTC = 0;
-					$TFacture[$numFacture]->coutEntrepriseHT = 0;
-					$TFacture[$numFacture]->fk_rh_ressource = $TRessource[$plaque];
-					$TFacture[$numFacture]->motif = 'Facture Parcours';
-					$TFacture[$numFacture]->commentaire  = 'concernant '.$infos[0];
-					$TFacture[$numFacture]->set_date('date_debut', $infos[10]);
-					$TFacture[$numFacture]->set_date('date_fin', $infos[1]);
-				}
 				
-				$TFacture[$numFacture]->coutTTC += intval(strtr($infos[38], ',','.'));
-				$TFacture[$numFacture]->coutEntrepriseTTC += floatval(strtr($infos[38], ',','.'));
-				//$TFacture[$numFacture]->TVA=19.6;
-				echo floatval(strtr($infos[12], ',','.'));
-				$TFacture[$numFacture]->coutEntrepriseHT += floatval(strtr($infos[12], ',','.'));
+				//FACTURE
+				$fact = new TRH_Evenement;
+				$fact->type = 'facture';
+				$fact->numFacture = $numFacture;
+				$fact->fk_rh_ressource = $TRessource[$plaque];
+				$fact->motif = 'Facture mensuelle Parcours';
+				$TExtrasFieldValues = array();
+				$c = '';
+				for ($i = 30; $i <= 38; $i++) {
+		    			$c .= $TExtrasFieldKeys[$i]." : ".$infos[$i]."€\n";}
+				$fact->commentaire  = $c;
+				$fact->set_date('date_debut', $infos[10]);
+				$fact->set_date('date_fin', $infos[1]);
+				$fact->coutTTC += floatval(strtr($infos[38], ',','.'));
+				$fact->coutEntrepriseTTC += floatval(strtr($infos[38], ',','.'));
+				//$fact->TVA=19.6;
+				$fact->coutEntrepriseHT += floatval(strtr($infos[12], ',','.'));
 				$t = explode(' ',$infos[7]);
-				$TFacture[$numFacture]->fk_user = (array_key_exists(strtolower($t[0]) , $TUser)) ? $TUser[strtolower($t[0])] : 0 ;
+				$fact->fk_user = (array_key_exists(strtolower($t[0]) , $TUser)) ? $TUser[strtolower($t[0])] : 0 ;
+				
 				
 				//CONTRAT
 				if (! array_key_exists ( strtolower($numContrat) , $TContrat )){
 					$contrat = new TRH_Contrat;
 					$contrat->libelle = 'Contrat n°'.$numContrat;
 					$contrat->numContrat = $numContrat;
-					$TExtrasFieldValues = array();
-					$TExtrasFieldUnites = array();
-					for ($i = 12; $i <= 38; $i++) {
-		    			$TExtrasFieldValues[] = $infos[$i];
-						$TExtrasFieldUnites[] = '€';
-					}
-					$contrat->extraFieldNom = implode(';', $TExtrasFieldKeys);
-					$contrat->extraFieldValeur = implode(';', $TExtrasFieldValues);
-					$contrat->extraFieldUnite = implode(';', $TExtrasFieldUnites);
 					$contrat->set_date('date_debut', $infos[10]);
 					$contrat->set_date('date_fin', $infos[11]);
 					$contrat->bail = 'location';
@@ -112,46 +104,41 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$contrat->fk_tier_fournisseur = $idParcours;
 					$contrat->fk_rh_ressource_type = $idVoiture;
 					$contrat->save($ATMdb);
-					echo 'Id du contrat : '.$contrat->getId().'<br>';
+					$cptContrat ++;
+					
+					//LIAISON CONTRAT-RESSOURCE
 					$assocContrat =  new TRH_Contrat_Ressource;
-					echo 'Id ressource : '.$TRessource[$plaque].'<br>';
 					$assocContrat->fk_rh_ressource = $TRessource[$plaque];
 					$assocContrat->fk_rh_contrat = $contrat->getId();
 					$assocContrat->save($ATMdb);
 				}
 				
-				//VEHICULE
+				$fact->numContrat = $numContrat;
+				$fact->fk_contrat = $TContrat[strtolower($numContrat)];
+				$fact->save($ATMdb);
+				$cptFacture++;
 				
 				
-				
-				
-				
-				
-				//$temp->save($ATMdb);
 			}
 			
 		}
 		else {//ligne d'entete : on charge les noms des champs
 			$TExtrasFieldKeys = array(); // 12 à 38
-			for ($i = 12; $i <= 38; $i++) {
-    			$TExtrasFieldKeys[] = $infos[$i];
+			for ($i = 30; $i <= 38; $i++) {
+    			$TExtrasFieldKeys[$i] = $infos[$i];
 			}
 		}
 		
 		$numLigne++;
-		
-		//print_r(explode('\n', $data));
 	}
 
-	// on save les factures
-	foreach ($TFacture as $i=>$temp) {
-		echo '<br>'.' : ';	
-		print_r($temp);
-		$temp->save($ATMdb);
-		echo '<br>';
-	}
-	echo 'Fin du traitement. '.($numLigne-3).' lignes rajoutés à la table.';
-	
+	//Fin du code PHP : Afficher le temps d'éxecution et le bilan.
+	echo $cptContrat.' contrats importés.<br>';
+	echo $cptNoVoiture.' plaques sans correspondance.<br>';
+	echo $cptFacture.' factures importés.<br>';
+	$timeend=microtime(true);
+	$page_load_time = number_format($timeend-$timestart, 3);
+	echo '<br>Fin du traitement. Durée : '.$page_load_time . " sec.<br><br><br>";
 }
 
 function chargeVoiture(&$ATMdb){
