@@ -5,7 +5,7 @@
 		
 		<br/>
 		<div style=" display:inline-block;">                  
-		<table class="border" style="width:200%;" >	
+		<table class="border" style="width:130%;" >	
 				<br/><br/>
 				<tr>
 					<td>       </td>
