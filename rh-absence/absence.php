@@ -376,6 +376,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'etat'=>$absence->etat
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
+				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')	
 				,'fk_user'=>$absence->fk_user
 			)	
 			,'userCourant'=>array(

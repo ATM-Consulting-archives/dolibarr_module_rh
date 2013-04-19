@@ -2,7 +2,7 @@
         [view.head;strconv=no]
 
 		Utilisateur : [userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]
-		<br/>Compteur : [view.compteur_id;strconv=no;protect=no]
+		
 		<br/>
 		<div style=" display:inline-block;">                  
 		<table class="border" style="width:200%;" >	
@@ -25,8 +25,6 @@
 					<td style="text-align:center;"> [horaires.lundi_heurefam;strconv=no;protect=no]     </td>
 					<td style="text-align:center;"> [horaires.lundi_heuredpm;strconv=no;protect=no]    </td>
 					<td style="text-align:center;"> [horaires.lundi_heurefpm;strconv=no;protect=no]    </td>
-					
-
 				</tr>
 				<tr>
 					<td style="text-align:center;"><b>Mardi</b></td>
