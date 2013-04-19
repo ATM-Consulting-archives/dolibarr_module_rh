@@ -366,7 +366,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			,'absenceCourante'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'id'=>$absence->getId()
-				,'commentaire'=>$form->texte('','commentaire',$absence->commentaire,23,500,'',$class="text", $default='')
+				,'commentaire'=>$form->zonetexte('','commentaire',$absence->commentaire, 40,3,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)

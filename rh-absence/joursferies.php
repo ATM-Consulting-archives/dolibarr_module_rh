@@ -166,9 +166,7 @@ function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 				'id'=>$feries->getId()
 				,'date_jourOff'=>$form->calendrier('', 'date_jourOff', $feries->get_date('date_jourOff'), 10)
 				,'moment'=>$form->combo('','moment',$feries->TMoment,$feries->moment)
-				//,'matin'=>$form->checkbox1('','matin','1',$feries->matin==1?true:false)
-				//,'apresmidi'=>$form->checkbox1('','apresmidi','1',$feries->apresmidi==1?true:false)
-				,'commentaire'=>$form->texte('','commentaire',$feries->commentaire, 30,100,'','','-')
+				,'commentaire'=>$form->zonetexte('','commentaire',$feries->commentaire, 40,3,'','','-')
 			)
 			,'userCourant'=>array(
 				'id'=>$user->id
