@@ -45,13 +45,16 @@
 		<td>Type</td>
 		<td>Nombre de jours avant alerte</td>
 		<td id="textMontant">Montant avant alerte</td>
+		<td>Se valide lui-même ?</td>
+		<td>Niveau du valideur</td>
 	</tr>
 	<tr>
 		<td>[valideur.group;strconv=no;protect=no]</td>
 		<td>[valideur.type;strconv=no;protect=no]</td>
 		<td>[valideur.nbjours;strconv=no;protect=no]</td>
 		<td id="textMontant2">[valideur.montant;strconv=no;protect=no]€</td>
-		<td id="textMontant2">[valideur.validate_himself;strconv=no;protect=no]€</td>
+		<td>[valideur.validate_himself;strconv=no;protect=no]</td>
+		<td>[valideur.level;strconv=no]</td>
 	</tr>
 </table>
 
