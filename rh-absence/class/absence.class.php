@@ -386,17 +386,27 @@ class TRH_Absence extends TObjetStd {
 					if($this->dfMoment=='matin'){		// si la date de fin est le matin, il n'y a donc que le cas matin à traiter
 						if($TTravail[$jourDebutSem.'am']==0){
 							$duree-=0.5;
+						}else{
+							$this->dureeHeure=$this->additionnerHeure($this->dureeHeure,$this->difheure($TTravailHeure["date_".$jourDebutSem."_heuredam"], $TTravailHeure["date_".$jourDebutSem."_heurefam"]));
 						}
 					}else if($this->ddMoment=='apresmidi'){		// si la date de debut est lapres midi, il n'y a donc que le cas pm à traiter
 						if($TTravail[$jourDebutSem.'pm']==0){
 							$duree-=0.5;
 						}
+						else{
+							$this->dureeHeure=$this->additionnerHeure($this->dureeHeure,$this->difheure($TTravailHeure["date_".$jourDebutSem."_heuredpm"], $TTravailHeure["date_".$jourDebutSem."_heurefpm"]));
+						}
 					}else{	//sinon on traite les cas matin et apres midi
 						if($TTravail[$jourDebutSem.'am']==0){
 							$duree-=0.5;
+						}else{
+							$this->dureeHeure=$this->additionnerHeure($this->dureeHeure,$this->difheure($TTravailHeure["date_".$jourDebutSem."_heuredam"], $TTravailHeure["date_".$jourDebutSem."_heurefam"]));
 						}
+						
 						if($TTravail[$jourDebutSem.'pm']==0){
 							$duree-=0.5;
+						}else{
+							$this->dureeHeure=$this->additionnerHeure($this->dureeHeure,$this->difheure($TTravailHeure["date_".$jourDebutSem."_heuredpm"], $TTravailHeure["date_".$jourDebutSem."_heurefpm"]));
 						}
 					}
 					return $duree;
@@ -404,7 +414,6 @@ class TRH_Absence extends TObjetStd {
 				else return $duree;
 				
 			}else{	//les jours de début et de fin sont différents
-				//echo "boucle2";
 				//////////////////////////jour de début
 				$ferie=0;		
 				foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
@@ -479,12 +488,14 @@ class TRH_Absence extends TObjetStd {
 				
 			}
 			
-			
+			//////////////////////////////////////////////////////////////TRAITEMENT DES HEURES
 			//pour chaque jour, du début de l'absence jusqu'à sa fin, on teste si l'employé travaille et on compte les heures
 			$jourEnCours=$this->date_debut;
 			$jourFin=$this->date_fin;
 			$dureeHeure=0;
-			while($jourEnCours!=$jourFin+3600*24){
+			$dureeHeureCalc= "0:0";
+			$cpt=0;
+			while($jourEnCours!=$jourFin){
 				$ferie=0;
 				//echo "boucle1";
 				
@@ -500,36 +511,92 @@ class TRH_Absence extends TObjetStd {
 						if($jour==$jourEnCoursSem){
 							foreach(array('am','pm') as $moment) {
 								if($TTravail[$jour.$moment]==0){
-									
 								}
 								else{
-									$madateD= '2010-03-31 '.$TTravailHeure["date_".$jour."_heured".$moment].':00';
-									$madateF='2010-03-31 '.$TTravailHeure["date_".$jour."_heuref".$moment].':00';
-									echo $madateF;
-
-									/*$date = '2004-10-27 12:00:00';
-										$heure = 3;
-										$minute = 5;
-										$seconde = 10;
-										echo "$date<br>";
-										echo date('Y-m-d H:i:s',strtotime("+$heure hours $minute minutes $seconde seconds", strtotime($date))) . '<br>';*/
-
+									if($cpt==0){   //on traite le premier jour de l'absence
+										if($moment=="am"){
+											if($this->ddMoment=="matin"){
+												$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+											}else if($this->ddMoment=="apresmidi"){
+											}
+										}
+										else if($moment=="pm"){
+											if($this->ddMoment=="apresmidi"){
+												$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+											}else if($this->ddMoment=="matin"){
+												$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+											}
+										}
+										
+									}else{
+										$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+									}
 									
-									echo 'test';
-									echo "<br/>".$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]);
-									$dureeHeure=$dureeHeure+$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]);
+								}
+							}
+						}
+						
+					}
+				}
+				$jourEnCours=$jourEnCours+3600*24;
+				$cpt++;
+			}
+
+			///////////////////////////////////////////////TRAITEMENT DU DERNIER JOUR POUR LES HEURES
+			$ferie=0;
+			foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
+	 			if(strtotime($jourFerie)==$jourEnCours){
+	 				$ferie=1;
+	 			}
+	 		}
+			if(!$ferie){
+				$jourEnCoursSem=$this->jourSemaine($jourEnCours);
+				foreach ($this->TJour as $jour) {
+					if($jour==$jourEnCoursSem){
+						foreach(array('am','pm') as $moment) {
+							if($TTravail[$jour.$moment]==0){
+							}
+							else{
+								if($moment=="am"){
+									if($this->dfMoment=="matin"){
+										$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+									}else if($this->ddMoment=="apresmidi"){
+										$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+									}
+								}
+								else if($moment=="pm"){
+									if($this->dfMoment=="apresmidi"){
+										$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+									}else if($this->dfMoment=="matin"){
+									}
 								}
 							}
 						}
 					}
+					
 				}
-				$jourEnCours=$jourEnCours+3600*24;
-				
 			}
-			echo "test = ".$dureeHeure;
+			
+			$this->dureeHeure=$dureeHeure;
 		    return $duree;
 		}
 		
+		//permet d'additionner deux heures ensemble
+		function additionnerHeure($dureeTotale, $dureeDiff){
+			list($heureT, $minuteT) = explode(':', $dureeTotale);
+			//echo "heureT : ".$heureT." minutesT : ".$minuteT;
+			list($heureD, $minuteD) = explode(':', $dureeDiff);
+			
+			$heureT=$heureT+$heureD;
+			$minuteT=$minuteT+$minuteD;
+			
+			while($minuteT>60){
+				$minuteT-=60;
+				$heureT+=1;
+			}
+			
+			return $heureT.":".$minuteT;
+		}
 		
 		//renvoie le jour de la semaine correspondant à la date passée en paramètre
 		function jourSemaine($phpDate){
