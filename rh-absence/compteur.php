@@ -77,9 +77,12 @@ function _liste(&$ATMdb, &$compteur) {
 	getStandartJS();
 	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Administration des congés');
 	$r = new TSSRenderControler($compteur);
-	$sql="SELECT  r.rowid as 'ID', CONCAT(c.firstname,' ',c.name) as 'Utilisateur', anneeN as 'annee', r.date_cre as 'DateCre',r.acquisExerciceN as 'Congés acquis N', 
-	r.acquisAncienneteN as 'Congés Ancienneté', r.acquisExerciceNM1 as 'Conges Acquis N-1', r.congesPrisNM1 as 'Conges Pris N-1',
-			   r.rttPris as 'RttPris'
+	$sql="SELECT  r.rowid as 'ID', CONCAT(c.firstname,' ',c.name) as 'Utilisateur', anneeN as 'annee', 
+		r.date_cre as 'DateCre', CAST(r.acquisExerciceN as DECIMAL(16,1)) as 'Congés acquis N', 
+		CAST(r.acquisAncienneteN as DECIMAL(16,1)) as 'Congés Ancienneté', 
+		CAST(r.acquisExerciceNM1 as DECIMAL(16,1)) as 'Conges Acquis N-1', 
+		CAST(r.congesPrisNM1 as DECIMAL(16,1)) as 'Conges Pris N-1',
+		CAST(r.rttPris as DECIMAL(16,1))  as 'RttPris'
 		FROM ".MAIN_DB_PREFIX."rh_compteur as r, ".MAIN_DB_PREFIX."user as c 
 		WHERE r.entity=".$conf->entity." AND r.fk_user=c.rowid";
 		
@@ -254,7 +257,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'anneeCourante'=>$form->texte('','anneeN',round2Virgule($anneeCourante),10,50,'',$class="text", $default='')
 				,'total'=>round2Virgule($congeCourantTotal)
 				,'idUser'=>$congeCourant->fk_user
-				,'date_congesCloture'=>$compteurGlobal->date_congesClotureInit
+				,'date_congesCloture'=>date("d/m/Y",strtotime($compteurGlobal->date_congesClotureInit))
 				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',round2Virgule($compteurGlobal->congesAcquisMensuelInit),10,50,'',$class="text", $default='')	
 			)
 			
@@ -266,7 +269,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'mensuel'=>$form->texte('','rttAcquisMensuel',round2Virgule($rttCourant['mensuel']),10,50,'',$class="text", $default='')
 				,'annuelCumule'=>$form->texte('','rttAcquisAnnuelCumule',round2Virgule($rttCourant['annuelCumule']),10,50,'',$class="text", $default='')
 				,'annuelNonCumule'=>$form->texte('','rttAcquisAnnuelNonCumule',round2Virgule($rttCourant['annuelNonCumule']),10,50,'',$class="text", $default='')
-				,'date_rttCloture'=>$compteurGlobal->date_rttClotureInit
+				,'date_rttCloture'=>date("d/m/Y",strtotime($compteurGlobal->date_rttClotureInit))
 				,'mensuelInit'=>$form->texte('','rttAcquisMensuelInit',round2Virgule($rttCourant['mensuelInit']),10,50,'',$class="text", $default='')
 				,'annuelCumuleInit'=>$form->texte('','rttAcquisAnnuelCumuleInit',round2Virgule($rttCourant['annuelCumuleInit']),10,50,'',$class="text", $default='')
 				,'annuelNonCumuleInit'=>$form->texte('','rttAcquisAnnuelNonCumuleInit',round2Virgule($rttCourant['annuelNonCumuleInit']),10,50,'',$class="text", $default='')

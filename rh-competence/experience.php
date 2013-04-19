@@ -106,11 +106,6 @@
 						$tagCompetence->save($ATMdb);
 					}
 					
-					
-					
-					
-					
-					
 					_ficheFormation($ATMdb, $formation,$tagCompetence,'edit');
 				}
 				else{

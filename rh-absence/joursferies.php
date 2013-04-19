@@ -86,7 +86,7 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 	
 	$r = new TSSRenderControler($feries);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
-			  date_jourOff, moment as 'Période',  commentaire as 'Commentaire', '' as 'Supprimer'
+			  DATE_FORMAT(date_jourOff, '%d/%m/%Y') as 'date_jourOff', moment as 'Période',  commentaire as 'Commentaire', '' as 'Supprimer'
 		FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
 		WHERE entity=".$conf->entity;
 		
@@ -166,9 +166,7 @@ function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 				'id'=>$feries->getId()
 				,'date_jourOff'=>$form->calendrier('', 'date_jourOff', $feries->get_date('date_jourOff'), 10)
 				,'moment'=>$form->combo('','moment',$feries->TMoment,$feries->moment)
-				//,'matin'=>$form->checkbox1('','matin','1',$feries->matin==1?true:false)
-				//,'apresmidi'=>$form->checkbox1('','apresmidi','1',$feries->apresmidi==1?true:false)
-				,'commentaire'=>$form->texte('','commentaire',$feries->commentaire, 30,100,'','','-')
+				,'commentaire'=>$form->zonetexte('','commentaire',$feries->commentaire, 40,3,'','','-')
 			)
 			,'userCourant'=>array(
 				'id'=>$user->id
