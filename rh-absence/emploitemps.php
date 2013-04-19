@@ -17,7 +17,7 @@
 				break;
 				
 			case 'save':
-				$ATMdb->db->debug=true;
+				//$ATMdb->db->debug=true;
 				$emploiTemps->load($ATMdb, $_REQUEST['fk_user']);
 				
 				$emploiTemps->razCheckbox($ATMdb, $emploiTemps);
@@ -81,7 +81,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 			,'Utilisateur'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'">@val@</a>'
 		)
 		,'translate'=>array()
-		,'hide'=>array('DateCre')
+		,'hide'=>array('DateCre','ID')
 		,'type'=>array()
 		,'liste'=>array(
 			'titre'=>'Liste des emplois du temps des collaborateurs'
