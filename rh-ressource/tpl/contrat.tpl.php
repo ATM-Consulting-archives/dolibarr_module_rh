@@ -38,10 +38,12 @@
 	 	</tr><tr>
 	 		<td>TVA </td>
 	 		<td>[contrat.TVA;strconv=no;protect=no] %</td>
-	 	</tr><tr>
+	 	</tr>
+	 	<tr>
 	 		<td>Loyer HT</td>
 	 		<td>[contrat.loyer_HT;strconv=no;protect=no] €</td>
 	 	</tr>
+	 	
 	</table>
 	
 </div>

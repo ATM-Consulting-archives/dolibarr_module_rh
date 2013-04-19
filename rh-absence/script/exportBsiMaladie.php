@@ -10,18 +10,8 @@ $ATMdb=new Tdb;
 $anneeCourante=date('Y');
 $anneePrec=$anneeCourante-1;
 
-$debutAnnee='01/06/'.$anneePrec;
-$finAnnee='31/05/'.$anneeCourante;
-
-// calcul du timestamp
-list($jour, $mois, $annee) = explode('/', $debutAnnee);
-$timestampDebutAnnee = mktime (0, 0, 0, $mois, $jour, $annee);
-$debutAnnee=date("Y-m-d H:i:s", $timestampDebutAnnee);
-
-
-list($jour, $mois, $annee) = explode('/', $finAnnee);
-$timestampFinAnnee = mktime (0, 0, 0, $mois, $jour, $annee);
-$finAnnee=date("Y-m-d H:i:s", $timestampFinAnnee);
+$debutAnnee=$anneePrec.'-06-01 00:00:00';
+$finAnnee=$anneeCourante.'-05-31 00:00:00';
 
 $TUserID=array();
 $sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
@@ -31,7 +21,7 @@ while($ATMdb->Get_line()) {
 	$TUserID[]=$ATMdb->Get_field('rowid');
 }
 
-$TabRecap=array();
+$TabRecapMaladie=array();
 foreach($TUserID as $user){
 	
 	$sql="SELECT u.name, u.firstname, a.type, a.date_debut, a.date_fin, a.duree 
@@ -44,7 +34,7 @@ foreach($TUserID as $user){
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
-		$TabRecap['maladiemaintenue'][$user]=$TabRecap[$user]+$ATMdb->Get_field('duree');
+		$TabRecapMaladie['maladiemaintenue'][$user]=$TabRecap[$user]+$ATMdb->Get_field('duree');
 	}
 }
 
@@ -60,10 +50,10 @@ foreach($TUserID as $user){
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
-		$TabRecap['maladienonmaintenue'][$user]=$TabRecap[$user]+$ATMdb->Get_field('duree');
+		$TabRecapMaladie[$user]['maladienonmaintenue']=$TabRecap[$user]+$ATMdb->Get_field('duree');
 	}
 }
 //print_r($TabRecap);
 //echo "<br/>";
-__out($TabRecap);
+__out($TabRecapMaladie);
 

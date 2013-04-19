@@ -152,6 +152,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 	echo $form->hidden('id', $contrat->getId());
 	echo $form->hidden('action', 'save');
 	$contrat->load_liste($ATMdb);
+	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/contrat.tpl.php'
 		,array()

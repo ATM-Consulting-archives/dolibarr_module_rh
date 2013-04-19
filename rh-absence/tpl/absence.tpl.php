@@ -39,8 +39,12 @@
 				</tr>
 				[onshow;block=begin;when [view.mode]!='edit']
 					<tr>
-						<td>Duree</td>
+						<td>Duree (en demi-journées)</td>
 						<td>[absenceCourante.duree;strconv=no;protect=no]</td>
+					</tr>
+					<tr>
+						<td>Duree (en heures)</td>
+						<td>[absenceCourante.dureeHeure;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
 						<td>Etat</td>

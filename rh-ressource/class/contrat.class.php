@@ -5,8 +5,8 @@ class TRH_Contrat  extends TObjetStd {
 		global $conf;
 		parent::set_table(MAIN_DB_PREFIX.'rh_contrat');
 		parent::add_champs('libelle','type=chaine;');
+		parent::add_champs('numContrat','type=chaine;');
 		parent::add_champs('date_debut, date_fin','type=date;');
-		//parent::add_champs('duree, kilometrage ','type=entier;');
 		
 		parent::add_champs('bail','type=chaine;');
 		parent::add_champs('TVA','type=entier;');

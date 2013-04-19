@@ -23,8 +23,10 @@
 				$absence->save($ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
+				//echo "test".$absence->difheure('16:00','17:30');
 				$mesg = '<div class="ok">Demande enregistrée</div>';
 				_fiche($ATMdb, $absence,'view');
+				
 				break;
 			
 			case 'view':
@@ -364,7 +366,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			,'absenceCourante'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'id'=>$absence->getId()
-				,'commentaire'=>$form->texte('','commentaire',$absence->commentaire,23,500,'',$class="text", $default='')
+				,'commentaire'=>$form->zonetexte('','commentaire',$absence->commentaire, 40,3,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
@@ -374,6 +376,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'etat'=>$absence->etat
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
+				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')	
 				,'fk_user'=>$absence->fk_user
 			)	
 			,'userCourant'=>array(
