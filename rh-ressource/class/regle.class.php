@@ -5,23 +5,31 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource_regle');
 		
 		parent::add_champs('choixApplication','type=chaine;');
-		parent::add_champs('dureeHInt','type=chaine;');
-		parent::add_champs('dureeMInt','type=chaine;');
-		parent::add_champs('dureeHExt','type=chaine;');
-		parent::add_champs('dureeMExt','type=chaine;');
-		parent::add_champs('limSMS','type=chaine;');
+		
+		//valeurs
+		parent::add_champs('duree','type=entier;');
+		parent::add_champs('dureeInt','type=entier;');
+		parent::add_champs('dureeExt','type=entier;');
+		parent::add_champs('natureDeduire','type=chaine;');
+		parent::add_champs('montantDeduire','type=float;');
+		parent::add_champs('dataIllimite','type=chaine;'); //booléen
+		parent::add_champs('dataIphone','type=chaine;'); //booléen
+		parent::add_champs('mailforfait','type=chaine;'); //booléen
+		parent::add_champs('smsIllimite','type=chaine;'); //booléen
+		parent::add_champs('data15Mo','type=chaine;'); //booléen
+		parent::add_champs('carteJumelle','type=chaine;'); //booléen
 		parent::add_champs('numeroExclus','type=chaine;');
 		
-		parent::add_champs('fk_user','type=entier;index;');
-		parent::add_champs('fk_usergroup','type=entier;index;');
+		
+		parent::add_champs('fk_user','type=entier;');
+		parent::add_champs('fk_usergroup','type=entier;');
 		parent::add_champs('fk_rh_ressource_type, entity','type=entier;index;');
 		
 		parent::_init_vars();
 		parent::start();
 		
 		$this->choixApplication = 'all';
-		
-		$this->TObjet = array('limInterne'=>'Limite interne', 'limExterne'=>'Limite externe');
+	
 		$this->TUser = array();
 		$this->TGroup  = array();
 		$this->TChoixApplication = array(

@@ -66,17 +66,66 @@
 		<td>[newRule.fk_user; strconv=no]</td>
 	</tr>
 	<tr>
+		<td>Limite</td>
+		<td>
+			<input class="" type="radio" id="limGen" name="choixApplication" value="gen"  CHECKED >
+			<label for="choixApplication_1">Générale</label>
+			<input class="" type="radio" id="limIntExt" name="choixApplication" value="intext"    >
+			<label for="choixApplication_2">Interne\Externe</label>	
+			<script>
+			$(document).ready(function(){
+				
+				$('#limGen').click(function(){
+					$('#general').show();
+					$('#interne').hide();
+					$('#externe').hide();
+				});
+				$('#limIntExt').click(function(){
+					$('#general').hide();
+					$('#interne').show();
+					$('#externe').show();
+				})
+			})
+		</script>	
+		</td>
+	</tr>
+	<tr id="general">
+		<td>Limite Générale</td>
+		<td>[newRule.dureeH;strconv=no]:[newRule.dureeM;strconv=no]    (HH:MM)</td>
+	</tr>
+	<tr id="interne">
 		<td>Limite Interne</td>
 		<td>[newRule.dureeHInt;strconv=no]:[newRule.dureeMInt;strconv=no]    (HH:MM)</td>
 	</tr>
-	<tr>
+	<tr id="externe">
 		<td>Limite Externe</td>
 		<td>[newRule.dureeHExt;strconv=no]:[newRule.dureeMExt;strconv=no]    (HH:MM)</td>
 	</tr>
 	<tr>
-		<td>Limite SMS</td>
-		<td>[newRule.limSMS;strconv=no]</td>
+		<td> Nature à déduire</td>
+		<td>[newRule.natureDeduire;strconv=no]</td>
 	</tr>
+	<tr>
+		<td>Montant à déduire</td>
+		<td>[newRule.montantDeduire;strconv=no]</td>
+	</tr>
+	<tr>
+		<td>Données illimités ?</td>
+		<td>[newRule.dataIllimite;strconv=no]</td>
+	</tr>
+	<tr>
+		<td>Données Iphone ?</td>
+		<td>[newRule.dataIphone;strconv=no]</td>
+	</tr>
+	<tr>
+		<td>SMS Illimités ?</td>
+		<td>[newRule.smsIllimite;strconv=no]</td>
+	</tr>
+	<tr>
+		<td>Forfait Mail ?</td>
+		<td>[newRule.mailforfait;strconv=no]</td>
+	</tr>
+	
 	<tr>
 		<td>Numéros Exclus (les séparer par des ";")</td>
 		<td>[newRule.numeroExclus;strconv=no]</td>
