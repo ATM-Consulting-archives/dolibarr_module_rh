@@ -114,7 +114,7 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 		,'hide'=>array('DateCre')
 		,'type'=>array('date_jourOff'=>'date')
 		,'liste'=>array(
-			'titre'=>'Liste des jours non travaillés'
+			'titre'=>'Liste des jours fériés ou non travaillés'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)

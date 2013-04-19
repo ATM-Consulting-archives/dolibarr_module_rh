@@ -81,8 +81,13 @@
 					<td style="text-align:center;"> [horaires.dimanche_heurefpm;strconv=no;protect=no]    </td>
 				</tr>
 		</table>
+		
+		
 		</div>
-
+	[onshow;block=begin;when [view.mode]=='edit']
+		<br/><br/>
+		<b style="margin-left:320px;">Veuillez respecter le format HH:MM pour les horaires</b>
+	[onshow;block=end]
 	
 
 	<div class="tabsAction" >
