@@ -79,23 +79,104 @@
 
 <br>
 
+[onshow;block=begin;when [view.mode]=='edit']
+	<h2>Ressource associée </h2>
+	<div>
+		[fk_ressource.liste_fk_rh_ressource;strconv=no;protect=no]
+	</div>
+[onshow;block=end]
 
-	
-		[onshow;block=begin;when [view.mode]=='edit']
-			<h2>Ressource associée </h2>
-			<div>
-				[fk_ressource.liste_fk_rh_ressource;strconv=no;protect=no]
-			</div>
-		[onshow;block=end]
+[onshow;block=begin;when [view.mode]!='edit']
+	[onshow;block=begin;when [fk_ressource.fk_rh_ressource]!='aucune ressource']
+		<h2>Ressource associée </h2>
+		<div>
+			Cette ressource est associée à <a href='ressource.php?id=[fk_ressource.id]'>[fk_ressource.fk_rh_ressource]</a>.
+		</div>
+	[onshow;block=end]
+[onshow;block=end]
 		
-		[onshow;block=begin;when [view.mode]!='edit']
-			[onshow;block=begin;when [fk_ressource.fk_rh_ressource]!='aucune ressource']
-				<h2>Ressource associée </h2>
-				<div>
-					Cette ressource est associée à <a href='ressource.php?id=[fk_ressource.id]'>[fk_ressource.fk_rh_ressource]</a>.
-				</div>
-			[onshow;block=end]
-		[onshow;block=end]
+[onshow;block=begin;when [view.mode]=='edit']
+<h2>Attribution de la ressource</h2>
+
+<p> Attribuer directement cette ressource à un utilisateur : 
+<INPUT type=radio name="fieldChoice" value="O" id="ouiChecked"><label for="ouiChecked"> Oui</label>
+<INPUT type=radio name="fieldChoice" value="N" id="nonChecked" checked="checked"><label for="nonChecked"> Non</label>
+</p>
+
+<table id="tableAttribution" class="border" style="width:100%">
+	[NEmprunt.fk_rh_ressource;strconv=no;protect=no]
+	[NEmprunt.type;strconv=no;protect=no]
+	<tr>
+		<td>Utilisateur</td>
+		<td>[NEmprunt.fk_user;strconv=no;protect=no]</td>
+	</tr>
+	<tr>
+		<td>Date début</td>
+		<td>[NEmprunt.date_debut;strconv=no;protect=no]</td>
+	</tr>
+	<tr>
+		<td>Date fin</td>
+		<td>[NEmprunt.date_fin;strconv=no;protect=no]</td>
+	</tr>
+	<tr>
+		<td>Commentaire</td>
+		<td>[NEmprunt.commentaire;strconv=no;protect=no]</td>
+	</tr>
+</table>
+[onshow;block=end]
+
+
+<script>
+	$(document).ready( function(){
+		$('#tableAttribution').hide();
+		$('#ouiChecked').click(function(){
+			$('#tableAttribution').show();
+		});
+		$('#nonChecked').click(function(){
+			$('#tableAttribution').hide();
+		})
+		
+		//on empêche que la date de début dépasse pas celle de fin
+		function comparerDates(){
+			jd = parseInt($("#date_debut").val().substr(0,2));
+			md = parseInt($("#date_debut").val().substr(3,2));
+			ad = parseInt($("#date_debut").val().substr(6,4));
+			jf = parseInt($("#date_fin").val().substr(0,2));
+			mf = parseInt($("#date_fin").val().substr(3,2));
+			af = parseInt($("#date_fin").val().substr(6,4));
+			if(af<ad){
+				$("#date_fin").val($("#date_debut").val());
+				return;
+			}
+			else if(af==ad){
+				
+				if(mf<md){
+					$("#date_fin").val($("#date_debut").val());
+					return;}
+					
+				else if(mf==md){
+					
+					if(jf<jd){
+						$("#date_fin").val($("#date_debut").val());
+						return;}
+					else if(jf=jd){return;}
+					else{return;}
+					
+				}
+				else{return;}
+			}
+			else{return;}
+			
+			
+		};
+		
+		$("#date_debut").change(comparerDates);
+		$("#date_fin").change(comparerDates);
+			
+	});
+</script>
+
+
 
 [onshow;block=begin;when [view.userRight]==1]
 <div class="tabsAction" style="text-align:center;" >
@@ -106,8 +187,6 @@
 		[onshow;block=begin;when [view.mode]!='edit']
 			<a class="butAction"  href="?id=[ressource.id]&action=edit">Modifier</a>
 			&nbsp; &nbsp;<a class="butActionDelete"  href="?id=[ressource.id]&action=delete">Supprimer</a>
-			<!--&nbsp; &nbsp; <input type="button" value="Supprimer" name="cancel" class="butActionDelete" onclick="document.location.href='?id=[ressource.id]&action=edit'">-->
-
 		[onshow;block=end]
 </div>
 [onshow;block=end]

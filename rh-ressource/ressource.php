@@ -8,6 +8,7 @@
 	
 	//if (!$user->rights->financement->affaire->read)	{ accessforbidden(); }
 	$ATMdb=new Tdb;
+	$emprunt=new TRH_Evenement;
 	$ressource=new TRH_ressource;
 	
 	$mesg = '';
@@ -23,19 +24,21 @@
 			case 'edit'	:
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $ressource,'edit');
+				_fiche($ATMdb, $emprunt, $ressource,'edit');
 				break;
 			
 			case 'type':
 				$ressource->set_values($_REQUEST);
 				$ressource->save($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
+				$emprunt->load($ATMdb, $_REQUEST['idEven']);
 				$ressource->fk_rh_ressource_type=$_REQUEST['fk_rh_ressource_type'];
-				_fiche($ATMdb, $ressource,'edit');
+				_fiche($ATMdb, $emprunt, $ressource,'edit');
 				break;
 			
 				
 			case 'save':
+			
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				//on vérifie que les champs obligatoires sont renseignés
@@ -67,6 +70,13 @@
 				$ressource->set_values($_REQUEST);
 				$ressource->save($ATMdb);
 				
+				////////
+				if($_REQUEST["fieldChoice"]=="O"){
+					$emprunt->load($ATMdb, $_REQUEST['idEven']);
+					$emprunt->set_values($_REQUEST['evenement']);
+					$emprunt->save($ATMdb);
+				}
+				////////
 
 				if ($mesg==''){
 					$mesg = '<div class="ok">Modifications effectuées</div>';
@@ -78,13 +88,13 @@
 				else {$mode = 'edit';}
 				
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $ressource,$mode);
+				_fiche($ATMdb, $emprunt, $ressource,$mode);
 				break;
 			
 			case 'view':
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $ressource,'view');
+				_fiche($ATMdb, $emprunt, $ressource,'view');
 				break;
 			
 				
@@ -107,7 +117,7 @@
 	}
 	elseif(isset($_REQUEST['id'])) {
 		$ressource->load($ATMdb, $_REQUEST['id']);
-		_fiche($ATMdb, $ressource, 'view');
+		_fiche($ATMdb, $emprunt, $ressource, 'view');
 	}
 	else {
 		/*
@@ -287,7 +297,7 @@ function _choixType(&$ATMdb, &$ressource, $mode) {
 
 
 
-function _fiche(&$ATMdb, &$ressource, $mode) {
+function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 	global $db,$user;
 	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
 
@@ -335,6 +345,9 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 		$reqVide=1;
 	}
 
+	$emprunt->load_liste($ATMdb);
+	
+	print_r($ressource->TRessource);
 
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
@@ -362,7 +375,15 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'id'=>$ressource->fk_rh_ressource
 				,'reqExiste'=>$reqVide
 			)
-			
+			,'NEmprunt'=>array(
+				'id'=>$emprunt->getId()
+				,'type'=>$form->hidden('evenement[type]', 'emprunt')
+				,'fk_user'=>$form->combo('','evenement[fk_user]',$emprunt->TUser,$emprunt->fk_user)
+				,'fk_rh_ressource'=> $form->hidden('evenement[fk_rh_ressource]', $ressource->getId())
+				,'commentaire'=>$form->texte('','evenement[commentaire]',$emprunt->commentaire, 30,100,'','','-')
+				,'date_debut'=> $form->calendrier('', 'evenement[date_debut]', $emprunt->get_date('date_debut'), 10)
+				,'date_fin'=> $form->calendrier('', 'evenement[date_fin]', $emprunt->get_date('date_fin'), 10)
+			)
 			,'view'=>array(
 				'mode'=>$mode
 				,'userRight'=>((int)$user->rights->ressource->ressource->createRessource)
