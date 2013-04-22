@@ -28,6 +28,7 @@
 		<td>
 			[newRule.choixApplication; strconv=no]
 		</td>
+		[onshow;block=end]
 		<script>
 			$(document).ready(function(){
 				[onshow;block=begin;when [newRule.choixApplicationViewMode]=='Utilisateur']
@@ -54,7 +55,7 @@
 				})
 			})
 		</script>
-		[onshow;block=end]
+		
 	</tr>
 	
 	<tr id="group">
@@ -67,27 +68,38 @@
 	</tr>
 	<tr>
 		<td>Limite</td>
-		<td>
-			<input class="" type="radio" id="limGen" name="choixApplication" value="gen"  CHECKED >
-			<label for="choixApplication_1">Générale</label>
-			<input class="" type="radio" id="limIntExt" name="choixApplication" value="intext"    >
-			<label for="choixApplication_2">Interne\Externe</label>	
+		[onshow;block=begin;when [view.mode]!='view']
+			<td>[newRule.choixLimite; strconv=no]</td>
+		[onshow;block=end]
+		[onshow;block=begin;when [view.mode]=='view']
+			<td>[newRule.choixLimiteViewMode; strconv=no]</td>
+		[onshow;block=end]
+		
 			<script>
 			$(document).ready(function(){
-				
-				$('#limGen').click(function(){
+				$('#choixLimite_1').click(function(){
 					$('#general').show();
 					$('#interne').hide();
 					$('#externe').hide();
 				});
-				$('#limIntExt').click(function(){
+				$('#choixLimite_2').click(function(){
 					$('#general').hide();
 					$('#interne').show();
 					$('#externe').show();
 				})
+				
+				[onshow;block=begin;when [newRule.choixLimiteViewMode]=='Général']
+					$('#interne,#externe').hide();
+				[onshow;block=end]
+				
+				[onshow;block=begin;when [newRule.choixLimiteViewMode]!='Général']
+					$('#general').hide();
+				[onshow;block=end]
+				
+				
 			})
-		</script>	
-		</td>
+			</script>	
+		
 	</tr>
 	<tr id="general">
 		<td>Limite Générale</td>
@@ -107,7 +119,7 @@
 	</tr>
 	<tr>
 		<td>Montant à déduire</td>
-		<td>[newRule.montantDeduire;strconv=no]</td>
+		<td>[newRule.montantDeduire;strconv=no] €</td>
 	</tr>
 	<tr>
 		<td>Données illimités ?</td>
