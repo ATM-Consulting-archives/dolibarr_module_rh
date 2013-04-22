@@ -34,7 +34,7 @@ foreach($TUserID as $user){
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
-		$TabRecapMaladie['maladiemaintenue'][$user]=$TabRecap[$user]+$ATMdb->Get_field('duree');
+		$TabRecapMaladie[$user]['maladiemaintenue']=$TabRecapMaladie[$user]['maladiemaintenue']+$ATMdb->Get_field('duree');
 	}
 }
 
@@ -50,10 +50,10 @@ foreach($TUserID as $user){
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
-		$TabRecapMaladie[$user]['maladienonmaintenue']=$TabRecap[$user]+$ATMdb->Get_field('duree');
+		$TabRecapMaladie[$user]['maladienonmaintenue']=$TabRecapMaladie[$user]['maladienonmaintenue']+$ATMdb->Get_field('duree');
 	}
 }
-//print_r($TabRecap);
+//print_r($TabRecapMaladie);
 //echo "<br/>";
 __out($TabRecapMaladie);
 

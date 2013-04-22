@@ -7,7 +7,8 @@ global $user,$conf;
 
 $ATMdb=new Tdb;
 	
-$anneeCourante=date('Y');
+$debutAnnee='2012-01-01 00:00:00';
+$finAnnee='2013-01-01 00:00:00';
 
 $TUserID=array();
 $sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
@@ -24,11 +25,12 @@ foreach($TUserID as $user){
 	FROM ".MAIN_DB_PREFIX."rh_remuneration as a 
 	WHERE a.entity=".$conf->entity."
 	AND a.fk_user=".$user."
-	AND a.anneeRemuneration=".$anneeCourante;
-	
+	AND (a.date_debutRemuneration>'".$debutAnnee."' AND a.date_finRemuneration<'".$finAnnee."')";
+	//echo $sql;exit;
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
-		$TabRecapRem[$user]['anneeRemuneration']=$ATMdb->Get_field('anneeRemuneration');
+		$TabRecapRem[$user]['date_debutRemuneration']=$ATMdb->Get_field('date_debutRemuneration');
+		$TabRecapRem[$user]['date_finRemuneration']=$ATMdb->Get_field('date_finRemuneration');
 		$TabRecapRem[$user]['bruteAnnuelle']=$ATMdb->Get_field('bruteAnnuelle');
 		$TabRecapRem[$user]['salaireMensuel']=$ATMdb->Get_field('salaireMensuel');
 		$TabRecapRem[$user]['primeAnciennete']=$ATMdb->Get_field('primeAnciennete');
@@ -40,14 +42,15 @@ foreach($TUserID as $user){
 		$TabRecapRem[$user]['urssafPartPatronale']=$ATMdb->Get_field('urssafPartSalariale');
 		$TabRecapRem[$user]['retraitePartSalariale']=$ATMdb->Get_field('urssafPartSalariale');
 		$TabRecapRem[$user]['retraitePartPatronale']=$ATMdb->Get_field('urssafPartSalariale');
+		//print_r($TabRecapRem);
 	}
 }
 
-/*
-foreach($TabRecapRem as $tab){
+
+/*foreach($TabRecapRem as $tab){
 	print_r($tab);
 	echo "<br/>";	
-}*/
-
+}
+*/
 __out($TabRecapRem);
 

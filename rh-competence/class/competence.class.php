@@ -152,8 +152,10 @@ class TRH_remuneration extends TObjetStd {
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_remuneration');
 		parent::add_champs('date_entreeEntreprise','type=date;');
-		parent::add_champs('anneeRemuneration','type=entier;');	
-			
+		
+		parent::add_champs('date_debutRemuneration','type=date;');
+		parent::add_champs('date_finRemuneration','type=date;');
+		
 		parent::add_champs('bruteAnnuelle','type=float;');		
 		parent::add_champs('salaireMensuel','type=float;');		
 		parent::add_champs('primeAnciennete','type=float;');	
