@@ -353,7 +353,6 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 
 	$emprunt->load_liste($ATMdb);
 	
-	print_r($ressource->TRessource);
 
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
