@@ -366,7 +366,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			,'absenceCourante'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'id'=>$absence->getId()
-				,'commentaire'=>$form->zonetexte('','commentaire',$absence->commentaire, 40,3,'','','-')
+				,'commentaire'=>$form->zonetexte('','commentaire',$absence->commentaire, 30,3,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
@@ -385,7 +385,6 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
 				,'valideurConges'=>$user->rights->absence->myactions->valideurConges&&$estValideur
 				,'enregistrerPaieAbsences'=>$user->rights->absence->myactions->enregistrerPaieAbsences&&$estValideur
-				
 			)
 			,'view'=>array(
 				'mode'=>$mode

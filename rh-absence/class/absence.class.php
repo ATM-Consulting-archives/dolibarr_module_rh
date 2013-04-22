@@ -877,3 +877,69 @@ class TRH_Pointage extends TObjetStd {
 		}
 	}
 }
+
+
+
+//définition de la classe pour la gestion des règles
+class TRH_RegleAbsence extends TObjetStd {
+	function __construct() { 
+		parent::set_table(MAIN_DB_PREFIX.'rh_absence_regle');
+		parent::add_champs('typeAbsence','type=chaine;');
+		parent::add_champs('choixApplication','type=chaine;');
+		parent::add_champs('nbJourCumulable','type=int;');
+		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
+		parent::add_champs('fk_usergroup','type=entier;');	//utilisateur concerné
+		parent::add_champs('entity','type=int;');
+		
+		
+		parent::_init_vars();
+		parent::start();	
+		
+		$this->choixApplication = 'all';
+		
+		$this->TTypeAbsence = array('rttnoncumule'=>'RTT Non Cumulé');
+		$this->TUser = array();
+		$this->TGroup  = array();
+		$this->TChoixApplication = array(
+			'all'=>'Tous'
+			,'group'=>'Groupe'
+			,'user'=>'Utilisateur'
+		);
+	}
+	
+	function save(&$ATMdb) {
+		global $conf;
+		$this->entity = $conf->entity;
+		
+		switch ($this->choixApplication){
+			case 'all':$this->fk_user = NULL;$this->fk_usergroup=NULL;break;
+			case 'user':$this->fk_usergroup = NULL;break;
+			case 'group':$this->fk_user = NULL;break;
+			default : echo'pbchoixapplication';break;				
+		}
+		
+		parent::save($ATMdb);
+	}
+
+	
+	
+	function load_liste(&$ATMdb){
+		global $conf;
+
+		//LISTE DE GROUPES
+		$this->TGroup  = array();
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TGroup[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+		}
+		
+		//LISTE DE USERS
+		$this->TUser = array();
+		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+		}
+	}
+}

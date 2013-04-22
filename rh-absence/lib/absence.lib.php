@@ -41,8 +41,7 @@ function compteurPrepareHead(&$obj, $type='absence') {
 
 function edtPrepareHead(&$obj, $type='absence') {
 	global $user;
-	//print '(lol)';
-	//print_r($obj);
+
 	switch ($type) {
 		
 		case 'emploitemps':
@@ -54,6 +53,18 @@ function edtPrepareHead(&$obj, $type='absence') {
 				);
 				break;
 				
+	}
+}
+
+function reglePrepareHead(&$obj, $type='regle') {
+	global $user;
+
+	switch ($type) {
+		case 'regle':
+				return array(
+					array(DOL_URL_ROOT_ALT.'/absence/regleAbsence.php?fk_user='.$user->id, 'Règles des absences','regle')
+				);
+				break;	
 	}
 }
 

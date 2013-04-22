@@ -81,5 +81,5 @@
 	$s=new TRH_JoursFeries;
 	$s->init_db_by_vars($ATMdb);
 	
-	$t=new TRH_Pointage;
+	$t=new TRH_RegleAbsence;
 	$t->init_db_by_vars($ATMdb);

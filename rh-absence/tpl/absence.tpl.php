@@ -16,7 +16,7 @@
 			[onshow;block=end]
 
 
-			<table class="border" style="width:30%">
+			<table class="border" style="width:40%">
 				<tr>
 					<td>Utilisateur Courant</td>
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
