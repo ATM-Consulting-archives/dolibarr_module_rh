@@ -167,7 +167,7 @@ function _fiche(&$ATMdb,  &$association, &$ressource,  $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-			/*,'userRight'=>((int)$user->rights->financement->affaire->write)*/
+				,'userRight'=>((int)$user->rights->ressource->contrat->createContract)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'contrats', 'Ressource')
 			)
 			
