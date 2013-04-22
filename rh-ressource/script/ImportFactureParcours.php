@@ -6,10 +6,10 @@
  * et une évenement de type facture
  */
 
-require('../config.php');
+/*require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');
-require('../class/contrat.class.php');
+require('../class/contrat.class.php');*/
 
 global $conf;
 
