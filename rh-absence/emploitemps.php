@@ -45,9 +45,7 @@
 		_liste($ATMdb, $emploiTemps);
 	}
 	
-	
 	$ATMdb->close();
-	
 	llxFooter();
 	
 	
@@ -58,7 +56,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	print dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence');
 	
 	$r = new TSSRenderControler($emploiTemps);
-	$sql="SELECT e.rowid as 'ID', e.date_cre as 'DateCre', e.fk_user as 'Id Utilisateur', CONCAT(u.firstname,' ', u.name) as 'Utilisateur'
+	$sql="SELECT e.rowid as 'ID', e.date_cre as 'DateCre', e.fk_user as 'Id Utilisateur', CONCAT(u.firstname,' ', u.name) as 'Emploi du temps de l\'utilisateur'
 		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."user as u
 		WHERE e.entity=".$conf->entity." AND u.rowid=e.fk_user";
 
@@ -78,7 +76,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'">@val@</a>'
-			,'Utilisateur'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'">@val@</a>'
+			,'Emploi du temps de l\'utilisateur'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'"<a>Emploi Du Temps de @val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre','ID')
@@ -132,7 +130,21 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 		}
 	} 
 	
-
+	$droitsEdt=0;
+	if($user->rights->absence->myactions->modifierEdt&&!$user->rights->absence->myactions->modifierSonEdt){
+		if($user->id!=$emploiTemps->fk_user){
+			$droitsEdt=$user->rights->absence->myactions->modifierEdt;
+		}
+	}
+	else if($user->rights->absence->myactions->modifierEdt){
+		$droitsEdt=$user->rights->absence->myactions->modifierEdt;
+	}
+	else if($user->rights->absence->myactions->modifierSonEdt&&$user->id==$emploiTemps->fk_user){
+		$droitsEdt=$user->rights->absence->myactions->modifierSonEdt;
+	}
+	else $droitsEdt=0;
+	
+	//echo "salut".$user->rights->absence->myactions->modifierSonEdt;
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/emploitemps.tpl.php'
 		,array(	
@@ -151,8 +163,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				,'compteur_id'=>$emploiTemps->getId()
 			)
 			,'droits'=>array(
-				'modifierEdt'=>$user->rights->absence->myactions->modifierEdt
-				,'modifierSonEdt'=>$user->rights->absence->myactions->modifierSonEdt
+				'modifierEdt'=>$droitsEdt
 			)
 			
 			

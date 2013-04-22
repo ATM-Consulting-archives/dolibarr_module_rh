@@ -24,18 +24,36 @@ function compteurPrepareHead(&$obj, $type='absence') {
 	switch ($type) {
 		
 		case 'compteur':
-				if($user->rights->absence->myactions->modifierParamGlobalConges=="1"){
+				//eif($user->rights->absence->myactions->modifierParamGlobalConges=="1"){
 					return array(
-					array(DOL_URL_ROOT_ALT.'/absence/compteur.php', 'Compteur','compteur')
-					,array(DOL_URL_ROOT_ALT.'/absence/adminCompteur.php?action=view', 'Administration générale congés','adminconges')
+					array(DOL_URL_ROOT_ALT.'/absence/compteur.php?action=view', 'Compteur de '.$user->lastname,'compteur')
+					//,array(DOL_URL_ROOT_ALT.'/absence/adminCompteur.php?action=view', 'Administration générale congés','adminconges')
 					);
 					break;
-				}else{
+	}
+}
+
+function adminCompteurPrepareHead(&$obj, $type='compteur') {
+	global $user;
+	switch ($type) {
+		
+		case 'compteur':
 					return array(
-					array(DOL_URL_ROOT_ALT.'/absence/compteur.php?id='.$obj->getId()."&action=view", 'Compteur','compteur')
+					array(DOL_URL_ROOT_ALT.'/absence/adminCompteur.php', 'Compteur de congés','compteur')
 					);
-				}
-				
+					break;				
+	}
+}
+
+function adminCongesPrepareHead(&$obj, $type='adminconges') {
+	global $user;
+	switch ($type) {
+		
+		case 'compteur':
+					return array(
+					array(DOL_URL_ROOT_ALT.'/absence/adminConges.php?action=view', 'Données générales des congés','adminconges')
+					);
+					break;
 	}
 }
 
@@ -47,8 +65,8 @@ function edtPrepareHead(&$obj, $type='absence') {
 		case 'emploitemps':
 				
 				return array(
-					array(DOL_URL_ROOT_ALT.'/absence/emploitemps.php?id='.$obj->fk_user."&action=view&fk_user=".$user->id, 'Emploi du temps','emploitemps')
-				   ,array(DOL_URL_ROOT_ALT.'/absence/joursferies.php?&fk_user='.$user->id, 'Jours non travaillés','joursferies')
+					array(DOL_URL_ROOT_ALT.'/absence/emploitemps.php?&fk_user='.$user->id, 'Emploi du temps','emploitemps')
+				   ,array(DOL_URL_ROOT_ALT.'/absence/joursferies.php?&fk_user='.$user->id, 'Jours Fériés ou non travaillés','joursferies')
 				   //,array(DOL_URL_ROOT_ALT.'/absence/pointage.php?&fk_user='.$user->id, 'Pointage Collaborateurs','pointage')
 				);
 				break;

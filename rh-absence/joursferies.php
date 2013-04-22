@@ -137,7 +137,7 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 	));
 	if($user->rights->absence->myactions->ajoutJourOff=="1"){
 		?>
-		<a class="butAction" href="?id=<?=$user->id?>&action=new">Nouveau</a><div style="clear:both"></div>
+		<a class="butAction" href="?fk_user=<?=$user->id?>&action=new">Nouveau</a><div style="clear:both"></div>
 		<?
 	}
 	$form->end();

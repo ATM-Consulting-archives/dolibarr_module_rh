@@ -66,7 +66,7 @@ function _liste(&$ATMdb, $regle) {
 		
 	$r = new TSSRenderControler($regle);
 	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.name) as 'Utilisateur', g.nom as 'Groupe',
-		r.typeAbsence, r.nbJourCumulable , '' as 'Supprimer'
+		r.typeAbsence, r.nbJourCumulable , r.restrictif as 'Restrictif', '' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_absence_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup as g ON (r.fk_usergroup = g.rowid)
@@ -93,6 +93,7 @@ function _liste(&$ATMdb, $regle) {
 		)
 		,'translate'=>array(
 			'typeAbsence'=>array('rttnoncumule'=>'RTT Non Cumulé')
+			,'Restrictif'=>array('1'=>'Oui')
 		)
 		,'hide'=>array()
 		,'type'=>array()
@@ -109,13 +110,13 @@ function _liste(&$ATMdb, $regle) {
 		)
 		,'title'=>array(
 			'typeAbsence'=>'Type d\'absence concerné'
-			,'nbJourCumulable'=>'Nombre de jours cumulable'
+			,'nbJourCumulable'=>'Nombre de jours contigus possible'
 		)
 		,'orderBy'=>$TOrder
 		
 	));
 	
-	?><a class="butAction" href="?id=<?=$regle->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
+	?><a class="butAction" href="?id=<?=$regle->getId()?>&action=new">Nouvelle règle</a><div style="clear:both"></div></div><?
 	$form->end();
 	llxFooter();
 }	
@@ -155,6 +156,7 @@ function _fiche(&$ATMdb, $regle, $mode) {
 				,'fk_group'=>$form->combo('', 'fk_usergroup',$regle->TGroup, $regle->fk_usergroup)
 				,'nbJourCumulable'=>$form->texte('', 'nbJourCumulable', $regle->nbJourCumulable,30 ,255,'','','')
 				,'typeAbsence'=>$form->combo('', 'typeAbsence',$regle->TTypeAbsence, $regle->typeAbsence)
+				,'restrictif'=>$form->checkbox1('','restrictif','1',$regle->restrictif==1?true:false)
 			)
 			,'userCourant'=>array(
 				'id'=>$userCourant->id

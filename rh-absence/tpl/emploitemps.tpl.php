@@ -1,12 +1,10 @@
 
         [view.head;strconv=no]
 
-		Utilisateur : [userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]
+		<h2 style="color: #2AA8B9;">Emploi du temps de [userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</h2>
 		
-		<br/>
 		<div style=" display:inline-block;">                  
 		<table class="border" style="width:130%;" >	
-				<br/><br/>
 				<tr>
 					<td>       </td>
 					<td style="text-align:center;"><b>Matin</b></td>
@@ -82,27 +80,36 @@
 				</tr>
 		</table>
 		
-		
 		</div>
 	[onshow;block=begin;when [view.mode]=='edit']
 		<br/><br/>
 		<b style="margin-left:320px;">Veuillez respecter le format HH:MM pour les horaires</b>
 	[onshow;block=end]
 	
-
-	<div class="tabsAction" >
-		[onshow;block=begin;when [view.mode]=='edit']
-			<input type="submit" value="Enregistrer" name="save" class="button"  onclick="document.location.href='?id=[view.compteur_id]&action=view'">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[view.compteur_id]&action=view'">
-		[onshow;block=end]
-		
-		[onshow;block=begin;when [view.mode]!='edit']
+	
+	
+	[onshow;block=begin;when [view.mode]=='edit']
+		<div class="tabsAction" >
+		<input type="submit" value="Enregistrer" name="save" class="button"  onclick="document.location.href='?id=[view.compteur_id]&action=view'">
+		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[view.compteur_id]&action=view'">
+		</div>
+	[onshow;block=end]
+	
+	[onshow;block=begin;when [view.mode]!='edit']
 			[onshow;block=begin;when [droits.modifierEdt]=='1']
+			<div class="tabsAction" >
 				<a class="butAction"  href="?id=[view.compteur_id]&action=edit">Modifier</a>
+			</div>
+			<br/>
 			[onshow;block=end]
-		[onshow;block=end]
-	</div>
-
+	[onshow;block=end]
+	
+	[onshow;block=begin;when [view.mode]!='edit']
+			[onshow;block=begin;when [droits.modifierEdt]!='1']
+			<br/><br/>
+			[onshow;block=end]
+	[onshow;block=end]
+			
 	<script>
 		$(document).ready( function(){
 			//on empêche que la date de début dépasse celle de fin

@@ -9,7 +9,7 @@
 		<div style="display:inline-block;">
 		
         <h2 style="color: #2AA8B9;">Année N-1</h2>                         
-		<table class="border" style="width:100%;"  >
+		<table class="border" style="width:150%;"  >
 				<tr>
 					<td>Utilisateur Courant</td>
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
@@ -45,9 +45,9 @@
 		</table>
 		</div>
 		
-		<div style="float:right; display:inline-block; margin-left: 100px;">
+		<div style="float:right; display:inline-block; margin-left: 200px;">
 		<h2 style="color: #2AA8B9;">Année N</h2>                         
-		<table class="border" style="width:100%;" >	
+		<table class="border" style="width:150%;" >	
 				<tr>
 					<td>Acquis Exercice</td>
 					<td>[congesCourant.acquisEx;strconv=no;protect=no]</td>
@@ -82,7 +82,7 @@
 	<div style="display:inline-block; margin-top:-20px;">
 	    <div style="display:inline-block;">   
 	    <h2 style="color: #2AA8B9;">Compteur de RTT</h2>                         
-		<table class="border" style="width:100%">
+		<table class="border" style="width:150%">
 				<tr>
 					<td>Jours RTT Acquis</td>
 					<td>[rttCourant.acquis;strconv=no;protect=no]</td>
@@ -98,8 +98,8 @@
 		</table>
 		</div>
 		
-		<div style="float:right; display:inline-block; margin-left: 90px;">
-		<h2 style="color: #2AA8B9;">Méthode acquisition des jours</h2>                         
+		<div style="float:right; display:inline-block; margin-left: 200px;">
+		<h2 style="color: #2AA8B9;">Méthode d'acquisition des jours</h2>                         
 		<table class="border" style="width:100%">
 				<tr>
 					<td>Type acquisition</td>
@@ -131,22 +131,31 @@
 		</table>
 	    </div>  
 	</div>            
-		<br/><br/>
 
 
 	
-		<div class="tabsAction" >
+		
 		[onshow;block=begin;when [view.mode]=='edit']
+			<div class="tabsAction" >
 			<input type="submit" value="Enregistrer" name="save" class="button"  onclick="document.location.href='?id=[rttCourant.id]&action=view'">
 			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[rttCourant.id]&action=view'">
+			</div>
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
 			[onshow;block=begin;when [userCourant.modifierCompteur]=='1']
+			<div class="tabsAction" >
 				<a class="butAction"  href="?id=[rttCourant.id]&action=edit">Modifier</a>
+			</div>
 			[onshow;block=end]
 		[onshow;block=end]
-		</div>
+		
+		[onshow;block=begin;when [view.mode]!='edit']
+			[onshow;block=begin;when [userCourant.modifierCompteur]!='1']
+			 <br/> <br/>
+			[onshow;block=end]
+		[onshow;block=end]
+		
 
 		
 

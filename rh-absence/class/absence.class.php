@@ -177,6 +177,13 @@ class TRH_Absence extends TObjetStd {
 			$this->duree=$dureeAbsenceCourante;
 			$this->etat="Avalider";
 			$this->libelleEtat=saveLibelleEtat($this->etat);
+			
+			//on teste s'il y a des règles qui s'appliquent à cette demande d'absence
+			$TRegles=$this->findRegleUser($ATMdb);
+			
+			if($demandeAutorisee){
+				
+			}
 			parent::save($db);
 		}
 
@@ -688,7 +695,34 @@ class TRH_Absence extends TObjetStd {
 			return (($hf[0]-$hd[0]).":".($hf[1]-$hd[1]).":".($hf[2]-$hd[2]));
 		}
 
+		function findRegleUser(&$ATMdb){
+			
+			$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, r.fk_user, r.fk_usergroup, r.choixApplication  
+			FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
+			WHERE( r.fk_user=u.rowid AND r.fk_user=".$this->fk_user." AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
+			OR (r.choixApplication Like 'all' AND u.rowid=".$this->fk_user." and u.rowid=g.fk_user) 
+			OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$this->fk_user.")";
+			
+			$ATMdb->Execute($sql);
+			$TRegle = array();
+			$k=0;
+			while($ATMdb->Get_line()) {
+				$TRegle[$k]['rowid']= $ATMdb->Get_field('rowid');
+				$TRegle[$k]['typeAbsence']= $ATMdb->Get_field('typeAbsence');
+				$TRegle[$k]['nbJourCumulable']= $ATMdb->Get_field('nbJourCumulable');
+				$TRegle[$k]['restrictif']= $ATMdb->Get_field('restrictif');
+				$TRegle[$k]['fk_user']= $ATMdb->Get_field('fk_user');
+				$TRegle[$k]['fk_usergroup']= $ATMdb->Get_field('fk_usergroup');
+				$TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
+				$k++;
+			}
+			//print_r($TRegle);exit;
+			return $TRegle;
+		}
 		
+		function dureeAbsenceRecevable($absence){
+			
+		}
 		
 }
 
@@ -887,6 +921,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		parent::add_champs('typeAbsence','type=chaine;');
 		parent::add_champs('choixApplication','type=chaine;');
 		parent::add_champs('nbJourCumulable','type=int;');
+		parent::add_champs('restrictif','type=int;');
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('fk_usergroup','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=int;');

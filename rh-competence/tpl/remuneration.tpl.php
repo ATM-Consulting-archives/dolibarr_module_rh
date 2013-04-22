@@ -17,7 +17,8 @@
 					<td><b>Salaire Mensuel</b></td>
 				</tr>
 				<tr>
-					<td>[remuneration.anneeRemuneration;block=tr;strconv=no;protect=no]</td>
+					<td>[remuneration.date_debutRemuneration;block=tr;strconv=no;protect=no]</td>
+					<td>[remuneration.date_finRemuneration;block=tr;strconv=no;protect=no]</td>
 					<td>[remuneration.bruteAnnuelle;strconv=no;protect=no]€</td>
 					<td>[remuneration.salaireMensuel;strconv=no;protect=no]€</td>
 				</tr>
