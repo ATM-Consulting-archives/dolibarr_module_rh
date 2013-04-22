@@ -37,16 +37,12 @@ if (($handle = fopen("./fichierImports/".$nomFichier, "r")) !== FALSE) {
 		if ($numLigne >=1){
 			$infos = explode(';', $data[0]);
 			
-			
 			$numero = $infos[1];
 			$nom = $infos[26];
 			$prenom = $infos[27];
-			
-			echo '<br><br>';
+
 			if (!empty($nom)){
 				if (array_key_exists(strtolower($nom), $TUser)){
-					print_r($infos);
-					echo $nom;
 					$temp = new TRH_Ressource_Regle;
 					$temp->choixApplication = 'user';
 					
@@ -70,6 +66,7 @@ if (($handle = fopen("./fichierImports/".$nomFichier, "r")) !== FALSE) {
 		
 					
 					$temp->save($ATMdb);
+					$cpt++;
 				}
 				else {echo 'Utilisateur inconnu : '.$nom.' '.$prenom.'<br>';}
 			}
@@ -90,7 +87,7 @@ if (($handle = fopen("./fichierImports/".$nomFichier, "r")) !== FALSE) {
 //Fin du code PHP : Afficher le temps d'éxecution
 $timeend=microtime(true);
 $page_load_time = number_format($timeend-$timestart, 3);
-echo 'Fin du traitement. Durée : '.$page_load_time . " sec";
+echo 'Fin du traitement. Durée : '.$page_load_time . " sec.<br>".$cpt." règles importés.<br><br>";
 
 function clockToInt($chaine){
 	// $chaine est sous format 02:30 hh:mm	

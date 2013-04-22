@@ -5,6 +5,7 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource_regle');
 		
 		parent::add_champs('choixApplication','type=chaine;');
+		parent::add_champs('choixLimite','type=chaine;');
 		
 		//valeurs
 		parent::add_champs('duree','type=entier;');
@@ -20,35 +21,30 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		parent::add_champs('carteJumelle','type=chaine;'); //booléen
 		parent::add_champs('numeroExclus','type=chaine;');
 		
-		
 		parent::add_champs('fk_user','type=entier;');
 		parent::add_champs('fk_usergroup','type=entier;');
 		parent::add_champs('fk_rh_ressource_type, entity','type=entier;index;');
 		
-		parent::_init_vars();
-		parent::start();
-		
 		$this->choixApplication = 'all';
-	
+		$this->choixLimite = 'extint';
 		$this->TUser = array();
 		$this->TGroup  = array();
+		$this->TChoixLimite = array(
+			'gen'=>'Général'
+			,'extint'=>'Interne/Externe'
+		);
 		$this->TChoixApplication = array(
 			'all'=>'Tous'
 			,'group'=>'Groupe'
 			,'user'=>'Utilisateur'
 		);
+		
+		parent::_init_vars();
+		parent::start();
 	}
 	
 	function load_liste(&$ATMdb){
 		global $conf;
-		
-		//chargement d'une liste de toutes les types de ressources
-		/*$this->TRessourceType = array();
-		$sqlReq="SELECT rowid,libelle FROM ".MAIN_DB_PREFIX."rh_ressource_type WHERE entity=".$conf->entity;
-		$ATMdb->Execute($sqlReq);
-		while($ATMdb->Get_line()) {
-			$this->TRessourceType[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
-			}*/
 		
 		//LISTE DE GROUPES
 		$this->TGroup  = array();
@@ -85,23 +81,18 @@ class TRH_Ressource_Regle  extends TObjetStd {
 			case 'group':$this->fk_user = NULL;break;
 			default : echo'pbchoixapplication';break;				
 		}
-		if (!is_numeric($this->dureeMInt)){
-			$this->dureeMInt = "00";
-		}
-		if (!is_numeric($this->dureeHInt)){
-			$this->dureeHInt = "02";
-		}
-		if (!is_numeric($this->dureeMExt)){
-			$this->dureeMExt = "00";
-		}
-		if (!is_numeric($this->dureeHExt)){
-			$this->dureeHExt = "02";
+		
+		switch ($this->choixLimite){
+			case 'gen':
+				$this->dureeInt = 0;
+				$this->dureeExt = 0;
+				break;
+			case 'extint':
+				$this->duree = 0;
+				break;
+			default : echo 'pb choix limite'; break;
 		}
 		
-		$this->dureeMInt = substr($this->dureeMInt,0, 2);
-		$this->dureeHInt = substr($this->dureeHInt,0, 2);
-		$this->dureeMExt = substr($this->dureeMExt,0, 2);
-		$this->dureeHExt = substr($this->dureeHExt,0, 2);
 		parent::save($ATMdb);
 	}
 	

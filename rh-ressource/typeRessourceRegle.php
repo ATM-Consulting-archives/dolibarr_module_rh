@@ -20,7 +20,7 @@
 				//$ATMdb->db->debug=true;
 				$ressourceType->load($ATMdb, $_REQUEST['id']);
 				//$ressourceType->save($ATMdb);
-				_fiche($ATMdb, $regle, $ressourceType,'edit');
+				_fiche($ATMdb, $regle, $ressourceType,'new');
 				
 				break;	
 			case 'edit'	:
@@ -101,7 +101,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 	
 	$r = new TSSRenderControler($ressourceType);
 	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.name) as 'Utilisateur', g.nom as 'Groupe',
-		duree, dureeInt,dureeExt,dataIllimite, dataIphone, mailforfait, smsIllimite, data15Mo, carteJumelle
+		duree, dureeInt,dureeExt,dataIllimite, dataIphone, mailforfait, smsIllimite, data15Mo, carteJumelle,'' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup as g ON (r.fk_usergroup = g.rowid)
@@ -122,6 +122,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=view">@val@</a>'
+			,'Supprimer'=>'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'eval'=>array(
 			'dureeInt'=>'intToString(@val@)'
@@ -182,9 +183,16 @@ function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('fk_rh_ressource_type', $ressourceType->getId());
 	
-	$TBool = array('vrai'=>'Oui', 'faux'=>'Non');
+	$TBool = array('faux'=>'Non', 'vrai'=>'Oui');
 	$TBS=new TTemplateTBS();
 	$regle->load_liste($ATMdb);
+	
+	if ($mode == 'new'){
+		$regle->choixApplication = 'all';
+		$regle->choixLimite = 'gen';
+		$mode = 'edit';
+	}
+	
 	print $TBS->render('./tpl/ressource.type.regle.tpl.php'
 		,array()
 		,array(
@@ -193,13 +201,14 @@ function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 				,'code'=> $ressourceType->code
 				,'libelle'=> $ressourceType->libelle
 			)
-			
 			,'newRule'=>array(
 				'id'=>$regle->getId()
 				,'choixApplication'=>$form->radiodiv('','choixApplication',$regle->TChoixApplication, $regle->choixApplication)
 				,'choixApplicationViewMode'=>$regle->TChoixApplication[$regle->choixApplication]
 				,'fk_user'=>$form->combo('', 'fk_user',$regle->TUser, $regle->fk_user)
 				,'fk_group'=>$form->combo('', 'fk_usergroup',$regle->TGroup, $regle->fk_usergroup)
+				,'choixLimite'=>$form->radiodiv('','choixLimite',$regle->TChoixLimite, $regle->choixLimite)
+				,'choixLimiteViewMode'=>$regle->TChoixLimite[$regle->choixLimite]
 				,'dureeH'=>$form->texte('', 'dureeH', intToHour($regle->duree), 2,2,'','','')
 				,'dureeM'=>$form->texte('', 'dureeM', intToMinute($regle->duree), 2,2,'','','')
 				,'dureeHInt'=>$form->texte('', 'dureeHInt', intToHour($regle->dureeInt), 2,2,'','','')
