@@ -58,6 +58,10 @@
 		<td>Nombre de jours cumulables</td>
 		<td>[newRule.nbJourCumulable;strconv=no]</td>
 	</tr>
+	<tr>
+		<td>Mode restrictif</td>
+		<td>[newRule.restrictif;strconv=no]</td>
+	</tr>
 </table>
 
 
