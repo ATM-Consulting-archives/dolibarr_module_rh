@@ -12,7 +12,8 @@
 			<br/><br/>
 			<table class="border" style="width:50%">		
 				<tr>
-					<td><b>Année de rémunération</b></td>
+					<td><b>Date début rémunération</b></td>
+					<td><b>Date fin rémunération</b></td>
 					<td><b>Rémunération brute annuelle</b></td>
 					<td><b>Salaire Mensuel</b></td>
 				</tr>
