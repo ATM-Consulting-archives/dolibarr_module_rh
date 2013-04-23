@@ -27,10 +27,10 @@
 					$absence->load($ATMdb, $_REQUEST['id']);
 					mailConges($absence);
 					$mesg = '<div class="ok">Demande enregistrée</div>';
-					
+					_fiche($ATMdb, $absence,'view');
 				}else{
 					if($demandeRecevable==0){
-						$mesg = '<div class="error">Demande refusée</div>';
+						$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur</div>';
 						_fiche($ATMdb, $absence,'edit');
 					}else if($demandeRecevable==2){
 						$absence->avertissement=1;
@@ -148,7 +148,7 @@ function _liste(&$ATMdb, &$absence) {
 			'En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 
 			'Enregistrée dans la paie'=>'<b style="color:#9A69E3">	Acceptée et Enregistrée dans la paie</b>' , 
 			'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
-			
+			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
 		)
 		,'hide'=>array('DateCre', 'fk_user')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
@@ -394,7 +394,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
 				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')
-				,'avertissement'=>$absence->avertissement==1?'':'<img src="./img/warning.png"> salut</img>'
+				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png">  Ne respecte pas les règles en vigueur</img>':'Aucun'
 				,'fk_user'=>$absence->fk_user
 			)	
 			,'userCourant'=>array(

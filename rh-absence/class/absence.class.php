@@ -164,13 +164,12 @@ class TRH_Absence extends TObjetStd {
 			$TRegles=$this->findRegleUser($db);
 			$nbJourAutorise=$this->dureeAbsenceRecevable($TRegles);
 			
+		
 			if($nbJourAutorise==0){
 				return 0;
-			} else if ($nbJourAutorise==2){
-				return $nbJourAutorise;
 			}
 			
-		
+			
 			///////décompte des congés
 			if($this->type=="rttcumule"){
 				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante."  where fk_user=".$user->id;
@@ -189,7 +188,8 @@ class TRH_Absence extends TObjetStd {
 				$db->Execute($sqlDecompte);
 				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 			}
-			return 1;
+			
+			return $nbJourAutorise;
 		}
 		
 		
@@ -739,7 +739,7 @@ class TRH_Absence extends TObjetStd {
 			foreach($TRegle as $TR){
 				if($TR['typeAbsence']==$this->type){
 					if($this->duree>$TR['nbJourCumulable']){
-						if($this->restrictif){
+						if($TR['restrictif']==1){
 								 return 0;
 						}
 						else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
