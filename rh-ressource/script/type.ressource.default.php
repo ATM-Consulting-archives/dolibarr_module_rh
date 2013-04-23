@@ -39,7 +39,7 @@
 	
 //CARTE TOTAL
 	$tempType = new TRH_Ressource_type;
-	$tempType->chargement('Carte Total', 'carte', 1, 'Péage;Plein d\'essence', 'peage;plein');
+	$tempType->chargement('Carte Total', 'cartetotal', 1, 'Péage;Plein d\'essence', 'peage;plein');
 	$tempType->save($ATMdb);
 	
 	$tempField = new TRH_Ressource_field;
