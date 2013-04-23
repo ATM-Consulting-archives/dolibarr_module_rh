@@ -153,6 +153,18 @@ class TRH_Absence extends TObjetStd {
 			$dureeAbsenceCourante=$this->calculJoursFeries($ATMdb, $dureeAbsenceCourante);
 			$dureeAbsenceCourante=$this->calculJoursTravailles($ATMdb, $dureeAbsenceCourante);
 			
+			//autres paramètes à sauvegarder
+			$this->libelle=saveLibelle($this->type);
+			$this->duree=$dureeAbsenceCourante;
+			$this->etat="Avalider";
+			$this->libelleEtat=saveLibelleEtat($this->etat);
+			
+			//on teste s'il y a des règles qui s'appliquent à cette demande d'absence
+			$TRegles=$this->findRegleUser($ATMdb);
+			
+			if($demandeAutorisee){
+				
+			}
 			
 			///////décompte des congés
 			if($this->type=="rttcumule"){
@@ -172,18 +184,7 @@ class TRH_Absence extends TObjetStd {
 				$ATMdb->Execute($sqlDecompte);
 				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 			}
-			//autres paramètes à sauvegarder
-			$this->libelle=saveLibelle($this->type);
-			$this->duree=$dureeAbsenceCourante;
-			$this->etat="Avalider";
-			$this->libelleEtat=saveLibelleEtat($this->etat);
 			
-			//on teste s'il y a des règles qui s'appliquent à cette demande d'absence
-			$TRegles=$this->findRegleUser($ATMdb);
-			
-			if($demandeAutorisee){
-				
-			}
 			parent::save($db);
 		}
 
@@ -548,7 +549,7 @@ class TRH_Absence extends TObjetStd {
 				$jourEnCours=$jourEnCours+3600*24;
 				$cpt++;
 			}
-
+			
 			///////////////////////////////////////////////TRAITEMENT DU DERNIER JOUR POUR LES HEURES
 			$ferie=0;
 			foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
@@ -561,13 +562,13 @@ class TRH_Absence extends TObjetStd {
 				foreach ($this->TJour as $jour) {
 					if($jour==$jourEnCoursSem){
 						foreach(array('am','pm') as $moment) {
-							if($TTravail[$jour.$moment]==0){
+							if($TTravail[$jour.$moment]==0){	
 							}
 							else{
 								if($moment=="am"){
 									if($this->dfMoment=="matin"){
 										$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
-									}else if($this->ddMoment=="apresmidi"){
+									}else if($this->dfMoment=="apresmidi"){
 										$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
 									}
 								}
