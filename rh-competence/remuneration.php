@@ -80,7 +80,7 @@ function _liste(&$ATMdb, $remuneration) {
 	
 	////////////AFFICHAGE DES LIGNES DE REMUNERATION
 	$r = new TSSRenderControler($remuneration);
-	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.date_debutRemuneration, r.date_finRemuneration as 'Date fin', 
+	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', DATE_FORMAT(r.date_debutRemuneration, '%d/%m/%Y') as 'Date début', DATE_FORMAT(r.date_finRemuneration, '%d/%m/%Y') as 'Date fin', 
 			CONCAT(u.firstname,' ',u.name) as 'Utilisateur' ,
 			  CONCAT( ROUND(r.bruteAnnuelle,2),' €') as 'Rémunération brute annuelle',  
 			  CONCAT( ROUND(r.salaireMensuel,2),' €') as 'Salaire mensuel', r.fk_user, '' as 'Supprimer'
@@ -100,7 +100,8 @@ function _liste(&$ATMdb, $remuneration) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'anneeRemuneration'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
+			'Rémunération brute annuelle'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
+			,'Date début'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
 			,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
 		)
 		,'translate'=>array(

@@ -20,12 +20,29 @@
 				//$ATMdb->db->debug=true;
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->set_values($_REQUEST);
-				$absence->save($ATMdb);
-				$absence->load($ATMdb, $_REQUEST['id']);
-				mailConges($absence);
-				//echo "test".$absence->difheure('16:00','17:30');
-				$mesg = '<div class="ok">Demande enregistrée</div>';
-				_fiche($ATMdb, $absence,'view');
+				$demandeRecevable=$absence->testDemande($ATMdb);
+				
+				if($demandeRecevable==1){
+					$absence->save($ATMdb);
+					$absence->load($ATMdb, $_REQUEST['id']);
+					mailConges($absence);
+					$mesg = '<div class="ok">Demande enregistrée</div>';
+					_fiche($ATMdb, $absence,'view');
+				}else{
+					if($demandeRecevable==0){
+						$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur</div>';
+						_fiche($ATMdb, $absence,'edit');
+					}else if($demandeRecevable==2){
+						$absence->avertissement=1;
+						$absence->save($ATMdb);
+						$absence->load($ATMdb, $_REQUEST['id']);
+						mailConges($absence);
+						$mesg = '<div class="error">Attention : La durée de l\'absence dépasse la règle en vigueur</div>';
+						_fiche($ATMdb, $absence,'view');
+					}
+						
+				}
+				
 				
 				break;
 			
@@ -106,7 +123,7 @@ function _liste(&$ATMdb, &$absence) {
 	$r = new TSSRenderControler($absence);
 	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
 			  a.libelle as 'Type absence',a.fk_user,  a.fk_user, CONCAT(u.firstname,' ',u.name) as 'Utilisateur' ,
-			   a.libelleEtat as 'Statut demande'
+			   a.libelleEtat as 'Statut demande', a.avertissement
 		FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 		WHERE a.fk_user=".$user->id." AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
 		
@@ -131,7 +148,7 @@ function _liste(&$ATMdb, &$absence) {
 			'En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 
 			'Enregistrée dans la paie'=>'<b style="color:#9A69E3">	Acceptée et Enregistrée dans la paie</b>' , 
 			'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
-			
+			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
 		)
 		,'hide'=>array('DateCre', 'fk_user')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
@@ -376,7 +393,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'etat'=>$absence->etat
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
-				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')	
+				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')
+				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png">  Ne respecte pas les règles en vigueur</img>':'Aucun'
 				,'fk_user'=>$absence->fk_user
 			)	
 			,'userCourant'=>array(

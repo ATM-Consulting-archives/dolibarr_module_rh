@@ -109,6 +109,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('dureeHeure','type=chaine;');			
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
 		parent::add_champs('etat','type=chaine;');			//état (à valider, validé...)
+		parent::add_champs('avertissement','type=int;');	
 		parent::add_champs('libelleEtat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=int;');	
@@ -143,35 +144,16 @@ class TRH_Absence extends TObjetStd {
 		}
 	}
 
-		function save(&$db) {
+
+		function testDemande(&$db){
 			$ATMdb=new Tdb;
 			global $conf, $user;
 			$this->entity = $conf->entity;
-			
 			//on calcule la duree de l'absence, en décomptant jours fériés et jours non travaillés par le collaborateur
-			$dureeAbsenceCourante=$this->calculDureeAbsence($ATMdb);
-			$dureeAbsenceCourante=$this->calculJoursFeries($ATMdb, $dureeAbsenceCourante);
-			$dureeAbsenceCourante=$this->calculJoursTravailles($ATMdb, $dureeAbsenceCourante);
+			$dureeAbsenceCourante=$this->calculDureeAbsence($db);
+			$dureeAbsenceCourante=$this->calculJoursFeries($db, $dureeAbsenceCourante);
+			$dureeAbsenceCourante=$this->calculJoursTravailles($db, $dureeAbsenceCourante);
 			
-			
-			///////décompte des congés
-			if($this->type=="rttcumule"){
-				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante."  where fk_user=".$user->id;
-				$ATMdb->Execute($sqlDecompte);
-				$this->rttPris=$this->rttPris+$dureeAbsenceCourante;
-				$this->rttAcquisAnnuelCumule=$this->rttAcquisAnnuelCumule-$dureeAbsenceCourante;
-				
-			}else if($this->type=="rttnoncumule"){
-				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule-".$dureeAbsenceCourante." where fk_user=".$user->id;
-				$ATMdb->Execute($sqlDecompte);
-				$this->rttPris=$this->rttPris-$dureeAbsenceCourante;
-				$this->rttAcquisAnnuelNonCumule=$this->rttAcquisAnnuelNonCumule-$dureeAbsenceCourante;
-			}
-			else {	//autre que RTT : décompte les congés
-				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$user->id;
-				$ATMdb->Execute($sqlDecompte);
-				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
-			}
 			//autres paramètes à sauvegarder
 			$this->libelle=saveLibelle($this->type);
 			$this->duree=$dureeAbsenceCourante;
@@ -179,11 +161,42 @@ class TRH_Absence extends TObjetStd {
 			$this->libelleEtat=saveLibelleEtat($this->etat);
 			
 			//on teste s'il y a des règles qui s'appliquent à cette demande d'absence
-			$TRegles=$this->findRegleUser($ATMdb);
+			$TRegles=$this->findRegleUser($db);
+			$nbJourAutorise=$this->dureeAbsenceRecevable($TRegles);
 			
-			if($demandeAutorisee){
-				
+		
+			if($nbJourAutorise==0){
+				return 0;
 			}
+			
+			
+			///////décompte des congés
+			if($this->type=="rttcumule"){
+				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante."  where fk_user=".$user->id;
+				$db->Execute($sqlDecompte);
+				$this->rttPris=$this->rttPris+$dureeAbsenceCourante;
+				$this->rttAcquisAnnuelCumule=$this->rttAcquisAnnuelCumule-$dureeAbsenceCourante;
+				
+			}else if($this->type=="rttnoncumule"){
+				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule-".$dureeAbsenceCourante." where fk_user=".$user->id;
+				$db->Execute($sqlDecompte);
+				$this->rttPris=$this->rttPris-$dureeAbsenceCourante;
+				$this->rttAcquisAnnuelNonCumule=$this->rttAcquisAnnuelNonCumule-$dureeAbsenceCourante;
+			}
+			else {	//autre que RTT : décompte les congés
+				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$user->id;
+				$db->Execute($sqlDecompte);
+				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
+			}
+			
+			return $nbJourAutorise;
+		}
+		
+		
+		function save(&$db) {
+
+			global $conf, $user;
+			$this->entity = $conf->entity;
 			parent::save($db);
 		}
 
@@ -548,7 +561,7 @@ class TRH_Absence extends TObjetStd {
 				$jourEnCours=$jourEnCours+3600*24;
 				$cpt++;
 			}
-
+			
 			///////////////////////////////////////////////TRAITEMENT DU DERNIER JOUR POUR LES HEURES
 			$ferie=0;
 			foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
@@ -561,13 +574,13 @@ class TRH_Absence extends TObjetStd {
 				foreach ($this->TJour as $jour) {
 					if($jour==$jourEnCoursSem){
 						foreach(array('am','pm') as $moment) {
-							if($TTravail[$jour.$moment]==0){
+							if($TTravail[$jour.$moment]==0){	
 							}
 							else{
 								if($moment=="am"){
 									if($this->dfMoment=="matin"){
 										$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
-									}else if($this->ddMoment=="apresmidi"){
+									}else if($this->dfMoment=="apresmidi"){
 										$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
 									}
 								}
@@ -701,8 +714,9 @@ class TRH_Absence extends TObjetStd {
 			FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
 			WHERE( r.fk_user=u.rowid AND r.fk_user=".$this->fk_user." AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
 			OR (r.choixApplication Like 'all' AND u.rowid=".$this->fk_user." and u.rowid=g.fk_user) 
-			OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$this->fk_user.")";
-			
+			OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$this->fk_user.") 
+			ORDER BY r.nbJourCumulable";
+
 			$ATMdb->Execute($sql);
 			$TRegle = array();
 			$k=0;
@@ -716,12 +730,26 @@ class TRH_Absence extends TObjetStd {
 				$TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
 				$k++;
 			}
-			//print_r($TRegle);exit;
+
 			return $TRegle;
 		}
 		
-		function dureeAbsenceRecevable($absence){
-			
+		function dureeAbsenceRecevable($TRegle){
+			$avertissement=0;
+			foreach($TRegle as $TR){
+				if($TR['typeAbsence']==$this->type){
+					if($this->duree>$TR['nbJourCumulable']){
+						if($TR['restrictif']==1){
+								 return 0;
+						}
+						else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
+					}
+				}
+			}
+			if($avertissement==0){
+				return 1;
+			}
+			return $avertissement;
 		}
 		
 }

@@ -63,9 +63,9 @@ function _remuneration($userId, $date_debut, $date_debut){
 			$TabRecapRem[$userId][substr($ATMdb->Get_field('date_debutRemuneration'),0,4)]['prevoyancePartSalariale']=$ATMdb->Get_field('prevoyancePartSalariale');
 			$TabRecapRem[$userId][substr($ATMdb->Get_field('date_debutRemuneration'),0,4)]['prevoyancePartPatronale']=$ATMdb->Get_field('prevoyancePartPatronale');
 			$TabRecapRem[$userId][substr($ATMdb->Get_field('date_debutRemuneration'),0,4)]['urssafPartSalariale']=$ATMdb->Get_field('urssafPartSalariale');
-			$TabRecapRem[$userId][substr($ATMdb->Get_field('date_debutRemuneration'),0,4)]['urssafPartPatronale']=$ATMdb->Get_field('urssafPartSalariale');
-			$TabRecapRem[$userId][substr($ATMdb->Get_field('date_debutRemuneration'),0,4)]['retraitePartSalariale']=$ATMdb->Get_field('urssafPartSalariale');
-			$TabRecapRem[$userId][substr($ATMdb->Get_field('date_debutRemuneration'),0,4)]['retraitePartPatronale']=$ATMdb->Get_field('urssafPartSalariale');
+			$TabRecapRem[$userId][substr($ATMdb->Get_field('date_debutRemuneration'),0,4)]['urssafPartPatronale']=$ATMdb->Get_field('urssafPartPatronale');
+			$TabRecapRem[$userId][substr($ATMdb->Get_field('date_debutRemuneration'),0,4)]['retraitePartSalariale']=$ATMdb->Get_field('retraitePartSalariale');
+			$TabRecapRem[$userId][substr($ATMdb->Get_field('date_debutRemuneration'),0,4)]['retraitePartPatronale']=$ATMdb->Get_field('retraitePartPatronale');
 			//print_r($TabRecapRem);
 		}
 		

@@ -50,6 +50,10 @@
 						<td>Etat</td>
 						<td>[absenceCourante.libelleEtat;strconv=no;protect=no]</td>
 					</tr>
+					<tr>
+						<td>Avertissement</td>
+						<td>[absenceCourante.avertissement;strconv=no;protect=no]</td>
+					</tr>
 				[onshow;block=end]
 			</table>
 
