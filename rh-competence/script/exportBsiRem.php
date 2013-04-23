@@ -39,9 +39,9 @@ foreach($TUserID as $user){
 		$TabRecapRem[$user]['prevoyancePartSalariale']=$ATMdb->Get_field('prevoyancePartSalariale');
 		$TabRecapRem[$user]['prevoyancePartPatronale']=$ATMdb->Get_field('prevoyancePartPatronale');
 		$TabRecapRem[$user]['urssafPartSalariale']=$ATMdb->Get_field('urssafPartSalariale');
-		$TabRecapRem[$user]['urssafPartPatronale']=$ATMdb->Get_field('urssafPartSalariale');
-		$TabRecapRem[$user]['retraitePartSalariale']=$ATMdb->Get_field('urssafPartSalariale');
-		$TabRecapRem[$user]['retraitePartPatronale']=$ATMdb->Get_field('urssafPartSalariale');
+		$TabRecapRem[$user]['urssafPartPatronale']=$ATMdb->Get_field('urssafPartPatronale');
+		$TabRecapRem[$user]['retraitePartSalariale']=$ATMdb->Get_field('retraitePartSalariale');
+		$TabRecapRem[$user]['retraitePartPatronale']=$ATMdb->Get_field('retraitePartPatronale');
 		//print_r($TabRecapRem);
 	}
 }

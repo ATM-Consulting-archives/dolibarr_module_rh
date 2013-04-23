@@ -25,10 +25,11 @@
 				
 			case 'save':
 				//$ATMdb->db->debug=true;
-				$mesg = '<div class="ok">Modifications effectuées</div>';
 				$regle->load($ATMdb, $_REQUEST['id']);
+				$regle->restrictif=0;
 				$regle->set_values($_REQUEST);				
 				$regle->save($ATMdb);
+				$mesg = '<div class="ok">Modifications effectuées</div>';
 				_fiche($ATMdb,  $regle,'view');
 				break;
 			
@@ -93,7 +94,7 @@ function _liste(&$ATMdb, $regle) {
 		)
 		,'translate'=>array(
 			'typeAbsence'=>array('rttnoncumule'=>'RTT Non Cumulé')
-			,'Restrictif'=>array('1'=>'Oui')
+			,'Restrictif'=>array('1'=>'Oui', '0'=>'Non')
 		)
 		,'hide'=>array()
 		,'type'=>array()
@@ -124,6 +125,7 @@ function _liste(&$ATMdb, $regle) {
 function _fiche(&$ATMdb, $regle, $mode) {
 	llxHeader('','Règle sur les Absences', '', '', 0, 0);
 	
+	global $user,$conf;
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	
@@ -137,11 +139,12 @@ function _fiche(&$ATMdb, $regle, $mode) {
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
-				$userCourant=new User($db);
+				$userCourant=new User($ATMdb);
 				$userCourant->firstname=$ATMdb->Get_field('firstname');
 				$userCourant->id=$ATMdb->Get_field('rowid');
 				$userCourant->lastname=$ATMdb->Get_field('name');
 	}
+	
 	
 	$TBS=new TTemplateTBS();
 	$regle->load_liste($ATMdb);
