@@ -133,7 +133,7 @@
 									,'ImportFactureArea.php' => 'Area'
 									,'ImportFactureEuromaster.php' => 'Euromaster'
 									,'ImportFactureParcours.php' => 'Parcours'
-									,'ImportFactureOrange.php' => 'Orange');
+									,'ImportOrange.php' => 'Orange');
 		
 		$TBS=new TTemplateTBS();
 		$select_types_imports = $TBS->render('./tpl/documentSupplier.tpl.php'

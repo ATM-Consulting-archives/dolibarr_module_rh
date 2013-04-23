@@ -85,7 +85,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		//print_r(explode('\n', $data));
 	}
 	
-	echo 'Fin du traitement. '.($numLigne-3).' lignes rajoutés à la table.';
+	echo 'Fin du traitement. '.($numLigne-3).' lignes rajoutés à la table.<br><br>';
 	
 }
 

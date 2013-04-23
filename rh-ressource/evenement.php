@@ -89,7 +89,8 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	global $conf,$user;	
 	llxHeader('','Liste des emprunts');
 	?><div class="fiche"><?	
-	
+	    
+	 
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource');
 	// btsubmit($pLib,$pName,$plus="")
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
@@ -239,7 +240,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->get_date('date_fin'), 10)
 				,'type'=>$form->combo('', 'type', $tab, $evenement->type)
 				,'responsabilite'=>$form->texte('','responsabilite',$evenement->responsabilite, 10,10,'','','')
-				,'coutTTC'=>$form->texte('', 'coutTTC', $evenement->coutTTC, 10,10)
+				,'coutTTC'=>$form->texte('', 'coutTTC', ($evenement->coutTTC == 0) ? '0': $evenement->coutTTC, 10,10)
 				,'coutEntrepriseTTC'=>$form->texte('', 'coutEntrepriseTTC', $evenement->coutEntrepriseTTC, 10,10)
 				,'TVA'=>$form->combo('','TVA',$evenement->TTVA,$evenement->TVA)
 				,'coutEntrepriseHT'=>$form->texte('', 'coutEntrepriseHT', $evenement->coutEntrepriseHT, 10,10)
