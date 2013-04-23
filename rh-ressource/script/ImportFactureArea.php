@@ -32,7 +32,9 @@ echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 $TRessource = chargeVoiture($ATMdb);
 $TEmprunts = chargeEmprunts($ATMdb);
 $TAssocies = chargeAssocies($ATMdb);
-
+$TCarteInexistantes = array();
+$TCarteNonAttribue = array();
+$cpt =0;
 //print_r($TRessource);
 
 //début du parsing
@@ -46,7 +48,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		$temp->load_liste($ATMdb);
 		if (strpos((string) $infos[10], 'Trajet') !== FALSE ){
 			if (! array_key_exists ( $infos[6] , $TRessource )){
-				echo 'Pas de carte correspondante : '.$infos[6].'<br>';
+				//echo 'Pas de carte  correspondante : '.$infos[6].'<br>';
+				$TCarteInexistantes[$infos[6]] = 1;
 			}
 			else {
 				//print_r($infos);
@@ -70,7 +73,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					}
 				}
 				if ($temp->fk_user==0){
-					echo 'La carte '.$infos[6].' n\'est pas attribuée sur la période utilisé !<br>';
+					$TCarteNonAttribue[$infos[6]] = 1;
+					//echo 'La carte '.$infos[6].' n\'est pas attribuée sur la période utilisé !<br>';
 				}
 				$ttva = array_keys($temp->TTVA , floatval(strtr($infos[21], ',','.')));
 				$temp->TVA = $ttva[0];
@@ -85,23 +89,27 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				else {
 					$temp->commentaire = '';	
 				}
-				
-				
 				$temp->save($ATMdb);
+				$cpt ++;
 			}
-			
 		}
-		
 		$numLigne++;
-		
 	}
-
-	//Fin du code PHP : Afficher le temps d'éxecution
-	$timeend=microtime(true);
-	$page_load_time = number_format($timeend-$timestart, 3);
-	echo 'Fin du traitement. Durée : '.$page_load_time . " sec";
-	
 }
+
+foreach ($TCarteInexistantes as $key => $value) {
+	echo 'Pas de carte  correspondante : '.$key.'<br>';
+}
+foreach ($TCarteNonAttribue as $key => $value) {
+	echo 'La carte '.$key.' n\'est pas attribuée sur la période utilisé !<br>';	
+}
+
+
+//Fin du code PHP : Afficher le temps d'éxecution
+$timeend=microtime(true);
+$page_load_time = number_format($timeend-$timestart, 3);
+echo $cpt." événements trajets rajoutés.<br>";
+echo 'Fin du traitement. Durée : '.$page_load_time . " sec<br><br>";
 
 function chargeAssocies(&$ATMdb){
 	global $conf;
