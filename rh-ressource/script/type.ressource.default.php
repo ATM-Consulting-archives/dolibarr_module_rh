@@ -68,7 +68,7 @@
 	
 //TELEPHONE
 	$tempType = new TRH_Ressource_type;
-	$tempType->chargement('Téléphone', 'telephone', 1, '', '');
+	$tempType->chargement('Téléphone', 'telephone', 1, 'factTel','Facture téléphonique');
 	$tempType->save($ATMdb);
 	
 	$tempField = new TRH_Ressource_field;
