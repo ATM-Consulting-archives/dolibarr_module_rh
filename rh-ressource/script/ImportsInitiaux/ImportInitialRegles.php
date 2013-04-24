@@ -1,8 +1,8 @@
 <?php
-require('../config.php');
-require('../class/evenement.class.php');
-require('../class/ressource.class.php');
-require('../class/regle.class.php');
+require('../../config.php');
+require('../../class/evenement.class.php');
+require('../../class/ressource.class.php');
+require('../../class/regle.class.php');
 
 global $conf;
 
@@ -31,7 +31,7 @@ print_r($TUser);
 
 //début du parsing
 $numLigne = 0;
-if (($handle = fopen("./fichierImports/".$nomFichier, "r")) !== FALSE) {
+if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle, 0,'\r')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
 		if ($numLigne >=1){

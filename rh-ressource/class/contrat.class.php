@@ -127,6 +127,7 @@ class TRH_Contrat_Ressource  extends TObjetStd {
 	function save(&$db) {
 		global $conf;
 		$this->entity = $conf->entity;
+		if (empty($this->commentaire)){$this->commentaire = ' ';}
 		parent::save($db);
 	}
 	
