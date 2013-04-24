@@ -199,26 +199,31 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	while($ATMdb->Get_line()) {
 				//$rttCourant=new User($db);
 				$rttCourant['id']=$ATMdb->Get_field('rowid');
-				$rttCourant['acquis']=$ATMdb->Get_field('rttAcquisMensuelInit')+$ATMdb->Get_field('rttAcquisAnnuelCumuleInit')+$ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit');
+				$rttCourant['typeAcquisition']=$ATMdb->Get_field('rttTypeAcquisition');
+				if($rttCourant['typeAcquisition']=='Annuel'){
+					$rttCourant['acquis']=$ATMdb->Get_field('rttAcquisMensuelInit')+$ATMdb->Get_field('rttAcquisAnnuelCumuleInit')+$ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit');
+				}else if($rttCourant['typeAcquisition']=='Mensuel'){
+					$rttCourant['acquis']=$ATMdb->Get_field('rttAcquisMensuelTotal');
+				}
 				$rttCourant['pris']=$ATMdb->Get_field('rttPris');
 				$rttCourant['mensuel']=$ATMdb->Get_field('rttAcquisMensuel');
 				$rttCourant['annuelCumule']=$ATMdb->Get_field('rttAcquisAnnuelCumule');
 				$rttCourant['annuelNonCumule']=$ATMdb->Get_field('rttAcquisAnnuelNonCumule');
-				$rttCourant['typeAcquisition']=$ATMdb->Get_field('rttTypeAcquisition');
+				
 				$rttCourant['annuelCumuleInit']=$ATMdb->Get_field('rttAcquisAnnuelCumuleInit');
 				$rttCourant['annuelNonCumuleInit']=$ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit');
 				$rttCourant['mensuelInit']=$ATMdb->Get_field('rttAcquisMensuelInit');
+				$rttCourant['mensuelTotal']=$ATMdb->Get_field('rttAcquisMensuelTotal');
 				$rttCourant['annee']=substr($ATMdb->Get_field('anneertt'),0,4);
 				$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
-				
-				//$Tab[]=$rttCourant;	
+	
 	}
 	
 	$rttCourantReste=$rttCourant['acquis']-$rttCourant['pris'];
 	
 
 	//récupération des informations globales du compteur
-	$sqlReq="SELECT * FROM `".MAIN_DB_PREFIX."rh_admin_compteur` where rowid=1";	
+	$sqlReq="SELECT * FROM `".MAIN_DB_PREFIX."rh_admin_compteur`";	
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 				$compteurGlobal=new User($db);
@@ -226,6 +231,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				$compteurGlobal->congesAcquisMensuelInit=$ATMdb->Get_field('congesAcquisMensuelInit');
 				$compteurGlobal->date_rttClotureInit=$ATMdb->Get_field('date_rttClotureInit');
 				$compteurGlobal->date_congesClotureInit=$ATMdb->Get_field('date_congesClotureInit');
+				break;
 	}
 	
 	
@@ -271,6 +277,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'annuelNonCumule'=>$form->texte('','rttAcquisAnnuelNonCumule',round2Virgule($rttCourant['annuelNonCumule']),10,50,'',$class="text", $default='')
 				,'date_rttCloture'=>date("d/m/Y",strtotime($compteurGlobal->date_rttClotureInit))
 				,'mensuelInit'=>$form->texte('','rttAcquisMensuelInit',round2Virgule($rttCourant['mensuelInit']),10,50,'',$class="text", $default='')
+				,'mensuelTotal'=>$form->texte('','rttAcquisMensuelTotal',round2Virgule($rttCourant['mensuelTotal']),10,50,'',$class="text", $default='')
 				,'annuelCumuleInit'=>$form->texte('','rttAcquisAnnuelCumuleInit',round2Virgule($rttCourant['annuelCumuleInit']),10,50,'',$class="text", $default='')
 				,'annuelNonCumuleInit'=>$form->texte('','rttAcquisAnnuelNonCumuleInit',round2Virgule($rttCourant['annuelNonCumuleInit']),10,50,'',$class="text", $default='')
 				,'typeAcquisition'=>$form->combo('','rttTypeAcquisition',$compteur->TTypeAcquisition,$compteur->rttTypeAcquisition)
