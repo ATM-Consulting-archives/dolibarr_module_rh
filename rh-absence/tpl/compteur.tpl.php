@@ -115,6 +115,10 @@
 					 <td colspan="2"><h2 style="color: #2AA8B9;">Méthode d'acquisition des jours</h2></td>
 				</tr>
 				<tr>
+					<td>Métier collaborateur</td>
+					<td>[rttCourant.rttMetier;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
 					<td>Type acquisition</td>
 					
 					<td>[onshow;block=begin;when [view.mode]=='edit'] 
@@ -141,6 +145,7 @@
 					<td><b> Dernière clôture RTT</b></td>
 					<td>[rttCourant.date_rttCloture;strconv=no;protect=no]</td>
 				</tr>
+				
 		</table>
 	    </div>  
 	</div>            
