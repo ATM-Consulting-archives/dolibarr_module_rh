@@ -76,7 +76,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'">@val@</a>'
-			,'Emploi du temps de l\'utilisateur'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'"<a>Emploi Du Temps de @val@</a>'
+			,'Emploi du temps de l\'utilisateur'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'"<a>Emploi du temps de @val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre','ID')
