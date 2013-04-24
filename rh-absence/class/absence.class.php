@@ -99,6 +99,7 @@ class TRH_Compteur extends TObjetStd {
 class TRH_Absence extends TObjetStd {
 	function __construct() { /* declaration */
 		
+		global $user;
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence');
 		parent::add_champs('code','type=int;');				//code  congé
 		parent::add_champs('type','type=varchar;');				//type de congé
@@ -119,7 +120,6 @@ class TRH_Absence extends TObjetStd {
 		
 		$this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
 		$this->Tjoursem = array("dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi");
-		
 		
 		//combo box pour le type d'absence
 		$this->TTypeAbsence = array('rttcumule'=>'RTT Cumulé','rttnoncumule'=>'RTT Non Cumulé', 'conges' => 'Congés', 'maladiemaintenue' => 'Maladie maintenue', 
@@ -142,6 +142,31 @@ class TRH_Absence extends TObjetStd {
 		while($ATMdb->Get_line()) {
 			$this->TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 		}
+		
+		
+		$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, r.fk_user, r.fk_usergroup, r.choixApplication
+		FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
+		WHERE( r.fk_user=u.rowid AND r.fk_user=".$user->id." AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
+		OR (r.choixApplication Like 'all' AND u.rowid=".$user->id." and u.rowid=g.fk_user) 
+		OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$user->id.") 
+		ORDER BY r.nbJourCumulable";
+
+		$ATMdb->Execute($sql);
+		$this->TRegle = array();
+		$k=0;
+		while($ATMdb->Get_line()) {
+			$this->TRegle[$k]['rowid']= $ATMdb->Get_field('rowid');
+			$this->TRegle[$k]['typeAbsence']= $ATMdb->Get_field('typeAbsence');
+			$this->TRegle[$k]['libelle']= saveLibelle($ATMdb->Get_field('typeAbsence'));
+			$this->TRegle[$k]['nbJourCumulable']= $ATMdb->Get_field('nbJourCumulable');
+			$this->TRegle[$k]['restrictif']= $ATMdb->Get_field('restrictif');
+			$this->TRegle[$k]['fk_user']= $ATMdb->Get_field('fk_user');
+			$this->TRegle[$k]['fk_usergroup']= $ATMdb->Get_field('fk_usergroup');
+			$this->TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
+			$k++;
+		}
+		
+		
 	}
 
 
@@ -161,8 +186,8 @@ class TRH_Absence extends TObjetStd {
 			$this->libelleEtat=saveLibelleEtat($this->etat);
 			
 			//on teste s'il y a des règles qui s'appliquent à cette demande d'absence
-			$TRegles=$this->findRegleUser($db);
-			$nbJourAutorise=$this->dureeAbsenceRecevable($TRegles);
+			//$this->findRegleUser($db);
+			$nbJourAutorise=$this->dureeAbsenceRecevable();
 			
 		
 			if($nbJourAutorise==0){
@@ -708,35 +733,10 @@ class TRH_Absence extends TObjetStd {
 			return (($hf[0]-$hd[0]).":".($hf[1]-$hd[1]).":".($hf[2]-$hd[2]));
 		}
 
-		function findRegleUser(&$ATMdb){
-			
-			$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, r.fk_user, r.fk_usergroup, r.choixApplication  
-			FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
-			WHERE( r.fk_user=u.rowid AND r.fk_user=".$this->fk_user." AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
-			OR (r.choixApplication Like 'all' AND u.rowid=".$this->fk_user." and u.rowid=g.fk_user) 
-			OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$this->fk_user.") 
-			ORDER BY r.nbJourCumulable";
-
-			$ATMdb->Execute($sql);
-			$TRegle = array();
-			$k=0;
-			while($ATMdb->Get_line()) {
-				$TRegle[$k]['rowid']= $ATMdb->Get_field('rowid');
-				$TRegle[$k]['typeAbsence']= $ATMdb->Get_field('typeAbsence');
-				$TRegle[$k]['nbJourCumulable']= $ATMdb->Get_field('nbJourCumulable');
-				$TRegle[$k]['restrictif']= $ATMdb->Get_field('restrictif');
-				$TRegle[$k]['fk_user']= $ATMdb->Get_field('fk_user');
-				$TRegle[$k]['fk_usergroup']= $ATMdb->Get_field('fk_usergroup');
-				$TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
-				$k++;
-			}
-
-			return $TRegle;
-		}
 		
-		function dureeAbsenceRecevable($TRegle){
+		function dureeAbsenceRecevable(){
 			$avertissement=0;
-			foreach($TRegle as $TR){
+			foreach($this->TRegle as $TR){
 				if($TR['typeAbsence']==$this->type){
 					if($this->duree>$TR['nbJourCumulable']){
 						if($TR['restrictif']==1){
@@ -960,7 +960,11 @@ class TRH_RegleAbsence extends TObjetStd {
 		
 		$this->choixApplication = 'all';
 		
-		$this->TTypeAbsence = array('rttnoncumule'=>'RTT Non Cumulé');
+		$this->TTypeAbsence = array('rttcumule'=>'RTT Cumulé','rttnoncumule'=>'RTT Non Cumulé', 'conges' => 'Congés', 'maladiemaintenue' => 'Maladie maintenue', 
+		'maladienonmaintenue'=>'Maladie non maintenue','maternite'=>'Maternité', 'paternite'=>'Paternité', 
+		'chomagepartiel'=>'Chômage Partiel','nonremuneree'=>'Non rémunérée','accidentdetravail'=>'Accident de travail',
+		'maladieprofessionnelle'=>'Maladie professionnelle', 'congeparental'=>'Congé parental', 'accidentdetrajet'=>'Accident de trajet',
+		'mitempstherapeutique'=>'Mi-temps thérapeutique');
 		$this->TUser = array();
 		$this->TGroup  = array();
 		$this->TChoixApplication = array(

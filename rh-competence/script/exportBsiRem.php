@@ -25,7 +25,7 @@ foreach($TUserID as $user){
 	FROM ".MAIN_DB_PREFIX."rh_remuneration as a 
 	WHERE a.entity=".$conf->entity."
 	AND a.fk_user=".$user."
-	AND (a.date_debutRemuneration>'".$debutAnnee."' AND a.date_finRemuneration<'".$finAnnee."')";
+	AND (a.date_debutRemuneration>'".$debutAnnee."' AND a.date_finRemuneration>'".$finAnnee."')";
 	//echo $sql;exit;
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
@@ -42,7 +42,7 @@ foreach($TUserID as $user){
 		$TabRecapRem[$user]['urssafPartPatronale']=$ATMdb->Get_field('urssafPartPatronale');
 		$TabRecapRem[$user]['retraitePartSalariale']=$ATMdb->Get_field('retraitePartSalariale');
 		$TabRecapRem[$user]['retraitePartPatronale']=$ATMdb->Get_field('retraitePartPatronale');
-		//print_r($TabRecapRem);
+		print_r($TabRecapRem);
 	}
 }
 

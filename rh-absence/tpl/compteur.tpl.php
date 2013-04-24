@@ -4,12 +4,16 @@
 
 
        
-	<h1 style="color: #2AA8B9;">Congés payés</h1>                             
+	<h1 style="color: #2AA8B9;">Congés payés</h1>  
+	<br>                          
 	<div style="display:inline-block; margin-top:-20px;">
 		<div style="display:inline-block;">
 		
-        <h2 style="color: #2AA8B9;">Année N-1</h2>                         
+                       
 		<table class="border" style="width:150%;"  >
+				<tr>
+					<td colspan="2"><h2 style="color: #2AA8B9;">Année N-1</h2>  </td> 
+				</tr>
 				<tr>
 					<td>Utilisateur Courant</td>
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
@@ -42,12 +46,10 @@
 					<td><b>Reste à prendre</b></td>
 					<td><b>[congesPrec.reste;strconv=no;protect=no]</b></td>
 				</tr>
-		</table>
-		</div>
-		
-		<div style="float:right; display:inline-block; margin-left: 200px;">
-		<h2 style="color: #2AA8B9;">Année N</h2>                         
-		<table class="border" style="width:150%;" >	
+
+				<tr>
+					<td colspan="2"><h2 style="color: #2AA8B9;">Année N</h2>  </td> 
+				</tr>
 				<tr>
 					<td>Acquis Exercice</td>
 					<td>[congesCourant.acquisEx;strconv=no;protect=no]</td>
@@ -73,16 +75,19 @@
 					<td>[congesCourant.date_congesCloture;strconv=no;protect=no]</td>
 				</tr>
 		</table>
-		</div>
-	</div>
+
+
 	
 	<br/><br/><br/><br/>
 	
-	<h1 style="color: #2AA8B9;">RTT</h1>                             
-	<div style="display:inline-block; margin-top:-20px;">
-	    <div style="display:inline-block;">   
-	    <h2 style="color: #2AA8B9;">Compteur de RTT</h2>                         
+	<h1 style="color: #2AA8B9;">RTT</h1>  
+	                           
+ 
+	                       
 		<table class="border" style="width:150%">
+				<tr>
+					 <td colspan="2"><h2 style="color: #2AA8B9;">Compteur de RTT</h2>     </td>
+				</tr>
 				<tr>
 					<td>Jours RTT Acquis</td>
 					<td>[rttCourant.acquis;strconv=no;protect=no]</td>
@@ -95,12 +100,12 @@
 					<td>Jours RTT Restant à prendre</td>
 					<td>[rttCourant.reste;strconv=no;protect=no]</td>
 				</tr>
-		</table>
-		</div>
+
 		
-		<div style="float:right; display:inline-block; margin-left: 200px;">
-		<h2 style="color: #2AA8B9;">Méthode d'acquisition des jours</h2>                         
-		<table class="border" style="width:100%">
+		             
+				<tr>
+					 <td colspan="2"><h2 style="color: #2AA8B9;">Méthode d'acquisition des jours</h2></td>
+				</tr>
 				<tr>
 					<td>Type acquisition</td>
 					
