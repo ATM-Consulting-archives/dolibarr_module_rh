@@ -26,3 +26,7 @@
 	define('DOL_ADMIN_USER', 'admin');
 	
 	define('DIR_DOC_OUTPUT', '/var/lib/dolibarr/documents/ressource/');
+	define('USER_MAIL_SENDER', 'webmaster@atm-consulting.fr');
+	define('USER_MAIL_RECEIVER', 'webmaster@atm-consulting.fr');
+	
+	define('DAYS_BEFORE_ALERT',30);

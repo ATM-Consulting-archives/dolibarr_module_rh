@@ -17,10 +17,10 @@ function _get($case) {
 			__out(_jourAnciennete($_REQUEST['id']));	
 			break;
 		case 'maladie_maintenue':
-			__out(_dureeMaladieMaintenue($_REQUEST['id'], $REQUEST['date_debut'], $REQUEST['date_fin']));	
+			__out(_dureeMaladieMaintenue($_REQUEST['id'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
 			break;
 		case 'maladie_non_maintenue':
-			__out(_dureeMaladieNonMaintenue($_REQUEST['id'], $REQUEST['date_debut'], $REQUEST['date_fin']));	
+			__out(_dureeMaladieNonMaintenue($_REQUEST['id'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
 			break;
 	}
 }
