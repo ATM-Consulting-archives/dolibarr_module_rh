@@ -352,7 +352,6 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 	}
 
 	$emprunt->load_liste($ATMdb);
-	
 
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
@@ -369,8 +368,8 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
 				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
-				,'date_vente'=>$form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
-				,'date_garantie'=>$form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
+				,'date_vente'=>empty($ressource->date_vente) ? '' : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
+				,'date_garantie'=>empty($ressource->date_garantie) ? '': $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TAgence,$ressource->fk_proprietaire)
 
 			)
