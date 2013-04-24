@@ -26,8 +26,7 @@ $TRessource = chargeVoiture($ATMdb);
 $ressource = new TRH_Ressource;
 //$ressource->load($ATMdb, $id)
 //$ressource->isEmpruntee($ATMdb, date("Y-m-d",time()) );
-print_r($TRessource);
-
+$cpt = 0;
 $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle)) != false){
@@ -64,22 +63,18 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->commentaire = $infos[8]; 	//le commentaire
 				
 				//print_r($temp);
-				$temp->save($ATMdb);echo ' : Ajoutee.';		
+				$temp->save($ATMdb);echo ' : Ajoutee.';
+				$cpt++;		
 				
 			}
 			else {
-				echo ' : la ressource n\'existe pas. <br>';
-			}
-			
+				echo 'La ressource'.$plaque.'n\'existe pas. <br>';
+			}	
 		}
-		
-		echo '<br>';
 		$numLigne++;
-		
-		//print_r(explode('\n', $data));
 	}
 	
-	echo 'Fin du traitement. '.($numLigne-3).' lignes rajoutés à la table.';
+	echo 'Fin du traitement. '.$cpt.' lignes rajoutés à la table.';
 	
 }
 
