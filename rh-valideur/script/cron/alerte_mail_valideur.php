@@ -5,14 +5,14 @@
  * 
  */
  	define('INC_FROM_CRON_SCRIPT', true);
-	require('../config.php');
+	require('../../config.php');
 	
 	
 	$ATMdb=new TPDOdb;
 	$langs->load('mails');
 	
 	$sql = "SELECT u.rowid, u.name,u.firstname,u.email 
-	FROM ".MAIN_DB_PREFIX."user u LEFT JOIN llx_rh_valideur_groupe v ON (v.fk_user=u.rowid)
+	FROM ".MAIN_DB_PREFIX."user u LEFT JOIN ".MAIN_DB_PREFIX."rh_valideur_groupe v ON (v.fk_user=u.rowid)
 	WHERE u.email!=''
 	AND v.type='NDFP'";
 	$ATMdb->Execute($sql);

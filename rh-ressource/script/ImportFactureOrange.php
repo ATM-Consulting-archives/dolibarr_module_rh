@@ -1,7 +1,9 @@
 <?php
+/*
 require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');
+//*/
 
 global $conf;
 $ATMdb=new Tdb;
@@ -225,7 +227,7 @@ $cptFacture = 0;
 
 //----------------------ECRITURE DANS LE FICHIER D'EXPORT------------------------
 //LIGNE D'EN TETE
-$export = fopen('./exports/exportMoisAvril2013.csv', 'w');
+$export = fopen('./script/exports/exportMoisAvril2013.csv', 'w');
 fwrite($export, "Utilisateur;Limite Générale;Conso Générale;Limite Interne;Conso Interne;Durée Interne Facturée;Limite Externe;Conso Externe;Durée Externe Facturée;Durée Totale Facturée;Conso Data;Data Facturés;SMS;SMS facturés;Coût minute;Total Facturé à l'utilisateur\n\r");
 //UNE LIGNE PAR UTILISATEUR
 foreach ($TUser as $nom => $id) {
