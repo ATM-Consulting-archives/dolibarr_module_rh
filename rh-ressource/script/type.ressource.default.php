@@ -84,7 +84,7 @@
 	
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Numéro', 'numeroTel', 'chaine',0, 0, '', 1, $tempType->rowid);
-	$tempField = new TRH_Ressource_field;
+	/*$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Coût minutaire interne', 'coutMinuteInterne', 'chaine',0, 1, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Coût minutaire externe', 'coutMinuteExterne', 'chaine',0, 2, '', 1, $tempType->rowid);
@@ -144,7 +144,7 @@
 	$tempField->chargement($ATMdb,'Communications week-end en Euros ht', 'commWeekEnd', 'chaine',1, 29, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Libellé de la flotte', 'libFlotte', 'chaine',1, 30, '', 1, $tempType->rowid);
-		
+	*/	
 		
 		
 	
