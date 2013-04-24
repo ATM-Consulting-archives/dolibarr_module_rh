@@ -1,5 +1,6 @@
 <?php
 /*
+ * init ressource par défaut
  * Script créant et vérifiant que les champs requis s'ajoutent bien
  * 
  */
