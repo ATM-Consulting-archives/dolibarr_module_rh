@@ -88,10 +88,18 @@
 				<tr>
 					 <td colspan="2"><h2 style="color: #2AA8B9;">Compteur de RTT</h2>     </td>
 				</tr>
+				[onshow;block=begin;when [rttCourant.typeAcquisition]=='Annuel'] 
 				<tr>
 					<td>Jours RTT Acquis</td>
 					<td>[rttCourant.acquis;strconv=no;protect=no]</td>
 				</tr>
+				[onshow;block=end]
+				[onshow;block=begin;when [rttCourant.typeAcquisition]=='Mensuel'] 
+				<tr>
+					<td>Jours RTT Acquis</td>
+					<td>[rttCourant.mensuelTotal;strconv=no;protect=no]</td>
+				</tr>
+				[onshow;block=end]
 				<tr>
 					<td>Jours RTT Pris</td>
 					<td>[rttCourant.pris;strconv=no;protect=no]	</td>
@@ -163,6 +171,25 @@
 		
 
 		
+		
+		<script>
+		$(document).ready( function(){
+			//on empêche que la date de début dépasse celle de fin
+			$('#rttTypeAcquisition').change( 	function(){
+				
+				
+				if($('#rttTypeAcquisition').val()=="Mensuel"){
+					$("#rttAcquisMensuelInit").val(1);
+					$("#rttAcquisAnnuelCumuleInit").val(0);
+					$("#rttAcquisAnnuelNonCumuleInit").val(0);
+				}else{
+					$("#rttAcquisMensuelInit").val(0);
+					$("#rttAcquisAnnuelCumuleInit").val(5);
+					$("#rttAcquisAnnuelNonCumuleInit").val(7);
+				}
+				
+			});
 
-
+		});
+	</script>
 

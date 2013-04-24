@@ -17,17 +17,21 @@
 	
 	//on récupère la date de fin de cloture des RTT
 	$k=0;
-	$sqlReqCloture="SELECT fk_user, date_rttCloture FROM `".MAIN_DB_PREFIX."rh_compteur`";
+	$sqlReqCloture="SELECT fk_user, date_rttCloture, rttAcquisAnnuelCumuleInit, rttAcquisAnnuelNonCumuleInit FROM `".MAIN_DB_PREFIX."rh_compteur`";
 	$ATMdb->Execute($sqlReqCloture);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
-				$Tab[$ATMdb->Get_field('fk_user')] = $ATMdb->Get_field('date_rttCloture');
+			$Tab[$ATMdb->Get_field('fk_user')]['date_rttCloture'] = $ATMdb->Get_field('date_rttCloture');
+			$Tab[$ATMdb->Get_field('fk_user')]['rttAcquisAnnuelCumuleInit'] = $ATMdb->Get_field('rttAcquisAnnuelCumuleInit');
+			$Tab[$ATMdb->Get_field('fk_user')]['rttAcquisAnnuelNonCumuleInit'] = $ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit');
+			$Tab[$ATMdb->Get_field('fk_user')]['fk_user'] = $ATMdb->Get_field('fk_user');
 	}
 
-	foreach($Tab as $idUser => $dateCloture )
+	foreach($Tab as $TabRtt )
 	{
 	   	//echo $idUser." ".$dateCloture. "<br/>";
-		$date=strtotime($dateCloture);
+		$date=strtotime($TabRtt['date_rttCloture']);
+		
 		$dateMD=date("dm",$date);
 
 		//COMPTEUR MENSUEL
@@ -35,16 +39,16 @@
 		$mars=date("dm");
 		if($mars==$dateMD){
 			//on remet à 0 les compteurs
-			$sqlRaz='UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttAcquisMensuel=0, rttPris=0 WHERE rttTypeAcquisition="Mensuel" WHERE fk_user ='.$idUser;
+			$sqlRaz='UPDATE '.MAIN_DB_PREFIX.'rh_compteur SET rttAcquisMensuel=0, rttPris=0, rttAcquisAnnuelCumule=0, rttAcquisAnnuelNonCumule=0 WHERE rttTypeAcquisition="Mensuel" AND fk_user ='.$TabRtt['fk_user'];
 			$ATMdb->Execute($sqlRaz);
 		}
 		
 
 		//COMPTEUR ANNUEL
-		////// 1er mars, tous les rtt de l'année N sont données à ceux qui les accumulent par année
+		////// 1er mars, tous les rtt de l'année N sont donnés à ceux qui les accumulent par année
 		if($mars==$dateMD){
-			//on remet à 5 et à 7 des rtt cumules/noncumules les compteurs
-			$sqlTransfert='UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttAcquisAnnuelCumule=5, rttAcquisAnnuelNonCumule=7, rttPris=0  WHERE rttTypeAcquisition="Annuel" WHERE fk_user ='.$idUser;
+			//on remet à 5 et à 7 des rtt cumules/noncumules les compteurs par exemple, dépend de ce qui est entré sur le compteur
+			$sqlTransfert='UPDATE '.MAIN_DB_PREFIX.'rh_compteur SET rttAcquisAnnuelCumule='.$TabRtt['rttAcquisAnnuelCumuleInit'].', rttAcquisAnnuelNonCumule='.$TabRtt['rttAcquisAnnuelNonCumuleInit'].', rttPris=0  WHERE rttTypeAcquisition="Annuel" AND fk_user ='.$TabRtt['fk_user'];
 			$ATMdb->Execute($sqlTransfert);
 		}	
 			    
@@ -54,9 +58,20 @@
 	/////chaque mois, les rtt sont incrémentés de 1 pour ceux qui les accumulent par mois
 	$jour=date("d");
 	if($jour=="01"){
-		//on incrémente de 1
-		$sqlIncr='UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttAcquisMensuel=rttAcquisMensuel+1 WHERE rttTypeAcquisition="Mensuel"';
-		$ATMdb->Execute($sqlIncr);
+		$sqlMois="SELECT fk_user, rttAcquisMensuelInit FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE rttTypeAcquisition='Mensuel'";
+		$ATMdb->Execute($sqlMois);
+		$Tab=array();
+		while($ATMdb->Get_line()) {
+				$Tab[$ATMdb->Get_field('fk_user')]['rttAcquisMensuelInit'] = $ATMdb->Get_field('rttAcquisMensuelInit');
+				$Tab[$ATMdb->Get_field('fk_user')]['fk_user'] = $ATMdb->Get_field('fk_user');
+		}
+
+		foreach($Tab as $TabMois){
+			//on incrémente de 1 par exemple, suivant ce qui est donné dans la base
+			$sqlIncr='UPDATE '.MAIN_DB_PREFIX.'rh_compteur SET rttAcquisMensuelTotal=0+rttAcquisMensuelTotal+'.$TabMois['rttAcquisMensuelInit'].' WHERE rttTypeAcquisition="Mensuel" AND fk_user='.$TabMois['fk_user'];
+			$ATMdb->Execute($sqlIncr);
+		}
+		
 	}
 
 
