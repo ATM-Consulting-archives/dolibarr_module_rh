@@ -41,23 +41,25 @@
 	$p=new TRH_Absence;
 	$p->init_db_by_vars($ATMdb);
 	
+
+	$sqlReq="SELECT * FROM ".MAIN_DB_PREFIX."rh_admin_compteur";
+	$ATMdb->Execute($sqlReq);
+	$Tab=array();
+	$j=0;
+	while($ATMdb->Get_line()) {
+				$j++;		
+	}
+	if($j==0){
+		$q=new TRH_AdminCompteur;
+		$q->init_db_by_vars($ATMdb);
+		$q->congesAcquisMensuelInit='2.08';
+		$q->date_rttClotureInit=strtotime('2013-03-01 00:00:00');
+		$q->date_congesClotureInit=strtotime('2013-06-01 00:00:00');
+		$q->save($ATMdb);
+	}
 	
 	
-	
-	
-	
-	$q=new TRH_AdminCompteur;
-	$q->init_db_by_vars($ATMdb);
-	$q->congesAcquisMensuelInit='2.08';
-	$q->date_rttClotureInit=strtotime('2013-06-01 00:00:00');
-	$q->date_congesClotureInit=strtotime('2013-03-01 00:00:00');
-	$q->save($ATMdb);
-	
-	
-	
-	
-	
-	
+
 	$r=new TRH_EmploiTemps;
 	$r->init_db_by_vars($ATMdb);
 	$sqlReq="SELECT DISTINCT rowid FROM ".MAIN_DB_PREFIX."user WHERE rowid NOT IN ( SELECT fk_user from ".MAIN_DB_PREFIX."rh_absence_emploitemps)";
