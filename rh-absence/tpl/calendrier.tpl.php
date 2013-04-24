@@ -226,10 +226,10 @@
             <!--<div id="showdaybtn" class="fbutton">
                 <div><span title='Day' class="showdayview">Jour</span></div>
             </div>-->
-              <div  id="showweekbtn" class="fbutton fcurrent">
+              <div  id="showweekbtn" class="fbutton">
                 <div><span title='Week' class="showweekview">Semaine</span></div>
             </div>
-              <div  id="showmonthbtn" class="fbutton">
+              <div  id="showmonthbtn" class="fbutton fcurrent">
                 <div><span title='Month' class="showmonthview">Mois</span></div>
 
             </div>
