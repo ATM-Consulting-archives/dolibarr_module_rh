@@ -167,70 +167,63 @@ class modAbsence extends DolibarrModules
 		
 		$this->rights[$r][0] = 7101;
 		$this->rights[$r][1] = 'Valider ou refuser une demande de congés';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'valideurConges';
 		$r++;
 		
 		$this->rights[$r][0] = 7102;
 		$this->rights[$r][1] = 'Visualiser le compteur de congés d\'un collaborateur';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'visualiserCompteur';
 		$r++;
 		
 		$this->rights[$r][0] = 7103;
 		$this->rights[$r][1] = 'Modifier le compteur de congés d\'un collaborateur';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierCompteur';
 		$r++;
 		
 		$this->rights[$r][0] = 7104;
 		$this->rights[$r][1] = 'Modifier les paramètres globaux des congés';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierParamGlobalConges';
 		$r++;
 		
 		$this->rights[$r][0] = 7105;
 		$this->rights[$r][1] = 'Ajouter/Supprimer des jours non travaillés';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'ajoutJourOff';
 		$r++;
 		
 		$this->rights[$r][0] = 7106;
 		$this->rights[$r][1] = 'Modifier l\'emploi du temps d\'un collaborateur';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierEdt';
 		$r++;
 		
 		$this->rights[$r][0] = 7107;
 		$this->rights[$r][1] = 'Modifier son emploi du temps';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierSonEdt';
 		$r++;
 		
 		$this->rights[$r][0] = 7108;
-		$this->rights[$r][1] = 'Voir les absences de tous les collaborateurs';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][1] = 'Voir toutes les absences des collaborateurs';
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirToutesAbsences';
 		$r++;
 		
-		$this->rights[$r][0] = 7109;
-		$this->rights[$r][1] = 'Notifier une absence comme étant Enregistrée dans la paie';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'myactions';
-        $this->rights[$r][5] = 'enregistrerPaieAbsences';
-		$r++;
-		
 		$this->rights[$r][0] = 7110;
 		$this->rights[$r][1] = 'Rajouter des règles sur les demandes d\'absences';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'rajouterRegle';
 		$r++;
