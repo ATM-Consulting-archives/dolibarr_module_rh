@@ -16,7 +16,7 @@
 			[onshow;block=end]
 
 
-			<table class="border" style="width:30%">
+			<table class="border" style="width:40%">
 				<tr>
 					<td>Utilisateur Courant</td>
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
@@ -50,6 +50,10 @@
 						<td>Etat</td>
 						<td>[absenceCourante.libelleEtat;strconv=no;protect=no]</td>
 					</tr>
+					<tr>
+						<td>Avertissement</td>
+						<td>[absenceCourante.avertissement;strconv=no;protect=no]</td>
+					</tr>
 				[onshow;block=end]
 			</table>
 
@@ -74,7 +78,7 @@
 					<td>[rttCourant.mensuel;strconv=no;protect=no]</td>
 				</tr>
 			</table>
-        <br/>  
+
 			
 			
 		[onshow;block=begin;when [absenceCourante.etat]!='Refusee']
@@ -104,7 +108,7 @@
 		[onshow;block=end]	
 		[onshow;block=end]	
 
-		
+		</div>
 		[onshow;block=begin;when [absenceCourante.etat]=='Validee']
 		[onshow;block=begin;when [view.mode]!='edit']
 				[onshow;block=begin;when [userCourant.enregistrerPaieAbsences]=='1']
@@ -113,8 +117,21 @@
 				[onshow;block=end]
 		[onshow;block=end]
 		[onshow;block=end]
-			
 		
+		
+		<h3 style="color: #2AA8B9;">Règles concernant le collaborateur</h3>
+		<table  class="liste formdoc noborder" style="width:100%">
+				<tr class="liste_titre">
+					<td><b>Type d'absence concerné</b></td>
+					<td><b>Nombre de jours cumulables possible</b></td>
+					<td><b>Restrictif</b></td>
+				</tr>
+				<tr class="pair">
+					<td>[TRegle.libelle;block=tr;strconv=no;protect=no]</td>
+					<td>[TRegle.nbJourCumulable;block=tr;strconv=no;protect=no]</td>
+					<td>[TRegle.restrictif;block=tr;strconv=no;protect=no]</td>
+				</tr>	
+		</table>
 
 		<script>
 			$(document).ready( function(){

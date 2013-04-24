@@ -3,9 +3,8 @@
         
     <div class="fiche"> <!-- begin div class="fiche" -->
     [view.head;strconv=no]
-    
-            <div class="tabBar">
-	                                
+    	
+           
 [onshow;block=end] 	
 	
 	<table class="border" style="width:100%">
@@ -75,6 +74,7 @@
 </script>
 
 
+
 [onshow;block=begin;when [view.userRight]==1]
 [onshow;block=begin;when [view.mode]=='view']
 	<div class="tabsAction" style="text-align:center;">
@@ -93,8 +93,8 @@
 [onshow;block=end] 
 [onshow;block=end] 
 
-	</div>
-	</div>
+	
+</div>
 
 	
 

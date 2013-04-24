@@ -80,12 +80,14 @@ function _liste(&$ATMdb, $remuneration) {
 	
 	////////////AFFICHAGE DES LIGNES DE REMUNERATION
 	$r = new TSSRenderControler($remuneration);
-	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.anneeRemuneration, CONCAT(u.firstname,' ',u.name) as 'Utilisateur' ,
-			  CONCAT( ROUND(r.bruteAnnuelle,2),' €') as 'Rémunération brute annuelle',  CONCAT( ROUND(r.salaireMensuel,2),' €') as 'Salaire mensuel', r.fk_user, '' as 'Supprimer'
+	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', DATE_FORMAT(r.date_debutRemuneration, '%d/%m/%Y') as 'Date début', DATE_FORMAT(r.date_finRemuneration, '%d/%m/%Y') as 'Date fin', 
+			CONCAT(u.firstname,' ',u.name) as 'Utilisateur' ,
+			  CONCAT( ROUND(r.bruteAnnuelle,2),' €') as 'Rémunération brute annuelle',  
+			  CONCAT( ROUND(r.salaireMensuel,2),' €') as 'Salaire mensuel', r.fk_user, '' as 'Supprimer'
 		FROM   ".MAIN_DB_PREFIX."rh_remuneration as r, ".MAIN_DB_PREFIX."user as u
 		WHERE r.fk_user=".$_REQUEST['fk_user']." AND r.entity=".$conf->entity." AND u.rowid=r.fk_user";
-
-	$TOrder = array('anneeRemuneration'=>'ASC');
+	
+	$TOrder = array('date_debutRemuneration'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -98,7 +100,8 @@ function _liste(&$ATMdb, $remuneration) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'anneeRemuneration'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
+			'Rémunération brute annuelle'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
+			,'Date début'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
 			,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
 		)
 		,'translate'=>array(
@@ -118,7 +121,7 @@ function _liste(&$ATMdb, $remuneration) {
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 		)
 		,'title'=>array(
-			'anneeRemuneration'=>'Année de rémunération'
+			'date_debutRemuneration'=>'Date début'
 		)
 		,'search'=>array(
 		)
@@ -165,7 +168,8 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 			'remuneration'=>array(
 				'id'=>$remuneration->getId()
 				,'date_entreeEntreprise'=>$form->calendrier('', 'date_entreeEntreprise', $remuneration->get_date('date_entreeEntreprise'), 10)
-				,'anneeRemuneration'=>$form->texte('','anneeRemuneration',$remuneration->anneeRemuneration, 30,100,'','','-')
+				,'date_debutRemuneration'=>$form->calendrier('', 'date_debutRemuneration', $remuneration->get_date('date_debutRemuneration'), 10)
+				,'date_finRemuneration'=>$form->calendrier('', 'date_finRemuneration', $remuneration->get_date('date_finRemuneration'), 10)
 				,'bruteAnnuelle'=>$form->texte('','bruteAnnuelle',$remuneration->bruteAnnuelle, 30,100,'','','-')
 				,'salaireMensuel'=>$form->texte('','salaireMensuel',$remuneration->salaireMensuel, 30,100,'','','-')
 				,'primeAnciennete'=>$form->texte('','primeAnciennete',$remuneration->primeAnciennete, 30,100,'','','-')

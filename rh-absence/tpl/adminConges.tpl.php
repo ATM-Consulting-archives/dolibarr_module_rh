@@ -10,10 +10,10 @@
        
 		
 		<div style="float:right; display:inline-block; margin-left: 100px;">                  
-		<table class="border" style="width:100%;" >	
+		<table class="border" style="width:150%;" >	
 				<br/><br/>
 				<tr>
-					<td>Acquis Par Mois</td>
+					<td>Nombre de jours acquis Par Mois</td>
 					<td> [compteurGlobal.congesAcquisMensuelInit;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
@@ -24,14 +24,14 @@
 		</div>
 	</div>
 	
-	<br/><br/><br/><br/>
+	<br/><br/>
 	
 	<h1 style="color: #2AA8B9;">RTT</h1>                             
-	<div style="display:inline-block; margin-top:-20px;">
+	<div style="display:inline-block; margin-top:-50px;">
 	    
 		
-		<div style="float:right; display:inline-block; margin-left: 90px;">                        
-		<table class="border" style="width:100%">
+		<div style="float:right; display:inline-block; margin-left: 100px;">                        
+		<table class="border" style="width:225%">
 				<tr>
 					<td>Date clôture RTT</td>
 					<td>[compteurGlobal.date_rttClotureInit;strconv=no;protect=no]</td>
@@ -39,21 +39,25 @@
 		</table>
 	    </div>  
 	</div>            
-	<br/><br/>
+	<br/><br/><br/>
 
 
-	<div class="tabsAction" >
+	
 		[onshow;block=begin;when [view.mode]=='edit']
+		<div class="tabsAction" >
 			<input type="submit" value="Enregistrer" name="save" class="button"  onclick="document.location.href='?id=[compteurGlobal.rowid]&action=view'">
 			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[compteurGlobal.rowid]&action=view'">
+		
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
 			[onshow;block=begin;when [userCourant.modifierParamGlobalConges]=='1']
+			<div class="tabsAction" >
 				<a class="butAction"  href="?id=[compteurGlobal.rowid]&action=edit">Modifier</a>
+			</div>
 			[onshow;block=end]
 		[onshow;block=end]
-	</div>
+	
 
 		
 

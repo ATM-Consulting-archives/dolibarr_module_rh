@@ -1,0 +1,86 @@
+ [view.head;strconv=no]
+
+<h2>Nouvelle règle sur les demandes d'absence</h2>
+<table width="60%" class="border">
+	<tr>
+		<td>Choix d'application</td>
+		[onshow;block=begin;when [view.mode]=='view']
+		<td>
+			[newRule.choixApplicationViewMode; strconv=no]
+		</td>
+		[onshow;block=end]
+		[onshow;block=begin;when [view.mode]!='view']
+		<td>
+			[newRule.choixApplication; strconv=no]
+		</td>
+		<script>
+			$(document).ready(function(){
+				[onshow;block=begin;when [newRule.choixApplicationViewMode]=='Utilisateur']
+					$('#group').hide();
+				[onshow;block=end]
+				[onshow;block=begin;when [newRule.choixApplicationViewMode]=='Groupe']
+					$('#user').hide();
+				[onshow;block=end]
+				[onshow;block=begin;when [newRule.choixApplicationViewMode]=='Tous']
+					$('#user, #group').hide();
+				[onshow;block=end]
+				
+				$('#choixApplication_3').click(function(){
+					$('#user').show();
+					$('#group').hide();
+				});
+				$('#choixApplication_2').click(function(){
+					$('#group').show();
+					$('#user').hide();
+				})
+				$('#choixApplication_1').click(function(){
+					$('#group').hide();
+					$('#user').hide();
+				})
+			})
+		</script>
+		[onshow;block=end]
+	</tr>
+	
+	<tr id="group">
+		<td>Groupe</td>
+		<td>[newRule.fk_group; strconv=no]</td>
+	</tr>
+	<tr id="user">
+		<td>Utilisateur</td>
+		<td>[newRule.fk_user; strconv=no]</td>
+	</tr>
+	<tr>
+		<td>Type d'absence concerné</td>
+		<td>[newRule.typeAbsence;strconv=no]</td>
+	</tr>
+	<tr>
+		<td>Nombre de jours cumulables</td>
+		<td>[newRule.nbJourCumulable;strconv=no]</td>
+	</tr>
+	<tr>
+		<td>Mode restrictif</td>
+		<td>[newRule.restrictif;strconv=no]</td>
+	</tr>
+</table>
+
+
+[onshow;block=begin;when [view.mode]!='edit']
+	<div class="tabsAction">
+		<a href="?fk_user=[userCourant.id]" class="butAction">Retour</a>
+		<a href="?id=[newRule.id]&action=edit&fk_user=[userCourant.id]" class="butAction">Modifier</a>
+		<a class="butActionDelete"  href="?id=[newRule.id]&action=delete&fk_user=[userCourant.id]">Supprimer</a>
+	</div>
+		
+		</div>
+		
+	
+[onshow;block=end]	
+[onshow;block=begin;when [view.mode]=='edit']
+
+
+<div class="tabsAction" style="text-align:center;">
+	<input type="submit" value="Enregistrer" name="save" class="button"> 
+	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[newRule.id]&fk_user=[userCourant.id]'">
+</div>
+[onshow;block=end]

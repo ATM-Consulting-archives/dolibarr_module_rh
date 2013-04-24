@@ -17,17 +17,21 @@
 			<td>Type</td>
 			<td>[NEvent.type;strconv=no;protect=no]</td>
 		</tr>
+		<tr id="numFacture">
+			<td>Numéro de facture</td>
+			<td>[NEvent.numFacture;strconv=no;protect=no]</td>
+		</tr>
 		<tr>
 			<td>Motif</td>
 			<td>[NEvent.motif;strconv=no;protect=no]</td>[NEvent.fk_rh_ressource;strconv=no;protect=no]
 		</tr>
-		<tr>
-			<td>Utilisateur</td>
+		<tr id="user">
+			<td >Utilisateur</td>
 			<td>[NEvent.user;strconv=no;protect=no]</td>
 		</tr>
-		<tr>
-			<td>Responsabilité</td>
-			<td>[NEvent.responsabilite;strconv=no;protect=no]%</td>
+		<tr id="responsabilite">
+			<td >Responsabilité</td>
+			<td>[NEvent.responsabilite;strconv=no;protect=no]</td>
 			<script>
 				$(document).ready(function(){$('#responsabilite').val(100);})
 			</script>
@@ -35,6 +39,10 @@
 		<tr>
 			<td>Commentaire</td>
 			<td>[NEvent.commentaire;strconv=no;protect=no]</td>
+		</tr>
+		<tr id="numContrat">
+			<td>Contrat associé</td>
+			<td><a href="contrat.php?id=[NEvent.idContrat;strconv=no;protect=no]">[NEvent.numContrat;strconv=no;protect=no]</a></td>
 		</tr>
 		<tr>
 			<td>Coût TTC</td>
@@ -91,8 +99,44 @@
 			
 		};
 		
+		function effacerChamps(){
+			$('#user').hide();
+			$('#responsabilite').hide();
+			$('#numFacture').hide();
+			$('#numContrat').hide();
+			
+		};
+		
+		function afficherSelonType(type){
+			effacerChamps();
+			switch (type.toLowerCase()){
+				case 'accident':
+					$('#user').show();
+					$('#responsabilite').show();
+					break;
+				case 'facture':
+					$('#numFacture').show();
+					$('#numContrat').show();
+				default : 
+					break;}
+		};
+				
 		$("#date_debut").change(comparerDates);
 		$("#date_fin").change(comparerDates);
+		
+		[onshow;block=begin;when [view.mode]=='view']
+		afficherSelonType('[NEvent.type;strconv=no;protect=no]');
+		[onshow;block=end]
+		
+		[onshow;block=begin;when [view.mode]!='view']
+		afficherSelonType($("#type option:selected").val());
+		$("#type").change(function () {
+			$("#type option:selected").each(function () {
+				afficherSelonType($(this).val());
+			});
+		})
+		[onshow;block=end]
+
 	});
 </script>
 

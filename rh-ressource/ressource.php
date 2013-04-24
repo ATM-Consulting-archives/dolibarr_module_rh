@@ -8,6 +8,7 @@
 	
 	//if (!$user->rights->financement->affaire->read)	{ accessforbidden(); }
 	$ATMdb=new Tdb;
+	$emprunt=new TRH_Evenement;
 	$ressource=new TRH_ressource;
 	
 	$mesg = '';
@@ -23,19 +24,21 @@
 			case 'edit'	:
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $ressource,'edit');
+				_fiche($ATMdb, $emprunt, $ressource,'edit');
 				break;
 			
 			case 'type':
 				$ressource->set_values($_REQUEST);
 				$ressource->save($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
+				$emprunt->load($ATMdb, $_REQUEST['idEven']);
 				$ressource->fk_rh_ressource_type=$_REQUEST['fk_rh_ressource_type'];
-				_fiche($ATMdb, $ressource,'edit');
+				_fiche($ATMdb, $emprunt, $ressource,'new');
 				break;
 			
 				
 			case 'save':
+			
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				//on vérifie que le libellé est renseigné
@@ -73,6 +76,13 @@
 				$ressource->set_values($_REQUEST);
 				$ressource->save($ATMdb);
 				
+				////////
+				if($_REQUEST["fieldChoice"]=="O"){
+					$emprunt->load($ATMdb, $_REQUEST['idEven']);
+					$emprunt->set_values($_REQUEST['evenement']);
+					$emprunt->save($ATMdb);
+				}
+				////////
 
 				if ($mesg==''){
 					$mesg = '<div class="ok">Modifications effectuées</div>';
@@ -84,13 +94,13 @@
 				else {$mode = 'edit';}
 				
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $ressource,$mode);
+				_fiche($ATMdb, $emprunt, $ressource,$mode);
 				break;
 			
 			case 'view':
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $ressource,'view');
+				_fiche($ATMdb, $emprunt, $ressource,'view');
 				break;
 			
 				
@@ -113,7 +123,7 @@
 	}
 	elseif(isset($_REQUEST['id'])) {
 		$ressource->load($ATMdb, $_REQUEST['id']);
-		_fiche($ATMdb, $ressource, 'view');
+		_fiche($ATMdb, $emprunt, $ressource, 'view');
 	}
 	else {
 		/*
@@ -293,7 +303,7 @@ function _choixType(&$ATMdb, &$ressource, $mode) {
 
 
 
-function _fiche(&$ATMdb, &$ressource, $mode) {
+function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 	global $db,$user;
 	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
 
@@ -341,7 +351,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 		$reqVide=1;
 	}
 
-
+	$emprunt->load_liste($ATMdb);
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
 		,array(
@@ -357,10 +367,9 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
 				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
-				,'date_vente'=>$form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
-				,'date_garantie'=>$form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
+				,'date_vente'=>(empty($ressource->date_vente) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' , 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
+				,'date_garantie'=>(empty($ressource->date_garantie) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TAgence,$ressource->fk_proprietaire)
-
 			)
 			,'fk_ressource'=>array(
 				'liste_fk_rh_ressource'=>$form->combo('','fk_rh_ressource',$ressource->TRessource,$ressource->fk_rh_ressource)
@@ -368,9 +377,17 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'id'=>$ressource->fk_rh_ressource
 				,'reqExiste'=>$reqVide
 			)
-			
+			,'NEmprunt'=>array(
+				'id'=>$emprunt->getId()
+				,'type'=>$form->hidden('evenement[type]', 'emprunt')
+				,'fk_user'=>$form->combo('','evenement[fk_user]',$emprunt->TUser,$emprunt->fk_user)
+				,'fk_rh_ressource'=> $form->hidden('evenement[fk_rh_ressource]', $ressource->getId())
+				,'commentaire'=>$form->texte('','evenement[commentaire]',$emprunt->commentaire, 30,100,'','','-')
+				,'date_debut'=> $form->calendrier('', 'evenement[date_debut]', $emprunt->get_date('date_debut'), 10)
+				,'date_fin'=> $form->calendrier('', 'evenement[date_fin]', $emprunt->get_date('date_fin'), 10)
+			)
 			,'view'=>array(
-				'mode'=>$mode
+				'mode'=>$mode=='new' ? 'edit' : $mode
 				,'userRight'=>((int)$user->rights->ressource->ressource->createRessource)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'fiche', 'Ressource')
 			)

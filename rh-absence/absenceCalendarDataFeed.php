@@ -66,9 +66,8 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idAfficher=0){
       }else if ($idUser!=0){
 	  	$sql1.=" AND r.fk_user IN(".implode(',', $TabUser).")";
       }
-		
 	}
-	
+	//$sql1.=" AND r.etat !=Refusee";
 	//echo $sql1;
   	$ATMdb->Execute($sql1);
     

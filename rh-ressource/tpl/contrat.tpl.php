@@ -43,10 +43,6 @@
 	 		<td>Loyer HT</td>
 	 		<td>[contrat.loyer_HT;strconv=no;protect=no] €</td>
 	 	</tr>
-	 	<tr>
-	 		<td>[extraFields.nom;block=tr;strconv=no;protect=no]</td>
-	 		<td>[extraFields.valeur;strconv=no;protect=no] [extraFields.unite;strconv=no;protect=no]</td>
-	 	</tr>
 	 	
 	</table>
 	

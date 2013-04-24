@@ -1,7 +1,7 @@
 <?php
-require('../config.php');
-require('../class/evenement.class.php');
-require('../class/ressource.class.php');
+require('../../config.php');
+require('../../class/evenement.class.php');
+require('../../class/ressource.class.php');
 
 global $conf;
 
@@ -32,7 +32,7 @@ echo 'Traitement du fichier '.$nomFichier.' : <br>';
 
 //début du parsing
 $numLigne = 0;
-if (($handle = fopen("./fichierImports/".$nomFichier, "r")) !== FALSE) {
+if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle, 0,'\r')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
 		if ($numLigne >=1){

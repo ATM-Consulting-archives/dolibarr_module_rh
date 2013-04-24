@@ -28,6 +28,7 @@
 		<td>
 			[newRule.choixApplication; strconv=no]
 		</td>
+		[onshow;block=end]
 		<script>
 			$(document).ready(function(){
 				[onshow;block=begin;when [newRule.choixApplicationViewMode]=='Utilisateur']
@@ -54,7 +55,7 @@
 				})
 			})
 		</script>
-		[onshow;block=end]
+		
 	</tr>
 	
 	<tr id="group">
@@ -66,17 +67,77 @@
 		<td>[newRule.fk_user; strconv=no]</td>
 	</tr>
 	<tr>
+		<td>Limite</td>
+		[onshow;block=begin;when [view.mode]!='view']
+			<td>[newRule.choixLimite; strconv=no]</td>
+		[onshow;block=end]
+		[onshow;block=begin;when [view.mode]=='view']
+			<td>[newRule.choixLimiteViewMode; strconv=no]</td>
+		[onshow;block=end]
+		
+			<script>
+			$(document).ready(function(){
+				$('#choixLimite_1').click(function(){
+					$('#general').show();
+					$('#interne').hide();
+					$('#externe').hide();
+				});
+				$('#choixLimite_2').click(function(){
+					$('#general').hide();
+					$('#interne').show();
+					$('#externe').show();
+				})
+				
+				[onshow;block=begin;when [newRule.choixLimiteViewMode]=='Général']
+					$('#interne,#externe').hide();
+				[onshow;block=end]
+				
+				[onshow;block=begin;when [newRule.choixLimiteViewMode]!='Général']
+					$('#general').hide();
+				[onshow;block=end]
+				
+				
+			})
+			</script>	
+		
+	</tr>
+	<tr id="general">
+		<td>Limite Générale</td>
+		<td>[newRule.dureeH;strconv=no]:[newRule.dureeM;strconv=no]    (HH:MM)</td>
+	</tr>
+	<tr id="interne">
 		<td>Limite Interne</td>
 		<td>[newRule.dureeHInt;strconv=no]:[newRule.dureeMInt;strconv=no]    (HH:MM)</td>
 	</tr>
-	<tr>
+	<tr id="externe">
 		<td>Limite Externe</td>
 		<td>[newRule.dureeHExt;strconv=no]:[newRule.dureeMExt;strconv=no]    (HH:MM)</td>
 	</tr>
 	<tr>
-		<td>Limite SMS</td>
-		<td>[newRule.limSMS;strconv=no]</td>
+		<td> Nature à déduire</td>
+		<td>[newRule.natureDeduire;strconv=no]</td>
 	</tr>
+	<tr>
+		<td>Montant à déduire</td>
+		<td>[newRule.montantDeduire;strconv=no] €</td>
+	</tr>
+	<tr>
+		<td>Données illimités ?</td>
+		<td>[newRule.dataIllimite;strconv=no]</td>
+	</tr>
+	<tr>
+		<td>Données Iphone ?</td>
+		<td>[newRule.dataIphone;strconv=no]</td>
+	</tr>
+	<tr>
+		<td>SMS Illimités ?</td>
+		<td>[newRule.smsIllimite;strconv=no]</td>
+	</tr>
+	<tr>
+		<td>Forfait Mail ?</td>
+		<td>[newRule.mailforfait;strconv=no]</td>
+	</tr>
+	
 	<tr>
 		<td>Numéros Exclus (les séparer par des ";")</td>
 		<td>[newRule.numeroExclus;strconv=no]</td>

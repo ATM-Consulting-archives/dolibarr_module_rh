@@ -9,7 +9,6 @@ class TRH_Evenement  extends TObjetStd {
 		parent::add_champs('motif','type=chaine;');
 		parent::add_champs('commentaire','type=chaine;');
 		
-		
 		//type : accident, répération, emprunt, appel ou facture
 		parent::add_champs('type','type=chaine;');
 
@@ -35,7 +34,9 @@ class TRH_Evenement  extends TObjetStd {
 		
 		//pour une facture
 		parent::add_champs('numFacture','type=chaine;');
-		parent::add_champs('compteFacture','type=chaine;');		
+		parent::add_champs('compteFacture','type=chaine;');
+		parent::add_champs('numContrat','type=chaine;');
+		parent::add_champs('fk_contrat','type=entier;index');
 		
 		parent::_init_vars();
 		parent::start();
@@ -66,7 +67,7 @@ class TRH_Evenement  extends TObjetStd {
 		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TUser[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name');
+			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1'); 
 			}
 	}
 
@@ -95,8 +96,13 @@ class TRH_Evenement  extends TObjetStd {
 		if ($this->date_fin < $this->date_debut) {
 			$this->date_fin = $this->date_debut;
 		}
-		$temp = new TRH_Ressource;
-		$temp->load($db, $this->fk_rh_ressource);
+		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource 
+		WHERE rowid=".$this->fk_rh_ressource." AND entity=".$conf->entity;
+		$db->Execute($sqlReq);
+		while($db->Get_line()) {
+			$nom = $db->Get_field('libelle');
+		}
+			
 		$this->load_liste($db);
 		$this->load_liste_type($db, $temp);
 		
@@ -122,16 +128,16 @@ class TRH_Evenement  extends TObjetStd {
 		}
 		
 		if ($this->type=='emprunt'){
-			$this->subject = "[ ".$temp->libelle." ] Utilisé par ".$this->TUser[$this->fk_user];
+			$this->subject = "[ ".$nom." ] Utilisé par ".$this->TUser[$this->fk_user];
 		}
 		else {
-			$this->subject = "[ ".$temp->libelle." ] ".$this->TType[$this->type]." : ".$this->motif;
+			$this->subject = "[ ".$nom." ] ".$this->TType[$this->type]." : ".$this->motif;
 		}
 		
 		$this->isAllDayEvent = 1;
 		if (empty($this->coutEntrepriseHT)) {$this->coutEntrepriseHT = ($this->coutEntrepriseTTC)*(1-(0.01*$this->TTVA[$this->TVA]));}
 		parent::save($db);
-		$temp->save($db);	//ça met le statut de la ressource liée à jour
+		
 	}
 	
 }	

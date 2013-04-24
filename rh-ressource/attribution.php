@@ -100,7 +100,7 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	global $langs, $conf, $db, $user;
 	
 	llxHeader('','Liste des attributions');
-	?><div class="fiche"><?	
+	?><div class="fiche"><?
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'attribution', 'Ressource');
 	
 	$r = new TSSRenderControler($emprunt);
@@ -148,14 +148,13 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 			,'messageNothing'=>"Il n'y a aucun emprunt à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
-			
 		)
 		,'orderBy'=>$TOrder
 		
 	));
 	
 	if($user->rights->ressource->ressource->manageAttribution){
-	?><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
+	?><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a></div><br><br><br></div><?
 	}
 	
 	global $mesg, $error;

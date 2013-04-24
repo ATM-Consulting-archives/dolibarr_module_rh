@@ -35,17 +35,19 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null, $typeRessourc
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 	WHERE ";
-	if ($typeRessource) {$sql .= "r.fk_rh_ressource_type=". $idRessource." AND ";}
+	if ($typeRessource) {$sql .= " r.fk_rh_ressource_type=". $idRessource." AND ";}
 	
-	$sql .= " `date_debut` between '"
-      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."'";
+	$sql .= " date_debut<='".php2MySqlTime($ed)."' AND date_fin >= '". php2MySqlTime($sd)."' ";
+    
+	//$sql .= " `date_debut` between '"
+    //  .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."'";
     if (! $typeRessource){
     	$sql.=" AND e.fk_rh_ressource=".$idRessource;
 	}
 	if (!$user->rights->ressource->agenda->viewAgenda){
     	$sql.=" AND e.fk_user=".$user->id;
 	}
-	
+	//echo $sql;
    $ATMdb->Execute($sql);
     while ($row=$ATMdb->Get_line()) {
       //$ret['events'][] = $row;

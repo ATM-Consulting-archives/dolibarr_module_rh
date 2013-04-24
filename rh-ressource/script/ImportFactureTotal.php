@@ -85,7 +85,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		//print_r(explode('\n', $data));
 	}
 	
-	echo 'Fin du traitement. '.($numLigne-3).' lignes rajoutés à la table.';
+	echo 'Fin du traitement. '.($numLigne-3).' lignes rajoutés à la table.<br><br>';
 	
 }
 
@@ -95,7 +95,7 @@ function chargeVoiture(&$ATMdb){
 	$sql="SELECT r.rowid as 'ID', t.rowid as 'IdType', r.numId FROM ".MAIN_DB_PREFIX."rh_ressource as r 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t on (r.fk_rh_ressource_type = t.rowid)
 	WHERE r.entity=".$conf->entity."
-	 AND (t.code='voiture' OR t.code='carte') ";
+	 AND (t.code='voiture' OR t.code='cartetotal') ";
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		//$idVoiture = $ATMdb->Get_field('IdType');

@@ -12,12 +12,14 @@
 			<br/><br/>
 			<table class="border" style="width:50%">		
 				<tr>
-					<td><b>Année de rémunération</b></td>
+					<td><b>Date début rémunération</b></td>
+					<td><b>Date fin rémunération</b></td>
 					<td><b>Rémunération brute annuelle</b></td>
 					<td><b>Salaire Mensuel</b></td>
 				</tr>
 				<tr>
-					<td>[remuneration.anneeRemuneration;block=tr;strconv=no;protect=no]</td>
+					<td>[remuneration.date_debutRemuneration;block=tr;strconv=no;protect=no]</td>
+					<td>[remuneration.date_finRemuneration;block=tr;strconv=no;protect=no]</td>
 					<td>[remuneration.bruteAnnuelle;strconv=no;protect=no]€</td>
 					<td>[remuneration.salaireMensuel;strconv=no;protect=no]€</td>
 				</tr>

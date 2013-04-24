@@ -20,13 +20,27 @@
 				//$ATMdb->db->debug=true;
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->set_values($_REQUEST);
-				$absence->save($ATMdb);
-				$absence->load($ATMdb, $_REQUEST['id']);
-				mailConges($absence);
-				//echo "test".$absence->difheure('16:00','17:30');
-				$mesg = '<div class="ok">Demande enregistrée</div>';
-				_fiche($ATMdb, $absence,'view');
+				$demandeRecevable=$absence->testDemande($ATMdb);
 				
+				if($demandeRecevable==1){
+					$absence->save($ATMdb);
+					$absence->load($ATMdb, $_REQUEST['id']);
+					mailConges($absence);
+					$mesg = '<div class="ok">Demande enregistrée</div>';
+					_fiche($ATMdb, $absence,'view');
+				}else{
+					if($demandeRecevable==0){
+						$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur</div>';
+						_fiche($ATMdb, $absence,'edit');
+					}else if($demandeRecevable==2){
+						$absence->avertissement=1;
+						$absence->save($ATMdb);
+						$absence->load($ATMdb, $_REQUEST['id']);
+						mailConges($absence);
+						$mesg = '<div class="error">Attention : La durée de l\'absence dépasse la règle en vigueur</div>';
+						_fiche($ATMdb, $absence,'view');
+					}	
+				}
 				break;
 			
 			case 'view':
@@ -106,7 +120,7 @@ function _liste(&$ATMdb, &$absence) {
 	$r = new TSSRenderControler($absence);
 	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
 			  a.libelle as 'Type absence',a.fk_user,  a.fk_user, CONCAT(u.firstname,' ',u.name) as 'Utilisateur' ,
-			   a.libelleEtat as 'Statut demande'
+			   a.libelleEtat as 'Statut demande', a.avertissement
 		FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 		WHERE a.fk_user=".$user->id." AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
 		
@@ -128,12 +142,12 @@ function _liste(&$ATMdb, &$absence) {
 		)
 		,'translate'=>array('Statut demande'=>array(
 			'Refusée'=>'<b style="color:#A72947">Refusée</b>',
-			'En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 
+			'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
 			'Enregistrée dans la paie'=>'<b style="color:#9A69E3">	Acceptée et Enregistrée dans la paie</b>' , 
 			'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
-			
+			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
 		)
-		,'hide'=>array('DateCre', 'fk_user')
+		,'hide'=>array('DateCre', 'fk_user', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
 			'titre'=>'Liste de vos absences'
@@ -150,6 +164,7 @@ function _liste(&$ATMdb, &$absence) {
 		,'title'=>array(
 			'date_debut'=>'Date début'
 			,'date_fin'=>'Date fin'
+			,'avertissement'=>'Règle'
 			
 		)
 		,'search'=>array(
@@ -188,7 +203,7 @@ function _liste(&$ATMdb, &$absence) {
 		$r = new TSSRenderControler($absence);
 		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
 				  a.libelle as 'Type absence',a.fk_user,  CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
-				  a.libelleEtat as 'Statut demande'
+				  a.libelleEtat as 'Statut demande', a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
 		
@@ -209,11 +224,12 @@ function _liste(&$ATMdb, &$absence) {
 			)
 			,'translate'=>array('Statut demande'=>array(
 				'Refusée'=>'<b style="color:#A72947">Refusée</b>',
-				'En attente de validation'=>'<b style="color:#2AA8B9">	En attente de validation</b>' , 
+				'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
 				'Enregistrée dans la paie'=>'<b style="color:#9A69E3">	Acceptée et Enregistrée dans la paie</b>' , 
 				'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
+				,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
 			)			
-			,'hide'=>array('DateCre','fk_user')
+			,'hide'=>array('DateCre','fk_user','ID')
 			,'type'=>array('date_debut'=>'date','date_fin'=>'date')
 			,'liste'=>array(
 				'titre'=>'Liste des absences à valider'
@@ -230,6 +246,7 @@ function _liste(&$ATMdb, &$absence) {
 			,'title'=>array(
 				'date_debut'=>'Date début'
 				,'date_fin'=>'Date fin'
+				,'avertissement'=>'Règle'
 				
 			)
 			
@@ -309,8 +326,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	//récupération informations utilisateur dont on observe l'absence, ou la crée
 	if($absence->fk_user!=0){
 		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
-	}
-	else{
+	}else{
 		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$user->id;//AND entity=".$conf->entity;
 	}
 	$ATMdb->Execute($sqlReqUser);
@@ -324,9 +340,38 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	$estValideur=$absence->estValideur($ATMdb,$user->id);
 	
+	if($absence->fk_user==0){
+		$regleId=$user->id;
+	}else $regleId=$absence->fk_user;
+	
+	
+	//affichage des règles liées à l'utilisateur 
+	$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, r.fk_user, r.fk_usergroup, r.choixApplication
+		FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
+		WHERE( r.fk_user=u.rowid AND r.fk_user=".$regleId." AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
+		OR (r.choixApplication Like 'all' AND u.rowid=".$regleId." and u.rowid=g.fk_user) 
+		OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$regleId.") 
+		ORDER BY r.nbJourCumulable";
+
+		$ATMdb->Execute($sql);
+		$TRegle = array();
+		$k=0;
+		while($ATMdb->Get_line()) {
+			$TRegle[$k]['rowid']= $ATMdb->Get_field('rowid');
+			$TRegle[$k]['typeAbsence']= $ATMdb->Get_field('typeAbsence');
+			$TRegle[$k]['libelle']= saveLibelle($ATMdb->Get_field('typeAbsence'));
+			$TRegle[$k]['nbJourCumulable']= $ATMdb->Get_field('nbJourCumulable');
+			$TRegle[$k]['restrictif']= $ATMdb->Get_field('restrictif')==1?'Oui':'Non';
+			$TRegle[$k]['fk_user']= $ATMdb->Get_field('fk_user');
+			$TRegle[$k]['fk_usergroup']= $ATMdb->Get_field('fk_usergroup');
+			$TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
+			$k++;
+		}
+	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/absence.tpl.php'
 		,array(
+			'TRegle' =>$TRegle
 		)
 		,array(
 			'congesPrec'=>array(
@@ -366,7 +411,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			,'absenceCourante'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'id'=>$absence->getId()
-				,'commentaire'=>$form->texte('','commentaire',$absence->commentaire,23,500,'',$class="text", $default='')
+				,'commentaire'=>$form->zonetexte('','commentaire',$absence->commentaire, 30,3,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
@@ -376,7 +421,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'etat'=>$absence->etat
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
-				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')	
+				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')
+				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png">  Ne respecte pas les règles en vigueur</img>':'Aucun'
 				,'fk_user'=>$absence->fk_user
 			)	
 			,'userCourant'=>array(
@@ -385,7 +431,6 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
 				,'valideurConges'=>$user->rights->absence->myactions->valideurConges&&$estValideur
 				,'enregistrerPaieAbsences'=>$user->rights->absence->myactions->enregistrerPaieAbsences&&$estValideur
-				
 			)
 			,'view'=>array(
 				'mode'=>$mode

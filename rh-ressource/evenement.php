@@ -89,7 +89,8 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	global $conf,$user;	
 	llxHeader('','Liste des emprunts');
 	?><div class="fiche"><?	
-	
+	    
+	 
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource');
 	// btsubmit($pLib,$pName,$plus="")
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
@@ -230,16 +231,20 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				'id'=>$evenement->getId()
 				,'user'=>$form->combo('','fk_user',$evenement->TUser,$evenement->fk_user)
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
-				,'commentaire'=>$form->texte('','commentaire',$evenement->commentaire, 30,100,'','','-')
+				,'commentaire'=>$form->zonetexte('','commentaire',$evenement->commentaire,100,10,'','','')
+				,'numFacture'=>$form->texte('', 'numFacture', $evenement->numFacture, 10,10)
+				,'numContrat'=>$form->texte('', 'numContrat', $evenement->numContrat, 10,10)
+				,'idContrat'=>$evenement->fk_contrat
 				,'motif'=>$form->texte('','motif',$evenement->motif, 30,100,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->get_date('date_fin'), 10)
 				,'type'=>$form->combo('', 'type', $tab, $evenement->type)
-				,'responsabilite'=>$form->texte('','responsabilite',$evenement->responsabilite, 10,10,'','','-')
-				,'coutTTC'=>$form->texte('', 'coutTTC', $evenement->coutTTC, 10,10)
+				,'responsabilite'=>$form->texte('','responsabilite',$evenement->responsabilite, 10,10,'','','')
+				,'coutTTC'=>$form->texte('', 'coutTTC', ($evenement->coutTTC == 0) ? '0': $evenement->coutTTC, 10,10)
 				,'coutEntrepriseTTC'=>$form->texte('', 'coutEntrepriseTTC', $evenement->coutEntrepriseTTC, 10,10)
 				,'TVA'=>$form->combo('','TVA',$evenement->TTVA,$evenement->TVA)
-				,'coutEntrepriseHT'=>($evenement->coutEntrepriseTTC)*(1-(0.01*$evenement->TTVA[$evenement->TVA]))
+				,'coutEntrepriseHT'=>$form->texte('', 'coutEntrepriseHT', $evenement->coutEntrepriseHT, 10,10)
+				//($evenement->coutEntrepriseHT)*(1-(0.01*$evenement->TTVA[$evenement->TVA]))
 			)
 			,'view'=>array(
 				'mode'=>$mode

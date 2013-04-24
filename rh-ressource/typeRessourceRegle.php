@@ -20,7 +20,7 @@
 				//$ATMdb->db->debug=true;
 				$ressourceType->load($ATMdb, $_REQUEST['id']);
 				//$ressourceType->save($ATMdb);
-				_fiche($ATMdb, $regle, $ressourceType,'edit');
+				_fiche($ATMdb, $regle, $ressourceType,'new');
 				
 				break;	
 			case 'edit'	:
@@ -36,7 +36,11 @@
 				$mesg = '<div class="ok">Modifications effectuées</div>';
 				$mode = 'view';
 				$regle->load($ATMdb, $_REQUEST['idRegle']);
-				$regle->set_values($_REQUEST);				
+				$regle->set_values($_REQUEST);
+				$regle->duree = timeToInt($_REQUEST['dureeH'],$_REQUEST['dureeM'] );
+				$regle->dureeInt = timeToInt($_REQUEST['dureeHInt'],$_REQUEST['dureeMInt'] );
+				$regle->dureeExt = timeToInt($_REQUEST['dureeHExt'],$_REQUEST['dureeMExt'] );
+								
 				$regle->save($ATMdb);
 				$ressourceType->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb,  $regle, $ressourceType,$mode);
@@ -97,9 +101,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 	
 	$r = new TSSRenderControler($ressourceType);
 	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.name) as 'Utilisateur', g.nom as 'Groupe',
-		CONCAT(r.dureeHInt,':',r.dureeMInt) as 'Limite Interne',
-		CONCAT(r.dureeHExt,':',r.dureeMExt) as 'Limite Externe',
-		r.limSMS as 'Limite SMS' 
+		duree, dureeInt,dureeExt,dataIllimite, dataIphone, mailforfait, smsIllimite, data15Mo, carteJumelle,'' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup as g ON (r.fk_usergroup = g.rowid)
@@ -120,10 +122,34 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=view">@val@</a>'
+			,'Supprimer'=>'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=delete"><img src="./img/delete.png"></a>'
+		)
+		,'eval'=>array(
+			'dureeInt'=>'intToString(@val@)'
+			,'dureeExt'=>'intToString(@val@)'
+			,'duree'=>'intToString(@val@)'
+		)
+		,'title'=>array(
+			'duree'=>'Limite générale'
+			,'dureeInt'=>'Limite interne'
+			,'dureeExt'=>'Limite externe'
+			,'dataIllimite'=>'3G illimité'
+			,'smsIllimite'=> 'SMS illimité'
+			,'dataIphone' => 'Forfait Data Iphone'
+			,'mailforfait' => 'Forfait Mail'
+			,'data15Mo' => 'Forfait Data 15 Mo'
+			,'carteJumelle' => 'Forfait carte jumellé'
+		
 		)
 		,'translate'=>array(
 			'Sur'=>$regle->TObjet
 			,'Période'=>$regle->TPeriode
+			,'dataIllimite' => array('vrai'=>'Oui', 'faux'=>'')
+			,'smsIllimite' => array('vrai'=>'Oui', 'faux'=>'')
+			,'dataIphone' => array('vrai'=>'Oui', 'faux'=>'')
+			,'mailforfait' => array('vrai'=>'Oui', 'faux'=>'')
+			,'data15Mo' => array('vrai'=>'Oui', 'faux'=>'')
+			,'carteJumelle' => array('vrai'=>'Oui', 'faux'=>'')
 		)
 		,'hide'=>array()
 		,'type'=>array()
@@ -157,8 +183,16 @@ function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('fk_rh_ressource_type', $ressourceType->getId());
 	
+	$TBool = array('faux'=>'Non', 'vrai'=>'Oui');
 	$TBS=new TTemplateTBS();
 	$regle->load_liste($ATMdb);
+	
+	if ($mode == 'new'){
+		$regle->choixApplication = 'all';
+		$regle->choixLimite = 'gen';
+		$mode = 'edit';
+	}
+	
 	print $TBS->render('./tpl/ressource.type.regle.tpl.php'
 		,array()
 		,array(
@@ -173,11 +207,20 @@ function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 				,'choixApplicationViewMode'=>$regle->TChoixApplication[$regle->choixApplication]
 				,'fk_user'=>$form->combo('', 'fk_user',$regle->TUser, $regle->fk_user)
 				,'fk_group'=>$form->combo('', 'fk_usergroup',$regle->TGroup, $regle->fk_usergroup)
-				,'dureeHInt'=>$form->texte('', 'dureeHInt', $regle->dureeHInt, 2,2,'','','')
-				,'dureeMInt'=>$form->texte('', 'dureeMInt', $regle->dureeMInt, 2,2,'','','')
-				,'dureeHExt'=>$form->texte('', 'dureeHExt', $regle->dureeHExt, 2,2,'','','')
-				,'dureeMExt'=>$form->texte('', 'dureeMExt', $regle->dureeMExt, 2,2,'','','')
-				,'limSMS'=>$form->texte('', 'limSMS', $regle->limSMS,5 ,5,'','','')
+				,'choixLimite'=>$form->radiodiv('','choixLimite',$regle->TChoixLimite, $regle->choixLimite)
+				,'choixLimiteViewMode'=>$regle->TChoixLimite[$regle->choixLimite]
+				,'dureeH'=>$form->texte('', 'dureeH', intToHour($regle->duree), 2,2,'','','')
+				,'dureeM'=>$form->texte('', 'dureeM', intToMinute($regle->duree), 2,2,'','','')
+				,'dureeHInt'=>$form->texte('', 'dureeHInt', intToHour($regle->dureeInt), 2,2,'','','')
+				,'dureeMInt'=>$form->texte('', 'dureeMInt', intToMinute($regle->dureeInt), 2,2,'','','')
+				,'dureeHExt'=>$form->texte('', 'dureeHExt', intToHour($regle->dureeExt), 2,2,'','','')
+				,'dureeMExt'=>$form->texte('', 'dureeMExt', intToMinute($regle->dureeExt), 2,2,'','','')
+				,'natureDeduire'=>$form->texte('', 'natureDeduire', $regle->natureDeduire, 100,255,'','','')
+				,'montantDeduire'=>$form->texte('', 'montantDeduire', $regle->montantDeduire, 5,20,'','','')
+				,'dataIllimite'=>$form->combo('', 'dataIllimite',$TBool, $regle->dataIllimite)
+				,'dataIphone'=>$form->combo('', 'dataIphone',$TBool, $regle->dataIphone)
+				,'smsIllimite'=>$form->combo('', 'smsIllimite',$TBool, $regle->smsIllimite)
+				,'mailforfait'=>$form->combo('', 'mailforfait',$TBool, $regle->mailforfait)
 				,'numeroExclus'=>$form->texte('', 'numeroExclus', $regle->numeroExclus,30 ,255,'','','')
 		
 			)
@@ -199,5 +242,28 @@ function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 	llxFooter();
 }
 
-	
-	
+
+
+function intToString($val){
+	$h = intval($val/60);
+	if ($h < 10){$h = '0'.$h;}
+	$m = $val%60;
+	if ($m < 10){$m = '0'.$m;}
+	if ($h==0 && $m==0){return '';}
+	return $h.':'.$m;
+}
+
+function intToHour($val){
+	$h = intval($val/60);
+	if ($h < 10){$h = '0'.$h;}
+	return $h;
+}
+function intToMinute($val){
+	$m = $val%60;
+	if ($m < 10){$m = '0'.$m;}
+	return $m;
+}
+
+function timeToInt($h, $m){
+	return intval($h)*60+intval($m);
+}

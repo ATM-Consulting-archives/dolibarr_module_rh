@@ -1,12 +1,10 @@
 
         [view.head;strconv=no]
 
-		Utilisateur : [userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]
+		<h2 style="color: #2AA8B9;">Emploi du temps de [userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</h2>
 		
-		<br/>
 		<div style=" display:inline-block;">                  
-		<table class="border" style="width:200%;" >	
-				<br/><br/>
+		<table class="border" style="width:130%;" >	
 				<tr>
 					<td>       </td>
 					<td style="text-align:center;"><b>Matin</b></td>
@@ -81,102 +79,209 @@
 					<td style="text-align:center;"> [horaires.dimanche_heurefpm;strconv=no;protect=no]    </td>
 				</tr>
 		</table>
-		</div>
-
-	
-
-	<div class="tabsAction" >
-		[onshow;block=begin;when [view.mode]=='edit']
-			<input type="submit" value="Enregistrer" name="save" class="button"  onclick="document.location.href='?id=[view.compteur_id]&action=view'">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[view.compteur_id]&action=view'">
-		[onshow;block=end]
 		
-		[onshow;block=begin;when [view.mode]!='edit']
+		</div>
+	[onshow;block=begin;when [view.mode]=='edit']
+		<br/><br/>
+		<b style="margin-left:320px;">Veuillez respecter le format HH:MM pour les horaires</b>
+	[onshow;block=end]
+	
+	
+	
+	[onshow;block=begin;when [view.mode]=='edit']
+		<div class="tabsAction" >
+		<input type="submit" value="Enregistrer" name="save" class="button"  onclick="document.location.href='?id=[view.compteur_id]&action=view'">
+		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[view.compteur_id]&action=view'">
+		</div>
+	[onshow;block=end]
+	
+	[onshow;block=begin;when [view.mode]!='edit']
 			[onshow;block=begin;when [droits.modifierEdt]=='1']
+			<div class="tabsAction" >
 				<a class="butAction"  href="?id=[view.compteur_id]&action=edit">Modifier</a>
+			</div>
+			<br/>
 			[onshow;block=end]
-		[onshow;block=end]
-	</div>
-
+	[onshow;block=end]
+	
+	[onshow;block=begin;when [view.mode]!='edit']
+			[onshow;block=begin;when [droits.modifierEdt]!='1']
+			<br/><br/>
+			[onshow;block=end]
+	[onshow;block=end]
+			
 	<script>
 		$(document).ready( function(){
 			//on empêche que la date de début dépasse celle de fin
-			 $('body').click( 	function(){
+			$('#lundiam').change( 	function(){
 				
 				if($('#lundiam').attr('checked')!="checked"){
 					$("#date_lundi_heuredam").val("00:00");
 					$("#date_lundi_heurefam").val("00:00");
-				}/*else{
+				}
+				else{
 					$("#date_lundi_heuredam").val("09:00");
 					$("#date_lundi_heurefam").val("12:15");
-					//$("p").wrapInner(document.createElement("b"));
-				}*/
+				}
+			});
+			
+			$('#lundipm').change( 	function(){
 				
 				if($('#lundipm').attr('checked')!="checked"){
 					$("#date_lundi_heuredpm").val("00:00");
 					$("#date_lundi_heurefpm").val("00:00");
 				}
+				else{
+					$("#date_lundi_heuredpm").val("14:00");
+					$("#date_lundi_heurefpm").val("18:00");
+				}
+			});
+			
+			 $('#mardiam').change( 	function(){
 				
 				if($('#mardiam').attr('checked')!="checked"){
 					$("#date_mardi_heuredam").val("00:00");
 					$("#date_mardi_heurefam").val("00:00");
 				}
+				else{
+					$("#date_mardi_heuredam").val("09:00");
+					$("#date_mardi_heurefam").val("12:15");
+				}
+			});
+			
+			$('#mardipm').change( 	function(){
 				
 				if($('#mardipm').attr('checked')!="checked"){
 					$("#date_mardi_heuredpm").val("00:00");
 					$("#date_mardi_heurefpm").val("00:00");
 				}
+				else{
+					$("#date_mardi_heuredpm").val("14:00");
+					$("#date_mardi_heurefpm").val("18:00");
+				}
+			});
+			
+			$('#mercrediam').change( 	function(){
 				
 				if($('#mercrediam').attr('checked')!="checked"){
 					$("#date_mercredi_heuredam").val("00:00");
 					$("#date_mercredi_heurefam").val("00:00");
 				}
+				else{
+					$("#date_mercredi_heuredam").val("09:00");
+					$("#date_mercredi_heurefam").val("12:15");
+				}
+			});
+			
+			$('#mercredipm').change( 	function(){
 				
 				if($('#mercredipm').attr('checked')!="checked"){
 					$("#date_mercredi_heuredpm").val("00:00");
 					$("#date_mercredi_heurefpm").val("00:00");
 				}
+				else{
+					$("#date_mercredi_heuredpm").val("14:00");
+					$("#date_mercredi_heurefpm").val("18:00");
+				}
+			});
+			
+			$('#jeudiam').change( 	function(){
 				
 				if($('#jeudiam').attr('checked')!="checked"){
 					$("#date_jeudi_heuredam").val("00:00");
 					$("#date_jeudi_heurefam").val("00:00");
 				}
+				else{
+					$("#date_jeudi_heuredam").val("09:00");
+					$("#date_jeudi_heurefam").val("12:15");
+				}
+			});
+			
+			$('#jeudipm').change( 	function(){
 				
 				if($('#jeudipm').attr('checked')!="checked"){
 					$("#date_jeudi_heuredpm").val("00:00");
 					$("#date_jeudi_heurefpm").val("00:00");
 				}
+				else{
+					$("#date_jeudi_heuredpm").val("14:00");
+					$("#date_jeudi_heurefpm").val("18:00");
+				}
+			});
+			
+			$('#vendrediam').change( 	function(){
 				
 				if($('#vendrediam').attr('checked')!="checked"){
 					$("#date_vendredi_heuredam").val("00:00");
 					$("#date_vendredi_heurefam").val("00:00");
 				}
+				else{
+					$("#date_vendredi_heuredam").val("09:00");
+					$("#date_vendredi_heurefam").val("12:15");
+				}
+			});
+			
+			$('#vendredipm').change( 	function(){
+				
 				if($('#vendredipm').attr('checked')!="checked"){
 					$("#date_vendredi_heuredpm").val("00:00");
 					$("#date_vendredi_heurefpm").val("00:00");
 				}
+				else{
+					$("#date_vendredi_heuredpm").val("14:00");
+					$("#date_vendredi_heurefpm").val("18:00");
+				}
+			});
+			
+			$('#samediam').change( 	function(){
 				
 				if($('#samediam').attr('checked')!="checked"){
 					$("#date_samedi_heuredam").val("00:00");
 					$("#date_samedi_heurefam").val("00:00");
 				}
+				else{
+					$("#date_samedi_heuredam").val("09:00");
+					$("#date_samedi_heurefam").val("12:15");
+				}
+			});
+			
+			$('#samedipm').change( 	function(){
 				
 				if($('#samedipm').attr('checked')!="checked"){
 					$("#date_samedi_heuredpm").val("00:00");
 					$("#date_samedi_heurefpm").val("00:00");
 				}
+				else{
+					$("#date_samedi_heuredpm").val("14:00");
+					$("#date_samedi_heurefpm").val("18:00");
+				}
+			});
+			
+			$('#dimancheam').change( 	function(){
 				
 				if($('#dimancheam').attr('checked')!="checked"){
 					$("#date_dimanche_heuredam").val("00:00");
 					$("#date_dimanche_heurefam").val("00:00");
 				}
+				else{
+					$("#date_dimanche_heuredam").val("09:00");
+					$("#date_dimanche_heurefam").val("12:15");
+				}
+			});
+			
+			$('#dimanchepm').change( 	function(){
 				
 				if($('#dimanchepm').attr('checked')!="checked"){
 					$("#date_dimanche_heuredpm").val("00:00");
 					$("#date_dimanche_heurefpm").val("00:00");
 				}
-
-    		});	
+				else{
+					$("#date_dimanche_heuredpm").val("14:00");
+					$("#date_dimanche_heurefpm").val("18:00");
+				}
+			});
+			
+    		
 			
 		});
 	</script>
