@@ -7,7 +7,7 @@
 			<td>[joursFeries.date_jourOff;strconv=no;protect=no]</td>
 		</tr>
 		<tr>
-			<td>Matin</td>
+			<td>Période</td>
 			<td>[joursFeries.moment;strconv=no;protect=no]</td>
 		</tr>
 		<tr>
