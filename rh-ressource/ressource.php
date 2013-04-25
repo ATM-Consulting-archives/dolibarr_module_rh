@@ -235,11 +235,11 @@ function getStatut($id, $jour){
 		//echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
 		if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
 			&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
-				return 'Attribuée à '.$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name');
+				return 'Attribuée à '.htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 				break;
 		}
 		if (date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) >= $jour ){
-				$return='Réservée à '.$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name');
+				$return='Réservée à '.htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 				break;
 			}
 	}
