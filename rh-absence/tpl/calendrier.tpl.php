@@ -1,13 +1,16 @@
 
 [view.head3;strconv=no]
 
-
-		<br> 
-		Filtre par utilisateur :  
-                [absence.TUser;strconv=no;protect=no]
-                [absence.btValider;strconv=no;protect=no]
-        <br> 
-
+			
+		 	[onshow;block=begin;when [absence.droits]!='0']
+		 	<br> 
+				Filtre par utilisateur :  
+		                [absence.TUser;strconv=no;protect=no]
+		                [absence.btValider;strconv=no;protect=no] 
+		    <br>
+	       [onshow;block=end]
+			
+			
 <h1>Agenda des absences</h1>
 		
 			<div id="agenda">

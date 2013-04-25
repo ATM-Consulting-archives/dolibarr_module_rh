@@ -50,7 +50,11 @@ class TRH_Compteur extends TObjetStd {
 		parent::start();
 		
 		$this->TTypeAcquisition = array('Annuel'=>'Annuel','Mensuel'=>'Mensuel');
-		$this->TMetier = array('cadre'=>'Cadre','noncadre37'=>'Non Cadre 37h','noncadre38'=>'Non Cadre 38h','noncadre39'=>'Non Cadre 39', 'autre'=>'Autre');
+		$this->TMetier = array('cadre'=>'Cadre',
+		'noncadre37cpro'=>'Non Cadre 37h C\'PRO','noncadre37cproinfo'=>'Non Cadre 37h C\'PRO Info',
+		'noncadre38cpro'=>'Non Cadre 38h C\'PRO', 'noncadre38cproinfo'=>'Non Cadre 38h C\'PRO Info',
+		'noncadre39'=>'Non Cadre 39h', 
+		'autre'=>'Autre');
 	}
 	
 	
@@ -87,6 +91,7 @@ class TRH_Compteur extends TObjetStd {
 		$this->rttAcquisMensuel='0';
 		$this->rttAcquisAnnuelCumule='5';
 		$this->rttAcquisAnnuelNonCumule='7';
+		$this->rttMetier='cadre';
 		$this->rttannee=$annee;
 		$this->nombreCongesAcquisMensuel='2.08';
 		$this->date_rttCloture=strtotime('2013-03-01 00:00:00');
@@ -230,7 +235,7 @@ class TRH_Absence extends TObjetStd {
 				$this->rttAcquisMensuel=$this->rttAcquisMensuel-$dureeAbsenceCourante;
 				
 			}
-			else {	//autre que RTT : décompte les congés
+			else if($this->type=="conges"||$this->type=="maladienonmaintenue"){	//autre que RTT : décompte les congés
 				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$user->id;
 				$db->Execute($sqlDecompte);
 				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
@@ -725,9 +730,12 @@ class TRH_Absence extends TObjetStd {
 							$ATMdb->Execute($sqlRecredit);
 						}
 					break;
-					default :  //dans les autres cas, on recrédite les congés
+					case 'conges':
 						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
-						//echo $this->type.$sqlRecredit;exit;
+						$ATMdb->Execute($sqlRecredit);
+					break;
+					case 'maladienonmaintenue':
+						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
 						$ATMdb->Execute($sqlRecredit);
 					break;
 				}

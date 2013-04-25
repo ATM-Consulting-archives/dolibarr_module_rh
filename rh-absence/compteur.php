@@ -155,6 +155,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
 	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=". $userCourant->id; //."AND entity=".$conf->entity;
+	
 	$ATMdb->Execute($sqlReqUser);
 	$congePrec=array();
 	
@@ -203,6 +204,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				
 				
 	}
+
 	$congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+	$congePrec['acquisHorsPer']+$congePrec['reportConges'];
 	$congePrecReste=$congePrecTotal-$congePrec['congesPris'];
 	
