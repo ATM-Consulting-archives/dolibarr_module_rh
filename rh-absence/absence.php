@@ -73,7 +73,7 @@
 				_fiche($ATMdb, $absence,'view');
 				break;
 				
-			case 'envoyerpaie':
+			/*case 'envoyerpaie':
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` SET etat='Enregistree', libelleEtat='Enregistrée dans la paie' where fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
@@ -81,7 +81,7 @@
 				mailConges($absence);
 				$mesg = '<div class="ok">Demande d\'absence enregistrée dans la paie</div>';
 				_fiche($ATMdb, $absence,'view');
-				break;
+				break;*/
 				
 			case 'refuse':
 				$absence->load($ATMdb, $_REQUEST['id']);
@@ -119,7 +119,7 @@ function _liste(&$ATMdb, &$absence) {
 	//LISTE D'ABSENCES DU COLLABORATEUR
 	$r = new TSSRenderControler($absence);
 	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-			  a.libelle as 'Type absence',a.fk_user,  a.fk_user, CONCAT(u.firstname,' ',u.name) as 'Utilisateur' ,
+			  a.libelle,a.fk_user,  a.fk_user, CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
 			   a.libelleEtat as 'Statut demande', a.avertissement
 		FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 		WHERE a.fk_user=".$user->id." AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
@@ -138,12 +138,12 @@ function _liste(&$ATMdb, &$absence) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Type absence'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			,'Utilisateur'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array('Statut demande'=>array(
 			'Refusée'=>'<b style="color:#A72947">Refusée</b>',
 			'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
-			'Enregistrée dans la paie'=>'<b style="color:#9A69E3">	Acceptée et Enregistrée dans la paie</b>' , 
 			'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
 			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
 		)
@@ -165,10 +165,12 @@ function _liste(&$ATMdb, &$absence) {
 			'date_debut'=>'Date début'
 			,'date_fin'=>'Date fin'
 			,'avertissement'=>'Règle'
+			,'libelle'=>'Type d\'absence'
 			
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
+			,'libelle'=>true
 			
 		)
 		,'orderBy'=>$TOrder
@@ -205,7 +207,8 @@ function _liste(&$ATMdb, &$absence) {
 				  a.libelle as 'Type absence',a.fk_user,  CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
 				  a.libelleEtat as 'Statut demande', a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-			WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
+			WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity=".$conf->entity." AND u.rowid=a.fk_user
+			AND a.etat LIKE 'AValider'";
 		
 		$TOrder = array('Statut demande'=>'DESC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -225,7 +228,6 @@ function _liste(&$ATMdb, &$absence) {
 			,'translate'=>array('Statut demande'=>array(
 				'Refusée'=>'<b style="color:#A72947">Refusée</b>',
 				'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
-				'Enregistrée dans la paie'=>'<b style="color:#9A69E3">	Acceptée et Enregistrée dans la paie</b>' , 
 				'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
 				,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
 			)			

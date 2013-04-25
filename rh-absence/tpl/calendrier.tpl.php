@@ -1,13 +1,12 @@
 
 [view.head3;strconv=no]
 
- 	[onshow;block=begin;when [absence.voirToutesAbsences]=='1']
+
 		<br> 
 		Filtre par utilisateur :  
                 [absence.TUser;strconv=no;protect=no]
                 [absence.btValider;strconv=no;protect=no]
         <br> 
-	[onshow;block=end]
 
 <h1>Agenda des absences</h1>
 		
