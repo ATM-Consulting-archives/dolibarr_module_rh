@@ -76,7 +76,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 		WHERE e.entity=".$conf->entity." AND u.rowid=e.fk_user";
 
 	if($user->rights->absence->myactions->modifierEdt!="1"){
-		$sql.=" AND e.fk_user IN(".implode(',', $TabUser).")";
+		$sql.=" AND e.fk_user=".$user->id;
 	}
 	
 	$TOrder = array('ID'=>'DESC');
