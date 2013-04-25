@@ -30,21 +30,47 @@
 	$ressource=new TRH_ressource;
 	$ressource->load($ATMdb, $_REQUEST['id']);
 	
-	$type = isset($_REQUEST['type']) ? $_REQUEST['type'] : 1;
+	$fiche = isset($_REQUEST['fiche']) ? $_REQUEST['fiche'] : false;
+	$id = isset($_REQUEST['id']) ? $_REQUEST['id'] : 0;
+	$type = isset($_REQUEST['type']) ? $_REQUEST['type'] : 0;
+	$fk_user = isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : 0;
+	$typeEven = isset($_REQUEST['typeEven']) ? $_REQUEST['typeEven'] : null ;
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
 	echo $form->hidden('action', 'afficher');
-	echo $form->hidden('id',$ressource->getId());
+	//echo $form->hidden('id',$ressource->getId());
+	//echo 'Type : '.$type.' id : '.$id.' user : '.$fk_user.' even : '.$typeEven.'<br>';
+	$url = ($id>0 ? 'id='.$id : '').($type>0 ? '&type='.$type : '' ).($fk_user>0 ? '&fk_user='.$fk_user : '' ).($typeEven ? '&typeEven='.$typeEven : '' );
 	
+	//LISTE DE USERS
+	$TUser = array('');
+	$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+	$ATMdb->Execute($sqlReq);
+	while($ATMdb->Get_line()) {
+		$TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+		}
 	
+	$TRessource = array('');
+	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity=".$conf->entity." 
+	AND fk_rh_ressource_type = ".$type;
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle').' '.$ATMdb->Get_field('numId');
+			}
+
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'
 		,array()
 		,array(
 			'ressource'=>array(
 				'id' => $ressource->getId()
+				,'fiche'=> $fiche
 				,'type'=>$form->combo('', 'type', $ressource->TType, $type)
-				,'typeAAfficher'=>$type
+				,'typeURL'=>$type
+				,'idRessource'=>$form->combo('', 'id', $TRessource, $id)
+				,'fk_user'=>$form->combo('', 'fk_user', $TUser, $fk_user)
+				,'typeEven'=>$form->combo('', 'typeEven', array('all'=>'','accident'=>'Accident','reparation'=>'Réparation','facture'=>'Facture'), $typeEven)
+				,'URL'=>$url
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 			)
 			,'view'=>array(

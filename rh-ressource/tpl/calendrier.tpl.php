@@ -1,34 +1,69 @@
-[onshow;block=begin;when [ressource.id]!=0]        
-                <div class="fiche"> <!-- begin div class="fiche" -->
-                [view.head;strconv=no]
-                
-                        
-[onshow;block=end] 	
+ <div class="fiche"> <!-- begin div class="fiche" -->
 
-[onshow;block=begin;when [ressource.id]=0]
-		<br> 
-		Spécifier le type de ressource à afficher :  
-                [ressource.type;strconv=no;protect=no]
-                [ressource.btValider;strconv=no;protect=no]
-[onshow;block=end] 	
-
+[onshow;block=begin;when [ressource.fiche]==true]
+	[view.head;strconv=no]
+[onshow;block=end] 
 
 <h1>Agenda des ressources</h1>
+
+[onshow;block=begin;when [ressource.fiche]!=true]  
+	 
+		Filtre :  
+			[ressource.type;strconv=no;protect=no]
+			[ressource.idRessource;strconv=no;protect=no]
+			[ressource.fk_user;strconv=no;protect=no]
+			[ressource.typeEven;strconv=no;protect=no]
+			[ressource.btValider;strconv=no;protect=no]
+         <br><br>
+[onshow;block=end] 	
+
+<script>
+$('#type').change(function(){
+		//alert('top');
+		$.ajax({
+			url: 'script/loadRessources.php?type='+$('#type option:selected').val()
+		}).done(function(data) {
+			liste = JSON.parse(data);
+			$("#id").empty(); // remove old options
+			$.each(liste, function(key, value) {
+			  $("#id").append($("<option></option>")
+			     .attr("value", key).text(value));
+			});	
+		});
+		
+		$.ajax({
+			url: 'script/loadTypeEvent.php?type='+$('#type option:selected').val()
+		}).done(function(data) {
+			liste = JSON.parse(data);
+			$("#typeEven").empty(); // remove old options
+			$.each(liste, function(key, value) {
+			  $("#typeEven").append($("<option></option>")
+			     .attr("value", key).text(value));
+			});	
+		});
+		
+});
+
+</script>
+
 		
 			<div id="agenda">
 				 <script type="text/javascript">
         $(document).ready(function() {     
            var view="month";          
-           
+           /*
            [onshow;block=begin;when [ressource.id]!=0]        
                 var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]";
 			[onshow;block=end]
 			
+			
 			[onshow;block=begin;when [ressource.id]=0]
-					 var DATA_FEED_URL = "ressourceCalendarDataFeed.php?type=[ressource.typeAAfficher;strconv=no]";
-			[onshow;block=end]
+					var DATA_FEED_URL = "ressourceCalendarDataFeed.php?type=[ressource.typeURL;strconv=no]";
+			[onshow;block=end]*/
 
-            //var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]&type=[ressource.typeAAfficher;strconv=no]"
+			var DATA_FEED_URL = "ressourceCalendarDataFeed.php?[ressource.URL;strconv=no]";
+			
+            
             //alert(DATA_FEED_URL);
             var op = {
                 view: view,
