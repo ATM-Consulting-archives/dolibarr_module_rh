@@ -18,7 +18,7 @@ function ressourcePrepareHead(&$obj, $type='type-ressource',&$param=null) {
 					array(DOL_URL_ROOT_ALT.'/ressource/ressource.php?id='.$obj->getId(), 'Fiche','fiche')
 					,($obj->fk_rh_ressource == 0)  ? array(DOL_URL_ROOT_ALT.'/ressource/attribution.php?id='.$obj->getId(), 'Attribution','attribution'):null
 					,array(DOL_URL_ROOT_ALT.'/ressource/evenement.php?id='.$obj->getId(), 'Evénement','evenement')
-					,array(DOL_URL_ROOT_ALT.'/ressource/calendrierRessource.php?id='.$obj->getId(), 'Calendrier','calendrier')
+					,$user->rights->ressource->ressource->viewResourceCalendar?array(DOL_URL_ROOT_ALT.'/ressource/calendrierRessource.php?id='.$obj->getId(), 'Calendrier','calendrier'):''
 					,array(DOL_URL_ROOT_ALT.'/ressource/document.php?id='.$obj->getId(), 'Fichiers joints','document')
 					,$user->rights->ressource->ressource->viewFilesRestricted?array(DOL_URL_ROOT_ALT.'/ressource/documentConfidentiel.php?id='.$obj->getId(), 'Fichiers confidentiels','documentConfidentiel'):''
 					,array(DOL_URL_ROOT_ALT.'/ressource/contratRessource.php?id='.$obj->getId(), 'Contrats','contrats')
