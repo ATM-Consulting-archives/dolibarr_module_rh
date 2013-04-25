@@ -1,13 +1,12 @@
 
 [view.head3;strconv=no]
 
- 	[onshow;block=begin;when [absence.voirToutesAbsences]=='1']
+
 		<br> 
 		Filtre par utilisateur :  
                 [absence.TUser;strconv=no;protect=no]
                 [absence.btValider;strconv=no;protect=no]
         <br> 
-	[onshow;block=end]
 
 <h1>Agenda des absences</h1>
 		
@@ -227,10 +226,10 @@
             <!--<div id="showdaybtn" class="fbutton">
                 <div><span title='Day' class="showdayview">Jour</span></div>
             </div>-->
-              <div  id="showweekbtn" class="fbutton fcurrent">
+              <div  id="showweekbtn" class="fbutton">
                 <div><span title='Week' class="showweekview">Semaine</span></div>
             </div>
-              <div  id="showmonthbtn" class="fbutton">
+              <div  id="showmonthbtn" class="fbutton fcurrent">
                 <div><span title='Month' class="showmonthview">Mois</span></div>
 
             </div>

@@ -146,9 +146,6 @@ function saveLibelleEtat($etat){
 		case 'Refusee':
 			return "Refusée";
 		break;
-		case 'Enregistree':
-			return "Enregistrée dans la paie";
-		break;
 
 	}
 }
