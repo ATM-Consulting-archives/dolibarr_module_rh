@@ -55,13 +55,28 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	getStandartJS();
 	print dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence');
 	
+	$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
+			WHERE v.fk_user=".$user->id." 
+			AND v.type='Conges'
+			AND v.fk_usergroup=u.fk_usergroup
+			AND v.entity=".$conf->entity;
+		
+	$ATMdb->Execute($sql);
+	$TabUser=array();
+	$k=0;
+	while($ATMdb->Get_line()) {
+				$TabUser[]=$ATMdb->Get_field('fk_user');
+				$k++;
+	}
+	
 	$r = new TSSRenderControler($emploiTemps);
-	$sql="SELECT e.rowid as 'ID', e.date_cre as 'DateCre', e.fk_user as 'Id Utilisateur', CONCAT(u.firstname,' ', u.name) as 'Emploi du temps de l\'utilisateur'
-		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."user as u
+	$sql="SELECT DISTINCT e.rowid as 'ID', e.date_cre as 'DateCre', e.fk_user as 'Id Utilisateur', CONCAT(u.firstname,' ', u.name) as 'Emploi du temps de l\'utilisateur'
+		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."user as u, 
+		`".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as g 
 		WHERE e.entity=".$conf->entity." AND u.rowid=e.fk_user";
 
 	if($user->rights->absence->myactions->modifierEdt!="1"){
-		$sql.=" AND e.fk_user=".$user->id;
+		$sql.=" AND e.fk_user IN(".implode(',', $TabUser).")";
 	}
 	
 	$TOrder = array('ID'=>'DESC');
