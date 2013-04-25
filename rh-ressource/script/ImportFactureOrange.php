@@ -5,6 +5,9 @@ require('../class/evenement.class.php');
 require('../class/ressource.class.php');
 //*/
 
+
+ini_set('memory_limit','512M'); //taille mémoire limitée
+set_time_limit(0); //durée d'execution illimitée.
 global $conf;
 $ATMdb=new Tdb;
 // relever le point de départ
@@ -43,6 +46,7 @@ while($ATMdb->Get_line()) {
 		,'data15Mo'=> false
 		);	
 	}
+
 
 $TNumero = array();
 $sql="SELECT rowid, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity=".$conf->entity;

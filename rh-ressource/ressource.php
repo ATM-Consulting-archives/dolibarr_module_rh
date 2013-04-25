@@ -193,7 +193,6 @@ function _liste(&$ATMdb, &$ressource) {
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
-			
 		)
 		,'title'=>array(
 			'libelle'=>'Libellé'
@@ -206,8 +205,7 @@ function _liste(&$ATMdb, &$ressource) {
 			'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
 			,'numId'=>true
 			,'libelle'=>true
-			,'Statut'=>array('recherche'=>array('Libre','Attribuée', 'Réservée'))
-			
+			//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
 		)
 		,'orderBy'=>$TOrder
 		

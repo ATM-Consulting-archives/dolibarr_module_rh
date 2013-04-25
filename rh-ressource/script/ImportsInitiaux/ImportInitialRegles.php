@@ -27,7 +27,6 @@ $nomFichier = "reglesAppels.csv";
 echo 'Import initial des règles d\'appels et des affectations des téléphones.<br><br>';
 echo 'Traitement du fichier '.$nomFichier.' : <br>';
 
-print_r($TUser);
 
 //début du parsing
 $numLigne = 0;
@@ -59,11 +58,10 @@ if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 					$temp->carteJumelle = strtolower($infos[19]);
 					
 					$temp->numeroExclus = '';
-		
+							
 					$temp->fk_rh_ressource_type = $idTel ;
 					$temp->fk_user = intval($TUser[strtolower($nom)]);
-					//echo 'ATTENTION : '.$temp->fk_user.'<BR>';
-		
+					$temp->choixLimite = ($temp->duree==0) ? 'extint' :  'gen' ;		
 					
 					$temp->save($ATMdb);
 					$cpt++;
