@@ -50,6 +50,17 @@
 				$k++;
 	}
 	
+	if($user->rights->absence->myactions->voirToutesAbsences){
+		$combo=$form->combo('', 'rowid', $absence->TUser,  $absence->TUser);
+		$droits=1;
+	}else if($k>0){
+		$combo=$form->combo('', 'rowid',$TabUser,  $TabUser);
+		$droits=2;
+	}else{
+		$droits=0;
+		$combo='';
+	} 
+	
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'
@@ -57,7 +68,9 @@
 		,array(
 			'absence'=>array(
 				'idUser' =>  $_REQUEST['idUser']? $_REQUEST['idUser']:$user->id
-				,'TUser'=>$user->rights->absence->myactions->voirToutesAbsences?$form->combo('', 'rowid', $absence->TUser,  $absence->TUser):$form->combo('', 'rowid',$TabUser,  $TabUser)
+				//,'TUser'=>$user->rights->absence->myactions->voirToutesAbsences?$form->combo('', 'rowid', $absence->TUser,  $absence->TUser):$form->combo('', 'rowid',$TabUser,  $TabUser)
+				,'TUser'=>$combo
+				,'droits'=>$droits
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 				,'idAfficher'=>$_REQUEST['rowid']? $_REQUEST['rowid']:0
 			)

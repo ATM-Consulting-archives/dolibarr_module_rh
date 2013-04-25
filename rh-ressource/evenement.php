@@ -31,13 +31,20 @@
 				
 			case 'save':
 				//$ATMdb->db->debug=true;
-				$mesg = '<div class="ok">Modifications effectuées</div>';
 				$evenement->load($ATMdb, $_REQUEST['idEven']);
 				$evenement->set_values($_REQUEST);
 				$evenement->save($ATMdb);
+				if (!isset($_REQUEST['motif'])|| $_REQUEST['motif']==''){
+					$mesg = '<div class="error">Le motif doit être renseigné.</div>';
+					$mode = 'edit';
 					
+				}
+				else{
+					$mesg = '<div class="ok">Modifications effectuées</div>';
+					$mode = 'view';
+				}
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $evenement,$ressource,'view');
+				_fiche($ATMdb, $evenement,$ressource,$mode);
 				break;
 			
 			case 'view':
@@ -168,11 +175,11 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'ID'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
+			'Motif'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&type='.$type.'&action=deleteEvent"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array('Type'=>$evenement->TType)
-		,'hide'=>array()
+		,'hide'=>array('ID')
 		,'type'=>array(
 			'Date début'=>'date'
 			,'Date fin'=>'date'

@@ -15,7 +15,7 @@ $TUser = array();
 $sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
-	$TUser[strtolower($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
+	$TUser[strtoupper($ATMdb->Get_field('firstname')).' '.strtoupper($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
 	}
 
 
@@ -142,7 +142,7 @@ $TUser = array();
 $sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
-	$TUser[strtolower($ATMdb->Get_field('name').' '.$ATMdb->Get_field('firstname'))] = $ATMdb->Get_field('rowid');
+	$TUser[strtoupper($ATMdb->Get_field('name').' '.$ATMdb->Get_field('firstname'))] = $ATMdb->Get_field('rowid');
 	}
 $TAgence = array();
 $sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
@@ -158,7 +158,7 @@ $cptTel = 0;
 $numLigne = 0;
 if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle, 0,'\r')) != false){
-		if ($numLigne >=1 && $numLigne<42){
+		if ($numLigne >=1){
 			$infos = explode(';', $data[0]);
 			//print_r($infos);
 			//echo '<br>';
@@ -171,7 +171,7 @@ if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 			if (empty($nom)){
 				null;
 			}
-			else if (!array_key_exists(strtolower($nom.' '.$prenom), $TUser)){
+			else if (!array_key_exists(strtoupper($nom.' '.$prenom), $TUser)){
 				$TUserInexistants[$nom.' '.$prenom] = 1;
 				null; //si l'user n'existe pas
 			}
@@ -226,7 +226,7 @@ if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 				
 				$emprunt = new TRH_Evenement;
 				$emprunt->type = 'emprunt';
-				$emprunt->fk_user = $TUser[strtolower($nom).' '.strtolower($prenom)];
+				$emprunt->fk_user = $TUser[strtoupper($nom.' '.$prenom)];
 				$emprunt->fk_rh_ressource = $tel->getId();
 				$emprunt->set_date('date_debut', '01/01/2013');
 				$emprunt->set_date('date_fin', '31/12/2013');

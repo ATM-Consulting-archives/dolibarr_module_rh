@@ -90,7 +90,7 @@ class TRH_Ressource_Regle  extends TObjetStd {
 			case 'extint':
 				$this->duree = 0;
 				break;
-			default : echo 'pb choix limite'; break;
+			default : echo 'pb choix limite : '.$this->choixLimite.'<br>'; break;
 		}
 		
 		parent::save($ATMdb);

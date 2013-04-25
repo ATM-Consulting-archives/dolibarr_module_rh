@@ -114,11 +114,11 @@
 		<td>[newRule.dureeHExt;strconv=no]:[newRule.dureeMExt;strconv=no]    (HH:MM)</td>
 	</tr>
 	<tr>
-		<td> Nature à déduire</td>
+		<td> Nature pris en charge par l'utilisateur</td>
 		<td>[newRule.natureDeduire;strconv=no]</td>
 	</tr>
 	<tr>
-		<td>Montant à déduire</td>
+		<td>Montant pris en charge par l'utilisateur</td>
 		<td>[newRule.montantDeduire;strconv=no] €</td>
 	</tr>
 	<tr>

@@ -17,7 +17,6 @@ while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
 	}
 
-
 $idVoiture = getIdTypeVoiture($ATMdb);
 $TFichier = array("CPRO GROUPE - PRELVT DU 05.04.13.csv",
 "CPRO INFORMATIQUE PREL 05 04 13.csv",
@@ -59,7 +58,7 @@ if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 				$temp->set_date('date_vente', '');
 				$temp->set_date('date_garantie', '');
 				$temp->immatriculation = (string)$plaque;//plaque;
-				$temp->libelle = $infos[40].' '.$infos[41];
+				$temp->libelle = ucwords(strtolower($infos[40].' '.$infos[41]));
 				$temp->marquevoit = (string)$infos[40];
 				$temp->modlevoit = (string)$infos[41];
 				$temp->bailvoit = 'Location';
