@@ -140,19 +140,22 @@
 	});
 </script>
 
-[onshow;block=begin;when [view.userRight]==1]
+
 <div class="tabsAction" style="text-align:center;">
 	[onshow;block=begin;when [view.mode]=='view']
 		<a class="butAction"  href="ressource.php?id=[ressource.id]&action=view">Ressource associée</a>
-		<a class="butAction"  href="?id=[ressource.id]&idEven=[NEvent.id]&action=edit">Modifier</a>
-		<a class="butActionDelete"  href="?id=[ressource.id]&idEven=[NEvent.id]&action=deleteEvent">Supprimer</a>
+		[onshow;block=begin;when [view.userRight]==1]
+			<a class="butAction"  href="?id=[ressource.id]&idEven=[NEvent.id]&action=edit">Modifier</a>
+			<a class="butActionDelete"  href="?id=[ressource.id]&idEven=[NEvent.id]&action=deleteEvent">Supprimer</a>
+		[onshow;block=end]
 	[onshow;block=end]
  
 	[onshow;block=begin;when [view.mode]!='view']
-		<input type="submit" value="Enregistrer" name="save" class="button">
-		&nbsp; &nbsp; 
-		<input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
+		[onshow;block=begin;when [view.userRight]==1]
+			<input type="submit" value="Enregistrer" name="save" class="button">
+			&nbsp; &nbsp; 
+			<input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
+		[onshow;block=end]
 	[onshow;block=end]
-	 
 </div>
-[onshow;block=end]
+
