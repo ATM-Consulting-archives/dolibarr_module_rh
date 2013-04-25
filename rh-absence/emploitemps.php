@@ -70,7 +70,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	}
 	
 	$r = new TSSRenderControler($emploiTemps);
-	$sql="SELECT DISTINCT e.rowid as 'ID', e.date_cre as 'DateCre', e.fk_user as 'Id Utilisateur', CONCAT(u.firstname,' ', u.name) as 'Emploi du temps de l\'utilisateur'
+	$sql="SELECT DISTINCT e.rowid as 'ID', e.date_cre as 'DateCre', e.fk_user as 'Id Utilisateur', '' as 'Emploi du temps', u.firstname, u.name, '' as '','' as ''
 		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."user as u, 
 		`".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as g 
 		WHERE e.entity=".$conf->entity." AND u.rowid=e.fk_user";
@@ -78,7 +78,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	if($user->rights->absence->myactions->modifierEdt!="1"){
 		$sql.=" AND e.fk_user=".$user->id;
 	}
-	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');	
 	$TOrder = array('ID'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -91,7 +91,11 @@ function _liste(&$ATMdb, &$emploiTemps) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'">@val@</a>'
-			,'Emploi du temps de l\'utilisateur'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'"<a>Emploi du temps de @val@</a>'
+			, 'Emploi du temps'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'"<a>Emploi du temps</a>'
+		)
+		,'title'=>array(
+			'firstname'=>'Prénom'
+			,'name'=>'Nom'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre','ID')
@@ -105,9 +109,16 @@ function _liste(&$ATMdb, &$emploiTemps) {
 			,'messageNothing'=>"Il n'y a aucun emploi du temps à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 		)
 		,'orderBy'=>$TOrder
+		,'search'=>array(
+			'firstname'=>true
+			,'name'=>true
+		)
+		
 	));
+	$form->end();
 	llxFooter();
 }	
 	

@@ -139,12 +139,12 @@ function _liste(&$ATMdb, &$absence) {
 		//LISTE DES ABSENCES À VALIDER
 		$r = new TSSRenderControler($absence);
 		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
-				  a.libelle as 'Type absence',a.fk_user,  CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
+				  a.libelle as 'Type absence',a.fk_user,  u.firstname, u.name,
 				  a.libelleEtat as 'Statut demande', a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity=".$conf->entity." AND u.rowid=a.fk_user
 			AND a.etat LIKE 'AValider'";
-		
+
 		$TOrder = array('Statut demande'=>'DESC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -184,7 +184,15 @@ function _liste(&$ATMdb, &$absence) {
 				'date_debut'=>'Date début'
 				,'date_fin'=>'Date fin'
 				,'avertissement'=>'Règle'
+				,'firstname'=>'Prénom'
+				,'name'=>'Nom'
 				
+			)
+			,'search'=>array(
+				'date_debut'=>array('recherche'=>'calendar')
+				,'libelle'=>true
+				,"firstname"=>true
+				,"name"=>true
 			)
 			
 			,'orderBy'=>$TOrder

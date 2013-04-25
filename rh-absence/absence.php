@@ -119,7 +119,7 @@ function _liste(&$ATMdb, &$absence) {
 	//LISTE D'ABSENCES DU COLLABORATEUR
 	$r = new TSSRenderControler($absence);
 	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-			  a.libelle,a.fk_user,  a.fk_user, CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
+			  a.libelle,a.fk_user,  a.fk_user, u.firstname, u.name,
 			   a.libelleEtat as 'Statut demande', a.avertissement
 		FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 		WHERE a.fk_user=".$user->id." AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
@@ -165,11 +165,15 @@ function _liste(&$ATMdb, &$absence) {
 			,'date_fin'=>'Date fin'
 			,'avertissement'=>'Règle'
 			,'libelle'=>'Type d\'absence'
+			,'firstname'=>'Prénom'
+			,'name'=>'Nom'
 			
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
 			,'libelle'=>true
+			,"firstname"=>true
+			,"name"=>true
 			
 		)
 		,'orderBy'=>$TOrder
