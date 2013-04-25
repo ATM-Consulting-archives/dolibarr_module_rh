@@ -42,7 +42,7 @@ class TRH_Ressource extends TObjetStd {
 		$this->TRessource = array('');
 		$this->TEvenement = array();
 		
-		$this->TAgence = array();
+		$this->TAgence = array('');
 		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup ";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
@@ -226,7 +226,6 @@ class TRH_Ressource extends TObjetStd {
 	function save(&$db) {
 		global $conf;
 		$this->entity = $conf->entity;
-		
 		//$this->setStatut($db, date("Y-m-d"));
 		
 		//on transforme les champs sensés être entier en int

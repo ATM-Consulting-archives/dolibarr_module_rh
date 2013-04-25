@@ -98,9 +98,8 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 	llxHeader('','Règles sur les Ressources');
 	?><div class="fiche"><?	
 	dol_fiche_head(ressourcePrepareHead($ressourceType, 'type-ressource')  , 'regle', 'Type de ressource');
-	
 	$r = new TSSRenderControler($ressourceType);
-	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.name) as 'Utilisateur', g.nom as 'Groupe',
+	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.name)  as 'Utilisateur', g.nom as 'Groupe',
 		duree, dureeInt,dureeExt,dataIllimite, dataIphone, mailforfait, smsIllimite, data15Mo, carteJumelle,'' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
@@ -108,13 +107,17 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		WHERE r.entity=".$conf->entity."
 		AND r.fk_rh_ressource_type=".$ressourceType->getId();
 	
-	//echo $sql;
+	echo $sql;
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 	
+	$TOuiRien = array('vrai'=>'Oui', 'faux'=>'');
+	$TOuiNon = array('vrai'=>'Oui', 'faux'=>'Non');
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
+	$form=new TFormCore($_SERVER['PHP_SELF'].'?id='.$ressourceType->getId().'&','formtranslateList','GET');
+	$form->hidden('id',$ressourceType->getId());
 	
-	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
@@ -128,6 +131,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 			'dureeInt'=>'intToString(@val@)'
 			,'dureeExt'=>'intToString(@val@)'
 			,'duree'=>'intToString(@val@)'
+			//,'Utilisateur'=>'decodeNom((string)(@val@))'
 		)
 		,'title'=>array(
 			'duree'=>'Limite générale'
@@ -139,17 +143,16 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 			,'mailforfait' => 'Forfait Mail'
 			,'data15Mo' => 'Forfait Data 15 Mo'
 			,'carteJumelle' => 'Forfait carte jumellé'
-		
 		)
 		,'translate'=>array(
 			'Sur'=>$regle->TObjet
 			,'Période'=>$regle->TPeriode
-			,'dataIllimite' => array('vrai'=>'Oui', 'faux'=>'')
-			,'smsIllimite' => array('vrai'=>'Oui', 'faux'=>'')
-			,'dataIphone' => array('vrai'=>'Oui', 'faux'=>'')
-			,'mailforfait' => array('vrai'=>'Oui', 'faux'=>'')
-			,'data15Mo' => array('vrai'=>'Oui', 'faux'=>'')
-			,'carteJumelle' => array('vrai'=>'Oui', 'faux'=>'')
+			,'dataIllimite' => $TOuiRien
+			,'smsIllimite' => $TOuiRien
+			,'dataIphone' => $TOuiRien
+			,'mailforfait' => $TOuiRien
+			,'data15Mo' => $TOuiRien
+			,'carteJumelle' => $TOuiRien
 		)
 		,'hide'=>array()
 		,'type'=>array()
@@ -162,14 +165,25 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 			,'messageNothing'=>"Il n'y a aucune règle à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+		)
+		,'search'=>array(
+			'Utilisateur'=>true
+			,'dataIllimite' => array('recherche'=>$TOuiNon)
+			,'smsIllimite' => array('recherche'=>$TOuiNon)
+			,'dataIphone' => array('recherche'=>$TOuiNon)
+			,'mailforfait' => array('recherche'=>$TOuiNon)
+			,'data15Mo' => array('recherche'=>$TOuiNon)
+			,'carteJumelle' => array('recherche'=>$TOuiNon)
 			
+			//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservée'=>'Réservée'))	
 		)
 		,'orderBy'=>$TOrder
 		
 	));
 	
 	?><a class="butAction" href="?id=<?=$ressourceType->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
-	
+	$form->end();
 	llxFooter();
 }	
 	
@@ -253,6 +267,11 @@ function intToString($val){
 	return $h.':'.$m;
 }
 
+function decodeNom($val){
+	//echo $val;
+	
+	return htmlentities($val, ENT_COMPAT , 'ISO8859-1');
+}
 function intToHour($val){
 	$h = intval($val/60);
 	if ($h < 10){$h = '0'.$h;}

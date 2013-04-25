@@ -235,11 +235,11 @@ function getStatut($id, $jour){
 		//echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
 		if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
 			&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
-				return 'Attribuée à '.$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name');
+				return 'Attribuée à '.htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 				break;
 		}
 		if (date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) >= $jour ){
-				$return='Réservée à '.$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name');
+				$return='Réservée à '.htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 				break;
 			}
 	}
@@ -365,8 +365,8 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
 				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
-				,'date_vente'=>(empty($ressource->date_vente) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' , 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
-				,'date_garantie'=>(empty($ressource->date_garantie) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
+				,'date_vente'=>(empty($ressource->date_vente) || ($ressource->date_vente<=0) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' , 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
+				,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TAgence,$ressource->fk_proprietaire)
 			)
 			,'fk_ressource'=>array(
