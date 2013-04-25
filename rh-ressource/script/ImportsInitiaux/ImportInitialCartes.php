@@ -20,7 +20,7 @@ while($ATMdb->Get_line()) {
 
 
 //----------------------Import des cartes total---------------
-/*
+
 $idCarteTotal = getIdType($ATMdb,'cartetotal');
 $cptCarteTotal = 0;
 $nomFichier = "fichier facture total.csv";
@@ -71,11 +71,11 @@ if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 	}
 }
 fclose($handle);
-echo $cptCarteTotal.' cartes Total importés.<br>';//*/
+echo $cptCarteTotal.' cartes Total importés.<br>';
 
 //----------------------Import des cartes area---------------
 
-/*
+
 $idCarteArea = getIdType($ATMdb,'cartearea');
 $cptCarteArea = 0;
 $nomFichier = "fichier facture area.CSV";
@@ -130,7 +130,7 @@ if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 fclose($handle);
 echo $cptCarteArea.' cartes Area importés.<br>';
  
-//*/	
+	
 
 //----------------------Import des téléphones---------------
 
