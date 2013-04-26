@@ -635,7 +635,8 @@ function templatereplace($line, $replacements = array(), &$redata = array(), $de
         
          $_registerform .= '<script language="javascript">
          $(document).ready(function() {
-         $("#registercontinue").click();
+         	// autoclick	
+         	$("#registercontinue").click();
          });
          
          </script>';
