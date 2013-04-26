@@ -1,4 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
     /*
     * LimeSurvey
     * Copyright (C) 2007-2012 The LimeSurvey Project Team / Carsten Schmitz
@@ -225,6 +226,10 @@
             if (Yii::app()->request->getParam('action','none')=='previewgroup' && intval(Yii::app()->request->getParam('gid',0)))
             {
                 $route.="/action/previewgroup/gid/".intval(Yii::app()->request->getParam('gid',0));
+            }
+            if (Yii::app()->request->getParam('token')!='')
+            {
+                $route.="/token/".Yii::app()->request->getParam('token');
             }
             $sHTMLCode = "<select id='languagechanger' name='languagechanger' class='languagechanger' onchange='javascript:window.location=this.value'>\n";
             foreach ($slangs as $sLanguage)
@@ -988,6 +993,10 @@
                     $aReplacementVars["FIRSTNAME"]=$oTokenInformation->firstname;
                     $aReplacementVars["LASTNAME"]=$oTokenInformation->lastname;
                     $aReplacementVars["TOKEN"]=$clienttoken;
+                    // added survey url in replacement vars
+                    $surveylink = Yii::app()->createAbsoluteUrl("/survey/index/sid/{$surveyid}",array('lang'=>$_SESSION['survey_'.$surveyid]['s_lang'],'token'=>$clienttoken));
+                    $aReplacementVars['SURVEYURL'] = $surveylink;
+                    
                     $attrfieldnames=getAttributeFieldNames($surveyid);
                     foreach ($attrfieldnames as $attr_name)
                     {
@@ -1276,8 +1285,7 @@
         $loadsecurity = returnGlobal('loadsecurity');
 
         // NO TOKEN REQUIRED BUT CAPTCHA ENABLED FOR SURVEY ACCESS
-        if ($tokensexist == 0 &&
-        isCaptchaEnabled('surveyaccessscreen',$thissurvey['usecaptcha']))
+        if ($tokensexist == 0 && isCaptchaEnabled('surveyaccessscreen',$thissurvey['usecaptcha']) && !$preview)
         {
 
             // IF CAPTCHA ANSWER IS NOT CORRECT OR NOT SET
@@ -1972,7 +1980,7 @@
     // Prefill questions/answers from command line params
     $reservedGetValues= array('token','sid','gid','qid','lang','newtest','action');
     $startingValues=array();
-    if (isset($_GET) && !$preview)
+    if (isset($_GET))
     {
         foreach ($_GET as $k=>$v)
         {
@@ -1983,6 +1991,7 @@
         }
     }
     $_SESSION['survey_'.$surveyid]['startingValues']=$startingValues;
+
     if (isset($_SESSION['survey_'.$surveyid]['fieldarray'])) $_SESSION['survey_'.$surveyid]['fieldarray']=array_values($_SESSION['survey_'.$surveyid]['fieldarray']);
 
     //Check if a passthru label and value have been included in the query url
@@ -2474,9 +2483,10 @@ function checkQuota($checkaction,$surveyid)
         $redata = compact(array_keys(get_defined_vars()));
         foreach($quota_info as $quota)
         {
-            $quota['Message']=templatereplace($quota['Message'],array(),$redata);
-            $quota['Url']=templatereplace($quota['Url'],array(),$redata);
-            $quota['UrlDescrip']=templatereplace($quota['UrlDescrip'],array(),$redata);
+            $quota['Message'] = templatereplace($quota['Message'],array(),$redata);
+            $quota['Url'] = passthruReplace($quota['Url'], $thissurvey);
+            $quota['Url'] = templatereplace($quota['Url'],array(),$redata);
+            $quota['UrlDescrip'] = templatereplace($quota['UrlDescrip'],array(),$redata);
             if ((isset($quota['status']) && $quota['status'] == "matched") && (isset($quota['Action']) && $quota['Action'] == "1"))
             {
                 // If a token is used then mark the token as completed

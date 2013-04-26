@@ -176,7 +176,7 @@ class RegisterController extends LSYii_Controller {
         foreach ($attributeinsertdata as $k => $v)
             $token->$k = $v;
         $result = $token->save();
-
+		
         /**
         $result = $connect->Execute($query, array($postfirstname,
         $postlastname,
@@ -188,7 +188,7 @@ class RegisterController extends LSYii_Controller {
         ) or safeDie ($query."<br />".$connect->ErrorMsg());  //Checked - According to adodb docs the bound variables are quoted automatically
         */
         $tid = getLastInsertID($token->tableName());;
-
+        $token=$token->token;
 
         $fieldsarray["{ADMINNAME}"]=$thissurvey['adminname'];
         $fieldsarray["{ADMINEMAIL}"]=$thissurvey['adminemail'];
@@ -205,6 +205,7 @@ class RegisterController extends LSYii_Controller {
         $from = "{$thissurvey['adminname']} <{$thissurvey['adminemail']}>";
 
         $surveylink = $this->createAbsoluteUrl("/survey/index/sid/{$surveyid}",array('lang'=>$baselang,'token'=>$newtoken));
+		header("Location: ".$surveylink);
         $optoutlink = $this->createAbsoluteUrl("/optout/tokens/surveyid/{$surveyid}",array('langcode'=>'fr','token'=>'newtoken'));
         $optinlink = $this->createAbsoluteUrl("/optin/tokens/surveyid/{$surveyid}",array('langcode'=>'fr','token'=>'newtoken'));
         if (getEmailFormat($surveyid) == 'html')
@@ -260,7 +261,8 @@ class RegisterController extends LSYii_Controller {
         // fetch the defined variables and pass it to the header footer templates.
         $redata = compact(array_keys(get_defined_vars()));
         $this->_printTemplateContent($thistpl.'/startpage.pstpl', $redata, __LINE__);
-        $this->_printTemplateContent($thistpl.'/survey.pstpl', $redata, __LINE__);
+		
+		$this->_printTemplateContent($thistpl.'/survey.pstpl', $redata, __LINE__);
         echo $html;
         $this->_printTemplateContent($thistpl.'/endpage.pstpl', $redata, __LINE__);
         

@@ -47,7 +47,7 @@ class SurveyAdmin extends Survey_Common_Action
     public function index()
     {
         if (count(getSurveyList(true)) == 0)
-		{
+        {
             $this->_renderWrappedTemplate('super', 'firststeps');
         } else {
             $this->getController()->_js_admin_includes(Yii::app()->getConfig('generalscripts') . "jquery/jqGrid/js/i18n/grid.locale-en.js");
@@ -311,10 +311,8 @@ class SurveyAdmin extends Survey_Common_Action
     */
     public function deactivate($iSurveyID = null)
     {
+        $iSurveyID = Yii::app()->request->getPost('sid', $iSurveyID);
         $iSurveyID = sanitize_int($iSurveyID);
-
-        $postsid = Yii::app()->request->getPost('sid', $iSurveyID);
-        $postsid = sanitize_int($postsid);
         $clang = $this->getController()->lang;
         $date = date('YmdHis'); //'His' adds 24hours+minutes to name to allow multiple deactiviations in a day
 
@@ -328,7 +326,7 @@ class SurveyAdmin extends Survey_Common_Action
         else
         {
             //See if there is a tokens table for this survey
-            if (tableExists("{{tokens_{$postsid}}}"))
+            if (tableExists("{{tokens_{$iSurveyID}}}"))
             {
                 if (Yii::app()->db->getDriverName() == 'postgre')
                 {
@@ -339,8 +337,8 @@ class SurveyAdmin extends Survey_Common_Action
                     $deactivateresult = Yii::app()->db->createCommand($setidx)->query();
                 }
 
-                $toldtable = "{{tokens_{$postsid}}}";
-                $tnewtable = "{{old_tokens_{$postsid}_{$date}}}";
+                $toldtable = "{{tokens_{$iSurveyID}}}";
+                $tnewtable = "{{old_tokens_{$iSurveyID}_{$date}}}";
 
                 $tdeactivateresult = Yii::app()->db->createCommand()->renameTable($toldtable, $tnewtable);
 
@@ -348,10 +346,14 @@ class SurveyAdmin extends Survey_Common_Action
                 $aData['toldtable'] = $toldtable;
             }
 
+            //Remove any survey_links to the CPDB
+            Survey_links::model()->deleteLinksBySurvey($iSurveyID);
+            
+
             // IF there are any records in the saved_control table related to this survey, they have to be deleted
-            $result = Saved_control::model()->deleteSomeRecords(array('sid' => $postsid)); //Yii::app()->db->createCommand($query)->query();
-            $sOldSurveyTableName = Yii::app()->db->tablePrefix."survey_{$postsid}";
-            $sNewSurveyTableName = Yii::app()->db->tablePrefix."old_survey_{$postsid}_{$date}";
+            $result = Saved_control::model()->deleteSomeRecords(array('sid' => $iSurveyID)); //Yii::app()->db->createCommand($query)->query();
+            $sOldSurveyTableName = Yii::app()->db->tablePrefix."survey_{$iSurveyID}";
+            $sNewSurveyTableName = Yii::app()->db->tablePrefix."old_survey_{$iSurveyID}_{$date}";
             $aData['sNewSurveyTableName']=$sNewSurveyTableName;
             //Update the auto_increment value from the table before renaming
             $new_autonumber_start = 0;
@@ -391,11 +393,11 @@ class SurveyAdmin extends Survey_Common_Action
             $survey->active = 'N';
             $survey->save();
 
-            $prow = Survey::model()->find('sid = :sid', array(':sid' => $postsid));
+            $prow = Survey::model()->find('sid = :sid', array(':sid' => $iSurveyID));
             if ($prow->savetimings == "Y")
             {
-                $sOldTimingsTableName = Yii::app()->db->tablePrefix."survey_{$postsid}_timings";
-                $sNewTimingsTableName = Yii::app()->db->tablePrefix."old_survey_{$postsid}_timings_{$date}";
+                $sOldTimingsTableName = Yii::app()->db->tablePrefix."survey_{$iSurveyID}_timings";
+                $sNewTimingsTableName = Yii::app()->db->tablePrefix."old_survey_{$iSurveyID}_timings_{$date}";
 
                 $deactivateresult2 = Yii::app()->db->createCommand()->renameTable($sOldTimingsTableName, $sNewTimingsTableName);
                 $deactivateresult = ($deactivateresult && $deactivateresult2);
@@ -479,7 +481,7 @@ class SurveyAdmin extends Survey_Common_Action
                 }
                 $aViewUrls['output'].="<p>" .
                 $clang->gT("Database error!!")."\n <font color='red'>" ."</font>\n" .
-                "<pre>".implode(' ', $aResult['error'])."</pre>\n
+                "<pre>".var_export ($aResult['error'],true)."</pre>\n
                 <a href='".Yii::app()->getController()->createUrl("admin/survey/sa/view/surveyid/".$iSurveyID)."'>".$clang->gT("Main Admin Screen")."</a>\n</div>" ;
             }
             else
@@ -859,18 +861,34 @@ class SurveyAdmin extends Survey_Common_Action
 
         if ($action == "importsurvey" || $action == "copysurvey")
         {
-            if (Yii::app()->request->getParam('copysurveytranslinksfields') == "on" || Yii::app()->request->getParam('translinksfields') == "on")
-            {
-                $sTransLinks = true;
-            }
             $clang = $this->getController()->lang;
 
             // Start the HTML
             if ($action == 'importsurvey')
             {
+                $aPathInfo = pathinfo($_FILES['the_file']['name']);
+                if (isset($aPathInfo['extension']))
+                {
+                    $sExtension = $aPathInfo['extension'];
+                }
+                else
+                {
+                    $sExtension = "";
+                }            
+                
                 $aData['sHeader'] = $clang->gT("Import survey data");
                 $aData['sSummaryHeader'] = $clang->gT("Survey structure import summary");
                 $importingfrom = "http";
+                $aPathInfo = pathinfo($_FILES['the_file']['name']);
+                if (isset($aPathInfo['extension']))
+                {
+                    $sExtension = $aPathInfo['extension'];
+                }
+                else
+                {
+                    $sExtension = "";
+                }            
+                
             }
             elseif ($action == 'copysurvey')
             {
@@ -879,30 +897,16 @@ class SurveyAdmin extends Survey_Common_Action
             }
             // Start traitment and messagebox
             $aData['bFailed'] = false; // Put a var for continue
-
+            
             if ($action == 'importsurvey')
             {
 
-                $the_full_file_path = Yii::app()->getConfig('tempdir') . DIRECTORY_SEPARATOR . randomChars(20).'_'.$_FILES['the_file']['name'];
-                if (!@move_uploaded_file($_FILES['the_file']['tmp_name'], $the_full_file_path))
+                $sFullFilepath = Yii::app()->getConfig('tempdir') . DIRECTORY_SEPARATOR . randomChars(20).'.'.$sExtension;
+                if (!@move_uploaded_file($_FILES['the_file']['tmp_name'], $sFullFilepath))
                 {
                     $aData['sErrorMessage'] = sprintf($clang->gT("An error occurred uploading your file. This may be caused by incorrect permissions in your %s folder."), Yii::app()->getConfig('tempdir'));
                     $aData['bFailed'] = true;
                 }
-                else
-                {
-                    $sFullFilepath = $the_full_file_path;
-                    $aPathInfo = pathinfo($sFullFilepath);
-                    if (isset($aPathInfo['extension']))
-                    {
-                        $sExtension = $aPathInfo['extension'];
-                    }
-                    else
-                    {
-                        $sExtension = "";
-                    }
-                }
-
                 if (!$aData['bFailed'] && (strtolower($sExtension) != 'csv' && strtolower($sExtension) != 'lss' && strtolower($sExtension) != 'txt' && strtolower($sExtension) != 'lsa'))
                 {
                     $aData['sErrorMessage'] = sprintf($clang->gT("Import failed. You specified an invalid file type '%s'."), $sExtension);
@@ -914,14 +918,7 @@ class SurveyAdmin extends Survey_Common_Action
                 $iSurveyID = sanitize_int(Yii::app()->request->getParam('copysurveylist'));
                 $exclude = array();
 
-                if (get_magic_quotes_gpc())
-                {
-                    $sNewSurveyName = stripslashes($_POST['copysurveyname']);
-                }
-                else
-                {
-                    $sNewSurveyName = Yii::app()->request->getPost('copysurveyname');
-                }
+                $sNewSurveyName = Yii::app()->request->getPost('copysurveyname');
 
                 if (Yii::app()->request->getPost('copysurveyexcludequotas') == "on")
                 {
@@ -971,7 +968,7 @@ class SurveyAdmin extends Survey_Common_Action
             }
             elseif ($action == 'copysurvey' && !$aData['bFailed'])
             {
-                $aImportResults = XMLImportSurvey('', $copysurveydata, $sNewSurveyName);
+                $aImportResults = XMLImportSurvey('', $copysurveydata, $sNewSurveyName,NULL,(isset($_POST['translinksfields'])));
                 if (isset($exclude['conditions']))
                 {
                     Questions::model()->updateAll(array('relevance'=>'1'),'sid='.$aImportResults['newsid']);
@@ -1480,7 +1477,7 @@ class SurveyAdmin extends Survey_Common_Action
         if (empty($files))
         {
             $generalscripts_path = Yii::app()->getConfig('generalscripts');
-	        $adminscripts_path = Yii::app()->getConfig('adminscripts');
+            $adminscripts_path = Yii::app()->getConfig('adminscripts');
             $styleurl = Yii::app()->getConfig('styleurl');
                                                                             
             $js_files = array(

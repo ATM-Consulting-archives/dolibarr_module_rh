@@ -161,8 +161,8 @@ function createChart($iQuestionID, $iSurveyID, $type=null, $lbl, $gdata, $grawda
 
             $counter=0;
             foreach ($lblout as $sLabelName)
-            {
-                $DataSet->SetSerieName($sLabelName, "Serie$counter");
+            {                                  
+                $DataSet->SetSerieName(html_entity_decode($sLabelName,null,'UTF-8'), "Serie$counter");
                 $counter++;
             }
 
@@ -242,13 +242,13 @@ function createChart($iQuestionID, $iSurveyID, $type=null, $lbl, $gdata, $grawda
             elseif (getLanguageRTL($language))
             {
                 foreach($lbl as $kkey => $kval){
-                    $lblout[]= UTF8Strrev($kkey.' )'.$kval.'(');
+                    $lblout[]= UTF8Strrev(html_entity_decode($kkey,null,'UTF-8').' )'.$kval.'(');
                 }
             }
             else
             {
                 foreach($lbl as $kkey => $kval){
-                    $lblout[]= $kkey.' ('.$kval.')';
+                    $lblout[]= html_entity_decode($kkey,null,'UTF-8').' ('.$kval.')';
                 }
             }
 
@@ -514,9 +514,9 @@ function buildSelects($allfields, $surveyid, $language) {
                     if (substr($pv, -1, 1) == "E" && !empty($_POST[$pv]))
                     {
                         $datetimeobj = new Date_Time_Converter($_POST[$pv], $formatdata['phpdate'].' H:i');
-                        $_POST[$pv]=$datetimeobj->convert("Y-m-d");
+                        $sDateValue=$datetimeobj->convert("Y-m-d");
 
-                        $selects[] = Yii::app()->db->quoteColumnName('datestamp')." >= ".dbQuoteAll($_POST[$pv]." 00:00:00")." and ".Yii::app()->db->quoteColumnName('datestamp')." <= ".dbQuoteAll($_POST[$pv]." 23:59:59");
+                        $selects[] = Yii::app()->db->quoteColumnName('datestamp')." >= ".dbQuoteAll($sDateValue." 00:00:00")." and ".Yii::app()->db->quoteColumnName('datestamp')." <= ".dbQuoteAll($sDateValue." 23:59:59");
                     }
                     else
                     {
@@ -524,16 +524,16 @@ function buildSelects($allfields, $surveyid, $language) {
                         if (substr($pv, -1, 1) == "L" && !empty($_POST[$pv]))
                         {
                             $datetimeobj = new Date_Time_Converter($_POST[$pv], $formatdata['phpdate'].' H:i');
-                            $_POST[$pv]=$datetimeobj->convert("Y-m-d H:i:s");
-                            $selects[]= Yii::app()->db->quoteColumnName('datestamp')." < ".dbQuoteAll($_POST[$pv]);
+                            $sDateValue=$datetimeobj->convert("Y-m-d H:i:s");
+                            $selects[]= Yii::app()->db->quoteColumnName('datestamp')." < ".dbQuoteAll($sDateValue);
                         }
 
                         //timestamp greater than
                         if (substr($pv, -1, 1) == "G" && !empty($_POST[$pv]))
                         {
                             $datetimeobj = new Date_Time_Converter($_POST[$pv], $formatdata['phpdate'].' H:i');
-                            $_POST[$pv]=$datetimeobj->convert("Y-m-d H:i:s");
-                            $selects[]= Yii::app()->db->quoteColumnName('datestamp')." > ".dbQuoteAll($_POST[$pv]);
+                            $sDateValue=$datetimeobj->convert("Y-m-d H:i:s");
+                            $selects[]= Yii::app()->db->quoteColumnName('datestamp')." > ".dbQuoteAll($sDateValue);
                         }
                     }
                 }
@@ -573,6 +573,8 @@ class statistics_helper {
       * @var Spreadsheet_Excel_Writer_Worksheet
       */
      protected $sheet;
+     
+     protected $xlsPercents;
      
      /**
       * The current Excel workbook we are working on
@@ -1801,7 +1803,7 @@ class statistics_helper {
             elseif (incompleteAnsFilterState() == "complete") {$query .= " AND submitdate is not null";}
 
             //check for any "sql" that has been passed from another script
-            if ($sql != "NULL") {$query .= " AND $sql";}
+            if (!empty($sql)) {$query .= " AND $sql";}
 
             //get data
             $row=Yii::app()->db->createCommand($query)->queryScalar();
@@ -2343,8 +2345,8 @@ class statistics_helper {
 
                         $this->xlsRow++;
                         $this->sheet->write($this->xlsRow,0,$label[$i]);
-                        $this->sheet->write($this->xlsRow,1,$grawdata[$i]);
-                        $this->sheet->write($this->xlsRow,2,sprintf("%01.2f", $gdata[$i]). "%");
+                        $this->sheet->writeNumber($this->xlsRow,1,$grawdata[$i]);
+                        $this->sheet->writeNumber($this->xlsRow,2,$gdata[$i]/100, $this->xlsPercents);
 
                         break;
                     case 'pdf':
@@ -2443,8 +2445,8 @@ class statistics_helper {
 
                                 $this->xlsRow++;
                                 $this->sheet->write($this->xlsRow,0,$label[$i]);
-                                $this->sheet->write($this->xlsRow,1,$grawdata[$i]);
-                                $this->sheet->write($this->xlsRow,2,sprintf("%01.2f", $percentage)."%");
+                                $this->sheet->writeNumber($this->xlsRow,1,$grawdata[$i]);
+                                $this->sheet->writeNumber($this->xlsRow,2,$percentage/100, $this->xlsPercents);
 
                                 break;
                             case 'pdf':
@@ -2505,9 +2507,9 @@ class statistics_helper {
 
                                 $this->xlsRow++;
                                 $this->sheet->write($this->xlsRow,0,$label[$i]);
-                                $this->sheet->write($this->xlsRow,1,$grawdata[$i]);
-                                $this->sheet->write($this->xlsRow,2,sprintf("%01.2f", $percentage)."%");
-                                $this->sheet->write($this->xlsRow,3,sprintf("%01.2f", $percentage)."%");
+                                $this->sheet->writeNumber($this->xlsRow,1,$grawdata[$i]);
+                                $this->sheet->writeNumber($this->xlsRow,2,$percentage/100, $this->xlsPercents);
+                                $this->sheet->writeNumber($this->xlsRow,3,$percentage/100, $this->xlsPercents);
 
                                 break;
                             case 'pdf':
@@ -2575,9 +2577,9 @@ class statistics_helper {
 
                                 $this->xlsRow++;
                                 $this->sheet->write($this->xlsRow,0,$label[$i]);
-                                $this->sheet->write($this->xlsRow,1,$grawdata[$i]);
-                                $this->sheet->write($this->xlsRow,2,sprintf("%01.2f", $percentage)."%");
-                                $this->sheet->write($this->xlsRow,3,sprintf("%01.2f", $aggregatedgdata)."%");
+                                $this->sheet->writeNumber($this->xlsRow,1,$grawdata[$i]);
+                                $this->sheet->writeNumber($this->xlsRow,2,$percentage/100, $this->xlsPercents);
+                                $this->sheet->writeNumber($this->xlsRow,3,$aggregatedgdata/100, $this->xlsPercents);
 
                                 break;
                             case 'pdf':
@@ -2640,9 +2642,9 @@ class statistics_helper {
 
                                 $this->xlsRow++;
                                 $this->sheet->write($this->xlsRow,0,$label[$i]);
-                                $this->sheet->write($this->xlsRow,1,$grawdata[$i]);
-                                $this->sheet->write($this->xlsRow,2,sprintf("%01.2f", $percentage)."%");
-                                $this->sheet->write($this->xlsRow,3,sprintf("%01.2f", $aggregatedgdata)."%");
+                                $this->sheet->writeNumber($this->xlsRow,1,$grawdata[$i]);
+                                $this->sheet->writeNumber($this->xlsRow,2,$percentage/100, $this->xlsPercents);
+                                $this->sheet->writeNumber($this->xlsRow,3,$aggregatedgdata/100, $this->xlsPercents);
 
                                 break;
                             case 'pdf':
@@ -2702,13 +2704,13 @@ class statistics_helper {
 
                                 $this->xlsRow++;
                                 $this->sheet->write($this->xlsRow,0,$statlang->gT("Sum")." (".$statlang->gT("Answers").")");
-                                $this->sheet->write($this->xlsRow,1,$sumitems);
-                                $this->sheet->write($this->xlsRow,2,$sumpercentage."%");
-                                $this->sheet->write($this->xlsRow,3,$sumpercentage."%");
+                                $this->sheet->writeNumber($this->xlsRow,1,$sumitems);
+                                $this->sheet->writeNumber($this->xlsRow,2,$sumpercentage/100, $this->xlsPercents);
+                                $this->sheet->writeNumber($this->xlsRow,3,$sumpercentage/100, $this->xlsPercents);
                                 $this->xlsRow++;
                                 $this->sheet->write($this->xlsRow,0,$statlang->gT("Number of cases"));
-                                $this->sheet->write($this->xlsRow,1,$TotalCompleted);
-                                $this->sheet->write($this->xlsRow,2,$casepercentage."%");
+                                $this->sheet->writeNumber($this->xlsRow,1,$TotalCompleted);
+                                $this->sheet->writeNumber($this->xlsRow,2,$casepercentage/100, $this->xlsPercents);
 
                                 break;
                             case 'pdf':
@@ -2752,8 +2754,8 @@ class statistics_helper {
 
                             $this->xlsRow++;
                             $this->sheet->write($this->xlsRow,0,$label[$i]);
-                            $this->sheet->write($this->xlsRow,1,$grawdata[$i]);
-                            $this->sheet->write($this->xlsRow,2,sprintf("%01.2f", $gdata[$i])."%");
+                            $this->sheet->writeNumber($this->xlsRow,1,$grawdata[$i]);
+                            $this->sheet->writeNumber($this->xlsRow,2,$gdata[$i]/100, $this->xlsPercents);
 
                             break;
                         case 'pdf':
@@ -2882,11 +2884,11 @@ class statistics_helper {
 
                         $this->xlsRow++;
                         $this->sheet->write($this->xlsRow,0,$statlang->gT("Arithmetic mean"));
-                        $this->sheet->write($this->xlsRow,1,$am);
+                        $this->sheet->writeNumber($this->xlsRow,1,$am);
 
                         $this->xlsRow++;
                         $this->sheet->write($this->xlsRow,0,$statlang->gT("Standard deviation"));
-                        $this->sheet->write($this->xlsRow,1,$stddev);
+                        $this->sheet->writeNumber($this->xlsRow,1,$stddev);
 
                         break;
                     case 'pdf':
@@ -3265,6 +3267,8 @@ class statistics_helper {
 
             // Creating the first worksheet
             $this->sheet = $this->workbook->addWorksheet(utf8_decode('results-survey'.$surveyid));
+            $this->xlsPercents = &$this->workbook->addFormat();
+            $this->xlsPercents->setNumFormat('0.00%');
             $this->sheet->setInputEncoding('utf-8');
             $this->sheet->setColumn(0,20,20);
             $separator="~|";
@@ -3320,16 +3324,16 @@ class statistics_helper {
             case "xls":
                 $this->xlsRow = 0;
                 $this->sheet->write($this->xlsRow,0,$statlang->gT("Number of records in this query:",'unescaped'));
-                $this->sheet->write($this->xlsRow,1,$results);
+                $this->sheet->writeNumber($this->xlsRow,1,$results);
                 $this->xlsRow++;
                 $this->sheet->write($this->xlsRow,0,$statlang->gT("Total records in survey:",'unescaped'));
-                $this->sheet->write($this->xlsRow,1,$total);
+                $this->sheet->writeNumber($this->xlsRow,1,$total);
 
                 if($total)
                 {
                     $this->xlsRow++;
                     $this->sheet->write($this->xlsRow,0,$statlang->gT("Percentage of total:",'unescaped'));
-                    $this->sheet->write($this->xlsRow,1,$percent."%");
+                    $this->sheet->writeNumber($this->xlsRow,1,$results/$total, $this->xlsPercents);
                 }
 
                 break;
@@ -3385,7 +3389,8 @@ class statistics_helper {
 
         elseif (!empty($newsql)) {$sql = $newsql;}
 
-        if (!isset($sql) || !$sql) {$sql="NULL";}
+        if (!isset($sql) || !$sql) {$sql="";}
+        Yii::app()->session['response_filterview_'.$surveyid]=$sql;
 
         //only continue if we have something to output
         if ($results > 0)
@@ -3397,7 +3402,7 @@ class statistics_helper {
                 ."\t\t<p>"
                 ."\t\t\t<input type='submit' value='".$statlang->gT("Browse")."'  />\n"
                 ."\t\t\t<input type='hidden' name='sid' value='$surveyid' />\n"
-                ."\t\t\t<input type='hidden' name='sql' value=\"$sql\" />\n"
+                ."\t\t\t<input type='hidden' name='sqlfilter' value='1' />\n"
                 ."\t\t\t<input type='hidden' name='subaction' value='all' />\n"
                 ."\t\t</p>"
                 ."\t\t</form>\n";

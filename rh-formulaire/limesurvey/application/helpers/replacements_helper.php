@@ -94,6 +94,10 @@ function templatereplace($line, $replacements = array(), &$redata = array(), $de
     $_surveyid = Yii::app()->getConfig('surveyID');
     if (!isset($showxquestions)) { $showxquestions = Yii::app()->getConfig('showxquestions'); }
     if (!isset($s_lang)) { $s_lang = (isset(Yii::app()->session['survey_'.$_surveyid]['s_lang']) ? Yii::app()->session['survey_'.$_surveyid]['s_lang'] : 'en'); }
+    if($_surveyid && !isset($thissurvey))
+    {
+        $thissurvey=getSurveyInfo($_surveyid,$s_lang);
+    }
     if (!isset($captchapath)) { $captchapath = ''; }
     if (!isset($sitename)) { $sitename=Yii::app()->getConfig('sitename'); }
     if (!isset($saved_id) && isset(Yii::app()->session['survey_'.$_surveyid]['srid'])) { $saved_id=Yii::app()->session['survey_'.$_surveyid]['srid'];}
@@ -628,26 +632,34 @@ function templatereplace($line, $replacements = array(), &$redata = array(), $de
 
         $_registerform .= "\n<input type='hidden' name='lang' value='" . $_reglang . "' />\n";
         $_registerform .= "<input type='hidden' name='sid' value='$tokensid' id='sid' />\n";
+        
+         $_registerform .= '<script language="javascript">
+         $(document).ready(function() {
+         $("#registercontinue").click();
+         });
+         
+         </script>';
+         
 
         $_registerform.="<table class='register' summary='Registrationform'>\n"
         . "<tr><td align='right'>"
         . $clang->gT("First name") . ":</td>"
         . "<td align='left'><input class='text' type='text' name='register_firstname'";
-        if (isset($_POST['register_firstname']))
+        if (isset($_REQUEST['register_firstname']))
         {
             $_registerform .= " value='" . htmlentities(returnGlobal('register_firstname'), ENT_QUOTES, 'UTF-8') . "'";
         }
         $_registerform .= " /></td></tr>"
         . "<tr><td align='right'>" . $clang->gT("Last name") . ":</td>\n"
         . "<td align='left'><input class='text' type='text' name='register_lastname'";
-        if (isset($_POST['register_lastname']))
+        if (isset($_REQUEST['register_lastname']))
         {
             $_registerform .= " value='" . htmlentities(returnGlobal('register_lastname'), ENT_QUOTES, 'UTF-8') . "'";
         }
         $_registerform .= " /></td></tr>\n"
         . "<tr><td align='right'>" . $clang->gT("Email address") . ":</td>\n"
         . "<td align='left'><input class='text' type='text' name='register_email'";
-        if (isset($_POST['register_email']))
+        if (isset($_REQUEST['register_email']))
         {
             $_registerform .= " value='" . htmlentities(returnGlobal('register_email'), ENT_QUOTES, 'UTF-8') . "'";
         }
