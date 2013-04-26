@@ -48,7 +48,7 @@ class TRH_Contrat  extends TObjetStd {
 		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TAgence[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			$this->TAgence[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 			}
 		
 		//chargement d'une liste des tiers
@@ -56,13 +56,14 @@ class TRH_Contrat  extends TObjetStd {
 		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TFournisseur[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			$this->TFournisseur[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 			}
 		
 		
 		//chargement d'une liste de toutes les TVA
 		$this->TTVA = array();
-		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
+		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0]."
+		 AND entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
