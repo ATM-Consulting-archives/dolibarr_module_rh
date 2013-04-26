@@ -18,8 +18,20 @@
 [onshow;block=end] 	
 
 <script>
+ajaxLoadType = function(){
+	$.ajax({
+			url: 'script/loadTypeEvent.php?type='+$('#type option:selected').val()
+		}).done(function(data) {
+			liste = JSON.parse(data);
+			$("#typeEven").empty(); // remove old options
+			$.each(liste, function(key, value) {
+			  $("#typeEven").append($("<option></option>")
+			     .attr("value", key).text(value));
+			});	
+		});
+}
+
 $('#type').change(function(){
-		//alert('top');
 		$.ajax({
 			url: 'script/loadRessources.php?type='+$('#type option:selected').val()
 		}).done(function(data) {
@@ -30,19 +42,11 @@ $('#type').change(function(){
 			     .attr("value", key).text(value));
 			});	
 		});
+		ajaxLoadType();
 		
-		$.ajax({
-			url: 'script/loadTypeEvent.php?type='+$('#type option:selected').val()
-		}).done(function(data) {
-			liste = JSON.parse(data);
-			$("#typeEven").empty(); // remove old options
-			$.each(liste, function(key, value) {
-			  $("#typeEven").append($("<option></option>")
-			     .attr("value", key).text(value));
-			});	
-		});
 		
 });
+
 
 </script>
 

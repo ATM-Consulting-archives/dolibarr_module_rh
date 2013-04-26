@@ -150,14 +150,14 @@ function _liste(&$ATMdb, &$ressource) {
 		$sql.=", '' as 'Supprimer'";
 	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r";
-	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON r.fk_rh_ressource_type=t.rowid";
+			//LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON r.fk_rh_ressource_type=t.rowid";
 	if(!$user->rights->ressource->ressource->viewRessource){
 		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource)";
 	}
 	$sql.=" WHERE r.entity=".$conf->entity;
 	if(!$user->rights->ressource->ressource->viewRessource){
-		$sql.=" AND e.type ='emprunt'";
-		$sql.=" AND e.fk_user=".$user->id;
+		$sql.=" AND e.type ='emprunt' 
+				AND e.fk_user=".$user->id;
 	}
 		
 	$TOrder = array('DateCre'=>'ASC');
@@ -201,12 +201,14 @@ function _liste(&$ATMdb, &$ressource) {
 			
 			
 		)
-		,'search'=>array(
-			'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
-			,'numId'=>true
-			,'libelle'=>true
-			//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
-		)
+		,'search'=>($user->rights->ressource->ressource->searchRessource) ? 		
+			array(
+				'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
+				,'numId'=>true
+				,'libelle'=>true
+				//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
+			)
+			: array()
 		,'orderBy'=>$TOrder
 		
 	));
