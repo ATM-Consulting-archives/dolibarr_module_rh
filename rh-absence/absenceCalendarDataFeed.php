@@ -8,12 +8,15 @@ $method = $_GET["method"];
 switch ($method) {
     case "list":
 		
-        if (isset($_GET['idUser'])){
-			 if (isset($_GET['idAfficher'])){
-	       	 	$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser'], $_GET['idAfficher']);
-			 }else $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser']);
-		}else {
-			 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"]);
+        if (isset($_GET['idUser'])&&isset($_GET['idGroupe'])){
+	       	 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser'], $_GET['idGroupe']);
+		}else if (isset($_GET['idUser'])){
+			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser']);
+		}
+		else if (isset($_GET['idGroupe'])){
+			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], 0, $_GET['idGroupe']);
+		}else{
+			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"]);
 		}
 		
         break; 
@@ -21,8 +24,8 @@ switch ($method) {
 }
 echo json_encode($ret); 
 
-function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idAfficher=0){
-  	global $conf;
+function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
+  	global $conf,$user;
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
@@ -31,9 +34,36 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idAfficher=0){
   $ret['error'] = null;
   
   try{
-   
+
+  	if($idUser==0&&$idGroupe==0){	//on affiche toutes les absences 
+  		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE `date_debut` between '"
+      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
+  	}
+  	else if($idUser==0){		//on recherche un groupe
+  		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
+  		WHERE `date_debut` between '"
+      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupe; 
+ 
+  	}
+  	else if($idGroupe==0){		//on recherche un utilisateur
+  		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
+  		WHERE `date_debut` between '" 
+      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' 
+      AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND u.rowid=".$idUser;
+  	}
+  	else{		//on recherche un groupe et un utilisateur
+  		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
+  		WHERE `date_debut` between '" 
+      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' 
+      AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND u.rowid=".$idUser." AND g.fk_usergroup=".$idGroupe;  
+  	}
+    
     //LISTE USERS À VALIDER
-	$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
+	/*$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
 			WHERE v.fk_user=".$idUser." 
 			AND v.type='Conges'
 			AND v.fk_usergroup=u.fk_usergroup
@@ -46,9 +76,9 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idAfficher=0){
 				$TabUser[]=$ATMdb->Get_field('fk_user');
 				$k++;
 	}
-	//print_r($TabUser);
+	//print_r($TabUser);*/
 	
-	if($k==0){
+	/*if($k==0){
 		$sql1 = "SELECT r.rowid as rowid, r.libelle, r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
     
@@ -59,7 +89,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idAfficher=0){
       }
 	  
 	}else{
-		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE `date_debut` between '"
+		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
 	  if ($idAfficher!=0){
 	  	$sql1.=" AND r.fk_user=".$idAfficher;
@@ -67,11 +97,12 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idAfficher=0){
 	  	$sql1.=" AND r.fk_user IN(".implode(',', $TabUser).")";
       }
 	}
+	
 	//$sql1.=" AND r.etat !=Refusee";
-	//echo $sql1;
+	//echo $sql1;*/
   	$ATMdb->Execute($sql1);
     
-    while ($row = $ATMdb->Get_line()) {
+   /* while ($row = $ATMdb->Get_line()) {
     	switch($row->type){
 			case 'rttcumule' : 
 				$color=6;
@@ -112,11 +143,23 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idAfficher=0){
 			case 'mitempstherapeutique':
 				$color=0;
 				break;
-    	}
+    	}*/
+    while ($row = $ATMdb->Get_line()) {
+	    	switch($row->etat){
+				case 'Avalider' : 
+					$color=6;
+					break;
+				case 'Refusee':
+					$color=14;
+					break;
+				case 'Validee':
+					$color=8;
+					break;
+			}
 
       $ret['events'][] = array(
         $row->rowid,
-        $row->libelle." ".htmlentities($row->name, ENT_COMPAT , 'ISO8859-1').' '.htmlentities($row->firstname, ENT_COMPAT , 'ISO8859-1'),
+        htmlentities($row->name, ENT_COMPAT , 'ISO8859-1').' '.htmlentities($row->firstname, ENT_COMPAT , 'ISO8859-1')." : ".$row->libelle,
         php2JsTime(mySql2PhpTime($row->date_debut)),
         php2JsTime(mySql2PhpTime($row->date_fin)),
         1,//$row->isAllDayEvent,
@@ -173,7 +216,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idAfficher=0){
   return $ret;
 }
 
-function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idAfficher){
+function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idGroupe){
   $phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
   switch($type){
@@ -194,6 +237,6 @@ function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idAfficher){
       break;
   }
   //echo $st . "--" . $et;
-  return listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idAfficher);
+  return listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idGroupe);
 }
 

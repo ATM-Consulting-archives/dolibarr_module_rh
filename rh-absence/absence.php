@@ -119,14 +119,25 @@ function _liste(&$ATMdb, &$absence) {
 	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
 	//getStandartJS();
 	
-	//LISTE D'ABSENCES DU COLLABORATEUR
 	$r = new TSSRenderControler($absence);
-	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
+	
+	//droits d'admin : accès à toutes les absences
+	if($user->rights->absence->myactions->voirToutesAbsences){
+		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
 			  a.libelle,a.fk_user,  a.fk_user, u.firstname, u.name,
 			   a.libelleEtat as 'Statut demande', a.avertissement
 		FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-		WHERE a.fk_user=".$user->id." AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
-		
+		WHERE  a.entity=".$conf->entity." AND u.rowid=a.fk_user";
+	}else{
+		//LISTE D'ABSENCES DU COLLABORATEUR
+		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
+				  a.libelle,a.fk_user,  a.fk_user, u.firstname, u.name,
+				   a.libelleEtat as 'Statut demande', a.avertissement
+			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
+			WHERE a.fk_user=".$user->id." AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
+	}
+
+	
 	
 	$TOrder = array('Statut demande'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -455,7 +466,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
 				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
 				,'valideurConges'=>$user->rights->absence->myactions->valideurConges&&$estValideur
-				,'enregistrerPaieAbsences'=>$user->rights->absence->myactions->enregistrerPaieAbsences&&$estValideur
+				//,'enregistrerPaieAbsences'=>$user->rights->absence->myactions->enregistrerPaieAbsences&&$estValideur
 			)
 			,'view'=>array(
 				'mode'=>$mode
