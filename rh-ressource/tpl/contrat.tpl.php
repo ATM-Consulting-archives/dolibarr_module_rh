@@ -32,18 +32,20 @@
 	 	<tr>
 	 		<td>Date de fin</td>
 	 		<td>[contrat.date_fin;strconv=no;protect=no]</td>
-	 	</tr><tr>
-	 		<td>Loyer TTC</td>
-	 		<td>[contrat.loyer_TTC;strconv=no;protect=no] €</td>
-	 	</tr><tr>
-	 		<td>TVA </td>
-	 		<td>[contrat.TVA;strconv=no;protect=no] %</td>
 	 	</tr>
-	 	<tr>
-	 		<td>Loyer HT</td>
-	 		<td>[contrat.loyer_HT;strconv=no;protect=no] €</td>
-	 	</tr>
-	 	
+	 	[onshow;block=begin;when [view.userRightViewContrat]==1]
+		 	<tr>
+		 		<td>Loyer TTC</td>
+		 		<td>[contrat.loyer_TTC;strconv=no;protect=no] €</td>
+		 	</tr><tr>
+		 		<td>TVA </td>
+		 		<td>[contrat.TVA;strconv=no;protect=no] %</td>
+		 	</tr>
+		 	<tr>
+		 		<td>Loyer HT</td>
+		 		<td>[contrat.loyer_HT;strconv=no;protect=no] €</td>
+		 	</tr>
+	 	[onshow;block=end]
 	</table>
 	
 </div>

@@ -253,6 +253,19 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'ressource';
 		$this->rights[$r][5] = 'viewResourceCalendar';
+		$r++;
+		$this->rights[$r][0] = 7016;
+		$this->rights[$r][1] = 'Filtre Recherche dans la liste des ressources';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'searchRessource';
+		$r++;
+		$this->rights[$r][0] = 7017;
+		$this->rights[$r][1] = 'Voir les prix sur les contrats';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'contrat';
+		$this->rights[$r][5] = 'viewPrixContrat';
+		
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add

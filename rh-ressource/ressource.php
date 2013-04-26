@@ -201,12 +201,14 @@ function _liste(&$ATMdb, &$ressource) {
 			
 			
 		)
-		,'search'=>array(
-			'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
-			,'numId'=>true
-			,'libelle'=>true
-			//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
-		)
+		,'search'=>($user->rights->ressource->ressource->searchRessource) ? 		
+			array(
+				'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
+				,'numId'=>true
+				,'libelle'=>true
+				//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
+			)
+			: array()
 		,'orderBy'=>$TOrder
 		
 	));
