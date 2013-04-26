@@ -30,6 +30,8 @@
 		$absence->load($ATMdb, $user->id);
 	}
 	
+	$idCalendar= isset($_REQUEST['rowid']) ? $_REQUEST['rowid'] : '';
+	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
 	echo $form->hidden('action', 'afficher');
 	echo $form->hidden('id',$absence->getId());
@@ -39,7 +41,7 @@
 			AND v.type='Conges'
 			AND u.fk_user=s.rowid
 			AND v.fk_usergroup=u.fk_usergroup
-			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=1)
+			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$user->id.")
 			AND v.entity=".$conf->entity;
 		
 	$ATMdb->Execute($sql);
@@ -51,10 +53,10 @@
 	}
 	
 	if($user->rights->absence->myactions->voirToutesAbsences){
-		$combo=$form->combo('', 'rowid', $absence->TUser,  $absence->TUser);
+		$combo=$form->combo('', 'rowid', $absence->TUser,  $idCalendar);
 		$droits=1;
 	}else if($k>0){
-		$combo=$form->combo('', 'rowid',$TabUser,  $TabUser);
+		$combo=$form->combo('', 'rowid',$TabUser,  $idCalendar);
 		$droits=2;
 	}else{
 		$droits=0;

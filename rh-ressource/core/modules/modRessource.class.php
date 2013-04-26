@@ -247,6 +247,12 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'ressource';
 		$this->rights[$r][5] = 'uploadFilesSupplier';
+		$r++;
+		$this->rights[$r][0] = 7015;
+		$this->rights[$r][1] = 'Consulter le calendrier d\'une ressource';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'viewResourceCalendar';
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add

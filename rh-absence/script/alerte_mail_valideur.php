@@ -43,7 +43,7 @@ function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 			WHERE v.fk_user=".$fk_user." 
 			AND v.type='Conges'
 			AND v.fk_usergroup=u.fk_usergroup
-			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=1)
+			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$fk_user.")
 			AND v.entity=".$conf->entity;
 		
 	$ATMdb->Execute($sql);

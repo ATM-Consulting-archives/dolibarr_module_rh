@@ -94,6 +94,9 @@
 				$mesg = '<div class="error">Demande d\'absence refusée</div>';
 				_fiche($ATMdb, $absence,'view');
 				break;
+			case 'listeValidation' : 
+				_listeValidation($ATMdb, $absence);
+				break;
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {
@@ -119,7 +122,7 @@ function _liste(&$ATMdb, &$absence) {
 	//LISTE D'ABSENCES DU COLLABORATEUR
 	$r = new TSSRenderControler($absence);
 	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-			  a.libelle,a.fk_user,  a.fk_user, CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
+			  a.libelle,a.fk_user,  a.fk_user, u.firstname, u.name,
 			   a.libelleEtat as 'Statut demande', a.avertissement
 		FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 		WHERE a.fk_user=".$user->id." AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
@@ -139,7 +142,6 @@ function _liste(&$ATMdb, &$absence) {
 		)
 		,'link'=>array(
 			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
-			,'Utilisateur'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array('Statut demande'=>array(
 			'Refusée'=>'<b style="color:#A72947">Refusée</b>',
@@ -166,20 +168,33 @@ function _liste(&$ATMdb, &$absence) {
 			,'date_fin'=>'Date fin'
 			,'avertissement'=>'Règle'
 			,'libelle'=>'Type d\'absence'
+			,'firstname'=>'Prénom'
+			,'name'=>'Nom'
 			
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
 			,'libelle'=>true
+			,"firstname"=>true
+			,"name"=>true
 			
 		)
 		,'orderBy'=>$TOrder
 		
 	));
-	?><br/><a class="butAction" href="?id=<?=$absence->getId()?>&action=new">Nouvelle demande</a><div style="clear:both"></div><br/><?
+	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new">Nouvelle demande</a><div style="clear:both"></div><?
 	$form->end();
 	
 	
+	llxFooter();
+}	
+
+	
+function _listeValidation(&$ATMdb, &$absence) {
+	global $langs, $conf, $db, $user;	
+	llxHeader('','Liste de vos absences');
+	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
+	//getStandartJS();
  
  	//LISTE USERS À VALIDER
  	
@@ -187,7 +202,7 @@ function _liste(&$ATMdb, &$absence) {
 			WHERE v.fk_user=".$user->id." 
 			AND v.type='Conges'
 			AND v.fk_usergroup=u.fk_usergroup
-			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=1)
+			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$user->id.")
 			AND v.entity=".$conf->entity;
 		
 	$ATMdb->Execute($sql);
@@ -204,12 +219,12 @@ function _liste(&$ATMdb, &$absence) {
 		//LISTE DES ABSENCES À VALIDER
 		$r = new TSSRenderControler($absence);
 		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
-				  a.libelle as 'Type absence',a.fk_user,  CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
+				  a.libelle as 'Type absence',a.fk_user,  u.firstname, u.name,
 				  a.libelleEtat as 'Statut demande', a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity=".$conf->entity." AND u.rowid=a.fk_user
 			AND a.etat LIKE 'AValider'";
-		
+
 		$TOrder = array('Statut demande'=>'DESC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -249,7 +264,15 @@ function _liste(&$ATMdb, &$absence) {
 				'date_debut'=>'Date début'
 				,'date_fin'=>'Date fin'
 				,'avertissement'=>'Règle'
+				,'firstname'=>'Prénom'
+				,'name'=>'Nom'
 				
+			)
+			,'search'=>array(
+				'date_debut'=>array('recherche'=>'calendar')
+				,'libelle'=>true
+				,"firstname"=>true
+				,"name"=>true
 			)
 			
 			,'orderBy'=>$TOrder

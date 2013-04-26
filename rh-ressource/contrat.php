@@ -183,7 +183,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 	);
 	
 	print "<br/>";
-	//liste des ressources associés
+	//liste des ressources associées
 	$r = new TSSRenderControler($contrat);
 	$sql= "SELECT r.rowid as ID, r.libelle as 'Libellé' , r.numId as 'Numéro Id'
 			FROM ".MAIN_DB_PREFIX."rh_ressource as r, ".MAIN_DB_PREFIX."rh_contrat_ressource as l";
@@ -215,7 +215,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 		,'hide'=>array()
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste des ressources associés'
+			'titre'=>'Liste des ressources associées'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
