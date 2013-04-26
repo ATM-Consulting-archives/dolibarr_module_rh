@@ -99,7 +99,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 	?><div class="fiche"><?	
 	dol_fiche_head(ressourcePrepareHead($ressourceType, 'type-ressource')  , 'regle', 'Type de ressource');
 	$r = new TSSRenderControler($ressourceType);
-	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.name)  as 'Utilisateur', g.nom as 'Groupe',
+	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.name)  as 'Utilisateur', g.nom as 'Groupe', r.choixApplication as 'CA',
 		duree, dureeInt,dureeExt,dataIllimite, dataIphone, mailforfait, smsIllimite, data15Mo, carteJumelle,'' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
@@ -107,7 +107,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		WHERE r.entity=".$conf->entity."
 		AND r.fk_rh_ressource_type=".$ressourceType->getId();
 	
-	echo $sql;
+	//echo $sql;
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -126,12 +126,12 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=delete"><img src="./img/delete.png"></a>'
-		)
+		) 
 		,'eval'=>array(
 			'dureeInt'=>'intToString(@val@)'
 			,'dureeExt'=>'intToString(@val@)'
 			,'duree'=>'intToString(@val@)'
-			//,'Utilisateur'=>'decodeNom((string)(@val@))'
+			,'Utilisateur'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		,'title'=>array(
 			'duree'=>'Limite générale'
@@ -154,7 +154,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 			,'data15Mo' => $TOuiRien
 			,'carteJumelle' => $TOuiRien
 		)
-		,'hide'=>array()
+		,'hide'=>array('CA')
 		,'type'=>array()
 		,'liste'=>array(
 			'titre'=>'Liste des règles'
@@ -186,7 +186,10 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 	$form->end();
 	llxFooter();
 }	
-	
+
+function lol($val){
+	echo $val;
+}
 function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 	llxHeader('','Règle sur les Ressources', '', '', 0, 0);
 	
@@ -256,7 +259,11 @@ function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 	llxFooter();
 }
 
-
+function stringTous($val, $choixApplication){
+	echo $choixApplication;
+	if ($choixApplication == 'all') return 'Tous';
+	else return $val;
+}
 
 function intToString($val){
 	$h = intval($val/60);
@@ -267,11 +274,6 @@ function intToString($val){
 	return $h.':'.$m;
 }
 
-function decodeNom($val){
-	//echo $val;
-	
-	return htmlentities($val, ENT_COMPAT , 'ISO8859-1');
-}
 function intToHour($val){
 	$h = intval($val/60);
 	if ($h < 10){$h = '0'.$h;}

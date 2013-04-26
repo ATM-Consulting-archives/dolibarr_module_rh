@@ -76,7 +76,7 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		$this->entity = $conf->entity;
 		
 		switch ($this->choixApplication){
-			case 'all':$this->fk_user = NULL;$this->fk_usergroup=NULL;break;
+			case 'all':$this->fk_user = 0;$this->fk_usergroup=0;break;
 			case 'user':$this->fk_usergroup = NULL;break;
 			case 'group':$this->fk_user = NULL;break;
 			default : break;				
