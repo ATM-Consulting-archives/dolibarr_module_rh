@@ -49,4 +49,22 @@ function ressourcePrepareHead(&$obj, $type='type-ressource',&$param=null) {
 	
 	
 }
+
+/**
+ * Affiche un tableau avec le numId et le libellé de la ressource
+ */
+function printLibelle($ressource){
+	
+	?><table class="border" style="width:100%">
+		<tr>
+			<td>Numéro Id</td>
+			<td><? echo $ressource->numId ;?></td>
+		</tr>
+		<tr>
+			<td>Libellé</td>
+			<td><? echo $ressource->libelle ;?></td>
+		</tr>
+	</table><br><?
+	
+}
 	

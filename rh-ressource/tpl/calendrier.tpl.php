@@ -1,8 +1,20 @@
  <div class="fiche"> <!-- begin div class="fiche" -->
 
 [onshow;block=begin;when [ressource.fiche]==true]
-	[view.head;strconv=no]
+	[view.head;strconv=no;protect=no]
+	<table class="border" style="width:100%">
+		<tr>
+			<td>Numéro Id</td>
+			<td>[ressource.numId;strconv=no;protect=no]</td>
+		</tr>
+		<tr>
+			<td>Libellé</td>
+			<td>[ressource.libelle;strconv=no;protect=no]</td>
+		</tr>
+	</table><br>
 [onshow;block=end] 
+ 
+
 
 <h1>Agenda des ressources</h1>
 

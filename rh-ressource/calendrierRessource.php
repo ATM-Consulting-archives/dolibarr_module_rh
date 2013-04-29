@@ -75,6 +75,8 @@
 				,'typeEven'=>$form->combo('', 'typeEven', $TTypeEvent, $typeEven)
 				,'URL'=>$url
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
+				,'numId'=>$ressource->numId
+				,'libelle'=>$ressource->libelle
 			)
 			,'view'=>array(
 				'mode'=>$mode
