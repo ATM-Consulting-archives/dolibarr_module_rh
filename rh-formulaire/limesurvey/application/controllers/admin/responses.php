@@ -68,24 +68,19 @@ class responses extends Survey_Common_Action
 
         $aData['surveyinfo'] = $thissurvey;
 
-        if (isset($browselang) && $browselang != '')
+        if (Yii::app()->request->getParam('browselang'))
         {
-            Yii::app()->session['browselang'] = $browselang;
-            $aData['language'] = Yii::app()->session['browselang'];
-        }
-        elseif (isset(Yii::app()->session['browselang']))
-        {
-            $aData['language'] = Yii::app()->session['browselang'];
+            $aData['language'] = Yii::app()->request->getParam('browselang');
             $aData['languagelist'] = $languagelist = Survey::model()->findByPk($iSurveyId)->additionalLanguages;
             $aData['languagelist'][] = Survey::model()->findByPk($iSurveyId)->language;
             if (!in_array($aData['language'], $languagelist))
             {
-                $aData['language'] = Survey::model()->findByPk($iSurveyId)->language;
+                $aData['language'] = $thissurvey['language'];
             }
         }
         else
         {
-            $aData['language'] = Survey::model()->findByPk($iSurveyId)->language;
+            $aData['language'] = $thissurvey['language'];
         }
 
         $aData['qulanguage'] = Survey::model()->findByPk($iSurveyId)->language;
@@ -300,7 +295,7 @@ class responses extends Survey_Common_Action
          * it containts
          *             $fnames[] = array(<dbfieldname>, <some strange title>, <questiontext>, <group_id>, <questiontype>);
          */
-        if (Yii::app()->request->getPost('sql'))
+        if (Yii::app()->session['response_filter_'.$iSurveyID])
         {
             $aViewUrls[] = 'browseallfiltered_view';
         }
@@ -439,7 +434,17 @@ class responses extends Survey_Common_Action
          */
         if(hasSurveyPermission($iSurveyID,'responses','read'))
         {
-            if (Yii::app()->request->getPost('sql'))
+            if (Yii::app()->request->getPost('clearsqlfilter'))
+            {
+                unset(Yii::app()->session['response_filterview_'.$iSurveyID]);    
+                unset(Yii::app()->session['response_filter_'.$iSurveyID]);    
+            }
+            if(Yii::app()->request->getPost('sqlfilter')  && isset(Yii::app()->session['response_filterview_'.$iSurveyID]))
+            {
+                Yii::app()->session['response_filter_'.$iSurveyID]=Yii::app()->session['response_filterview_'.$iSurveyID];    
+            }
+            
+            if (Yii::app()->session['response_filter_'.$iSurveyID])
             {
                 $aViewUrls[] = 'browseallfiltered_view';
             }
@@ -512,6 +517,8 @@ class responses extends Survey_Common_Action
 
             $start = Yii::app()->request->getParam('start', 0);
             $limit = Yii::app()->request->getParam('limit', 50);
+            $order = Yii::app()->request->getParam('order', 'asc');
+
             if(!$limit){$limit=50;}
             $oCriteria = new CDbCriteria;
             //Create the query
@@ -535,16 +542,15 @@ class responses extends Survey_Common_Action
             {
                 $limit = $dtcount;
             }
-
             //NOW LETS SHOW THE DATA
-            if (Yii::app()->request->getPost('sql') && stripcslashes(Yii::app()->request->getPost('sql')) !== "" && Yii::app()->request->getPost('sql') != "NULL")
-                $oCriteria->addCondition(stripcslashes(Yii::app()->request->getPost('sql')));
+            if (isset(Yii::app()->session['response_filter_'.$iSurveyID]) && trim(Yii::app()->session['response_filter_'.$iSurveyID]) !== "")
+                $oCriteria->addCondition(Yii::app()->session['response_filter_'.$iSurveyID]);
             
             if (!is_null($tokenRequest)) {
                 $oCriteria->addCondition('t.token = ' . Yii::app()->db->quoteValue($tokenRequest));
             }
 
-            $oCriteria->order = 'id ' . (Yii::app()->request->getParam('order') == 'desc' ? 'desc' : 'asc');
+            $oCriteria->order = 'id ' . ($order == 'desc' ? 'desc' : 'asc');
             $oCriteria->offset = $start;
             $oCriteria->limit = $limit;
 
@@ -552,6 +558,11 @@ class responses extends Survey_Common_Action
 
             $dtcount2 = count($dtresult);
             $cells = $fncount + 1;
+            // Fix start if order is desc, only if actual start is 0
+            if($order == 'desc' && $start==0)
+            {
+                $start=$dtcount-count($dtresult);
+            }
 
             //CONTROL MENUBAR
             $last = $start - $limit;

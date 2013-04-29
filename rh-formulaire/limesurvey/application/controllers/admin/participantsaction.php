@@ -477,7 +477,7 @@ class participantsaction extends Survey_Common_Action
         // Deletes from participants only
         if ($selectoption == 'po')
         {
-            Participants::model()->deleteParticipant($iParticipantId);
+            Participants::model()->deleteParticipants($iParticipantId);
         }
         // Deletes from central and token table
         elseif ($selectoption == 'ptt')
@@ -605,10 +605,13 @@ class participantsaction extends Survey_Common_Action
         $aData->records = count($records);
         $aData->total = ceil($aData->records / 10);
         $i = 0;
-
         foreach ($records as $row)
         {
-            $surveyname = Surveys_languagesettings::model()->getSurveyNames($row['survey_id']);
+            $oSurvey=Survey::model()->with(array('languagesettings'=>array('condition'=>'surveyls_language=language')))->findByAttributes(array('sid' => $row['survey_id']));            
+            foreach($oSurvey->languagesettings as $oLanguageSetting)
+            {
+                $surveyname= $oLanguageSetting->surveyls_title;
+            }
             $surveylink = "";
             /* Check permissions of each survey before creating a link*/
             if (!hasSurveyPermission($row['survey_id'], 'tokens', 'read'))
@@ -618,7 +621,7 @@ class participantsaction extends Survey_Common_Action
             {
                 $surveylink = '<a href=' . Yii::app()->getController()->createUrl("/admin/tokens/sa/browse/surveyid/{$row['survey_id']}") . '>' . $row['survey_id'].'</a>';
             }
-            $aData->rows[$i]['cell'] = array($surveyname[0]['surveyls_title'], $surveylink, $row['token_id'], $row['date_created'], $row['date_invited'], $row['date_completed']);
+            $aData->rows[$i]['cell'] = array($surveyname, $surveylink, $row['token_id'], $row['date_created'], $row['date_invited'], $row['date_completed']);
             $i++;
         }
 
@@ -774,8 +777,7 @@ class participantsaction extends Survey_Common_Action
      */
     function getParticipantsResults_json()
     {
-        $searchcondition = Yii::app()->request->getQuery('search');
-        $searchcondition = urldecode($searchcondition);
+        $searchcondition = Yii::app()->request->getpost('searchcondition');
         $finalcondition = array();
         $condition = explode("||", $searchcondition);
         $search = Participants::model()->getParticipantsSearchMultipleCondition($condition);
@@ -833,9 +835,12 @@ class participantsaction extends Survey_Common_Action
                 // Super admin
                 $sCanEdit = "true";
             }
+            if (trim($row['ownername'])=='') {
+                $row['ownername']=$row['username'];   
+            }
             $aRowToAdd['cell'] = array($row['participant_id'], $sCanEdit, $row['firstname'], $row['lastname'], $row['email'], $row['blacklisted'], $row['survey'], $row['language'], $row['ownername']);
             $aRowToAdd['id'] = $row['participant_id'];
-            unset($row['participant_id'], $row['firstname'], $row['lastname'], $row['email'], $row['blacklisted'], $row['language'],$row['ownername'],$row['owner_uid'], $row['can_edit'], $row['survey']);
+            unset($row['participant_id'], $row['firstname'], $row['lastname'], $row['email'], $row['blacklisted'], $row['language'],$row['ownername'],$row['owner_uid'], $row['can_edit'], $row['survey'], $row['username']);
             foreach($row as $key=>$attvalue)
             {
               $aRowToAdd['cell'][] = $attvalue;
@@ -1084,15 +1089,27 @@ class participantsaction extends Survey_Common_Action
 
     function attributeMapCSV()
     {
-        $config['upload_path'] = './tmp/upload';
-        $config['allowed_types'] = 'text/x-csv|text/plain|application/octet-stream|csv';
-        $config['max_size'] = '1000';
 
         $clang = $this->getController()->lang;
-        $sFilePath = preg_replace('/\\\/', '/', Yii::app()->getConfig('tempdir')) . "/" . $_FILES['the_file']['name'];
-        $bMoveFileResult = @move_uploaded_file($_FILES['the_file']['tmp_name'], $sFilePath);
-        $errorinupload = '';
-        $filterblankemails = Yii::app()->request->getPost('filterbea');
+        $sRandomFileName=randomChars(20);
+        $sFilePath = Yii::app()->getConfig('tempdir') . DIRECTORY_SEPARATOR . $sRandomFileName;
+
+        $aPathinfo = pathinfo($_FILES['the_file']['name']);
+        $sExtension = $aPathinfo['extension'];
+        if (strtolower($sExtension)=='csv')
+        {
+            $bMoveFileResult = @move_uploaded_file($_FILES['the_file']['tmp_name'], $sFilePath);
+            $errorinupload = '';
+            $filterblankemails = Yii::app()->request->getPost('filterbea');
+        }
+        else
+        {
+            $templateData['error_msg'] = sprintf($clang->gT("This is not a .csv file."), Yii::app()->getConfig('tempdir'));
+            $errorinupload = array('error' => $this->upload->display_errors());
+            Yii::app()->session['summary'] = array('errorinupload' => $errorinupload);
+            $this->_renderWrappedTemplate('participants', array('participantsPanel', 'uploadSummary'));
+        }
+        
 
         if (!$bMoveFileResult)
         {
@@ -1127,7 +1144,7 @@ class participantsaction extends Survey_Common_Action
             $aData = array(
                 'attributes' => $attributes,
                 'firstline' => $selectedcsvfields,
-                'fullfilepath' => $sFilePath,
+                'fullfilepath' => $sRandomFileName,
                 'linecount' => $linecount - 1,
                 'filterbea' => $filterblankemails,
                 'participant_id_exists' => in_array('participant_id', $fieldlist)
@@ -1146,9 +1163,9 @@ class participantsaction extends Survey_Common_Action
         $seperator = Yii::app()->request->getPost('seperatorused');
         $newarray = Yii::app()->request->getPost('newarray');
         $mappedarray = Yii::app()->request->getPost('mappedarray');
-        $sFilePath = Yii::app()->request->getPost('fullfilepath');
         $filterblankemails = Yii::app()->request->getPost('filterbea');
         $overwrite = Yii::app()->request->getPost('overwrite');
+        $sFilePath = Yii::app()->getConfig('tempdir') . '/' . basename(Yii::app()->request->getPost('fullfilepath'));
         $errorinupload = "";
         $recordcount = 0;
         $mandatory = 0;
@@ -1211,7 +1228,7 @@ class participantsaction extends Survey_Common_Action
                 {
                     foreach ($mappedarray as $key => $value)
                     {
-                        array_push($allowedfieldnames, $value);
+                        array_push($allowedfieldnames, strtolower($value));
                     }
                 }
                 //For Attributes
@@ -1238,7 +1255,7 @@ class participantsaction extends Survey_Common_Action
                 {
                     $firstline[$index] = preg_replace("/(.*) <[^,]*>$/", "$1", $fieldname);
                     $fieldname = $firstline[$index];
-                    if (!in_array(strtolower($fieldname), $allowedfieldnames))
+                    if (!in_array(strtolower($fieldname), $allowedfieldnames) && !in_array($fieldname,$mappedarray))
                     {
                         $ignoredcolumns[] = $fieldname;
                     } else {
@@ -1365,7 +1382,7 @@ class participantsaction extends Survey_Common_Action
                             	//saving in this import
                             	if (in_array($key, $allowedfieldnames)) {
                                     foreach ($mappedarray as $attid => $attname) {
-                                        if ($attname == $key) {
+                                        if (strtolower($attname) == $key) {
                                             if (!empty($value)) {
                                                 $aData = array('participant_id' => $writearray['participant_id'],
                                                                'attribute_id' => $attid,
@@ -1482,7 +1499,7 @@ class participantsaction extends Survey_Common_Action
         $overwriteman = Yii::app()->request->getPost('overwriteman');
         $createautomap = Yii::app()->request->getPost('createautomap');
 
-        $response = Participants::model()->copyToCentral(Yii::app()->request->getPost('surveyid'), $newarr, $mapped, $overwriteauto, $overwriteman);
+        $response = Participants::model()->copyToCentral(Yii::app()->request->getPost('surveyid'), $newarr, $mapped, $overwriteauto, $overwriteman, $createautomap);
         $clang = $this->getController()->lang;
 
         printf($clang->gT("%s participants have been copied to the central participants table"), $response['success']);

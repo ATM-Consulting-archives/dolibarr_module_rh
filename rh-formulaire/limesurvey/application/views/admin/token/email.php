@@ -68,14 +68,15 @@
 
                     <ul>
                         <li><label for='from_<?php echo $language; ?>'><?php $clang->eT("From"); ?>:</label>
-                            <input type='text' size='50' id='from_<?php echo $language; ?>' name='from_<?php echo $language; ?>' value="<?php echo "{$thissurvey[$baselang]['adminname']} <{$thissurvey[$baselang]['adminemail']}>"; ?>" /></li>
-
+                            <input type='text' size='50' id='from_<?php echo $language; ?>' name='from_<?php echo $language; ?>' value="<?php echo htmlspecialchars($thissurvey[$baselang]['adminname'],ENT_QUOTES,'UTF-8')." <".htmlspecialchars($thissurvey[$baselang]['adminemail'],ENT_QUOTES,'UTF-8').">"; ?>" /></li>
                         <li><label for='subject_<?php echo $language; ?>'><?php $clang->eT("Subject"); ?>:</label>
                             <input type='text' size='83' id='subject_<?php echo $language; ?>' name='subject_<?php echo $language; ?>' value="<?php echo $subject; ?>" /></li>
 
                         <li><label for='message_<?php echo $language; ?>'><?php $clang->eT("Message"); ?>:</label>
+                            <div class="htmleditor">
                             <textarea name='message_<?php echo $language; ?>' id='message_<?php echo $language; ?>' rows='20' cols='80'><?php echo htmlspecialchars($textarea); ?></textarea>
                             <?php echo getEditor("email-inv", "message_$language", "[" . $clang->gT("Invitation email:", "js") . "](" . $language . ")", $surveyid, '', '', "tokens"); ?>
+                            </div>
                         </li>
                     </ul></div>
                 <?php } ?>

@@ -60,6 +60,249 @@ Thank you to everyone who helped with this new release!
 CHANGE LOG
 ------------------------------------------------------
 
+Changes from 2.00+ (build 130406) to 2.00+ (build 130423) Apr 23, 2013
+-Fixed issue: 5-point slider not working on all-in-one survey (Carsten Schmitz)
+-Fixed issue #7684: HTML entities visible in statistics graphs (Carsten Schmitz)
+-Fixed issue #7689: editing survey permissions gives errors (tpartner)
+-Fixed issue #7712: Some problems with statistics in pdf format (Carsten Schmitz)
+-Fixed issue #7726: Value for participant attribute could be "select one", or so it seems (Carsten Schmitz)
+-Fixed issue #7731: When "Showing filtered results" if you change number of records or any other data the filter is lost (Carsten Schmitz)
+-Fixed issue #7734: Quick statistics | Filter 'Submission date: Equals' does not work (Carsten Schmitz)
+-Fixed issue #7738: Security question cannot be answered correctly (Carsten Schmitz)
+-Fixed issue #7741: Order of label sets in label set picker (Carsten Schmitz)
+-Fixed issue #7742: Display "Manage survey administrators" page broken (Carsten Schmitz)
+-Fixed issue #7744: False confirmation of adding subquestions when running into database limit (Carsten Schmitz)
+-Fixed issue #7747: Inserting new answer option on a non-default language tab causes a JavaScript error (Carsten Schmitz)
+-Fixed issue #7748: Javascript comment hick-ups (Carsten Schmitz)
+-Fixed issue #7751: Bounce processing dont work if port is set server (thanks to sandrocasali) (Denis Chenu)
+-Fixed issue #7754: Retrieving list of participants with additional token information (trougakoss)
+-Fixed issue #7759: Sending email invitation takes lot of memory when having alot of tokens (Carsten Schmitz)
+-Fixed issue #7764: Missing translation (Carsten Schmitz)
+-Fixed issue #7764: Missing translation (Menno Dekker)
+-Fixed issue #7777: Printable Version showing blank page (Carsten Schmitz)
+-Fixed issue: Extreme memory usage on database backup (Carsten Schmitz)
+-Fixed issue: Extreme memory usage when exporting results and having alot of tokens (Carsten Schmitz)
+-Fixed issue: Notice in debug mode (Carsten Schmitz)
+-Fixed issue: Surveys not ordered by name (Carsten Schmitz)
+-New Feature : export_timeline function in remotecontrol (Spiros Trougakos)
+-New feature: Spanish (Argentinia) informal translation (Carsten Schmitz)
+-New feature: Spanish (Argentinia) translation (Carsten Schmitz)
+#Updated translation: Catalan by valdomir
+#Updated translation: Czech by slansky
+#Updated translation: Dutch by Han, Nickko
+#Updated translation: Dutch (Informal) by Han, Nickko
+#Updated translation: French (France) by DenisChenu
+#Updated translation: German by c_schmitz
+#Updated translation: German (Informal) by c_schmitz
+#Updated translation: Greek by kiolalis
+#Updated translation: Hebrew by tabakman
+#Updated translation: Hindi by ajparag
+#Updated translation: Korean by cnsla
+#Updated translation: Norwegian (Bokmal) by peterhol, pmonstad
+#Updated translation: Norwegian (Nynorsk) by pmonstad
+#Updated translation: Polish by elisa
+#Updated translation: Portuguese (Portugal) by nostradumusfdx, algarvio, samarta, hmlc, jginga
+#Updated translation: Russian by vipgroup
+#Updated translation: Slovak by rundmg
+#Updated translation: Slovenian by doklb
+#Updated translation: Spanish (Argentina) by pomiagos
+#Updated translation: Spanish (Spain) by valdomir, jaimealvarezv
+#Updated translation: Swedish by Mazi
+#Updated translation: Turkish by kayazeren
+#Updated translation: Ukrainian by myksyd
+
+
+Changes from 2.00+ (build 130325) to 2.00+ (build 130406) Apr 06, 2013
+-Fixed issue #7694: When clicking on showing last 50 answers first 50 are shown (Denis Chenu)
+-Fixed issue #7698: EM's is_int() function causes problems when validating subquestions (Denis Chenu)
+-Fixed issue #7718: Cancelling the delete survey operation leads to error (Carsten Schmitz)
+-Fixed issue #7720: Copying a survey results in the new survey with same name of the original survey (Carsten Schmitz)
+-Fixed issue: Template RTL compatibility (Tal Tabakman)
+#Updated translation: French (France) by DenisChenu
+#Updated translation: German by c_schmitz
+#Updated translation: Italian (Informal) by filipguttman
+#Updated translation: Latvian by marcic
+#Updated translation: Polish by elisa
+#Updated translation: Portuguese (Brazil) by amcorreia, santanabeto, mauriciofurtado
+#Updated translation: Portuguese (Portugal) by algarvio, nostradumusfdx, samarta
+#Updated translation: Romanian by filipguttman
+#Updated translation: Russian by vipgroup
+#Updated translation: Slovenian by kaysersoze
+#Updated translation: Ukrainian by myksyd
+
+
+
+Changes from 2.00+ (build 130317) to 2.00+ (build 130325) Mar 25, 2013
+-New feature: Extra class for multi column: colstyle-ul, colstyle-table and colstyle-css with display columns settings (Denis Chenu)
+-Fixed issue #7261: Internet Explorer: short free text not accessible after file upload (Denis Chenu)
+-Fixed issue #7675: Last check time improperly set after completion of ComfortUpdate (Carsten Schmitz)
+-Fixed issue #7681: Trying to filter statistics by an array question choice gives error (Carsten Schmitz)
+-Fixed issue #7684: HTML entities visible in statistics graphs (Carsten Schmitz)
+-Fixed issue #7685: Mulitple choice question type doesn't display correctly when 'display columns' with IE8 or little screen (Denis Chenu)
+-Fixed issue #7690: Always converts resource links when copying survey (Carsten Schmitz)
+-Fixed issue #7695: Error importing a label set (Carsten Schmitz)
+-Fixed issue: Error when tryin to import a sub-/question with a blank title field (Carsten Schmitz)
+-Fixed issue: Security question is shown when previewing a question group or question (Carsten Schmitz)
+#Updated translation: Chinese (Simplified) by yanglaw
+#Updated translation: Chinese (Taiwan) (Traditional) by katy50306
+#Updated translation: Czech by slansky
+#Updated translation: Dutch by Han
+#Updated translation: Dutch (Informal) by Han
+#Updated translation: Estonian by klaster
+#Updated translation: French (France) by DenisChenu
+#Updated translation: Greek by kiolalis
+#Updated translation: Hindi by ajparag
+#Updated translation: Latvian by vipgroup
+#Updated translation: Lithuanian by apklausos, simasj
+#Updated translation: Malay by asklinux
+#Updated translation: Russian by Dangar, vipgroup, JNNSoftSign
+#Updated translation: Slovenian by kaysersoze
+#Updated translation: Ukrainian by TatyAly, myksyd, JNNSoftSign
+
+Changes from 2.00+ (build 130311) to 2.00+ (build 130317) Mar 17, 2013
+-New feature: Use SGQA identifier to prefill some answer with URL in preview mode (Denis Chenu)
+-Fixed issue #7193: A shared user can definitively delete a shared participant (Carsten Schmitz)
+-Fixed issue #7195: Impossible to add participants from survey to CPDB (Carsten Schmitz)
+-Fixed issue #7315: Validation regex not being checked / not working (logic test ok) in preview mode (Denis Chenu)
+-Fixed issue #7633: SURVEYURL not being replaced in confirmation email (ravindrakhokharia)
+-Fixed issue #7643: Answer code is not set in comment field headings when exporting responses (Carsten Schmitz)
+-Fixed issue #7654: Better handling of numbers in Excel export - patch by slansky (Carsten Schmitz)
+-Fixed issue #7656: Can not use coreReplacements var in Relevance (Denis Chenu)
+-Fixed issue #7658: Group preview expressions not working right after import (Carsten Schmitz)
+-Fixed issue #7659: OptOut/OptIn page does not load the related template (Carsten Schmitz)
+-Fixed issue #7660: Misplaced HTML editor when sending invitations (Denis Chenu)
+-Fixed issue #7661: Capital 'R' missing in certain title elements in administration (Carsten Schmitz)
+-Fixed issue #7662: Obsolete 'close window' link in clear logo completed template (Carsten Schmitz)
+-Fixed issue #7666: Incorrect date value in saved_control table. (Carsten Schmitz)
+-Fixed issue #7670: Unable to browse responses in other language than default (Carsten Schmitz)
+-Fixed issue #7673: When survey is deactivated during previewing a survey a system error message is shown for survey admins (Carsten Schmitz)
+-Fixed issue: Can not test group if token exist or if survey is not started (Denis Chenu)
+-Fixed issue: Choice heigths are set too low with conditional ranking question (Denis Chenu)
+-Fixed issue: CPDB .csv import not working (Carsten Schmitz)
+-Fixed issue: Wrong redirect after update check (Carsten Schmitz)
+#Updated translation: Catalan by valdomir
+#Updated translation: Czech by slansky
+#Updated translation: French (France) by DenisChenu
+#Updated translation: German by c_schmitz
+#Updated translation: German (Informal) by c_schmitz
+#Updated translation: Greek by kiolalis
+#Updated translation: Hindi by ajparag
+#Updated translation: Italian by lfanfoni, riboeri
+#Updated translation: Kurdish (Sorani) by Ayeneh
+#Updated translation: Polish by elisa
+#Updated translation: Portuguese (Portugal) by samarta
+#Updated translation: Romanian by filipguttman
+#Updated translation: Russian by vipgroup
+#Updated translation: Serbian by MilaVeljovic
+#Updated translation: Spanish (Spain) by valdomir
+#Updated translation: Swedish by gogl
+#Updated translation: Turkish by kayazeren
+
+
+Changes from 2.00+ (build 130305) to 2.00+ (build 130311) Mar 11, 2013
+-Fixed issue #6509: Central Participant Database: Attributes mapping is difficult with high number of attributes (UI) (tpartner)
+-Fixed issue #7010: Line breaks not properly handled in response export to CSV (Carsten Schmitz)
+-Fixed issue #7302: Entering a number with a decimal causes the entry to be reset to zero (Carsten Schmitz)
+-Fixed issue #7309: Placeholders referring to dual scale question do not work (Denis Chenu)
+-Fixed issue #7312: Cannot switch between email template tabs (Carsten Schmitz)
+-Fixed issue #7329: Login error notice: langcode param not defined if authentication by webserver is activated (Carsten Schmitz)
+-Fixed issue #7633: Importing CSV of respondents presents attribute-mapping interface, but does not map contents to attributes (Carsten Schmitz)
+-Fixed issue #7638: Crash when viewing printable version (Carsten Schmitz)
+-Fixed issue #7640: Group order not properly set when importing question groups by RemoteControl (Carsten Schmitz)
+-Fixed issue #7644: {TEMPLATEURL} cannot be used in predefined labels inside " (Denis Chenu)
+-Fixed issue #7646: Dual Matrix - function of the dropdown separator advanced question setting is unclear (Carsten Schmitz)
+-Fixed issue #7648: Blank screen after user registers for a survey (Carsten Schmitz)
+-Fixed issue #7652: User groups permissions shows Access denied (Carsten Schmitz)
+-Fixed issue: Deletion of participants in CPDB  fails if you try delete from related token tables or responses (Carsten Schmitz)
+-Fixed issue: Security problems with uploaded files in administration (Carsten Schmitz)
+-Fixed issue: When sending invitation the sender name/email was not properly escaped (Carsten Schmitz)
+#Updated translation: Catalan by valdomir
+#Updated translation: Czech by slansky
+#Updated translation: French (France) by DenisChenu
+#Updated translation: German by c_schmitz
+#Updated translation: German (Informal) by c_schmitz
+#Updated translation: Greek by kiolalis
+#Updated translation: Latvian by marcic
+#Updated translation: Mongolian by erka
+#Updated translation: Norwegian (BokmÃ¥l) by pmonstad
+#Updated translation: Russian by vipgroup
+#Updated translation: Vietnamese by rinodung
+
+
+Changes from 2.00+ (build 130226) to 2.00+ (build 130305) Mar 5, 2013
+-Fixed issue #7177: Search on custom attribute field doesn't work if searched text is a number (Carsten Schmitz)
+-Fixed issue #7299: Unable to open printable survey view (Carsten Schmitz)
+-Fixed issue #7328: Quotas can not be viewed / processed in an active poll (Carsten Schmitz)
+-Fixed issue #7330: Invitation CSV import no longer takes in account extra attributes as duplication criteria (Carsten Schmitz)
+-Fixed issue #7331: When survey language is changed in welcome screen then the token key is not properly saved along the response (Carsten Schmitz)
+-Fixed issue #7335: SQL error (column ID ambiguous) when exporting a single response (Carsten Schmitz)
+-Fixed issue #7336: "Printable version" not available if the user has view/read permission in the survey (Carsten Schmitz)
+-Fixed issue #7337: RemoteControl2 API add_participant doesn't set 'emailstatus' to OK by default (Carsten Schmitz)
+-Fixed issue #7616: Missing translations in Share panel table (Carsten Schmitz)
+-Fixed issue #7617: Error in label set resource tab (Carsten Schmitz)
+-Fixed issue #7619: Wrong native name for Slovenian translation (Carsten Schmitz)
+-Fixed issue #7620: Problem validating accents with regular expression validation (Carsten Schmitz)
+-Fixed issue #7621: Not possible to use passthrough variables in quota URL (Carsten Schmitz)
+-Fixed issue #7622: Testing survey crashes when moving to group with multiple choice question (Carsten Schmitz)
+-Fixed issue #7625: Cannot include response and invitation infomation in confirmation message (Carsten Schmitz)
+-Fixed issue #7628: After inserting an response entry using data entry the link to view the record links back to response summary instead (Carsten Schmitz)
+-Fixed issue #7629: Fatal error on unexpected key/data when using RPC function add_response (Carsten Schmitz)
+-Fixed issue: No owner shown in central participants database if owner full name not set (Carsten Schmitz)
+#Updated translation: Bulgarian by tnovakova
+#Updated translation: Catalan by valdomir
+#Updated translation: German by c_schmitz
+#Updated translation: German (Informal) by c_schmitz
+#Updated translation: Greek by kiolalis
+#Updated translation: Hungarian by debugz
+#Updated translation: Japanese by nomoto
+#Updated translation: Latvian by vipgroup, marcic
+#Updated translation: Polish by elisa
+#Updated translation: Portuguese (Portugal) by samarta
+#Updated translation: Romanian by filipguttman
+#Updated translation: Russian by vipgroup
+
+
+Changes from 2.00+ (build 130219) to 2.00+ (build 130226) Feb 26, 2013
+-Fixed issue #4638: Array Dual Scale - Dual Dropdown - id contains # (Denis Chenu)
+-Fixed issue #6504: If admin language is not the same as survey language then survey names won't be shown for assigned surveys in central participants database (Carsten Schmitz)
+-Fixed issue #6946: "Quick-add" fail to parse expressions with ' " ' (Damien)
+-Fixed issue #6957: Error when using too many parameters in a search in central participant database (Carsten Schmitz)
+-Fixed issue #7049: Webserver authentication not working when external access control is used (Carsten Schmitz)
+-Fixed issue #7091: Missing translations  in Share panel (Carsten Schmitz)
+-Fixed issue #7175: Problems with attributes not being copied when copying from tokens to participants database (Carsten Schmitz)
+-Fixed issue #7191: Survey links not deleted when deactivating a survey (Carsten Schmitz)
+-Fixed issue #7193: A shared user can definitively delete a shared participant (Carsten Schmitz)
+-Fixed issue #7247: Token related error after submitting a survey (Carsten Schmitz)
+-Fixed issue #7299: Unable to open printable survey view (Carsten Schmitz)
+-Fixed issue #7309: Placeholders referring to dual scale question do not work (Denis Chenu)
+-Fixed issue #7313: Default value for date/time questions don't include time (Carsten Schmitz)
+-Fixed issue #7314: Print answers displays custom html code in answers column (Carsten Schmitz)
+-Fixed issue #7316: Unable to import .lss file (Carsten Schmitz)
+-Fixed issue #7318: Multiple Numerical - Subquestion validation - Input field and Tip in different way (Denis Chenu)
+-Fixed issue #7319: Incorrect native name for Catalan translation (Carsten Schmitz)
+-Fixed issue #7321: Internal server error when taking survey and using list(dropdown) question type (Carsten Schmitz)
+-Fixed issue #7322: Can't use negative values in assessment rules (Carsten Schmitz)
+-Fixed issue #7332: Unnecessary line break after inserting of completed.pstpl into final survey page (Sam Mousa)
+-Fixed issue: Notice in QueXML export when there is invalid HTML in question text (Carsten Schmitz)
+-Fixed issue: Survey timings not imported when importing survey archive (.lsa) (Carsten Schmitz)
+#Updated translation: Bulgarian by tnovakova
+#Updated translation: Catalan by valdomir
+#Updated translation: Chinese (Simplified) by yanglaw
+#Updated translation: Chinese (Taiwan) (Traditional) by katy50306
+#Updated translation: Czech by slansky
+#Updated translation: Danish by nielsb
+#Updated translation: Dutch by Han
+#Updated translation: Dutch (Informal) by Han
+#Updated translation: German by c_schmitz
+#Updated translation: German (Informal) by c_schmitz
+#Updated translation: Greek by kiolalis
+#Updated translation: Lithuanian by apklausos, simasj
+#Updated translation: Mongolian by erka
+#Updated translation: Polish by elisa
+#Updated translation: Portuguese (Portugal) by samarta
+#Updated translation: Romanian by filipguttman
+#Updated translation: Russian by vipgroup, Dominik
+#Updated translation: Turkish by kayazeren
 
 Changes from 2.00+ (build 130213) to 2.00+ (build 130219) Feb 19, 2013
 -Fixed issue #7049: Webserver authentication not working when external access control is used (Carsten Schmitz)

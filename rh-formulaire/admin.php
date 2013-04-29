@@ -1,19 +1,163 @@
 <?php
-
-
 require('config.php');
+require(DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php');
+require('class/groupeformulaire.class.php');
+//require(DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php');
 
 llxHeader();
-$url = './limesurvey/index.php/admin/';
+
+global $db;
+$ATMdb = new Tdb;
+$errdatefin = FALSE;
+$errdatedeb = FALSE;
+
+if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'add'){
+	//traitement de l'ajou
+	if(isset($_POST['datedeb']) && !empty($_POST['datedeb']) && array_sum(sscanf($_POST['datedeb'], "%d/%d/%d")) != 0)
+		$datedeb= $_POST['datedeb'];
+	else
+		$errdatedeb = TRUE;	
+	
+	if(isset($_POST['datefin']) && !empty($_POST['datefin']) && array_sum(sscanf($_POST['datefin'], "%d/%d/%d")) != 0)
+		$datefin= $_POST['datefin'];
+	else
+		$errdatefin = TRUE;
+	
+	if($errdatedeb == TRUE || $errdatefin == TRUE) 
+		echo dol_htmloutput_mesg('Les dates entrées ne sont pas d\'un type valide.', '', 'error', 0);
+	else{
+		$TGroupeForm = new TGroupeFormulaire();
+		
+		$TGroupeForm->fk_usergroup = $_POST['groupe'];
+		$TGroupeForm->fk_survey = $_POST['survey'];
+		$TGroupeForm->date_deb = strtotime($datedeb);
+		$TGroupeForm->date_fin = strtotime($datefin);
+		
+		$TGroupeForm->save($ATMdb);
+		
+		echo dol_htmloutput_mesg('Les droits ont été enregistré.', '', 'ok', 0);
+	}
+}
+elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
+{
+	$TGroupeForm = new TGroupeFormulaire();
+	$TGroupeForm->load($ATMdb,$_GET['id']);
+	$TGroupeForm->delete($ATMdb);
+}
+
 ?>
+
 <h1>Administration des formulaires</h1>
-
-
-<iframe frameborder="0" id="limeSurveyFrame" name="limeSurveyFrame" src="<?=$url ?>" width="100%" height="800" onload="this.height=this.contentWindow.document.body.scrollHeight+50;" >
-
-</iframe>
-
-
+<hr>
+<h3>Gestion des droits</h3>
+<form action="" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="action" id="action" value="add" />
+	<table>
+		<tr height="50px;">
+			<td>Groupe : </td>
+			<td>
+				<select name="groupe" id="groupe">
+					<?php
+					$ATMdb = new Tdb;
+					$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."usergroup";
+					$ATMdb->Execute($sql);
+					
+					while($ATMdb->Get_line()){
+						$group = new UserGroup($db);
+						$group->fetch($ATMdb->Get_field('rowid'));
+						?>
+						<option value="<?=$group->id;?>"><?=$group->name;?></option>
+						<?php
+					}
+					?>
+				</select>
+			</td>
+			<td>Formulaire : </td>
+			<td>
+				<select name="survey" id="survey">
+					<?php
+					$ATMdb = new Tdb;
+					$sql = "SELECT s.sid AS id, sl.surveyls_title AS title
+							FROM lime_surveys AS s
+							LEFT JOIN lime_surveys_languagesettings AS sl ON sl.surveyls_survey_id = s.sid";
+					$ATMdb->Execute($sql);
+					
+					while($ATMdb->Get_line()){
+						?>
+						<option value="<?=$ATMdb->Get_field('id');?>"><?=$ATMdb->Get_field('title')?></option>
+						<?php
+					}
+					?>
+				</select>
+			</td>
+		</tr>
+		<tr height="50px;">
+			<td>Du : </td>
+			<td><input type="text" name="datedeb" onclick="if(this.value=='jj/mm/aaaa')this.value='';" onblur="if(this.value=='')this.value='jj/mm/aaaa';" id="datedeb" value="<?php echo (isset($_POST['datedeb']) && !empty($_POST['datedeb']) && $errdatedeb) ? $_POST['datedeb'] : "jj/mm/aaaa"; ?>" /></td>
+			<td>Au : </td>
+			<td><input type="text" name="datefin" onclick="if(this.value=='jj/mm/aaaa')this.value='';" onblur="if(this.value=='')this.value='jj/mm/aaaa';" id="datefin" value="<?php echo (isset($_POST['datefin']) && !empty($_POST['datefin']) && $errdatefin) ? $_POST['datefin'] : "jj/mm/aaaa"; ?>" /></td>
+		</tr>
+		<tr height="20px;">
+		</tr>
+		<tr>
+			<td colspan="4" align="center">
+				<input type="submit" value="Ajouter un droit d'accès" />
+			</td>
+		</tr>
+	</table>
+</form>
+<br>
+<hr>
+<h3>Liste des droits</h3>
+<br>
 <?php
+$Tlistedroit = new TGroupeFormulaire;
 
+$r = new TSSRenderControler($Tlistedroit);
+$sql = "SELECT fg.rowid AS 'ID', sl.surveyls_title AS title, gr.nom AS groupe, fg.date_deb AS datedeb, fg.date_fin AS datefin, '' as 'Supprimer'
+		FROM ".MAIN_DB_PREFIX."rh_formulaire_groupe AS fg
+			LEFT JOIN lime_surveys_languagesettings AS sl ON sl.surveyls_survey_id = fg.fk_survey
+			LEFT JOIN ".MAIN_DB_PREFIX."usergroup AS gr ON gr.rowid = fg.fk_usergroup";
+
+$TOrder = array('datedeb'=>'ASC');
+if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+			
+$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
+$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
+
+$r->liste($ATMdb, $sql, array(
+	'limit'=>array(
+		'page'=>$page
+		,'nbLine'=>'30'
+	)
+	,'type'=>array(
+		'datedeb' => 'date',
+		'datefin' => 'date'
+	)
+	,'liste'=>array(
+		'picto_precedent'=>img_picto('','back.png', '', 0)
+		,'picto_suivant'=>img_picto('','next.png', '', 0)
+		,'noheader'=> (int)isset($_REQUEST['socid'])
+		,'messageNothing'=>"Auncuns droits configuré"
+		,'order_down'=>img_picto('','1downarrow.png', '', 0)
+		,'order_up'=>img_picto('','1uparrow.png', '', 0)
+		,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+	)
+	,'title'=>array(
+		'datedeb'=>'Date début'
+		,'datefin' => 'Date fin'
+		,'title' => 'Formulaire'
+		,'groupe' => 'Groupe'
+	)
+	,'search'=>array(
+	)
+	,'link'=>array(
+			'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="../img/delete.png"></a>'
+		)
+	,'orderBy'=>$TOrder
+	
+));
+$form->end();
 ?>
+<br>
