@@ -31,9 +31,17 @@
 
 	<!-- entête du tableau -->
 <table class="border" style="width:100%">
+	[onshow;block=begin;when [view.mode]=='new']
+		<tr>
+			<td>Type</td>
+			<td>[ressourceNew.typeCombo;strconv=no;protect=no]</td>
+			<td>[ressourceNew.validerType;strconv=no;protect=no]</td>
+		</tr>
+	[onshow;block=end]
+	[onshow;block=begin;when [view.mode]!='new']
 	<tr>
 		<td>Type</td>
-		<td>[ressource.type;strconv=no;protect=no]</td>
+		<td>[ressource.type;strconv=no;protect=no]</td>[ressource.typehidden;strconv=no;protect=no]
 	</tr>
 	
 	<tr>
@@ -244,4 +252,5 @@
 			[onshow;block=end]
 		[onshow;block=end]
 
+	[onshow;block=end]
 </div>
