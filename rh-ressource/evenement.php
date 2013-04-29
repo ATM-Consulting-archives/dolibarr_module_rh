@@ -95,9 +95,7 @@
 function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	global $conf,$user;	
 	llxHeader('','Liste des emprunts');
-	?><div class="fiche"><?	
-	    
-	 
+	
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource');
 	
 	printLibelle($ressource);
@@ -206,7 +204,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	));
 	
 	if($user->rights->ressource->ressource->manageEvents){
-	?><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
+	?></div><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
 	}
 	?>
 	<div style="clear:both"></div></div><?

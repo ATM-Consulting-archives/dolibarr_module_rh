@@ -1,4 +1,4 @@
- <div class="fiche"> <!-- begin div class="fiche" -->
+
 
 [onshow;block=begin;when [ressource.fiche]==true]
 	[view.head;strconv=no;protect=no]
@@ -17,7 +17,15 @@
 
 
 <h1>Agenda des ressources</h1>
+[ressource.ficheHidden;strconv=no;protect=no][ressource.idHidden;strconv=no;protect=no]
 
+[onshow;block=begin;when [ressource.fiche]==true]
+	Filtre sur le type d'événément : 
+	[ressource.typeEven;strconv=no;protect=no]
+	[ressource.btValider;strconv=no;protect=no]
+	<br><br>
+[onshow;block=end]
+		
 [onshow;block=begin;when [ressource.fiche]!=true]  
 	 
 		Filtre :  
@@ -48,9 +56,9 @@ $('#type').change(function(){
 			url: 'script/loadRessources.php?type='+$('#type option:selected').val()
 		}).done(function(data) {
 			liste = JSON.parse(data);
-			$("#id").empty(); // remove old options
+			$("#idCombo").empty(); // remove old options
 			$.each(liste, function(key, value) {
-			  $("#id").append($("<option></option>")
+			  $("#idCombo").append($("<option></option>")
 			     .attr("value", key).text(value));
 			});	
 		});

@@ -1,9 +1,6 @@
-<?php 	llxHeader('', 'Liste des ressources', '', '', 0, 0, array('../js/jquery.jOrgChart.js'));
-?>
 [onshow;block=begin;when [view.mode]=='view']
 
         
-                <div class="fiche"> <!-- begin div class="fiche" -->
                 [view.head;strconv=no]
                 
                         
@@ -185,7 +182,7 @@
 </script>
 
 
-
+</div>
 [onshow;block=begin;when [view.userRight]==1]
 <div class="tabsAction" style="text-align:center;" >
 		[onshow;block=begin;when [view.mode]=='edit']
@@ -259,4 +256,4 @@
 		[onshow;block=end]
 
 	[onshow;block=end]
-</div>
+
