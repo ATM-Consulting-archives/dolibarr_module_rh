@@ -35,11 +35,11 @@ class ActionsAbsence
 		acquisAncienneteN, acquisHorsPeriodeN, anneeN, acquisExerciceNM1, acquisAncienneteNM1, acquisHorsPeriodeNM1, reportCongesNM1, congesPrisNM1
 		,anneeNM1, rttPris, rttTypeAcquisition, rttAcquisMensuelInit, rttAcquisAnnuelCumuleInit, rttAcquisAnnuelNonCumuleInit
 		,rttAcquisMensuel, rttAcquisAnnuelCumule, rttAcquisAnnuelNonCumule, rttannee, nombreCongesAcquisMensuel, date_congesCloture, date_rttCloture
-		,rttAcquisMensuelTotal, dureeN, congesResteNM1, dureeNM1) 
+		,rttAcquisMensuelTotal, dureeN, congesResteNM1, dureeNM1, rttMetier) 
 		VALUES('".$parameters['idUser']."', '" .$parameters['dateC']."','".$parameters['conf']."','".$parameters['idUser']."','6', '1',
 		 '0', '".$annee."', '25', '1', '0', '0', '0','".$anneePrec."', '0', 'Annuel', '0', '5', '7', '0', '5', '7', '".$annee."', ".$congesAcquisMensuelInit.", 
 		 '".$date_congesClotureInit."', '".$date_rttClotureInit."' 
-		 ,'0', '0', '0', '0')";
+		 ,'0', '0', '0', '0', 'cadre')";
 		$db->query($sqlcompteur);
 		
 		$sqledt="INSERT INTO  ".MAIN_DB_PREFIX."rh_absence_emploitemps (rowid, date_cre, entity, fk_user,

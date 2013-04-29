@@ -21,7 +21,6 @@
 	$tempType->save($ATMdb);
 	
 	$tempField = new TRH_Ressource_field;
-	//$tempField->chargement($libelle, $code, $type, $obligatoire, $ordre, $options, $supprimable, $fk_rh_ressource_type)
 	$tempField->chargement($ATMdb, 'Immatriculation', 'immatriculation','chaine', 0, 0, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Marque', 'marqueVoit', 'chaine',0, 1, '', 1, $tempType->rowid);
@@ -40,7 +39,7 @@
 	
 //CARTE TOTAL
 	$tempType = new TRH_Ressource_type;
-	$tempType->chargement('Carte Total', 'cartetotal', 1, 'Péage;Plein d\'essence', 'peage;plein');
+	$tempType->chargement('Carte Total', 'cartetotal', 1, 'Péage;Plein d\'essence', 'peage;pleindessence');
 	$tempType->save($ATMdb);
 	
 	$tempField = new TRH_Ressource_field;

@@ -167,70 +167,63 @@ class modAbsence extends DolibarrModules
 		
 		$this->rights[$r][0] = 7101;
 		$this->rights[$r][1] = 'Valider ou refuser une demande de congés';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'valideurConges';
 		$r++;
 		
 		$this->rights[$r][0] = 7102;
 		$this->rights[$r][1] = 'Visualiser le compteur de congés d\'un collaborateur';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'visualiserCompteur';
 		$r++;
 		
 		$this->rights[$r][0] = 7103;
 		$this->rights[$r][1] = 'Modifier le compteur de congés d\'un collaborateur';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierCompteur';
 		$r++;
 		
 		$this->rights[$r][0] = 7104;
 		$this->rights[$r][1] = 'Modifier les paramètres globaux des congés';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierParamGlobalConges';
 		$r++;
 		
 		$this->rights[$r][0] = 7105;
 		$this->rights[$r][1] = 'Ajouter/Supprimer des jours non travaillés';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'ajoutJourOff';
 		$r++;
 		
 		$this->rights[$r][0] = 7106;
 		$this->rights[$r][1] = 'Modifier l\'emploi du temps d\'un collaborateur';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierEdt';
 		$r++;
 		
 		$this->rights[$r][0] = 7107;
 		$this->rights[$r][1] = 'Modifier son emploi du temps';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierSonEdt';
 		$r++;
 		
 		$this->rights[$r][0] = 7108;
-		$this->rights[$r][1] = 'Voir les absences de tous les collaborateurs';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][1] = 'Voir toutes les absences des collaborateurs';
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirToutesAbsences';
 		$r++;
 		
-		$this->rights[$r][0] = 7109;
-		$this->rights[$r][1] = 'Notifier une absence comme étant Enregistrée dans la paie';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'myactions';
-        $this->rights[$r][5] = 'enregistrerPaieAbsences';
-		$r++;
-		
 		$this->rights[$r][0] = 7110;
 		$this->rights[$r][1] = 'Rajouter des règles sur les demandes d\'absences';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'rajouterRegle';
 		$r++;
@@ -328,6 +321,21 @@ class modAbsence extends DolibarrModules
 					'user'=> 2
         );
 		
+		$r++;
+		$this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('Liste à valider'),
+		        	'mainmenu'=> '',
+		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/absence/absence.php?action=listeValidation',
+					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 103,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '$user->rights->absence->myactions->valideurConges',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
 			$r++;
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu

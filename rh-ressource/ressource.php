@@ -150,14 +150,14 @@ function _liste(&$ATMdb, &$ressource) {
 		$sql.=", '' as 'Supprimer'";
 	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r";
-	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON r.fk_rh_ressource_type=t.rowid";
+			//LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON r.fk_rh_ressource_type=t.rowid";
 	if(!$user->rights->ressource->ressource->viewRessource){
 		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource)";
 	}
 	$sql.=" WHERE r.entity=".$conf->entity;
 	if(!$user->rights->ressource->ressource->viewRessource){
-		$sql.=" AND e.type ='emprunt'";
-		$sql.=" AND e.fk_user=".$user->id;
+		$sql.=" AND e.type ='emprunt' 
+				AND e.fk_user=".$user->id;
 	}
 		
 	$TOrder = array('DateCre'=>'ASC');
@@ -193,7 +193,6 @@ function _liste(&$ATMdb, &$ressource) {
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
-			
 		)
 		,'title'=>array(
 			'libelle'=>'Libellé'
@@ -202,13 +201,14 @@ function _liste(&$ATMdb, &$ressource) {
 			
 			
 		)
-		,'search'=>array(
-			'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
-			,'numId'=>true
-			,'libelle'=>true
-			,'Statut'=>array('recherche'=>array('Libre','Attribuée', 'Réservée'))
-			
-		)
+		,'search'=>($user->rights->ressource->ressource->searchRessource) ? 		
+			array(
+				'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
+				,'numId'=>true
+				,'libelle'=>true
+				//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
+			)
+			: array()
 		,'orderBy'=>$TOrder
 		
 	));
@@ -237,11 +237,11 @@ function getStatut($id, $jour){
 		//echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
 		if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
 			&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
-				return 'Attribuée à '.$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name');
+				return 'Attribuée à '.htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 				break;
 		}
 		if (date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) >= $jour ){
-				$return='Réservée à '.$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name');
+				$return='Réservée à '.htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 				break;
 			}
 	}
@@ -367,8 +367,8 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
 				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
-				,'date_vente'=>(empty($ressource->date_vente) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' , 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
-				,'date_garantie'=>(empty($ressource->date_garantie) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
+				,'date_vente'=>(empty($ressource->date_vente) || ($ressource->date_vente<=0) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' , 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
+				,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TAgence,$ressource->fk_proprietaire)
 			)
 			,'fk_ressource'=>array(

@@ -30,22 +30,53 @@
 	$ressource=new TRH_ressource;
 	$ressource->load($ATMdb, $_REQUEST['id']);
 	
-	$type = isset($_REQUEST['type']) ? $_REQUEST['type'] : 1;
+	$fiche = isset($_REQUEST['fiche']) ? $_REQUEST['fiche'] : false;
+	$id = isset($_REQUEST['id']) ? $_REQUEST['id'] : 0;
+	$type = isset($_REQUEST['type']) ? $_REQUEST['type'] : 0;
+	$fk_user = isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : 0;
+	$typeEven = isset($_REQUEST['typeEven']) ? $_REQUEST['typeEven'] : null ;
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
 	echo $form->hidden('action', 'afficher');
-	echo $form->hidden('id',$ressource->getId());
+	//echo $form->hidden('id',$ressource->getId());
+	//echo 'Type : '.$type.' id : '.$id.' user : '.$fk_user.' even : '.$typeEven.'<br>';
+	$url = ($id>0 ? 'id='.$id : '').($type>0 ? '&type='.$type : '' ).($fk_user>0 ? '&fk_user='.$fk_user : '' ).($typeEven ? '&typeEven='.$typeEven : '' );
 	
+	//LISTE DE USERS
+	$TUser = array('');
+	$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+	$ATMdb->Execute($sqlReq);
+	while($ATMdb->Get_line()) {
+		$TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+		}
 	
+	$TRessource = array('');
+	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity=".$conf->entity;
+	if ($type>0){$sqlReq .= " AND fk_rh_ressource_type = ".$type;}
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle').' '.$ATMdb->Get_field('numId');
+			}
+	
+	$TType = array_merge(array(''), $ressource->TType);
+	$TTypeEvent = loadListeTypeEvent($ATMdb, $type);
+
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'
 		,array()
 		,array(
 			'ressource'=>array(
 				'id' => $ressource->getId()
-				,'type'=>$form->combo('', 'type', $ressource->TType, $type)
-				,'typeAAfficher'=>$type
+				,'fiche'=> $fiche
+				,'type'=>$form->combo('', 'type', $TType, $type)
+				,'typeURL'=>$type
+				,'idRessource'=>$form->combo('', 'id', $TRessource, $id)
+				,'fk_user'=>$form->combo('', 'fk_user', $TUser, $fk_user)
+				,'typeEven'=>$form->combo('', 'typeEven', $TTypeEvent, $typeEven)
+				,'URL'=>$url
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
+				,'numId'=>$ressource->numId
+				,'libelle'=>$ressource->libelle
 			)
 			,'view'=>array(
 				'mode'=>$mode
@@ -61,4 +92,31 @@
 	$form->end();
 
 	llxFooter();
+	
+function loadListeTypeEvent(&$ATMdb, $type){
+	global $conf;
+	
+	$TEvent = array(
+		'all'=>''
+		,'accident'=>'Accident'
+		,'reparation'=>'Réparation'
+		,'facture'=>'Facture'
+	);	
+	$ATMdb =new TPDOdb;
+	
+
+	$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
+	WHERE rowid=".$type." AND entity=".$conf->entity;
+	$ATMdb->Execute($sqlReq);
+	while($ATMdb->Get_line()) {
+		$keys = explode(';', $ATMdb->Get_field('liste_evenement_key'));
+		$values = explode(';', $ATMdb->Get_field('liste_evenement_value'));
+		foreach ($values as $i=>$value) {
+			if (!empty($value)){
+				$TEvent[$keys[$i]] = $values[$i];
+			}
+		}
+	}
+	return $TEvent;
+}
 

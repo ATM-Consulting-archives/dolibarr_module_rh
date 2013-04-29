@@ -8,21 +8,21 @@ $ATMdb=new TPDOdb;
 $method = $_GET["method"];
 switch ($method) {
     case "list": 
-		if ($_REQUEST['id']!=0){
-			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_REQUEST['id'], false);	
+		/*if ($_REQUEST['id']!=0){
+			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], 0, $_REQUEST['id'],0 , null);	
 		}
-		else {
-			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_REQUEST['type'], true);
-		}
+		else {*/
+			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], 
+					$_REQUEST['type'], $_REQUEST['id'], $_REQUEST['fk_user'], $_REQUEST['typeEven']);
+		//}
         
         break;   
 
 }
 echo json_encode($ret); 
 
-function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null, $typeRessource=false){
+function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = null ){
   global $user;
-	
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
@@ -30,20 +30,25 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null, $typeRessourc
   $ret["end"] = php2JsTime($ed);
   $ret['error'] = null;
   try{
-    
+    //echo 'Type : '.$idTypeRessource.' id : '.$idRessource.' user : '.$fk_user.' even : '.$typeEven.'<br>';
 	$sql = "SELECT e.rowid,  date_debut, date_fin, isAllDayEvent, fk_user, color, type, subject
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 	WHERE ";
-	if ($typeRessource) {$sql .= " r.fk_rh_ressource_type=". $idRessource." AND ";}
 	
 	$sql .= " date_debut<='".php2MySqlTime($ed)."' AND date_fin >= '". php2MySqlTime($sd)."' ";
-    
 	//$sql .= " `date_debut` between '"
     //  .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."'";
-    if (! $typeRessource){
+    
+	if ($idTypeRessource!=0) {$sql .= " AND r.fk_rh_ressource_type=".$idTypeRessource;}
+	if ($idRessource!=0) {$sql .= " AND e.fk_rh_ressource=".$idRessource;}
+	if ($fk_user!=0) {$sql .= " AND e.fk_user=".$fk_user;}
+	if ($typeEven && $typeEven!='all') {$sql .= " AND e.type='".$typeEven."'";}
+	//echo $sql;
+	/*else{
     	$sql.=" AND e.fk_rh_ressource=".$idRessource;
-	}
+	}//*/
+	
 	if (!$user->rights->ressource->agenda->viewAgenda){
     	$sql.=" AND e.fk_user=".$user->id;
 	}
@@ -83,7 +88,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idRessource=null, $typeRessourc
   return $ret;
 }
 
-function listCalendar(&$ATMdb, $day, $type, $idRessource=null, $typeRessource=false){
+function listCalendar(&$ATMdb, $day, $type, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = null){
   $phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
   switch($type){
@@ -104,7 +109,7 @@ function listCalendar(&$ATMdb, $day, $type, $idRessource=null, $typeRessource=fa
       break;
   }
  
-	return listCalendarByRange($ATMdb, $st, $et, $idRessource, $typeRessource);
+	return listCalendarByRange($ATMdb, $st, $et, $idTypeRessource, $idRessource ,$fk_user , $typeEven );
   
 
 }

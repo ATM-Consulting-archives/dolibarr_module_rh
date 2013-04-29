@@ -9,7 +9,7 @@
 
 
 			[onshow;block=begin;when [view.mode]=='edit']
-            <h1 style="color: #2AA8B9;"> Déclaration d'absence</h1>                         
+            <h1 style="color: #2AA8B9;"> Nouvelle demande d'absence</h1>                         
 			[onshow;block=end]
 			 [onshow;block=begin;when [view.mode]!='edit']
             <h1 style="color: #2AA8B9;"> Visualisation de la demande d'absence</h1>                         
@@ -109,14 +109,6 @@
 		[onshow;block=end]	
 
 		</div>
-		[onshow;block=begin;when [absenceCourante.etat]=='Validee']
-		[onshow;block=begin;when [view.mode]!='edit']
-				[onshow;block=begin;when [userCourant.enregistrerPaieAbsences]=='1']
-					<span style="width:30%"class="butAction" id="action-update"  onclick="document.location.href='?action=envoyerpaie&id=[absenceCourante.id]'">Marquer comme Enregistrée dans la paie</span>
-				<br/><br/><br/><br/><br/>
-				[onshow;block=end]
-		[onshow;block=end]
-		[onshow;block=end]
 		
 		
 		<h3 style="color: #2AA8B9;">Règles concernant le collaborateur</h3>

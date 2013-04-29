@@ -27,9 +27,9 @@ if (empty($nomFichier)){$nomFichier = "./fichierImports/fichier facture total.cs
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 $TRessource = chargeVoiture($ATMdb);
-
+$TCarteInexistantes = array();
 //print_r($TRessource);
-
+$cpt = 0;
 //début du parsing
 $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
@@ -41,19 +41,30 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			//print_r($infos);
 			
 			
-			$temp = new TRH_Evenement;
-			$temp->load_liste($ATMdb);
-			$temp->load_liste_type($ATMdb, $temp);
-			if (! array_key_exists ( $infos[9] , $TRessource )){
-				echo 'Pas de carte correspondante : '.$infos[9].'<br>';
+			
+			if (empty($infos[9])){
+				null;
+			}
+			else if (! array_key_exists ( $infos[9] , $TRessource )){
+				$TCarteInexistantes[$infos[9]] = 1;
 			}
 			else {
+				$temp = new TRH_Evenement;
+				$temp->load_liste($ATMdb);
+				$temp->load_liste_type($ATMdb, $temp);
+			
 				$temp->fk_rh_ressource = $TRessource[$infos[9]];
-				if (strpos((string) $infos[17], 'age TVA') !== FALSE ){
+				$t = explode(' ',$infos[30]);
+				array_shift($t); 
+				$nomPeage = htmlentities(implode(' ', $t), ENT_COMPAT , 'ISO8859-1'); 
+				
+				if ((strpos((string) $infos[17], 'age TVA') !== FALSE ) || (strpos((string) $infos[17], 'PEAGE') !== FALSE )){
 					$temp->type = 'page';
+					$temp->motif = 'Péage '.$nomPeage;
 				}
 				else {
 					$temp->type = 'pleindessence';
+					$temp->motif = 'Essence '.$nomPeage;
 				}
 				
 				$temp->fk_user = $TUser[strtolower($infos[12])];
@@ -68,27 +79,28 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->numFacture = $infos[1];
 				$temp->compteFacture = $infos[13];
 				
-				$temp->motif = htmlentities($infos[17], ENT_COMPAT , 'ISO8859-1');
+				
+				//$temp->motif = htmlentities($infos[17], ENT_COMPAT , 'ISO8859-1');
 				if ($infos[31]!=''){
-					$temp->commentaire = $infos[30].(isset($infos[31]) ? ' kilometrage : '.$infos[31] : '');	
-				}
-				else {
-					$temp->commentaire = $infos[30];	
+					$temp->commentaire = (isset($infos[31]) ? ' Kilometrage : '.$infos[31] : '');	
 				}
 				
 				$temp->save($ATMdb);
+				$cpt++;
 			}
 			
 		}
 		$numLigne++;
 		
 		//print_r(explode('\n', $data));
-	}
-	
-	echo 'Fin du traitement. '.($numLigne-3).' lignes rajoutés à la table.<br><br>';
-	
+	}	
 }
 
+foreach ($TCarteInexistantes as $key => $value) {
+	echo 'Erreur : Pas de carte correspondante : '.$key.'<br>';
+}
+echo 'Fin du traitement. '.$cpt.' événements rajoutés créés.<br><br>';
+	
 function chargeVoiture(&$ATMdb){
 	global $conf;
 	$TRessource = array();

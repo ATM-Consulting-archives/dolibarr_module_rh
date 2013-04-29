@@ -42,11 +42,12 @@ class TRH_Ressource extends TObjetStd {
 		$this->TRessource = array('');
 		$this->TEvenement = array();
 		
-		$this->TAgence = array();
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup ";
+		$this->TAgence = array('');
+		global $conf;
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TAgence[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			$this->TAgence[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 			}
 		$this->TTVA = array();
 		$this->TContratAssocies = array(); 	//tout les objets rh_contrat_ressource liés à la ressource
@@ -122,14 +123,16 @@ class TRH_Ressource extends TObjetStd {
 		}
 		
 		$this->TTVA = array();
-		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
+		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0]."
+		AND entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
 			}
 		
 		$this->TListeContrat = array(); 	//liste des id et libellés de tout les contrats
-		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_contrat WHERE fk_rh_ressource_type =".$this->fk_rh_ressource_type;
+		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_contrat WHERE fk_rh_ressource_type =".$this->fk_rh_ressource_type."
+		AND entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TListeContrat[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
@@ -226,7 +229,6 @@ class TRH_Ressource extends TObjetStd {
 	function save(&$db) {
 		global $conf;
 		$this->entity = $conf->entity;
-		
 		//$this->setStatut($db, date("Y-m-d"));
 		
 		//on transforme les champs sensés être entier en int
@@ -359,7 +361,8 @@ class TRH_Ressource_type extends TObjetStd {
 		global $conf;
 		if ($this->supprimable){
 			//on supprime les champs associés à ce type
-			$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." AND entity=".$conf->entity;
+			$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()."
+			 AND entity=".$conf->entity;
 			$ATMdb->Execute($sqlReq);
 			$Tab = array();
 			while($ATMdb->Get_line()) {

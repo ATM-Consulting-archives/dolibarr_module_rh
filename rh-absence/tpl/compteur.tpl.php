@@ -88,18 +88,12 @@
 				<tr>
 					 <td colspan="2"><h2 style="color: #2AA8B9;">Compteur de RTT</h2>     </td>
 				</tr>
-				[onshow;block=begin;when [rttCourant.typeAcquisition]=='Annuel'] 
+
 				<tr>
 					<td>Jours RTT Acquis</td>
 					<td>[rttCourant.acquis;strconv=no;protect=no]</td>
 				</tr>
-				[onshow;block=end]
-				[onshow;block=begin;when [rttCourant.typeAcquisition]=='Mensuel'] 
-				<tr>
-					<td>Jours RTT Acquis</td>
-					<td>[rttCourant.mensuelTotal;strconv=no;protect=no]</td>
-				</tr>
-				[onshow;block=end]
+
 				<tr>
 					<td>Jours RTT Pris</td>
 					<td>[rttCourant.pris;strconv=no;protect=no]	</td>
@@ -130,7 +124,7 @@
 					 </td>
 				</tr>
 				<tr>
-					<td>Mensuel</td>
+					<td>Jours acquis par mois</td>
 					<td>[rttCourant.mensuelInit;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
@@ -180,19 +174,45 @@
 		<script>
 		$(document).ready( function(){
 			//on empêche que la date de début dépasse celle de fin
-			$('#rttTypeAcquisition').change( 	function(){
+			$('#rttMetier').change( 	function(){
 				
 				
-				if($('#rttTypeAcquisition').val()=="Mensuel"){
-					$("#rttAcquisMensuelInit").val(1);
-					$("#rttAcquisAnnuelCumuleInit").val(0);
+				if($('#rttMetier').val()=="cadre"){
+					$("#rttTypeAcquisition").val("Annuel").attr('selected');
+					$("#rttAcquisMensuelInit").val(0);
+					$("#rttAcquisAnnuelCumuleInit").val(12);
 					$("#rttAcquisAnnuelNonCumuleInit").val(0);
-				}else{
+				}
+				else if($('#rttMetier').val()=="noncadre37cpro"){
+					$("#rttTypeAcquisition").val("Annuel").attr('selected');
 					$("#rttAcquisMensuelInit").val(0);
 					$("#rttAcquisAnnuelCumuleInit").val(5);
 					$("#rttAcquisAnnuelNonCumuleInit").val(7);
 				}
-				
+				else if($('#rttMetier').val()=="noncadre37cproinfo"){
+					$("#rttTypeAcquisition").val("Annuel").attr('selected');
+					$("#rttAcquisMensuelInit").val(0);
+					$("#rttAcquisAnnuelCumuleInit").val(12);
+					$("#rttAcquisAnnuelNonCumuleInit").val(0);
+				}
+				else if($('#rttMetier').val()=="noncadre38cpro"){
+					$("#rttTypeAcquisition").val("Annuel").attr('selected');
+					$("#rttAcquisMensuelInit").val(0);
+					$("#rttAcquisAnnuelCumuleInit").val(3);
+					$("#rttAcquisAnnuelNonCumuleInit").val(3);
+				}
+				else if($('#rttMetier').val()=="noncadre38cproinfo"){
+					$("#rttTypeAcquisition").val("Mensuel").attr('selected');
+					$("#rttAcquisMensuelInit").val(0.5);
+					$("#rttAcquisAnnuelCumuleInit").val(0);
+					$("#rttAcquisAnnuelNonCumuleInit").val(0);
+				}
+				else if($('#rttMetier').val()=="noncadre39"){
+					$("#rttTypeAcquisition").val("Annuel").attr('selected');
+					$("#rttAcquisMensuelInit").val(0);
+					$("#rttAcquisAnnuelCumuleInit").val(0);
+					$("#rttAcquisAnnuelNonCumuleInit").val(0);
+				}
 			});
 
 		});

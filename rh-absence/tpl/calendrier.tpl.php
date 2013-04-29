@@ -1,14 +1,30 @@
 
 [view.head3;strconv=no]
 
- 	[onshow;block=begin;when [absence.voirToutesAbsences]=='1']
-		<br> 
-		Filtre par utilisateur :  
-                [absence.TUser;strconv=no;protect=no]
-                [absence.btValider;strconv=no;protect=no]
-        <br> 
-	[onshow;block=end]
+	 	<br> 
+				Groupe  [absence.TGroupe;strconv=no;protect=no]
+	            Utilisateur    [absence.TUser;strconv=no;protect=no]
+	                [absence.btValider;strconv=no;protect=no] 
+	    <br>
 
+	
+		<script>
+		$('#groupe').change(function(){
+				//alert('top');
+				$.ajax({
+					url: 'script/loadUtilisateurs.php?groupe='+$('#groupe option:selected').val()
+				}).done(function(data) {
+					liste = JSON.parse(data);
+					$("#idUtilisateur").empty(); // remove old options
+					$.each(liste, function(key, value) {
+					  $("#idUtilisateur").append($("<option></option>")
+					     .attr("value", key).text(value));
+					});	
+				});
+		});
+		</script>
+			
+			
 <h1>Agenda des absences</h1>
 		
 			<div id="agenda">
@@ -16,7 +32,7 @@
         $(document).ready(function() {     
             var view="month";          
            
-            var DATA_FEED_URL = "absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idAfficher=[absence.idAfficher;strconv=no;protect=no]"
+            var DATA_FEED_URL = "absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]"
             var op = {
                 view: view,
                 theme:3,
@@ -227,10 +243,10 @@
             <!--<div id="showdaybtn" class="fbutton">
                 <div><span title='Day' class="showdayview">Jour</span></div>
             </div>-->
-              <div  id="showweekbtn" class="fbutton fcurrent">
+              <div  id="showweekbtn" class="fbutton">
                 <div><span title='Week' class="showweekview">Semaine</span></div>
             </div>
-              <div  id="showmonthbtn" class="fbutton">
+              <div  id="showmonthbtn" class="fbutton fcurrent">
                 <div><span title='Month' class="showmonthview">Mois</span></div>
 
             </div>

@@ -167,12 +167,13 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 				,'tiersAgence'=> $form->combo('','fk_tier_utilisateur',$contrat->TAgence,$contrat->fk_tier_utilisateur)
 				,'date_debut'=> $form->calendrier('', 'date_debut', $contrat->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $contrat->get_date('date_fin'), 10)
-				,'loyer_TTC'=>$form->texte('', 'loyer_TTC', $contrat->loyer_TTC, 10,20,'','','-')
+				,'loyer_TTC'=>$form->texte('', 'loyer_TTC', $contrat->loyer_TTC, 10,20,'','','')
 				,'TVA'=>$form->combo('','TVA',$contrat->TTVA,$contrat->TVA)
 				,'loyer_HT'=>($contrat->loyer_TTC)*(1-(0.01*$contrat->TTVA[$contrat->TVA]))
 			)
 			,'view'=>array(
 				'mode'=>$mode
+				,'userRightViewContrat'=>(int)$user->rights->ressource->contrat->viewPrixContrat
 				,'userRight'=>((int)$user->rights->ressource->contrat->createContract)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($contrat, 'contrat')  , 'fiche', 'Contrat')
 			)
@@ -183,7 +184,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 	);
 	
 	print "<br/>";
-	//liste des ressources associés
+	//liste des ressources associées
 	$r = new TSSRenderControler($contrat);
 	$sql= "SELECT r.rowid as ID, r.libelle as 'Libellé' , r.numId as 'Numéro Id'
 			FROM ".MAIN_DB_PREFIX."rh_ressource as r, ".MAIN_DB_PREFIX."rh_contrat_ressource as l";
@@ -215,7 +216,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 		,'hide'=>array()
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste des ressources associés'
+			'titre'=>'Liste des ressources associées'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)

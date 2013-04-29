@@ -114,27 +114,27 @@
 		<td>[newRule.dureeHExt;strconv=no]:[newRule.dureeMExt;strconv=no]    (HH:MM)</td>
 	</tr>
 	<tr>
-		<td> Nature à déduire</td>
+		<td>Nature prise en charge par l'utilisateur</td>
 		<td>[newRule.natureDeduire;strconv=no]</td>
 	</tr>
 	<tr>
-		<td>Montant à déduire</td>
+		<td>Montant pris en charge par l'utilisateur</td>
 		<td>[newRule.montantDeduire;strconv=no] €</td>
 	</tr>
 	<tr>
-		<td>Données illimités ?</td>
+		<td>Données illimitées</td>
 		<td>[newRule.dataIllimite;strconv=no]</td>
 	</tr>
 	<tr>
-		<td>Données Iphone ?</td>
+		<td>Données Iphone</td>
 		<td>[newRule.dataIphone;strconv=no]</td>
 	</tr>
 	<tr>
-		<td>SMS Illimités ?</td>
+		<td>SMS Illimités</td>
 		<td>[newRule.smsIllimite;strconv=no]</td>
 	</tr>
 	<tr>
-		<td>Forfait Mail ?</td>
+		<td>Forfait Mail</td>
 		<td>[newRule.mailforfait;strconv=no]</td>
 	</tr>
 	

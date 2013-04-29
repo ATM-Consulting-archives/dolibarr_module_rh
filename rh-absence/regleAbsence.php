@@ -93,7 +93,11 @@ function _liste(&$ATMdb, $regle) {
 			
 		)
 		,'translate'=>array(
-			'typeAbsence'=>array('rttnoncumule'=>'RTT Non Cumulé')
+			'typeAbsence'=>array('rttcumule'=>'RTT Cumulé','rttnoncumule'=>'RTT Non Cumulé', 'conges' => 'Congés', 'maladiemaintenue' => 'Maladie maintenue', 
+		'maladienonmaintenue'=>'Maladie non maintenue','maternite'=>'Maternité', 'paternite'=>'Paternité', 
+		'chomagepartiel'=>'Chômage Partiel','nonremuneree'=>'Non rémunérée','accidentdetravail'=>'Accident de travail',
+		'maladieprofessionnelle'=>'Maladie professionnelle', 'congeparental'=>'Congé parental', 'accidentdetrajet'=>'Accident de trajet',
+		'mitempstherapeutique'=>'Mi-temps thérapeutique')
 			,'Restrictif'=>array('1'=>'Oui', '0'=>'Non')
 		)
 		,'hide'=>array()

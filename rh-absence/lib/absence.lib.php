@@ -6,7 +6,7 @@ function absencePrepareHead(&$obj, $type='absence') {
 		case 'absence':
 				return array(
 					array(DOL_URL_ROOT_ALT.'/absence/absence.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
-					,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?idUser='.$obj->fk_user.'&id='.$obj->getId(), 'Calendrier','calendrier')
+					,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(), 'Calendrier','calendrier')
 				);
 				break;
 		case 'absenceCreation':
@@ -145,9 +145,6 @@ function saveLibelleEtat($etat){
 		break;
 		case 'Refusee':
 			return "Refusée";
-		break;
-		case 'Enregistree':
-			return "Enregistrée dans la paie";
 		break;
 
 	}

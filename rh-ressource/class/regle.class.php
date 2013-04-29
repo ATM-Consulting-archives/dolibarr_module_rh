@@ -30,7 +30,7 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		$this->TUser = array();
 		$this->TGroup  = array();
 		$this->TChoixLimite = array(
-			'gen'=>'Général'
+			'gen'=>'Générale'
 			,'extint'=>'Interne/Externe'
 		);
 		$this->TChoixApplication = array(
@@ -51,7 +51,7 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TGroup[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			$this->TGroup[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 			}
 		
 		//LISTE DE USERS
@@ -59,7 +59,7 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TUser[$ATMdb->Get_field('rowid')] = $this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 			}
 		
 	}
@@ -76,10 +76,10 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		$this->entity = $conf->entity;
 		
 		switch ($this->choixApplication){
-			case 'all':$this->fk_user = NULL;$this->fk_usergroup=NULL;break;
+			case 'all':$this->fk_user = 0;$this->fk_usergroup=0;break;
 			case 'user':$this->fk_usergroup = NULL;break;
 			case 'group':$this->fk_user = NULL;break;
-			default : echo'pbchoixapplication';break;				
+			default : break;				
 		}
 		
 		switch ($this->choixLimite){
@@ -90,7 +90,7 @@ class TRH_Ressource_Regle  extends TObjetStd {
 			case 'extint':
 				$this->duree = 0;
 				break;
-			default : echo 'pb choix limite'; break;
+			default : break;
 		}
 		
 		parent::save($ATMdb);
