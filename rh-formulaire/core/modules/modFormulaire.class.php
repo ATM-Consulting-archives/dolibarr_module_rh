@@ -91,7 +91,7 @@ class modFormulaire extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
-		//$this->config_page_url = array("setuppage.php@ressource");
+		$this->config_page_url = array("admin.php@formulaire");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
@@ -293,8 +293,9 @@ class modFormulaire extends DolibarrModules
 	{
 		$sql = array();
 
-		$result=$this->load_tables();
-
+		$url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/formulaire/script/create-maj-base.php";
+		file_get_contents($url);
+		
 		return $this->_init($sql, $options);
 	}
 

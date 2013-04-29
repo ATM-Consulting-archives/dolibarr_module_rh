@@ -633,14 +633,14 @@ function templatereplace($line, $replacements = array(), &$redata = array(), $de
         $_registerform .= "\n<input type='hidden' name='lang' value='" . $_reglang . "' />\n";
         $_registerform .= "<input type='hidden' name='sid' value='$tokensid' id='sid' />\n";
         
-         $_registerform .= '<script language="javascript">
-         $(document).ready(function() {
-         	// autoclick	
-         	$("#registercontinue").click();
-         });
-         
-         </script>';
-         
+        if( returnGlobal('register_email') !='' ) {
+    		$_registerform .= '<script language="javascript">
+							    	$(document).ready(function() {
+							    		// autoclick	
+							    		$("#registercontinue").click();
+							    	});
+						    	</script>';
+        }
 
         $_registerform.="<table class='register' summary='Registrationform'>\n"
         . "<tr><td align='right'>"

@@ -176,5 +176,6 @@ require_once BASEPATH . 'yii' . EXT;
 require_once APPPATH . 'core/LSYii_Application' . EXT;
 
 Yii::createApplication('LSYii_Application', APPPATH . 'config/config' . EXT)->run();
+
 /* End of file index.php */
 /* Location: ./index.php */

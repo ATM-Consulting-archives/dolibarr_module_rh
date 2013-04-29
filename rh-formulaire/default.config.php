@@ -24,7 +24,4 @@
 	require(COREROOT.'inc.core.php');
 	
 	define('DOL_ADMIN_USER', 'admin');
-	define( 'LS_BASEURL', HTTP.'/custom/formulaire/limesurvey/');
-	define( 'LS_USER', 'id_ls_user' );
-	define( 'LS_PASSWORD', 'mdp_ls_user' );
 	

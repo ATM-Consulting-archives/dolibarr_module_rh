@@ -74,5 +74,5 @@ function correctPNG() // correctly handle PNG transparency in Win IE 5.5 & 6.
 }
 
 $(document).ready(function(){
-	
+
 });

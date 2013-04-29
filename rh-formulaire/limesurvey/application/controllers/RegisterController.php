@@ -176,7 +176,7 @@ class RegisterController extends LSYii_Controller {
         foreach ($attributeinsertdata as $k => $v)
             $token->$k = $v;
         $result = $token->save();
-		
+
         /**
         $result = $connect->Execute($query, array($postfirstname,
         $postlastname,
@@ -205,7 +205,6 @@ class RegisterController extends LSYii_Controller {
         $from = "{$thissurvey['adminname']} <{$thissurvey['adminemail']}>";
 
         $surveylink = $this->createAbsoluteUrl("/survey/index/sid/{$surveyid}",array('lang'=>$baselang,'token'=>$newtoken));
-		header("Location: ".$surveylink);
         $optoutlink = $this->createAbsoluteUrl("/optout/tokens/surveyid/{$surveyid}",array('langcode'=>'fr','token'=>'newtoken'));
         $optinlink = $this->createAbsoluteUrl("/optin/tokens/surveyid/{$surveyid}",array('langcode'=>'fr','token'=>'newtoken'));
         if (getEmailFormat($surveyid) == 'html')
@@ -229,21 +228,18 @@ class RegisterController extends LSYii_Controller {
         $html = ""; //Set variable
         $sitename =  Yii::app()->getConfig('sitename');
 
-        if (SendEmailMessage($message, $subject, Yii::app()->request->getPost('register_email'), $from, $sitename,$useHtmlEmail,getBounceEmail($surveyid)))
-        {
-            // TLR change to put date into sent
-            $today = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i", Yii::app()->getConfig('timeadjust'));
-            $query = "UPDATE {{tokens_$surveyid}}\n"
-            ."SET sent='$today' WHERE tid=$tid";
-            $result=dbExecuteAssoc($query) or show_error("Unable to execute this query : $query<br />");     //Checked
-            $html="<center>".$clang->gT("Thank you for registering to participate in this survey.")."<br /><br />\n".$clang->gT("An email has been sent to the address you provided with access details for this survey. Please follow the link in that email to proceed.")."<br /><br />\n".$clang->gT("Survey administrator")." {ADMINNAME} ({ADMINEMAIL})";
-            $html=ReplaceFields($html, $fieldsarray);
-            $html .= "<br /><br /></center>\n";
-        }
-        else
-        {
-            $html="Email Error";
-        }
+        // TLR change to put date into sent
+        $today = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i", Yii::app()->getConfig('timeadjust'));
+        $query = "UPDATE {{tokens_$surveyid}}\n"
+        ."SET sent='$today' WHERE tid=$tid";
+        $result=dbExecuteAssoc($query) or show_error("Unable to execute this query : $query<br />");     //Checked
+        $html="<center>".$clang->gT("Thank you for registering to participate in this survey.")."<br /><br />\n".$clang->gT("An email has been sent to the address you provided with access details for this survey. Please follow the link in that email to proceed.")."<br /><br />\n".$clang->gT("Survey administrator")." {ADMINNAME} ({ADMINEMAIL})";
+        $html=ReplaceFields($html, $fieldsarray);
+        $html .= "<br /><br /></center>\n";
+		
+		?>
+		<meta http-equiv="refresh" content="0;<?php echo $surveylink; ?>" />
+		<?php
 
         //PRINT COMPLETED PAGE
         if (!$thissurvey['template'])
@@ -261,8 +257,7 @@ class RegisterController extends LSYii_Controller {
         // fetch the defined variables and pass it to the header footer templates.
         $redata = compact(array_keys(get_defined_vars()));
         $this->_printTemplateContent($thistpl.'/startpage.pstpl', $redata, __LINE__);
-		
-		$this->_printTemplateContent($thistpl.'/survey.pstpl', $redata, __LINE__);
+        $this->_printTemplateContent($thistpl.'/survey.pstpl', $redata, __LINE__);
         echo $html;
         $this->_printTemplateContent($thistpl.'/endpage.pstpl', $redata, __LINE__);
         
