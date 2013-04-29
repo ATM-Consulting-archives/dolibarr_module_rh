@@ -257,49 +257,6 @@ function getStatut($id, $jour){
 	}
 
 
-/*
- * à la création de la ressource, on choisi premierement le type
- 
-function _choixType(&$ATMdb, &$ressource, $mode) {
-	global $db,$user;
-	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
-
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','GET');
-	$form->Set_typeaff($mode);
-	//echo $form->hidden('id', $ressource->getId());
-	echo $form->hidden('action', 'type');
-	
-	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/ressource.new.tpl.php'
-		,array()
-		,array(
-			'ressource'=>array(
-				'id'=>$ressource->getId()
-				,'type'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type" 
-				
-			)
-			,'view'=>array(
-				'mode'=>$mode
-				,'userRight'=>((int)$user->rights->ressource->ressource->createRessource)
-				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'fiche', 'Ressource')
-			)
-			
-			
-		)	
-		
-	);
-	
-	echo $form->end_form();
-	// End of page
-	
-	global $mesg, $error;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
-	llxFooter();
-	
-}
-*/
-
-
 function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 	global $db,$user;
 	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));

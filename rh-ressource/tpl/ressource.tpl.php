@@ -190,7 +190,13 @@
 <div class="tabsAction" style="text-align:center;" >
 		[onshow;block=begin;when [view.mode]=='edit']
 			<input type="submit" value="Enregistrer" name="save" class="button">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
+			[onshow;block=begin;when [ressource.id]!=0]
+				&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
+			[onshow;block=end]
+			[onshow;block=begin;when [ressource.id]==0]
+				&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href=''">
+			[onshow;block=end]
+			
 		[onshow;block=end]
 		[onshow;block=begin;when [view.mode]!='edit']
 			<a class="butAction"  href="?id=[ressource.id]&action=edit">Modifier</a>
