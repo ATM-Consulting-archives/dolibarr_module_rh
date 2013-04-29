@@ -9,7 +9,7 @@
 
 
 			[onshow;block=begin;when [view.mode]=='edit']
-            <h1 style="color: #2AA8B9;"> Déclaration d'absence</h1>                         
+            <h1 style="color: #2AA8B9;"> Nouvelle demande d'absence</h1>                         
 			[onshow;block=end]
 			 [onshow;block=begin;when [view.mode]!='edit']
             <h1 style="color: #2AA8B9;"> Visualisation de la demande d'absence</h1>                         

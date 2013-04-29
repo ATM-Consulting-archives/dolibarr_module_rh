@@ -124,7 +124,7 @@
 					 </td>
 				</tr>
 				<tr>
-					<td>Mensuel</td>
+					<td>Jours acquis par mois</td>
 					<td>[rttCourant.mensuelInit;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
