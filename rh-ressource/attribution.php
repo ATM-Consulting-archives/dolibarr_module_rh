@@ -103,6 +103,8 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	?><div class="fiche"><?
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'attribution', 'Ressource');
 	
+	printLibelle($ressource);
+	
 	$r = new TSSRenderControler($emprunt);
 	$sql="SELECT DISTINCT e.rowid as 'ID', CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.commentaire as 'Commentaire'";

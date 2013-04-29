@@ -1,8 +1,20 @@
  <div class="fiche"> <!-- begin div class="fiche" -->
 
 [onshow;block=begin;when [ressource.fiche]==true]
-	[view.head;strconv=no]
+	[view.head;strconv=no;protect=no]
+	<table class="border" style="width:100%">
+		<tr>
+			<td>Numéro Id</td>
+			<td>[ressource.numId;strconv=no;protect=no]</td>
+		</tr>
+		<tr>
+			<td>Libellé</td>
+			<td>[ressource.libelle;strconv=no;protect=no]</td>
+		</tr>
+	</table><br>
 [onshow;block=end] 
+ 
+
 
 <h1>Agenda des ressources</h1>
 
@@ -18,8 +30,20 @@
 [onshow;block=end] 	
 
 <script>
+ajaxLoadType = function(){
+	$.ajax({
+			url: 'script/loadTypeEvent.php?type='+$('#type option:selected').val()
+		}).done(function(data) {
+			liste = JSON.parse(data);
+			$("#typeEven").empty(); // remove old options
+			$.each(liste, function(key, value) {
+			  $("#typeEven").append($("<option></option>")
+			     .attr("value", key).text(value));
+			});	
+		});
+}
+
 $('#type').change(function(){
-		//alert('top');
 		$.ajax({
 			url: 'script/loadRessources.php?type='+$('#type option:selected').val()
 		}).done(function(data) {
@@ -30,19 +54,11 @@ $('#type').change(function(){
 			     .attr("value", key).text(value));
 			});	
 		});
+		ajaxLoadType();
 		
-		$.ajax({
-			url: 'script/loadTypeEvent.php?type='+$('#type option:selected').val()
-		}).done(function(data) {
-			liste = JSON.parse(data);
-			$("#typeEven").empty(); // remove old options
-			$.each(liste, function(key, value) {
-			  $("#typeEven").append($("<option></option>")
-			     .attr("value", key).text(value));
-			});	
-		});
 		
 });
+
 
 </script>
 

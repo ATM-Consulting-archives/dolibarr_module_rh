@@ -43,8 +43,8 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
 	if ($idTypeRessource!=0) {$sql .= " AND r.fk_rh_ressource_type=".$idTypeRessource;}
 	if ($idRessource!=0) {$sql .= " AND e.fk_rh_ressource=".$idRessource;}
 	if ($fk_user!=0) {$sql .= " AND e.fk_user=".$fk_user;}
-	if ($typeEven) {$sql .= " AND e.type='".$fk_user."'";}
-	
+	if ($typeEven && $typeEven!='all') {$sql .= " AND e.type='".$typeEven."'";}
+	//echo $sql;
 	/*else{
     	$sql.=" AND e.fk_rh_ressource=".$idRessource;
 	}//*/

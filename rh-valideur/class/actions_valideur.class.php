@@ -12,7 +12,7 @@ class ActionsValideur
       
     function formObjectOptions(&$parameters, &$object, &$action, $hookmanager) 
     { 
-        global $db,$html,$user;
+        global $db,$html,$user, $langs;
 		
 		if($action=='is_validator'){
 			$user_id=$user->id;
@@ -207,6 +207,7 @@ class ActionsValideur
 			if($object->statut==4) {
 				$parameters['buttons'][]= '<a class="butActionDelete" href="javascript:ndfp_alert_next_level('.$object->id.')">Montrer au valideur + 1</a>';	
 			}
+			
 			
 		}
 		

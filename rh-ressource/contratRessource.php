@@ -80,6 +80,8 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 	?><div class="fiche"><?	
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'contrats', 'Ressource');
 	
+	printLibelle($ressource);
+	
 	$r = new TSSRenderControler($association);
 	$sql="SELECT DISTINCT a.rowid as 'ID',  c.rowid as 'IDContrat' , c.libelle as 'Libellé',
 		DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin', a.commentaire as 'Commentaire'";

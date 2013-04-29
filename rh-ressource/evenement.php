@@ -99,9 +99,11 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	    
 	 
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource');
-	// btsubmit($pLib,$pName,$plus="")
+	
+	printLibelle($ressource);
+	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
-	//$form->Set_typeaff($mode);
+	
 	echo $form->hidden('action', 'afficherListe');
 	echo $form->hidden('id',$ressource->getId());
 	$evenement->load_liste_type($ATMdb, $ressource);

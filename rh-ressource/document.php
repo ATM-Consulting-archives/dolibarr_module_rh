@@ -28,7 +28,6 @@
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers joints');
 		?><div class="fiche"><?	
-		
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];
 		
@@ -124,6 +123,8 @@
 		echo ($message ? dol_htmloutput_mesg($message, '', ($error ? 'error' : 'ok'), 0) : '');
 
 		echo ($formconfirm ? $formconfirm : '');
+		
+		printLibelle($ressource);
 		
 		if($user->rights->ressource->ressource->uploadFiles){
 			$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$ressource->getId(), '', 0, 0, $can_upload);

@@ -1,14 +1,28 @@
 
 [view.head3;strconv=no]
 
-			
-		 	[onshow;block=begin;when [absence.droits]!='0']
-		 	<br> 
-				Filtre par utilisateur :  
-		                [absence.TUser;strconv=no;protect=no]
-		                [absence.btValider;strconv=no;protect=no] 
-		    <br>
-	       [onshow;block=end]
+	 	<br> 
+				Groupe  [absence.TGroupe;strconv=no;protect=no]
+	            Utilisateur    [absence.TUser;strconv=no;protect=no]
+	                [absence.btValider;strconv=no;protect=no] 
+	    <br>
+
+	
+		<script>
+		$('#groupe').change(function(){
+				//alert('top');
+				$.ajax({
+					url: 'script/loadUtilisateurs.php?groupe='+$('#groupe option:selected').val()
+				}).done(function(data) {
+					liste = JSON.parse(data);
+					$("#idUtilisateur").empty(); // remove old options
+					$.each(liste, function(key, value) {
+					  $("#idUtilisateur").append($("<option></option>")
+					     .attr("value", key).text(value));
+					});	
+				});
+		});
+		</script>
 			
 			
 <h1>Agenda des absences</h1>
@@ -18,7 +32,7 @@
         $(document).ready(function() {     
             var view="month";          
            
-            var DATA_FEED_URL = "absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idAfficher=[absence.idAfficher;strconv=no;protect=no]"
+            var DATA_FEED_URL = "absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]"
             var op = {
                 view: view,
                 theme:3,

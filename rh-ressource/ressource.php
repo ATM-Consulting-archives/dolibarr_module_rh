@@ -19,29 +19,28 @@
 			case 'add':
 			case 'new':
 				$ressource->set_values($_REQUEST);
-				_choixType($ATMdb, $ressource,'new');
+				_fiche($ATMdb, $emprunt, $ressource,'new');
 				break;	
 			case 'edit'	:
 				//$ATMdb->db->debug=true;
+				//print_r($_REQUEST);
+				
+				//$ressource->set_values($_REQUEST['fk_rh_ressource_type']);
+				$ressource->fk_rh_ressource_type = $_REQUEST['fk_rh_ressource_type'];
+				$ressource->load_ressource_type($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $emprunt, $ressource,'edit');
 				break;
-			
-			case 'type':
-				$ressource->set_values($_REQUEST);
-				$ressource->save($ATMdb);
-				$ressource->load($ATMdb, $_REQUEST['id']);
-				$emprunt->load($ATMdb, $_REQUEST['idEven']);
-				$ressource->fk_rh_ressource_type=$_REQUEST['fk_rh_ressource_type'];
-				_fiche($ATMdb, $emprunt, $ressource,'new');
-				break;
-			
 				
 			case 'save':
-			
 				//$ATMdb->db->debug=true;
+				$ressource->fk_rh_ressource_type = $_REQUEST['fk_rh_ressource_type'];
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				//on vérifie que le libellé est renseigné
+				if  ( empty($_REQUEST['numId']) ){
+					$mesg .= '<div class="error">Le numéro Id doit être renseigné.</div>';
+				}
+				
 				if  ( empty($_REQUEST['libelle']) ){
 					$mesg .= '<div class="error">Le libellé doit être renseigné.</div>';
 				}
@@ -104,8 +103,6 @@
 				break;
 			
 				
-				
-				
 			case 'delete':
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				//$ATMdb->db->debug=true;
@@ -150,14 +147,14 @@ function _liste(&$ATMdb, &$ressource) {
 		$sql.=", '' as 'Supprimer'";
 	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r";
-	$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON r.fk_rh_ressource_type=t.rowid";
+			//LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON r.fk_rh_ressource_type=t.rowid";
 	if(!$user->rights->ressource->ressource->viewRessource){
 		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource)";
 	}
 	$sql.=" WHERE r.entity=".$conf->entity;
 	if(!$user->rights->ressource->ressource->viewRessource){
-		$sql.=" AND e.type ='emprunt'";
-		$sql.=" AND e.fk_user=".$user->id;
+		$sql.=" AND e.type ='emprunt' 
+				AND e.fk_user=".$user->id;
 	}
 		
 	$TOrder = array('DateCre'=>'ASC');
@@ -201,12 +198,14 @@ function _liste(&$ATMdb, &$ressource) {
 			
 			
 		)
-		,'search'=>array(
-			'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
-			,'numId'=>true
-			,'libelle'=>true
-			//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
-		)
+		,'search'=>($user->rights->ressource->ressource->searchRessource) ? 		
+			array(
+				'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
+				,'numId'=>true
+				,'libelle'=>true
+				//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
+			)
+			: array()
 		,'orderBy'=>$TOrder
 		
 	));
@@ -258,49 +257,6 @@ function getStatut($id, $jour){
 	}
 
 
-/*
- * à la création de la ressource, on choisi premierement le type
- */
-function _choixType(&$ATMdb, &$ressource, $mode) {
-	global $db,$user;
-	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
-
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','GET');
-	$form->Set_typeaff($mode);
-	//echo $form->hidden('id', $ressource->getId());
-	echo $form->hidden('action', 'type');
-	
-	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/ressource.new.tpl.php'
-		,array()
-		,array(
-			'ressource'=>array(
-				'id'=>$ressource->getId()
-				,'type'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type" 
-				
-			)
-			,'view'=>array(
-				'mode'=>$mode
-				,'userRight'=>((int)$user->rights->ressource->ressource->createRessource)
-				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'fiche', 'Ressource')
-			)
-			
-			
-		)	
-		
-	);
-	
-	echo $form->end_form();
-	// End of page
-	
-	global $mesg, $error;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
-	llxFooter();
-	
-}
-
-
-
 function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 	global $db,$user;
 	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
@@ -308,8 +264,10 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $ressource->getId());
-	echo $form->hidden('action', 'save');
-	
+	if ($mode=='new'){
+		echo $form->hidden('action', 'edit');
+	}
+	else {echo $form->hidden('action', 'save');}
 	//Ressources
 	$TFields=array();
 	
@@ -361,13 +319,19 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 				'id'=>$ressource->getId()
 				,'numId'=>$form->texte('', 'numId', $ressource->numId, 00,20,'','','-')
 				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 50,255,'','','-')
-				//,'type'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type" 
+				//,'type'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type"
+				,'typehidden'=>$form->hidden('fk_rh_ressource_type', $ressource->fk_rh_ressource_type) 
 				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
 				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
 				,'date_vente'=>(empty($ressource->date_vente) || ($ressource->date_vente<=0) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' , 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
 				,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TAgence,$ressource->fk_proprietaire)
+			)
+			,'ressourceNew' =>array(
+				'typeCombo'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type"
+				,'validerType'=>$form->btsubmit('Valider', 'validerType')
+				
 			)
 			,'fk_ressource'=>array(
 				'liste_fk_rh_ressource'=>$form->combo('','fk_rh_ressource',$ressource->TRessource,$ressource->fk_rh_ressource)
@@ -385,7 +349,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 				,'date_fin'=> $form->calendrier('', 'evenement[date_fin]', $emprunt->get_date('date_fin'), 10)
 			)
 			,'view'=>array(
-				'mode'=>$mode=='new' ? 'edit' : $mode
+				'mode'=>$mode
 				,'userRight'=>((int)$user->rights->ressource->ressource->createRessource)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'fiche', 'Ressource')
 			)
