@@ -8,6 +8,7 @@ llxHeader();
 
 global $db;
 $ATMdb = new Tdb;
+$form = new Form($db);
 $errdatefin = FALSE;
 $errdatedeb = FALSE;
 
@@ -93,9 +94,9 @@ elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'
 		</tr>
 		<tr height="50px;">
 			<td>Du : </td>
-			<td><input type="text" name="datedeb" onclick="if(this.value=='jj/mm/aaaa')this.value='';" onblur="if(this.value=='')this.value='jj/mm/aaaa';" id="datedeb" value="<?php echo (isset($_POST['datedeb']) && !empty($_POST['datedeb']) && $errdatedeb) ? $_POST['datedeb'] : "jj/mm/aaaa"; ?>" /></td>
+			<td><?php $form->select_date('','datedeb','','','',"add",1,1); ?></td>
 			<td>Au : </td>
-			<td><input type="text" name="datefin" onclick="if(this.value=='jj/mm/aaaa')this.value='';" onblur="if(this.value=='')this.value='jj/mm/aaaa';" id="datefin" value="<?php echo (isset($_POST['datefin']) && !empty($_POST['datefin']) && $errdatefin) ? $_POST['datefin'] : "jj/mm/aaaa"; ?>" /></td>
+			<td><?php $form->select_date('','datefin','','','',"add",1,1); ?></td>
 		</tr>
 		<tr height="20px;">
 		</tr>
