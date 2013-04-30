@@ -2,6 +2,7 @@
 require('config.php');
 require(DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php');
 require('class/groupeformulaire.class.php');
+require(DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php');
 //require(DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php');
 
 llxHeader();
@@ -15,12 +16,12 @@ $errdatedeb = FALSE;
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'add'){
 	//traitement de l'ajou
 	if(isset($_POST['datedeb']) && !empty($_POST['datedeb']) && array_sum(sscanf($_POST['datedeb'], "%d/%d/%d")) != 0)
-		$datedeb= $_POST['datedeb'];
+		$datedeb = $_POST['datedeb'];
 	else
-		$errdatedeb = TRUE;	
+		$errdatedeb = TRUE;
 	
 	if(isset($_POST['datefin']) && !empty($_POST['datefin']) && array_sum(sscanf($_POST['datefin'], "%d/%d/%d")) != 0)
-		$datefin= $_POST['datefin'];
+		$datefin = $_POST['datefin'];
 	else
 		$errdatefin = TRUE;
 	
@@ -29,6 +30,12 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'add'){
 	else{
 		$TGroupeForm = new TGroupeFormulaire();
 		
+		$datedeb = explode("/",$datedeb);
+		$datedeb =  $datedeb[2]."-".$datedeb[1]."-".$datedeb[0];
+		$datefin = explode("/",$datefin);
+		$datefin =  $datefin[2]."-".$datefin[1]."-".$datefin[0];
+		
+		echo $datedeb." ".$datefin;
 		$TGroupeForm->fk_usergroup = $_POST['groupe'];
 		$TGroupeForm->fk_survey = $_POST['survey'];
 		$TGroupeForm->date_deb = strtotime($datedeb);
