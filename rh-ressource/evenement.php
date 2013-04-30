@@ -206,8 +206,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	if($user->rights->ressource->ressource->manageEvents){
 	?></div><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
 	}
-	?>
-	<div style="clear:both"></div></div><?
+	?><div style="clear:both"></div></div><?
 	$form->end();
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
@@ -233,6 +232,8 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 		,array(
 			'ressource'=>array(
 				'id'=>$ressource->getId()
+				,'numId'=>$ressource->numId
+				,'libelle'=>$ressource->libelle
 			)
 			,'NEvent'=>array(
 				'id'=>$evenement->getId()

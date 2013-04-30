@@ -27,7 +27,6 @@
 	function _fiche(&$ATMdb, &$ressource) {
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers joints');
-		?><div class="fiche"><?	
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];
 		
@@ -133,7 +132,7 @@
 			$formfile->list_of_documents($filearray, $ressource, 'ressource', '&id='.$ressource->getId(),0,'ressource/'.$ressource->getId().'/',0);
 		}
 		
-		?><div style="clear:both"></div></div><?
+		?><div style="clear:both"></div><?
 		
 		dol_fiche_end();
 		llxFooter();

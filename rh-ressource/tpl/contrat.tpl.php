@@ -1,12 +1,8 @@
 <?php 	llxHeader('', 'Liste des contrats');
 ?>
 [onshow;block=begin;when [view.mode]=='view']
-
-        
-                <div class="fiche"> <!-- begin div class="fiche" -->
-                [view.head;strconv=no]
-                
-                        
+		
+		[view.head;strconv=no]
                                 
 [onshow;block=end]
 
@@ -91,7 +87,7 @@
 		$("#date_fin").change(comparerDates);
 	});
 </script>
-
+</div>
 [onshow;block=begin;when [view.userRight]==1]
 <div class="tabsAction" style="text-align:center;">
 		[onshow;block=begin;when [view.mode]=='edit']

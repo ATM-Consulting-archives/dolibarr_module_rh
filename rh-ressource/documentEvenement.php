@@ -29,7 +29,6 @@
 	function _fiche(&$ATMdb, &$evenement, &$ressource) {
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers joints');
-		?><div class="fiche"><?	
 		
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];
@@ -127,6 +126,8 @@
 
 		echo ($formconfirm ? $formconfirm : '');
 		
+		printLibelle($ressource);
+		
 		if($user->rights->ressource->ressource->uploadFiles){
 			$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$ressource->getId().'&idEven='.$evenement->getId(), '', 0, 0, $can_upload);
 			$formfile->list_of_documents($filearray, $evenement, 'ressource', '&id='.$ressource->getId().'&idEven='.$evenement->getId(),0,'evenement/'.$evenement->getId().'/',1);
@@ -134,7 +135,7 @@
 			$formfile->list_of_documents($filearray, $evenement, 'ressource', '&id='.$ressource->getId().'&idEven='.$evenement->getId(),0,'evenement/'.$evenement->getId().'/',0);
 		}
 		
-		?><div style="clear:both"></div></div><?
+		?><div style="clear:both"></div><?
 		
 		dol_fiche_end();
 		llxFooter();

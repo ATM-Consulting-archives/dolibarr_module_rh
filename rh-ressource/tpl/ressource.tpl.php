@@ -257,3 +257,5 @@
 
 	[onshow;block=end]
 
+<div style="clear:both"></div>
+

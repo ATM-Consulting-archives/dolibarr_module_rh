@@ -77,7 +77,6 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 	global $langs,$conf,$user;	
 	llxHeader('','Liste des contrats');
 	getStandartJS();
-	?><div class="fiche"><?	
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'contrats', 'Ressource');
 	
 	printLibelle($ressource);
@@ -133,9 +132,9 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 	));
 	
 	if($user->rights->ressource->contrat->createContract){
-	?><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
+	?></div><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
 	}
-	
+	?><div style="clear:both"></div></div><?
 	llxFooter();
 }	
 	
@@ -159,11 +158,13 @@ function _fiche(&$ATMdb,  &$association, &$ressource,  $mode) {
 		,array(
 			'ressource'=>array(
 				'id'=>$ressource->getId()
+				,'numId'=>$ressource->numId
+				,'libelle'=>$ressource->libelle
 			)
 			,'NAssociation'=>array(
 				'id'=>$association->getId()
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
-				,'fk_rh_contrat'=>$form->combo('', 'fk_rh_contrat', $ressource->TListeContrat, $association->fk_rh_contrat)
+				,'fk_rh_contrat'=>(count($ressource->TListeContrat) > 0) ? $form->combo('', 'fk_rh_contrat', $ressource->TListeContrat, $association->fk_rh_contrat) : 'Pas de contrats associés au type '.$ressource->TType[$ressource->fk_rh_ressource_type]
 				,'commentaire'=>$form->texte('','commentaire',$association->commentaire, 30,100,'','','-')
 			
 			)
