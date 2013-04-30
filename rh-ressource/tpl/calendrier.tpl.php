@@ -27,13 +27,25 @@
 [onshow;block=end]
 		
 [onshow;block=begin;when [ressource.fiche]!=true]  
-	 
-		Filtre :  
-			[ressource.type;strconv=no;protect=no]
-			[ressource.idRessource;strconv=no;protect=no]
-			[ressource.fk_user;strconv=no;protect=no]
-			[ressource.typeEven;strconv=no;protect=no]
-			[ressource.btValider;strconv=no;protect=no]
+
+		<table class="border" style="width:100%">
+			<tr>
+				<td>Type</td>
+				<td>Ressource</td>
+				<td>Utilisateur</td>
+				<td>Evénement</td>
+				<td rowspan="2">[ressource.btValider;strconv=no;protect=no]</td>
+			</tr>
+			<tr>
+				<td>[ressource.type;strconv=no;protect=no]</td>
+				<td>[ressource.idRessource;strconv=no;protect=no]</td>
+				<td>[ressource.fk_user;strconv=no;protect=no]</td>
+				<td>[ressource.typeEven;strconv=no;protect=no]</td>
+			</tr>
+			
+		</table>
+			
+			
          <br><br>
 [onshow;block=end] 	
 
@@ -75,17 +87,17 @@ $('#type').change(function(){
 				 <script type="text/javascript">
         $(document).ready(function() {     
            var view="month";          
-           /*
+           
            [onshow;block=begin;when [ressource.id]!=0]        
-                var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]";
+                var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]&typeEven=[ressource.typeEvenURL;strconv=no]";
 			[onshow;block=end]
 			
 			
 			[onshow;block=begin;when [ressource.id]=0]
-					var DATA_FEED_URL = "ressourceCalendarDataFeed.php?type=[ressource.typeURL;strconv=no]";
-			[onshow;block=end]*/
+					var DATA_FEED_URL = "ressourceCalendarDataFeed.php?[ressource.URL;strconv=no]";
+			[onshow;block=end]
 
-			var DATA_FEED_URL = "ressourceCalendarDataFeed.php?[ressource.URL;strconv=no]";
+			//var DATA_FEED_URL = "ressourceCalendarDataFeed.php?[ressource.URL;strconv=no]";
 			
             
             //alert(DATA_FEED_URL);

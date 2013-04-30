@@ -76,6 +76,7 @@
 				,'idRessource'=>$form->combo('', 'idCombo', $TRessource, $id)
 				,'fk_user'=>$form->combo('', 'fk_user', $TUser, $fk_user)
 				,'typeEven'=>$form->combo('', 'typeEven', $TTypeEvent, $typeEven)
+				,'typeEvenURL'=>$typeEven
 				,'URL'=>$url
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 				,'numId'=>$ressource->numId

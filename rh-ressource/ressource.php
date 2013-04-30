@@ -177,8 +177,6 @@ function _liste(&$ATMdb, &$ressource) {
 			'Statut'=>'getStatut("@val@")'
 			,'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
-			//,'name'=>'getName(@ID@, date("Y-m-d"))'
-			//,'firstname'=>'getFirstname(@ID@, date("Y-m-d"))'
 		)
 		,'translate'=>array(
 			'fk_rh_ressource_type'=>$ressource->TType
