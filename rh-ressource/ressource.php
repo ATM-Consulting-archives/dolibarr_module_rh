@@ -142,22 +142,23 @@ function _liste(&$ATMdb, &$ressource) {
 	
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.libelle, r.fk_rh_ressource_type,
-		r.numId , '' as 'Statut'";
+		r.numId , name as 'Statut', firstname, name ";
 	if($user->rights->ressource->ressource->createRessource){
 		$sql.=", '' as 'Supprimer'";
 	}
-	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r";
-			//LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t ON r.fk_rh_ressource_type=t.rowid";
+	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON  (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource)
+		AND e.entity = ".$conf->entity."
+		AND e.date_debut<='".date("Y-m-d")."' AND e.date_fin >= '". date("Y-m-d")."' 
+	 LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid )";	
+	$sql.=" WHERE  r.entity=".$conf->entity;
+	
+	
 	if(!$user->rights->ressource->ressource->viewRessource){
-		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource)";
+		$sql.=" AND e.fk_user=".$user->id;
 	}
-	$sql.=" WHERE r.entity=".$conf->entity;
-	if(!$user->rights->ressource->ressource->viewRessource){
-		$sql.=" AND e.type ='emprunt' 
-				AND e.fk_user=".$user->id;
-	}
-		
-	$TOrder = array('DateCre'=>'ASC');
+	
+	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -173,7 +174,11 @@ function _liste(&$ATMdb, &$ressource) {
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'eval'=>array(
-			'Statut'=>'getStatut(@ID@, date("Y-m-d"))'
+			'Statut'=>'getStatut("@val@")'
+			,'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			//,'name'=>'getName(@ID@, date("Y-m-d"))'
+			//,'firstname'=>'getFirstname(@ID@, date("Y-m-d"))'
 		)
 		,'translate'=>array(
 			'fk_rh_ressource_type'=>$ressource->TType
@@ -195,6 +200,8 @@ function _liste(&$ATMdb, &$ressource) {
 			'libelle'=>'Libellé'
 			,'numId'=>'Numéro Id'
 			,'fk_rh_ressource_type'=> 'Type'
+			,'name'=>'Nom'
+			,'firstname'=>'Prénom'
 			
 			
 		)
@@ -203,6 +210,8 @@ function _liste(&$ATMdb, &$ressource) {
 				'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
 				,'numId'=>true
 				,'libelle'=>true
+				,'name'=>true
+				,'firstname'=>true
 				//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
 			)
 			: array()
@@ -214,10 +223,15 @@ function _liste(&$ATMdb, &$ressource) {
 	llxFooter();
 }	
 
+
+function getStatut($val){
+	if (empty($val)){return "Libre";}
+	return "Attribué";
+}
 /**
  * Retourne un statut selon le jour donnée. Prend en compte la ressource associé éventuelle (si celle ci est attribué, elle le devient aussi)
  */
-function getStatut($id, $jour){
+function getAttribution($id, $jour){
 	global $conf;
 	$ATMdb=new Tdb;
 	$sqlReq="SELECT e.date_debut, e.date_fin , firstname, name 
@@ -229,15 +243,22 @@ function getStatut($id, $jour){
 	ORDER BY date_debut";
 	
 	$ATMdb->Execute($sqlReq);
-	$return = 'Libre';
+	$return = $return = array('name'=>''
+				,'firstname'=>''
+				,'statut'=>'Libre') ;
 	while($ATMdb->Get_line()) {
-		//echo $ATMdb->Get_field('date_debut').'  '.$ATMdb->Get_field('date_fin').'   <br>';
 		if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
 			&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
-				return 'Attribuée à '.htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+				return array('name'=>htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')
+				,'firstname'=>htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')
+				,'statut'=>'Attribuée') ;
+				//return 'Attribuée à '.htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 				break;
 		}
 		if (date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) >= $jour ){
+			$return =  array('name'=>htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')
+				,'firstname'=>htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')
+				,'statut'=>'Réservée') ;
 				$return='Réservée à '.htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 				break;
 			}
@@ -249,12 +270,17 @@ function getStatut($id, $jour){
 	$ATMdb->Execute($sqlReq);
 	while($row=$ATMdb->Get_line()){
 		if ($ATMdb->Get_field('fk_rh_ressource') !=  0){
-			$return = getStatut($ATMdb->Get_field('fk_rh_ressource'), $jour);}
+			$return = array('name'=>''
+				,'firstname'=>''
+				,'statut'=>'Libre') ;
+		}
+			//$return = getStatut($ATMdb->Get_field('fk_rh_ressource'), $jour);}
 	}
 	
 	$ATMdb->close();
 	return $return;			
 	}
+
 
 
 function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
