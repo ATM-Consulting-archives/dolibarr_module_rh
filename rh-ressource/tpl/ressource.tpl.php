@@ -1,10 +1,5 @@
-[onshow;block=begin;when [view.mode]=='view']
-
-        
-                [view.head;strconv=no]
-                
-                        
-                                
+[onshow;block=begin;when [view.mode]=='view']        
+	[view.head;strconv=no]
 [onshow;block=end]  
 
 
@@ -182,7 +177,7 @@
 </script>
 
 
-</div>
+
 [onshow;block=begin;when [view.userRight]==1]
 <div class="tabsAction" style="text-align:center;" >
 		[onshow;block=begin;when [view.mode]=='edit']
@@ -202,7 +197,7 @@
 </div>
 [onshow;block=end]
 
-<div>
+
 
 		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]=='aucune ressource']
 			[onshow;block=begin;when [fk_ressource.reqExiste]=='1']

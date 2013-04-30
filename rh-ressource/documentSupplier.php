@@ -25,7 +25,6 @@
 	function _fiche(&$ATMdb, &$ressource) {
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers joints');
-		?><div class="fiche"><?	
 		
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];

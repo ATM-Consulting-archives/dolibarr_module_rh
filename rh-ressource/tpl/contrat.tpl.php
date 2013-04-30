@@ -1,10 +1,14 @@
-<?php 	llxHeader('', 'Liste des contrats');
-?>
 [onshow;block=begin;when [view.mode]=='view']
 		
 		[view.head;strconv=no]
                                 
 [onshow;block=end]
+[onshow;block=begin;when [view.mode]!='view']
+		
+		<div>
+                                
+[onshow;block=end]
+
 
 <div>
 	<table class="border" style="width:100%">

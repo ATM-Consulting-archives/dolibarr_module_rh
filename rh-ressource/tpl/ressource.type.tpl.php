@@ -1,11 +1,9 @@
 [onshow;block=begin;when [view.mode]=='view']
+    [view.head;strconv=no]
+[onshow;block=end]  
 
-        
-                <div class="fiche"> <!-- begin div class="fiche" -->
-                [view.head;strconv=no]
-                
-                        <div class="tabBar">
-                                
+[onshow;block=begin;when [view.mode]!='view']
+    <div>
 [onshow;block=end]  
 		
 
@@ -33,21 +31,23 @@
 	});
 	</script>
 [onshow;block=end]
+
+</div>
+
+
 [onshow;block=begin;when [view.mode]!='edit']
-	
-		
-		</div>
-		
 	<div class="tabsAction">
 		<a href="?id=[ressourceType.id]&action=edit" class="butAction">Modifier</a>
 		<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[ressourceType.id]'">Supprimer</span>
 	</div>
 [onshow;block=end]	
+
 [onshow;block=begin;when [view.mode]=='edit']
-
-
-<div class="tabsAction" style="text-align:center;">
-	<input type="submit" value="Enregistrer" name="save" class="button"> 
-	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
-</div>
+	<div class="tabsAction" style="text-align:center;">
+		<input type="submit" value="Enregistrer" name="save" class="button"> 
+		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
+	</div>
 [onshow;block=end]
+
+<div style="clear:both"></div>
+
