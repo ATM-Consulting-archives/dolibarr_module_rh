@@ -20,6 +20,7 @@
 				//$ATMdb->db->debug=true;
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->set_values($_REQUEST);
+				$absence->niveauValidation=1;
 				$demandeRecevable=$absence->testDemande($ATMdb);
 				
 				if($demandeRecevable==1){
@@ -73,15 +74,15 @@
 				_fiche($ATMdb, $absence,'view');
 				break;
 				
-			/*case 'envoyerpaie':
+			case 'niveausuperieur':
 				$absence->load($ATMdb, $_REQUEST['id']);
-				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` SET etat='Enregistree', libelleEtat='Enregistrée dans la paie' where fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
+				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` SET niveauValidation=niveauValidation+1 where rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="ok">Demande d\'absence enregistrée dans la paie</div>';
+				$mesg = '<div class="ok">Demande d\'absence envoyée au valideur supérieur</div>';
 				_fiche($ATMdb, $absence,'view');
-				break;*/
+				break;
 				
 			case 'refuse':
 				$absence->load($ATMdb, $_REQUEST['id']);
@@ -190,6 +191,10 @@ function _liste(&$ATMdb, &$absence) {
 			,"name"=>true
 			
 		)
+		,'eval'=>array(
+				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+		)
 		,'orderBy'=>$TOrder
 		
 	));
@@ -230,7 +235,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 	//LISTE USERS À VALIDER
 	if($k==1){		//on n'a qu'un groupe de validation
 		$sql=" SELECT DISTINCT u.fk_user, 
-				a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
+				a.rowid as 'ID', a.date_cre ,a.date_debut, a.date_fin, 
 			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.name,
 			 	a.libelleEtat as 'Statut demande', a.avertissement
 				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
@@ -247,23 +252,41 @@ function _listeValidation(&$ATMdb, &$absence) {
 			if($TabGroupe[0]['validate_himself']==0){
 				$sql.=" AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$user->id.")";
 			}
-			echo $sql;
 		
-	}/*else if($k>1){		//on a plusieurs groupes de validation
-		$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
-			WHERE v.fk_user=".$user->id." 
-			AND v.fk_usergroup=u.fk_usergroup
-			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$user->id.")
-			AND v.entity=".$conf->entity;
- 		}
+		
+	}else if($k>1){		//on a plusieurs groupes de validation
+		$sql=" SELECT DISTINCT u.fk_user, 
+				a.rowid as 'ID', a.date_cre,a.date_debut, a.date_fin, 
+			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.name,
+			 	a.libelleEtat as 'Statut demande', a.avertissement
+				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
+				".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as s
+				WHERE v.fk_user=".$user->id." 
+				AND v.fk_usergroup=u.fk_usergroup
+				AND u.fk_user=a.fk_user 
+				AND u.fk_user=s.rowid
+				AND a.etat LIKE 'AValider'
+				AND v.entity=".$conf->entity;
+ 		
+ 		$j=0;
 		foreach($TabGroupe as $TGroupe){
- 		$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
-			WHERE v.fk_user=".$user->id." 
-			AND v.fk_usergroup=u.fk_usergroup
-			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$user->id.")
-			AND v.entity=".$conf->entity;
+			if($j==0){
+				$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+					AND a.niveauValidation=".$TabGroupe[$j]['level']."
+					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+					)";
+			}else{
+				$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+					AND a.niveauValidation=".$TabGroupe[$j]['level']."
+					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+					)";
+			}
+ 			
+			$j++;
  		}
-	}*/
+ 		$sql.=")";
+ 		//echo $sql;
+	}
  	
  
 	
@@ -291,7 +314,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
 				,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
 			)			
-			,'hide'=>array('DateCre','fk_user','ID')
+			,'hide'=>array('date_cre','fk_user','ID')
 			,'type'=>array('date_debut'=>'date','date_fin'=>'date')
 			,'liste'=>array(
 				'titre'=>'Liste des absences à valider'
@@ -319,12 +342,14 @@ function _listeValidation(&$ATMdb, &$absence) {
 				,"firstname"=>true
 				,"name"=>true
 			)
+			,'eval'=>array(
+				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			)
 			
 			,'orderBy'=>$TOrder
 			
 		));
-	
-	
 	
 	
 	llxFooter();
@@ -521,6 +546,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'fk_user'=>$absence->fk_user
 				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$absence->fk_user):''
 				,'userAbsenceCourant'=>$droitsCreation==1?'':$form->hidden('fk_user', $user->id)
+				,'niveauValidation'=>$absence->niveauValidation
 			)	
 			,'userCourant'=>array(
 				'id'=>$userCourant->id

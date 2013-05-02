@@ -122,6 +122,10 @@ function _liste(&$ATMdb, &$emploiTemps) {
 			'firstname'=>true
 			,'name'=>true
 		)
+		,'eval'=>array(
+				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+		)
 		
 	));
 	$form->end();

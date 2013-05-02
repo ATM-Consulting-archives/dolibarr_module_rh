@@ -74,7 +74,7 @@ function _liste(&$ATMdb, &$compteur) {
 	getStandartJS();
 	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Administration des congés');
 	$r = new TSSRenderControler($compteur);
-	$sql="SELECT  r.rowid as 'ID', CONCAT(c.firstname,' ',c.name) as 'Utilisateur', anneeN as 'annee', 
+	$sql="SELECT  r.rowid as 'ID', c.firstname, c.name, anneeN as 'annee', 
 		r.date_cre as 'DateCre', CAST(r.acquisExerciceN as DECIMAL(16,1)) as 'Congés acquis N', 
 		CAST(r.acquisAncienneteN as DECIMAL(16,1)) as 'Congés Ancienneté', 
 		CAST(r.acquisExerciceNM1 as DECIMAL(16,1)) as 'Conges Acquis N-1', 
@@ -96,7 +96,8 @@ function _liste(&$ATMdb, &$compteur) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Utilisateur'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'name'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			,'firstname'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')
@@ -112,7 +113,15 @@ function _liste(&$ATMdb, &$compteur) {
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			
 		)
+		,'title'=>array(
+			'name'=>'Nom'
+			,'firstname'=>'Prénom'
+		)
 		,'orderBy'=>$TOrder
+		,'eval'=>array(
+			'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+		)
 		
 	));
 	
