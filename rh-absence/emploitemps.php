@@ -41,8 +41,14 @@
 		
 	}
 	else {
-		$emploiTemps->load($ATMdb, $_REQUEST['fk_user']);
-		_liste($ATMdb, $emploiTemps);
+		if($user->rights->absence->myactions->voirTousEdt){
+			$emploiTemps->load($ATMdb, $_REQUEST['fk_user']);
+			_liste($ATMdb, $emploiTemps);
+		}else{
+			$emploiTemps->load($ATMdb, $user->id);
+			_fiche($ATMdb, $emploiTemps,'view');
+		}
+		
 	}
 	
 	$ATMdb->close();

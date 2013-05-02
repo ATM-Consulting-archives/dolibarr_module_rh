@@ -297,14 +297,14 @@ function _listeValidation(&$ATMdb, &$absence) {
 }	
 	
 function _fiche(&$ATMdb, &$absence, $mode) {
-	global $db,$user;
+	global $db,$user,$conf;
 	llxHeader('','Déclaration absence');
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $absence->getId());
 	echo $form->hidden('action', 'save');
-	echo $form->hidden('fk_user', $user->id);
+	//echo $form->hidden('fk_user', $user->id);
 	
 	
 	$anneeCourante=date('Y');
@@ -403,7 +403,32 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			$TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
 			$k++;
 		}
+
+	//création du tableau des utilisateurs liés au groupe du valideur, pour créer une absence, pointage...
+	$TUser = array();
+	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
+		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
+		$droitsCreation=1;
+	}else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
+		$sqlReqUser=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
+			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s  
+			WHERE v.fk_user=".$user->id." 
+			AND v.type='Conges'
+			AND s.rowid=u.fk_user
+			AND v.fk_usergroup=u.fk_usergroup
+			AND v.entity=".$conf->entity;
+		$droitsCreation=1;
+	}else $droitsCreation=2; //on n'a pas les droits de création
+	if($droitsCreation==1){
+		$ATMdb->Execute($sqlReqUser);
+		while($ATMdb->Get_line()) {
+			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+		}
+	}
 	
+	
+	
+		
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/absence.tpl.php'
 		,array(
@@ -435,7 +460,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'acquis'=>$form->texte('','rttAcquis',$rttCourant['acquis'],10,50,'',$class="text", $default='')
 				,'rowid'=>$form->texte('','rowid',$rttCourant['id'],10,50,'',$class="text", $default='')
-				,'id'=>$form->texte('','fk_user',$_REQUEST['id'],10,50,'',$class="text", $default='')
+				//,'id'=>$form->texte('','fk_user',$_REQUEST['id'],10,50,'',$class="text", $default='')
 				,'pris'=>$form->texte('','rttPris',$rttCourant['pris'],10,50,'',$class="text", $default='')
 				,'mensuel'=>round2Virgule($rttCourant['mensuel'])
 				,'annuelCumule'=>round2Virgule($rttCourant['annuelCumule'])
@@ -460,12 +485,15 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')
 				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png">  Ne respecte pas les règles en vigueur</img>':'Aucun'
 				,'fk_user'=>$absence->fk_user
+				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$absence->fk_user):''
+				,'userAbsenceCourant'=>$droitsCreation==1?'':$form->hidden('fk_user', $user->id)
 			)	
 			,'userCourant'=>array(
 				'id'=>$userCourant->id
 				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
 				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
 				,'valideurConges'=>$user->rights->absence->myactions->valideurConges&&$estValideur
+				,'droitCreationAbsenceCollaborateur'=>$droitsCreation==1?'1':'0'
 				//,'enregistrerPaieAbsences'=>$user->rights->absence->myactions->enregistrerPaieAbsences&&$estValideur
 			)
 			,'view'=>array(

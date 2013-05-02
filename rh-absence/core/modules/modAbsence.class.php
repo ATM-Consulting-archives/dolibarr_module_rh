@@ -201,20 +201,30 @@ class modAbsence extends DolibarrModules
 		$r++;
 		
 		$this->rights[$r][0] = 7106;
+		$this->rights[$r][1] = 'Visualiser l\'emploi du temps des collaborateurs';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'voirTousEdt';
+		$r++;
+		
+		$this->rights[$r][0] = 7107;
 		$this->rights[$r][1] = 'Modifier l\'emploi du temps d\'un collaborateur';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierEdt';
 		$r++;
 		
-		$this->rights[$r][0] = 7107;
+		$this->rights[$r][0] = 7108;
 		$this->rights[$r][1] = 'Modifier son emploi du temps';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierSonEdt';
 		$r++;
 		
-		$this->rights[$r][0] = 7108;
+		
+		
+		
+		$this->rights[$r][0] = 7109;
 		$this->rights[$r][1] = 'Voir toutes les absences des collaborateurs';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
@@ -227,6 +237,21 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'rajouterRegle';
 		$r++;
+		
+		$this->rights[$r][0] = 7111;
+		$this->rights[$r][1] = 'Créer une absence pour un collaborateur';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'creerAbsenceCollaborateur';
+		$r++;
+		
+		$this->rights[$r][0] = 7112;
+		$this->rights[$r][1] = 'Créer une absence pour un collaborateur de son groupe';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'creerAbsenceCollaborateurGroupe';
+		$r++;
+		
 		
 		
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
@@ -391,8 +416,8 @@ class modAbsence extends DolibarrModules
 		            'fk_menu'=>'fk_mainmenu=absence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
 		        	'titre'=> $langs->trans('Règles absences'),
-		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+		        	'mainmenu'=> 'absence',
+		        	'leftmenu'=> 'regle',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/regleAbsence.php',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 105,
@@ -401,6 +426,23 @@ class modAbsence extends DolibarrModules
 					'target'=> '',
 					'user'=> 2
         );
+		
+		$r++;
+		$this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=absence',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('Documents sur les règles'),
+		        	'mainmenu'=> '',
+		        	'leftmenu'=> '',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/absence/documentRegle.php',
+					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 105,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
+
 		
 		/*
 		$r++;
