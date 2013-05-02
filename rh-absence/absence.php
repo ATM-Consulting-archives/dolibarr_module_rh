@@ -207,35 +207,69 @@ function _listeValidation(&$ATMdb, &$absence) {
 	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
 	//getStandartJS();
  
- 	//LISTE USERS À VALIDER
- 	
-	$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
+ 
+ 	//LISTE DES GROUPES À VALIDER
+ 	$sql=" SELECT DISTINCT fk_usergroup, nbjours, validate_himself, level 
+ 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe`
+			WHERE fk_user=".$user->id." 
+			AND type='Conges'
+			AND entity=".$conf->entity;
+	//echo $sql;
+	$ATMdb->Execute($sql);
+	$TabGroupe=array();
+	$k=0;
+	while($ATMdb->Get_line()) {
+				$TabGroupe[$k]['fk_usergroup']=$ATMdb->Get_field('fk_usergroup');
+				$TabGroupe[$k]['nbjours']=$ATMdb->Get_field('nbjours');
+				$TabGroupe[$k]['validate_himself']=$ATMdb->Get_field('validate_himself');
+				$TabGroupe[$k]['level']=$ATMdb->Get_field('level');
+				$k++;
+	}
+	//print_r($TabGroupe);
+	
+	//LISTE USERS À VALIDER
+	if($k==1){		//on n'a qu'un groupe de validation
+		$sql=" SELECT DISTINCT u.fk_user, 
+				a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
+			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.name,
+			 	a.libelleEtat as 'Statut demande', a.avertissement
+				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
+				".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as s
+				WHERE v.fk_user=".$user->id." 
+				AND v.fk_usergroup=u.fk_usergroup
+				AND u.fk_user=a.fk_user 
+				AND u.fk_user=s.rowid
+				AND a.etat LIKE 'AValider'
+				AND v.entity=".$conf->entity." 
+				AND v.fk_usergroup=".$TabGroupe[0]['fk_usergroup']."
+				AND a.niveauValidation=".$TabGroupe[0]['level'];
+				
+			if($TabGroupe[0]['validate_himself']==0){
+				$sql.=" AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$user->id.")";
+			}
+			echo $sql;
+		
+	}/*else if($k>1){		//on a plusieurs groupes de validation
+		$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
 			WHERE v.fk_user=".$user->id." 
-			AND v.type='Conges'
 			AND v.fk_usergroup=u.fk_usergroup
 			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$user->id.")
 			AND v.entity=".$conf->entity;
-		
-	$ATMdb->Execute($sql);
-	$TabUser=array();
-	$k=0;
-	while($ATMdb->Get_line()) {
-				$TabUser[]=$ATMdb->Get_field('fk_user');
-				$k++;
-	}
+ 		}
+		foreach($TabGroupe as $TGroupe){
+ 		$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
+			WHERE v.fk_user=".$user->id." 
+			AND v.fk_usergroup=u.fk_usergroup
+			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$user->id.")
+			AND v.entity=".$conf->entity;
+ 		}
+	}*/
+ 	
+ 
 	
-	if($k==0){
-		
-	}else{
 		//LISTE DES ABSENCES À VALIDER
 		$r = new TSSRenderControler($absence);
-		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
-				  a.libelle as 'Type absence',a.fk_user,  u.firstname, u.name,
-				  a.libelleEtat as 'Statut demande', a.avertissement
-			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-			WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity=".$conf->entity." AND u.rowid=a.fk_user
-			AND a.etat LIKE 'AValider'";
-
+		
 		$TOrder = array('Statut demande'=>'DESC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -289,7 +323,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 			,'orderBy'=>$TOrder
 			
 		));
-	}
+	
 	
 	
 	
