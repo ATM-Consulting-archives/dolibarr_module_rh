@@ -124,6 +124,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('etat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('avertissement','type=int;');	
 		parent::add_champs('libelleEtat','type=chaine;');			//état (à valider, validé...)
+		parent::add_champs('niveauValidation','type=entier;');	//niveau de validation
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=int;');	
 		

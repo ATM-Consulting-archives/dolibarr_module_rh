@@ -188,7 +188,7 @@ class RegisterController extends LSYii_Controller {
         ) or safeDie ($query."<br />".$connect->ErrorMsg());  //Checked - According to adodb docs the bound variables are quoted automatically
         */
         $tid = getLastInsertID($token->tableName());;
-
+        $token=$token->token;
 
         $fieldsarray["{ADMINNAME}"]=$thissurvey['adminname'];
         $fieldsarray["{ADMINEMAIL}"]=$thissurvey['adminemail'];
@@ -228,21 +228,18 @@ class RegisterController extends LSYii_Controller {
         $html = ""; //Set variable
         $sitename =  Yii::app()->getConfig('sitename');
 
-        if (SendEmailMessage($message, $subject, Yii::app()->request->getPost('register_email'), $from, $sitename,$useHtmlEmail,getBounceEmail($surveyid)))
-        {
-            // TLR change to put date into sent
-            $today = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i", Yii::app()->getConfig('timeadjust'));
-            $query = "UPDATE {{tokens_$surveyid}}\n"
-            ."SET sent='$today' WHERE tid=$tid";
-            $result=dbExecuteAssoc($query) or show_error("Unable to execute this query : $query<br />");     //Checked
-            $html="<center>".$clang->gT("Thank you for registering to participate in this survey.")."<br /><br />\n".$clang->gT("An email has been sent to the address you provided with access details for this survey. Please follow the link in that email to proceed.")."<br /><br />\n".$clang->gT("Survey administrator")." {ADMINNAME} ({ADMINEMAIL})";
-            $html=ReplaceFields($html, $fieldsarray);
-            $html .= "<br /><br /></center>\n";
-        }
-        else
-        {
-            $html="Email Error";
-        }
+        // TLR change to put date into sent
+        $today = dateShift(date("Y-m-d H:i:s"), "Y-m-d H:i", Yii::app()->getConfig('timeadjust'));
+        $query = "UPDATE {{tokens_$surveyid}}\n"
+        ."SET sent='$today' WHERE tid=$tid";
+        $result=dbExecuteAssoc($query) or show_error("Unable to execute this query : $query<br />");     //Checked
+        $html="<center>".$clang->gT("Thank you for registering to participate in this survey.")."<br /><br />\n".$clang->gT("An email has been sent to the address you provided with access details for this survey. Please follow the link in that email to proceed.")."<br /><br />\n".$clang->gT("Survey administrator")." {ADMINNAME} ({ADMINEMAIL})";
+        $html=ReplaceFields($html, $fieldsarray);
+        $html .= "<br /><br /></center>\n";
+		
+		?>
+		<meta http-equiv="refresh" content="0;<?php echo $surveylink; ?>" />
+		<?php
 
         //PRINT COMPLETED PAGE
         if (!$thissurvey['template'])

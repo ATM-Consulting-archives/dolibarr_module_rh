@@ -31,7 +31,7 @@
 	$ressource->load($ATMdb, $_REQUEST['id']);
 	
 	$fiche = isset($_REQUEST['fiche']) ? $_REQUEST['fiche'] : false;
-	$id = isset($_REQUEST['id']) ? $_REQUEST['id'] : 0;
+	$id = isset($_REQUEST['idCombo']) ? $_REQUEST['idCombo'] : 0;
 	$type = isset($_REQUEST['type']) ? $_REQUEST['type'] : 0;
 	$fk_user = isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : 0;
 	$typeEven = isset($_REQUEST['typeEven']) ? $_REQUEST['typeEven'] : null ;
@@ -60,6 +60,7 @@
 	
 	$TType = array_merge(array(''), $ressource->TType);
 	$TTypeEvent = loadListeTypeEvent($ATMdb, $type);
+	if ($fiche) {$TTypeEvent = loadListeTypeEvent($ATMdb, $ressource->fk_rh_ressource_type);}
 
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'
@@ -67,12 +68,15 @@
 		,array(
 			'ressource'=>array(
 				'id' => $ressource->getId()
+				,'idHidden'=>$form->hidden('id', $ressource->getId())
 				,'fiche'=> $fiche
+				,'ficheHidden'=>$form->hidden('fiche', $fiche)
 				,'type'=>$form->combo('', 'type', $TType, $type)
 				,'typeURL'=>$type
-				,'idRessource'=>$form->combo('', 'id', $TRessource, $id)
+				,'idRessource'=>$form->combo('', 'idCombo', $TRessource, $id)
 				,'fk_user'=>$form->combo('', 'fk_user', $TUser, $fk_user)
 				,'typeEven'=>$form->combo('', 'typeEven', $TTypeEvent, $typeEven)
+				,'typeEvenURL'=>$typeEven
 				,'URL'=>$url
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 				,'numId'=>$ressource->numId

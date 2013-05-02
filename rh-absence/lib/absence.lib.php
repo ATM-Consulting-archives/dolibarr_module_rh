@@ -82,7 +82,13 @@ function reglePrepareHead(&$obj, $type='regle') {
 				return array(
 					array(DOL_URL_ROOT_ALT.'/absence/regleAbsence.php?fk_user='.$user->id, 'Règles des absences','regle')
 				);
-				break;	
+				break;
+		case 'import':
+				return array(
+					array(DOL_URL_ROOT_ALT.'/ressource/documentRegle.php', 'Fiche','fiche')
+				);
+			
+			break;
 	}
 }
 

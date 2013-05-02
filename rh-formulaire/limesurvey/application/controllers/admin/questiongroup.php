@@ -46,8 +46,8 @@ class questiongroup extends Survey_Common_Action
             $importgroup = "\n";
             $importgroup .= "\n";
 
-            $sFullFilepath = Yii::app()->getConfig('tempdir') . DIRECTORY_SEPARATOR . $_FILES['the_file']['name'];
-            $aPathInfo = pathinfo($sFullFilepath);
+            $sFullFilepath = Yii::app()->getConfig('tempdir') . DIRECTORY_SEPARATOR . randomChars(20);
+            $aPathInfo = pathinfo($_FILES['the_file']['name']);
             $sExtension = $aPathInfo['extension'];
 
             if (!@move_uploaded_file($_FILES['the_file']['tmp_name'], $sFullFilepath))

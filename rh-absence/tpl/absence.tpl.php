@@ -17,10 +17,19 @@
 
 
 			<table class="border" style="width:40%">
+				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='1']
+				<tr>
+					<td>Utilisateur</td>
+					<td>[absenceCourante.userAbsence;strconv=no;protect=no]</td>
+				</tr>	
+				[onshow;block=end]
+				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='0']
 				<tr>
 					<td>Utilisateur Courant</td>
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
-				</tr>	
+					[absenceCourante.userAbsenceCourant;strconv=no;protect=no]
+				</tr>
+				[onshow;block=end]	
 				<tr>
 					<td>Type d'absence</td>
 					<td>[absenceCourante.comboType;strconv=no;protect=no]</td>
@@ -53,6 +62,10 @@
 					<tr>
 						<td>Avertissement</td>
 						<td>[absenceCourante.avertissement;strconv=no;protect=no]</td>
+					</tr>
+					<tr>
+						<td>Niveau de validation</td>
+						<td>[absenceCourante.niveauValidation;strconv=no;protect=no]</td>
 					</tr>
 				[onshow;block=end]
 			</table>
@@ -94,6 +107,7 @@
 					[onshow;block=begin;when [userCourant.valideurConges]=='1']
 						<a class="butAction" id="action-update"  onclick="document.location.href='?action=accept&id=[absenceCourante.id]'">Accepter</a>	
 						<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=refuse&id=[absenceCourante.id]'">Refuser</span>
+						<a style='width:22%' class="butAction" id="action-update"  onclick="document.location.href='?action=niveausuperieur&id=[absenceCourante.id]'">Envoyer au valideur supérieur</a>	
 					[onshow;block=end]
 				[onshow;block=end]
 				

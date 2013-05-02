@@ -183,17 +183,6 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'date_maj'=>$ressource->get_date('date_maj','d/m/Y à H:i:s')
 				,'date_cre'=>$ressource->get_date('date_cre','d/m/Y')
 			)
-			/*,'newField'=>array(
-				'hidden'=>$form->hidden('action', 'save')
-				,'code'=>$form->texte('', 'TNField[code]', '', 20,255,'','','-')
-				,'ordre'=>$form->hidden('TNField[ordre]', $k+1, 'class="ordre'.($k+1).'"')
-				,'indice'=>$k+1
-				,'libelle'=>$form->texte('', 'TNField[libelle]', '', 20,255,'','','-')
-				,'type'=>$form->combo('', 'TNField[type]',$ressource->TType, 'texte')
-				,'obligatoire'=>$form->combo('','TNField[obligatoire]',array('Oui','Non'),'0')
-				
-			
-			)*/
 			,'view'=>array(
 				'mode'=>$mode
 				,'nbChamps'=>count($ressource->TField)

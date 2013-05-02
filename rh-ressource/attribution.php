@@ -100,7 +100,6 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	global $langs, $conf, $db, $user;
 	
 	llxHeader('','Liste des attributions');
-	?><div class="fiche"><?
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'attribution', 'Ressource');
 	
 	printLibelle($ressource);
@@ -156,9 +155,9 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	));
 	
 	if($user->rights->ressource->ressource->manageAttribution){
-	?><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a></div><br><br><br></div><?
+	?></div><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
 	}
-	
+	?><div style="clear:both"></div></div><?
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();

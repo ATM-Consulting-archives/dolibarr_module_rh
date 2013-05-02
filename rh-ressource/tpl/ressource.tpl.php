@@ -1,13 +1,5 @@
-<?php 	llxHeader('', 'Liste des ressources', '', '', 0, 0, array('../js/jquery.jOrgChart.js'));
-?>
-[onshow;block=begin;when [view.mode]=='view']
-
-        
-                <div class="fiche"> <!-- begin div class="fiche" -->
-                [view.head;strconv=no]
-                
-                        
-                                
+[onshow;block=begin;when [view.mode]=='view']        
+	[view.head;strconv=no]
 [onshow;block=end]  
 
 
@@ -31,9 +23,17 @@
 
 	<!-- entête du tableau -->
 <table class="border" style="width:100%">
+	[onshow;block=begin;when [view.mode]=='new']
+		<tr>
+			<td>Type</td>
+			<td>[ressourceNew.typeCombo;strconv=no;protect=no]</td>
+			<td>[ressourceNew.validerType;strconv=no;protect=no]</td>
+		</tr>
+	[onshow;block=end]
+	[onshow;block=begin;when [view.mode]!='new']
 	<tr>
 		<td>Type</td>
-		<td>[ressource.type;strconv=no;protect=no]</td>
+		<td>[ressource.type;strconv=no;protect=no]</td>[ressource.typehidden;strconv=no;protect=no]
 	</tr>
 	
 	<tr>
@@ -182,7 +182,13 @@
 <div class="tabsAction" style="text-align:center;" >
 		[onshow;block=begin;when [view.mode]=='edit']
 			<input type="submit" value="Enregistrer" name="save" class="button">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
+			[onshow;block=begin;when [ressource.id]!=0]
+				&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
+			[onshow;block=end]
+			[onshow;block=begin;when [ressource.id]==0]
+				&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href=''">
+			[onshow;block=end]
+			
 		[onshow;block=end]
 		[onshow;block=begin;when [view.mode]!='edit']
 			<a class="butAction"  href="?id=[ressource.id]&action=edit">Modifier</a>
@@ -191,7 +197,7 @@
 </div>
 [onshow;block=end]
 
-<div>
+
 
 		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]=='aucune ressource']
 			[onshow;block=begin;when [fk_ressource.reqExiste]=='1']
@@ -244,4 +250,7 @@
 			[onshow;block=end]
 		[onshow;block=end]
 
-</div>
+	[onshow;block=end]
+
+<div style="clear:both"></div>
+

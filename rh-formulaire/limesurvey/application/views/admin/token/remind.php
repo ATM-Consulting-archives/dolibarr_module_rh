@@ -33,7 +33,7 @@
             }
             echo "<div id='tabpage_{$language}'><ul>"
             . "<li><label for='from_$language' >" . $clang->gT("From") . ":</label>\n"
-            . "<input type='text' size='50' name='from_$language' id='from_$language' value=\"{$thissurvey['adminname']} <{$thissurvey['adminemail']}>\" /></li>\n"
+            . "<input type='text' size='50' name='from_$language' id='from_$language' value=\"".htmlspecialchars($thissurvey['adminname'],ENT_QUOTES,'UTF-8')." <".htmlspecialchars($thissurvey['adminemail'],ENT_QUOTES,'UTF-8').">\" /></li>\n"
             . "<li><label for='subject_$language' >" . $clang->gT("Subject") . ":</label>";
 
             $fieldsarray["{ADMINNAME}"] = $thissurvey['adminname'];
@@ -51,11 +51,11 @@
 
             echo "<input type='text' size='83' id='subject_$language' name='subject_$language' value=\"$subject\" /></li><li>\n"
             . "<label for='message_$language'>" . $clang->gT("Message") . ":</label>\n"
+            . "<div  class='htmleditor'>\n"
             . "<textarea name='message_$language' id='message_$language' rows='20' cols='80' >";
-
             echo htmlspecialchars($textarea);
-
             echo "</textarea>"
+            . "</div>\n"
             . getEditor("email-rem", "message_$language", "[" . $clang->gT("Reminder Email:", "js") . "](" . $language . ")", $surveyid, '', '', "tokens")
             . "</li>\n"
             . "</ul></div>";

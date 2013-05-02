@@ -1,6 +1,7 @@
 <?php
 
 require('config.php');
+require('./lib/ressource.lib.php');
 include_once("../rh-library/wdCalendar/php/functions.php");
 $ATMdb=new TPDOdb;
 
@@ -29,9 +30,13 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
   $ret["start"] = php2JsTime($sd);
   $ret["end"] = php2JsTime($ed);
   $ret['error'] = null;
+  
+  $TEvent = getTypeEvent($idTypeRessource);
+  $TRessource = getRessource(0);
+  $TUser = getUsers();
+ 
   try{
-    //echo 'Type : '.$idTypeRessource.' id : '.$idRessource.' user : '.$fk_user.' even : '.$typeEven.'<br>';
-	$sql = "SELECT e.rowid,  date_debut, date_fin, isAllDayEvent, fk_user, color, type, subject
+	$sql = "SELECT e.rowid,  date_debut, date_fin, isAllDayEvent, fk_user, color, type, subject, e.fk_rh_ressource 
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 	WHERE ";
@@ -61,14 +66,20 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
       //  $attends .= $row->OtherAttendee;
       //}
       if ($row->type == 'emprunt'){
-      	$lien = 'attribution.php?id='.$idRessource.'&idEven='.$row->rowid.'&action=view';
+      	$lien = 'attribution.php?id='.$row->fk_rh_ressource.'&idEven='.$row->rowid.'&action=view';
       }
 	  else {
-	  	$lien = 'evenement.php?id='.$idRessource.'&idEven='.$row->rowid.'&action=view';
+	  	$lien = 'evenement.php?id='.$row->fk_rh_ressource.'&idEven='.$row->rowid.'&action=view';
 	  }
+	 
+	  //on écrit l'intitulé du calendrier en fonction des données de la fonction
+	  $sujet = '';
+	  $sujet .= ((empty($idRessource) || ($idRessource==0)) ? $TRessource[$row->fk_rh_ressource].', ' : '');
+	  $sujet .= ( (!$typeEven || $typeEven=='all') ? $TEvent[$row->type] : '');
+	  $sujet .= (($fk_user==0) ? ', '.$TUser[$row->fk_user] : '');  
       $ret['events'][] = array(
        $row->rowid,
-        $row->subject,
+        $sujet,
         php2JsTime(mySql2PhpTime($row->date_debut)),
         php2JsTime(mySql2PhpTime($row->date_fin)),
         $row->isAllDayEvent,
