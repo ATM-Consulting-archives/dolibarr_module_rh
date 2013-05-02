@@ -2,7 +2,6 @@
 	
 	require('config.php');
 
-
 	if(isset($_REQUEST['ndfp'])) {
 		dol_include_once("/ndfp/lib/ndfp.lib.php");
 		$langs->load('ndfp@ndfp');
@@ -50,11 +49,16 @@ cp save/$tardoc /mnt/srv1
 		 * 
 		 */
 		 
-		 /*exec('smbclient -N '.THEREFORE_LOADER.' -Wmshome -c "put ./tmp/'.$filename.'"');
-		 exec('smbclient -N '.THEREFORE_LOADER.' -Wmshome -c "put ./tmp/'.$_FILES['fichier1']['name'].'"');
-		*/
-		 @unlink('./tmp/'.$_FILES['fichier1']['name']);
-		 @unlink('./tmp/'.$filename);
+		$cmd1 = 'smbclient '.THEREFORE_LOADER.' -Wmshome -c "put ./tmp/'.$filename.' ./Loader/'.$filename.'" -U dolibarr2 dolibar2013';
+		$cmd2 = 'smbclient '.THEREFORE_LOADER.' -Wmshome -c "put ./tmp/'.$_FILES['fichier1']['name'].' ./Loader/'.$_FILES['fichier1']['name'].'" -U dolibarr2 dolibar2013';
+file_put_contents('cmd.log',$cmd1."\n".$cmd2);
+		print $cmd1.'<br/>';
+		print exec($cmd1);
+print $cmd2.'<br/>';
+		print exec($cmd2);
+		
+		// @unlink('./tmp/'.$_FILES['fichier1']['name']);
+		// @unlink('./tmp/'.$filename);
 		
 		print "Fichier déposé sur le serveur";
 	}
