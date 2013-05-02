@@ -1,9 +1,7 @@
 <?php
 	require('config.php');
-	require('./class/ressource.class.php');
-	require('./class/evenement.class.php');
-	require('./class/contrat.class.php');
-	require('./lib/ressource.lib.php');
+	require('./class/absence.class.php');
+	require('./lib/absence.lib.php');
 	
 	require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
 	require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
@@ -15,14 +13,14 @@
 	$langs->load('other');
 	
 	$ATMdb=new Tdb;
-	$ressource = new TRH_Ressource;
+	$absence=new TRH_Absence;
 	
-	_fiche($ATMdb, $ressource);
+	_fiche($ATMdb, $absence);
 	
 	$ATMdb->close();
 	llxFooter();
 	
-	function _fiche(&$ATMdb, &$ressource) {
+	function _fiche(&$ATMdb, &$absence) {
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers joints');
 		
@@ -38,7 +36,7 @@
 		
 		if ($_REQUEST["sendit"])
 		{
-			$upload_dir = DIR_DOC_OUTPUT.'import_fournisseurs';
+			$upload_dir = DIR_DOC_OUTPUT.'regle';
 		
 			if (dol_mkdir($upload_dir) >= 0)
 			{
@@ -47,10 +45,6 @@
 				
 		        if (is_numeric($resupload) && $resupload > 0)
 				{
-					
-					$nomFichier= $upload_dir . "/" . $_FILES['userfile']['name'];
-					include("./script/".$_REQUEST["typeImport"]);
-					
 					$message = $langs->trans("FileTransferComplete");
 		            $error = false;
 				}
@@ -78,7 +72,7 @@
 		// Delete
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		{
-			$upload_dir = DIR_DOC_OUTPUT.'import_fournisseurs';
+			$upload_dir = DIR_DOC_OUTPUT.'regle';
 		
 			$file = $upload_dir . '/' . $_REQUEST['urlfile'];
 			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $object);
@@ -104,7 +98,7 @@
 		if (!$sortfield) $sortfield = "name";
 		
 		
-		$upload_dir = DIR_DOC_OUTPUT.'import_fournisseurs';
+		$upload_dir = DIR_DOC_OUTPUT.'regle';
 		
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$totalsize = 0;
@@ -120,46 +114,18 @@
 		
 		$can_upload = 1;
 		
-		echo dol_get_fiche_head(ressourcePrepareHead($ressource, 'import', $ressource), 'fiche', 'Import fournisseurs');
+		echo dol_get_fiche_head(reglePrepareHead($absence, 'import', $absence), 'fiche', 'Fichiers joints');
 		
 		echo ($message ? dol_htmloutput_mesg($message, '', ($error ? 'error' : 'ok'), 0) : '');
 
 		echo ($formconfirm ? $formconfirm : '');
 		
-		$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
-		
-		$liste_types_imports=array('ImportFactureTotal.php' => 'Total'
-									,'ImportFactureArea.php' => 'Area'
-									,'ImportFactureEuromaster.php' => 'Euromaster'
-									,'ImportFactureParcours.php' => 'Parcours'
-									,'ImportFactureOrange.php' => 'Orange');
-		
-		$TBS=new TTemplateTBS();
-		$select_types_imports = $TBS->render('./tpl/documentSupplier.tpl.php'
-			,array()
-			,array(
-				'import'=>array(
-					'typeImport'=>$form->combo('','typeImport',$liste_types_imports,'')
-				)
-			)	
-			
-		);
-		$select_types_imports = preg_replace("/(\r\n|\n|\r)/", " ", $select_types_imports);
-		$select_types_imports = preg_replace("/'/", "\"", $select_types_imports);
-		
-		echo $form->end_form();
-		
-		$formfile->form_attach_new_file($_SERVER["PHP_SELF"], '', 0, 0, $can_upload);
-		$formfile->list_of_documents($filearray, $ressource, 'import_fournisseurs', '',0,DIR_DOC_OUTPUT.'import_fournisseurs/',1);
-
-		?>
-		<script>
-			$(document).ready(function(){
-				$("form[name='formuserfile']").children().children().children().children().prepend('<? print $select_types_imports; ?>');
-			});
-		</script>
-		
-		<div style="clear:both"></div></div><?
+		if($user->rights->absence->myactions->uploadFilesRegle){
+			$formfile->form_attach_new_file($_SERVER["PHP_SELF"], '', 0, 0, $can_upload);
+			$formfile->list_of_documents($filearray, $absence, 'regle', '',0,DIR_DOC_OUTPUT.'regle/',1);
+		}else{
+			$formfile->list_of_documents($filearray, $absence, 'regle', '',0,DIR_DOC_OUTPUT.'regle/',0);
+		}
 		
 		dol_fiche_end();
 		llxFooter();
