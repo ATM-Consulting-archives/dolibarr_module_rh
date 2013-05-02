@@ -49,8 +49,8 @@ cp save/$tardoc /mnt/srv1
 		 * 
 		 */
 		 
-		$cmd1 = 'smbclient '.THEREFORE_LOADER.' -W'.THEREFORE_GROUP.' -c "put ./tmp/'.$filename.' ./Loader/'.$filename.'" -U '.THEREFORE_USER.'%'.THEREFORE_PASSWORD;
-		$cmd2 = 'smbclient '.THEREFORE_LOADER.' -W'.THEREFORE_GROUP.' -c "put ./tmp/'.$_FILES['fichier1']['name'].' ./Loader/'.$_FILES['fichier1']['name'].'" -U '.THEREFORE_USER.'%'.THEREFORE_PASSWORD;
+		$cmd1 = 'smbclient '.THEREFORE_LOADER.' -W'.THEREFORE_GROUP.' -c "cd Loader;put ./tmp/'.$filename.'" -U '.THEREFORE_USER.'%'.THEREFORE_PASSWORD;
+		$cmd2 = 'smbclient '.THEREFORE_LOADER.' -W'.THEREFORE_GROUP.' -c "cd Loader;put ./tmp/'.$_FILES['fichier1']['name'].'" -U '.THEREFORE_USER.'%'.THEREFORE_PASSWORD;
 file_put_contents('cmd.log',$cmd1."\n".$cmd2);
 		print $cmd1.'<br/>';
 		print exec($cmd1);
