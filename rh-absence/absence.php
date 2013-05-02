@@ -40,7 +40,14 @@
 						mailConges($absence);
 						$mesg = '<div class="error">Attention : La durée de l\'absence dépasse la règle en vigueur</div>';
 						_fiche($ATMdb, $absence,'view');
-					}	
+					}
+					else if($demandeRecevable==3){		// demande rtt non cumulés acollée à un congé, ou rtt ou jour férié
+						$mesg = '<div class="error">Demande refusée à cause des règles sur les RTT non cumulés</div>';
+						_fiche($ATMdb, $absence,'edit');
+					}else if($demandeRecevable==4){		// doit attendre 2 mois avant de reprendre un jour de rtt non cumulés
+						$mesg = '<div class="error">Demande refusée : attendre 2 mois entre 2 jours de RTT non cumulés</div>';
+						_fiche($ATMdb, $absence,'edit');
+					}		
 				}
 				break;
 			

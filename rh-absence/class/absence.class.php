@@ -157,6 +157,7 @@ class TRH_Absence extends TObjetStd {
 		}
 		
 		
+		//on sélectionne les règles relatives à un utilisateurs
 		$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, r.fk_user, r.fk_usergroup, r.choixApplication
 		FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
 		WHERE( r.fk_user=u.rowid AND r.fk_user=".$user->id." AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
@@ -192,6 +193,8 @@ class TRH_Absence extends TObjetStd {
 			$dureeAbsenceCourante=$this->calculJoursFeries($db, $dureeAbsenceCourante);
 			$dureeAbsenceCourante=$this->calculJoursTravailles($db, $dureeAbsenceCourante);
 			
+			
+			
 			//autres paramètes à sauvegarder
 			$this->libelle=saveLibelle($this->type);
 			$this->duree=$dureeAbsenceCourante;
@@ -200,11 +203,26 @@ class TRH_Absence extends TObjetStd {
 			
 			//on teste s'il y a des règles qui s'appliquent à cette demande d'absence
 			//$this->findRegleUser($db);
-			$nbJourAutorise=$this->dureeAbsenceRecevable();
+			$dureeAbsenceRecevable=$this->dureeAbsenceRecevable();
 			
 		
-			if($nbJourAutorise==0){
+			if($dureeAbsenceRecevable==0){
 				return 0;
+			}
+			
+			//on teste si c'est une demande de jours non cumulés, 
+			//si les jours N-1 début absence et N+1 fin absence sont travaillés
+			if($this->type=='rttnoncumule'){
+				$absenceAutoriseeDebut=$this->isWorkingDayPrevious($ATMdb, $this->date_debut);
+				$absenceAutoriseeFin=$this->isWorkingDayNext($ATMdb, $this->date_debut);
+				if($absenceAutoriseeDebut==0||$absenceAutoriseeFin==0){
+					return 3; //etat pour le message d'erreur lié aux rtt non cumulés
+				}
+				//on teste finalement si le collaborateur n'a pas déjà pris un jour de rtt non cumulés dans les 2 mois précédents
+				$absenceAutorisee1Jour2Mois=$this->rttnoncumuleDuree2mois($ATMdb, $this->date_debut);
+				if($absenceAutorisee1Jour2Mois==0){
+					return 4; //etat pour le message d'erreur lié aux rtt non cumulés, et indiquant qu'un seul jour peut être pris par 2 mois
+				}
 			}
 			
 			
@@ -242,7 +260,7 @@ class TRH_Absence extends TObjetStd {
 				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 			}
 			
-			return $nbJourAutorise;
+			return $dureeAbsenceRecevable;
 		}
 		
 		
@@ -800,6 +818,89 @@ class TRH_Absence extends TObjetStd {
 			}
 			return $avertissement;
 		}
+		
+		function isWorkingDayNext(&$ATMdb, $dateTest){
+
+			$dateNext=$dateTest+3600*24;
+			//$jourNext=$this->jourSemaine($dateNext);
+			
+			//on teste si c'est un jour férié
+			$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
+			.$this->php2Date($this->date_debut)."' and '".$dateNext."'"; 
+			
+			$ATMdb->Execute($sql);
+			while($ATMdb->Get_line()) {
+				if($this->php2Date($dateNext)==$ATMdb->Get_field('date_jourOff')&&$ATMdb->Get_field('date_jourOff')!='apresmidi'){
+					return 0;
+				}
+			}
+			
+			//on teste si le jour suivant est un rtt cumulé ou un congés ce qui est interdit
+			$sql="SELECT rowid, date_debut, dfMoment FROM ".MAIN_DB_PREFIX."rh_absence 
+			WHERE date_debut LIKE '".$this->php2Date($dateNext)."'
+			AND (type LIKE 'rttcumule' OR type LIKE 'conges') 
+			AND etat <> 'refusee'"; 
+			$ATMdb->Execute($sql);
+
+			while($ATMdb->Get_line()) {
+				//echo $this->php2Date($dateNext);
+				if($this->php2Date($dateNext)==$ATMdb->Get_field('date_debut')&&$ATMdb->Get_field('date_debut')!='apresmidi'){
+					return 0;
+				}
+			}
+			return 1;
+		}
+		
+		function isWorkingDayPrevious(&$ATMdb, $dateTest){
+
+			$datePrec=$dateTest-3600*24;
+			//$jourPrec=$this->jourSemaine($datePrec);
+			
+			//on teste si c'est un jour férié
+			$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
+			.$jourPrec."' and '". $this->php2Date($this->date_debut)."'"; 
+			
+			$ATMdb->Execute($sql);
+			while($ATMdb->Get_line()) {
+				if($this->php2Date($dateTest)==$ATMdb->Get_field('date_jourOff')){
+					return 0;
+				}
+			}
+			
+			//on teste si le jour précédent est un rtt cumulé ou un congés ce qui est interdit
+			$sql="SELECT rowid, date_debut, dfMoment FROM ".MAIN_DB_PREFIX."rh_absence 
+			WHERE date_fin LIKE '".$this->php2Date($datePrec)."'
+			AND (type LIKE 'rttcumule' OR type LIKE 'conges')
+			AND etat <> 'refusee'"; 
+			$ATMdb->Execute($sql);
+
+			while($ATMdb->Get_line()) {
+				//echo $this->php2Date($datePrec);
+				if($this->php2Date($datePrec)==$ATMdb->Get_field('date_fin')&&$ATMdb->Get_field('date_fin')!='matin'){
+					return 0;
+				}
+			}
+			return 1;
+		}
+
+		function rttnoncumuleDuree2mois(&$ATMdb, $dateDebut){
+			
+			//on calcule 2 mois entre la date de début de la demande d'absence, et la prise d'un rtt non cumulé
+			$dateLimite=$dateDebut-3600*24*58;
+			
+			$sql="SELECT SUM(duree) as 'somme' FROM ".MAIN_DB_PREFIX."rh_absence 
+			WHERE date_debut between '".$this->php2Date($dateLimite)."' AND '".$this->php2Date($dateDebut)."'
+			AND type LIKE 'rttnoncumule' AND etat <> 'refusee'"; 
+			$ATMdb->Execute($sql);
+			
+			while($ATMdb->Get_line()) {
+				if($ATMdb->Get_field('somme')>=1){
+					return 0;
+				}
+			}
+			return 1;
+		}
+		
 		
 }
 
