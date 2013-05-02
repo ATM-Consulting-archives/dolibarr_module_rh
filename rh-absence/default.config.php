@@ -26,3 +26,4 @@
 	define('DOL_ADMIN_USER', 'admin');
 	
 	define('USER_MAIL_SENDER', 'webmaster@atm-consulting.fr');
+	define('DIR_DOC_OUTPUT', '/var/lib/dolibarr/documents/absence/');
