@@ -4,6 +4,7 @@
 	 	<br> 
 				Groupe  [absence.TGroupe;strconv=no;protect=no]
 	            Utilisateur    [absence.TUser;strconv=no;protect=no]
+
 	                [absence.btValider;strconv=no;protect=no] 
 	    <br>
 

@@ -59,7 +59,7 @@
 			<br/><br/>
 			<table class="border" style="width:100%;">
 				[onshow;block=begin;when [view.mode]=='view']
-				<a style="float:right;" class="butAction" href="?fk_user=[userCourant.id]">Annuler</a>
+					<a style="float:right;" class="butAction" href="?fk_user=[userCourant.id]">Retour</a>
 				[onshow;block=end]	
 			</table>
 		</div>

@@ -39,23 +39,6 @@
 	echo $form->hidden('id',$absence->getId());
 	
 	
-	//récupération du tableau utilisateur
-	/*$sql=" SELECT DISTINCT s.name,  s.firstname, u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s
-			WHERE v.fk_user=".$user->id." 
-			AND v.type='Conges'
-			AND u.fk_user=s.rowid
-			AND v.fk_usergroup=u.fk_usergroup
-			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$user->id.")
-			AND v.entity=".$conf->entity;
-		
-	$ATMdb->Execute($sql);
-	
-	$k=0;
-	while($ATMdb->Get_line()) {
-				$TabUser[$ATMdb->Get_field('fk_user')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
-				$k++;
-	}*/
-	
 	$TabUser=array();
 	//récupération du tableau utilisateur
 	$sqlReq="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u,".MAIN_DB_PREFIX."usergroup_user as g  
@@ -80,18 +63,7 @@
 		$TabGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 	}
 		
-	
-	/*if($user->rights->absence->myactions->voirToutesAbsences){
-		$combo=$form->combo('', 'rowid', $absence->TUser,  $idCalendar);
-		$droits=1;
-	}else if($k>0){
-		$combo=$form->combo('', 'rowid',$TabUser,  $idCalendar);
-		$droits=2;
-	}else{
-		$droits=0;
-		$combo='';
-	} */
-	
+
 	$idUser=$_REQUEST['idUtilisateur']? $_REQUEST['idUtilisateur']:0;
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'
@@ -106,6 +78,8 @@
 				//,'droits'=>$droits
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 				//,'idAfficher'=>$_REQUEST['rowid']? $_REQUEST['rowid']:0
+				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
 			)
 			,'view'=>array(
 				'mode'=>$mode
