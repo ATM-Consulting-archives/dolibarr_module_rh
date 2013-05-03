@@ -44,15 +44,12 @@
 		 file_put_contents( './tmp/'.$filename , $xml->asXML() );
 		
 		 
-		$cmd1 = 'smbclient '.THEREFORE_LOADER.' -W'.THEREFORE_GROUP.' -c "cd Loader;put ./tmp/'.$filename.' .\\'.$filename.';put ./tmp/'.$_FILES['fichier1']['name'].' .\\'.$filename.'" -U '.THEREFORE_USER.'%'.THEREFORE_PASSWORD;
+		$cmd1 = 'smbclient '.THEREFORE_LOADER.' -W'.THEREFORE_GROUP.' -c "cd Loader;put ./tmp/'.$filename.' .\\'.$filename.';put ./tmp/'.$_FILES['fichier1']['name'].' .\\'.$_FILES['fichier1']['name'].'" -U '.THEREFORE_USER.'%'.THEREFORE_PASSWORD;
 		file_put_contents('cmd.log',$cmd1."\n");
 		print $cmd1.'<br/>';
 		print exec($cmd1);
 		
-		// debug, get log
-		sleep(3);
-		$cmd2 = 'smbclient '.THEREFORE_LOADER.' -W'.THEREFORE_GROUP.' -c "cd Loader;get .\\Log\\log.txt" -U '.THEREFORE_USER.'%'.THEREFORE_PASSWORD;
-		print exec($cmd2);
+		print '<a href="./tmp/'.$filename.'">'.$filename.'</a> <a href="./tmp/'.$_FILES['fichier1']['name'].'">'.$_FILES['fichier1']['name'].'</a>'; 		
 		
 		// @unlink('./tmp/'.$_FILES['fichier1']['name']);
 		// @unlink('./tmp/'.$filename);
