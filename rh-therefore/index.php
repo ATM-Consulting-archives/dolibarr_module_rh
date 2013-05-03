@@ -32,12 +32,12 @@
 		 if($type=='ndfp') {
 		 	 $filename='NDF'.$_REQUEST['id'].'.xml';
 			
-			 $xml->addChild('DocPath', $_FILES['fichier1']['name']);
-			 $xml->addChild('index1', $_REQUEST['id']);
-			 $xml->addChild('index2', $user->login);
-			 $xml->addChild('index3', $user->lastname);
-			 $xml->addChild('index4', $user->firstname);
-			 $xml->addChild('index5', date('d/m/Y') );
+			 $xml->addChild('DocPath', '.\\'.$_FILES['fichier1']['name']);
+			 $xml->addChild('Index1', $_REQUEST['id']);
+			 $xml->addChild('Index2', $user->login);
+			 $xml->addChild('Index3', $user->lastname);
+			 $xml->addChild('Index4', $user->firstname);
+			 $xml->addChild('Index5', date('d/m/Y') );
 		 }
 		 
 		 //print $filename.'<br>';
