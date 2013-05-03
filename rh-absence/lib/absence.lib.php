@@ -96,47 +96,85 @@ function reglePrepareHead(&$obj, $type='regle') {
 function saveLibelle($type){
 	switch($type){
 		case 'rttcumule':
-			return "RTT Cumulé";
+			return "RTT cumulé";
 		break;
 		case 'rttnoncumule':
-			return "RTT Non Cumulé";
+			return "RTT non cumulé";
 		break;
 		case 'conges':
-			return "Congés";
+			return "Absence congés";
 		break;
 		case 'maladiemaintenue':
-			return "Maladie Maintenue";
+			return "Absence maladie maintenue";
 		break;
 		case 'maladienonmaintenue':
-			return "Maladie Non Maintenue";
+			return "Absence maladie non maintenue";
 		break;
 		case 'maternite':
-			return "Maternité";
+			return "Absence maternité";
 		break;
+		case 'pathologie':
+			return "Absence pathologie";
+		break;
+		
 		case 'paternite':
-			return "Paternité";
+			return "Absence paternité";
 		break;
 		case 'chomagepartiel':
-			return "Chômage Partiel";
+			return "Absence Chômage partiel";
 		break;
 		case 'nonremuneree':
-			return "Non rémunérée";
+			return "Absence non rémunérée";
 		break;
 		case 'accidentdetravail':
-			return "Accident de travail";
+			return "Absence accident du travail";
 		break;
 		case 'maladieprofessionnelle':
-			return "Maladie Professionnelle";
+			return "Absence maladie Professionnelle";
 		break;
 		case 'congeparental':
-			return "Congé Parental";
+			return "Absence Congés parental";
 		break;
 		case 'accidentdetrajet':
-			return "Accident de trajet";
+			return "Absence Accident trajet";
 		break;
 		case 'mitempstherapeutique':
-			return "Mi-temps thérapeutique";
+			return "Absence Mi-temps thérapeutique";
 		break;
+		case 'mariage':
+			return "Mariage";
+		break;
+		case 'deuil':
+			return "Deuil";
+		break;
+		case 'naissanceadoption':
+			return "Naissance ou adoption";
+		break;
+		case 'enfantmalade':
+			return "Enfant malade";
+		break;
+		case 'demenagement':
+			return "Déménagement";
+		break;
+		case 'cours':
+			return "Cours";
+		break;
+		case 'preavis':
+			return "Absence préavis";
+		break;
+		case 'demenagement':
+			return "Déménagement";
+		break;
+		case 'rechercheemploi':
+			return "Absence recherche emploi";
+		break;
+		case 'miseapied':
+			return "Absence mise à pied";
+		break;
+		case 'nonjustifiee':
+			return "Absence non justifiée";
+		break;
+		
 	}
 }
 

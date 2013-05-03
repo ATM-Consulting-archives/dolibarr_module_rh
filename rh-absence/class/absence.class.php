@@ -135,11 +135,16 @@ class TRH_Absence extends TObjetStd {
 		$this->Tjoursem = array("dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi");
 		
 		//combo box pour le type d'absence
-		$this->TTypeAbsence = array('rttcumule'=>'RTT Cumulé','rttnoncumule'=>'RTT Non Cumulé', 'conges' => 'Congés', 'maladiemaintenue' => 'Maladie maintenue', 
-		'maladienonmaintenue'=>'Maladie non maintenue','maternite'=>'Maternité', 'paternite'=>'Paternité', 
-		'chomagepartiel'=>'Chômage Partiel','nonremuneree'=>'Non rémunérée','accidentdetravail'=>'Accident de travail',
-		'maladieprofessionnelle'=>'Maladie professionnelle', 'congeparental'=>'Congé parental', 'accidentdetrajet'=>'Accident de trajet',
-		'mitempstherapeutique'=>'Mi-temps thérapeutique');
+		$this->TTypeAbsence = array('rttcumule'=>'RTT cumulé','rttnoncumule'=>'RTT non cumulé', 
+		'conges' => 'Absence congés', 'maladiemaintenue' => 'Absence maladie maintenue', 
+		'maladienonmaintenue'=>'Absence maladie non maintenue','maternite'=>'Absence maternité', 'paternite'=>'Absence paternité', 
+		'chomagepartiel'=>'Absence Chômage partiel','nonremuneree'=>'Absence non rémunérée','accidentdetravail'=>'Absence accident du travail',
+		'maladieprofessionnelle'=>'Absence maladie professionnelle', 
+		'congeparental'=>'Absence Congés parental', 'accidentdetrajet'=>'Absence Accident trajet',
+		'mitempstherapeutique'=>'Absence Mi-temps thérapeutique', 'pathologie'=>'Absence pathologie','mariage'=>'Mariage',
+		'deuil'=>'Deuil','naissanceadoption'=>'Naissance ou adoption', 'enfantmalade'=>'Enfant malade', 'demenagement'=>'Déménagement',
+		'cours'=>'Cours', 'preavis'=>'Absence préavis','rechercheemploi'=>'Absence recherche emploi', 
+		'miseapied'=>'Absence mise à pied', 'nonjustifiee'=>'Absence non justifiée'  );
 		
 		//combo pour le choix de matin ou après midi 
 		$this->TddMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date début
