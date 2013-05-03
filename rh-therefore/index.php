@@ -51,7 +51,7 @@
 		
 		// debug, get log
 		sleep(3);
-		$cmd2 = 'smbclient '.THEREFORE_LOADER.' -W'.THEREFORE_GROUP.' -c "cd Loader;get .\\Log\log.txt" -U '.THEREFORE_USER.'%'.THEREFORE_PASSWORD;
+		$cmd2 = 'smbclient '.THEREFORE_LOADER.' -W'.THEREFORE_GROUP.' -c "cd Loader;get .\\Log\\log.txt" -U '.THEREFORE_USER.'%'.THEREFORE_PASSWORD;
 		print exec($cmd2);
 		
 		// @unlink('./tmp/'.$_FILES['fichier1']['name']);
