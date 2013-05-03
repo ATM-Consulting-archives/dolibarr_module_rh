@@ -24,7 +24,7 @@
 		}
 	}
 	elseif(($_REQUEST['libelleCompetence'])!="") {
-		$recherche=$tagCompetence->deleteEspace($_REQUEST['libelleCompetence']);
+		$recherche=$tagCompetence->replaceEspaceEnPourcentage($_REQUEST['libelleCompetence']);
 		//print($recherche);print "<br/>";
 		$competenceOu=$tagCompetence->separerOu($recherche);
 		//print_r($competenceOu);print "<br/>";
@@ -163,7 +163,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	$fuser->getrights();
 	
 	$sql="SELECT c.rowid, c.libelleCompetence, c.niveauCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."rh_formation_cv as f 
-	WHERE c.fk_user_formation=".$formation->getID(). " AND c.fk_user_formation=f.rowid AND c.fk_user=".$formation->fk_user;
+	WHERE c.fk_user_formation=".$formation->getID(). " AND c.fk_user_formation=f.rowid AND c.fk_user=".$formation->fk_user." AND c.entity=".$conf->entity;
 
 	$k=0;
 	$ATMdb->Execute($sql);

@@ -587,7 +587,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
 				,'idUser'=>$user->id
-				,'comboType'=>$form->combo('','type',$absence->TTypeAbsence,$absence->type)
+				,'comboType'=>$droitsCreation==1?$form->combo('','type',$absence->TTypeAbsenceAdmin,$absence->type):$form->combo('','type',$absence->TTypeAbsenceUser,$absence->type)
 				,'etat'=>$absence->etat
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	

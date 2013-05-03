@@ -162,7 +162,7 @@ function _fiche(&$ATMdb, $regle, $mode) {
 				,'fk_user'=>$form->combo('', 'fk_user',$regle->TUser, $regle->fk_user)
 				,'fk_group'=>$form->combo('', 'fk_usergroup',$regle->TGroup, $regle->fk_usergroup)
 				,'nbJourCumulable'=>$form->texte('', 'nbJourCumulable', $regle->nbJourCumulable,30 ,255,'','','')
-				,'typeAbsence'=>$form->combo('', 'typeAbsence',$regle->TTypeAbsence, $regle->typeAbsence)
+				,'typeAbsence'=>$form->combo('', 'typeAbsence',$regle->TTypeAbsenceAdmin, $regle->typeAbsence)
 				,'restrictif'=>$form->checkbox1('','restrictif','1',$regle->restrictif==1?true:false)
 			)
 			,'userCourant'=>array(
