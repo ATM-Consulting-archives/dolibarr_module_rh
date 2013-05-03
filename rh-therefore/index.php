@@ -32,30 +32,24 @@
 		 if($type=='ndfp') {
 		 	 $filename='NDF'.$_REQUEST['id'].'.xml';
 			
-			 $xml->addChild('DocPath', './'.$_FILES['fichier1']['name']);
-			 $xml->addChild('index1', $_REQUEST['id']);
-			 $xml->addChild('index2', $user->login);
-			 $xml->addChild('index3', $user->name);
-			 $xml->addChild('index4', $user->firstname);
-			 $xml->addChild('index5', date('d/m/Y') );
+			 $xml->addChild('DocPath', '.\\'.$_FILES['fichier1']['name']);
+			 $xml->addChild('Index1', $_REQUEST['id']);
+			 $xml->addChild('Index2', $user->login);
+			 $xml->addChild('Index3', $user->lastname);
+			 $xml->addChild('Index4', $user->firstname);
+			 $xml->addChild('Index5', date('d/m/Y') );
 		 }
 		 
 		 //print $filename.'<br>';
 		 file_put_contents( './tmp/'.$filename , $xml->asXML() );
-		/*
-		 * # Copie sur SRV1
-mount //192.168.101.251/Sauvegarde_Dolibar /mnt/srv1 -o username=philippe,password=Id@osud26
-cp save/$tardoc /mnt/srv1
-		 * 
-		 */
+		
 		 
-		$cmd1 = 'smbclient '.THEREFORE_LOADER.' -W'.THEREFORE_GROUP.' -c "cd Loader;put ./tmp/'.$filename.' .\\'.$filename.'" -U '.THEREFORE_USER.'%'.THEREFORE_PASSWORD;
-		$cmd2 = 'smbclient '.THEREFORE_LOADER.' -W'.THEREFORE_GROUP.' -c "cd Loader;put ./tmp/'.$_FILES['fichier1']['name'].' .\\'.$filename.'" -U '.THEREFORE_USER.'%'.THEREFORE_PASSWORD;
-file_put_contents('cmd.log',$cmd1."\n".$cmd2);
+		$cmd1 = 'smbclient '.THEREFORE_LOADER.' -W'.THEREFORE_GROUP.' -c "cd Loader;put ./tmp/'.$filename.' .\\'.$filename.';put ./tmp/'.$_FILES['fichier1']['name'].' .\\'.$_FILES['fichier1']['name'].'" -U '.THEREFORE_USER.'%'.THEREFORE_PASSWORD;
+		file_put_contents('cmd.log',$cmd1."\n");
 		print $cmd1.'<br/>';
 		print exec($cmd1);
-print $cmd2.'<br/>';
-		print exec($cmd2);
+		
+		print '<a href="./tmp/'.$filename.'">'.$filename.'</a> <a href="./tmp/'.$_FILES['fichier1']['name'].'">'.$_FILES['fichier1']['name'].'</a>'; 		
 		
 		// @unlink('./tmp/'.$_FILES['fichier1']['name']);
 		// @unlink('./tmp/'.$filename);
