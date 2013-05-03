@@ -147,7 +147,7 @@ function _liste(&$ATMdb, &$absence) {
 
 	
 	
-	$TOrder = array('Statut demande'=>'DESC');
+	$TOrder = array('Statut demande'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -253,8 +253,17 @@ function _listeValidation(&$ATMdb, &$absence) {
 				AND u.fk_user=s.rowid
 				AND a.etat LIKE 'AValider'
 				AND v.entity=".$conf->entity." 
-				AND v.fk_usergroup=".$TabGroupe[0]['fk_usergroup']."
-				AND a.niveauValidation=".$TabGroupe[0]['level'];
+				AND v.fk_usergroup=".$TabGroupe[0]['fk_usergroup'];
+				
+				if($TabGroupe[$j]['level']==1){	//on teste le niveau de validation : si il est de niveau 1, il faut qu'il puisse voir le 2 et 3
+					$sql.=" AND ( a.niveauValidation=1 OR a.niveauValidation=2 OR a.niveauValidation=3)";
+				}else if($TabGroupe[$j]['level']==2){
+					$sql.=" AND ( a.niveauValidation=3 OR a.niveauValidation=2)";
+				}
+				else if($TabGroupe[$j]['level']==3){
+					$sql.=" AND a.niveauValidation=3";
+				}
+				
 				
 			if($TabGroupe[0]['validate_himself']==0){
 				$sql.=" AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$user->id.")";
@@ -276,17 +285,45 @@ function _listeValidation(&$ATMdb, &$absence) {
 				AND v.entity=".$conf->entity;
  		
  		$j=0;
-		foreach($TabGroupe as $TGroupe){
+		foreach($TabGroupe as $TGroupe){ 	//on affiche les absences des différents groupe de validation
 			if($j==0){
-				$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-					AND a.niveauValidation=".$TabGroupe[$j]['level']."
+				if($TabGroupe[$j]['level']==1){	//on teste le niveau de validation  si il est de niveau 1, il faut qu'il puisse voir le 2 et 3
+					$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+					AND (a.niveauValidation=1 OR a.niveauValidation=2 OR a.niveauValidation=3)
 					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
 					)";
+				}else if($TabGroupe[$j]['level']==2){
+					$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+					AND (a.niveauValidation=3 OR a.niveauValidation=2)
+					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+					)";
+				}
+				else if($TabGroupe[$j]['level']==3){
+					$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+					AND a.niveauValidation=3
+					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+					)";
+				}
+				
 			}else{
-				$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-					AND a.niveauValidation=".$TabGroupe[$j]['level']."
-					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
-					)";
+				if($TabGroupe[$j]['level']==1){	//on teste le niveau de validation
+					$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+						AND (a.niveauValidation=1 OR a.niveauValidation=2 OR a.niveauValidation=3) 
+						AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+						)";
+				}
+				else if($TabGroupe[$j]['level']==2){
+					$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+						AND (a.niveauValidation=3 OR a.niveauValidation=2) 
+						AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+						)";
+				}
+				else if($TabGroupe[$j]['level']==3){
+					$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+						AND a.niveauValidation=3
+						AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+						)";
+				}	
 			}
  			
 			$j++;
@@ -300,7 +337,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 		//LISTE DES ABSENCES À VALIDER
 		$r = new TSSRenderControler($absence);
 		
-		$TOrder = array('Statut demande'=>'DESC');
+		$TOrder = array('Statut demande'=>'ASC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 					
@@ -313,7 +350,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				,'nbLine'=>'30'
 			)
 			,'link'=>array(
-				'Type absence'=>'<a href="?id=@ID@&action=view">@val@</a>'
+				'Type absence'=>'<a href="?id=@ID@&action=view&validation=ok">@val@</a>'
 			)
 			,'translate'=>array('Statut demande'=>array(
 				'Refusée'=>'<b style="color:#A72947">Refusée</b>',
@@ -440,7 +477,13 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				$userCourant->lastname=$ATMdb->Get_field('name');
 	}
 	
-	$estValideur=$absence->estValideur($ATMdb,$user->id);
+	
+	//$estValideur=$absence->estValideur($ATMdb,$user->id);
+	if(isset($_REQUEST['validation'])){
+		if($_REQUEST['validation']=='ok'){
+			$estValideur=1;
+		}else $estValideur=0;
+	}else $estValideur=0;
 	
 	if($absence->fk_user==0){
 		$regleId=$user->id;
@@ -560,6 +603,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
 				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
 				,'valideurConges'=>$user->rights->absence->myactions->valideurConges&&$estValideur
+				//,'valideurConges'=>$user->rights->absence->myactions->valideurConges
 				,'droitCreationAbsenceCollaborateur'=>$droitsCreation==1?'1':'0'
 				//,'enregistrerPaieAbsences'=>$user->rights->absence->myactions->enregistrerPaieAbsences&&$estValideur
 			)

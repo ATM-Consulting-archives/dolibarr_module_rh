@@ -757,10 +757,11 @@ class TRH_Absence extends TObjetStd {
 			}
 		}
 
+
 		//fonction qui va renvoyer 1 si l'utilisateur est valideur de l'absence courante
-		function estValideur(&$ATMdb,$idUser){
+		/*function estValideur(&$ATMdb,$idUser){
 			
-			if($this->fk_user==$idUser) return 0;
+		//	if($this->fk_user==$idUser) return 0;
 			//on récupère les groupes auxquels appartient l'utilisateur ayant créé l'absence
 			$sql="SELECT fk_usergroup FROM `".MAIN_DB_PREFIX."usergroup_user` WHERE fk_user=".$this->fk_user;
 			$ATMdb->Execute($sql);
@@ -784,7 +785,7 @@ class TRH_Absence extends TObjetStd {
 				}
 			}	
 			return 0;
-		}
+		}*/
 		
 		
 		//donne la différence entre 2 heures (respecter l'ordre début et fin)
@@ -1053,10 +1054,10 @@ class TRH_JoursFeries extends TObjetStd {
 	}
 	
 }
-
+/*
 //définition de la table pour l'enregistrement des jours non travaillés dans l'année (fériés etc...)
 class TRH_Pointage extends TObjetStd {
-	function __construct() { /* declaration */
+	function __construct() {
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_jour_non_travaille');
 		parent::add_champs('date','type=date;');		//date du jour non travaillé
@@ -1088,7 +1089,7 @@ class TRH_Pointage extends TObjetStd {
 					$k++;
 		}
 	}
-}
+}*/
 
 
 
