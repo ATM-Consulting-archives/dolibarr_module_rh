@@ -25,6 +25,7 @@ class TRH_valideur_groupe extends TObjetStd {
 		
 		$this->TGroup = array();
 		
+		// AA arg encore un ! :(
 		//chargement d'une liste de tous les utilisateurs
 		$this->TUser = array();
 		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user";

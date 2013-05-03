@@ -56,7 +56,7 @@ class TRH_competence_cv extends TObjetStd {
 		$this->TNiveauCompetence = array('faible'=>'Faible','moyen'=>'Moyen','bon'=>'Bon','excellent'=>'Excellent');
 	}
 	
-	function deleteEspace($competence){
+	function deleteEspace($competence){ // AA nom de fonction très mal choisie, elle ne fait pas du tout ce qu'elle inspire
 		$competence=strtolower($competence);
 		$compSansEspace=str_replace(' ','%',$competence);
 		return "%".$compSansEspace."%";

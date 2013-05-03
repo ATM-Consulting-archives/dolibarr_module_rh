@@ -8,7 +8,7 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		parent::add_champs('choixLimite','type=chaine;');
 		
 		//valeurs
-		parent::add_champs('duree','type=entier;');
+		parent::add_champs('duree','type=entier;'); // AA à simpliefier nom de nom, les champs peuvent être simplement séparé par des ,
 		parent::add_champs('dureeInt','type=entier;');
 		parent::add_champs('dureeExt','type=entier;');
 		parent::add_champs('natureDeduire','type=chaine;');
@@ -79,7 +79,6 @@ class TRH_Ressource_Regle  extends TObjetStd {
 			case 'all':$this->fk_user = 0;$this->fk_usergroup=0;break;
 			case 'user':$this->fk_usergroup = NULL;break;
 			case 'group':$this->fk_user = NULL;break;
-			default : break;				
 		}
 		
 		switch ($this->choixLimite){
@@ -90,7 +89,6 @@ class TRH_Ressource_Regle  extends TObjetStd {
 			case 'extint':
 				$this->duree = 0;
 				break;
-			default : break;
 		}
 		
 		parent::save($ATMdb);

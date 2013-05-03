@@ -27,7 +27,7 @@ class TRH_Ressource extends TObjetStd {
 		$this->ressourceType=new TRH_Ressource_type;
 
 		$ATMdb=new Tdb;
-		
+		// AA Cela est-il vraiment nécessaire ici ? Je n'aime pas les connexions dans les constructeur :(
 		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type', array());
 		
 		//chargement d'une liste de tout les types de ressources
@@ -121,7 +121,7 @@ class TRH_Ressource extends TObjetStd {
 			$this->TContratAssocies[$id] = new TRH_Contrat_Ressource;
 			$this->TContratAssocies[$id]->load($ATMdb, $id);
 		}
-		
+		// AA c'est un contrat ça ? (outre le fait que je ne comprends pas toutes ces notions de contrats)
 		$this->TTVA = array();
 		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0]."
 		AND entity=".$conf->entity;
@@ -143,8 +143,11 @@ class TRH_Ressource extends TObjetStd {
 	/**
 	 * La fonction renvoie le rowid de l'user qui a la ressource à la date T, 0 sinon.
 	 */
-	function isEmpruntee(&$ATMdb, $jour){
+	function isEmpruntee(&$ATMdb, $jour){ // AA bizarrement, oui j'ai toujours aimé le Franglais
 		global $conf;
+		
+		// AA Par contre je la function peut se résumer en une seule fonction
+		
 		$sql = "SELECT u.rowid, e.date_debut as 'debut', e.date_fin as 'fin'
 				FROM ".MAIN_DB_PREFIX."user as u
 				LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (e.fk_user = u.rowid)
@@ -174,7 +177,7 @@ class TRH_Ressource extends TObjetStd {
 	 * Utile pour la comparaison.
 	 */
 	function strToTimestamp($chaine){
-		$a = strptime ($chaine, "%d/%m/%Y");
+		$a = strptime ($chaine, "%d/%m/%Y"); // AA snif je viens d'apprendre une fonction et c'est pas tout les jours ;)
 		$timestamp = mktime(0, 0, 0, $a['tm_mon']+1, $a['tm_mday'], $a['tm_year']+1900);
 		return $timestamp;
 	}
@@ -299,6 +302,7 @@ class TRH_Ressource_type extends TObjetStd {
 	}
 	
 	function chargement($libelle, $code, $supprimable, $liste_evenement_value, $liste_evenement_key){
+		// AA et ça ça fait quoi ?
 		$this->libelle = $libelle;
 		$this->code = $code;
 		$this->supprimable = $supprimable;
@@ -316,8 +320,7 @@ class TRH_Ressource_type extends TObjetStd {
 	 */
 	function isUsedByRessource(&$ATMdb){
 		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource', array('fk_rh_ressource_type'=>$this->getId()));
-		$taille = count($Tab);
-		if ($taille>0) return true;
+		if (count($Tab)>0) return true;
 		return false;
 
 	}
@@ -485,7 +488,7 @@ class TRH_Ressource_field extends TObjetStd {
  * Classes d'associations
  * 
  */
-
+// AA ?
 class TRH_Ressource_Import  extends TObjetStd {
 	
 	function __construct(){

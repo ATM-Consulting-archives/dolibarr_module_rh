@@ -72,7 +72,7 @@ class TRH_Compteur extends TObjetStd {
 		$anneePrec=$annee-1;
 
 		$this->fk_user=$idUser;
-		$this->acquisExerciceN='6';
+		$this->acquisExerciceN='6'; // AA Il n'est pas nécessaire de mettre des cotes sur les nombres, PHP cast automatiquement après pour la DB
 		$this->acquisAncienneteN='1';
 		$this->acquisHorsPeriodeN='0';
 		$this->anneeN=$annee;
@@ -94,7 +94,7 @@ class TRH_Compteur extends TObjetStd {
 		$this->rttMetier='cadre';
 		$this->rttannee=$annee;
 		$this->nombreCongesAcquisMensuel='2.08';
-		$this->date_rttCloture=strtotime('2013-03-01 00:00:00');
+		$this->date_rttCloture=strtotime('2013-03-01 00:00:00'); // AA Ne devrait pas être en dur mais en config
 		$this->date_congesCloture=strtotime('2013-06-01 00:00:00');
 	}
 	
@@ -132,7 +132,7 @@ class TRH_Absence extends TObjetStd {
 		parent::start();
 		
 		$this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
-		$this->Tjoursem = array("dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi");
+		$this->Tjoursem = array("dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"); // AA préférer cote au doublecote
 		
 		//combo box pour le type d'absence
 		$this->TTypeAbsence = array('rttcumule'=>'RTT cumulé','rttnoncumule'=>'RTT non cumulé', 
@@ -151,7 +151,8 @@ class TRH_Absence extends TObjetStd {
 		$this->TdfMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date fin
 		
 		//on crée un tableau des utilisateurs pour l'afficher en combo box, et ensuite sélectionner quelles absences afficher
-		$ATMdb=new Tdb;
+		
+		$ATMdb=new Tdb; // AA Ne devrait pas être ici mais dans une fonction à l'afficahge quand on en a besoin !
 		global $conf;
 		$this->TUser=array();
 		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
@@ -218,8 +219,8 @@ class TRH_Absence extends TObjetStd {
 			//on teste si c'est une demande de jours non cumulés, 
 			//si les jours N-1 début absence et N+1 fin absence sont travaillés
 			if($this->type=='rttnoncumule'){
-				$absenceAutoriseeDebut=$this->isWorkingDayPrevious($ATMdb, $this->date_debut);
-				$absenceAutoriseeFin=$this->isWorkingDayNext($ATMdb, $this->date_debut);
+				$absenceAutoriseeDebut=$this->isWorkingDayPrevious($ATMdb, $this->date_debut);// AA plus simple 1fct -> isWorkingDay($ATMdb, strtotime( '-1day', $this->date_debut) )
+				$absenceAutoriseeFin=$this->isWorkingDayNext($ATMdb, $this->date_debut);// AA faux ? datedébut ? plus simple 1fct -> isWorkingDay($ATMdb, strtotime( '+1day', $this->date_debut) )
 				if($absenceAutoriseeDebut==0||$absenceAutoriseeFin==0){
 					return 3; //etat pour le message d'erreur lié aux rtt non cumulés
 				}
@@ -287,7 +288,7 @@ class TRH_Absence extends TObjetStd {
 				if($this->ddMoment=="matin"&&$this->dfMoment=="apresmidi"){
 					$duree+=1;
 				}
-				else if($this->ddMoment==$this->dfMoment){
+				else if($this->ddMoment==$this->dfMoment){ // AA et si aucun ?!!
 					$duree+=0.5;
 				}
 			}
@@ -298,7 +299,7 @@ class TRH_Absence extends TObjetStd {
 		//calcul la durée de l'absence après le décompte des jours fériés
 		function calculJoursFeries(&$ATMdb, $duree){
 
-			$dateDebutAbs=$this->php2Date($this->date_debut);
+			$dateDebutAbs=$this->php2Date($this->date_debut); // AA équivalent $this->get_date('date_debut','Y-m-d H:i:s')
 			$dateFinAbs=$this->php2Date($this->date_fin);
 			
 			//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
@@ -696,10 +697,12 @@ class TRH_Absence extends TObjetStd {
 		
 		//renvoie le jour de la semaine correspondant à la date passée en paramètre
 		function jourSemaine($phpDate){
-		    $frdate=$this->php2dmy($phpDate);
+		    $frdate=$this->php2dmy($phpDate); 
 			list($jour, $mois, $annee) = explode('/', $frdate);
 			// calcul du timestamp
 			$timestamp = mktime (0, 0, 0, $mois, $jour, $annee);
+			// AA === $timestamp = strtotime(date('Y-m-d', $phpDate));
+			
 			// affichage du jour de la semaine
 			return $this->Tjoursem[date("w",$timestamp)];
 		}
@@ -827,7 +830,7 @@ class TRH_Absence extends TObjetStd {
 		
 		function isWorkingDayNext(&$ATMdb, $dateTest){
 
-			$dateNext=$dateTest+3600*24;
+			$dateNext=$dateTest+3600*24; // AA cf mon autre comm, quand l'horloge change d'heure ceci fonctionne mal
 			//$jourNext=$this->jourSemaine($dateNext);
 			
 			//on teste si c'est un jour férié
@@ -1051,7 +1054,7 @@ class TRH_JoursFeries extends TObjetStd {
 	
 	//remet à 0 les checkbox avant la sauvegarde
 	function razCheckbox(&$ATMdb, $absence){
-		global $conf, $user;
+		global $conf, $user; // AA $user c'est pour le fun, $conf c'est pour la confiance ?
 		$this->entity = $conf->entity;
 
 			$this->matin=0;
@@ -1059,6 +1062,8 @@ class TRH_JoursFeries extends TObjetStd {
 	}
 	
 }
+
+// AA utile ? A ben non
 /*
 //définition de la table pour l'enregistrement des jours non travaillés dans l'année (fériés etc...)
 class TRH_Pointage extends TObjetStd {
