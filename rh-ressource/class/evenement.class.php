@@ -25,6 +25,9 @@ class TRH_Evenement  extends TObjetStd {
 		parent::add_champs('TVA','type=entier;'); //indice de la TVA dans le tableau $this->TTVA
 		parent::add_champs('coutEntrepriseHT','type=float;');
 		
+		parent::add_champs('litreEssence','type=float;'); //pour des pleins d'essences
+		parent::add_champs('kilometrage','type=entier;');
+		
 		//pour un appel
 		parent::add_champs('appelHeure','type=chaine;');
 		parent::add_champs('appelNumero','type=chaine;');
@@ -47,6 +50,7 @@ class TRH_Evenement  extends TObjetStd {
 			,'accident'=>'Accident'
 			,'reparation'=>'Réparation'
 			,'facture'=>'Facture'
+			,'divers'=>'Divers'
 		);	
 			
 	}
@@ -71,10 +75,10 @@ class TRH_Evenement  extends TObjetStd {
 			}
 	}
 
-	function load_liste_type(&$ATMdb, $ressource){
+	function load_liste_type(&$ATMdb, $idRessourceType){
 		global $conf;
 		$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-		WHERE rowid=".$ressource->fk_rh_ressource_type." AND entity=".$conf->entity;
+		WHERE rowid=".$idRessourceType." AND entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$keys = explode(';', $ATMdb->Get_field('liste_evenement_key'));
@@ -96,6 +100,7 @@ class TRH_Evenement  extends TObjetStd {
 		if ($this->date_fin < $this->date_debut) {
 			$this->date_fin = $this->date_debut;
 		}
+		
 		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource 
 		WHERE rowid=".$this->fk_rh_ressource." AND entity=".$conf->entity;
 		$db->Execute($sqlReq);
@@ -104,7 +109,7 @@ class TRH_Evenement  extends TObjetStd {
 		}
 			
 		$this->load_liste($db);
-		$this->load_liste_type($db, $temp);
+		$this->load_liste_type($db, $this->fk_rh_ressource_type);
 		
 		switch($this->type){
 			case 'accident':
