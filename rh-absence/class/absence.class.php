@@ -287,16 +287,14 @@ class TRH_Absence extends TObjetStd {
 			$duree=$diff/3600/24;
 			
 			//prise en compte du matin et après midi
-			if(isset($_REQUEST['id'])){
-				if($this->ddMoment=="matin"&&$this->dfMoment=="apresmidi"){
-					$duree+=1;
-				}
-				else if($this->ddMoment==$this->dfMoment){
-					 // AA et si aucun ?!! il y a forcément matin ou apresmidi 
-				//pour le début et la fin de la demande d'absence
-					$duree+=0.5;
-				}
+			
+			if($this->ddMoment=="matin"&&$this->dfMoment=="apresmidi"){
+				$duree+=1;
 			}
+			else if($this->ddMoment==$this->dfMoment){
+				$duree+=0.5;
+			}
+			
 			return $duree; 
 		}
 		
@@ -832,7 +830,7 @@ class TRH_Absence extends TObjetStd {
 		
 		function isWorkingDayNext(&$ATMdb, $dateTest){
 
-			$dateNext=$dateTest+3600*24; // AA cf mon autre comm, quand l'horloge change d'heure ceci fonctionne mal
+			$dateNext=strtotime('+1day',$dateTest); // +3600*24; // AA cf mon autre comm, quand l'horloge change d'heure ceci fonctionne mal
 			//$jourNext=$this->jourSemaine($dateNext);
 			
 			//on teste si c'est un jour férié
