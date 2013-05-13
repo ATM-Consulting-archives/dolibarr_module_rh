@@ -71,7 +71,8 @@ Charger un fichier <input type="file" name="fichier1" />
 
 print_r( PDO::getAvailableDrivers());
 //	$pdo=new TPDOdb;
-	$pdo = new PDO("odbc:Driver=FreeTDS; Server=sqlsrv4; Port=1433; Database=Therefore; UID=dolibarr; PWD=doli2013;"); 
+	//$pdo = new PDO("odbc:Driver=FreeTDS; Server=sqlsrv4; Port=1433; Database=Therefore; UID=dolibarr; PWD=doli2013;");
+	$pdo = new PDO("odbc:Driver={SQL Server};Server=192.168.1.117;Database=Therefore; Uid=dolibarr;Pwd=doli2013;");
 print_r($pdo);
 print "PDO!";
 
