@@ -1,7 +1,8 @@
 <?php
 	
 	require('config.php');
-
+ini_set('display_errors','On');
+error_reporting(E_ALL);
 	if(isset($_REQUEST['ndfp'])) {
 		dol_include_once("/ndfp/lib/ndfp.lib.php");
 		$langs->load('ndfp@ndfp');
@@ -64,8 +65,20 @@ Charger un fichier <input type="file" name="fichier1" />
 <input type="hidden" name="<?=$type ?>" value="1" /> 
 <input type="submit" value="envoyer" />
 </form>
-<iframe src="<?=$url ?>" width="100%" height="800">
-</iframe>
-<?
+<!-- <iframe src="<?=$url ?>" width="100%" height="800">
+</iframe> -->
+<?php
 
+print_r( PDO::getAvailableDrivers());
+//	$pdo=new TPDOdb;
+	$pdo = new PDO("odbc:Driver=FreeTDS; Server=sqlsrv4; Port=1433; Database=Therefore; UID=dolibarr; PWD=doli2013;"); 
+print_r($pdo);
+print "PDO!";
+
+	$pdo->Execute("SELECT DocNp FROM therefore.dbo.TheCat".$_REQUEST['categorie']." WHERE id_Dolibarr=".$_REQUEST['id']); 
+print_r($pdo->Get_All()); 
+
+
+
+print $pdo->db->errorInfo();
 	llxFooter();
