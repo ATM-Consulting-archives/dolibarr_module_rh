@@ -78,7 +78,6 @@ function getTypeEvent($idTypeRessource){
 	);	
 	$ATMdb =new TPDOdb;
 	
-
 	$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
 	WHERE rowid=".$idTypeRessource." AND entity=".$conf->entity;
 	$ATMdb->Execute($sqlReq);

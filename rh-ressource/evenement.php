@@ -104,7 +104,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	
 	echo $form->hidden('action', 'afficherListe');
 	echo $form->hidden('id',$ressource->getId());
-	$evenement->load_liste_type($ATMdb, $ressource);
+	$evenement->load_liste_type($ATMdb, $ressource->fk_rh_ressource_type);
 
 	?>
 	<table>
@@ -187,6 +187,10 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 			,'Traité le'=>'date'
 			
 		)
+		,'eval'=>array(
+			'Utilisateur'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+		)
+		
 		,'liste'=>array(
 			'titre'=>'Liste des événements de type '.$evenement->TType[$type]
 			,'image'=>img_picto('','title.png', '', 0)
@@ -224,7 +228,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	echo $form->hidden('idEven',$evenement->getId());
 
 	$evenement->load_liste($ATMdb);
-	$evenement->load_liste_type($ATMdb, $ressource);
+	$evenement->load_liste_type($ATMdb, $ressource->fk_rh_ressource_type);
 	$TBS=new TTemplateTBS();
 	$tab = array_splice ( $evenement->TType , 1);
 	print $TBS->render('./tpl/evenement.tpl.php'

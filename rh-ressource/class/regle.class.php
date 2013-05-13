@@ -8,21 +8,13 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		parent::add_champs('choixLimite','type=chaine;');
 		
 		//valeurs
-		parent::add_champs('duree','type=entier;'); // AA à simpliefier nom de nom, les champs peuvent être simplement séparé par des ,
-		parent::add_champs('dureeInt','type=entier;');
-		parent::add_champs('dureeExt','type=entier;');
+		parent::add_champs('duree, dureeInt, dureeExt','type=entier;');
 		parent::add_champs('natureDeduire','type=chaine;');
 		parent::add_champs('montantDeduire','type=float;');
-		parent::add_champs('dataIllimite','type=chaine;'); //booléen
-		parent::add_champs('dataIphone','type=chaine;'); //booléen
-		parent::add_champs('mailforfait','type=chaine;'); //booléen
-		parent::add_champs('smsIllimite','type=chaine;'); //booléen
-		parent::add_champs('data15Mo','type=chaine;'); //booléen
-		parent::add_champs('carteJumelle','type=chaine;'); //booléen
-		parent::add_champs('numeroExclus','type=chaine;');
+		parent::add_champs('dataIllimite,dataIphone,mailforfait,smsIllimite,data15Mo,carteJumelle,numeroExclus','type=chaine;'); //booléen
+
 		
-		parent::add_champs('fk_user','type=entier;');
-		parent::add_champs('fk_usergroup','type=entier;');
+		parent::add_champs('fk_user, fk_usergroup','type=entier;');
 		parent::add_champs('fk_rh_ressource_type, entity','type=entier;index;');
 		
 		$this->choixApplication = 'all';
