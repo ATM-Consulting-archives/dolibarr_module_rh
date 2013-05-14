@@ -76,19 +76,19 @@
             <table class="border" style="width:40%">
 				<tr>
 					<td>Congés payés</td>
-					<td>[congesPrec.reste;strconv=no;protect=no]</td>
+					<td id='reste'>[congesPrec.reste;strconv=no;protect=no]</td>
 				</tr>	
 				<tr>
 					<td>RTT cumulés </td>
-					<td>[rttCourant.annuelCumule;strconv=no;protect=no]</td>
+					<td id='cumule'>[rttCourant.annuelCumule;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>RTT non cumulés</td>
-					<td>[rttCourant.annuelNonCumule;strconv=no;protect=no]</td>
+					<td id='noncumule'>[rttCourant.annuelNonCumule;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>RTT mensuels</td>
-					<td>[rttCourant.mensuel;strconv=no;protect=no]</td>
+					<td id='mensuel'>[rttCourant.mensuel;strconv=no;protect=no]</td>
 				</tr>
 			</table>
 
@@ -205,6 +205,30 @@
 				$("#date_debut").change(comparerDates);
 				$("#date_fin").change(comparerDates);
 			});
+		</script>
+		
+		<script>
+		$('#fk_user').change(function(){
+				//alert('top');
+				$.ajax({
+					url: 'script/chargerCompteurDemandeAbsence.php?user='+$('#fk_user option:selected').val()
+				}).done(function(data) {
+					liste = JSON.parse(data);
+
+					$('#reste').empty();
+					$('#reste').append(liste.reste);
+					
+					$('#cumule').empty();
+					$('#cumule').append(liste.annuelCumule);
+					
+					$('#noncumule').empty();
+					$('#noncumule').append(liste.annuelNonCumule);
+					
+					$('#mensuel').empty();
+					$('#mensuel').append(liste.mensuel);
+
+				});
+		});
 		</script>
 
 
