@@ -21,7 +21,7 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->set_values($_REQUEST);
 				$absence->niveauValidation=1;
-				$demandeRecevable=$absence->testDemande($ATMdb);
+				$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user']);
 				
 				if($demandeRecevable==1){
 					$absence->save($ATMdb);
@@ -401,7 +401,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 	
 function _fiche(&$ATMdb, &$absence, $mode) {
 	global $db,$user,$conf;
-	llxHeader('','Déclaration absence');
+	llxHeader('','Demande d\'absence');
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
@@ -536,12 +536,26 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	}
 	
 	
+	//Tableau affichant les 10 dernières absences du collaborateur
+	$sql="SELECT DATE_FORMAT(date_debut, '%d/%m/%Y') as 'dateD', DATE_FORMAT(date_fin, '%d/%m/%Y')  as 'dateF', libelle, libelleEtat FROM `".MAIN_DB_PREFIX."rh_absence` WHERE fk_user=".$regleId." 
+	AND entity=".$conf->entity. " GROUP BY date_cre LIMIT 0,10";
+	$ATMdb->Execute($sql);
+	$TRecap=array();
+	$k=0;
+	while($ATMdb->Get_line()) {		
+		$TRecap[$k]['date_debut']=$ATMdb->Get_field('dateD');
+		$TRecap[$k]['date_fin']=$ATMdb->Get_field('dateF');
+		$TRecap[$k]['libelle']=$ATMdb->Get_field('libelle');
+		$TRecap[$k]['libelleEtat']=$ATMdb->Get_field('libelleEtat');
+		$k++;
+	}
 	
 		
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/absence.tpl.php'
 		,array(
 			'TRegle' =>$TRegle
+			,'TRecap'=>$TRecap
 		)
 		,array(
 			'congesPrec'=>array(
