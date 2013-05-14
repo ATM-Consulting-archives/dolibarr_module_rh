@@ -46,8 +46,6 @@ function ressourcePrepareHead(&$obj, $type='type-ressource',&$param=null) {
 			
 			break;
 	}
-	
-	
 }
 
 /**
@@ -107,6 +105,19 @@ function getRessource($idTypeRessource = 0){
 	return $TRessource;
 }
 
+function getIdType($type){
+	global $conf;
+	$ATMdb =new TPDOdb;
+	$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_type 
+		WHERE entity=".$conf->entity."
+	 	AND code= '".$type."'";
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$id = $ATMdb->Get_field('rowid');
+		}
+	return $id;
+}
+	
 function getUsers(){
 	global $conf;
 	$TUser = array();

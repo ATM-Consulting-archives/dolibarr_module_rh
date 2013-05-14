@@ -79,6 +79,7 @@
 				if($_REQUEST["fieldChoice"]=="O"){
 					$emprunt->load($ATMdb, $_REQUEST['idEven']);
 					$emprunt->set_values($_REQUEST['evenement']);
+					$emprunt->fk_rh_ressource = $ressource->getId();
 					$emprunt->save($ATMdb);
 				}
 				////////
@@ -138,6 +139,7 @@
 function _liste(&$ATMdb, &$ressource) {
 	global $langs,$conf,$db,$user;	
 	llxHeader('','Liste des ressources');
+	print dol_get_fiche_head(array()  , '', 'Liste ressources');
 	getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
@@ -376,6 +378,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 				'mode'=>$mode
 				,'userRight'=>((int)$user->rights->ressource->ressource->createRessource)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'fiche', 'Ressource')
+				,'onglet'=>dol_get_fiche_head(array()  , '', 'Création ressource')
 			)
 			
 			

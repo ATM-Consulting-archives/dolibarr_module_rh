@@ -5,7 +5,7 @@
  * On créé un évenement par ligne de ce fichier
  * et une évenement de type facture
  */
- 
+ /*
 require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');

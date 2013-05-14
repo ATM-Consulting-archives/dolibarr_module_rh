@@ -81,6 +81,7 @@
 function _liste(&$ATMdb, &$contrat) {
 	global $langs,$conf,$db,$user;
 	llxHeader('','Liste des contrats');
+	print dol_get_fiche_head(array()  , '', 'Liste contrats');
 	getStandartJS();
 	
 	$r = new TSSRenderControler($contrat);
@@ -176,6 +177,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 				,'userRightViewContrat'=>(int)$user->rights->ressource->contrat->viewPrixContrat
 				,'userRight'=>((int)$user->rights->ressource->contrat->createContract)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($contrat, 'contrat')  , 'fiche', 'Contrat')
+				,'onglet'=>dol_get_fiche_head(array()  , '', 'Création contrat')
 			)
 			
 			
