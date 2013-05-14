@@ -1,10 +1,7 @@
 <?php
 	require('config.php');
 	require('./class/competence.class.php');
-	
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		require('./lib/competence.lib.php');
 	
 	$langs->load('competence@competence');
 	$langs->load("users");
@@ -27,7 +24,7 @@
 		}
 	}
 	elseif(($_REQUEST['libelleCompetence'])!="") {
-		$recherche=$tagCompetence->deleteEspace($_REQUEST['libelleCompetence']);
+		$recherche=$tagCompetence->replaceEspaceEnPourcentage($_REQUEST['libelleCompetence']);
 		//print($recherche);print "<br/>";
 		$competenceOu=$tagCompetence->separerOu($recherche);
 		//print_r($competenceOu);print "<br/>";
@@ -47,20 +44,13 @@
 function _liste(&$ATMdb,  $tagCompetence, $recherche ) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Résultat de la recherche');
-	
-	$fuser = new User($db);
-	$fuser->fetch($_REQUEST['fk_user']);
-	$fuser->getrights();
-
-	$head = user_prepare_head($fuser);
-	dol_fiche_head($head, 'recherche', $langs->trans('Utilisateur'),0, 'user');
+	print dol_get_fiche_head(competencePrepareHead($tagCompetence, '')  , '', 'Compétences');
 	
 	////////////AFFICHAGE DES LIGNES DE CV 
 	$r = new TSSRenderControler($tagCompetence);
 	
 	$sql=$tagCompetence->requeteRecherche($ATMdb, $recherche);
-	
-	//echo $sql;
+
 	$TOrder = array('Niveau'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -74,13 +64,13 @@ function _liste(&$ATMdb,  $tagCompetence, $recherche ) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'name'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'name'=>'<a href=./experience.php?fk_user=@fkuser@>@val@</a>'
 			,'firstname'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			,'libelleCompetence'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array(
 		)
-		,'hide'=>array('DateCre', 'fk_user', 'rowid')
+		,'hide'=>array('DateCre', 'fk_user', 'rowid', 'fkuser')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
 			'titre'=>'RESULTAT DE VOTRE RECHERCHE'
@@ -119,14 +109,7 @@ function _liste(&$ATMdb,  $tagCompetence, $recherche ) {
 function _fiche(&$ATMdb,$tagCompetence, $mode) {
 	global $db,$user, $langs, $conf;
 	llxHeader('','Recherche Profil');
-
-	$fuser = new User($db);
-	$fuser->fetch(isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : $tagCompetence->fk_user);
-	$fuser->getrights();
-	
-	$head = user_prepare_head($fuser);
-	$current_head = 'recherche';
-	dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
+	print dol_get_fiche_head(competencePrepareHead($tagCompetence, '')  , '', 'Compétences');
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
@@ -134,7 +117,7 @@ function _fiche(&$ATMdb,$tagCompetence, $mode) {
 	echo $form->hidden('entity', $conf->entity);
 
 	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/rechercheProfil.tpl.php'
+	print $TBS->render('./tpl/rechercheCompetence.tpl.php'
 		,array(
 			
 		)
@@ -149,6 +132,7 @@ function _fiche(&$ATMdb,$tagCompetence, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
+				,'head'=>dol_get_fiche_head(competencePrepareHead($tagCompetence, '')  , '', 'Compétences')
 			)
 		)	
 	);
@@ -165,14 +149,7 @@ function _fiche(&$ATMdb,$tagCompetence, $mode) {
 function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	global $db,$user, $langs, $conf;
 	llxHeader('','Formations');
-
-	$fuser = new User($db);
-	$fuser->fetch(isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : $formation->fk_user);
-	$fuser->getrights();
-	
-	$head = user_prepare_head($fuser);
-	$current_head = 'recherche';
-	dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
+	print dol_get_fiche_head(competencePrepareHead($tagCompetence, '')  , '', 'Compétences');
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
@@ -181,8 +158,12 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	echo $form->hidden('fk_user', $user->id);
 	echo $form->hidden('entity', $conf->entity);
 
+	$fuser = new User($db);
+	$fuser->fetch(isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : $formation->fk_user);
+	$fuser->getrights();
+	
 	$sql="SELECT c.rowid, c.libelleCompetence, c.niveauCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."rh_formation_cv as f 
-	WHERE c.fk_user_formation=".$formation->getID(). " AND c.fk_user_formation=f.rowid AND c.fk_user=".$fuser->id;
+	WHERE c.fk_user_formation=".$formation->getID(). " AND c.fk_user_formation=f.rowid AND c.fk_user=".$formation->fk_user." AND c.entity=".$conf->entity;
 
 	$k=0;
 	$ATMdb->Execute($sql);
@@ -223,6 +204,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
+				,'head'=>dol_get_fiche_head(competencePrepareHead($tagCompetence, '')  , '', 'Compétences')
 			)
 			,'newCompetence'=>array(
 				'hidden'=>$form->hidden('action', 'newCompetence')
@@ -240,3 +222,4 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
 }
+	

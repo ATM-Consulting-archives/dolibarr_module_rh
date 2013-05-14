@@ -21,8 +21,8 @@
 				$ressourceType->load($ATMdb, $_REQUEST['id']);
 				//$ressourceType->save($ATMdb);
 				_fiche($ATMdb, $regle, $ressourceType,'new');
+				break;
 				
-				break;	
 			case 'edit'	:
 				//$ATMdb->db->debug=true;
 				$ressourceType->load($ATMdb, $_REQUEST['id']);
@@ -96,17 +96,17 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 	global $langs,$conf, $db;	
 	
 	llxHeader('','Règles sur les Ressources');
-	?><div class="fiche"><?	
 	dol_fiche_head(ressourcePrepareHead($ressourceType, 'type-ressource')  , 'regle', 'Type de ressource');
 	$r = new TSSRenderControler($ressourceType);
-	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.name)  as 'Utilisateur', g.nom as 'Groupe',
-		duree, dureeInt,dureeExt,dataIllimite, dataIphone, mailforfait, smsIllimite, data15Mo, carteJumelle,'' as 'Supprimer'
+	$sql="SELECT DISTINCT r.rowid as 'ID', r.choixApplication as 'CA', u.firstname ,u.name, g.nom as 'Groupe',
+		duree, dureeInt,dureeExt,dataIllimite, dataIphone, mailforfait, smsIllimite, data15Mo, '' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup as g ON (r.fk_usergroup = g.rowid)
 		WHERE r.entity=".$conf->entity."
-		AND r.fk_rh_ressource_type=".$ressourceType->getId();
+		 AND r.fk_rh_ressource_type=".$ressourceType->getId();
 	
+
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -114,8 +114,8 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 	$TOuiRien = array('vrai'=>'Oui', 'faux'=>'');
 	$TOuiNon = array('vrai'=>'Oui', 'faux'=>'Non');
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
-	$form=new TFormCore($_SERVER['PHP_SELF'].'?id='.$ressourceType->getId().'&','formtranslateList','GET');
-	$form->hidden('id',$ressourceType->getId());
+	$form=new TFormCore($_SERVER['PHP_SELF'].'?id='.$ressourceType->getId(),'formtranslateList','GET');
+	echo $form->hidden('id',$ressourceType->getId());
 	
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
@@ -125,23 +125,28 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=delete"><img src="./img/delete.png"></a>'
-		)
+		) 
 		,'eval'=>array(
 			'dureeInt'=>'intToString(@val@)'
 			,'dureeExt'=>'intToString(@val@)'
 			,'duree'=>'intToString(@val@)'
-			//,'Utilisateur'=>'decodeNom((string)(@val@))'
+			,'Groupe'=>'TousOuPas(@CA@,"@val@")'
+			,'firstname'=>'TousOuPas(@CA@,"@val@")'
+			,'name'=>'TousOuPas(@CA@,"@val@")'
+			//htmlentities("@val@", ENT_COMPAT , "ISO8859-1"))'
 		)
 		,'title'=>array(
-			'duree'=>'Limite générale'
-			,'dureeInt'=>'Limite interne'
-			,'dureeExt'=>'Limite externe'
+			'name'=>'Nom'
+			,'firstname'=>'Prénom'
+			,'duree'=>'Lim. générale'
+			,'dureeInt'=>'Lim. interne'
+			,'dureeExt'=>'Lim. externe'
 			,'dataIllimite'=>'3G illimité'
 			,'smsIllimite'=> 'SMS illimité'
 			,'dataIphone' => 'Forfait Data Iphone'
 			,'mailforfait' => 'Forfait Mail'
 			,'data15Mo' => 'Forfait Data 15 Mo'
-			,'carteJumelle' => 'Forfait carte jumellé'
+			//,'carteJumelle' => 'Forfait carte jumellé'
 		)
 		,'translate'=>array(
 			'Sur'=>$regle->TObjet
@@ -151,9 +156,9 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 			,'dataIphone' => $TOuiRien
 			,'mailforfait' => $TOuiRien
 			,'data15Mo' => $TOuiRien
-			,'carteJumelle' => $TOuiRien
+			//,'carteJumelle' => $TOuiRien
 		)
-		,'hide'=>array()
+		,'hide'=>array('CA')
 		,'type'=>array()
 		,'liste'=>array(
 			'titre'=>'Liste des règles'
@@ -168,24 +173,33 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		)
 		,'search'=>array(
 			'Utilisateur'=>true
-			,'dataIllimite' => array('recherche'=>$TOuiNon)
-			,'smsIllimite' => array('recherche'=>$TOuiNon)
-			,'dataIphone' => array('recherche'=>$TOuiNon)
-			,'mailforfait' => array('recherche'=>$TOuiNon)
-			,'data15Mo' => array('recherche'=>$TOuiNon)
-			,'carteJumelle' => array('recherche'=>$TOuiNon)
-			
+			,'dataIllimite' => $TOuiNon
+			,'smsIllimite' => $TOuiNon
+			,'dataIphone' => $TOuiNon
+			,'mailforfait' =>$TOuiNon
+			,'data15Mo' => $TOuiNon
+			//,'carteJumelle' => array('recherche'=>$TOuiNon)
+			,'name'=>TRUE
+			,'firstname'=>TRUE
 			//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservée'=>'Réservée'))	
 		)
 		,'orderBy'=>$TOrder
 		
 	));
 	
-	?><a class="butAction" href="?id=<?=$ressourceType->getId()?>&action=new">Nouveau</a><div style="clear:both"></div></div><?
+	?></div><a class="butAction" href="?id=<?=$ressourceType->getId()?>&action=new">Nouveau</a>
+	<div style="clear:both"></div><?
 	$form->end();
 	llxFooter();
 }	
-	
+
+function TousOuPas($choix, $val){
+	if ($choix=='all'){
+		return 'Tous';
+	}
+	return htmlentities($val, ENT_COMPAT , "ISO8859-1");
+}
+
 function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 	llxHeader('','Règle sur les Ressources', '', '', 0, 0);
 	
@@ -255,7 +269,11 @@ function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 	llxFooter();
 }
 
-
+function stringTous($val, $choixApplication){
+	echo $choixApplication;
+	if ($choixApplication == 'all') return 'Tous';
+	else return $val;
+}
 
 function intToString($val){
 	$h = intval($val/60);
@@ -266,11 +284,6 @@ function intToString($val){
 	return $h.':'.$m;
 }
 
-function decodeNom($val){
-	//echo $val;
-	
-	return htmlentities($val, ENT_COMPAT , 'ISO8859-1');
-}
 function intToHour($val){
 	$h = intval($val/60);
 	if ($h < 10){$h = '0'.$h;}

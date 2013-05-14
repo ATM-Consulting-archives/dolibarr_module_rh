@@ -789,10 +789,10 @@
             p.title = getTitle(e.event);
             p.data = e.event.join("$");
             var icons = [];
-            icons.push("<I class=\"cic cic-tmr\">&nbsp;</I>");
-            if (e.reevent) {
-                icons.push("<I class=\"cic cic-spcl\">&nbsp;</I>");
-            }
+            //icons.push("<I class=\"cic cic-tmr\">&nbsp;</I>");
+            //if (e.reevent) {
+            //    icons.push("<I class=\"cic cic-spcl\">&nbsp;</I>");
+            //}
             p.icon = icons.join("");
             var sP = gP(e.st.hour, e.st.minute);
             var eP = gP(e.et.hour, e.et.minute);
@@ -1102,8 +1102,8 @@
             }
             p.data = e.event.join("$");
             var sp = "<span style=\"cursor: pointer\">${content}</span>";
-            var i = "<I class=\"cic cic-tmr\">&nbsp;</I>";
-            var i2 = "<I class=\"cic cic-rcr\">&nbsp;</I>";
+            var i = "" //"<I class=\"cic cic-tmr\">&nbsp;</I>";
+            var i2 = "" //"<I class=\"cic cic-rcr\">&nbsp;</I>";
             var ml = "<div class=\"st-ad-ml\"></div>";
             var mr = "<div class=\"st-ad-mr\"></div>";
             var arrm = [];

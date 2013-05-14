@@ -72,34 +72,31 @@ class TRH_Compteur extends TObjetStd {
 		$anneePrec=$annee-1;
 
 		$this->fk_user=$idUser;
-		$this->acquisExerciceN='6';
-		$this->acquisAncienneteN='1';
-		$this->acquisHorsPeriodeN='0';
+		$this->acquisExerciceN=0; 
+		$this->acquisAncienneteN=0;
+		$this->acquisHorsPeriodeN=0;
 		$this->anneeN=$annee;
-		$this->acquisExerciceNM1='25';
-		$this->acquisAncienneteNM1='1';
-		$this->acquisHorsPeriodeNM1='0';
-		$this->reportCongesNM1='0';
-		$this->congesPrisNM1='0';
+		$this->acquisExerciceNM1=25;
+		$this->acquisAncienneteNM1=0;
+		$this->acquisHorsPeriodeNM1=0;
+		$this->reportCongesNM1=0;
+		$this->congesPrisNM1=0;
 		$this->anneeNM1=$anneePrec;
-		$this->rttPris='0';
+		$this->rttPris=0;
 		$this->rttTypeAcquisition='Annuel';
-		$this->rttAcquisMensuelInit='0';
-		$this->rttAcquisMensuelTotal='0';
-		$this->rttAcquisAnnuelCumuleInit='5';
-		$this->rttAcquisAnnuelNonCumuleInit='7';
-		$this->rttAcquisMensuel='0';
-		$this->rttAcquisAnnuelCumule='5';
-		$this->rttAcquisAnnuelNonCumule='7';
+		$this->rttAcquisMensuelInit=0;
+		$this->rttAcquisMensuelTotal=0;
+		$this->rttAcquisAnnuelCumuleInit=5;
+		$this->rttAcquisAnnuelNonCumuleInit=7;
+		$this->rttAcquisMensuel=0;
+		$this->rttAcquisAnnuelCumule=5;
+		$this->rttAcquisAnnuelNonCumule=7;
 		$this->rttMetier='cadre';
 		$this->rttannee=$annee;
-		$this->nombreCongesAcquisMensuel='2.08';
-		$this->date_rttCloture=strtotime('2013-03-01 00:00:00');
+		$this->nombreCongesAcquisMensuel=2.08;
+		$this->date_rttCloture=strtotime('2013-03-01 00:00:00'); // AA Ne devrait pas être en dur mais en config
 		$this->date_congesCloture=strtotime('2013-06-01 00:00:00');
 	}
-	
-	
-	
 	
 }
 
@@ -124,6 +121,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('etat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('avertissement','type=int;');	
 		parent::add_champs('libelleEtat','type=chaine;');			//état (à valider, validé...)
+		parent::add_champs('niveauValidation','type=entier;');	//niveau de validation
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=int;');	
 		
@@ -131,21 +129,33 @@ class TRH_Absence extends TObjetStd {
 		parent::start();
 		
 		$this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
-		$this->Tjoursem = array("dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi");
+		$this->Tjoursem = array('dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'); 
 		
 		//combo box pour le type d'absence
-		$this->TTypeAbsence = array('rttcumule'=>'RTT Cumulé','rttnoncumule'=>'RTT Non Cumulé', 'conges' => 'Congés', 'maladiemaintenue' => 'Maladie maintenue', 
-		'maladienonmaintenue'=>'Maladie non maintenue','maternite'=>'Maternité', 'paternite'=>'Paternité', 
-		'chomagepartiel'=>'Chômage Partiel','nonremuneree'=>'Non rémunérée','accidentdetravail'=>'Accident de travail',
-		'maladieprofessionnelle'=>'Maladie professionnelle', 'congeparental'=>'Congé parental', 'accidentdetrajet'=>'Accident de trajet',
-		'mitempstherapeutique'=>'Mi-temps thérapeutique');
+		$this->TTypeAbsenceAdmin = array('rttcumule'=>'RTT cumulé','rttnoncumule'=>'RTT non cumulé', 
+		'conges' => 'Absence congés', 'maladiemaintenue' => 'Absence maladie maintenue', 
+		'maladienonmaintenue'=>'Absence maladie non maintenue','maternite'=>'Absence maternité', 'paternite'=>'Absence paternité', 
+		'chomagepartiel'=>'Absence Chômage partiel','nonremuneree'=>'Absence non rémunérée','accidentdetravail'=>'Absence accident du travail',
+		'maladieprofessionnelle'=>'Absence maladie professionnelle', 
+		'congeparental'=>'Absence Congés parental', 'accidentdetrajet'=>'Absence Accident trajet',
+		'mitempstherapeutique'=>'Absence Mi-temps thérapeutique', 'pathologie'=>'Absence pathologie','mariage'=>'Mariage',
+		'deuil'=>'Deuil','naissanceadoption'=>'Naissance ou adoption', 'enfantmalade'=>'Enfant malade', 'demenagement'=>'Déménagement',
+		'cours'=>'Cours', 'preavis'=>'Absence préavis','rechercheemploi'=>'Absence recherche emploi', 
+		'miseapied'=>'Absence mise à pied', 'nonjustifiee'=>'Absence non justifiée'  );
+		
+		$this->TTypeAbsenceUser = array('rttcumule'=>'RTT cumulé','rttnoncumule'=>'RTT non cumulé', 
+		'conges' => 'Absence congés', 'paternite'=>'Absence paternité', 
+		'nonremuneree'=>'Absence non rémunérée', 'mariage'=>'Mariage',
+		'deuil'=>'Deuil','naissanceadoption'=>'Naissance ou adoption', 'enfantmalade'=>'Enfant malade', 'demenagement'=>'Déménagement',
+		 );
 		
 		//combo pour le choix de matin ou après midi 
 		$this->TddMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date début
 		$this->TdfMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date fin
 		
 		//on crée un tableau des utilisateurs pour l'afficher en combo box, et ensuite sélectionner quelles absences afficher
-		$ATMdb=new Tdb;
+		
+		$ATMdb=new Tdb; // AA Ne devrait pas être ici mais dans une fonction à l'afficahge quand on en a besoin !
 		global $conf;
 		$this->TUser=array();
 		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
@@ -156,6 +166,7 @@ class TRH_Absence extends TObjetStd {
 		}
 		
 		
+		//on sélectionne les règles relatives à un utilisateurs
 		$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, r.fk_user, r.fk_usergroup, r.choixApplication
 		FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
 		WHERE( r.fk_user=u.rowid AND r.fk_user=".$user->id." AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
@@ -191,6 +202,8 @@ class TRH_Absence extends TObjetStd {
 			$dureeAbsenceCourante=$this->calculJoursFeries($db, $dureeAbsenceCourante);
 			$dureeAbsenceCourante=$this->calculJoursTravailles($db, $dureeAbsenceCourante);
 			
+			
+			
 			//autres paramètes à sauvegarder
 			$this->libelle=saveLibelle($this->type);
 			$this->duree=$dureeAbsenceCourante;
@@ -199,11 +212,26 @@ class TRH_Absence extends TObjetStd {
 			
 			//on teste s'il y a des règles qui s'appliquent à cette demande d'absence
 			//$this->findRegleUser($db);
-			$nbJourAutorise=$this->dureeAbsenceRecevable();
+			$dureeAbsenceRecevable=$this->dureeAbsenceRecevable();
 			
 		
-			if($nbJourAutorise==0){
+			if($dureeAbsenceRecevable==0){
 				return 0;
+			}
+			
+			//on teste si c'est une demande de jours non cumulés, 
+			//si les jours N-1 début absence et N+1 fin absence sont travaillés
+			if($this->type=='rttnoncumule'){
+				$absenceAutoriseeDebut=$this->isWorkingDayPrevious($ATMdb, $this->date_debut);// AA plus simple 1fct -> isWorkingDay($ATMdb, strtotime( '-1day', $this->date_debut) )
+				$absenceAutoriseeFin=$this->isWorkingDayNext($ATMdb, $this->date_fin);// AA plus simple 1fct -> isWorkingDay($ATMdb, strtotime( '+1day', $this->date_fin) )
+				if($absenceAutoriseeDebut==0||$absenceAutoriseeFin==0){
+					return 3; //etat pour le message d'erreur lié aux rtt non cumulés
+				}
+				//on teste finalement si le collaborateur n'a pas déjà pris un jour de rtt non cumulés dans les 2 mois précédents
+				$absenceAutorisee1Jour2Mois=$this->rttnoncumuleDuree2mois($ATMdb, $this->date_debut);
+				if($absenceAutorisee1Jour2Mois==0){
+					return 4; //etat pour le message d'erreur lié aux rtt non cumulés, et indiquant qu'un seul jour peut être pris par 2 mois
+				}
 			}
 			
 			
@@ -235,13 +263,13 @@ class TRH_Absence extends TObjetStd {
 				$this->rttAcquisMensuel=$this->rttAcquisMensuel-$dureeAbsenceCourante;
 				
 			}
-			else if($this->type=="conges"||$this->type=="maladienonmaintenue"){	//autre que RTT : décompte les congés
+			else if($this->type=="conges"){	//autre que RTT : décompte les congés
 				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$user->id;
 				$db->Execute($sqlDecompte);
 				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 			}
 			
-			return $nbJourAutorise;
+			return $dureeAbsenceRecevable;
 		}
 		
 		
@@ -259,14 +287,14 @@ class TRH_Absence extends TObjetStd {
 			$duree=$diff/3600/24;
 			
 			//prise en compte du matin et après midi
-			if(isset($_REQUEST['id'])){
-				if($this->ddMoment=="matin"&&$this->dfMoment=="apresmidi"){
-					$duree+=1;
-				}
-				else if($this->ddMoment==$this->dfMoment){
-					$duree+=0.5;
-				}
+			
+			if($this->ddMoment=="matin"&&$this->dfMoment=="apresmidi"){
+				$duree+=1;
 			}
+			else if($this->ddMoment==$this->dfMoment){
+				$duree+=0.5;
+			}
+			
 			return $duree; 
 		}
 		
@@ -623,6 +651,7 @@ class TRH_Absence extends TObjetStd {
 	 		}
 			if(!$ferie){
 				$jourEnCoursSem=$this->jourSemaine($jourEnCours);
+				//echo $jourEnCoursSem;
 				foreach ($this->TJour as $jour) {
 					if($jour==$jourEnCoursSem){
 						foreach(array('am','pm') as $moment) {
@@ -672,10 +701,8 @@ class TRH_Absence extends TObjetStd {
 		
 		//renvoie le jour de la semaine correspondant à la date passée en paramètre
 		function jourSemaine($phpDate){
-		    $frdate=$this->php2dmy($phpDate);
-			list($jour, $mois, $annee) = explode('/', $frdate);
-			// calcul du timestamp
-			$timestamp = mktime (0, 0, 0, $mois, $jour, $annee);
+			$timestamp = strtotime(date('Y-m-d', $phpDate));
+
 			// affichage du jour de la semaine
 			return $this->Tjoursem[date("w",$timestamp)];
 		}
@@ -734,18 +761,15 @@ class TRH_Absence extends TObjetStd {
 						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
 						$ATMdb->Execute($sqlRecredit);
 					break;
-					case 'maladienonmaintenue':
-						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
-						$ATMdb->Execute($sqlRecredit);
-					break;
 				}
 			}
 		}
 
+
 		//fonction qui va renvoyer 1 si l'utilisateur est valideur de l'absence courante
-		function estValideur(&$ATMdb,$idUser){
+		/*function estValideur(&$ATMdb,$idUser){
 			
-			if($this->fk_user==$idUser) return 0;
+		//	if($this->fk_user==$idUser) return 0;
 			//on récupère les groupes auxquels appartient l'utilisateur ayant créé l'absence
 			$sql="SELECT fk_usergroup FROM `".MAIN_DB_PREFIX."usergroup_user` WHERE fk_user=".$this->fk_user;
 			$ATMdb->Execute($sql);
@@ -769,7 +793,7 @@ class TRH_Absence extends TObjetStd {
 				}
 			}	
 			return 0;
-		}
+		}*/
 		
 		
 		//donne la différence entre 2 heures (respecter l'ordre début et fin)
@@ -803,6 +827,89 @@ class TRH_Absence extends TObjetStd {
 			}
 			return $avertissement;
 		}
+		
+		function isWorkingDayNext(&$ATMdb, $dateTest){
+
+			$dateNext=strtotime('+1day',$dateTest); // +3600*24; // AA cf mon autre comm, quand l'horloge change d'heure ceci fonctionne mal
+			//$jourNext=$this->jourSemaine($dateNext);
+			
+			//on teste si c'est un jour férié
+			$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
+			.$this->php2Date($this->date_debut)."' and '".$dateNext."'"; 
+			
+			$ATMdb->Execute($sql);
+			while($ATMdb->Get_line()) {
+				if($this->php2Date($dateNext)==$ATMdb->Get_field('date_jourOff')&&$ATMdb->Get_field('date_jourOff')!='apresmidi'){
+					return 0;
+				}
+			}
+			
+			//on teste si le jour suivant est un rtt cumulé ou un congés ce qui est interdit
+			$sql="SELECT rowid, date_debut, dfMoment FROM ".MAIN_DB_PREFIX."rh_absence 
+			WHERE date_debut LIKE '".$this->php2Date($dateNext)."'
+			AND (type LIKE 'rttcumule' OR type LIKE 'conges') 
+			AND etat <> 'refusee'"; 
+			$ATMdb->Execute($sql);
+
+			while($ATMdb->Get_line()) {
+				//echo $this->php2Date($dateNext);
+				if($this->php2Date($dateNext)==$ATMdb->Get_field('date_debut')&&$ATMdb->Get_field('date_debut')!='apresmidi'){
+					return 0;
+				}
+			}
+			return 1;
+		}
+		
+		function isWorkingDayPrevious(&$ATMdb, $dateTest){
+
+			$datePrec=$dateTest-3600*24;
+			//$jourPrec=$this->jourSemaine($datePrec);
+			
+			//on teste si c'est un jour férié
+			$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
+			.$jourPrec."' and '". $this->php2Date($this->date_debut)."'"; 
+			
+			$ATMdb->Execute($sql);
+			while($ATMdb->Get_line()) {
+				if($this->php2Date($dateTest)==$ATMdb->Get_field('date_jourOff')){
+					return 0;
+				}
+			}
+			
+			//on teste si le jour précédent est un rtt cumulé ou un congés ce qui est interdit
+			$sql="SELECT rowid, date_debut, dfMoment FROM ".MAIN_DB_PREFIX."rh_absence 
+			WHERE date_fin LIKE '".$this->php2Date($datePrec)."'
+			AND (type LIKE 'rttcumule' OR type LIKE 'conges')
+			AND etat <> 'refusee'"; 
+			$ATMdb->Execute($sql);
+
+			while($ATMdb->Get_line()) {
+				//echo $this->php2Date($datePrec);
+				if($this->php2Date($datePrec)==$ATMdb->Get_field('date_fin')&&$ATMdb->Get_field('date_fin')!='matin'){
+					return 0;
+				}
+			}
+			return 1;
+		}
+
+		function rttnoncumuleDuree2mois(&$ATMdb, $dateDebut){
+			
+			//on calcule 2 mois entre la date de début de la demande d'absence, et la prise d'un rtt non cumulé
+			$dateLimite=$dateDebut-3600*24*58;
+			
+			$sql="SELECT SUM(duree) as 'somme' FROM ".MAIN_DB_PREFIX."rh_absence 
+			WHERE date_debut between '".$this->php2Date($dateLimite)."' AND '".$this->php2Date($dateDebut)."'
+			AND type LIKE 'rttnoncumule' AND etat <> 'refusee'"; 
+			$ATMdb->Execute($sql);
+			
+			while($ATMdb->Get_line()) {
+				if($ATMdb->Get_field('somme')>=1){
+					return 0;
+				}
+			}
+			return 1;
+		}
+		
 		
 }
 
@@ -947,52 +1054,11 @@ class TRH_JoursFeries extends TObjetStd {
 	
 	//remet à 0 les checkbox avant la sauvegarde
 	function razCheckbox(&$ATMdb, $absence){
-		global $conf, $user;
-		$this->entity = $conf->entity;
-
 			$this->matin=0;
-			 $this->apresmidi=0;
+			$this->apresmidi=0;
 	}
 	
 }
-
-//définition de la table pour l'enregistrement des jours non travaillés dans l'année (fériés etc...)
-class TRH_Pointage extends TObjetStd {
-	function __construct() { /* declaration */
-		
-		parent::set_table(MAIN_DB_PREFIX.'rh_jour_non_travaille');
-		parent::add_champs('date','type=date;');		//date du jour non travaillé
-		parent::add_champs('matin','type=entier;');	//utilisateur concerné
-		parent::add_champs('apresmidi','type=entier;');	//utilisateur concerné
-		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
-		
-		
-		parent::_init_vars();
-		parent::start();
-		
-		$ATMdb=new Tdb;
-		global $conf,$user;
-		
-		//LISTE USERS À VALIDER
-		$sql=" SELECT DISTINCT u.fk_user, s.name FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, 
-		".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s
-				WHERE v.fk_user=".$user->id." 
-				AND v.type='Conges'
-				AND s.rowid=u.fk_user
-				AND v.fk_usergroup=u.fk_usergroup
-				AND v.entity=".$conf->entity;
-				
-		$ATMdb->Execute($sql);
-		$this->TabUser=array();
-		$k=0;
-		while($ATMdb->Get_line()) {
-					$TabUser[]=$ATMdb->Get_field('fk_user');
-					$k++;
-		}
-	}
-}
-
-
 
 //définition de la classe pour la gestion des règles
 class TRH_RegleAbsence extends TObjetStd {
@@ -1012,11 +1078,17 @@ class TRH_RegleAbsence extends TObjetStd {
 		
 		$this->choixApplication = 'all';
 		
-		$this->TTypeAbsence = array('rttcumule'=>'RTT Cumulé','rttnoncumule'=>'RTT Non Cumulé', 'conges' => 'Congés', 'maladiemaintenue' => 'Maladie maintenue', 
-		'maladienonmaintenue'=>'Maladie non maintenue','maternite'=>'Maternité', 'paternite'=>'Paternité', 
-		'chomagepartiel'=>'Chômage Partiel','nonremuneree'=>'Non rémunérée','accidentdetravail'=>'Accident de travail',
-		'maladieprofessionnelle'=>'Maladie professionnelle', 'congeparental'=>'Congé parental', 'accidentdetrajet'=>'Accident de trajet',
-		'mitempstherapeutique'=>'Mi-temps thérapeutique');
+		$this->TTypeAbsenceAdmin = array('rttcumule'=>'RTT cumulé','rttnoncumule'=>'RTT non cumulé', 
+		'conges' => 'Absence congés', 'maladiemaintenue' => 'Absence maladie maintenue', 
+		'maladienonmaintenue'=>'Absence maladie non maintenue','maternite'=>'Absence maternité', 'paternite'=>'Absence paternité', 
+		'chomagepartiel'=>'Absence Chômage partiel','nonremuneree'=>'Absence non rémunérée','accidentdetravail'=>'Absence accident du travail',
+		'maladieprofessionnelle'=>'Absence maladie professionnelle', 
+		'congeparental'=>'Absence Congés parental', 'accidentdetrajet'=>'Absence Accident trajet',
+		'mitempstherapeutique'=>'Absence Mi-temps thérapeutique', 'pathologie'=>'Absence pathologie','mariage'=>'Mariage',
+		'deuil'=>'Deuil','naissanceadoption'=>'Naissance ou adoption', 'enfantmalade'=>'Enfant malade', 'demenagement'=>'Déménagement',
+		'cours'=>'Cours', 'preavis'=>'Absence préavis','rechercheemploi'=>'Absence recherche emploi', 
+		'miseapied'=>'Absence mise à pied', 'nonjustifiee'=>'Absence non justifiée'  );
+		
 		$this->TUser = array();
 		$this->TGroup  = array();
 		$this->TChoixApplication = array(

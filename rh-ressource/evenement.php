@@ -95,16 +95,16 @@
 function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	global $conf,$user;	
 	llxHeader('','Liste des emprunts');
-	?><div class="fiche"><?	
-	    
-	 
+	
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource');
-	// btsubmit($pLib,$pName,$plus="")
+	
+	printLibelle($ressource);
+	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
-	//$form->Set_typeaff($mode);
+	
 	echo $form->hidden('action', 'afficherListe');
 	echo $form->hidden('id',$ressource->getId());
-	$evenement->load_liste_type($ATMdb, $ressource);
+	$evenement->load_liste_type($ATMdb, $ressource->fk_rh_ressource_type);
 
 	?>
 	<table>
@@ -187,6 +187,10 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 			,'Traité le'=>'date'
 			
 		)
+		,'eval'=>array(
+			'Utilisateur'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+		)
+		
 		,'liste'=>array(
 			'titre'=>'Liste des événements de type '.$evenement->TType[$type]
 			,'image'=>img_picto('','title.png', '', 0)
@@ -204,10 +208,9 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	));
 	
 	if($user->rights->ressource->ressource->manageEvents){
-	?><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
+	?></div><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
 	}
-	?>
-	<div style="clear:both"></div></div><?
+	?><div style="clear:both"></div></div><?
 	$form->end();
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
@@ -225,7 +228,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	echo $form->hidden('idEven',$evenement->getId());
 
 	$evenement->load_liste($ATMdb);
-	$evenement->load_liste_type($ATMdb, $ressource);
+	$evenement->load_liste_type($ATMdb, $ressource->fk_rh_ressource_type);
 	$TBS=new TTemplateTBS();
 	$tab = array_splice ( $evenement->TType , 1);
 	print $TBS->render('./tpl/evenement.tpl.php'
@@ -233,6 +236,8 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 		,array(
 			'ressource'=>array(
 				'id'=>$ressource->getId()
+				,'numId'=>$ressource->numId
+				,'libelle'=>$ressource->libelle
 			)
 			,'NEvent'=>array(
 				'id'=>$evenement->getId()

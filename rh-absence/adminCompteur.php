@@ -74,7 +74,7 @@ function _liste(&$ATMdb, &$compteur) {
 	getStandartJS();
 	print dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Administration des congés');
 	$r = new TSSRenderControler($compteur);
-	$sql="SELECT  r.rowid as 'ID', CONCAT(c.firstname,' ',c.name) as 'Utilisateur', anneeN as 'annee', 
+	$sql="SELECT  r.rowid as 'ID', firstname, name, 
 		r.date_cre as 'DateCre', CAST(r.acquisExerciceN as DECIMAL(16,1)) as 'Congés acquis N', 
 		CAST(r.acquisAncienneteN as DECIMAL(16,1)) as 'Congés Ancienneté', 
 		CAST(r.acquisExerciceNM1 as DECIMAL(16,1)) as 'Conges Acquis N-1', 
@@ -84,10 +84,10 @@ function _liste(&$ATMdb, &$compteur) {
 		WHERE r.entity=".$conf->entity." AND r.fk_user=c.rowid";
 		
 	
-	$TOrder = array('DateCre'=>'ASC');
+	$TOrder = array('name'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
-				
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');			
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
 	//print $page;
 	$r->liste($ATMdb, $sql, array(
@@ -96,7 +96,8 @@ function _liste(&$ATMdb, &$compteur) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Utilisateur'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'firstname'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			,'name'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre')
@@ -110,13 +111,23 @@ function _liste(&$ATMdb, &$compteur) {
 			,'messageNothing'=>"Il n'y a aucun jour acquis à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 			
 		)
+		,'title'=>array(
+			'firstname'=>'Nom'
+			,'name'=>'Prénom'
+		)
+		,'search'=>array(
+			'firstname'=>true
+			,'name'=>true
+		)
 		,'orderBy'=>$TOrder
+
 		
 	));
 	
-	
+	$form->end();
 	llxFooter();
 }	
 	

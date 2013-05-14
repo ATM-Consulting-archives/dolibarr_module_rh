@@ -167,12 +167,13 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 				,'tiersAgence'=> $form->combo('','fk_tier_utilisateur',$contrat->TAgence,$contrat->fk_tier_utilisateur)
 				,'date_debut'=> $form->calendrier('', 'date_debut', $contrat->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $contrat->get_date('date_fin'), 10)
-				,'loyer_TTC'=>$form->texte('', 'loyer_TTC', $contrat->loyer_TTC, 10,20,'','','-')
+				,'loyer_TTC'=>$form->texte('', 'loyer_TTC', $contrat->loyer_TTC, 10,20,'','','')
 				,'TVA'=>$form->combo('','TVA',$contrat->TTVA,$contrat->TVA)
 				,'loyer_HT'=>($contrat->loyer_TTC)*(1-(0.01*$contrat->TTVA[$contrat->TVA]))
 			)
 			,'view'=>array(
 				'mode'=>$mode
+				,'userRightViewContrat'=>(int)$user->rights->ressource->contrat->viewPrixContrat
 				,'userRight'=>((int)$user->rights->ressource->contrat->createContract)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($contrat, 'contrat')  , 'fiche', 'Contrat')
 			)
@@ -183,92 +184,93 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 	);
 	
 	print "<br/>";
-	//liste des ressources associées
-	$r = new TSSRenderControler($contrat);
-	$sql= "SELECT r.rowid as ID, r.libelle as 'Libellé' , r.numId as 'Numéro Id'
-			FROM ".MAIN_DB_PREFIX."rh_ressource as r, ".MAIN_DB_PREFIX."rh_contrat_ressource as l";
-	if(!$user->rights->ressource->ressource->viewRessource){
-		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=l.fk_rh_ressource";
-	}
-	$sql.=" WHERE r.entity=".$conf->entity."
-			AND l.fk_rh_contrat =".$contrat->getId()."
-			AND l.fk_rh_ressource = r.rowid	";
-	if(!$user->rights->ressource->ressource->viewRessource){
-		$sql.=" AND e.type ='emprunt'
-			AND e.fk_user=".$user->id;
-	}
-	$TOrder = array('ID'=>'ASC');
-	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
-	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+	if ($mode != 'new'){
+		//liste des ressources associées
+		$r = new TSSRenderControler($contrat);
+		$sql= "SELECT r.rowid as ID, r.libelle as 'Libellé' , r.numId as 'Numéro Id'
+				FROM ".MAIN_DB_PREFIX."rh_ressource as r, ".MAIN_DB_PREFIX."rh_contrat_ressource as l";
+		if(!$user->rights->ressource->ressource->viewRessource){
+			$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=l.fk_rh_ressource";
+		}
+		$sql.=" WHERE r.entity=".$conf->entity."
+				AND l.fk_rh_contrat =".$contrat->getId()."
+				AND l.fk_rh_ressource = r.rowid	";
+		if(!$user->rights->ressource->ressource->viewRessource){
+			$sql.=" AND e.type ='emprunt'
+				AND e.fk_user=".$user->id;
+		}
+		$TOrder = array('ID'=>'ASC');
+		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+					
+		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
+		//print $page;
+		$r->liste($ATMdb, $sql, array(
+			'limit'=>array(
+				'page'=>$page
+				,'nbLine'=>'30'
+			)
+			,'link'=>array(
+				'Libellé'=>'<a href="ressource.php?id=@ID@&action=view">@val@</a>'
+			)
+			,'translate'=>array()
+			,'hide'=>array()
+			,'type'=>array()
+			,'liste'=>array(
+				'titre'=>'Liste des ressources associées'
+				,'image'=>img_picto('','title.png', '', 0)
+				,'picto_precedent'=>img_picto('','back.png', '', 0)
+				,'picto_suivant'=>img_picto('','next.png', '', 0)
+				,'noheader'=> (int)isset($_REQUEST['socid'])
+				,'messageNothing'=>"Il n'y a aucune ressource associée"
+				,'order_down'=>img_picto('','1downarrow.png', '', 0)
+				,'order_up'=>img_picto('','1uparrow.png', '', 0)
 				
-	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
-	//print $page;
-	$r->liste($ATMdb, $sql, array(
-		'limit'=>array(
-			'page'=>$page
-			,'nbLine'=>'30'
-		)
-		,'link'=>array(
-			'Libellé'=>'<a href="ressource.php?id=@ID@&action=view">@val@</a>'
-		)
-		,'translate'=>array()
-		,'hide'=>array()
-		,'type'=>array()
-		,'liste'=>array(
-			'titre'=>'Liste des ressources associées'
-			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
-			,'picto_suivant'=>img_picto('','next.png', '', 0)
-			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucune ressource associée"
-			,'order_down'=>img_picto('','1downarrow.png', '', 0)
-			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			)
+			,'orderBy'=>$TOrder
 			
-		)
-		,'orderBy'=>$TOrder
+		));
 		
-	));
-	
-	print "<br/>";
-	//liste des adresses liés au contrat
-	$r = new TSSRenderControler($contrat);
-	$sql= "SELECT s.rowid as ID , s.name as 'Nom', CONCAT(s.address, ' ', s.cp, ' ',s.ville) as 'Adresse',
-			s.phone as 'Tél pro.', s.phone_mobile as 'Tél portable', s.fax as 'Fax', s.email as 'EMail'
-			FROM ".MAIN_DB_PREFIX."socpeople as s
-			LEFT JOIN	".MAIN_DB_PREFIX."rh_contrat as c ON (s.fk_soc = c.fk_tier_fournisseur)
-			WHERE s.entity=".$conf->entity."
-			AND c.rowid =".$contrat->getId();
-	$TOrder = array('ID'=>'ASC');
-	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
-	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+		print "<br/>";
+		//liste des adresses liés au contrat
+		$r = new TSSRenderControler($contrat);
+		$sql= "SELECT s.rowid as ID , s.name as 'Nom', CONCAT(s.address, ' ', s.cp, ' ',s.ville) as 'Adresse',
+				s.phone as 'Tél pro.', s.phone_mobile as 'Tél portable', s.fax as 'Fax', s.email as 'EMail'
+				FROM ".MAIN_DB_PREFIX."socpeople as s
+				LEFT JOIN	".MAIN_DB_PREFIX."rh_contrat as c ON (s.fk_soc = c.fk_tier_fournisseur)
+				WHERE s.entity=".$conf->entity."
+				AND c.rowid =".$contrat->getId();
+		$TOrder = array('ID'=>'ASC');
+		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+					
+		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
+		$r->liste($ATMdb, $sql, array(
+			'limit'=>array(
+				'page'=>$page
+				,'nbLine'=>'30'
+			)
+			,'link'=>array(
+				'Nom'=>'<a href="../../contact/fiche.php?id=@ID@">@val@</a>'
+			)
+			,'translate'=>array()
+			,'hide'=>array()
+			,'type'=>array()
+			,'liste'=>array(
+				'titre'=>'Liste des agences à contacter en cas de problème'
+				,'image'=>img_picto('','title.png', '', 0)
+				,'picto_precedent'=>img_picto('','back.png', '', 0)
+				,'picto_suivant'=>img_picto('','next.png', '', 0)
+				,'noheader'=> (int)isset($_REQUEST['socid'])
+				,'messageNothing'=>"Il n'y a aucune agence liée"
+				,'order_down'=>img_picto('','1downarrow.png', '', 0)
+				,'order_up'=>img_picto('','1uparrow.png', '', 0)
 				
-	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
-	$r->liste($ATMdb, $sql, array(
-		'limit'=>array(
-			'page'=>$page
-			,'nbLine'=>'30'
-		)
-		,'link'=>array(
-			'Nom'=>'<a href="../../contact/fiche.php?id=@ID@">@val@</a>'
-		)
-		,'translate'=>array()
-		,'hide'=>array()
-		,'type'=>array()
-		,'liste'=>array(
-			'titre'=>'Liste des agences à contacter en cas de problème'
-			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
-			,'picto_suivant'=>img_picto('','next.png', '', 0)
-			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucune agence liée"
-			,'order_down'=>img_picto('','1downarrow.png', '', 0)
-			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			)
+			,'orderBy'=>$TOrder
 			
-		)
-		,'orderBy'=>$TOrder
-		
-	));
-	
+		));
+		}
 	
 	
 	echo $form->end_form();

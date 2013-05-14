@@ -1,7 +1,20 @@
 [onshow;block=begin;when [view.mode]=='view']
-    <div class="fiche"> <!-- begin div class="fiche" -->
+   
     [view.head;strconv=no]
 [onshow;block=end]                                
+<table class="border" style="width:100%">
+		<tr>
+			<td>Numéro Id</td>
+			<td>[ressource.numId;strconv=no;protect=no]</td>
+		</tr>
+		<tr>
+			<td>Libellé</td>
+			<td>[ressource.libelle;strconv=no;protect=no]</td>
+		</tr>
+</table><br>
+
+
+<h2>Evénement sur la ressource</h2>
 
 <div>
 	<table class="border" style="width:100%">
@@ -140,7 +153,7 @@
 	});
 </script>
 
-
+</div>
 <div class="tabsAction" style="text-align:center;">
 	[onshow;block=begin;when [view.mode]=='view']
 		<a class="butAction"  href="ressource.php?id=[ressource.id]&action=view">Ressource associée</a>
@@ -157,5 +170,5 @@
 			<input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressource.id]'">
 		[onshow;block=end]
 	[onshow;block=end]
-</div>
+<div style="clear:both"></div>
 

@@ -129,7 +129,6 @@ class modCompetence extends DolibarrModules
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
         $this->tabs = array(
         	'user:+competence:Expérience:competence@competence:/competence/experience.php?fk_user=__ID__'  // To add a new tab identified by code tabname1
-           ,'user:+recherche:Recherche Profil:competence@competence:/competence/rechercheProfil.php?fk_user=__ID__'
             ,'user:+remuneration:Rémunération:competence@competence:/competence/remuneration.php?fk_user=__ID__'
        	);
 
@@ -202,6 +201,51 @@ class modCompetence extends DolibarrModules
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
 		$r=0;
+		
+		$this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
+								'type'=>'top',			                // This is a Top menu entry
+								'titre'=>$langs->trans('Compétences'),
+								'mainmenu'=>'competence',
+								'leftmenu'=>'',
+								'url'=>'/competence/rechercheCompetence.php',
+								'langs'=>'competence@competence',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>100,
+								'enabled'=>'1',	// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
+								'perms'=>'$user->rights->curriculumvitae->myactions->rechercheProfil',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
+								'user'=>0);						                // 0=Menu for internal users, 1=external users, 2=both
+		
+		$r++;
+        $this->menu[$r]=array(
+			            'fk_menu'=>'fk_mainmenu=competence',			// Put 0 if this is a top menu
+			        	'type'=> 'left',			// This is a Top menu entry
+			        	'titre'=>$langs->trans('Recherche compétences'),
+			        	'mainmenu'=> 'competence',
+			        	'leftmenu'=> 'souscompetence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+						'url'=> '/competence/rechercheCompetence.php',
+						'langs'=> 'competence@competence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+						'position'=> 101,
+						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+						'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						'target'=> '',
+						'user'=> 2	// 0=Menu for internal users, 1=external users, 2=both
+        );
+		$r++;
+		$this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=competence,fk_leftmenu=souscompetence',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('Statistiques'),
+		        	'mainmenu'=> '',
+		        	'leftmenu'=> 'souscompetence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/competence/statCompetence.php',
+					'langs'=> 'competence@competence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 102,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
+		$r++;
 
 		// Add here entries to declare new menus
 		//

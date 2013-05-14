@@ -93,7 +93,11 @@ function _liste(&$ATMdb, $regle) {
 			
 		)
 		,'translate'=>array(
-			'typeAbsence'=>array('rttnoncumule'=>'RTT Non Cumulé')
+			'typeAbsence'=>array('rttcumule'=>'RTT Cumulé','rttnoncumule'=>'RTT Non Cumulé', 'conges' => 'Congés', 'maladiemaintenue' => 'Maladie maintenue', 
+		'maladienonmaintenue'=>'Maladie non maintenue','maternite'=>'Maternité', 'paternite'=>'Paternité', 
+		'chomagepartiel'=>'Chômage Partiel','nonremuneree'=>'Non rémunérée','accidentdetravail'=>'Accident de travail',
+		'maladieprofessionnelle'=>'Maladie professionnelle', 'congeparental'=>'Congé parental', 'accidentdetrajet'=>'Accident de trajet',
+		'mitempstherapeutique'=>'Mi-temps thérapeutique')
 			,'Restrictif'=>array('1'=>'Oui', '0'=>'Non')
 		)
 		,'hide'=>array()
@@ -158,7 +162,7 @@ function _fiche(&$ATMdb, $regle, $mode) {
 				,'fk_user'=>$form->combo('', 'fk_user',$regle->TUser, $regle->fk_user)
 				,'fk_group'=>$form->combo('', 'fk_usergroup',$regle->TGroup, $regle->fk_usergroup)
 				,'nbJourCumulable'=>$form->texte('', 'nbJourCumulable', $regle->nbJourCumulable,30 ,255,'','','')
-				,'typeAbsence'=>$form->combo('', 'typeAbsence',$regle->TTypeAbsence, $regle->typeAbsence)
+				,'typeAbsence'=>$form->combo('', 'typeAbsence',$regle->TTypeAbsenceAdmin, $regle->typeAbsence)
 				,'restrictif'=>$form->checkbox1('','restrictif','1',$regle->restrictif==1?true:false)
 			)
 			,'userCourant'=>array(

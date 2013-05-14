@@ -16,3 +16,7 @@ ErrorFileNotUploaded=Le fichier n'a pas été transféré. Vérifiez que sa tail
 ErrorFileIsInfectedWithAVirus=L'antivirus n'a pas pu valider ce fichier (il est probablement infecté par un virus) !
 FileHasBeenRemoved=Le fichier a été effacé
 ImportFournisseurs=Import fournisseurs
+Rapports = Rapports
+rapportTotal = Consommation cartes Total
+rapportTel = Dépassements téléphonique
+rapportVehicule = Véhicules 

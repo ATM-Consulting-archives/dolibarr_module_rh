@@ -13,26 +13,39 @@
                 { ?>
                 <a href='<?php echo $this->createUrl("admin/responses/sa/index/surveyid/$surveyid"); ?>'>
                     <img src='<?php echo $sImageURL; ?>summary.png' title='' alt='<?php $clang->eT("Show summary information"); ?>' /></a>
-                <?php if (count(Survey::model()->findByPk($surveyid)->additionalLanguages) == 0)
-                    { ?>
-                    <a href='<?php echo $this->createUrl("admin/responses/sa/browse/surveyid/$surveyid"); ?>'>
+                <?php } ?>
+        </div>
+        <?php if (hasSurveyPermission($surveyid, 'responses', 'read'))
+            { ?>
+            <ul class='sf-menu'>
+                <li><a href='<?php echo $this->createUrl("admin/responses/sa/browse/surveyid/$surveyid"); ?>'>
                         <img src='<?php echo $sImageURL; ?>document.png' title='' alt='<?php $clang->eT("Display Responses"); ?>' /></a>
-                    <?php }
-                    else
-                    { ?>
-                    <a href="<?php echo $this->createUrl("admin/responses/sa/browse/surveyid/$surveyid"); ?>" accesskey='b' id='browseresponses'>
-                        <img src='<?php echo $sImageURL; ?>document.png' alt='<?php $clang->eT("Display Responses"); ?>' /></a>
-
-                    <div class="langpopup" id="browselangpopup"><?php $clang->eT("Please select a language:"); ?><ul>
-                            <?php foreach ($tmp_survlangs as $tmp_lang)
-                                { ?>
-                                <li><a href="<?php echo $this->createUrl("admin/responses/sa/index/surveyid/$surveyid/start/0/limit/50/order/asc/browselang/$tmp_lang"); ?>" accesskey='b'><?php echo getLanguageNameFromCode($tmp_lang, false); ?></a></li>
-                                <?php } ?>
-                        </ul></div>
+                    <?php if (count($tmp_survlangs) > 1) { ?>
+                    <ul>
+                        <?php foreach ($tmp_survlangs as $tmp_lang) { ?>
+                        <li>
+                            <a href="<?php echo $this->createUrl("admin/responses/sa/browse/surveyid/$surveyid/browselang/$tmp_lang"); ?>" accesskey='b'><img src='<?php echo $sImageURL;?>document_30.png' alt=''/> <?php echo getLanguageNameFromCode($tmp_lang, false); ?></a>
+                        </li>
+                        <?php } ?>
+                    </ul>
                     <?php } ?>
-                <a href='<?php echo $this->createUrl("admin/responses/sa/browse/surveyid/$surveyid/start/0/limit/50/order/desc"); ?>'>
-                    <img src='<?php echo $sImageURL; ?>viewlast.png' alt='<?php $clang->eT("Display Last 50 Responses"); ?>' /></a>
-                <?php }
+                </li>
+                <li><a href='<?php echo $this->createUrl("admin/responses/sa/browse/surveyid/$surveyid/start/0/limit/50/order/desc"); ?>'>
+                        <img src='<?php echo $sImageURL; ?>viewlast.png' title='' alt='<?php $clang->eT("Display Last 50 Responses"); ?>' /></a>
+                    <?php if (count($tmp_survlangs) > 1) { ?>
+                    <ul>
+                        <?php foreach ($tmp_survlangs as $tmp_lang) { ?>
+                            <li>
+                                <a href="<?php echo $this->createUrl("admin/responses/sa/browse/surveyid/$surveyid/start/0/limit/50/order/desc/browselang/$tmp_lang"); ?>" accesskey='b'><img src='<?php echo $sImageURL;?>document_30.png' alt=''/> <?php echo getLanguageNameFromCode($tmp_lang, false); ?></a>
+                            </li>
+                            <?php } ?>
+                    </ul>
+                <?php } ?>
+                </li>
+                </ul>
+            <?php } ?>
+        <div class='menubar-left'>
+            <?php 
                 if (hasSurveyPermission($surveyid, 'responses', 'create'))
                 { ?>
                 <a href='<?php echo $this->createUrl("admin/dataentry/sa/view/surveyid/$surveyid"); ?>'>

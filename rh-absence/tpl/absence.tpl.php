@@ -9,7 +9,7 @@
 
 
 			[onshow;block=begin;when [view.mode]=='edit']
-            <h1 style="color: #2AA8B9;"> Déclaration d'absence</h1>                         
+            <h1 style="color: #2AA8B9;"> Nouvelle demande d'absence</h1>                         
 			[onshow;block=end]
 			 [onshow;block=begin;when [view.mode]!='edit']
             <h1 style="color: #2AA8B9;"> Visualisation de la demande d'absence</h1>                         
@@ -17,10 +17,19 @@
 
 
 			<table class="border" style="width:40%">
+				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='1']
+				<tr>
+					<td>Utilisateur</td>
+					<td>[absenceCourante.userAbsence;strconv=no;protect=no]</td>
+				</tr>	
+				[onshow;block=end]
+				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='0']
 				<tr>
 					<td>Utilisateur Courant</td>
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
-				</tr>	
+					[absenceCourante.userAbsenceCourant;strconv=no;protect=no]
+				</tr>
+				[onshow;block=end]	
 				<tr>
 					<td>Type d'absence</td>
 					<td>[absenceCourante.comboType;strconv=no;protect=no]</td>
@@ -54,13 +63,17 @@
 						<td>Avertissement</td>
 						<td>[absenceCourante.avertissement;strconv=no;protect=no]</td>
 					</tr>
+					<tr>
+						<td>Niveau de validation</td>
+						<td>[absenceCourante.niveauValidation;strconv=no;protect=no]</td>
+					</tr>
 				[onshow;block=end]
 			</table>
 
     <br/>
      <h3 style="color: #2AA8B9;">Jours restants à prendre</h3>
 							
-            <table class="border" style="width:30%">
+            <table class="border" style="width:40%">
 				<tr>
 					<td>Congés payés</td>
 					<td>[congesPrec.reste;strconv=no;protect=no]</td>
@@ -80,11 +93,10 @@
 			</table>
 
 			
-			
+			<div class="tabsAction" >
 		[onshow;block=begin;when [absenceCourante.etat]!='Refusee']
 		[onshow;block=begin;when [absenceCourante.etat]!='Validee']
-		[onshow;block=begin;when [absenceCourante.etat]!='Enregistree']
-			<div class="tabsAction" >
+			
 				[onshow;block=begin;when [view.mode]=='edit']
 					<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
 				[onshow;block=end]
@@ -94,23 +106,49 @@
 					[onshow;block=begin;when [userCourant.valideurConges]=='1']
 						<a class="butAction" id="action-update"  onclick="document.location.href='?action=accept&id=[absenceCourante.id]'">Accepter</a>	
 						<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=refuse&id=[absenceCourante.id]'">Refuser</span>
+						<a style='width:22%' class="butAction" id="action-update"  onclick="document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'">Envoyer au valideur supérieur</a>	
 					[onshow;block=end]
 				[onshow;block=end]
+
 				
-				
-				[onshow;block=begin;when [view.mode]!='edit']
-					[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
-						<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
-					[onshow;block=end]
-				[onshow;block=end]
-			</div>
+			
 		[onshow;block=end]
 		[onshow;block=end]	
-		[onshow;block=end]	
 
+		[onshow;block=begin;when when [absenceCourante.etat]!='Validee']
+		[onshow;block=begin;when [view.mode]!='edit']
+				[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
+	
+					<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
+				
+				[onshow;block=end]
+					
+		[onshow;block=end]
+		[onshow;block=end]
+		</div>
 		</div>
 		
 		
+		<div>
+		<h3 style="color: #2AA8B9;">Dernières absences du collaborateur</h3>
+		<table  class="liste formdoc noborder" style="width:100%">
+				<tr class="liste_titre">
+					<td><b>Date de début</b></td>
+					<td><b>Date de fin</b></td>
+					<td><b>Type d'absence</b></td>
+					<td><b>Etat</b></td>
+				</tr>
+				<tr class="pair">
+					<td>[TRecap.date_debut;block=tr;strconv=no;protect=no]</td>
+					<td>[TRecap.date_fin;block=tr;strconv=no;protect=no]</td>
+					<td>[TRecap.libelle;block=tr;strconv=no;protect=no]</td>
+					<td>[TRecap.libelleEtat;block=tr;strconv=no;protect=no]</td>
+				</tr>	
+		</table>
+		</div>
+		
+		
+		<div>
 		<h3 style="color: #2AA8B9;">Règles concernant le collaborateur</h3>
 		<table  class="liste formdoc noborder" style="width:100%">
 				<tr class="liste_titre">
@@ -124,6 +162,9 @@
 					<td>[TRegle.restrictif;block=tr;strconv=no;protect=no]</td>
 				</tr>	
 		</table>
+		</div>
+		
+		
 
 		<script>
 			$(document).ready( function(){

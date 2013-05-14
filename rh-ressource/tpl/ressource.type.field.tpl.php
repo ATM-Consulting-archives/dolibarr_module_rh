@@ -1,12 +1,12 @@
 [onshow;block=begin;when [view.mode]=='view']
 
-        
-                <div class="fiche"> <!-- begin div class="fiche" -->
-                [view.head;strconv=no]
-                
-                        <div class="tabBar">
+        [view.head;strconv=no]
                                 
-[onshow;block=end]  
+[onshow;block=end]
+
+[onshow;block=begin;when [view.mode]!='view']
+    <div>
+[onshow;block=end]    
 		
 			
 			<table width="100%" class="border">
@@ -93,6 +93,7 @@
 	</script>
 [onshow;block=end]
 
+</div>
 [onshow;block=begin;when [view.mode]!='edit']
 	<div class="tabsAction">
 		<a href="?id=[ressourceType.id]&action=edit" class="butAction">Modifier</a>
@@ -105,3 +106,7 @@
 		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
 	</div>
 [onshow;block=end]
+
+<div style="clear:both"></div>
+
+

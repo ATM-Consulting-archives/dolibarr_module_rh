@@ -314,9 +314,9 @@ function getSurveyList($returnarray=false, $surveyid=false)
 
     if(is_null($cached)) {
         if (!hasGlobalPermission('USER_RIGHT_SUPERADMIN'))
-            $surveyidresult = Survey::model()->permission(Yii::app()->user->getId())->with(array('languagesettings'=>array('condition'=>'surveyls_language=language')))->findAll();
+            $surveyidresult = Survey::model()->permission(Yii::app()->user->getId())->with(array('languagesettings'=>array('condition'=>'surveyls_language=language')))->findAll(array('order'=>'surveyls_title'));
         else
-            $surveyidresult = Survey::model()->with(array('languagesettings'=>array('condition'=>'surveyls_language=language')))->findAll();
+            $surveyidresult = Survey::model()->with(array('languagesettings'=>array('condition'=>'surveyls_language=language')))->findAll(array('order'=>'surveyls_title'));
 
         $surveynames = array();
         foreach ($surveyidresult as $result)
@@ -995,7 +995,10 @@ function setupColumns($columns, $answer_count,$wrapperclass="",$itemclass="")
     {
         $column_style = 'ul';
     };
-
+    if(!is_null($column_style) && $columns!=1) // Add a global class for all column.
+    {
+        $wrapperclass.= " colstyle-{$column_style}";
+    }
     if($columns < 2)
     {
         $column_style = null;
@@ -3265,7 +3268,7 @@ function questionAttributes($returnByName=false)
     'category'=>$clang->gT('Display'),
     'sortorder'=>120,
     'inputtype'=>'text',
-    "help"=>$clang->gT('Post-Answer-Separator|Inter-Dropdownlist-Separator for dropdown lists'),
+    "help"=>$clang->gT('Text shown on each subquestion row between both scales in dropdown mode'),
     "caption"=>$clang->gT('Dropdown separator'));
 
     $qattributes["dualscale_headerA"]=array(
@@ -4564,11 +4567,19 @@ function flattenText($sTextToFlatten, $keepSpan=false, $bDecodeHTMLEntities=fals
     else {
         $sNicetext = strip_tags($sNicetext);
     }
-    // ~\R~u : see "What \R matches" and "Newline sequences" in http://www.pcre.org/pcre.txt
+    // ~\R~u : see "What \R matches" and "Newline sequences" in http://www.pcre.org/pcre.txt - only available since PCRE 7.0
     if ($bStripNewLines ){  // strip new lines
-        $sNicetext = preg_replace(array('~\R~u'),array(' '), $sNicetext);
+        if (defined('PCRE_VERSION') && version_compare(substr(PCRE_VERSION,0,strpos(PCRE_VERSION,' ')),'7.0')>-1)
+        {
+            $sNicetext = preg_replace(array('~\R~u'),array(' '), $sNicetext);
+        }
+        else
+        {
+            // Poor man's replacement for line feeds
+            $sNicetext = str_replace(array("\r\n","\n", "\r"), array(' ',' ',' '), $sNicetext);
+        }
     }
-    else // unify newlines to \r\n
+    elseif (version_compare(substr(PCRE_VERSION,0,strpos(PCRE_VERSION,' ')),'7.0')>-1)// unify newlines to \r\n
     {
         $sNicetext = preg_replace(array('~\R~u'), array("\r\n"), $sNicetext);
     }
@@ -4824,10 +4835,10 @@ function getArrayFilterExcludesForQuestion($qid)
 
 
 
-function CSVEscape($str)
+function CSVEscape($sString)
 {
-    $str= str_replace('\n','\%n',$str);
-    return '"' . str_replace('"','""', $str) . '"';
+    $sString = preg_replace(array('~\R~u'), array(PHP_EOL), $sString);
+    return '"' . str_replace('"','""', $sString) . '"';
 }
 
 function convertCSVRowToArray($string, $seperator, $quotechar)
@@ -5934,7 +5945,8 @@ function getQuotaCompletedCount($iSurveyId, $quotaid)
                 if (!in_array($fieldname, $fields_list))
                     $fields_list[] = $fieldname;
 
-                $criteria->addColumnCondition(array($fieldname => $member['value']), 'OR');
+                // Yii does not quote column names (duh!) so we have to do it.
+                $criteria->addColumnCondition(array(Yii::app()->db->quoteColumnName($fieldname) => $member['value']), 'OR');
             }
 
             $fields_query[$fieldname] = $criteria;
@@ -6267,22 +6279,17 @@ function translateInsertansTags($newsid,$oldsid,$fieldnames)
             $description=preg_replace('/'.$pattern.'/', $replacement, $description);
         }
 
-        if (strcmp($description,$qentry['description']) !=0  ||
-        strcmp($gpname,$qentry['group_name']) !=0)
+        if (strcmp($description,$qentry['description']) !=0  || strcmp($gpname,$qentry['group_name']) !=0)
         {
             // Update Fields
-
-            $data = array(
-            'description' => $description,
-            'group_name' => $gpname
-            );
-
             $where = array(
             'gid' => $gid,
             'language' => $language
             );
-
-            Groups::model()->update($data,$where);
+            $oGroup = Groups::model()->findByAttributes($where);
+            $oGroup->description= $description;
+            $oGroup->group_name= $gpname;
+            $oGroup->save();
 
         } // Enf if modified
     } // end while qentry
@@ -7279,6 +7286,7 @@ function getLabelSets($languages = null)
     }
 
     $criteria = new CDbCriteria;
+    $criteria->order = "label_name";    
     foreach ($languagesarray as $k => $item)
     {
         $criteria->params[':lang_like1_' . $k] = "% $item %";

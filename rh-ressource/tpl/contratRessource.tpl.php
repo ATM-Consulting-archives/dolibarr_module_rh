@@ -1,13 +1,21 @@
 [onshow;block=begin;when [view.mode]=='view']
 
         
-                <div class="fiche"> <!-- begin div class="fiche" -->
                 [view.head;strconv=no]
                 
                         <div class="tabBar">
 [onshow;block=end] 
 
-
+<table class="border" style="width:100%">
+		<tr>
+			<td>Numéro Id</td>
+			<td>[ressource.numId;strconv=no;protect=no]</td>
+		</tr>
+		<tr>
+			<td>Libellé</td>
+			<td>[ressource.libelle;strconv=no;protect=no]</td>
+		</tr>
+</table><br>
 
 
 <h2>Contrat associé à la ressource</h2>
@@ -40,5 +48,4 @@
 	</div>
 [onshow;block=end] 
 
-</div>
 </div>

@@ -1,19 +1,87 @@
-[onshow;block=begin;when [ressource.id]!=0]        
-                <div class="fiche"> <!-- begin div class="fiche" -->
-                [view.head;strconv=no]
-                
-                        
-[onshow;block=end] 	
 
-[onshow;block=begin;when [ressource.id]=0]
-		<br> 
-		Spécifier le type de ressource à afficher :  
-                [ressource.type;strconv=no;protect=no]
-                [ressource.btValider;strconv=no;protect=no]
-[onshow;block=end] 	
+
+[onshow;block=begin;when [ressource.fiche]==true]
+	[view.head;strconv=no;protect=no]
+	<table class="border" style="width:100%">
+		<tr>
+			<td>Numéro Id</td>
+			<td>[ressource.numId;strconv=no;protect=no]</td>
+		</tr>
+		<tr>
+			<td>Libellé</td>
+			<td>[ressource.libelle;strconv=no;protect=no]</td>
+		</tr>
+	</table><br>
+[onshow;block=end] 
+ 
 
 
 <h1>Agenda des ressources</h1>
+[ressource.ficheHidden;strconv=no;protect=no][ressource.idHidden;strconv=no;protect=no]
+
+[onshow;block=begin;when [ressource.fiche]==true]
+	Filtre sur le type d'événément : 
+	[ressource.typeEven;strconv=no;protect=no]
+	[ressource.btValider;strconv=no;protect=no]
+	<br><br>
+[onshow;block=end]
+		
+[onshow;block=begin;when [ressource.fiche]!=true]  
+
+		<table class="border" style="width:100%">
+			<tr>
+				<td>Type</td>
+				<td>Ressource</td>
+				<td>Utilisateur</td>
+				<td>Evénement</td>
+				<td rowspan="2">[ressource.btValider;strconv=no;protect=no]</td>
+			</tr>
+			<tr>
+				<td>[ressource.type;strconv=no;protect=no]</td>
+				<td>[ressource.idRessource;strconv=no;protect=no]</td>
+				<td>[ressource.fk_user;strconv=no;protect=no]</td>
+				<td>[ressource.typeEven;strconv=no;protect=no]</td>
+			</tr>
+			
+		</table>
+			
+			
+         <br><br>
+[onshow;block=end] 	
+
+<script>
+ajaxLoadType = function(){
+	$.ajax({
+			url: 'script/loadTypeEvent.php?type='+$('#type option:selected').val()
+		}).done(function(data) {
+			liste = JSON.parse(data);
+			$("#typeEven").empty(); // remove old options
+			$.each(liste, function(key, value) {
+			  $("#typeEven").append($("<option></option>")
+			     .attr("value", key).text(value));
+			});	
+		});
+}
+
+$('#type').change(function(){
+		$.ajax({
+			url: 'script/loadRessources.php?type='+$('#type option:selected').val()
+		}).done(function(data) {
+			liste = JSON.parse(data);
+			$("#idCombo").empty(); // remove old options
+			$.each(liste, function(key, value) {
+			  $("#idCombo").append($("<option></option>")
+			     .attr("value", key).text(value));
+			});	
+		});
+		ajaxLoadType();
+		
+		
+});
+
+
+</script>
+
 		
 			<div id="agenda">
 				 <script type="text/javascript">
@@ -21,14 +89,17 @@
            var view="month";          
            
            [onshow;block=begin;when [ressource.id]!=0]        
-                var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]";
+                var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]&typeEven=[ressource.typeEvenURL;strconv=no]";
 			[onshow;block=end]
 			
+			
 			[onshow;block=begin;when [ressource.id]=0]
-					 var DATA_FEED_URL = "ressourceCalendarDataFeed.php?type=[ressource.typeAAfficher;strconv=no]";
+					var DATA_FEED_URL = "ressourceCalendarDataFeed.php?[ressource.URL;strconv=no]";
 			[onshow;block=end]
 
-            //var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]&type=[ressource.typeAAfficher;strconv=no]"
+			//var DATA_FEED_URL = "ressourceCalendarDataFeed.php?[ressource.URL;strconv=no]";
+			
+            
             //alert(DATA_FEED_URL);
             var op = {
                 view: view,

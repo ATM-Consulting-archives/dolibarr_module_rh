@@ -818,16 +818,15 @@ function XMLImportGroup($sFullFilepath, $iNewSID)
     // Import group table ===================================================================================
 
 
-    $query = "SELECT MAX(group_order) AS maxqo FROM {{groups}} WHERE sid=$iNewSID";
-    $res = Yii::app()->db->createCommand($query)->queryScalar();
-    if ($res == false)
+    $query = "SELECT MAX(group_order) AS maxgo FROM {{groups}} WHERE sid=$iNewSID";
+    $iGroupOrder = Yii::app()->db->createCommand($query)->queryScalar();
+    if ($iGroupOrder === false)
     {
-        $newgrouporder=0;
+        $iNewGroupOrder=0;
     }
     else
     {
-        $newgrouporder=$res;
-        $newgrouporder++;
+        $iNewGroupOrder=$iGroupOrder+1;
     }
 
     foreach ($xml->groups->rows->row as $row)
@@ -839,7 +838,7 @@ function XMLImportGroup($sFullFilepath, $iNewSID)
         }
         $iOldSID=$insertdata['sid'];
         $insertdata['sid']=$iNewSID;
-        $insertdata['group_order']=$newgrouporder;
+        $insertdata['group_order']=$iNewGroupOrder;
         $oldgid=$insertdata['gid']; unset($insertdata['gid']); // save the old qid
 
         // now translate any links
@@ -2083,7 +2082,7 @@ function CSVImportLabelset($sFullFilepath, $options)
                 {
                     foreach($csarray as $key=>$val)
                     {
-                        //			echo $val."-".$newcs."<br/>";  For debug purposes
+                        //            echo $val."-".$newcs."<br/>";  For debug purposes
                         if ($val == $newcs)
                         {
                             $lsmatch=$key;
@@ -3377,6 +3376,7 @@ function importSurveyFile($sFullFilepath, $bTranslateLinksFields, $sNewSurveyNam
             }
         }
         // Step 4 - import the timings file - if exists
+        Yii::app()->db->schema->refresh();
         foreach ($aFiles as $aFile)
         {
             if (pathinfo($aFile['filename'], PATHINFO_EXTENSION) == 'lsi' && tableExists("survey_{$aImportResults['newsid']}_timings"))
@@ -3513,16 +3513,16 @@ function XMLImportSurvey($sFullFilepath,$sXMLdata=NULL,$sNewSurveyName=NULL,$iDe
             $insertdata[(string)$key]=(string)$value;
         }
         if (!in_array($insertdata['surveyls_language'],$aLanguagesSupported)) continue;
-
+        // Assign new survey ID
         $insertdata['surveyls_survey_id']=$iNewSID;
+        // Assign new survey name (if a copy)
+        if ($sNewSurveyName != NULL)
+        {
+            $insertdata['surveyls_title']=$sNewSurveyName;
+        }
         if ($bTranslateInsertansTags)
         {
-            if ($sNewSurveyName == NULL)
-            {
-                $insertdata['surveyls_title']=translateLinks('survey', $iOldSID, $iNewSID, $insertdata['surveyls_title']);
-            } else {
-                $insertdata['surveyls_title']=translateLinks('survey', $iOldSID, $iNewSID, $sNewSurveyName);
-            }
+            $insertdata['surveyls_title']=translateLinks('survey', $iOldSID, $iNewSID, $insertdata['surveyls_title']);
             if (isset($insertdata['surveyls_description'])) $insertdata['surveyls_description']=translateLinks('survey', $iOldSID, $iNewSID, $insertdata['surveyls_description']);
             if (isset($insertdata['surveyls_welcometext'])) $insertdata['surveyls_welcometext']=translateLinks('survey', $iOldSID, $iNewSID, $insertdata['surveyls_welcometext']);
             if (isset($insertdata['surveyls_urldescription']))$insertdata['surveyls_urldescription']=translateLinks('survey', $iOldSID, $iNewSID, $insertdata['surveyls_urldescription']);
@@ -3661,12 +3661,12 @@ function XMLImportSurvey($sFullFilepath,$sXMLdata=NULL,$sNewSurveyName=NULL,$iDe
             }
             if ($insertdata)
                 XSSFilterArray($insertdata);
-            $newsqid =Questions::model()->insertRecords($insertdata) or safeDie($clang->gT("Error").": Failed to insert data [5]<br />");
-            if (!isset($insertdata['qid']))
+            $newsqid =Questions::model()->insertRecords($insertdata);
+            if (!isset($insertdata['qid']) && $newsqid)
             {
                 $aQIDReplacements[$oldsqid]=$newsqid; // add old and new qid to the mapping array
             }
-            else
+            elseif (isset($insertdata['qid']))
             {
                 switchMSSQLIdentityInsert('questions',false);
             }
@@ -4147,10 +4147,11 @@ function XMLImportTimings($sFullFilepath,$iSurveyID,$aFieldReMap=array())
         $aLanguagesSupported[]=(string)$language;
     }
     $results['languages']=count($aLanguagesSupported);
-
-
-
-
+     // Return if there are no timing records to import
+    if (!isset($xml->timings->rows)) 
+    {
+        return $results;   
+    }
     switchMSSQLIdentityInsert('survey_'.$iSurveyID.'_timings',true);
     foreach ($xml->timings->rows->row as $row)
     {
@@ -4627,7 +4628,13 @@ function TSVImportSurvey($sFullFilepath)
     {
         $result = Survey::model()->deleteSurvey($iNewSID);
     }
-
+    else
+    {
+        LimeExpressionManager::SetSurveyId($iNewSID);
+        LimeExpressionManager::RevertUpgradeConditionsToRelevance($iNewSID);
+        LimeExpressionManager::UpgradeConditionsToRelevance($iNewSID);
+    }
+    
     return $results;
 }
 

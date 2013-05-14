@@ -6,10 +6,10 @@
  * et une évenement de type facture
  */
  
-//require('./config.php');
-//require('./class/evenement.class.php');
-//require('./class/ressource.class.php');
-
+require('../config.php');
+require('../class/evenement.class.php');
+require('../class/ressource.class.php');
+//*/
 global $conf;
 
 $ATMdb=new Tdb;
@@ -49,22 +49,30 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$TCarteInexistantes[$infos[9]] = 1;
 			}
 			else {
+				//print_r($infos);echo '<br>';
 				$temp = new TRH_Evenement;
 				$temp->load_liste($ATMdb);
-				$temp->load_liste_type($ATMdb, $temp);
-			
+				$temp->load_liste_type($ATMdb, $idVoiture);
 				$temp->fk_rh_ressource = $TRessource[$infos[9]];
 				$t = explode(' ',$infos[30]);
 				array_shift($t); 
 				$nomPeage = htmlentities(implode(' ', $t), ENT_COMPAT , 'ISO8859-1'); 
 				
-				if ((strpos((string) $infos[17], 'age TVA') !== FALSE ) || (strpos((string) $infos[17], 'PEAGE') !== FALSE )){
+				if ((strpos((string) $infos[17], 'age TVA') !== FALSE ) || (strpos((string) $infos[17], 'PEAGE') !== FALSE ) ){
 					$temp->type = 'page';
 					$temp->motif = 'Péage '.$nomPeage;
 				}
-				else {
+				else if ( (strpos((string) $infos[17], 'Gazole') !== FALSE ) ){
 					$temp->type = 'pleindessence';
 					$temp->motif = 'Essence '.$nomPeage;
+					$temp->commentaire = $infos[18].'L d\'essence';
+					if ($infos[31]!=''){
+						$temp->commentaire .= (isset($infos[31]) ? ', Kilometrage : '.$infos[31] : '');	
+					}	
+				}
+				else {
+					$temp->type = 'divers';
+					$temp->motif = htmlentities($infos[17], ENT_COMPAT , 'ISO8859-1');
 				}
 				
 				$temp->fk_user = $TUser[strtolower($infos[12])];
@@ -78,12 +86,11 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->coutEntrepriseHT = strtr($infos[20], ',','.');
 				$temp->numFacture = $infos[1];
 				$temp->compteFacture = $infos[13];
+				$temp->litreEssence = floatval(strtr($infos[18],',','.'));
+				$temp->kilometrage = intval($infos[31]);
 				
 				
 				//$temp->motif = htmlentities($infos[17], ENT_COMPAT , 'ISO8859-1');
-				if ($infos[31]!=''){
-					$temp->commentaire = (isset($infos[31]) ? ' Kilometrage : '.$infos[31] : '');	
-				}
 				
 				$temp->save($ATMdb);
 				$cpt++;

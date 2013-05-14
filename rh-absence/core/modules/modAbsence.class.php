@@ -201,20 +201,27 @@ class modAbsence extends DolibarrModules
 		$r++;
 		
 		$this->rights[$r][0] = 7106;
+		$this->rights[$r][1] = 'Visualiser l\'emploi du temps des collaborateurs';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'voirTousEdt';
+		$r++;
+		
+		$this->rights[$r][0] = 7107;
 		$this->rights[$r][1] = 'Modifier l\'emploi du temps d\'un collaborateur';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierEdt';
 		$r++;
 		
-		$this->rights[$r][0] = 7107;
+		$this->rights[$r][0] = 7108;
 		$this->rights[$r][1] = 'Modifier son emploi du temps';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierSonEdt';
 		$r++;
 		
-		$this->rights[$r][0] = 7108;
+		$this->rights[$r][0] = 7109;
 		$this->rights[$r][1] = 'Voir toutes les absences des collaborateurs';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
@@ -228,6 +235,26 @@ class modAbsence extends DolibarrModules
         $this->rights[$r][5] = 'rajouterRegle';
 		$r++;
 		
+		$this->rights[$r][0] = 7111;
+		$this->rights[$r][1] = 'Créer une absence pour un collaborateur';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'creerAbsenceCollaborateur';
+		$r++;
+		
+		$this->rights[$r][0] = 7112;
+		$this->rights[$r][1] = 'Créer une absence pour un collaborateur de son groupe';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'creerAbsenceCollaborateurGroupe';
+		$r++;
+		
+		$this->rights[$r][0] = 7113;
+		$this->rights[$r][1] = 'Uploader des fichiers joints sur les règles';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'uploadFilesRegle';
+		$r++;
 		
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
@@ -294,7 +321,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Déclaration'),
+		        	'titre'=> $langs->trans('Demande d\'absence'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/absence.php?action=new',
@@ -328,7 +355,7 @@ class modAbsence extends DolibarrModules
 		        	'titre'=> $langs->trans('Liste à valider'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/absenceValidation.php',
+					'url'=> '/absence/absence.php?action=listeValidation',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 103,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -391,8 +418,8 @@ class modAbsence extends DolibarrModules
 		            'fk_menu'=>'fk_mainmenu=absence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
 		        	'titre'=> $langs->trans('Règles absences'),
-		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+		        	'mainmenu'=> 'absence',
+		        	'leftmenu'=> 'regle',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/regleAbsence.php',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 105,
@@ -402,105 +429,21 @@ class modAbsence extends DolibarrModules
 					'user'=> 2
         );
 		
-		/*
 		$r++;
 		$this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
+		            'fk_menu'=>'fk_mainmenu=absence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Administration compteur'),
+		        	'titre'=> $langs->trans('Documents sur les règles'),
 		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/compteur.php',
+		        	'leftmenu'=> '',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/absence/documentRegle.php',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 105,
-					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-					'perms'=> '$user->rights->absence->myactions->modifierCompteur',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-					'target'=> '',
-					'user'=> 2
-        );
-		
-		$r++;
-		$this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
-		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Règles absences'),
-		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/regleAbsence.php',
-					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-					'position'=> 105,
-					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-					'perms'=> '$user->rights->absence->myactions->rajouterRegle',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-					'target'=> '',
-					'user'=> 2
-        );
-		
-		*/
-		
-/*
-		$r++;
-		$this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
-		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('compteurConges'),
-		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/absence.php',
-					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-					'position'=> 102,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
 					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
 					'user'=> 2
         );
-		
-		$r++;
-		$this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
-		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('saisirConges'),
-		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/index.php',
-					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-					'position'=> 103,
-					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-					'target'=> '',
-					'user'=> 2
-        );
-		
-       */ 
-		// $r++;
-		// $this->menu[$r]=array(	'fk_menu'=>'r=0',		                // Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-		//							'type'=>'left',			                // This is a Left menu entry
-		//							'titre'=>'MyModule left menu',
-		//							'mainmenu'=>'mymodule',
-		//							'leftmenu'=>'mymodule',
-		//							'url'=>'/mymodule/pagelevel1.php',
-		//							'langs'=>'mylangfile',	                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		//							'position'=>100,
-		//							'enabled'=>'$conf->mymodule->enabled',	// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-		//							'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-		//							'target'=>'',
-		//							'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-		// $r++;
-		//
-		// Example to declare a Left Menu entry into an existing Top menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=mainmenucode',	// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy'
-		//							'type'=>'left',			                // This is a Left menu entry
-		//							'titre'=>'MyModule left menu',
-		//							'mainmenu'=>'mainmenucode',
-		//							'leftmenu'=>'mymodule',
-		//							'url'=>'/mymodule/pagelevel2.php',
-		//							'langs'=>'mylangfile',	                // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		//							'position'=>100,
-		//							'enabled'=>'$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-		//							'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-		//							'target'=>'',
-		//							'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-		// $r++;
-
 
 		// Exports
 		$r=1;

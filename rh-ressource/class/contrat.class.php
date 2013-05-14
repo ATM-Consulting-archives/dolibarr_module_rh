@@ -4,18 +4,15 @@ class TRH_Contrat  extends TObjetStd {
 	function __construct(){
 		global $conf;
 		parent::set_table(MAIN_DB_PREFIX.'rh_contrat');
-		parent::add_champs('libelle','type=chaine;');
-		parent::add_champs('numContrat','type=chaine;');
+		parent::add_champs('libelle,numContrat,bail','type=chaine;');
 		parent::add_champs('date_debut, date_fin','type=date;');
 		
-		parent::add_champs('bail','type=chaine;');
 		parent::add_champs('TVA','type=entier;');
 		parent::add_champs('loyer_TTC','type=float;');
 		
 		//Un evenement est lié à une ressource et deux tiers (agence utilisatrice et fournisseur)
 		//parent::add_champs('fk_tier_utilisateur,entity','type=entier;index;');
-		parent::add_champs('fk_tier_fournisseur,entity','type=entier;index;');
-		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
+		parent::add_champs('fk_tier_fournisseur,entity,fk_rh_ressource_type','type=entier;index;');
 		
 		parent::_init_vars();
 		parent::start();
@@ -48,7 +45,7 @@ class TRH_Contrat  extends TObjetStd {
 		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TAgence[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			$this->TAgence[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 			}
 		
 		//chargement d'une liste des tiers
@@ -56,7 +53,7 @@ class TRH_Contrat  extends TObjetStd {
 		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TFournisseur[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			$this->TFournisseur[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 			}
 		
 		
@@ -84,20 +81,11 @@ class TRH_Contrat  extends TObjetStd {
 	function delete(&$ATMdb){
 		global $conf;
 		//avant de supprimer le contrat, on supprime les liaisons contrat-ressource associés.
-		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE entity=".$conf->entity."
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE entity=".$conf->entity."
 		AND fk_rh_contrat=".$this->getId();
-		$Tab = array();
-		$temp = new TRH_Contrat_Ressource;
 		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			$Tab[] = $ATMdb->Get_field('rowid');
-			}
-		foreach ($Tab as $key => $id) {
-			$temp->load($ATMdb, $id);
-			$temp->delete($ATMdb);
-		}
 		
-		
+		//puis on supprime le contrat.
 		parent::delete($ATMdb);
 		
 		

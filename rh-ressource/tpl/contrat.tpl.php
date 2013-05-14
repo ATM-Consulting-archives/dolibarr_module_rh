@@ -1,14 +1,14 @@
-<?php 	llxHeader('', 'Liste des contrats');
-?>
 [onshow;block=begin;when [view.mode]=='view']
-
-        
-                <div class="fiche"> <!-- begin div class="fiche" -->
-                [view.head;strconv=no]
-                
-                        
+		
+		[view.head;strconv=no]
                                 
 [onshow;block=end]
+[onshow;block=begin;when [view.mode]!='view']
+		
+		<div>
+                                
+[onshow;block=end]
+
 
 <div>
 	<table class="border" style="width:100%">
@@ -32,18 +32,20 @@
 	 	<tr>
 	 		<td>Date de fin</td>
 	 		<td>[contrat.date_fin;strconv=no;protect=no]</td>
-	 	</tr><tr>
-	 		<td>Loyer TTC</td>
-	 		<td>[contrat.loyer_TTC;strconv=no;protect=no] €</td>
-	 	</tr><tr>
-	 		<td>TVA </td>
-	 		<td>[contrat.TVA;strconv=no;protect=no] %</td>
 	 	</tr>
-	 	<tr>
-	 		<td>Loyer HT</td>
-	 		<td>[contrat.loyer_HT;strconv=no;protect=no] €</td>
-	 	</tr>
-	 	
+	 	[onshow;block=begin;when [view.userRightViewContrat]==1]
+		 	<tr>
+		 		<td>Loyer TTC</td>
+		 		<td>[contrat.loyer_TTC;strconv=no;protect=no] €</td>
+		 	</tr><tr>
+		 		<td>TVA </td>
+		 		<td>[contrat.TVA;strconv=no;protect=no] %</td>
+		 	</tr>
+		 	<tr>
+		 		<td>Loyer HT</td>
+		 		<td>[contrat.loyer_HT;strconv=no;protect=no] €</td>
+		 	</tr>
+	 	[onshow;block=end]
 	</table>
 	
 </div>
@@ -89,7 +91,7 @@
 		$("#date_fin").change(comparerDates);
 	});
 </script>
-
+</div>
 [onshow;block=begin;when [view.userRight]==1]
 <div class="tabsAction" style="text-align:center;">
 		[onshow;block=begin;when [view.mode]=='edit']

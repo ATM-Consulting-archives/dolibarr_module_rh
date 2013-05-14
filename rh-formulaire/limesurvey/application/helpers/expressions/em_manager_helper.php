@@ -56,6 +56,11 @@
         * @var type
         */
         private $debugLevel=0;
+         /**
+        * sPreviewMode used for relevance equation force to 1 in preview mode
+        * @var string
+        */
+        private $sPreviewMode=false;
         /**
         * Collection of variable attributes, indexed by SGQA code
         *
@@ -684,6 +689,16 @@
         public function __clone()
         {
             trigger_error('Clone is not allowed.', E_USER_ERROR);
+        }
+
+        /**
+        * Set the previewmode
+        */
+        public static function SetPreviewMode($previewmode=false)
+        {
+            $LEM =& LimeExpressionManager::singleton();
+            $LEM->sPreviewMode=$previewmode;
+            //$_SESSION[$LEM->sessid]['previewmode']=$previewmode;
         }
 
         /**
@@ -1508,7 +1523,7 @@
                                     {
                                         if ($this->sgqaNaming)
                                         {
-                                            $base = substr(substr($sq['jsVarName'],4),0,-1);
+                                            $base = $sq['rowdivid']."#";
                                             $sq_name = "if(count(" . $base . "0.NAOK," . $base . "1.NAOK)==2,1,'')";
                                         }
                                         else
@@ -1594,7 +1609,7 @@
                                     {
                                         if ($this->sgqaNaming)
                                         {
-                                            $base = substr(substr($sq['jsVarName'],4),0,-1);
+                                            $base = $sq['rowdivid']."#";
                                             $sq_name = "if(count(" . $base . "0.NAOK," . $base . "1.NAOK)==2,1,'')";
                                         }
                                         else
@@ -2390,7 +2405,7 @@
                                 case 'U': //HUGE FREE TEXT
                                     if ($this->sgqaNaming)
                                     {
-                                        $subqValidEqn = '!(' . preg_replace('/\bthis\b/',substr($sq['jsVarName'],4), $em_validation_sq) . ')';
+                                        $subqValidEqn = '(' . preg_replace('/\bthis\b/',substr($sq['jsVarName'],4), $em_validation_sq) . ')';
                                     }
                                     else
                                     {
@@ -2734,7 +2749,7 @@
                 unset($_SESSION['LEMforceRefresh']);
                 $forceRefresh=true;
             }
-            else if (!$forceRefresh && isset($this->knownVars)) {
+            else if (!$forceRefresh && isset($this->knownVars) && !$this->sPreviewMode ) {
                 return false;   // means that those variables have been cached and no changes needed
             }
             $now = microtime(true);
@@ -2752,7 +2767,6 @@
             if (!isset($fieldmap)) {
                 return false; // implies an error occurred
             }
-
             $this->knownVars = array();   // mapping of VarName to Value
             $this->qcode2sgqa = array();
             $this->tempVars = array();
@@ -2825,6 +2839,8 @@
                 $groupNum = $fieldNameParts[1];
                 $aid = (isset($fielddata['aid']) ? $fielddata['aid'] : '');
                 $sqid = (isset($fielddata['sqid']) ? $fielddata['sqid'] : '');
+                if($this->sPreviewMode=='question') $fielddata['relevance']=1;
+                if($this->sPreviewMode=='group') $fielddata['grelevance']=1;
 
                 $questionId = $fieldNameParts[2];
                 $questionNum = $fielddata['qid'];
@@ -3112,7 +3128,6 @@
                     case 'I': //Language Question
                     case 'Y': //YES/NO radio-buttons
                     case '*': //Equation
-                    case '1': //Array (Flexible Labels) dual scale
                     case 'A': //ARRAY (5 POINT CHOICE) radio-buttons
                     case 'B': //ARRAY (10 POINT CHOICE) radio-buttons
                     case 'C': //ARRAY (YES/UNCERTAIN/NO) radio-buttons
@@ -3130,6 +3145,10 @@
                             $jsVarName_on = 'java' . $sgqa;
                         }
                         $jsVarName = 'java' . $sgqa;
+                        break;
+                    case '1': //Array (Flexible Labels) dual scale
+                        $jsVarName = 'java' . str_replace('#','_',$sgqa);
+                        $jsVarName_on = $jsVarName;
                         break;
                     case ':': //ARRAY (Multi Flexi) 1 to 10
                     case ';': //ARRAY (Multi Flexi) Text
@@ -3928,41 +3947,42 @@
 
         /**
         * Initialize a survey so can use EM to manage navigation
-        * @param <type> $surveyid
-        * @param <type> $surveyMode
-        * @param <type> $anonymized
-        * @param <type> $forceRefresh
+        * @param int $surveyid
+        * @param string $surveyMode
+        * @param array $aSurveyOptions
+        * @param bool $forceRefresh
+        * @param int $debugLevel
         */
-        static function StartSurvey($surveyid,$surveyMode='group',$options=NULL,$forceRefresh=false,$debugLevel=0)
+        static function StartSurvey($surveyid,$surveyMode='group',$aSurveyOptions=NULL,$forceRefresh=false,$debugLevel=0)
         {
             $LEM =& LimeExpressionManager::singleton();
             $LEM->sid=sanitize_int($surveyid);
             $LEM->sessid = 'survey_' . $LEM->sid;
 
             $LEM->em->StartProcessingGroup($surveyid);
-            if (is_null($options)) {
-                $options = array();
+            if (is_null($aSurveyOptions)) {
+                $aSurveyOptions = array();
             }
-            $LEM->surveyOptions['active'] = (isset($options['active']) ? $options['active'] : false);
-            $LEM->surveyOptions['allowsave'] = (isset($options['allowsave']) ? $options['allowsave'] : false);
-            $LEM->surveyOptions['anonymized'] = (isset($options['anonymized']) ? $options['anonymized'] : false);
-            $LEM->surveyOptions['assessments'] = (isset($options['assessments']) ? $options['assessments'] : false);
-            $LEM->surveyOptions['datestamp'] = (isset($options['datestamp']) ? $options['datestamp'] : false);
-            $LEM->surveyOptions['deletenonvalues'] = (isset($options['deletenonvalues']) ? ($options['deletenonvalues']=='1') : true);
-            $LEM->surveyOptions['hyperlinkSyntaxHighlighting'] = (isset($options['hyperlinkSyntaxHighlighting']) ? $options['hyperlinkSyntaxHighlighting'] : false);
-            $LEM->surveyOptions['ipaddr'] = (isset($options['ipaddr']) ? $options['ipaddr'] : false);
-            $LEM->surveyOptions['radix'] = (isset($options['radix']) ? $options['radix'] : '.');
-            $LEM->surveyOptions['refurl'] = (isset($options['refurl']) ? $options['refurl'] : NULL);
-            $LEM->surveyOptions['savetimings'] = (isset($options['savetimings']) ? $options['savetimings'] : '');
-            $LEM->sgqaNaming = (isset($options['sgqaNaming']) ? ($options['sgqaNaming']=="Y") : true); // TODO default should eventually be false
-            $LEM->surveyOptions['startlanguage'] = (isset($options['startlanguage']) ? $options['startlanguage'] : 'en');
-            $LEM->surveyOptions['surveyls_dateformat'] = (isset($options['surveyls_dateformat']) ? $options['surveyls_dateformat'] : 1);
-            $LEM->surveyOptions['tablename'] = (isset($options['tablename']) ? $options['tablename'] : '{{survey_' . $LEM->sid . '}}');
-            $LEM->surveyOptions['tablename_timings'] = ((isset($options['savetimings']) && $options['savetimings'] == 'Y') ? '{{survey_' . $LEM->sid . '_timings}}' : '');
-            $LEM->surveyOptions['target'] = (isset($options['target']) ? $options['target'] : '/temp/files/');
-            $LEM->surveyOptions['timeadjust'] = (isset($options['timeadjust']) ? $options['timeadjust'] : 0);
-            $LEM->surveyOptions['tempdir'] = (isset($options['tempdir']) ? $options['tempdir'] : '/temp/');
-            $LEM->surveyOptions['token'] = (isset($options['token']) ? $options['token'] : NULL);
+            $LEM->surveyOptions['active'] = (isset($aSurveyOptions['active']) ? $aSurveyOptions['active'] : false);
+            $LEM->surveyOptions['allowsave'] = (isset($aSurveyOptions['allowsave']) ? $aSurveyOptions['allowsave'] : false);
+            $LEM->surveyOptions['anonymized'] = (isset($aSurveyOptions['anonymized']) ? $aSurveyOptions['anonymized'] : false);
+            $LEM->surveyOptions['assessments'] = (isset($aSurveyOptions['assessments']) ? $aSurveyOptions['assessments'] : false);
+            $LEM->surveyOptions['datestamp'] = (isset($aSurveyOptions['datestamp']) ? $aSurveyOptions['datestamp'] : false);
+            $LEM->surveyOptions['deletenonvalues'] = (isset($aSurveyOptions['deletenonvalues']) ? ($aSurveyOptions['deletenonvalues']=='1') : true);
+            $LEM->surveyOptions['hyperlinkSyntaxHighlighting'] = (isset($aSurveyOptions['hyperlinkSyntaxHighlighting']) ? $aSurveyOptions['hyperlinkSyntaxHighlighting'] : false);
+            $LEM->surveyOptions['ipaddr'] = (isset($aSurveyOptions['ipaddr']) ? $aSurveyOptions['ipaddr'] : false);
+            $LEM->surveyOptions['radix'] = (isset($aSurveyOptions['radix']) ? $aSurveyOptions['radix'] : '.');
+            $LEM->surveyOptions['refurl'] = (isset($aSurveyOptions['refurl']) ? $aSurveyOptions['refurl'] : NULL);
+            $LEM->surveyOptions['savetimings'] = (isset($aSurveyOptions['savetimings']) ? $aSurveyOptions['savetimings'] : '');
+            $LEM->sgqaNaming = (isset($aSurveyOptions['sgqaNaming']) ? ($aSurveyOptions['sgqaNaming']=="Y") : true); // TODO default should eventually be false
+            $LEM->surveyOptions['startlanguage'] = (isset($aSurveyOptions['startlanguage']) ? $aSurveyOptions['startlanguage'] : 'en');
+            $LEM->surveyOptions['surveyls_dateformat'] = (isset($aSurveyOptions['surveyls_dateformat']) ? $aSurveyOptions['surveyls_dateformat'] : 1);
+            $LEM->surveyOptions['tablename'] = (isset($aSurveyOptions['tablename']) ? $aSurveyOptions['tablename'] : '{{survey_' . $LEM->sid . '}}');
+            $LEM->surveyOptions['tablename_timings'] = ((isset($aSurveyOptions['savetimings']) && $aSurveyOptions['savetimings'] == 'Y') ? '{{survey_' . $LEM->sid . '_timings}}' : '');
+            $LEM->surveyOptions['target'] = (isset($aSurveyOptions['target']) ? $aSurveyOptions['target'] : '/temp/files/');
+            $LEM->surveyOptions['timeadjust'] = (isset($aSurveyOptions['timeadjust']) ? $aSurveyOptions['timeadjust'] : 0);
+            $LEM->surveyOptions['tempdir'] = (isset($aSurveyOptions['tempdir']) ? $aSurveyOptions['tempdir'] : '/temp/');
+            $LEM->surveyOptions['token'] = (isset($aSurveyOptions['token']) ? $aSurveyOptions['token'] : NULL);
 
             $LEM->debugLevel=$debugLevel;
             $_SESSION[$LEM->sessid]['LEMdebugLevel']=$debugLevel; // need acces to SESSSION to decide whether to cache serialized instance of $LEM
@@ -3988,7 +4008,7 @@
             $LEM->indexGseq=array();
             $LEM->indexQseq=array();
             $LEM->qrootVarName2arrayFilter=array();
-
+            templatereplace("{}"); // Needed for coreReplacements in relevance equation (in all mode)
             if (isset($_SESSION[$LEM->sessid]['startingValues']) && is_array($_SESSION[$LEM->sessid]['startingValues']) && count($_SESSION[$LEM->sessid]['startingValues']) > 0)
             {
                 $startingValues = array();
@@ -4546,7 +4566,7 @@
                     $query .= $_SESSION[$this->sessid]['srid'];
 
                     if (!dbExecuteAssoc($query))
-                    {
+                    {                 
                         echo submitfailed('');  // TODO - report SQL error?
 
                         if (($this->debugLevel & LEM_DEBUG_VALIDATION_SUMMARY) == LEM_DEBUG_VALIDATION_SUMMARY) {
@@ -4554,7 +4574,7 @@
                         }
                     }
                     // Save Timings if needed
-                    if ($this->surveyOptions['savetimings']) {
+                    elseif ($this->surveyOptions['savetimings']) {
                         Yii::import("application.libraries.Save");
                         $cSave = new Save();
                         $cSave->set_answer_time();
@@ -6526,7 +6546,8 @@
                     {
                         $qrelJS .= "  if(" . implode(' || ', $qrelgseqs) . "){\n    ;\n  }\n  else";
                     }
-                    $qrelJS .= "  if (typeof sgqa !== 'undefined' && !LEMregexMatch('/ java' + sgqa + ' /', UsesVars)) {\n    return;\n }\n";
+                    $qrelJS .= "  if (typeof sgqa !== 'undefined' && !LEMregexMatch('/ java' + sgqa + ' /', UsesVars)) {\n";
+                    $qrelJS .= "  return;\n }\n";
                     $qrelJS .= implode("",$relParts);
                     $qrelJS .= "}\n";
                     $relEqns[] = $qrelJS;
@@ -7029,7 +7050,7 @@ EOT;
                 $rel = LimeExpressionManager::QuestionIsRelevant($i);
                 $question = LimeExpressionManager::ProcessString($testArg[3], $i, NULL, true, 1, 1);
 
-                $jsVarName='java' . $testArg[0];
+                $jsVarName='java' . str_replace('#','_',$testArg[0]);
 
                 $argInfo[] = array(
                 'num' => $i,
@@ -7320,7 +7341,6 @@ EOD;
                 $lang = " and a.language='".$lang."' and b.language='".$lang."'";
             }
 
-
             $databasetype = Yii::app()->db->getDriverName();
             if ($databasetype=='mssql' || $databasetype=="sqlsrv")
             {
@@ -7416,7 +7436,6 @@ EOD;
             if (!is_null($lang)) {
                 $lang = " and a.language='".$lang."'";
             }
-
             $query = "SELECT a.group_name, a.description, a.gid, a.group_order, a.grelevance"
             ." FROM {{groups}} AS a"
             ." WHERE a.sid=".$surveyid
@@ -7428,13 +7447,13 @@ EOD;
             $qinfo = array();
             $_order=0;
             foreach ($data as $d)
-            { 
+            {
                 $gid[$d['gid']] = array(
                     'group_order' => $_order,
                     'gid' => $d['gid'],
                     'group_name' => $d['group_name'],
                     'description' =>  $d['description'],
-                    'grelevance' => $d['grelevance'],
+                    'grelevance' => (!($this->sPreviewMode=='question' || $this->sPreviewMode=='group')) ? $d['grelevance']:1,
                  );
                 $qinfo[$_order] = $gid[$d['gid']];
                 ++$_order;                    

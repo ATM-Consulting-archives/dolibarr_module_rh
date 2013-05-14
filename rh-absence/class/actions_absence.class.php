@@ -29,7 +29,7 @@ class ActionsAbsence
 				$date_rttClotureInit =$obj->date_rttClotureInit;
 			}
 		}
-
+// AA que fait ce hook ?
 		
 		$sqlcompteur="INSERT INTO ".MAIN_DB_PREFIX."rh_compteur (rowid, date_cre, entity, fk_user, acquisExerciceN, 
 		acquisAncienneteN, acquisHorsPeriodeN, anneeN, acquisExerciceNM1, acquisAncienneteNM1, acquisHorsPeriodeNM1, reportCongesNM1, congesPrisNM1

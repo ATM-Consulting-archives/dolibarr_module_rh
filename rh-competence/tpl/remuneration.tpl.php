@@ -10,7 +10,7 @@
 				</tr>
 			</table>
 			<br/><br/>
-			<table class="border" style="width:50%">		
+			<table class="border" style="width:100%">		
 				<tr>
 					<td><b>Date début rémunération</b></td>
 					<td><b>Date fin rémunération</b></td>
@@ -25,7 +25,7 @@
 				</tr>
 			</table>
 			<br/><br/>
-			<table class="border" style="width:50%">		
+			<table class="border" style="width:100%">		
 				<tr>
 					<td><b>Prime d'ancienneté</b></td>
 					<td><b>Prime semestrielle</b></td>
@@ -39,7 +39,7 @@
 			</table>
 			<br/><br/>
 			<h2 style="color: #2AA8B9;">Vos cotisations</h2>
-			<table class="border" style="width:30%">		
+			<table class="border" style="width:60%">		
 				<tr>
 					<td></td>
 					<td><b>Part Salariale</b></td>
@@ -50,35 +50,21 @@
 					<td>[remuneration.prevoyancePartSalariale;block=tr;strconv=no;protect=no]€</td>
 					<td>[remuneration.prevoyancePartPatronale;strconv=no;protect=no]€</td>
 				</tr>
-			</table>
-			<br/><br/>
-			<table class="border" style="width:30%">		
-				<tr>
-					<td></td>
-					<td><b>Part Salariale</b></td>
-					<td><b>Part Patronale</b></td>
-				</tr>
+		
+
 				<tr>
 					<td><b>URSSAF</b></td>
 					<td>[remuneration.urssafPartSalariale;strconv=no;protect=no]€</td>
 					<td>[remuneration.urssafPartPatronale;strconv=no;protect=no]€</td>
 				</tr>
-			</table>
-			<br/><br/>
-			<table class="border" style="width:30%">		
-				<tr>
-					<td></td>
-					<td><b>Part Salariale</b></td>
-					<td><b>Part Patronale</b></td>
-				</tr>
+
+
 				<tr>
 					<td><b>RETRAITE</b></td>
 					<td>[remuneration.retraitePartSalariale;strconv=no;protect=no]€</td>
 					<td>[remuneration.retraitePartPatronale;strconv=no;protect=no]€</td>
 				</tr>
-			</table>
-			<br/><br/>
-			<table class="border" style="width:30%">		
+
 				
 				<tr>
 					<td><b>TOTAL</b></td>
