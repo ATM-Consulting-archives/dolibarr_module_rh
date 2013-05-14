@@ -11,12 +11,12 @@ _get($get);
 function _get($case) {
 	switch ($case) {
 		case 'ndf':
-			__out(_ndf($_REQUEST['date_debut'], $_REQUEST['date_fin']));
+			__out(_ndf($_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['type']));
 			break;
 	}
 }
 
-function _ndf($date_debut, $date_fin){
+function _ndf($date_debut, $date_fin, $type){
 	global $user, $conf, $langs, $db;
 	
 	$TabNdf=array();
@@ -45,6 +45,7 @@ function _ndf($date_debut, $date_fin){
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = n.fk_user";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva as v ON v.rowid = l.fk_tva";
     $sql.= " WHERE n.statut = 1";
+	$sql.= " AND n.type LIKE '".$type."'";
 	$sql.= " AND (n.dates>='".$date_debut."' AND n.datee<='".$date_fin."')";
 	$sql.= " ORDER BY n.rowid";
 	

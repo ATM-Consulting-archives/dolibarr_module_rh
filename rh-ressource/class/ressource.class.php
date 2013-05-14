@@ -146,7 +146,7 @@ class TRH_Ressource extends TObjetStd {
 	function isEmpruntee(&$ATMdb, $jour){ // AA bizarrement, oui j'ai toujours aimé le Franglais
 		global $conf;
 		
-		// AA Par contre je la function peut se résumer en une seule fonction
+		// AA Par contre je la function peut se résumer en une seule requete
 		
 		$sql = "SELECT u.rowid, e.date_debut as 'debut', e.date_fin as 'fin'
 				FROM ".MAIN_DB_PREFIX."user as u
@@ -301,8 +301,10 @@ class TRH_Ressource_type extends TObjetStd {
 		$this->TType=array('chaine'=>'Texte','entier'=>'Entier','float'=>'Float',"liste"=>'Liste',"checkbox"=>'Case à cocher');
 	}
 	
+	/**
+	 * Attribut les champs directement, pour créer les types par défauts par exemple. 
+	 */
 	function chargement($libelle, $code, $supprimable, $liste_evenement_value, $liste_evenement_key){
-		// AA et ça ça fait quoi ?
 		$this->libelle = $libelle;
 		$this->code = $code;
 		$this->supprimable = $supprimable;
@@ -484,19 +486,3 @@ class TRH_Ressource_field extends TObjetStd {
 
 }
 	
-/*
- * Classes d'associations
- * 
- */
-// AA ?
-class TRH_Ressource_Import  extends TObjetStd {
-	
-	function __construct(){
-		parent::set_table(MAIN_DB_PREFIX.'rh_association_ressourceimport');
-		parent::add_champs('libelle','type=chaine;');
-		
-		parent::add_champs('fk_rh_import','type=entier;index;');
-		parent::add_champs('fk_rh_ressource,entity','type=entier;index;');
-	}
-	
-}	
