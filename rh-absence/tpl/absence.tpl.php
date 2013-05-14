@@ -128,6 +128,26 @@
 		</div>
 		</div>
 		
+		
+		<div>
+		<h3 style="color: #2AA8B9;">Dernières absences du collaborateur</h3>
+		<table  class="liste formdoc noborder" style="width:100%">
+				<tr class="liste_titre">
+					<td><b>Date de début</b></td>
+					<td><b>Date de fin</b></td>
+					<td><b>Type d'absence</b></td>
+					<td><b>Etat</b></td>
+				</tr>
+				<tr class="pair">
+					<td>[TRecap.date_debut;block=tr;strconv=no;protect=no]</td>
+					<td>[TRecap.date_fin;block=tr;strconv=no;protect=no]</td>
+					<td>[TRecap.libelle;block=tr;strconv=no;protect=no]</td>
+					<td>[TRecap.libelleEtat;block=tr;strconv=no;protect=no]</td>
+				</tr>	
+		</table>
+		</div>
+		
+		
 		<div>
 		<h3 style="color: #2AA8B9;">Règles concernant le collaborateur</h3>
 		<table  class="liste formdoc noborder" style="width:100%">
@@ -143,6 +163,8 @@
 				</tr>	
 		</table>
 		</div>
+		
+		
 
 		<script>
 			$(document).ready( function(){

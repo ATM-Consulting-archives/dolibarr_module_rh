@@ -302,7 +302,7 @@ class TRH_Absence extends TObjetStd {
 		//calcul la durée de l'absence après le décompte des jours fériés
 		function calculJoursFeries(&$ATMdb, $duree){
 
-			$dateDebutAbs=$this->php2Date($this->date_debut); // AA équivalent $this->get_date('date_debut','Y-m-d H:i:s')
+			$dateDebutAbs=$this->php2Date($this->date_debut);
 			$dateFinAbs=$this->php2Date($this->date_fin);
 			
 			//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
