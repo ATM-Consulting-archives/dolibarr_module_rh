@@ -31,11 +31,13 @@
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Puissance Fiscale', 'pf', 'chaine',0, 4, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Type de véhicule', 'typeVehicule', 'liste',0, 5, 'VU;VP', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Localisation', 'localisationvehicule', 'chaine',0, 5, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Clé', 'cle', 'checkbox',1, 5, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Type de véhicule', 'typeVehicule', 'liste',0, 6, 'VU;VP', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Kit de Sécurité', 'kit', 'checkbox',1, 6, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Clé', 'cle', 'checkbox',1, 7, '', 1, $tempType->rowid);
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Kit de Sécurité', 'kit', 'checkbox',1, 8, '', 1, $tempType->rowid);
 	
 //CARTE TOTAL
 	$tempType = new TRH_Ressource_type;

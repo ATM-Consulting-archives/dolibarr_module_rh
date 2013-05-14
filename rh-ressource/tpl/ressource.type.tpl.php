@@ -3,6 +3,7 @@
 [onshow;block=end]  
 
 [onshow;block=begin;when [view.mode]!='view']
+    [view.onglet;strconv=no]
     <div>
 [onshow;block=end]  
 		

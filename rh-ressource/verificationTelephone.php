@@ -8,7 +8,7 @@ require('../class/evenement.class.php');
 require('../class/ressource.class.php');
 global $conf;
 $ATMdb=new TPDOdb;
-llxHeader('','Vérification des consommation téléphonique');
+llxHeader('','Vérification des consommations téléphonique');
 
 
 
