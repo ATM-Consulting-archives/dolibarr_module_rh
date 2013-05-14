@@ -107,7 +107,6 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		WHERE r.entity=".$conf->entity."
 		AND r.fk_rh_ressource_type=".$ressourceType->getId();
 	
-	echo $sql;
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
