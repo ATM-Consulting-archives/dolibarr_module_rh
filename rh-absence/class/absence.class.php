@@ -193,7 +193,7 @@ class TRH_Absence extends TObjetStd {
 	}
 
 
-		function testDemande(&$db){
+		function testDemande(&$db, $userConcerne){
 			$ATMdb=new Tdb;
 			global $conf, $user;
 			$this->entity = $conf->entity;
@@ -236,7 +236,7 @@ class TRH_Absence extends TObjetStd {
 			
 			
 			//on récupère la méthode d'acquisition des jours de l'utilisateur en cours : si par mois ou annuel
-			$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$user->id;
+			$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$userConcerne;
 			$ATMdb->Execute($sqlMethode);
 			while($ATMdb->Get_line()) {
 				$methode= $ATMdb->Get_field('rttTypeAcquisition');
@@ -244,27 +244,27 @@ class TRH_Absence extends TObjetStd {
 			
 			///////décompte des congés
 			if($this->type=="rttcumule"&&$methode=="Annuel"){
-				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante."  where fk_user=".$user->id;
+				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante."  where fk_user=".$userConcerne;
 				$db->Execute($sqlDecompte);
 				$this->rttPris=$this->rttPris+$dureeAbsenceCourante;
 				$this->rttAcquisAnnuelCumule=$this->rttAcquisAnnuelCumule-$dureeAbsenceCourante;
 				
 			}
 			else if($this->type=="rttnoncumule"&&$methode=="Annuel"){
-				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule-".$dureeAbsenceCourante." where fk_user=".$user->id;
+				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule-".$dureeAbsenceCourante." where fk_user=".$userConcerne;
 				$db->Execute($sqlDecompte);
 				$this->rttPris=$this->rttPris-$dureeAbsenceCourante;
 				$this->rttAcquisAnnuelNonCumule=$this->rttAcquisAnnuelNonCumule-$dureeAbsenceCourante;
 			}
 			else if($this->type=="rttnoncumule"&&$methode=="Mensuel"||$this->type=="rttcumule"&&$methode=="Mensuel"){
-				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisMensuel=rttAcquisMensuel-".$dureeAbsenceCourante."  where fk_user=".$user->id;
+				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisMensuel=rttAcquisMensuel-".$dureeAbsenceCourante."  where fk_user=".$userConcerne;
 				$db->Execute($sqlDecompte);
 				$this->rttPris=$this->rttPris+$dureeAbsenceCourante;
 				$this->rttAcquisMensuel=$this->rttAcquisMensuel-$dureeAbsenceCourante;
 				
 			}
 			else if($this->type=="conges"){	//autre que RTT : décompte les congés
-				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$user->id;
+				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$userConcerne;
 				$db->Execute($sqlDecompte);
 				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 			}
