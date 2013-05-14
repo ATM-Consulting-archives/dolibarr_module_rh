@@ -79,6 +79,7 @@
 				if($_REQUEST["fieldChoice"]=="O"){
 					$emprunt->load($ATMdb, $_REQUEST['idEven']);
 					$emprunt->set_values($_REQUEST['evenement']);
+					$emprunt->fk_rh_ressource = $ressource->getId();
 					$emprunt->save($ATMdb);
 				}
 				////////
