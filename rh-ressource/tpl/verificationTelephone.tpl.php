@@ -41,13 +41,12 @@
 			<td style="text-align:center;"> [tabTel.6;strconv=no;protect=no] </td>
 			<td style="text-align:center;"> [tabTel.8;strconv=no;protect=no] </td>
 			<td style="text-align:center;"> [tabTel.9;strconv=no;protect=no] </td>
-			<td style="text-align:center;"> [tabTel.10;strconv=no;protect=no] </td>
 			[onshow;block=end]
 			[onshow;block=begin;when [ndfField.3]!='extint']
 			<td colspan=2 style="text-align:center;"> [tabTel.4;strconv=no;protect=no] </td>
 			<td colspan=2 style="text-align:center;"> [tabTel.7;strconv=no;protect=no] </td>
-			<td style="text-align:center;"> [tabTel.7;strconv=no;protect=no] </td>
 			[onshow;block=end]
+			<td style="text-align:center;"> [tabTel.10;strconv=no;protect=no] </td>
 		</tr>
 	</tbody>
 </table>
