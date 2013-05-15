@@ -7,41 +7,48 @@ $ATMdb=new TPDOdb;
 $plagedeb = isset($_REQUEST['plagedebut']);
 $plagefin = isset($_REQUEST['plagefin']);
 
+
 $idVoiture = getIdType('voiture');
 
 //chargement des voitures
 $TVoitures = getRessource($idVoiture);
-$sql = "SELECT rowid, fk_soc, fk_user , immatriculation , marquevoit, modlevoit
-	FROM ".MAIN_DB_PREFIX."rh_ressource` 
-	WHERE entity=".$conf->entity."
+$sql = "SELECT r.rowid, fk_proprietaire,  immatriculation , marquevoit, modlevoit, name, firstname
+	FROM ".MAIN_DB_PREFIX."rh_ressource as r
+	LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (e.type='emprunt' AND r.rowid=e.fk_rh_ressource)
+	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
+	WHERE r.entity=".$conf->entity."
 	AND fk_rh_ressource_type =".$idVoiture;
 $ATMdb->Execute($sql);
 while($row = $ATMdb->Get_line()) {
 	$TVoitures[$row->rowid] = array(
-		'societe'=>$row->fk_soc
-		,'fk_user'=>$row->fk_user
+		'societe'=>$row->fk_proprietaire
+		,'fk_user'=>htmlentities($row->firstname.' '.$row->name, ENT_COMPAT , 'ISO8859-1')
 		,'immatriculation'=>$row->immatriculation
 		,'marque'=>$row->marquevoit
 		,'version'=>$row->modlevoit
 		);
 }
 
-print_r($TVoitures);
-
 
 //chargement des contrats
-/*$TContrats = array();
-$sql="SELECT rowid, fk_rh_ressource, fk_rh_contrat 
+$TContrats = array();
+$sql="SELECT rowid, loyer_TTC, assurance, entretien, date_debut, date_fin, fk_tier_fournisseur
 	FROM ".MAIN_DB_PREFIX."rh_contrat` 
-	WHERE entity=".$conf->entity;
+	WHERE entity=".$conf->entity."
+	";
 $ATMdb->Execute($sql);
 while($row = $ATMdb->Get_line()) {
-	$TAssociations[$row->rowid] = array(
-		''=>$row->fk_rh_ressource
-		,''=>$row->fk_rh_contrat
+	$deb = mktime(0,0,0,substr($row->date_debut,5,2),substr($row->date_debut,8,2),substr($row->date_debut,0,4));
+	$fin = mktime(0,0,0,substr($row->date_fin,5,2),substr($row->date_fin,8,2),substr($row->date_fin,0,4));
+	$TContrats[$row->rowid] = array(
+		'loyer'=>number_format($row->loyer_TTC,2).' €'
+		,'assurance'=>number_format($row->assurance,2).' €'
+		,'entretien'=>number_format($row->entretien,2).' €'
+		,'date_debut'=>date("d/m/Y", $deb)
+		,'date_fin'=>date("d/m/Y", $fin)
+		,'fk_soc'=>$row->fk_tier_fournisseur
 		);
 }
-*/
 
 //chargement des associations
 $TAssociations = array();
@@ -56,36 +63,59 @@ while($row = $ATMdb->Get_line()) {
 		);
 }
 
+//chargement des users
+//$TUsers = getUsers();
 
-$TRessource = array();
+//chargement des groupes
+$TGroups = getGroups();
 
-foreach ($TPleins as $idRessource => $value) {
-	$memKm = 0;
-	$memLitre = 0;
-	$texte = '';
-	foreach ($value as $km => $litre) {
-		if ($memKm!=0){
-			$conso = number_format((100*$memLitre)/($km-$memKm),2);
-			if(isset($_REQUEST['limite'])) {
-				if ($conso>=$_REQUEST['limite']){
-					$texte .= 'lol';
-				}
-			}
-			else{
-				$texte .= "<span style=\"margin-left: 3em;\">".($km-$memKm).'km fait avec '.number_format($memLitre,2).' litres. Conso : '. $conso.'L/100km<br></span>';
-			}
-		}
-		$memKm = $km;
-		$memLitre = $litre;
+//chargement des fournisseurs
+$TFournisseurs = array();
+$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity=".$conf->entity;
+$ATMdb->Execute($sqlReq);
+while($row = $ATMdb->Get_line()) {
+	$TFournisseurs[$row->rowid] = htmlentities($row->nom, ENT_COMPAT , 'ISO8859-1');
 	}
-	$TRessource[] = array(
-		'nom'=>$TCartes[$idRessource]
-		,'info'=>empty($texte) ? "<span style=\"margin-left: 3em;\">Aucun dépassement<br></span>" : $texte
-	);
-	
+
+
+$TRetour = array();
+
+$texte = '';
+foreach ($TAssociations as $value) {
+	$voiture = $TVoitures[$value['voiture']];
+	$contrat = $TContrats[$value['contrat']]; 
+	if (empty($voiture)){
+		echo 'pas de voiture n°'.$value['voiture'].'<br>';		
+	}
+	else if (empty($voiture)){
+		echo 'pas de contrat n°'.$value['contrat'].'<br>';		
+	}
+	else{
+		$TRetour[] = array(
+			'societe'=>$TGroups[$voiture['societe']]
+			,'collaborateur'=>$voiture['fk_user']
+			,'immatriculation'=>$voiture['immatriculation']
+			,'marque'=>$voiture['marque']
+			,'version'=>$voiture['version']
+			,'loyer'=>$contrat['loyer']
+			,'assurance'=>$contrat['assurance']
+			,'entretien'=>$contrat['entretien']
+			,'date_debut'=>$contrat['date_debut']
+			,'date_fin'=>$contrat['date_fin']
+			,'fournisseur'=>$TFournisseurs[$contrat['fk_soc']]
+		);
+		
+		
+		
+	}		
 }
 
-echo json_encode($TRessource);
+
+
+
+
+
+echo json_encode($TRetour);
 
 exit();
 

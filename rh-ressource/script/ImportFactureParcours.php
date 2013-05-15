@@ -5,11 +5,12 @@
  * On créé un évenement par ligne de ce fichier
  * et une évenement de type facture
  */
-
-/*require('../config.php');
+/*
+require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');
-require('../class/contrat.class.php');*/
+require('../class/contrat.class.php');
+//*/
 
 global $conf;
 
@@ -66,58 +67,67 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					}
 			}
 			else {
-				//echo 'Traitement de la Voiture '.$plaque.'<br>';
 				$numFacture = $infos[2];
 				$numContrat = $infos[4];
-				
-				//FACTURE
-				$fact = new TRH_Evenement;
-				$fact->type = 'facture';
-				$fact->numFacture = $numFacture;
-				$fact->fk_rh_ressource = $TRessource[$plaque];
-				$fact->motif = 'Facture mensuelle Parcours';
-				$TExtrasFieldValues = array();
-				$c = '';
-				for ($i = 30; $i <= 38; $i++) {
-		    			$c .= $TExtrasFieldKeys[$i]." : ".$infos[$i]."€\n";}
-				$fact->commentaire  = $c;
-				$fact->set_date('date_debut', $infos[10]);
-				$fact->set_date('date_fin', $infos[1]);
-				$fact->coutTTC += floatval(strtr($infos[38], ',','.'));
-				$fact->coutEntrepriseTTC += floatval(strtr($infos[38], ',','.'));
-				//$fact->TVA=19.6;
-				$fact->coutEntrepriseHT += floatval(strtr($infos[12], ',','.'));
-				$t = explode(' ',$infos[7]);
-				$fact->fk_user = (array_key_exists(strtolower($t[0]) , $TUser)) ? $TUser[strtolower($t[0])] : 0 ;
-				
-				
-				//CONTRAT
-				if (! array_key_exists ( strtolower($numContrat) , $TContrat )){
-					$contrat = new TRH_Contrat;
-					$contrat->libelle = 'Contrat n°'.$numContrat;
-					$contrat->numContrat = $numContrat;
-					$contrat->set_date('date_debut', $infos[10]);
-					$contrat->set_date('date_fin', $infos[11]);
-					$contrat->bail = 'location';
-					//$contrat->TVA
-					//$contrat->loyer_TTC
-					$contrat->fk_tier_fournisseur = $idParcours;
-					$contrat->fk_rh_ressource_type = $idVoiture;
-					$contrat->save($ATMdb);
-					$cptContrat ++;
+				if ( !empty($numContrat) && !empty($numFacture)){
+					//FACTURE
+					$fact = new TRH_Evenement;
+					$fact->type = 'facture';
+					$fact->numFacture = $numFacture;
+					$fact->fk_rh_ressource = $TRessource[$plaque];
+					$fact->motif = 'Facture mensuelle Parcours';
+					$TExtrasFieldValues = array();
+					$c = '';
+					for ($i = 30; $i <= 38; $i++) {
+			    			$c .= $TExtrasFieldKeys[$i]." : ".$infos[$i]."€\n";}
+					$fact->commentaire  = $c;
+					$fact->set_date('date_debut', $infos[10]);
+					$fact->set_date('date_fin', $infos[1]);
+					$fact->coutTTC += floatval(strtr($infos[38], ',','.'));
+					$fact->coutEntrepriseTTC += floatval(strtr($infos[38], ',','.'));
+					//$fact->TVA=19.6;
+					$fact->coutEntrepriseHT += floatval(strtr($infos[12], ',','.'));
+					$t = explode(' ',$infos[7]);
+					$fact->fk_user = (array_key_exists(strtolower($t[0]) , $TUser)) ? $TUser[strtolower($t[0])] : 0 ;
 					
-					//LIAISON CONTRAT-RESSOURCE
-					$assocContrat =  new TRH_Contrat_Ressource;
-					$assocContrat->fk_rh_ressource = $TRessource[$plaque];
-					$assocContrat->fk_rh_contrat = $contrat->getId();
-					$assocContrat->save($ATMdb);
+					
+					//CONTRAT
+					if (! array_key_exists ( strtolower($numContrat) , $TContrat )){
+						//print_r($infos);echo '<br><br>';
+						$contrat = new TRH_Contrat;
+						$contrat->libelle = 'Contrat n°'.$numContrat;
+						$contrat->numContrat = $numContrat;
+						$contrat->set_date('date_debut', '01/01/2013');
+						$contrat->set_date('date_fin', '31/12/2013');
+						$contrat->bail = 'location';
+						
+						$contrat->load_liste($ATMdb);
+						$ttva = array_keys($contrat->TTVA,19.6); //on met la TVA à 19.6%
+						$contrat->TVA = $ttva[0];
+						
+						$contrat->fk_tier_fournisseur = $idParcours;
+						$contrat->fk_rh_ressource_type = $idVoiture;
+						
+						$contrat->loyer_TTC = floatval(strtr($infos[30],',','.'));
+						$contrat->assurance = floatval(strtr($infos[34],',','.')); 
+						$contrat->entretien = floatval(strtr($infos[32],',','.'));  
+						
+						$contrat->save($ATMdb);
+						$cptContrat ++;
+						
+						//LIAISON CONTRAT-RESSOURCE
+						$assocContrat =  new TRH_Contrat_Ressource;
+						$assocContrat->fk_rh_ressource = $TRessource[$plaque];
+						$assocContrat->fk_rh_contrat = $contrat->getId();
+						$assocContrat->save($ATMdb);
+					}
+					
+					$fact->numContrat = $numContrat;
+					$fact->fk_contrat = $TContrat[strtolower($numContrat)];
+					$fact->save($ATMdb);
+					$cptFacture++;
+				
 				}
-				
-				$fact->numContrat = $numContrat;
-				$fact->fk_contrat = $TContrat[strtolower($numContrat)];
-				$fact->save($ATMdb);
-				$cptFacture++;
-				
 				
 			}
 			

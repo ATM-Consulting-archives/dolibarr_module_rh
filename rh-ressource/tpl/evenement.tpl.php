@@ -53,10 +53,6 @@
 			<td>Commentaire</td>
 			<td>[NEvent.commentaire;strconv=no;protect=no]</td>
 		</tr>
-		<tr id="numContrat">
-			<td>Contrat associé</td>
-			<td><a href="contrat.php?id=[NEvent.idContrat;strconv=no;protect=no]">[NEvent.numContrat;strconv=no;protect=no]</a></td>
-		</tr>
 		<tr>
 			<td>Coût TTC</td>
 			<td>[NEvent.coutTTC;strconv=no;protect=no] €</td>
@@ -129,7 +125,7 @@
 					break;
 				case 'facture':
 					$('#numFacture').show();
-					$('#numContrat').show();
+					//$('#numContrat').show();
 				default : 
 					break;}
 		};

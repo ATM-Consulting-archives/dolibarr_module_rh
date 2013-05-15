@@ -132,4 +132,21 @@ function getUsers(){
 	return $TUser;
 	
 }
+
+	
+function getGroups(){
+	global $conf;
+	$TGroups = array();
+	$ATMdb =new TPDOdb;
+	
+	$sqlReq="SELECT rowid,nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+	
+	$ATMdb->Execute($sqlReq);
+	while($ATMdb->Get_line()) {
+		$TGroups[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+		}
+	return $TGroups;
+	
+}
+	
 	
