@@ -40,7 +40,7 @@ $idParcours = getIdParcours($ATMdb);
 if ($idParcours == 0){echo 'Aucun fournisseur du nom de "Parcours" ! ';exit;}
 
 if (empty($nomFichier)){$nomFichier = "./fichierImports/CPRO INFORMATIQUE PREL 05 04 13.csv";}
-echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
+$message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 $cptContrat = 0;
 $cptFacture = 0;
 $cptNoVoiture = 0;
@@ -143,12 +143,13 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	}
 
 	//Fin du code PHP : Afficher le temps d'éxecution et le bilan.
-	echo $cptContrat.' contrats importés.<br>';
-	echo $cptNoVoiture.' plaques sans correspondance.<br>';
-	echo $cptFacture.' factures importés.<br>';
+	$message .= $cptContrat.' contrats importés.<br>';
+	$message .= $cptNoVoiture.' plaques sans correspondance.<br>';
+	$message .= $cptFacture.' factures importés.<br>';
 	$timeend=microtime(true);
 	$page_load_time = number_format($timeend-$timestart, 3);
-	echo '<br>Fin du traitement. Durée : '.$page_load_time . " sec.<br><br><br>";
+	$message .= '<br>Fin du traitement. Durée : '.$page_load_time . " sec.<br><br>";
+	send_mail('Import - Factures Parcours',$message);
 }
 
 function chargeVoiture(&$ATMdb){

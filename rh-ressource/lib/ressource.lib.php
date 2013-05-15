@@ -183,4 +183,19 @@ function timeToInt($h, $m){
 	return intval($h)*60+intval($m);
 }
 
+function send_mail($subject, $message){
+	global $langs;
+	
+	$langs->load('mails');
+	
+	$from = USER_MAIL_SENDER;
+	$sendto = USER_MAIL_RECEIVER;
+
+	$mail = new TReponseMail($from,$sendto,$subject,$message);
+	
+	dol_syslog("Ressource::sendmail content=$from,$sendto,$subject,$message", LOG_DEBUG);
+	
+    (int)$result = $mail->send(true, 'utf-8');
+	return (int)$result;
+}
 	
