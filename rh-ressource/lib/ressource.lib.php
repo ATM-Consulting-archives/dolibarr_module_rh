@@ -133,7 +133,6 @@ function getUsers(){
 	
 }
 
-	
 function getGroups(){
 	global $conf;
 	$TGroups = array();
@@ -149,4 +148,35 @@ function getGroups(){
 	
 }
 	
+
+function stringTous($val, $choixApplication){
+	echo $choixApplication;
+	if ($choixApplication == 'all') return 'Tous';
+	else return $val;
+}
+
+function intToString($val){
+	$h = intval($val/60);
+	if ($h < 10){$h = '0'.$h;}
+	$m = $val%60;
+	if ($m < 10){$m = '0'.$m;}
+	if ($h==0 && $m==0){return '';}
+	return $h.':'.$m;
+}
+
+function intToHour($val){
+	$h = intval($val/60);
+	if ($h < 10){$h = '0'.$h;}
+	return $h;
+}
+function intToMinute($val){
+	$m = $val%60;
+	if ($m < 10){$m = '0'.$m;}
+	return $m;
+}
+
+function timeToInt($h, $m){
+	return intval($h)*60+intval($m);
+}
+
 	
