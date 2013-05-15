@@ -245,7 +245,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
 				,'commentaire'=>$form->zonetexte('','commentaire',$evenement->commentaire,100,10,'','','')
 				,'numFacture'=>$form->texte('', 'numFacture', $evenement->numFacture, 10,10)
-				,'numContrat'=>$form->texte('', 'numContrat', $evenement->numContrat, 10,10)
+				//,'numContrat'=>$form->texte('', 'numContrat', $evenement->numContrat, 10,10)
 				,'idContrat'=>$evenement->fk_contrat
 				,'motif'=>$form->texte('','motif',$evenement->motif, 30,100,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)

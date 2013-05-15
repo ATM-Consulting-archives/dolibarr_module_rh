@@ -5,6 +5,7 @@
  * On créé un évenement par ligne de ce fichier
  * et une évenement de type facture
  */
+ 
  /*
 require('../config.php');
 require('../class/evenement.class.php');
@@ -24,7 +25,7 @@ while($ATMdb->Get_line()) {
 		
 $idVoiture = getIdTypeVoiture($ATMdb);
 if (empty($nomFichier)){$nomFichier = "./fichierImports/fichier facture total.csv";}
-echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
+$message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 $TRessource = chargeVoiture($ATMdb);
 $TCarteInexistantes = array();
@@ -104,9 +105,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 }
 
 foreach ($TCarteInexistantes as $key => $value) {
-	echo 'Erreur : Pas de carte correspondante : '.$key.'<br>';
+	$message .= 'Erreur : Pas de carte correspondante : '.$key.'<br>';
 }
-echo 'Fin du traitement. '.$cpt.' événements rajoutés créés.<br><br>';
+$message .= 'Fin du traitement. '.$cpt.' événements rajoutés créés.<br><br>';
+send_mail('Import - Factures TOTAL',$message);
 	
 function chargeVoiture(&$ATMdb){
 	global $conf;

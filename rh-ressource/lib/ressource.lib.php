@@ -66,25 +66,29 @@ function printLibelle($ressource){
 	
 }
 
-function getTypeEvent($idTypeRessource){
+function getTypeEvent($idTypeRessource = 0){
 	global $conf;
 	$TEvent = array(
 		'all'=>''
 		,'accident'=>'Accident'
 		,'reparation'=>'Réparation'
 		,'facture'=>'Facture'
-	);	
-	$ATMdb =new TPDOdb;
+	);
 	
-	$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-	WHERE rowid=".$idTypeRessource." AND entity=".$conf->entity;
-	$ATMdb->Execute($sqlReq);
-	while($ATMdb->Get_line()) {
-		$keys = explode(';', $ATMdb->Get_field('liste_evenement_key'));
-		$values = explode(';', $ATMdb->Get_field('liste_evenement_value'));
-		foreach ($values as $i=>$value) {
-			if (!empty($value)){
-				$TEvent[$keys[$i]] = $values[$i];
+	if ($idTypeRessource>0){
+		$ATMdb =new TPDOdb;
+		
+		$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
+		WHERE rowid=".$idTypeRessource." AND entity=".$conf->entity;
+		
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$keys = explode(';', $ATMdb->Get_field('liste_evenement_key'));
+			$values = explode(';', $ATMdb->Get_field('liste_evenement_value'));
+			foreach ($values as $i=>$value) {
+				if (!empty($value)){
+					$TEvent[$keys[$i]] = $values[$i];
+				}
 			}
 		}
 	}
@@ -131,5 +135,67 @@ function getUsers(){
 		}
 	return $TUser;
 	
+}
+
+function getGroups(){
+	global $conf;
+	$TGroups = array();
+	$ATMdb =new TPDOdb;
+	
+	$sqlReq="SELECT rowid,nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+	
+	$ATMdb->Execute($sqlReq);
+	while($ATMdb->Get_line()) {
+		$TGroups[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+		}
+	return $TGroups;
+	
+}
+	
+
+function stringTous($val, $choixApplication){
+	echo $choixApplication;
+	if ($choixApplication == 'all') return 'Tous';
+	else return $val;
+}
+
+function intToString($val){
+	$h = intval($val/60);
+	if ($h < 10){$h = '0'.$h;}
+	$m = $val%60;
+	if ($m < 10){$m = '0'.$m;}
+	if ($h==0 && $m==0){return '';}
+	return $h.':'.$m;
+}
+
+function intToHour($val){
+	$h = intval($val/60);
+	if ($h < 10){$h = '0'.$h;}
+	return $h;
+}
+function intToMinute($val){
+	$m = $val%60;
+	if ($m < 10){$m = '0'.$m;}
+	return $m;
+}
+
+function timeToInt($h, $m){
+	return intval($h)*60+intval($m);
+}
+
+function send_mail($subject, $message){
+	global $langs;
+	
+	$langs->load('mails');
+	
+	$from = USER_MAIL_SENDER;
+	$sendto = USER_MAIL_RECEIVER;
+
+	$mail = new TReponseMail($from,$sendto,$subject,$message);
+	
+	dol_syslog("Ressource::sendmail content=$from,$sendto,$subject,$message", LOG_DEBUG);
+	
+    (int)$result = $mail->send(true, 'utf-8');
+	return (int)$result;
 }
 	

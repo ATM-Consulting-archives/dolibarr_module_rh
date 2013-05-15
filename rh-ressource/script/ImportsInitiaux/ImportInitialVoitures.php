@@ -17,6 +17,13 @@ while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
 	}
 
+$TGroups = array();
+$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+$ATMdb->Execute($sql);
+while($ATMdb->Get_line()) {
+	$TGroups[strtolower($ATMdb->Get_field('nom'))] = $ATMdb->Get_field('rowid');
+	}
+
 $idVoiture = getIdTypeVoiture($ATMdb);
 $TFichier = array("CPRO GROUPE - PRELVT DU 05.04.13.csv",
 "CPRO INFORMATIQUE PREL 05 04 13.csv",
@@ -57,6 +64,7 @@ if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 				$temp->numId = $plaque;
 				$temp->set_date('date_vente', '');
 				$temp->set_date('date_garantie', '');
+				$temp->fk_proprietaire = $TGroups['C\'PRO Groupe'];
 				$temp->immatriculation = (string)$plaque;//plaque;
 				$temp->libelle = ucwords(strtolower($infos[40].' '.$infos[41]));
 				$temp->marquevoit = (string)$infos[40];

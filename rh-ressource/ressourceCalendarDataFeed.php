@@ -9,20 +9,16 @@ $ATMdb=new TPDOdb;
 $method = $_GET["method"];
 switch ($method) {
     case "list": 
-		/*if ($_REQUEST['id']!=0){
-			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], 0, $_REQUEST['id'],0 , null);	
-		}
-		else {*/
-			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], 
+		
+		$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], 
 					$_REQUEST['type'], $_REQUEST['id'], $_REQUEST['fk_user'], $_REQUEST['typeEven']);
-		//}
         
         break;   
 
 }
 echo json_encode($ret); 
 
-function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = null ){
+function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = 'all' ){
   global $user;
   $ret = array();
   $ret['events'] = array();
@@ -72,11 +68,13 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
 	  	$lien = 'evenement.php?id='.$row->fk_rh_ressource.'&idEven='.$row->rowid.'&action=view';
 	  }
 	 
+	 
+	 
 	  //on écrit l'intitulé du calendrier en fonction des données de la fonction
 	  $sujet = '';
-	  $sujet .= ((empty($idRessource) || ($idRessource==0)) ? $TRessource[$row->fk_rh_ressource].', ' : '');
-	  $sujet .= ( (!$typeEven || $typeEven=='all') ? $TEvent[$row->type] : '');
-	  $sujet .= (($fk_user==0) ? ', '.$TUser[$row->fk_user] : '');  
+	  $sujet .= (empty($idRessource) || ($idRessource==0)) ? $TRessource[$row->fk_rh_ressource].', ' : '';
+	  $sujet .=  ($typeEven=='all') ? $TEvent[$row->type] : '' ;
+	  $sujet .= ($fk_user==0) ? ', '.$TUser[$row->fk_user] : '';  
       $ret['events'][] = array(
        $row->rowid,
         $sujet,
@@ -99,7 +97,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
   return $ret;
 }
 
-function listCalendar(&$ATMdb, $day, $type, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = null){
+function listCalendar(&$ATMdb, $day, $type, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = 'all'){
   $phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
   switch($type){

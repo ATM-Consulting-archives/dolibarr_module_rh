@@ -36,6 +36,12 @@
 	 	</tr>
 	 	[onshow;block=begin;when [view.userRightViewContrat]==1]
 		 	<tr>
+		 		<td>Montant Entretien</td>
+		 		<td>[contrat.entretien;strconv=no;protect=no] €</td>
+		 	</tr><tr>
+		 		<td>Montant Assurance</td>
+		 		<td>[contrat.assurance;strconv=no;protect=no] €</td>
+		 	</tr><tr>
 		 		<td>Loyer TTC</td>
 		 		<td>[contrat.loyer_TTC;strconv=no;protect=no] €</td>
 		 	</tr><tr>

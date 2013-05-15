@@ -28,6 +28,9 @@ class TRH_Evenement  extends TObjetStd {
 		parent::add_champs('litreEssence','type=float;'); //pour des pleins d'essences
 		parent::add_champs('kilometrage','type=entier;');
 		
+		//pour une facture téléphonique
+		parent::add_champs('duree, dureeI, dureeE','type=entier;'); //durée de consommation
+		
 		//pour un appel
 		parent::add_champs('appelHeure','type=chaine;');
 		parent::add_champs('appelNumero','type=chaine;');
