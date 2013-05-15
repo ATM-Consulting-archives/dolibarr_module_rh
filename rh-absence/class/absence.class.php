@@ -412,7 +412,12 @@ class TRH_Absence extends TObjetStd {
 			while($ATMdb->Get_line()) {
 				$TabFerie[]= $ATMdb->Get_field('date_jourOff');
 			}				
-
+			
+			//on cherche le temps total de travail d'un employé par semaine : 
+			//cela va permettre de savoir si la durée d'une absence doit être limité à 7h par jour et 35h par semaine ou non
+			//si $tempsTravail supérieur à 35h, on limite les durées
+			//$tempsTravail=$this->calculTempsTravailHebdo($ATMdb,$this->fk_user);
+			
 			//on cherche les jours travaillés par l'employé
 			$sql="SELECT rowid, lundiam, lundipm, 
 			mardiam, mardipm, mercrediam, mercredipm, 
@@ -488,6 +493,8 @@ class TRH_Absence extends TObjetStd {
 							$duree-=0.5;
 						}else{
 							$this->dureeHeure=$this->additionnerHeure($this->dureeHeure,$this->difheure($TTravailHeure["date_".$jourDebutSem."_heuredam"], $TTravailHeure["date_".$jourDebutSem."_heurefam"]));
+							$this->dureeHeure=$this->horaireMinuteEnCentieme($this->dureeHeure);	
+
 						}
 					}else if($this->ddMoment=='apresmidi'){		// si la date de debut est lapres midi, il n'y a donc que le cas pm à traiter
 						if($TTravail[$jourDebutSem.'pm']==0){
@@ -495,18 +502,21 @@ class TRH_Absence extends TObjetStd {
 						}
 						else{
 							$this->dureeHeure=$this->additionnerHeure($this->dureeHeure,$this->difheure($TTravailHeure["date_".$jourDebutSem."_heuredpm"], $TTravailHeure["date_".$jourDebutSem."_heurefpm"]));
+							$this->dureeHeure=$this->horaireMinuteEnCentieme($this->dureeHeure);
 						}
 					}else{	//sinon on traite les cas matin et apres midi
 						if($TTravail[$jourDebutSem.'am']==0){
 							$duree-=0.5;
 						}else{
 							$this->dureeHeure=$this->additionnerHeure($this->dureeHeure,$this->difheure($TTravailHeure["date_".$jourDebutSem."_heuredam"], $TTravailHeure["date_".$jourDebutSem."_heurefam"]));
+							$this->dureeHeure=$this->horaireMinuteEnCentieme($this->dureeHeure);
 						}
 						
 						if($TTravail[$jourDebutSem.'pm']==0){
 							$duree-=0.5;
 						}else{
 							$this->dureeHeure=$this->additionnerHeure($this->dureeHeure,$this->difheure($TTravailHeure["date_".$jourDebutSem."_heuredpm"], $TTravailHeure["date_".$jourDebutSem."_heurefpm"]));
+							$this->dureeHeure=$this->horaireMinuteEnCentieme($this->dureeHeure);
 						}
 					}
 					return $duree;
@@ -589,6 +599,7 @@ class TRH_Absence extends TObjetStd {
 			}
 			
 			//////////////////////////////////////////////////////////////TRAITEMENT DES HEURES
+			
 			//pour chaque jour, du début de l'absence jusqu'à sa fin, on teste si l'employé travaille et on compte les heures
 			$jourEnCours=$this->date_debut;
 			$jourFin=$this->date_fin;
@@ -679,6 +690,7 @@ class TRH_Absence extends TObjetStd {
 			}
 			
 			$this->dureeHeure=$dureeHeure;
+			$this->dureeHeure=$this->horaireMinuteEnCentieme($this->dureeHeure);
 		    return $duree;
 		}
 		
@@ -697,6 +709,89 @@ class TRH_Absence extends TObjetStd {
 			}
 			
 			return $heureT.":".$minuteT;
+		}
+		
+		/*function calculTempsTravailHebdo($ATMdb,$user){
+			
+			//on cherche les jours travaillés par l'employé
+			$sql="SELECT rowid, lundiam, lundipm, 
+			mardiam, mardipm, mercrediam, mercredipm, 
+			jeudiam, jeudipm, vendrediam, vendredipm,
+			samediam, samedipm, dimancheam, dimanchepm
+			
+			,CONCAT(HOUR(date_lundi_heuredam) ,':' , MINUTE(date_lundi_heuredam)) as	date_lundi_heuredam
+			,CONCAT(HOUR(date_lundi_heurefam) ,':' , MINUTE(date_lundi_heurefam)) as	date_lundi_heurefam
+			,CONCAT(HOUR(date_lundi_heuredpm) ,':' , MINUTE(date_lundi_heuredpm)) as	date_lundi_heuredpm
+			,CONCAT(HOUR(date_lundi_heurefpm) ,':' , MINUTE(date_lundi_heurefpm)) as	date_lundi_heurefpm	
+			 	
+			,CONCAT(HOUR(date_mardi_heuredam) ,':' , MINUTE(date_mardi_heuredam)) as	date_mardi_heuredam	
+			,CONCAT(HOUR(date_mardi_heurefam) ,':' , MINUTE(date_mardi_heurefam)) as	date_mardi_heurefam
+			,CONCAT(HOUR(date_mardi_heuredpm) ,':' , MINUTE(date_mardi_heuredpm)) as	date_mardi_heuredpm
+			,CONCAT(HOUR(date_mardi_heurefpm) ,':' , MINUTE(date_mardi_heurefpm)) as	date_mardi_heurefpm
+			
+			,CONCAT(HOUR(date_mercredi_heuredam) ,':' , MINUTE(date_mercredi_heuredam)) as	date_mercredi_heuredam	
+			,CONCAT(HOUR(date_mercredi_heurefam) ,':' , MINUTE(date_mercredi_heurefam)) as	date_mercredi_heurefam
+			,CONCAT(HOUR(date_mercredi_heuredpm) ,':' , MINUTE(date_mercredi_heuredpm)) as	date_mercredi_heuredpm
+			,CONCAT(HOUR(date_mercredi_heurefpm) ,':' , MINUTE(date_mercredi_heurefpm)) as	date_mercredi_heurefpm
+			
+			,CONCAT(HOUR(date_jeudi_heuredam) ,':' , MINUTE(date_jeudi_heuredam)) as	date_jeudi_heuredam	
+			,CONCAT(HOUR(date_jeudi_heurefam) ,':' , MINUTE(date_jeudi_heurefam)) as	date_jeudi_heurefam
+			,CONCAT(HOUR(date_jeudi_heuredpm) ,':' , MINUTE(date_jeudi_heuredpm)) as	date_jeudi_heuredpm
+			,CONCAT(HOUR(date_jeudi_heurefpm) ,':' , MINUTE(date_jeudi_heurefpm)) as	date_jeudi_heurefpm
+			
+			,CONCAT(HOUR(date_vendredi_heuredam) ,':' , MINUTE(date_vendredi_heuredam)) as	date_vendredi_heuredam	
+			,CONCAT(HOUR(date_vendredi_heurefam) ,':' , MINUTE(date_vendredi_heurefam)) as	date_vendredi_heurefam
+			,CONCAT(HOUR(date_vendredi_heuredpm) ,':' , MINUTE(date_vendredi_heuredpm)) as	date_vendredi_heuredpm
+			,CONCAT(HOUR(date_vendredi_heurefpm) ,':' , MINUTE(date_vendredi_heurefpm)) as	date_vendredi_heurefpm
+			
+			,CONCAT(HOUR(date_samedi_heuredam) ,':' , MINUTE(date_samedi_heuredam)) as	date_samedi_heuredam	
+			,CONCAT(HOUR(date_samedi_heurefam) ,':' , MINUTE(date_samedi_heurefam)) as	date_samedi_heurefam
+			,CONCAT(HOUR(date_samedi_heuredpm) ,':' , MINUTE(date_samedi_heuredpm)) as	date_samedi_heuredpm
+			,CONCAT(HOUR(date_samedi_heurefpm) ,':' , MINUTE(date_samedi_heurefpm)) as	date_samedi_heurefpm
+			
+			,CONCAT(HOUR(date_dimanche_heuredam) ,':' , MINUTE(date_dimanche_heuredam)) as	date_dimanche_heuredam	
+			,CONCAT(HOUR(date_dimanche_heurefam) ,':' , MINUTE(date_dimanche_heurefam)) as	date_dimanche_heurefam
+			,CONCAT(HOUR(date_dimanche_heuredpm) ,':' , MINUTE(date_dimanche_heuredpm)) as	date_dimanche_heuredpm
+			,CONCAT(HOUR(date_dimanche_heurefpm) ,':' , MINUTE(date_dimanche_heurefpm)) as	date_dimanche_heurefpm	
+			 
+			FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` 
+			WHERE fk_user=".$this->fk_user; 
+
+			$ATMdb->Execute($sql);
+			$TTravail = array();
+			$TTravailHeure= array();
+			while($ATMdb->Get_line()) {
+				foreach ($this->TJour as $jour) {
+					foreach(array('am','pm') as $moment) {
+						$TTravail[$jour.$moment]=$ATMdb->Get_field($jour.$moment);
+						
+					}
+					foreach(array('dam','fam','dpm','fpm') as $moment) {
+						$TTravailHeure["date_".$jour."_heure".$moment]=$ATMdb->Get_field("date_".$jour."_heure".$moment);
+					}
+				}
+			}
+			$dureeHeure='0:0';
+			foreach ($this->TJour as $jour) {
+				foreach(array('am','pm') as $moment) {
+					if($TTravail[$jour.$moment]==1){
+						$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+						
+					}
+				}
+			}
+			$dureeHeure=$this->horaireMinuteEnCentieme($dureeHeure);
+			if($dureeHeure>35){
+				return 1;
+			}else{
+				return 0;
+			}
+		}*/
+		
+		function horaireMinuteEnCentieme($horaire){
+			list($heure, $minute) = explode(':', $horaire);	
+			$horaireCentieme=$heure+$minute/60;
+			return $horaireCentieme;
 		}
 		
 		//renvoie le jour de la semaine correspondant à la date passée en paramètre
@@ -765,35 +860,6 @@ class TRH_Absence extends TObjetStd {
 			}
 		}
 
-
-		//fonction qui va renvoyer 1 si l'utilisateur est valideur de l'absence courante
-		/*function estValideur(&$ATMdb,$idUser){
-			
-		//	if($this->fk_user==$idUser) return 0;
-			//on récupère les groupes auxquels appartient l'utilisateur ayant créé l'absence
-			$sql="SELECT fk_usergroup FROM `".MAIN_DB_PREFIX."usergroup_user` WHERE fk_user=".$this->fk_user;
-			$ATMdb->Execute($sql);
-			$TGroupesUser = array();
-			while($ATMdb->Get_line()) {
-				$TGroupesUser[]= $ATMdb->Get_field('fk_usergroup');
-			}
-			
-			//on récupère les groupes dont l'utilisateur courant est valideur de congés
-			$sql2="SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."rh_valideur_groupe WHERE fk_user=".$idUser." AND type='Conges'";
-			$ATMdb->Execute($sql2);
-			$TGroupesValideur = array();
-			while($ATMdb->Get_line()) {
-				$TGroupesValideur[]= $ATMdb->Get_field('fk_usergroup');
-			}
-			
-			//on regarde si l'utilisateur courant peut valider la demande d'absence
-			foreach($TGroupesUser as $grUser){
-				foreach($TGroupesValideur as $grValideur){
-					if($grUser==$grValideur) return 1;
-				}
-			}	
-			return 0;
-		}*/
 		
 		
 		//donne la différence entre 2 heures (respecter l'ordre début et fin)

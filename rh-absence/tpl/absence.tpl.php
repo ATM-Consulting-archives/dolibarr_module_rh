@@ -12,7 +12,7 @@
             <h1 style="color: #2AA8B9;"> Nouvelle demande d'absence</h1>                         
 			[onshow;block=end]
 			 [onshow;block=begin;when [view.mode]!='edit']
-            <h1 style="color: #2AA8B9;"> Visualisation de la demande d'absence</h1>                         
+            <h1 style="color: #2AA8B9;"> Récapitulatif de la demande d'absence</h1>                         
 			[onshow;block=end]
 
 
@@ -130,7 +130,7 @@
 		
 		
 		<div>
-		<h3 style="color: #2AA8B9;">Dernières absences du collaborateur</h3>
+		<h3 style="color: #2AA8B9;">Vos dernières absences</h3>
 		<table  class="liste formdoc noborder" style="width:100%">
 				<tr class="liste_titre">
 					<td><b>Date de début</b></td>
@@ -149,7 +149,7 @@
 		
 		
 		<div>
-		<h3 style="color: #2AA8B9;">Règles concernant le collaborateur</h3>
+		<h3 style="color: #2AA8B9;">Règles vous concernant</h3>
 		<table  class="liste formdoc noborder" style="width:100%">
 				<tr class="liste_titre">
 					<td><b>Type d'absence concerné</b></td>
@@ -208,6 +208,49 @@
 		</script>
 		
 		<script>
+		$(document).ready( function(){
+			if($('#userRecapCompteur').val()==0){
+				$.ajax({
+					url: 'script/chargerCompteurDemandeAbsence.php?user='+$('#fk_user option:selected').val()
+				}).done(function(data) {
+					liste = JSON.parse(data);
+
+					$('#reste').empty();
+					$('#reste').append(liste.reste);
+					
+					$('#cumule').empty();
+					$('#cumule').append(liste.annuelCumule);
+					
+					$('#noncumule').empty();
+					$('#noncumule').append(liste.annuelNonCumule);
+					
+					$('#mensuel').empty();
+					$('#mensuel').append(liste.mensuel);
+
+				});
+			}else{
+				$.ajax({
+					url: 'script/chargerCompteurDemandeAbsence.php?user='+$('#userRecapCompteur').val()
+				}).done(function(data) {
+					liste = JSON.parse(data);
+
+					$('#reste').empty();
+					$('#reste').append(liste.reste);
+					
+					$('#cumule').empty();
+					$('#cumule').append(liste.annuelCumule);
+					
+					$('#noncumule').empty();
+					$('#noncumule').append(liste.annuelNonCumule);
+					
+					$('#mensuel').empty();
+					$('#mensuel').append(liste.mensuel);
+
+				});
+			}
+			
+		});
+		
 		$('#fk_user').change(function(){
 				//alert('top');
 				$.ajax({
