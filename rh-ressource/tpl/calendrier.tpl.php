@@ -88,12 +88,12 @@ $('#type').change(function(){
         $(document).ready(function() {     
            var view="month";          
            
-           [onshow;block=begin;when [ressource.id]!=0]        
-                var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]&typeEven=[ressource.typeEvenURL;strconv=no]";
+           [onshow;block=begin;when [ressource.fiche]==true]        
+                var DATA_FEED_URL = "ressourceCalendarDataFeed.php?id=[ressource.id;strconv=no]&type=[ressource.typeURL;strconv=no]&typeEven=[ressource.typeEvenURL;strconv=no]";
 			[onshow;block=end]
 			
 			
-			[onshow;block=begin;when [ressource.id]=0]
+			[onshow;block=begin;when [ressource.fiche]!=true]
 					var DATA_FEED_URL = "ressourceCalendarDataFeed.php?[ressource.URL;strconv=no]";
 			[onshow;block=end]
 
