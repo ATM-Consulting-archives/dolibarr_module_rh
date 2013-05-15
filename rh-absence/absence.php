@@ -189,14 +189,12 @@ function _liste(&$ATMdb, &$absence) {
 			,'libelle'=>'Type d\'absence'
 			,'firstname'=>'Prénom'
 			,'name'=>'Nom'
-			
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
 			,'libelle'=>true
 			,"firstname"=>true
 			,"name"=>true
-			
 		)
 		,'eval'=>array(
 				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
@@ -407,6 +405,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $absence->getId());
 	echo $form->hidden('action', 'save');
+	echo $form->hidden('userRecapCompteur', isset($_REQUEST['fk_user'])?$_REQUEST['fk_user']:0);
 	//echo $form->hidden('fk_user', $user->id);
 	
 	
@@ -530,7 +529,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$droitsCreation=1;
 	}else $droitsCreation=2; //on n'a pas les droits de création
 	if($droitsCreation==1){
-		//$sqlReqUser.=" ORDER BY name";
+		$sqlReqUser.=" ORDER BY name";
 		$ATMdb->Execute($sqlReqUser);
 		while($ATMdb->Get_line()) {
 			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
