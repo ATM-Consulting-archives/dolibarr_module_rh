@@ -88,7 +88,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $mode) {
 							LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_regle as l ON (l.fk_ressource_type = t.rowid)
 		WHERE e.entity=".$conf->entity."
 			AND e.type='facture'
-			AND (e.date_debut>='".$date_debut."' AND e.date_fin<='".$date_fin."')
+			AND NOT (e.date_debut>'".$date_fin."' OR e.date_fin<'".$date_debut."')
 			AND t.code='telephone'
 			
 			AND ( 	
