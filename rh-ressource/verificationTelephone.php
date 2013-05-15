@@ -137,5 +137,6 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $mode) {
 		)	
 		
 	);
+	$form->end();
 	
 }
