@@ -2,6 +2,10 @@
 	[view.head;strconv=no]
 [onshow;block=end]  
 
+[onshow;block=begin;when [view.mode]!='view']        
+	[view.onglet;strconv=no]
+[onshow;block=end]  
+
 
 <link rel="stylesheet" type="text/css" href="./css/jquery.jOrgChart.css" />
 <script>

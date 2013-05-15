@@ -110,6 +110,7 @@ function _liste(&$ATMdb, &$ressource) {
 	global $langs,$conf, $db;	
 	
 	llxHeader('','Type Ressource');
+	print dol_get_fiche_head(array()  , '', 'Liste types de ressources');
 	getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
@@ -186,8 +187,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			,'view'=>array(
 				'mode'=>$mode
 				,'nbChamps'=>count($ressource->TField)
-			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource)  , 'fiche', 'Type de ressource')
+				,'onglet'=>dol_get_fiche_head(array()  , '', 'Création type de ressource')
 			)
 			
 		)	
