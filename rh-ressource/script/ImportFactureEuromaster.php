@@ -26,7 +26,7 @@ while($ATMdb->Get_line()) {
 $idVoiture = getIdTypeVoiture($ATMdb);
 $TRessource = chargeVoiture($ATMdb);
 if (empty($nomFichier)){$nomFichier = "./fichierImports/fichier facture euromaster.csv";}
-echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
+$message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 //début du parsing
 $numLigne = 0;
@@ -38,7 +38,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		$temp = new TRH_Evenement;
 		
 		if (! array_key_exists ( $infos[0] , $TRessource )){
-			echo 'Pas de voiture correspondante : '.$infos[0].'<br>';
+			$message .= 'Pas de voiture correspondante : '.$infos[0].'<br>';
 		}
 		else {
 			//print_r($infos);
@@ -60,7 +60,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			$temp->fk_user = $TUser[strtolower($infos[2])];
 			if ($temp->fk_user==0){
-				echo 'L\'utilisateur '.$infos[2].' n\'est pas dans la base  !<br>';
+				$message.= 'L\'utilisateur '.$infos[2].' n\'est pas dans la base  !<br>';
 			}
 			
 			
@@ -76,7 +76,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	//Fin du code PHP : Afficher le temps d'éxecution
 	$timeend=microtime(true);
 	$page_load_time = number_format($timeend-$timestart, 3);
-	echo 'Fin du traitement. Durée : '.$page_load_time . " sec";
+	$message .= 'Fin du traitement. Durée : '.$page_load_time . " sec.<br><br>";
+	send_mail('Import - Factures Euromaster',$message);
 	
 }
 

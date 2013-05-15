@@ -27,7 +27,7 @@ while($ATMdb->Get_line()) {
 		
 $idVoiture = getIdTypeVoiture($ATMdb);
 if (empty($nomFichier)){$nomFichier = "./fichierImports/fichier facture area.CSV";}
-echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
+$message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 $TRessource = chargeVoiture($ATMdb);
 $TEmprunts = chargeEmprunts($ATMdb);
@@ -98,18 +98,19 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 }
 
 foreach ($TCarteInexistantes as $key => $value) {
-	echo 'Pas de carte  correspondante : '.$key.'<br>';
+	$message .= 'Pas de carte  correspondante : '.$key.'<br>';
 }
 foreach ($TCarteNonAttribue as $key => $value) {
-	echo 'La carte '.$key.' n\'est pas attribuée sur la période utilisé !<br>';	
+	$message .= 'La carte '.$key.' n\'est pas attribuée sur la période utilisé !<br>';	
 }
 
 
 //Fin du code PHP : Afficher le temps d'éxecution
 $timeend=microtime(true);
 $page_load_time = number_format($timeend-$timestart, 3);
-echo $cpt." événements trajets rajoutés.<br>";
-echo 'Fin du traitement. Durée : '.$page_load_time . " sec<br><br>";
+$message .= $cpt." événements trajets rajoutés.<br>";
+$message .= 'Fin du traitement. Durée : '.$page_load_time . " sec.<br><br>";
+send_mail('Import - Factures AREA',$message);
 
 function chargeAssocies(&$ATMdb){
 	global $conf;

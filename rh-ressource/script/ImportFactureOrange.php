@@ -161,7 +161,7 @@ function modifierLimites(&$TLimites, $fk_user, $gen,  $int, $ext, $dataIll = fal
 
 //----------------TRAITEMENT DU FICHIER DES LIGNES D'APPELS----------------------------------------------------------
 if (empty($nomFichier)){$nomFichier = "./fichierImports/detail_appels.csv";}
-echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
+$message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 //début du parsing
 $numLigne = 0;
@@ -319,11 +319,11 @@ fclose($export);
 
 //----------------------------BILAN DES UTILISATEURS ET NUMERO INEXISTANTS-----------------------
 foreach ($TUserInexistants as $nom=> $rien) {
-	echo 'Erreur : Utilisateur '.$nom.' inexistant dans la base.<br>';
+	$message .= 'Erreur : Utilisateur '.$nom.' inexistant dans la base.<br>';
 }
 
 foreach ($TNumeroInexistants as $num => $rien) {
-	echo 'Erreur : Numéro '.$num.' inexistant dans la base.<br>';
+	$message .= 'Erreur : Numéro '.$num.' inexistant dans la base.<br>';
 }
 
 
@@ -334,9 +334,9 @@ foreach ($TNumeroInexistants as $num => $rien) {
 //----------------------------Fin du code PHP------------------------------------
 $timeend=microtime(true);
 $page_load_time = number_format($timeend-$timestart, 3);
-echo $cptFacture." factures crees.<br><br>";
-echo "Fin du traitement. ".'Durée : '.$page_load_time . " sec.<br><br><br>";
-
+$message .= $cptFacture." factures crees.<br><br>";
+$message .= "Fin du traitement. ".'Durée : '.$page_load_time . " sec.<br><br>";
+send_mail('Import - Factures Orange',$message);
 
 function intToString($val){
 	$h = intval($val/60);
