@@ -183,7 +183,7 @@ function timeToInt($h, $m){
 	return intval($h)*60+intval($m);
 }
 
-function send_mail($subject, $message){
+function send_mail_resources($subject, $message){
 	global $langs;
 	
 	$langs->load('mails');
