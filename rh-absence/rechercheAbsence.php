@@ -21,7 +21,7 @@
 		}
 	}
 	else if(isset($_REQUEST['valider'])){
-		_ficheResult($ATMdb,$absence, 'edit');
+		_listeResult($ATMdb,$absence);
 	}
 	else{
 		_fiche($ATMdb,$absence, 'edit');
@@ -84,6 +84,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
+				,'horsConges'=>$form->checkbox1('','horsConges','1','')
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id
@@ -105,24 +106,18 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 	llxFooter();
 }
 
-
-function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
-	global $db,$user, $langs, $conf;
-	llxHeader('','Formations');
 	
+function _listeResult(&$ATMdb, &$absence) {
+	global $langs, $conf, $db, $user;	
+	llxHeader('','Récapitulatif');
 	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Recherche');
 	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
-	$form->Set_typeaff($mode);
-	echo $form->hidden('fk_user', $user->id);
-	echo $form->hidden('entity', $conf->entity);
-
+	$r = new TSSRenderControler($absence);
 	
-	$idGroupeRecherche=isset($_REQUEST['groupe']) ? $_REQUEST['groupe'] : 0;
-	$idUserRecherche=isset($_REQUEST['user']) ? $_REQUEST['user'] : 0;
+	$idGroupeRecherche=$_REQUEST['groupe'];
+	$idUserRecherche=$_REQUEST['user'];
 	
 	if($idGroupeRecherche!=0){	//on recherche le nom du groupe
-		//echo $idGroupeRecherche;exit;
 		$sql="SELECT nom FROM ".MAIN_DB_PREFIX."usergroup
 		WHERE rowid =".$idGroupeRecherche." AND entity=".$conf->entity;
 		$ATMdb->Execute($sql);
@@ -144,41 +139,103 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 	}else{
 		$nomUserRecherche='Tous';
 	}
+	$horsConges=$_REQUEST['horsConges']==1?'1':'0';
+	if($horsConges==1){
+		$typeRecherche='Ceux qui n\'ont pas pris de congés pendant cette période';
+	}else $typeRecherche='Absences durant cette période';
+		
+	?>
+	<div>			
+		<h2 style="color: #2AA8B9;">Résultat de votre recherche</h2>	
+		<br/>
+		<table class="border" style="width:100%">	
+			<tr>
+				<td colspan="2"><b>Mots clés utilisés</b></td>	
+			</tr>
+			<tr>
+				<td style="width:30%"> Date début </td>
+				<td ><? echo $_REQUEST['date_debut'];?></td>
+			</tr>
+			<tr>
+				<td style="width:30%"> Date Fin </td>
+				<td><? echo $_REQUEST['date_fin'];  ?></td>
+			</tr>
+			<tr>
+				<td style="width:30%"> Groupe </td>
+				<td><?echo $nomGroupeRecherche;?></td>
+			</tr> 
+			<tr>
+				<td style="width:30%"> Utilisateur </td>
+				<td><?echo $nomUserRecherche;?></td>
+			</tr> 
+			<tr>
+				<td style="width:30%"> Type de recherche</td>
+				<td><?echo $typeRecherche;?></td>
+			</tr> 
+		</table>	
+	</div><br/><br/>
+	<?
+
+	//on va obtenir la requête correspondant à la recherche désirée
+	$sql=$absence->requeteRechercheAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, $horsConges, $_REQUEST['date_debut'], $_REQUEST['date_fin']);
 	
-	//on va obtenir un tableau des absences des collaborateurs pour la recherche
-	$requeteRecherche=$tagCompetence->requeteStatistique($ATMdb, $idGroupeRecherche, $idTagRecherche, $idUserRecherche);
-
-
-	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/statCompetenceResult.tpl.php'
-		,array(
-		)
-		,array(
-			'demande'=>array(
-				'idGroupeRecherche'=>$idGroupeRecherche
-				,'idUserRecherche'=>$idUserRecherche
-				,'nomGroupeRecherche'=>$nomGroupeRecherche
-				,'nomUserRecherche'=>$nomUserRecherche
-			)
-			,'resultat'=>array(
+	
+	$TOrder = array('name'=>'ASC');
+	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
-			)
-			,'userCourant'=>array(
-				'id'=>$fuser->id
-				,'nom'=>$fuser->lastname
-				,'prenom'=>$fuser->firstname
-			)
-			,'view'=>array(
-				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Recherche')
-			)
-		)	
-	);
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');		
 
-	echo $form->end_form();
+	$r->liste($ATMdb, $sql, array(
+		'limit'=>array(
+			'page'=>$page
+			,'nbLine'=>'30'
+		)
+		,'link'=>array(
+			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
+		)
+		,'translate'=>array('libelleEtat'=>array(
+			'Refusée'=>'<b style="color:#A72947">Refusée</b>',
+			'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
+			'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
+			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
+		)
+		,'hide'=>array('fk_user')
+		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
+		,'liste'=>array(
+			'titre'=>'Récapitulatif'
+			,'image'=>img_picto('','title.png', '', 0)
+			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_suivant'=>img_picto('','next.png', '', 0)
+			,'noheader'=> (int)isset($_REQUEST['socid'])
+			,'messageNothing'=>"Il n'y a aucune absence à afficher"
+			,'order_down'=>img_picto('','1downarrow.png', '', 0)
+			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			
+		)
+		,'title'=>array(
+			'date_debut'=>'Date début'
+			,'date_fin'=>'Date fin'
+			,'libelle'=>'Type d\'absence'
+			,'firstname'=>'Prénom'
+			,'name'=>'Nom'
+			,'libelleEtat'=>'Statut demande'
+		)
+		,'search'=>array(
+		)
+		,'eval'=>array(
+				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+		)
+		,'orderBy'=>$TOrder
+		
+	));
 	
-	global $mesg, $error;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	$form->end();
+	?><a class="butAction" href="?">Retour</a><div style="clear:both"></div><?
+	
 	llxFooter();
-}
+}	
 
