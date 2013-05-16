@@ -86,8 +86,9 @@ function _liste(&$ATMdb, &$contrat) {
 	
 	$r = new TSSRenderControler($contrat);
 	
-	$sql= "SELECT c.rowid as 'ID', c.libelle as 'Libellé', DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin',
-			t.libelle as 'Type Ressource', s.nom as 'Fournisseur'";
+	$sql= "SELECT c.rowid as 'ID', c.libelle , c.numContrat,   DATE(c.date_debut) as 'Date début', 
+			DATE(c.date_fin) as 'Date fin',
+			t.libelle as 'Type Ressource' , s.nom as 'Fournisseur'";
 	if($user->rights->ressource->contrat->createContract){
 		$sql.=", '' as Supprimer";
 	}
@@ -133,7 +134,16 @@ function _liste(&$ATMdb, &$contrat) {
 			,'messageNothing'=>"Il n'y a aucun contrat à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 			
+		)
+		,'title'=>array(
+			'libelle'=>'Libellé'
+			,'numContrat'=>'Numéro du contrat'
+		)
+		,'search'=>array(
+			'numContrat'=>true
+			,'libelle'=>true
 		)
 		,'orderBy'=>$TOrder
 		

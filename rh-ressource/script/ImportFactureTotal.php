@@ -108,7 +108,7 @@ foreach ($TCarteInexistantes as $key => $value) {
 	$message .= 'Erreur : Pas de carte correspondante : '.$key.'<br>';
 }
 $message .= 'Fin du traitement. '.$cpt.' événements rajoutés créés.<br><br>';
-send_mail('Import - Factures TOTAL',$message);
+send_mail_resources('Import - Factures TOTAL',$message);
 	
 function chargeVoiture(&$ATMdb){
 	global $conf;

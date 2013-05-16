@@ -1,10 +1,11 @@
 <?php
+
 /*
 require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');
+require('../lib/ressource.lib.php');
 //*/
-
 
 ini_set('memory_limit','512M'); //taille mémoire limitée
 set_time_limit(0); //durée d'execution illimitée.
@@ -15,26 +16,31 @@ $timestart=microtime(true);
 
 $default = 359940; //consideration conso infinie : 99H
 $coutMinute = 0.09;		//0.09€/min
-
+$message = '';
 
 //on charge quelques listes pour avoir les clés externes.
-$TUser = array();
+$idCarteSim = getIdType('cartesim');
+$TUser = getUsers();
 $TUserInexistants = array();
 $TNumeroInexistants = array();
 $TCompteurs = array();
+
+
+$TNumero = array();
+$sql="SELECT rowid, numId FROM ".MAIN_DB_PREFIX."rh_ressource 
+	WHERE fk_rh_ressource_type=".$idCarteSim." 
+	AND entity=".$conf->entity;
+$ATMdb->Execute($sql);
+while($ATMdb->Get_line()) {
+	$TNumero[$ATMdb->Get_field('numId')] = $ATMdb->Get_field('rowid');
+	}
+
+
 $TLimites = array();
 $sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
-	$TCompteurs[$ATMdb->Get_field('rowid')] = array(
-		'conso'=>0				//en sec
-		,'consoInterne' => 0 	//en sec
-		,'consoExterne' => 0 	//en sec
-		,'conso3G' => 0
-		,'consoSMS' => 0
-		
-		);
 	$TLimites[$ATMdb->Get_field('rowid')] = array(
 		'lim'=>$default
 		,'limInterne' => $default	//en sec
@@ -45,15 +51,9 @@ while($ATMdb->Get_line()) {
 		,'smsIllimite'=> false
 		,'data15Mo'=> false
 		);	
-	}
+}
 
 
-$TNumero = array();
-$sql="SELECT rowid, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity=".$conf->entity;
-$ATMdb->Execute($sql);
-while($ATMdb->Get_line()) {
-	$TNumero[intval($ATMdb->Get_field('numId'))] = $ATMdb->Get_field('rowid');
-	}
 
 $TGroups= array();
 $sql="SELECT fk_user, fk_usergroup
@@ -101,17 +101,21 @@ while($ATMdb->Get_line()) {
 			);
 		}
 	else if ($ATMdb->Get_field('choixApplication')=='group'){
-		foreach ($TGroups[$ATMdb->Get_field('fk_usergroup')] as $members) {
-			modifierLimites($TLimites, $members
-				, $ATMdb->Get_field('duree')
-				, $ATMdb->Get_field('dureeInt')
-				, $ATMdb->Get_field('dureeExt')
-				, $ATMdb->Get_field('dataIllimite')
-				, $ATMdb->Get_field('dataIphone')
-				, $ATMdb->Get_field('mailforfait')
-				, $ATMdb->Get_field('smsIllimite')
-				, $ATMdb->Get_field('data15Mo')
-				);
+		if (empty($TGroups[$ATMdb->Get_field('fk_usergroup')]))
+			{$message .= 'Groupe n°'.$ATMdb->Get_field('fk_usergroup').' inexistant.<br>';}
+		else{
+			foreach ($TGroups[$ATMdb->Get_field('fk_usergroup')] as $members) {
+				modifierLimites($TLimites, $members
+					, $ATMdb->Get_field('duree')
+					, $ATMdb->Get_field('dureeInt')
+					, $ATMdb->Get_field('dureeExt')
+					, $ATMdb->Get_field('dataIllimite')
+					, $ATMdb->Get_field('dataIphone')
+					, $ATMdb->Get_field('mailforfait')
+					, $ATMdb->Get_field('smsIllimite')
+					, $ATMdb->Get_field('data15Mo')
+					);
+				}
 			}
 		}
 	else if ($ATMdb->Get_field('choixApplication')=='all'){
@@ -153,15 +157,9 @@ function modifierLimites(&$TLimites, $fk_user, $gen,  $int, $ext, $dataIll = fal
 
 
 
-
-
-
-
-
-
 //----------------TRAITEMENT DU FICHIER DES LIGNES D'APPELS----------------------------------------------------------
-if (empty($nomFichier)){$nomFichier = "./fichierImports/detail_appels.csv";}
-$message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
+if (empty($nomFichier)){$nomFichier = "./fichierImports/detail_appels10.csv";}
+$message .= 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 //début du parsing
 $numLigne = 0;
@@ -171,52 +169,59 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		if ($numLigne >=3){
 			$infos = explode(';', $data[0]);
 			$mois = substr($infos[4],3,7);
-			if (! array_key_exists ( strtolower($infos[2]) , $TUser )){
+			$num = $infos[1];
+			if (empty($TUser[strtolower($infos[2])] )){
 				$TUserInexistants[strtolower($infos[2])] = 1;
 			}
-			else {
-				$id = $TUser[strtolower($infos[2])];
-				$TCompteurs[$id]['num'] = $infos[1];
-				//on cherche premierement le type d'appel
+			else if ( empty($TNumero[$num] )){
+				$TNumeroInexistants[$num] = 1;
+			}
+			else{
+				$idUser = $TUser[strtolower($infos[2])];
 				
-				//echo $infos[11].' :   ';
+				//si c'est la 1ere fois qu'on passe une ligne avec cet User, on initialise le compteur
+				if (empty($TCompteurs[$idUser])){
+					$TCompteurs[$idUser] = array(
+						'num'=>$num
+						,'conso'=>0				//en sec
+						,'consoInterne' => 0 	//en sec
+						,'consoExterne' => 0 	//en sec
+						,'conso3G' => 0
+						,'consoSMS' => 0
+						
+					);
+				}
+				
+				//on cherche premierement le type d'appel
 				if (strpos(strtolower($infos[11]),'connexion') !== FALSE){
-					//echo 'connexion '.$infos[10].'<br>';
-					$TCompteurs[$id]['conso3G'] += floatval($infos[10]);
+					$TCompteurs[$idUser]['conso3G'] += floatval($infos[10]);
 				}
 				else if (strpos(strtolower($infos[11]),'appel') !== FALSE){
 					//echo 'appels';
+					$h = intval(substr($infos[10], 0,2));
+					$m = intval(substr($infos[10], 3,2));
+					$s = intval(substr($infos[10], 6,2));
 					if (strpos(strtolower($infos[11]),'interne') !== FALSE){
-						//echo ' internes ';
-						$h = intval(substr($infos[10], 0,2));
-						$m = intval(substr($infos[10], 3,2));
-						$s = intval(substr($infos[10], 6,2));
-						//echo $h.':'.$m.':'.$s;					
-						$TCompteurs[$id]['consoInterne'] += $s+60*$m+3600*$h;
-						$TCompteurs[$id]['conso'] += $s+60*$m+3600*$h;
+						//echo ' internes ';					
+						$TCompteurs[$idUser]['consoInterne'] += $s+60*$m+3600*$h;
+						$TCompteurs[$idUser]['conso'] += $s+60*$m+3600*$h;
 					}
 					else{
 						//echo ' externes ';
-						$h = intval(substr($infos[10], 0,2));
-						$m = intval(substr($infos[10], 3,2));
-						$s = intval(substr($infos[10], 6,2));
-						//echo $h.':'.$m.':'.$s;					
-						$TCompteurs[$id]['consoExterne'] += $s+60*$m+3600*$h;
-						$TCompteurs[$id]['conso'] += $s+60*$m+3600*$h;
+						$TCompteurs[$idUser]['consoExterne'] += $s+60*$m+3600*$h;
+						$TCompteurs[$idUser]['conso'] += $s+60*$m+3600*$h;
 					}
 				}
 				else if (strpos(strtolower($infos[11]),'sms') !== FALSE){
 					//echo 'sms';
-					$TCompteurs[$id]['consoSMS'] += 1;
+					$TCompteurs[$idUser]['consoSMS'] += 1;
 					
 				}
 				else {
-					echo '                      PAS TRAITEE : '.$infos[11];
+					//echo 'PAS TRAITEE : '.$infos[11].'<br>';
 				}
 			}
 		}
-		
-		//echo '<br>';
 		$numLigne++;
 	}
 }
@@ -228,26 +233,30 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 //----------------------------CREATION DES FACTURES-------------------
 	
 $cptFacture = 0;
-
+//echo count($TCompteurs);
 //----------------------ECRITURE DANS LE FICHIER D'EXPORT------------------------
 //LIGNE D'EN TETE
-$export = fopen('./script/exports/exportMoisAvril2013.csv', 'w');
-fwrite($export, "Utilisateur;Limite Générale;Conso Générale;Limite Interne;Conso Interne;Durée Interne Facturée;Limite Externe;Conso Externe;Durée Externe Facturée;Durée Totale Facturée;Conso Data;Data Facturés;SMS;SMS facturés;Coût minute;Total Facturé à l'utilisateur\n\r");
+//$export = fopen('./script/exports/exportMoisAvril2013.csv', 'w');
+//fwrite($export, "Utilisateur;Limite Générale;Conso Générale;Limite Interne;Conso Interne;Durée Interne Facturée;Limite Externe;Conso Externe;Durée Externe Facturée;Durée Totale Facturée;Conso Data;Data Facturés;SMS;SMS facturés;Coût minute;Total Facturé à l'utilisateur\n\r");
 //UNE LIGNE PAR UTILISATEUR
 foreach ($TUser as $nom => $id) {
-	//print_r($TCompteurs[$id]);
-	//echo '<br>';
-	if ( array_key_exists ( $TCompteurs[$id]['num'] , $TNumero )){
+	
+	//echo $nom.' '.$TCompteurs[$id]['num']; print_r($TCompteurs[$id]);echo '.<br>';
+	if ( !empty($TCompteurs[$id] )){
 		//Sauvegarde de la facture : une facture par personne et par mois.
-		$temp = new TRH_Evenement;
-		//infos générales
-		$temp->set_date('date_debut', $infos[6]);
-		$temp->set_date('date_fin', $infos[6]);
-		$temp->type = 'factTel';
+		$fact = new TRH_Evenement;
+		
+		$fact->set_date('date_debut', $infos[6]);
+		$fact->set_date('date_fin', $infos[6]);
+		$fact->type = 'factTel';
 		//clés externes
-		$temp->fk_rh_ressource = $TNumero[$TCompteurs[$id]['num']];
-		$temp->fk_user = $id;
-		$temp->motif = 'Facture téléphonique '.$mois;
+		$fact->fk_rh_ressource_type = $idCarteSim;
+		$fact->fk_rh_ressource = $TNumero[$TCompteurs[$id]['num']];
+		$fact->fk_user = $id;
+		$fact->motif = 'Facture téléphonique '.$mois;
+		$fact->dureeI = intval($TCompteurs[$id]['consoInterne']/60);
+		$fact->dureeE = intval($TCompteurs[$id]['consoExterne']/60);
+		$fact->duree = $temp->dureeI + $temp->dureeE;
 		
 		$dureeInt = intval($TCompteurs[$id]['consoInterne']/60);
 		$dureeExt = intval($TCompteurs[$id]['consoExterne']/60);
@@ -269,8 +278,7 @@ foreach ($TUser as $nom => $id) {
 		($TLimites[$id]['data15Mo']) ? $dataFact = ($TCompteurs[$id]['conso3G']-15000) : $dataFact = $TCompteurs[$id]['conso3G'];
 		($dataFact<0) ? $dataFact = 0 : null;
 		
-		
-		$temp->commentaire = "Consommation Générale : ".intToString(intval(($dureeExt+$dureeInt))).
+		$fact->commentaire = "Consommation Générale : ".intToString(intval(($dureeExt+$dureeInt))).
 								"\nLimite Générale : ".intToString(intval($TLimites[$id]['lim'])/60). 
 								"\nConsommation interne : ".intToString(intval($dureeInt)).
 								"\nLimite interne : ".intToString(intval($TLimites[$id]['limInterne'])/60).
@@ -280,16 +288,19 @@ foreach ($TUser as $nom => $id) {
 								"\nDonnées facturés: ".$dataFact."o".
 								"\nSMS facturés: ".$smsFact.
 								"\nCoût minute: ".$coutMinute."€/min";
-								
+							
 		//echo $temp->commentaire.'<br>';
-		$temp->coutTTC = $coutInt+$coutExt;
-		$temp->coutEntrepriseTTC = (($TCompteurs[$id]['consoExterne']+$TCompteurs[$id]['consoInterne'])/60)*$coutMinute;  
-		$temp->TVA = $tva;
-		$temp->save($ATMdb);		
+		$fact->coutTTC = $coutInt+$coutExt;
+		$fact->coutEntrepriseTTC = 0;//(($TCompteurs[$id]['consoExterne']+$TCompteurs[$id]['consoInterne'])/60)*$coutMinute;  
+		$fact->TVA = $tva;
+		
+		
+		
+		$fact->save($ATMdb);		
 		$cptFacture++;
 		
 		//ecriture de l'export
-		fwrite($export, $nom.';');
+		/*fwrite($export, $nom.';');
 		fwrite($export, intToString(intval($TLimites[$id]['lim']/60)).";");
 		fwrite($export, intToString(intval($dureeExt+$dureeInt)).";");
 		fwrite($export, intToString(intval($TLimites[$id]['limInterne']/60)).";");
@@ -305,15 +316,12 @@ foreach ($TUser as $nom => $id) {
 		fwrite($export, $smsFact.';');
 		fwrite($export, $coutMinute.';');
 		fwrite($export, $coutMinute*intval($dureeFactInt+$dureeFactExt).';');
-		fwrite($export, "\n");
+		fwrite($export, "\n");*/
 		
-	}
-	else {
-		if (isset($TCompteurs[$id]['num']))
-			{$TNumeroInexistants[$TCompteurs[$id]['num']] = 1;}
-	}
+		}
+	
 }
-fclose($export);
+//fclose($export);
 
 
 
@@ -336,14 +344,6 @@ $timeend=microtime(true);
 $page_load_time = number_format($timeend-$timestart, 3);
 $message .= $cptFacture." factures crees.<br><br>";
 $message .= "Fin du traitement. ".'Durée : '.$page_load_time . " sec.<br><br>";
-send_mail('Import - Factures Orange',$message);
 
-function intToString($val){
-	$h = intval($val/60);
-	if ($h < 10){$h = '0'.$h;}
-	$m = $val%60;
-	if ($m < 10){$m = '0'.$m;}
-	if ($h==0 && $m==0){return '00:00';}
-	return $h.':'.$m;
-}
-
+//echo $message;
+send_mail_resources('Import - Factures Orange',$message);

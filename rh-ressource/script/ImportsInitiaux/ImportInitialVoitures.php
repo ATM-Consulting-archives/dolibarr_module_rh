@@ -11,7 +11,7 @@ $timestart=microtime(true);
 		
 //on charge quelques listes pour avoir les clés externes.
 $TUser = array();
-$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');

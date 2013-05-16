@@ -110,7 +110,7 @@ $timeend=microtime(true);
 $page_load_time = number_format($timeend-$timestart, 3);
 $message .= $cpt." événements trajets rajoutés.<br>";
 $message .= 'Fin du traitement. Durée : '.$page_load_time . " sec.<br><br>";
-send_mail('Import - Factures AREA',$message);
+send_mail_resources('Import - Factures AREA',$message);
 
 function chargeAssocies(&$ATMdb){
 	global $conf;

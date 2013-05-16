@@ -149,7 +149,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	$timeend=microtime(true);
 	$page_load_time = number_format($timeend-$timestart, 3);
 	$message .= '<br>Fin du traitement. Durée : '.$page_load_time . " sec.<br><br>";
-	send_mail('Import - Factures Parcours',$message);
+	send_mail_resources('Import - Factures Parcours',$message);
 }
 
 function chargeVoiture(&$ATMdb){

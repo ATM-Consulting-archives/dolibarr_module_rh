@@ -159,7 +159,7 @@ function stringTous($val, $choixApplication){
 	else return $val;
 }
 
-function intToString($val){
+function intToString($val = 0){
 	$h = intval($val/60);
 	if ($h < 10){$h = '0'.$h;}
 	$m = $val%60;
@@ -183,7 +183,7 @@ function timeToInt($h, $m){
 	return intval($h)*60+intval($m);
 }
 
-function send_mail($subject, $message){
+function send_mail_resources($subject, $message){
 	global $langs;
 	
 	$langs->load('mails');
