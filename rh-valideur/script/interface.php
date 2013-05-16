@@ -4,6 +4,10 @@ define('INC_FROM_CRON_SCRIPT', true);
 require('../config.php');
 
 //Interface qui renvoie toutes les lignes de notes de frais étant classées comme "comptabilisées"
+global $user,$conf;
+
+$ATMdb=new Tdb;
+
 $get = isset($_REQUEST['get'])?$_REQUEST['get']:'ndf';
 
 _get($get);
@@ -13,11 +17,17 @@ function _get($case) {
 		case 'ndf':
 			__out(_ndf($_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['type']));
 			break;
+		case 'situation_perso':
+			__out(_situation_perso($_REQUEST['fk_user']));	
+			break;
+		case 'situation_pro':
+			__out(_situation_pro($_REQUEST['fk_user']));	
+			break;
 	}
 }
 
 function _ndf($date_debut, $date_fin, $type){
-	global $user, $conf, $langs, $db;
+	global $langs, $db;
 	
 	$TabNdf=array();
 	$date_debut=explode("/", $date_debut);
@@ -147,3 +157,41 @@ function _ndf($date_debut, $date_fin, $type){
 	return $TabNdf;
 }
 
+function _situation_perso($userId){
+		
+	$TabRecapSituationPerso=array();
+	
+	$sql="SELECT e.DDN as 'ddn', e.SIT_FAM as 'situation_famille', e.NB_ENF_CHARGE as 'nb_enfants'
+	FROM ".MAIN_DB_PREFIX."user_extrafields as e 
+		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_object = u.rowid)
+	WHERE u.entity=".$conf->entity."
+	AND u.rowid=".$userId;
+	
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$TabRecapSituationPerso['ddn']=dol_print_date($ATMdb->Get_field('ddn'));
+		$TabRecapSituationPerso['situation_famille']=$ATMdb->Get_field('situation_famille');
+		$TabRecapSituationPerso['nb_enfants']=$ATMdb->Get_field('nb_enfants');
+	}
+	
+	return $TabRecapSituationPerso;
+	
+}
+
+function _situation_pro($userId){
+	
+	$TabRecapSituationPro=array();
+	
+	$sql="SELECT u.job as 'fonction'
+	FROM ".MAIN_DB_PREFIX."user as u
+	WHERE u.entity=".$conf->entity."
+	AND u.rowid=".$userId;
+	
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$TabRecapSituationPro['fonction']=$ATMdb->Get_field('fonction');
+	}
+	
+	return $TabRecapSituationPro;
+	
+}
