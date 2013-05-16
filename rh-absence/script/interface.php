@@ -15,19 +15,25 @@ _get($get);
 function _get($case) {
 	switch ($case) {
 		case 'jour_anciennete':
-			__out(_jourAnciennete($_REQUEST['id']));	
+			__out(_jourAnciennete($_REQUEST['fk_user']));	
 			break;
 		case 'maladie_maintenue':
-			__out(_dureeMaladieMaintenue($_REQUEST['id'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
+			__out(_dureeMaladieMaintenue($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
 			break;
 		case 'maladie_non_maintenue':
-			__out(_dureeMaladieNonMaintenue($_REQUEST['id'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
+			__out(_dureeMaladieNonMaintenue($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
+			break;
+		case 'conges':
+			__out(_conges($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
 			break;
 	}
 }
 
 
 function _jourAnciennete($userId){
+	
+	$TabRecapConges=array();
+	
 	$sql="SELECT a.acquisAncienneteNM1 
 	FROM ".MAIN_DB_PREFIX."rh_compteur as a 
 	WHERE a.entity=".$conf->entity."
@@ -37,6 +43,8 @@ function _jourAnciennete($userId){
 	while($ATMdb->Get_line()) {
 		$TabRecapConges[$userId]=$ATMdb->Get_field('acquisAncienneteNM1');
 	}
+	
+	return $TabRecapConges;
 }
 
 function _dureeMaladieMaintenue($userId, $date_debut, $date_fin){
@@ -64,9 +72,9 @@ function _dureeMaladieNonMaintenue($userId, $date_debut, $date_fin){
 	$TabRecapMaladie=array();
 		
 	$sql="SELECT u.name, u.firstname, a.type, a.date_debut, a.date_fin, a.duree 
-	FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."rh_absence as a 
-	WHERE u.rowid=a.fk_user 
-	AND a.type LIKE 'maladienonmaintenue'
+	FROM ".MAIN_DB_PREFIX."rh_absence as a
+		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user = u.rowid)
+	WHERE a.type LIKE 'maladienonmaintenue'
 	AND a.entity=".$conf->entity."
 	AND a.fk_user=".$userId."
 	AND (a.date_debut>'".$date_debut."' AND a.date_fin<'".$date_fin."')";
@@ -77,4 +85,28 @@ function _dureeMaladieNonMaintenue($userId, $date_debut, $date_fin){
 	}
 	
 	return $TabRecapMaladie;
+}
+
+function _conges($userId, $date_debut, $date_fin){
+	
+	////!!!! A MODIFIER
+	
+	$TabRecapConges=array();
+	
+	$sql="SELECT DATEDIFF('".$date_fin."','".$date_debut."')-COUNT(a.rowid) as 'nbJoursTravailles'
+	FROM ".MAIN_DB_PREFIX."rh_absence as a
+		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user = u.rowid)
+	WHERE a.entity=".$conf->entity."
+	AND a.fk_user=".$userId;
+	
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$TabRecapConges['nbJoursTravailles']=$ATMdb->Get_field('nbJoursTravailles');
+		$TabRecapConges['nbJoursNonTravailles']=$ATMdb->Get_field('nbJoursTravailles');
+		$TabRecapConges['congesPayes']=$ATMdb->Get_field('congesPayes');
+		$TabRecapConges['eventFamille']=$ATMdb->Get_field('eventFamille');
+		$TabRecapConges['congesDivers']=$ATMdb->Get_field('congesDivers');
+	}
+	
+	return $TabRecapConges;
 }

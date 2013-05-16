@@ -6,6 +6,10 @@ require('../config.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php");
 
 //Interface qui renvoie les congés maladie (maintenue ou non) et les jours ancienneté acquis du collaborateur souhaité durant la période demandée
+global $user,$conf;
+		
+$ATMdb=new Tdb;
+
 $get = isset($_REQUEST['get'])?$_REQUEST['get']:'';
 
 _get($get);
@@ -23,32 +27,28 @@ function _get($case) {
 
 
 function _formation($userId, $date_debut, $date_fin){
-		global $user,$conf;
-		
-		$ATMdb=new Tdb;
 		
 		$TabRecapFormation=array();
 		
-		$sql="SELECT u.name, u.firstname, a.date_debut, a.date_fin, a.coutFormation, a.libelleFormation
-		FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."rh_formation_cv as a 
-		WHERE u.rowid=a.fk_user 
-		AND a.entity=".$conf->entity."
-		AND a.fk_user=".$userId."
-		AND (a.date_debut>'".$date_debut."' AND a.date_fin<'".$date_fin."')";
+		$sql="SELECT f.rowid, f.libelleFormation, f.coutFormation, f.montantOrganisme, f.montantEntreprise
+		FROM ".MAIN_DB_PREFIX."rh_formation_cv as f
+			LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (f.fk_user = u.rowid)
+		WHERE f.entity=".$conf->entity."
+		AND u.rowid=".$userId."
+		AND (f.date_debut>'".$date_debut."' AND f.date_fin<'".$date_fin."')";
 		
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
-			$TabRecapFormation[$userId]['libelleFormation']=$ATMdb->Get_field('libelleFormation');
-			$TabRecapFormation[$userId]['coutFormation']=round($TabRecapFormation[$user]['coutFormation']+$ATMdb->Get_field('coutFormation'),2);
+			$TabRecapFormation[$ATMdb->Get_field('rowid')]['libelleFormation']=$ATMdb->Get_field('libelleFormation');
+			$TabRecapFormation[$ATMdb->Get_field('rowid')]['coutFormation']=round($ATMdb->Get_field('coutFormation'),2);
+			$TabRecapFormation[$ATMdb->Get_field('rowid')]['montantOrganisme']=round($ATMdb->Get_field('montantOrganisme'),2);
+			$TabRecapFormation[$ATMdb->Get_field('rowid')]['montantEntreprise']=round($ATMdb->Get_field('montantEntreprise'),2);
 		}
 		
 		return $TabRecapFormation;
 }
 
 function _remuneration($userId, $date_debut, $date_fin){
-		global $user,$conf;
-		
-		$ATMdb=new Tdb;
 		
 		$TabRecapFormation=array();
 		
