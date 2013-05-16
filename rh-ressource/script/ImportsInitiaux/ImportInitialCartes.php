@@ -24,6 +24,7 @@ while($ATMdb->Get_line()) {
 $idCarteTotal = getIdType($ATMdb,'cartetotal');
 $cptCarteTotal = 0;
 $nomFichier = "fichier facture total.csv";
+$nomFichier = "Facture TOTAL.csv";
 echo 'Traitement du fichier '.$nomFichier.' : <br>';
 
 
@@ -32,7 +33,7 @@ $numLigne = 0;
 if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle, 0,'\r')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=1){
+		if ($numLigne >=2){
 			$infos = explode(';', $data[0]);
 			//print_r($infos);
 			
@@ -79,6 +80,7 @@ echo $cptCarteTotal.' cartes Total importés.<br>';
 $idCarteArea = getIdType($ATMdb,'cartearea');
 $cptCarteArea = 0;
 $nomFichier = "fichier facture area.CSV";
+$nomFichier = "Facture AREA.CSV";
 echo 'Traitement du fichier '.$nomFichier.' : <br>';
 
 
