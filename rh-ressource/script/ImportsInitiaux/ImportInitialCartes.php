@@ -12,10 +12,10 @@ echo 'Import initial des cartes.<br><br>';
 $idVoiture=  getIdType($ATMdb, 'voiture');
 //on charge quelques listes pour avoir les clés externes.
 $TUser = array();
-$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+$sql="SELECT rowid, name, firstname,login FROM ".MAIN_DB_PREFIX."user ";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
-	$TUser[strtoupper($ATMdb->Get_field('firstname')).' '.strtoupper($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
+	$TUser[$ATMdb->Get_field('login') /*strtoupper($ATMdb->Get_field('firstname')).' '.strtoupper($ATMdb->Get_field('name'))*/] = $ATMdb->Get_field('rowid');
 	}
 
 
@@ -24,6 +24,7 @@ while($ATMdb->Get_line()) {
 $idCarteTotal = getIdType($ATMdb,'cartetotal');
 $cptCarteTotal = 0;
 $nomFichier = "fichier facture total.csv";
+$nomFichier = "Facture TOTAL.csv";
 echo 'Traitement du fichier '.$nomFichier.' : <br>';
 
 
@@ -32,7 +33,7 @@ $numLigne = 0;
 if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle, 0,'\r')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=1){
+		if ($numLigne >=2){
 			$infos = explode(';', $data[0]);
 			//print_r($infos);
 			
@@ -79,6 +80,7 @@ echo $cptCarteTotal.' cartes Total importés.<br>';
 $idCarteArea = getIdType($ATMdb,'cartearea');
 $cptCarteArea = 0;
 $nomFichier = "fichier facture area.CSV";
+$nomFichier = "Facture AREA.CSV";
 echo 'Traitement du fichier '.$nomFichier.' : <br>';
 
 

@@ -13,10 +13,10 @@ $timestart=microtime(true);
 
 //on charge quelques listes pour avoir les clés externes.
 $TUser = array();
-$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
-	$TUser[strtolower($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
+	$TUser[strtolower($ATMdb->Get_field('name').' '.$ATMdb->Get_field('firstname'))] = $ATMdb->Get_field('rowid');
 	}
 
 $TRessource = chargeSim($ATMdb);
@@ -41,7 +41,7 @@ if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 			$prenom = $infos[27];
 
 			if (!empty($nom)){
-				if (array_key_exists(strtolower($nom), $TUser)){
+				if (isset($TUser[strtolower($nom.' '.$prenom)])){
 					$temp = new TRH_Ressource_Regle;
 					$temp->choixApplication = 'user';
 					

@@ -159,7 +159,7 @@ function stringTous($val, $choixApplication){
 	else return $val;
 }
 
-function intToString($val){
+function intToString($val = 0){
 	$h = intval($val/60);
 	if ($h < 10){$h = '0'.$h;}
 	$m = $val%60;
