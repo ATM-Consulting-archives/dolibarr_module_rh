@@ -12,7 +12,7 @@ echo 'Import initial des cartes.<br><br>';
 $idVoiture=  getIdType($ATMdb, 'voiture');
 //on charge quelques listes pour avoir les clés externes.
 $TUser = array();
-$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[strtoupper($ATMdb->Get_field('firstname')).' '.strtoupper($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
