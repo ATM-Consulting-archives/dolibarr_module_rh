@@ -253,7 +253,11 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 	////////////AFFICHAGE DES  FORMATIONS
 	$r = new TSSRenderControler($formation);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
-			  date_debut, date_fin, libelleFormation,  commentaireFormation,lieuFormation, date_formationEcheance, CONCAT(coutFormation,' €') as 'Coût pour l\'entreprise', fk_user, '' as 'Supprimer'
+			  date_debut, date_fin, libelleFormation,  commentaireFormation,lieuFormation, date_formationEcheance
+			  , CONCAT(CAST(coutFormation as DECIMAL(16,2)),' €') as 'Coût total'
+			  , CONCAT(CAST(montantOrganisme as DECIMAL(16,2)),' €') as 'Pris en charge par l\'organisme'
+			  , CONCAT(CAST(montantEntreprise as DECIMAL(16,2)),' €') as 'Pris pris en charge par l\'entreprise'
+			  , fk_user, '' as 'Supprimer'
 		FROM   ".MAIN_DB_PREFIX."rh_formation_cv
 		WHERE fk_user=".$_REQUEST['fk_user']." AND entity=".$conf->entity;
 
@@ -414,7 +418,9 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				,'date_debut'=>$form->calendrier('', 'date_debut', $formation->get_date('date_debut'), 10)
 				,'date_fin'=>$form->calendrier('', 'date_fin', $formation->get_date('date_fin'), 10)
 				,'libelleFormation'=>$form->texte('','libelleFormation',$formation->libelleFormation, 30,100,'','','-')
-				,'coutFormation'=>$form->texte('','coutFormation',$formation->coutFormation, 30,100,'','','-')
+				,'coutFormation'=>$form->texte('','coutFormation',$formation->coutFormation, 15,100,'','','-')
+				,'montantOrganisme'=>$form->texte('','montantOrganisme',$formation->montantOrganisme, 15,100,'','','-')
+				,'montantEntreprise'=>$form->texte('','montantEntreprise',$formation->montantEntreprise, 15,100,'','','-')
 				,'commentaireFormation'=>$form->zonetexte('','commentaireFormation',$lignecv->commentaireFormation, 40,3,'','','-')
 				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 30,100,'','','-')
 				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->get_date('date_formationEcheance'), 10)
