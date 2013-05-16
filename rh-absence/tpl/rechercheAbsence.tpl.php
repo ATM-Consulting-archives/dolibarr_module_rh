@@ -1,6 +1,6 @@
 
 	<div>			
-		<h2 style="color: #2AA8B9;">Recherche des absences pour des collaborateurs</h2>	
+		<h2 style="color: #2AA8B9;">Recherche des absences des collaborateurs</h2>	
 		<br/>
 		<table class="border" style="width:100%">	
 			<tr>
@@ -12,7 +12,7 @@
 					Date fin [recherche.date_fin;block=tr;strconv=no;protect=no]
 					Groupe [recherche.TGroupe;block=tr;strconv=no;protect=no]
 					Utilisateur [recherche.TUser;block=tr;strconv=no;protect=no]
-					
+					Aucun congés [recherche.horsConges;block=tr;strconv=no;protect=no]
 					[recherche.btValider;block=tr;strconv=no;protect=no]
 					
 				</td>
