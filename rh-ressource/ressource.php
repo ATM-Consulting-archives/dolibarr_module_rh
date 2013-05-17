@@ -140,7 +140,8 @@ function _liste(&$ATMdb, &$ressource) {
 	global $langs,$conf,$db,$user;	
 	llxHeader('','Liste des ressources');
 	print dol_get_fiche_head(array()  , '', 'Liste ressources');
-	getStandartJS();
+	
+	//getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.libelle, r.fk_rh_ressource_type,
@@ -188,7 +189,7 @@ function _liste(&$ATMdb, &$ressource) {
 		,'liste'=>array(
 			'titre'=>'Liste des ressources'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Il n'y a aucune ressource à afficher"
