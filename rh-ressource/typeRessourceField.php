@@ -126,7 +126,7 @@ function _liste(&$ATMdb, &$ressource) {
 		,'liste'=>array(
 			'titre'=>'Liste des types de ressources'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Il n'y a aucun type de ressource à afficher"
@@ -185,6 +185,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				'id'=>$ressource->getId()
 				,'code'=> $ressource->code
 				,'libelle'=> $ressource->libelle
+				,'titreChamps'=>load_fiche_titre("Champs de la ressource",'', 'title.png', 0, '')
+				,'pictoMove'=>img_picto('','grip.png', '', 0)
 			)
 			,'newField'=>array(
 				//'hidden'=>$form->hidden('action', 'save')
@@ -200,8 +202,8 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 			,'view'=>array(
 				'mode'=>$mode
 				,'nbChamps'=>count($ressource->TField)
-			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource)  , 'field', 'Type de ressource')
+				,'onglet'=>dol_get_fiche_head(array()  , '', 'Type de ressource')
 			)
 			
 		)	

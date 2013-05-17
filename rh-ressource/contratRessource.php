@@ -119,7 +119,7 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 		,'liste'=>array(
 			'titre'=>'Liste des contrats'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Il n'y a aucun contrat à afficher"
@@ -158,8 +158,8 @@ function _fiche(&$ATMdb,  &$association, &$ressource,  $mode) {
 		,array(
 			'ressource'=>array(
 				'id'=>$ressource->getId()
-				,'numId'=>$ressource->numId
-				,'libelle'=>$ressource->libelle
+				,'entete'=>getLibelle($ressource)
+				,'titreContratRessource'=>load_fiche_titre("Contrat associé à la ressource",'', 'title.png', 0, '')
 			)
 			,'NAssociation'=>array(
 				'id'=>$association->getId()
@@ -172,6 +172,7 @@ function _fiche(&$ATMdb,  &$association, &$ressource,  $mode) {
 				'mode'=>$mode
 				,'userRight'=>((int)$user->rights->ressource->contrat->createContract)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'contrats', 'Ressource')
+				,'onglet'=>dol_get_fiche_head(array()  , '', 'Contrat associé')
 			)
 			
 			

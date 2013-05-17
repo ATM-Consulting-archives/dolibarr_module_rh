@@ -1,29 +1,18 @@
 [onshow;block=begin;when [view.mode]=='view']
-
-        
-                [view.head;strconv=no]
-                
-                        <div class="tabBar">
+	[view.head;strconv=no]
+    [ressource.entete;strconv=no;protect=no]           
 [onshow;block=end] 
 
+[onshow;block=begin;when [view.mode]!='view']
+	[view.onglet;strconv=no]
+    [ressource.entete;strconv=no;protect=no]           
+[onshow;block=end] 
+
+[ressource.titreContratRessource;strconv=no;protect=no]           
+
 <table class="border" style="width:100%">
-		<tr>
-			<td>Numéro Id</td>
-			<td>[ressource.numId;strconv=no;protect=no]</td>
-		</tr>
-		<tr>
-			<td>Libellé</td>
-			<td>[ressource.libelle;strconv=no;protect=no]</td>
-		</tr>
-</table><br>
-
-
-<h2>Contrat associé à la ressource</h2>
-
-
-<table class="border" style="width:50%">
 	<tr>
-		<td>Contrat</td>
+		<td style="width:20%">Contrat</td>
 		<td>[NAssociation.fk_rh_contrat;strconv=no;protect=no]</td>[NAssociation.fk_rh_ressource;strconv=no;protect=no]
 	</tr>
 	<tr>

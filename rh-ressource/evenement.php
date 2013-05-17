@@ -192,7 +192,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		,'liste'=>array(
 			'titre'=>'Liste des événements de type '.$evenement->TType[$type]
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>'Il n\'y a aucun événement à afficher'
@@ -253,7 +253,8 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->get_date('date_fin'), 10)
 				,'type'=>$form->combo('', 'type', $tab, $evenement->type)
-				,'responsabilite'=>$form->texte('','responsabilite',$evenement->responsabilite, 10,10,'','','')
+				//,'responsabilite'=>$form->texte('','responsabilite',$evenement->responsabilite, 10,10,'','','')
+				,'responsabilite'=>$form->combo('', 'responsabilite', $evenement->TResponsabilite, $evenement->responsabilite)
 				,'coutTTC'=>$form->texte('', 'coutTTC', ($evenement->coutTTC == 0) ? '0': $evenement->coutTTC, 10,10)
 				,'coutEntrepriseTTC'=>$form->texte('', 'coutEntrepriseTTC', $evenement->coutEntrepriseTTC, 10,10)
 				,'TVA'=>$form->combo('','TVA',$evenement->TTVA,$evenement->TVA)

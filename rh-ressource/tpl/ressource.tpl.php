@@ -19,10 +19,6 @@
 </script>
 
 
-[onshow;block=begin;when [view.mode]!='view']
-			<h2>Créer une ressource </h2>
-[onshow;block=end]
-
 <div>
 
 	<!-- entête du tableau -->
@@ -49,17 +45,14 @@
 		<td>[ressource.libelle;strconv=no;protect=no] </td>
 	</tr>
 	<tr>
-		<td>Date d'achat</td>
+		<td>Date début</td>
 		<td>[ressource.date_achat;strconv=no;protect=no]</td>
 	</tr>
 	<tr>
-		<td>Date de vente</td>
+		<td>Date fin</td>
 		<td>[ressource.date_vente;strconv=no;protect=no]</td>
 	</tr>	
-	<tr>
-		<td>Date de garantie</td>
-		<td>[ressource.date_garantie;strconv=no;protect=no]</td>
-	</tr>	
+		
 	<tr>
 		<td>Agence Propriétaire</td>
 		<td>[ressource.fk_proprietaire;strconv=no;protect=no]</td>
@@ -69,8 +62,8 @@
 
 </div>
 <br><br>
-[ressource.titreChamps;strconv=no;protect=no]
 
+[ressource.titreChamps;strconv=no;protect=no]
 <table class="border" style="width:100%">
 	<tr>
 		<td style="width:20%" [ressourceField.obligatoire;strconv=no;protect=no]> 
@@ -80,8 +73,7 @@
 		
 	</tr>
 </table>
-
-<br>
+<br><br>
 
 [onshow;block=begin;when [view.mode]=='edit']
 	[ressource.titreRessourceAssocie;strconv=no;protect=no]
@@ -92,6 +84,7 @@
 
 		
 [onshow;block=begin;when [view.mode]=='edit']
+<br><br>
 [ressource.titreAttribution;strconv=no;protect=no]
 
 <p> Attribuer directement cette ressource à un utilisateur : 
