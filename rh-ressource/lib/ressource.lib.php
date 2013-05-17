@@ -53,17 +53,21 @@ function ressourcePrepareHead(&$obj, $type='type-ressource',&$param=null) {
  */
 function printLibelle($ressource){
 	
-	?><table class="border" style="width:100%">
+	print getLibelle($ressource);
+	
+}
+
+function getLibelle($ressource){
+	return '<table class="border" style="width:100%">
 		<tr>
-			<td>Numéro Id</td>
-			<td><? echo $ressource->numId ;?></td>
+			<td style="width:20%">Numéro Id</td>
+			<td>'.$ressource->numId.'</td>
 		</tr>
 		<tr>
 			<td>Libellé</td>
-			<td><? echo $ressource->libelle ;?></td>
+			<td><a href="ressource.php?id='.$ressource->getId().'">'.$ressource->libelle.'</a> </td>
 		</tr>
-	</table><br><?
-	
+	</table><br>';
 }
 
 function getTypeEvent($idTypeRessource = 0){

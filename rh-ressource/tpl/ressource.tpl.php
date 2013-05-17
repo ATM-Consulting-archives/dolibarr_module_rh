@@ -29,14 +29,14 @@
 <table class="border" style="width:100%">
 	[onshow;block=begin;when [view.mode]=='new']
 		<tr>
-			<td>Type</td>
+			<td style="width:20%">Type</td>
 			<td>[ressourceNew.typeCombo;strconv=no;protect=no]</td>
 			<td>[ressourceNew.validerType;strconv=no;protect=no]</td>
 		</tr>
 	[onshow;block=end]
 	[onshow;block=begin;when [view.mode]!='new']
 	<tr>
-		<td>Type</td>
+		<td style="width:20%">Type</td>
 		<td>[ressource.type;strconv=no;protect=no]</td>[ressource.typehidden;strconv=no;protect=no]
 	</tr>
 	
@@ -68,15 +68,15 @@
 </table>
 
 </div>
+<br><br>
+[ressource.titreChamps;strconv=no;protect=no]
 
-<h2>Champs</h2>
-
-<table class="border" style="width:50%">
+<table class="border" style="width:100%">
 	<tr>
-		<td style="width:40%" [ressourceField.obligatoire;strconv=no;protect=no]> 
+		<td style="width:20%" [ressourceField.obligatoire;strconv=no;protect=no]> 
 			[ressourceField.libelle;block=tr;strconv=no;protect=no] 
 		</td>
-		<td style="width:60%"> [ressourceField.valeur;strconv=no;protect=no] </td>
+		<td> [ressourceField.valeur;strconv=no;protect=no] </td>
 		
 	</tr>
 </table>
@@ -84,23 +84,15 @@
 <br>
 
 [onshow;block=begin;when [view.mode]=='edit']
-	<h2>Ressource associée </h2>
+	[ressource.titreRessourceAssocie;strconv=no;protect=no]
 	<div>
 		[fk_ressource.liste_fk_rh_ressource;strconv=no;protect=no]
 	</div>
 [onshow;block=end]
 
-[onshow;block=begin;when [view.mode]!='edit']
-	[onshow;block=begin;when [fk_ressource.fk_rh_ressource]!='aucune ressource']
-		<h2>Ressource associée </h2>
-		<div>
-			Cette ressource est associée à <a href='ressource.php?id=[fk_ressource.id]'>[fk_ressource.fk_rh_ressource]</a>.
-		</div>
-	[onshow;block=end]
-[onshow;block=end]
 		
 [onshow;block=begin;when [view.mode]=='edit']
-<h2>Attribution de la ressource</h2>
+[ressource.titreAttribution;strconv=no;protect=no]
 
 <p> Attribuer directement cette ressource à un utilisateur : 
 <INPUT type=radio name="fieldChoice" value="O" id="ouiChecked"><label for="ouiChecked"> Oui</label>
@@ -202,12 +194,13 @@
 [onshow;block=end]
 
 
+<!--  href='ressource.php?id=[fk_ressource.id]'-->
 
 		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]=='aucune ressource']
 			[onshow;block=begin;when [fk_ressource.reqExiste]=='1']
 				[onshow;block=begin;when [view.mode]=='view']
 				</br>
-				<h2>Organigramme des ressources associées</h2>
+				[ressource.titreOrganigramme;strconv=no;protect=no]
 					<div id="organigrammePrincipal" style="margin-left:70px;text-align:center;">
 						<br/>
 						<div id="chart" class="orgChart" ></div>
@@ -233,7 +226,7 @@
 		[onshow;block=begin;when [fk_ressource.fk_rh_ressource]!='aucune ressource']
 			[onshow;block=begin;when [view.mode]=='view']
 				</br>
-				<h2>Organigramme des ressources associées</h2>
+				[ressource.titreOrganigramme;strconv=no;protect=no]
 					<div id="organigrammePrincipal" style="margin-left:70px;text-align:center;">
 					<br/>
 					<div id="chart" class="orgChart" ></div>

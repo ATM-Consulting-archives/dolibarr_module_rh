@@ -145,7 +145,7 @@ function _liste(&$ATMdb, &$contrat) {
 		)
 		,'search'=>array(
 			'numContrat'=>true
-			,'libelle'=>true
+			,'libelle'=>array('recherche'=>true,'table'=>'c')
 		)
 		,'orderBy'=>$TOrder
 		
