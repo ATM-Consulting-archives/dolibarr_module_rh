@@ -13,6 +13,7 @@
 	llxHeader('','Type d\'événement sur le type', '', '', 0, 0);
 	
 	
+	
 	if(isset($_REQUEST['id'])){
 		$ressourceType->load($ATMdb, $_REQUEST['id']);
 		if (isset($_REQUEST['action'])){
@@ -34,7 +35,17 @@
 		//$ATMdb->db->debug=true;
 		dol_fiche_head(ressourcePrepareHead($ressourceType, 'type-ressource')  , 'event', 'Type de ressource');
 	
-		?><h2>Créer des types d'événements associés au type de la ressource</h2><?	
+		echo '<table width="100%" class="border">			
+			<tr>
+				<td width="20%">Libellé</td>
+				<td>'.$ressourceType->libelle.'</td></tr>
+			<tr>
+				<td width="20%">Code</td>
+				<td>'.$ressourceType->code.'</td>
+			</tr>
+			</table><br><br>';
+	
+		print_fiche_titre("Créer des types d'événements associés au type de la ressource",'', 'title.png', 0, '');
 		
 		//on récupère le champs 
 		

@@ -21,6 +21,7 @@
 			,"/library/wdCalendar/css/alert.css" 
 			,"/library/wdCalendar/css/main.css")
 	);
+	
 		
 	$ATMdb=new Tdb;
 	$ressource=new TRH_ressource;
@@ -65,6 +66,8 @@
 		,array(
 			'ressource'=>array(
 				'id' => $id//$ressource->getId()
+				,'entete'=>getLibelle($ressource)
+				,'titreAgenda'=>load_fiche_titre("Agenda des ressources",'', 'title.png', 0, '')
 				,'idHidden'=>$form->hidden('id', $id)
 				,'fiche'=> $fiche
 				,'ficheHidden'=>$form->hidden('fiche', $fiche)
@@ -83,6 +86,7 @@
 				'mode'=>$mode
 				/*,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'calendrier', 'Ressource')
+				,'onglet'=>dol_get_fiche_head(array()  , '', 'Agenda')
 			)
 			
 			

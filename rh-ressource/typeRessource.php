@@ -139,7 +139,7 @@ function _liste(&$ATMdb, &$ressource) {
 		,'liste'=>array(
 			'titre'=>'Liste des types de ressources'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Il n'y a aucun type de ressource à afficher"

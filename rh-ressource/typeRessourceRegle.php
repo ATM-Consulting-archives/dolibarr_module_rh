@@ -97,6 +97,12 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 	
 	llxHeader('','Règles sur les Ressources');
 	dol_fiche_head(ressourcePrepareHead($ressourceType, 'type-ressource')  , 'regle', 'Type de ressource');
+	
+		echo '<table width="100%" class="border">
+			<tr><td width="20%">Libellé</td><td>'.$ressourceType->libelle.'</td></tr>
+			<tr><td width="20%">Code</td><td>'.$ressourceType->code.'</td></tr>
+		</table><br>';
+		
 	$r = new TSSRenderControler($ressourceType);
 	$sql="SELECT DISTINCT r.rowid as 'ID', r.choixApplication as 'CA', u.firstname ,u.name, g.nom as 'Groupe',
 		duree, dureeInt,dureeExt,dataIllimite, dataIphone, mailforfait, smsIllimite, data15Mo, '' as 'Supprimer'
@@ -163,7 +169,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		,'liste'=>array(
 			'titre'=>'Liste des règles'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['ID'])
 			,'messageNothing'=>"Il n'y a aucune règle à afficher"
@@ -203,6 +209,8 @@ function TousOuPas($choix, $val){
 function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 	llxHeader('','Règle sur les Ressources', '', '', 0, 0);
 	
+
+
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $ressourceType->getId());
@@ -227,6 +235,7 @@ function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 				'id'=>$ressourceType->getId()
 				,'code'=> $ressourceType->code
 				,'libelle'=> $ressourceType->libelle
+				,'titreRegle'=>load_fiche_titre('Règle','', 'title.png', 0, '')
 			)
 			,'newRule'=>array(
 				'id'=>$regle->getId()
@@ -255,6 +264,7 @@ function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 				'mode'=>$mode
 			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressourceType)  , 'regle', 'Type de ressource')
+				,'onglet'=>dol_get_fiche_head(array()  , '', 'Règle')
 			)
 			
 		)	

@@ -130,7 +130,7 @@ function _liste(&$ATMdb, &$contrat) {
 		,'liste'=>array(
 			'titre'=>'Liste des contrats'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Il n'y a aucun contrat à afficher"
@@ -236,7 +236,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 			,'liste'=>array(
 				'titre'=>'Liste des ressources associées'
 				,'image'=>img_picto('','title.png', '', 0)
-				,'picto_precedent'=>img_picto('','back.png', '', 0)
+				,'picto_precedent'=>img_picto('','previous.png', '', 0)
 				,'picto_suivant'=>img_picto('','next.png', '', 0)
 				,'noheader'=> (int)isset($_REQUEST['socid'])
 				,'messageNothing'=>"Il n'y a aucune ressource associée"
@@ -276,7 +276,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 			,'liste'=>array(
 				'titre'=>'Liste des agences à contacter en cas de problème'
 				,'image'=>img_picto('','title.png', '', 0)
-				,'picto_precedent'=>img_picto('','back.png', '', 0)
+				,'picto_precedent'=>img_picto('','previous.png', '', 0)
 				,'picto_suivant'=>img_picto('','next.png', '', 0)
 				,'noheader'=> (int)isset($_REQUEST['socid'])
 				,'messageNothing'=>"Il n'y a aucune agence liée"

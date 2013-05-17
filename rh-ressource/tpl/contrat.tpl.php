@@ -14,7 +14,7 @@
 <div>
 	<table class="border" style="width:100%">
 		<tr>
-			<td>Libellé du contrat</td>
+			<td style="width:20%">Libellé du contrat</td>
 			<td>[contrat.libelle;strconv=no;protect=no]</td>
 		</tr>
 	 	<tr>

@@ -167,7 +167,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle)) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'... ';
 		if ($numLigne >=3){
-			$infos = explode(';', $data[0]);
+			$infos = Œ explode(';', $data[0]);
 			$mois = substr($infos[4],3,7);
 			$num = $infos[1];
 			if (empty($TUser[strtolower($infos[2])] )){

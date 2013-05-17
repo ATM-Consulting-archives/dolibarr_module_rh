@@ -2,21 +2,15 @@
 
 [onshow;block=begin;when [ressource.fiche]==true]
 	[view.head;strconv=no;protect=no]
-	<table class="border" style="width:100%">
-		<tr>
-			<td>Numéro Id</td>
-			<td>[ressource.numId;strconv=no;protect=no]</td>
-		</tr>
-		<tr>
-			<td>Libellé</td>
-			<td>[ressource.libelle;strconv=no;protect=no]</td>
-		</tr>
-	</table><br>
+	[ressource.entete;strconv=no;protect=no]
 [onshow;block=end] 
  
+[onshow;block=begin;when [ressource.fiche]!=true]
+	[view.onglet;strconv=no;protect=no]
+[onshow;block=end] 
 
 
-<h1>Agenda des ressources</h1>
+[ressource.titreAgenda;strconv=no;protect=no]
 [ressource.ficheHidden;strconv=no;protect=no][ressource.idHidden;strconv=no;protect=no]
 
 [onshow;block=begin;when [ressource.fiche]==true]

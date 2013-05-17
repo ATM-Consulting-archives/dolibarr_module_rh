@@ -4,18 +4,21 @@
                                 
 [onshow;block=end]
 
-[onshow;block=begin;when [view.mode]!='view']
+[onshow;block=begin;when [view.mode]!='view']  
+	[view.onglet;strconv=no]
     <div>
 [onshow;block=end]    
 		
 			
 			<table width="100%" class="border">
-			<tr><td width="20%">Code</td><td>[ressourceType.code; strconv=no]</td></tr>
+			
 			<tr><td width="20%">Libellé</td><td>[ressourceType.libelle; strconv=no]</td></tr>
+			<tr><td width="20%">Code</td><td>[ressourceType.code; strconv=no]</td></tr>
 			</table>
-		
+	
+	<br>
+	[ressourceType.titreChamps; strconv=no]	
 
-	<h2>Champs de la ressource</h2>
 
 <dd> Si le type est Liste, séparer les élements par ';' .<br> <u>Exemple :</u> Si marque est de type liste, mettre "Ford;Citroën;Peugeot" dans les options.
 <br><br></dd>
@@ -43,7 +46,7 @@
 	<tr id="[ressourceField.indice;block=tr;stdconv=no;protect=no]" >
 		[ressourceField.ordre;strconv=no;protect=no]
 		[onshow;block=begin;when [view.mode]=='edit']
-			<td class="sortable">X</td>
+			<td class="sortable">[ressourceType.pictoMove; strconv=no]	</td>
 		[onshow;block=end]
 		<td>[ressourceField.code;strconv=no;protect=no]</td>
 		<td>[ressourceField.libelle;strconv=no;protect=no]</td>
