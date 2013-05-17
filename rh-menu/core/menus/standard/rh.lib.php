@@ -143,7 +143,10 @@ function print_rh_menu($db,$atarget,$type_user)
 	}
 
 	// Commercial
-	/*$menuqualified=0;
+	/*
+	 * Désactivé sauvagement
+	 * 
+	 * $menuqualified=0;
     if (! empty($conf->propal->enabled)) $menuqualified++;
     if (! empty($conf->commande->enabled)) $menuqualified++;
     if (! empty($conf->fournisseur->enabled)) $menuqualified++;
