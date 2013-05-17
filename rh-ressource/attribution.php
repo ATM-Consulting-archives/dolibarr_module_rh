@@ -143,7 +143,7 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 		,'liste'=>array(
 			'titre'=>'Historique des emprunts'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Il n'y a aucun emprunt à afficher"
@@ -195,6 +195,7 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 				'mode'=>$mode
 				,'userRight'=>((int)$user->rights->ressource->ressource->manageAttribution)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'attribution', 'Ressource')
+				,'onglet'=>dol_get_fiche_head(array()  , '', 'Attribution')
 			)
 			
 			

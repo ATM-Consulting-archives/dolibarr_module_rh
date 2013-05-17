@@ -1,25 +1,24 @@
 [onshow;block=begin;when [view.mode]=='view']
    
     [view.head;strconv=no]
-[onshow;block=end]                                
-<table class="border" style="width:100%">
-		<tr>
-			<td>Numéro Id</td>
-			<td>[ressource.numId;strconv=no;protect=no]</td>
-		</tr>
-		<tr>
-			<td>Libellé</td>
-			<td>[ressource.libelle;strconv=no;protect=no]</td>
-		</tr>
-</table><br>
+[onshow;block=end]  
+
+[onshow;block=begin;when [view.mode]!='view']
+    [view.onglet;strconv=no]
+    <div>
+[onshow;block=end] 
+
+[ressource.entete;strconv=no;protect=no]
+
+<br>
 
 
-<h2>Evénement sur la ressource</h2>
+[ressource.titreEvenement;strconv=no;protect=no]
 
 <div>
 	<table class="border" style="width:100%">
 		<tr>
-			<td>Date début</td>
+			<td style="width:20%">Date début</td>
 			<td>[NEvent.date_debut;block=tr;strconv=no;protect=no]</td>
 		</tr>
 		<tr>
@@ -39,19 +38,20 @@
 			<td>[NEvent.motif;strconv=no;protect=no]</td>[NEvent.fk_rh_ressource;strconv=no;protect=no]
 		</tr>
 		<tr id="user">
-			<td >Utilisateur</td>
-			<td>[NEvent.user;strconv=no;protect=no]</td>
+			<td>Utilisateur</td>
+			<td>
+				[onshow;block=begin;when [view.mode]=='view']
+					<a href="[ressource.URLroot;strconv=no;protect=no]/user/fiche.php?id=[NEvent.fk_user;strconv=no;protect=no]" >[NEvent.user;strconv=no;protect=no]</a>
+				[onshow;block=end] 	
+					
+				[onshow;block=begin;when [view.mode]!='view']
+					[NEvent.user;strconv=no;protect=no]
+				[onshow;block=end]
+			</td>
 		</tr>
 		<tr id="responsabilite">
-			<td >Responsabilité</td>
+			<td >Responsabilité de l'utilisateur</td>
 			<td>[NEvent.responsabilite;strconv=no;protect=no]</td>
-			<script>
-				$(document).ready(function(){$('#responsabilite').val(100);})
-			</script>
-		</tr>
-		<tr>
-			<td>Commentaire</td>
-			<td>[NEvent.commentaire;strconv=no;protect=no]</td>
 		</tr>
 		<tr>
 			<td>Coût TTC</td>
@@ -68,6 +68,10 @@
 		<tr>
 			<td>Coût pour l'entreprise HT</td>
 			<td>[NEvent.coutEntrepriseHT;strconv=no;protect=no] €</td>
+		</tr>
+		<tr>
+			<td>Commentaire</td>
+			<td>[NEvent.commentaire;strconv=no;protect=no]</td>
 		</tr>
 	</table>
 </div>
@@ -152,7 +156,6 @@
 </div>
 <div class="tabsAction" style="text-align:center;">
 	[onshow;block=begin;when [view.mode]=='view']
-		<a class="butAction"  href="ressource.php?id=[ressource.id]&action=view">Ressource associée</a>
 		[onshow;block=begin;when [view.userRight]==1]
 			<a class="butAction"  href="?id=[ressource.id]&idEven=[NEvent.id]&action=edit">Modifier</a>
 			<a class="butActionDelete"  href="?id=[ressource.id]&idEven=[NEvent.id]&action=deleteEvent">Supprimer</a>

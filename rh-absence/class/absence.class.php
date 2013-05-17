@@ -108,7 +108,7 @@ class TRH_Compteur extends TObjetStd {
 class TRH_Absence extends TObjetStd {
 	function __construct() { /* declaration */
 		
-		global $user;
+		global $user,$conf;
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence');
 		parent::add_champs('code','type=int;');				//code  congé
 		parent::add_champs('type','type=varchar;');				//type de congé
@@ -131,23 +131,30 @@ class TRH_Absence extends TObjetStd {
 		$this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
 		$this->Tjoursem = array('dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'); 
 		
-		//combo box pour le type d'absence
-		$this->TTypeAbsenceAdmin = array('rttcumule'=>'RTT cumulé','rttnoncumule'=>'RTT non cumulé', 
-		'conges' => 'Absence congés', 'maladiemaintenue' => 'Absence maladie maintenue', 
-		'maladienonmaintenue'=>'Absence maladie non maintenue','maternite'=>'Absence maternité', 'paternite'=>'Absence paternité', 
-		'chomagepartiel'=>'Absence Chômage partiel','nonremuneree'=>'Absence non rémunérée','accidentdetravail'=>'Absence accident du travail',
-		'maladieprofessionnelle'=>'Absence maladie professionnelle', 
-		'congeparental'=>'Absence Congés parental', 'accidentdetrajet'=>'Absence Accident trajet',
-		'mitempstherapeutique'=>'Absence Mi-temps thérapeutique', 'pathologie'=>'Absence pathologie','mariage'=>'Mariage',
-		'deuil'=>'Deuil','naissanceadoption'=>'Naissance ou adoption', 'enfantmalade'=>'Enfant malade', 'demenagement'=>'Déménagement',
-		'cours'=>'Cours', 'preavis'=>'Absence préavis','rechercheemploi'=>'Absence recherche emploi', 
-		'miseapied'=>'Absence mise à pied', 'nonjustifiee'=>'Absence non justifiée'  );
 		
-		$this->TTypeAbsenceUser = array('rttcumule'=>'RTT cumulé','rttnoncumule'=>'RTT non cumulé', 
-		'conges' => 'Absence congés', 'paternite'=>'Absence paternité', 
-		'nonremuneree'=>'Absence non rémunérée', 'mariage'=>'Mariage',
-		'deuil'=>'Deuil','naissanceadoption'=>'Naissance ou adoption', 'enfantmalade'=>'Enfant malade', 'demenagement'=>'Déménagement',
-		 );
+		$ATMdb=new Tdb;
+		
+		//combo box pour le type d'absence admin
+		$this->TTypeAbsenceAdmin=array();
+		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
+		WHERE entity=".$conf->entity;
+		$ATMdb->Execute($sql);
+
+		while($ATMdb->Get_line()) {
+			$this->TTypeAbsenceAdmin[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+		}
+		
+		
+		//combo box pour le type d'absence utilisateur
+		$this->TTypeAbsenceUser=array();
+		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
+		WHERE entity=".$conf->entity." AND admin=0";
+		$ATMdb->Execute($sql);
+
+		while($ATMdb->Get_line()) {
+			$this->TTypeAbsenceUser[$ATMdb->Get_field('typeAbsence')]=htmlentities($ATMdb->Get_field('libelleAbsence'), ENT_COMPAT , 'ISO8859-1');
+		}
+		
 		
 		//combo pour le choix de matin ou après midi 
 		$this->TddMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date début
@@ -155,8 +162,8 @@ class TRH_Absence extends TObjetStd {
 		
 		//on crée un tableau des utilisateurs pour l'afficher en combo box, et ensuite sélectionner quelles absences afficher
 		
-		$ATMdb=new Tdb; // AA Ne devrait pas être ici mais dans une fonction à l'afficahge quand on en a besoin !
-		global $conf;
+		 // AA Ne devrait pas être ici mais dans une fonction à l'afficahge quand on en a besoin !
+
 		$this->TUser=array();
 		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
 		$ATMdb->Execute($sqlReqUser);
@@ -1215,17 +1222,17 @@ class TRH_RegleAbsence extends TObjetStd {
 		parent::start();	
 		
 		$this->choixApplication = 'all';
-		
-		$this->TTypeAbsenceAdmin = array('rttcumule'=>'RTT cumulé','rttnoncumule'=>'RTT non cumulé', 
-		'conges' => 'Absence congés', 'maladiemaintenue' => 'Absence maladie maintenue', 
-		'maladienonmaintenue'=>'Absence maladie non maintenue','maternite'=>'Absence maternité', 'paternite'=>'Absence paternité', 
-		'chomagepartiel'=>'Absence Chômage partiel','nonremuneree'=>'Absence non rémunérée','accidentdetravail'=>'Absence accident du travail',
-		'maladieprofessionnelle'=>'Absence maladie professionnelle', 
-		'congeparental'=>'Absence Congés parental', 'accidentdetrajet'=>'Absence Accident trajet',
-		'mitempstherapeutique'=>'Absence Mi-temps thérapeutique', 'pathologie'=>'Absence pathologie','mariage'=>'Mariage',
-		'deuil'=>'Deuil','naissanceadoption'=>'Naissance ou adoption', 'enfantmalade'=>'Enfant malade', 'demenagement'=>'Déménagement',
-		'cours'=>'Cours', 'preavis'=>'Absence préavis','rechercheemploi'=>'Absence recherche emploi', 
-		'miseapied'=>'Absence mise à pied', 'nonjustifiee'=>'Absence non justifiée'  );
+		global $conf;
+		$ATMdb=new Tdb;
+		//combo box pour le type d'absence admin
+		$this->TTypeAbsenceAdmin=array();
+		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
+		WHERE entity=".$conf->entity;
+		$ATMdb->Execute($sql);
+
+		while($ATMdb->Get_line()) {
+			$this->TTypeAbsenceAdmin[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+		}
 		
 		$this->TUser = array();
 		$this->TGroup  = array();
@@ -1272,3 +1279,21 @@ class TRH_RegleAbsence extends TObjetStd {
 		}
 	}
 }
+
+
+//définition de la classe pour la gestion des règles
+class TRH_TypeAbsence extends TObjetStd {
+	function __construct() { 
+		parent::set_table(MAIN_DB_PREFIX.'rh_type_absence');
+		parent::add_champs('typeAbsence','type=chaine;');
+		parent::add_champs('libelleAbsence','type=chaine;');
+		parent::add_champs('codeAbsence','type=chaine;');
+		parent::add_champs('admin','type=int;');
+		parent::add_champs('entity','type=int;');
+		
+		parent::_init_vars();
+		parent::start();
+	}
+}
+
+		

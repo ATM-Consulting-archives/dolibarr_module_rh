@@ -1,24 +1,23 @@
 [onshow;block=begin;when [view.mode]=='view']
-
-        
-                <div class="fiche"> <!-- begin div class="fiche" -->
-                [view.head;strconv=no]
-                
-                        <div class="tabBar">
-                                
+	[view.head;strconv=no]                     
 [onshow;block=end]  
-		
+
+[onshow;block=begin;when [view.mode]!='view']
+	[view.onglet;strconv=no]                     
+[onshow;block=end]  
+	
 			
 <table width="100%" class="border">
 	<tr><td width="20%">Code</td><td>[ressourceType.code; strconv=no]</td></tr>
 	<tr><td width="20%">Libellé</td><td>[ressourceType.libelle; strconv=no]</td></tr>
 </table>
+<br>
 
+[ressourceType.titreRegle; strconv=no]
 
-<h2>Règle</h2>
 <table width="100%" class="border">
 	<tr>
-		<td>Choix d'application</td>
+		<td width="20%">Choix d'application</td>
 		[onshow;block=begin;when [view.mode]=='view']
 		<td>
 			[newRule.choixApplicationViewMode; strconv=no]
