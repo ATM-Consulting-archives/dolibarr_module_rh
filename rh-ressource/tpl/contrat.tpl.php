@@ -34,6 +34,35 @@
 	 		<td>Date de fin</td>
 	 		<td>[contrat.date_fin;strconv=no;protect=no]</td>
 	 	</tr>
+	 	<tr id="km" >
+	 		<td>Kilomètrage</td>
+	 		<td>[contrat.kilometre;strconv=no;protect=no] km</td>
+	 	</tr>
+	 	[onshow;block=begin;when [view.mode]!='view']
+		 	<script>
+		 		$('#fk_tier_fournisseur').change(function()
+		 			{actuKm();})
+		 		$(document).ready(function()
+		 			{actuKm();});
+		 		
+		 		function actuKm(){
+		 			if ($('#fk_tier_fournisseur option:selected').html()=='Parcours'){
+		 				$('#km').show();}
+		 			else{
+		 				$('#km').hide();
+		 			}
+		 		}
+		 	</script>
+	 	[onshow;block=end]
+	 	[onshow;block=begin;when [view.mode]=='view']
+	 	<script>
+	 		if ('[contrat.tiersFournisseur;strconv=no;protect=no]'!='Parcours'){
+	 			$('#km').hide();
+	 			
+	 		}
+	 	</script>
+	 	[onshow;block=end]
+	 	
 	 	[onshow;block=begin;when [view.userRightViewContrat]==1]
 		 	<tr>
 		 		<td>Montant Entretien</td>
@@ -42,14 +71,14 @@
 		 		<td>Montant Assurance</td>
 		 		<td>[contrat.assurance;strconv=no;protect=no] €</td>
 		 	</tr><tr>
-		 		<td>Loyer TTC</td>
+		 		<td>Loyer mensuel TTC</td>
 		 		<td>[contrat.loyer_TTC;strconv=no;protect=no] €</td>
 		 	</tr><tr>
 		 		<td>TVA </td>
 		 		<td>[contrat.TVA;strconv=no;protect=no] %</td>
 		 	</tr>
 		 	<tr>
-		 		<td>Loyer HT</td>
+		 		<td>Loyer mensuel HT</td>
 		 		<td>[contrat.loyer_HT;strconv=no;protect=no] €</td>
 		 	</tr>
 	 	[onshow;block=end]

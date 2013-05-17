@@ -39,18 +39,19 @@
 		</tr>
 		<tr id="user">
 			<td>Utilisateur</td>
-			<td><a href="[ressource.URLroot;strconv=no;protect=no]/user/fiche.php?id=[NEvent.fk_user;strconv=no;protect=no]" >[NEvent.user;strconv=no;protect=no]</a></td>
+			<td>
+				[onshow;block=begin;when [view.mode]=='view']
+					<a href="[ressource.URLroot;strconv=no;protect=no]/user/fiche.php?id=[NEvent.fk_user;strconv=no;protect=no]" >[NEvent.user;strconv=no;protect=no]</a>
+				[onshow;block=end] 	
+					
+				[onshow;block=begin;when [view.mode]!='view']
+					[NEvent.user;strconv=no;protect=no]
+				[onshow;block=end]
+			</td>
 		</tr>
 		<tr id="responsabilite">
-			<td >Responsabilité</td>
+			<td >Responsabilité de l'utilisateur</td>
 			<td>[NEvent.responsabilite;strconv=no;protect=no]</td>
-			<script>
-				$(document).ready(function(){$('#responsabilite').val(100);})
-			</script>
-		</tr>
-		<tr>
-			<td>Commentaire</td>
-			<td>[NEvent.commentaire;strconv=no;protect=no]</td>
 		</tr>
 		<tr>
 			<td>Coût TTC</td>
@@ -67,6 +68,10 @@
 		<tr>
 			<td>Coût pour l'entreprise HT</td>
 			<td>[NEvent.coutEntrepriseHT;strconv=no;protect=no] €</td>
+		</tr>
+		<tr>
+			<td>Commentaire</td>
+			<td>[NEvent.commentaire;strconv=no;protect=no]</td>
 		</tr>
 	</table>
 </div>
