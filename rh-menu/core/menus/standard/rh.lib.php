@@ -143,7 +143,7 @@ function print_rh_menu($db,$atarget,$type_user)
 	}
 
 	// Commercial
-	$menuqualified=0;
+	/*$menuqualified=0;
     if (! empty($conf->propal->enabled)) $menuqualified++;
     if (! empty($conf->commande->enabled)) $menuqualified++;
     if (! empty($conf->fournisseur->enabled)) $menuqualified++;
@@ -178,7 +178,7 @@ function print_rh_menu($db,$atarget,$type_user)
 			print_end_menu_entry();
 		}
 		
-	}
+	}*/
 
 	// Financial
 	$tmpentry=array('enabled'=>(! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->don->enabled) || ! empty($conf->tax->enabled)),
