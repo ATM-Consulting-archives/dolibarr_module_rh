@@ -120,29 +120,25 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	$r = new TSSRenderControler($evenement);
 	switch($type){
 		case 'all' :
-			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
-				DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.type as 'Type',
+			$jointureChamps ="DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.type as 'Type',
 				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutTTC as DECIMAL(16,2)), ' €') as 'Coût TTC', 
 				CONCAT (CAST(e.coutEntrepriseTTC as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise TTC', t.taux as 'TVA' ";
 			$jointureType = " AND e.type<>'emprunt' ";
 			break;
 		 case 'appel' :
-			$jointureChamps =" CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
-				DATE(e.date_debut) as 'Date', e.appelHeure as 'Heure', e.appelNumero as 'Numéro appelé', 
+			$jointureChamps ="DATE(e.date_debut) as 'Date', e.appelHeure as 'Heure', e.appelNumero as 'Numéro appelé', 
 				e.appelDureeReel as 'Durée/Volume réel', e.appelDureeFacturee as 'Durée/Volume facturé',
 				e.motif as 'Motif', CONCAT (CAST(e.coutHT as DECIMAL(16,2)), ' €') as 'Montant HT' ";
 			$jointureType = " AND e.type='appel' ";
 			break;
 		case 'facture':		
-			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
-				DATE(e.date_debut) as 'Date', DATE(e.date_fin) as 'Traité le', e.numFacture as 'Facture',
+			$jointureChamps ="DATE(e.date_debut) as 'Date', DATE(e.date_fin) as 'Traité le', e.numFacture as 'Facture',
 				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutTTC as DECIMAL(16,2)), ' €') as 'Coût TTC', 
 				t.taux as 'TVA', CONCAT (CAST(e.coutEntrepriseHT as DECIMAL(16,2)), ' €') as 'Coût HT' ";
 			$jointureType = " AND e.type='facture' ";
 			break;
 		default :
-			$jointureChamps ="CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
-				DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin',
+			$jointureChamps ="DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin',
 				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutTTC as DECIMAL(16,2)), ' €') as 'Coût', 
 				CONCAT (CAST(e.coutEntrepriseTTC as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise TTC', t.taux as 'TVA' ,
 				CONCAT (CAST(e.coutEntrepriseHT as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise HT'";
@@ -150,7 +146,8 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		break;
 		}	
 	
-	$sql = "SELECT DISTINCT e.rowid as 'ID', ".$jointureChamps;
+	$sql = "SELECT DISTINCT e.rowid as 'ID', u.rowid as idUser, 
+			CONCAT(u.firstname,' ',u.name) as 'Utilisateur', ".$jointureChamps;
 	if($user->rights->ressource->ressource->manageEvents){
 		$sql.=",'' as 'Supprimer'";
 	}
@@ -177,9 +174,10 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		,'link'=>array(
 			'Motif'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&type='.$type.'&action=deleteEvent"><img src="./img/delete.png"></a>'
+			//,'Utilisateur'=>'<a href="/user/fiche?id=@idUser@">@val@</a>'
 		)
 		,'translate'=>array('Type'=>$evenement->TType)
-		,'hide'=>array('ID')
+		,'hide'=>array('ID', 'idUser')
 		,'type'=>array(
 			'Date début'=>'date'
 			,'Date fin'=>'date'
@@ -238,10 +236,14 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				'id'=>$ressource->getId()
 				,'numId'=>$ressource->numId
 				,'libelle'=>$ressource->libelle
+				,'entete'=>getLibelle($ressource)
+				,'titreEvenement'=>load_fiche_titre("Evénement sur la ressource",'', 'title.png', 0, '')
+				,'URLroot'=>'http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT
 			)
 			,'NEvent'=>array(
 				'id'=>$evenement->getId()
 				,'user'=>$form->combo('','fk_user',$evenement->TUser,$evenement->fk_user)
+				,'fk_user'=>$evenement->fk_user
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
 				,'commentaire'=>$form->zonetexte('','commentaire',$evenement->commentaire,100,10,'','','')
 				,'numFacture'=>$form->texte('', 'numFacture', $evenement->numFacture, 10,10)
@@ -262,6 +264,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				'mode'=>$mode
 				,'userRight'=>((int)$user->rights->ressource->ressource->manageEvents)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($evenement, 'evenement', $ressource)  , 'fiche', 'Evénement')
+				,'onglet'=>dol_get_fiche_head(array()  , '', 'Evénement')
 			)
 		)	
 		

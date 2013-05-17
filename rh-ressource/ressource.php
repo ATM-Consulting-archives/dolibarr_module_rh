@@ -140,7 +140,8 @@ function _liste(&$ATMdb, &$ressource) {
 	global $langs,$conf,$db,$user;	
 	llxHeader('','Liste des ressources');
 	print dol_get_fiche_head(array()  , '', 'Liste ressources');
-	getStandartJS();
+	
+	//getStandartJS();
 	
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.libelle, r.fk_rh_ressource_type,
@@ -188,7 +189,7 @@ function _liste(&$ATMdb, &$ressource) {
 		,'liste'=>array(
 			'titre'=>'Liste des ressources'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Il n'y a aucune ressource à afficher"
@@ -345,7 +346,12 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 				'id'=>$ressource->getId()
 				,'numId'=>$form->texte('', 'numId', $ressource->numId, 00,20,'','','-')
 				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 50,255,'','','-')
-				//,'type'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type"
+
+				,'titreChamps'=>load_fiche_titre("Champs",'', 'title.png', 0, '')
+				,'titreOrganigramme'=>load_fiche_titre("Organigramme des ressources associées",'', 'title.png', 0, '')
+				,'titreRessourceAssocie'=>load_fiche_titre("Organigramme des ressources associées",'', 'title.png', 0, '')
+				,'titreAttribution'=>load_fiche_titre("Attribution de la ressource",'', 'title.png', 0, '')
+				
 				,'typehidden'=>$form->hidden('fk_rh_ressource_type', $ressource->fk_rh_ressource_type) 
 				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])

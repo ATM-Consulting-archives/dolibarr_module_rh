@@ -1,11 +1,12 @@
-[onshow;block=begin;when [view.mode]=='view']
-
-        
+[onshow;block=begin;when [view.mode]=='view']   
    [view.head;strconv=no]
-    	
-           
 [onshow;block=end] 	
-	
+
+[onshow;block=begin;when [view.mode]!='view']
+    [view.onglet;strconv=no]
+    <div>
+[onshow;block=end] 
+
 	<table class="border" style="width:100%">
 		[NEmprunt.fk_rh_ressource;strconv=no;protect=no]
 		[NEmprunt.type;strconv=no;protect=no]

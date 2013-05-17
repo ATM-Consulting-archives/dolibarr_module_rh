@@ -195,6 +195,7 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 				'mode'=>$mode
 				,'userRight'=>((int)$user->rights->ressource->ressource->manageAttribution)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'attribution', 'Ressource')
+				,'onglet'=>dol_get_fiche_head(array()  , '', 'Attribution')
 			)
 			
 			
