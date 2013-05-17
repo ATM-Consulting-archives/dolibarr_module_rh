@@ -105,6 +105,8 @@ function _liste(&$ATMdb, &$contrat) {
 		$sql.=" AND e.fk_user=".$user->id;
 	}
 	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','GET');
+	
 	$TOrder = array('Date début'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -116,7 +118,7 @@ function _liste(&$ATMdb, &$contrat) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Libellé'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		)
 		,'translate'=>array()
@@ -149,7 +151,7 @@ function _liste(&$ATMdb, &$contrat) {
 		
 	));
 	
-	
+	$form->end();
 	llxFooter();
 }	
 	
