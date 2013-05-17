@@ -26,6 +26,9 @@ function _get($case) {
 		case 'conges':
 			__out(_conges($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
 			break;
+		case 'recapAbsence':
+			__out(_recapAbsence($_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['choixApplication'], $_REQUEST['application']));	
+			break;
 	}
 }
 
@@ -109,4 +112,10 @@ function _conges($userId, $date_debut, $date_fin){
 	}
 	
 	return $TabRecapConges;
+}
+
+
+function _recapAbsence($date_debut, $date_fin, $choixApplication, $application){
+	
+	//return $date_debut." ".$date_fin." ".$choixApplication." ".$application;
 }
