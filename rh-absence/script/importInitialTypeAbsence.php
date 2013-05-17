@@ -36,10 +36,10 @@
  	$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_type_absence (rowid,typeAbsence, libelleAbsence, codeAbsence, admin, entity)
 	VALUES 
 	
-	(1,'rttcumule','RTT cumulé','','0','".$conf->entity."')
-	,(2,'rttnoncumule','RTT non cumulé','','0','".$conf->entity."')
-	,(3,'conges','Absence paternité','','0','".$conf->entity."')
-	,(4,'paternite','Cours','','0','".$conf->entity."')
+	(1,'rttcumule','RTT cumulé','930','0','".$conf->entity."')
+	,(2,'rttnoncumule','RTT non cumulé','940','0','".$conf->entity."')
+	,(3,'conges','Absence congés','950','0','".$conf->entity."')
+	,(4,'paternite','Absence paternité','963','0','".$conf->entity."')
 	,(5,'nonremuneree','Absence non rémunérée','','0','".$conf->entity."')
 	,(6,'mariage','Mariage','','0','".$conf->entity."')
 	,(7,'deuil','Deuil','','0','".$conf->entity."')
