@@ -123,8 +123,7 @@ function _conges($userId, $date_debut, $date_fin){
 		$EmploiDuTemps['dimancheam']=$ATMdb->Get_field('dimancheam');
 		$EmploiDuTemps['dimanchepm']=$ATMdb->Get_field('dimanchepm');
 	}
-	
-<<<<<<< HEAD
+
 	//On regarde chaque jour
 	$dateDeb = strtotime($date_debut);  
 	$dateFin = strtotime($date_fin);
@@ -217,13 +216,4 @@ function _conges($userId, $date_debut, $date_fin){
 	$TabRecapConges['congesDivers']=$nb_jours_conges_divers;
 	
 	return $TabRecapConges;
-=======
-	return $TabRecapConges;
-}
-
-
-function _recapAbsence($date_debut, $date_fin, $fk_user, $fk_usergroup){
-	
-	return $date_debut." ".$date_fin." ".$fk_user." ".$fk_usergroup;
->>>>>>> f0a9fa6fe6686c22befadd9895df113f8c5ee101
 }
