@@ -83,5 +83,11 @@
 	$s=new TRH_JoursFeries;
 	$s->init_db_by_vars($ATMdb);
 	
+	
+	
 	$t=new TRH_RegleAbsence;
 	$t->init_db_by_vars($ATMdb);
+	
+	$u=new TRH_TypeAbsence;
+	$u->init_db_by_vars($ATMdb);
+	
