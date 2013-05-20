@@ -10,6 +10,7 @@
 				<td>
 					Date début [recherche.date_debut;block=tr;strconv=no;protect=no]
 					Date fin [recherche.date_fin;block=tr;strconv=no;protect=no]
+					<br/>
 					Groupe [recherche.TGroupe;block=tr;strconv=no;protect=no]
 					Utilisateur [recherche.TUser;block=tr;strconv=no;protect=no]
 					Aucun congés [recherche.horsConges;block=tr;strconv=no;protect=no]
@@ -21,7 +22,7 @@
 	</div>
 
 
-[onshow;block=begin;when [userCourant.droitRecherche]!='1']
+[onshow;block=begin;when [userCourant.droitRecherche]!=1]
 		Vous ne possédez pas les droits pour effectuer une recherche sur les absences des collaborateurs
 [onshow;block=end]
 

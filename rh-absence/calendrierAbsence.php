@@ -46,6 +46,7 @@
 	if($idGroupe!=0){
 		$sqlReq.=" AND g.fk_usergroup=".$_REQUEST['groupe'];
 	}
+	$sqlReq.=" ORDER BY name";
 	$ATMdb->Execute($sqlReq);	
 	$TabUser[0] = 'Tous';		
 	while($ATMdb->Get_line()) {
@@ -57,7 +58,7 @@
 	$TabGroupe[0] = 'Tous';
 	//récupération du tableau groupe
 	//LISTE DE GROUPES
-	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity." ORDER BY nom";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 		$TabGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');

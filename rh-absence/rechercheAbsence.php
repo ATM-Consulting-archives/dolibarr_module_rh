@@ -36,7 +36,7 @@
 function _fiche(&$ATMdb, $absence,  $mode) {
 	global $db,$user, $langs, $conf;
 	llxHeader('','Formations');
-	
+
 	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Recherche');
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
@@ -90,7 +90,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 				'id'=>$fuser->id
 				,'nom'=>$fuser->lastname
 				,'prenom'=>$fuser->firstname
-				,'droitRecherche'=>$user->rights->curriculumvitae->myactions->rechercheProfil?1:0
+				,'droitRecherche'=>$user->rights->absence->myactions->rechercherAbsence?1:0
 			)
 			,'view'=>array(
 				'mode'=>$mode

@@ -152,7 +152,7 @@ class TRH_Absence extends TObjetStd {
 		$ATMdb->Execute($sql);
 
 		while($ATMdb->Get_line()) {
-			$this->TTypeAbsenceUser[$ATMdb->Get_field('typeAbsence')]=htmlentities($ATMdb->Get_field('libelleAbsence'), ENT_COMPAT , 'ISO8859-1');
+			$this->TTypeAbsenceUser[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
 		}
 		
 		
@@ -989,14 +989,15 @@ class TRH_Absence extends TObjetStd {
 	///////////////FONCTIONS pour le fichier rechercheAbsence\\\\\\\\\\\\\\\\\\\\\\\\\\\
 	
 	//va permettre la création de la requête pour les recherches d'absence pour les collaborateurs
-	function requeteRechercheAbsence(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $horsConges, $date_debut, $date_fin){	
+	function requeteRechercheAbsence(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $horsConges, $date_debut, $date_fin){
+			
 			if($horsConges==1){ //on recherche uniquement une compétence
 				$sql=$this->rechercheAucunConges($ATMdb,$idGroupeRecherche, $date_debut, $date_fin);
 			}
-			else if($idGroupeRecherche!=0&&$idUserRecherche==0){ //on recherche une compétence et un groupe
+			else if($idGroupeRecherche!=0&&$idUserRecherche==0){ //on recherche les absences d'un groupe
 				$sql=$this->rechercheAbsenceGroupe($ATMdb, $idGroupeRecherche, $date_debut, $date_fin);
 			}
-			else if($idUserRecherche!=0){ //on recherche une compétence et un utilisateur
+			else if($idUserRecherche!=0){ //on recherche les absences d'un utilisateur
 				$sql=$this->rechercheAbsenceUser($ATMdb,$idUserRecherche, $date_debut, $date_fin);
 			}
 			return $sql;
@@ -1024,18 +1025,18 @@ class TRH_Absence extends TObjetStd {
 			global $conf;
 
 			//on recherche le nom de la compétence désirée
-			$sql="SELECT DISTINCT a.fk_user, u.name, u.firstname
-			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."user as u
-			WHERE g.fk_usergroup =3  AND a.fk_user=g.fk_user AND u.rowid=a.fk_user
-			AND a.entity=".$conf->entity."
-			AND a.fk_user NOT IN (
+			$sql="SELECT DISTINCT g.fk_user, u.name, u.firstname
+			FROM ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."user as u
+			WHERE g.fk_usergroup =".$idGroupeRecherche."   AND u.rowid=g.fk_user
+			AND u.entity=".$conf->entity."
+			AND g.fk_user NOT IN (
 						SELECT a.fk_user 
 						FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
 						WHERE a.fk_user=u.rowid AND g.fk_user=u.rowid 
 						AND g.fk_usergroup=".$idGroupeRecherche." 
 						AND a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 						AND a.entity=".$conf->entity.")";
-			
+
 			return $sql;
 	}
 
@@ -1046,12 +1047,12 @@ class TRH_Absence extends TObjetStd {
 			//on recherche le nom de la compétence désirée
 			$sql="SELECT u.name, u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat
-				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
+				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 				WHERE a.fk_user=u.rowid 
-				AND  g.fk_user=u.rowid
-				AND g.fk_user=".$idUserRecherche."
+				AND a.fk_user=".$idUserRecherche."
 				AND a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				AND a.entity=".$conf->entity;
+				echo $sql;
 			
 			return $sql;
 	}
@@ -1289,6 +1290,7 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::add_champs('libelleAbsence','type=chaine;');
 		parent::add_champs('codeAbsence','type=chaine;');
 		parent::add_champs('admin','type=int;');
+		parent::add_champs('unite','type=chaine;');
 		parent::add_champs('entity','type=int;');
 		
 		parent::_init_vars();
