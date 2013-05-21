@@ -298,7 +298,7 @@ class TRH_Ressource_type extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		$this->TField=array();
-		$this->TType=array('chaine'=>'Texte','entier'=>'Entier','float'=>'Float',"liste"=>'Liste',"checkbox"=>'Case à cocher');
+		$this->TType=array('chaine'=>'Texte','entier'=>'Entier','float'=>'Float',"liste"=>'Liste','date'=>'Date', "checkbox"=>'Case à cocher');
 	}
 	
 	/**
