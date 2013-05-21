@@ -20,22 +20,55 @@
 		$ressourceType->load($ATMdb, $_REQUEST['id']);
 		if (isset($_REQUEST['action'])){
 			switch($_REQUEST['action']){
+				case 'add':	
 				case 'new':
+					//$typeEven->load($ATMdb, $_REQUEST['idTypeEvent']);
+					_fiche($ATMdb, $typeEven, $ressourceType, 'edit');
+					break;
+				case 'edit' :
 					$typeEven->load($ATMdb, $_REQUEST['idTypeEvent']);
 					_fiche($ATMdb, $typeEven, $ressourceType, 'edit');
 					break;
 				case 'save':
+					$typeEven->load($ATMdb, $_REQUEST['idTypeEvent']);
+					$mode = 'edit';
+					if (empty($_REQUEST['libelle'])){
+						$mesg = '<div class="error">Veuillez remplir le libellé.</div>';						
+					}
+					else if (empty($_REQUEST['codeanalytique'])){
+						$mesg = '<div class="error">Veuillez remplir le code analytique.</div>';						
+					}
+					else {
+						$mesg = '<div class="ok">Modifications effectuées</div>';
+						$mode = 'view';
+					}
 					$typeEven->set_values($_REQUEST);
 					$typeEven->save($ATMdb);
-					$mesg = '<div class="ok">Modifications effectuées</div>';
+					_fiche($ATMdb, $typeEven, $ressourceType, $mode);
+					break;
+				case 'view':
+					//$ATMdb->db->debug=true;
+					$typeEven->load($ATMdb, $_REQUEST['idTypeEvent']);
 					_fiche($ATMdb, $typeEven, $ressourceType, 'view');
 					break;
 				case 'delete' :
-					//TODO
+					$typeEven->load($ATMdb, $_REQUEST['idTypeEvent']);
+					if ($typeEven->supprimable == 'vrai'){
+						$typeEven->delete($ATMdb);
+						$ressourceType->load($ATMdb, $_REQUEST['id']);
+						?>
+						<script language="javascript">
+							document.location.href="?id=<?echo $_REQUEST['id'];?>&delete_ok=1";					
+						</script>
+						<?
+					}
+					else {
+						$mesg = '<div class="ok">Impossible de supprimer ce type d\événement.</div>';
+						_fiche($ATMdb, $typeEven, $ressourceType, 'view');
+						
+					}
 					break;
-				case 'edit' :
-					_fiche($ATMdb, $typeEven, $ressourceType, 'edit');
-					break;
+				
 				default :
 					break;
 			}
@@ -108,13 +141,13 @@ function _liste(&$ATMdb, &$ressourceType, &$even) {
 		</table><br>';
 		
 	$r = new TSSRenderControler($ressourceType);
-	$sql="SELECT rowid as ID, libelle, code, codeanalytique, fk_rh_ressource_type
+	$sql="SELECT rowid as ID, libelle, code, codeanalytique, fk_rh_ressource_type, supprimable
 		FROM ".MAIN_DB_PREFIX."rh_type_evenement as r
 		WHERE entity=".$conf->entity."
 		AND (fk_rh_ressource_type=0 OR fk_rh_ressource_type=".$ressourceType->getId().")";
 	
 
-	$TOrder = array('ID'=>'ASC');
+	$TOrder = array('fk_rh_ressource_type'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 	
@@ -130,19 +163,20 @@ function _liste(&$ATMdb, &$ressourceType, &$even) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'ID'=>'<a href="?id='.$ressourceType->getId().'&idTypeEvent=@ID@&action=view">@val@</a>'
-			//,'Supprimer'=>'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=delete"><img src="./img/delete.png"></a>'
+			'libelle'=>'<a href="?id='.$ressourceType->getId().'&idTypeEvent=@ID@&action=view">@val@</a>'
 		) 
-		,'eval'=>array()
+		,'translate'=>array(
+			'supprimable'=>array('vrai'=>'Non', 'faux'=>'Oui')
+		)
 		,'title'=>array(
-			'name'=>'Nom'
-			,'libelle'=>'Libellé'
+			'libelle'=>'Libellé'
 			,'code'=>'Code'
 			,'codeanalytique'=>'Code Analytique'
+			,'supprimable'=>'Type par défaut'
 		)
-		,'hide'=>array('ID')
+		,'hide'=>array('ID', 'fk_rh_ressource_type')
 		,'liste'=>array(
-			'titre'=>'Liste des événements'
+			'titre'=>'Liste des types d\'événements'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
@@ -162,7 +196,6 @@ function _liste(&$ATMdb, &$ressourceType, &$even) {
 	llxFooter();
 }	
 
-
 function _fiche(&$ATMdb, &$typeEven, &$ressourceType, $mode) {
 	llxHeader('','Règle sur les Ressources', '', '', 0, 0);
 	
@@ -171,7 +204,7 @@ function _fiche(&$ATMdb, &$typeEven, &$ressourceType, $mode) {
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $ressourceType->getId());
-	//echo $form->hidden('idTypeEvent', $event->getId());
+	echo $form->hidden('idTypeEvent', $typeEven->getId());
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('fk_rh_ressource_type', $ressourceType->getId());
 	
@@ -186,9 +219,11 @@ function _fiche(&$ATMdb, &$typeEven, &$ressourceType, $mode) {
 				,'titreEvenement'=>load_fiche_titre('Type d\'événement','', 'title.png', 0, '')
 			)
 			,'newEvent'=>array(
-				'libelle'=>$form->texte('', 'libelle', $event->libelle, 20,30,'','','')
-				,'code'=>$form->texte('', 'code', $event->code, 20,30,'','','')
-				,'codeanalytique'=>$form->texte('', 'codeanalytique', $event->codeanalytique, 20,30,'','','')
+				'id'=>$typeEven->getId()
+				,'libelle'=>$form->texte('', 'libelle', $typeEven->libelle, 20,30,'','','')
+				,'code'=>$form->texte('', 'code', $typeEven->code, 20,30,'disabled','','')
+				,'codeanalytique'=>$form->texte('', 'codeanalytique', $typeEven->codeanalytique, 20,30,'','','')
+				,'supprimable'=>$typeEven->supprimable
 				
 			)
 			,'view'=>array(

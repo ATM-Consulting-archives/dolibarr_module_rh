@@ -1,7 +1,9 @@
 
 <h1>Vérification des consommations d'essence</h1>
 
-Renseignez ici la limite de consommation : [infos.limite;strconv=no;protect=no] L/100km     [infos.valider;strconv=no;protect=no] <br><br>
+Renseignez ici la limite de consommation : [infos.limite;strconv=no;protect=no] L/100km.     
+Sur la période de [infos.plagedebut;strconv=no;protect=no] à [infos.plagefin;strconv=no;protect=no]
+[infos.valider;strconv=no;protect=no] <br><br>
 
 <script>
 /*
@@ -33,12 +35,16 @@ $(document).ready(function(){
 		<tr class="liste_titre">
 			<td>Carte Total</td>
 			<td>Plein d'essence</td>
+			<td>Date</td>
+			<td>Utilisateur</td>
 		</tr>
 	</thead>
 	<tbody>
 		<tr>
 			<td>[ressource.nom;block=tr;strconv=no;protect=no]</td>
 			<td>[ressource.info;strconv=no;protect=no]</td>
+			<td>[ressource.date;strconv=no;protect=no]</td>
+			<td>[ressource.user;strconv=no;protect=no]</td>
 		</tr>
 	</tbody>
 </table>
