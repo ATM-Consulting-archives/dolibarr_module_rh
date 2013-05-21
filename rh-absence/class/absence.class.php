@@ -206,7 +206,7 @@ class TRH_Absence extends TObjetStd {
 			$this->entity = $conf->entity;
 			
 			//on calcule la duree de l'absence, en décomptant jours fériés et jours non travaillés par le collaborateur
-			$dureeAbsenceCourante=$this->calculDureeAbsence($db);
+			$dureeAbsenceCourante=$this->calculDureeAbsence($db, $this->date_debut, $this->date_fin, $absence);
 			$dureeAbsenceCourante=$this->calculJoursFeries($db, $dureeAbsenceCourante, $absence);
 			$dureeAbsenceCourante=$this->calculJoursTravailles($db, $dureeAbsenceCourante); 
 			
@@ -290,16 +290,16 @@ class TRH_Absence extends TObjetStd {
 
 		
 		//calcul de la durée initiale de l'absence (sans jours fériés, sans les jours travaillés du salariés)
-		function calculDureeAbsence(&$ATMdb){
-			$diff=$this->date_fin-$this->date_debut;
+		function calculDureeAbsence(&$ATMdb, $date_debut, $date_fin, &$absence){
+			$diff=$date_fin-$date_debut;
 			$duree=$diff/3600/24;
-			
+
 			//prise en compte du matin et après midi
 			
-			if($this->ddMoment=="matin"&&$this->dfMoment=="apresmidi"){
+			if($absence->ddMoment=="matin"&&$absence->dfMoment=="apresmidi"){
 				$duree+=1;
 			}
-			else if($this->ddMoment==$this->dfMoment){
+			else if($absence->ddMoment==$absence->dfMoment){
 				$duree+=0.5;
 			}
 			
