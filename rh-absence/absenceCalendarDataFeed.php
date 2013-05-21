@@ -10,15 +10,7 @@ switch ($method) {
 		
         if (isset($_GET['idUser'])&&isset($_GET['idGroupe'])){
 	       	 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser'], $_GET['idGroupe']);
-		}else if (isset($_GET['idUser'])){
-			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser']);
 		}
-		else if (isset($_GET['idGroupe'])){
-			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], 0, $_GET['idGroupe']);
-		}else{
-			$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"]);
-		}
-		
         break; 
 
 }
@@ -36,70 +28,33 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
   try{
 
   	if($idUser==0&&$idGroupe==0){	//on affiche toutes les absences 
-  		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
   		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
   	}
   	else if($idUser==0){		//on recherche un groupe
-  		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
   		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
   		WHERE `date_debut` between '"
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupe; 
  
   	}
   	else if($idGroupe==0){		//on recherche un utilisateur
-  		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
   		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
   		WHERE `date_debut` between '" 
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' 
       AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND u.rowid=".$idUser;
   	}
   	else{		//on recherche un groupe et un utilisateur
-  		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
   		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
   		WHERE `date_debut` between '" 
       .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' 
       AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND u.rowid=".$idUser." AND g.fk_usergroup=".$idGroupe;  
   	}
     
-    //LISTE USERS À VALIDER
-	/*$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
-			WHERE v.fk_user=".$idUser." 
-			AND v.type='Conges'
-			AND v.fk_usergroup=u.fk_usergroup
-			AND v.entity=".$conf->entity;
-		//echo $sql;
-	$ATMdb->Execute($sql);
-	$TabUser=array();
-	$k=0;
-	while($ATMdb->Get_line()) {
-				$TabUser[]=$ATMdb->Get_field('fk_user');
-				$k++;
-	}
-	//print_r($TabUser);*/
-	
-	/*if($k==0){
-		$sql1 = "SELECT r.rowid as rowid, r.libelle, r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE `date_debut` between '"
-      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
-    
-	  if ($idAfficher!=0){
-	  	$sql1.=" AND r.fk_user=".$idAfficher;
-      }else   if ($idUser!=0){
-	  	$sql1.=" AND r.fk_user=".$idUser;
-      }
-	  
-	}else{
-		$sql1 = "SELECT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE `date_debut` between '"
-      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
-	  if ($idAfficher!=0){
-	  	$sql1.=" AND r.fk_user=".$idAfficher;
-      }else if ($idUser!=0){
-	  	$sql1.=" AND r.fk_user IN(".implode(',', $TabUser).")";
-      }
-	}
-	
-	//$sql1.=" AND r.etat !=Refusee";
-	//echo $sql1;*/
+   
   	$ATMdb->Execute($sql1);
     
    /* while ($row = $ATMdb->Get_line()) {

@@ -406,6 +406,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	echo $form->hidden('id', $absence->getId());
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('userRecapCompteur', isset($_REQUEST['fk_user'])?$_REQUEST['fk_user']:0);
+	echo $form->hidden('userAbsenceCree', isset($absence->fk_user)!=0?$absence->fk_user:0);
+
 	//echo $form->hidden('fk_user', $user->id);
 	
 	
@@ -525,7 +527,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			AND s.rowid=u.fk_user
 			AND v.fk_usergroup=u.fk_usergroup
 			AND v.entity=".$conf->entity;
-			
+			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
 	}else $droitsCreation=2; //on n'a pas les droits de création
 	if($droitsCreation==1){
