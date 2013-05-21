@@ -185,7 +185,8 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 				,'kilometre'=>$form->texte('', 'kilometre', $contrat->kilometre, 8,8,'','','')
 				,'loyer_TTC'=>$form->texte('', 'loyer_TTC', $contrat->loyer_TTC, 10,20,'','','')
 				,'TVA'=>$form->combo('','TVA',$contrat->TTVA,$contrat->TVA)
-				,'loyer_HT'=>($contrat->loyer_TTC)*(1-(0.01*$contrat->TTVA[$contrat->TVA]))
+				,'loyer_HT'=>$form->texte('', 'loyer_HT', number_format(($contrat->loyer_TTC)*(1-($contrat->TTVA[$contrat->TVA]/100)),2), 10,20,'disabled','','')
+				
 				
 			)
 			,'view'=>array(

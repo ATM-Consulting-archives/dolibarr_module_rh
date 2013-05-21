@@ -11,10 +11,10 @@ class TRH_Ressource extends TObjetStd {
 		//types énuméré
 		parent::add_champs('statut','type=chaine;');
 		
-		//clé étrangere : groupe propriétaire
-		parent::add_champs('fk_proprietaire','type=chaine;index;');
+		//clé étrangere : groupes propriétaire et utilisatrice
+		parent::add_champs('fk_utilisatrice','type=entier;index;');	//groupe
 		//clé étrangère : société
-		parent::add_champs('fk_soc,entity','type=entier;index;');//fk_soc_leaser
+		parent::add_champs('fk_soc,entity','type=entier;index;');//fk_soc_leaser : entity
 		//clé étrangère : type de la ressource
 		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
 		//clé étrangère : ressource associé

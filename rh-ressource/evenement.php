@@ -258,7 +258,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				,'coutTTC'=>$form->texte('', 'coutTTC', ($evenement->coutTTC == 0) ? '0': $evenement->coutTTC, 10,10)
 				,'coutEntrepriseTTC'=>$form->texte('', 'coutEntrepriseTTC', $evenement->coutEntrepriseTTC, 10,10)
 				,'TVA'=>$form->combo('','TVA',$evenement->TTVA,$evenement->TVA)
-				,'coutEntrepriseHT'=>$form->texte('', 'coutEntrepriseHT', $evenement->coutEntrepriseHT, 10,10)
+				,'coutEntrepriseHT'=>$form->texte('', 'coutEntrepriseHT', $evenement->coutEntrepriseHT, 10,10, 'disabled' )
 				//($evenement->coutEntrepriseHT)*(1-(0.01*$evenement->TTVA[$evenement->TVA]))
 			)
 			,'view'=>array(

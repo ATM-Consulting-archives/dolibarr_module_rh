@@ -73,7 +73,21 @@
 		 	</tr><tr>
 		 		<td>Loyer mensuel TTC</td>
 		 		<td>[contrat.loyer_TTC;strconv=no;protect=no] €</td>
-		 	</tr><tr>
+		 	</tr>
+		 	<script>
+				function actuHT(){
+					ttc = parseFloat($('#loyer_TTC').val());
+					tva = parseFloat($('#TVA option:selected').html());
+					ht = ttc*(1-(tva/100));
+					ht = ht.toFixed(2)
+					$('#loyer_HT').val(ht);
+				}
+				
+				$('#loyer_TTC').live('keyup', function(){
+					actuHT();});
+				$(function() {$('#TVA').change(function(){actuHT();	});	});
+			</script>
+		 	<tr>
 		 		<td>TVA </td>
 		 		<td>[contrat.TVA;strconv=no;protect=no] %</td>
 		 	</tr>

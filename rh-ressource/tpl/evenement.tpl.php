@@ -61,6 +61,20 @@
 			<td>Coût pour l'entreprise TTC</td>
 			<td>[NEvent.coutEntrepriseTTC;strconv=no;protect=no] €</td>
 		</tr>
+		<script>
+			function actuHT(){
+				ttc = parseFloat($('#coutEntrepriseTTC').val());
+				tva = parseFloat($('#TVA option:selected').html());
+				ht = ttc*(1-(tva/100));
+				ht = ht.toFixed(2)
+				$('#coutEntrepriseHT').val(ht);
+			}
+			
+			$('#coutEntrepriseTTC').live('keyup', function(){
+				actuHT();});
+			$(function() {$('#TVA').change(function(){actuHT();	});	});
+		</script>
+		
 		<tr>
 			<td>TVA</td>
 			<td>[NEvent.TVA;strconv=no;protect=no]</td>

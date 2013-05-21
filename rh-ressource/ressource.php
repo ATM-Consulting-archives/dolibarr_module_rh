@@ -231,7 +231,7 @@ function getStatut($val){
 }
 /**
  * Retourne un statut selon le jour donnée. Prend en compte la ressource associé éventuelle (si celle ci est attribué, elle le devient aussi)
- */
+ 
 function getAttribution($id, $jour){
 	global $conf;
 	$ATMdb=new Tdb;
@@ -281,7 +281,7 @@ function getAttribution($id, $jour){
 	$ATMdb->close();
 	return $return;			
 	}
-
+*/
 
 
 function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
@@ -358,7 +358,8 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
 				,'date_vente'=>(empty($ressource->date_vente) || ($ressource->date_vente<=0) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' , 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
 				//,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
-				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TAgence,$ressource->fk_proprietaire)
+				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TEntity,$ressource->fk_proprietaire)
+				,'fk_utilisatrice'=>$form->combo('','fk_utilisatrice',$ressource->TGroups,$ressource->fk_proprietaire)
 			)
 			,'ressourceNew' =>array(
 				'typeCombo'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type"
