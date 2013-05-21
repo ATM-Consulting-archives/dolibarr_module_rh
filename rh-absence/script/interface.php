@@ -91,8 +91,22 @@ function _dureeMaladieNonMaintenue($userId, $date_debut, $date_fin){
 }
 
 function _conges($userId, $date_debut, $date_fin){
+			
+	////!!!!!! A RETRAVAILLER !!!!!
 	
-	$nb_jours_travailles=0;
+			
+	//**********************************************
+	//On récupère le nombre de jours entre les 2 dates
+	//**********************************************
+	
+	$dateDeb = strtotime($date_debut);
+	$dateFin = strtotime($date_fin);
+	
+	$nb_jours = ($dateFin-$dateDeb)/(3600*24);
+	$nb_jours_travailles = $nb_jours;
+	$nb_jours_conges = 0;
+	$nb_jours_event_famille = 0;
+	$nb_jours_conges_divers = 0;
 	
 	//**********************************************
 	//On récupère l'emploi du temps de l'utilisateur
@@ -123,13 +137,13 @@ function _conges($userId, $date_debut, $date_fin){
 		$EmploiDuTemps['dimancheam']=$ATMdb->Get_field('dimancheam');
 		$EmploiDuTemps['dimanchepm']=$ATMdb->Get_field('dimanchepm');
 	}
-
-	//On regarde chaque jour
-	$dateDeb = strtotime($date_debut);  
-	$dateFin = strtotime($date_fin);
-	 
+	
+	//Traitement sur chaque jour
 	while ($dateDeb <= $dateFin)
 	{
+		$timestamp = strtotime(date('Y-m-d', $phpDate));
+		$jour = date("w",$timestamp);
+		
 		//On regarde si le jour est férié
 		$sql="SELECT *
 		FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries as a
@@ -139,70 +153,129 @@ function _conges($userId, $date_debut, $date_fin){
 		$ATMdb->Execute($sql);
 		$k=0;
 		while($ATMdb->Get_line()) {
+			$periode=$ATMdb->Get_field('moment');
+			if($periode=='matin'){
+				$nb_jours_travailles-=0.5;
+				switch ($jour) {
+				    case "lundi":
+				        if(!$EmploiDuTemps['lundipm']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+					case "mardi":
+				        if(!$EmploiDuTemps['mardipm']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+					case "mercredi":
+				        if(!$EmploiDuTemps['mercredipm']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+				    case "jeudi":
+				        if(!$EmploiDuTemps['jeudipm']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+					case "vendredi":
+				        if(!$EmploiDuTemps['vendredipm']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+					case "samedi":
+				        if(!$EmploiDuTemps['samedipm']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+					case "dimanche":
+				        if(!$EmploiDuTemps['dimanchepm']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+				}
+			}elseif($periode=='apresmidi'){
+				$nb_jours_travailles-=0.5;
+				switch ($jour) {
+				    case "lundi":
+						if($EmploiDuTemps['lundiam']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+					case "mardi":
+						if($EmploiDuTemps['mardiam']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+					case "mercredi":
+						if($EmploiDuTemps['mercrediam']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+				    case "jeudi":
+						if($EmploiDuTemps['jeudiam']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+					case "vendredi":
+						if($EmploiDuTemps['vendrediam']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+					case "samedi":
+						if($EmploiDuTemps['samediam']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+					case "dimanche":
+						if($EmploiDuTemps['dimancheam']){
+				        	$nb_jours_travailles-=0.5;
+				        }
+				        break;
+				}
+			}elseif($periode=='allday'){
+				$nb_jours_travailles-=1;
+			}
 			$k++;
 		}
 		
-		//Si le jour n'est pas férié
+		//Si le jour n'est pas férié, alors on regarde si la personne a déposé un jour d'absence ce jour-ci
 		if($k=0){
-			$timestamp = strtotime(date('Y-m-d', $phpDate));
-			$jour = date("w",$timestamp);
-			switch ($jour) {
-			    case "lundi":
-			        if($EmploiDuTemps['lundiam']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-					if($EmploiDuTemps['lundipm']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-			        break;
-				case "mardi":
-			        if($EmploiDuTemps['mardiam']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-					if($EmploiDuTemps['mardipm']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-			        break;
-				case "mercredi":
-			        if($EmploiDuTemps['mercrediam']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-					if($EmploiDuTemps['mercredipm']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-			        break;
-			    case "jeudi":
-			        if($EmploiDuTemps['jeudiam']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-					if($EmploiDuTemps['jeudipm']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-			        break;
-				case "vendredi":
-			        if($EmploiDuTemps['vendrediam']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-					if($EmploiDuTemps['vendredipm']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-			        break;
-				case "samedi":
-			        if($EmploiDuTemps['samediam']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-					if($EmploiDuTemps['samedipm']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-			        break;
-				case "dimanche":
-			        if($EmploiDuTemps['dimancheam']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-					if($EmploiDuTemps['dimanchepm']){
-			        	$nb_jours_travailles+=0.5;
-			        }
-			        break;
+			$sql="SELECT *
+			FROM ".MAIN_DB_PREFIX."llx_rh_absence as a
+				LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
+			WHERE a.entity=".$conf->entity."
+			AND u.rowid=".$userId."
+			AND a.etat='Validee'
+			AND (a.date_debut<='".date('Y-m-d 00:00:00',$dateDeb)."' AND a.date_fin>='".date('Y-m-d 00:00:00',$dateDeb)."'";
+			
+			$ATMdb->Execute($sql);
+			while($ATMdb->Get_line()) {
+				$date_absence_debut=$ATMdb->Get_field('date_debut');
+				$date_absence_fin=$ATMdb->Get_field('date_fin');
+				$periode_date_debut=$ATMdb->Get_field('ddMoment');
+				$periode_date_fin=$ATMdb->Get_field('dfMoment');
+				if((date('Y-m-d 00:00:00',$dateDeb)==$date_absence_debut)&&(date('Y-m-d 00:00:00',$dateDeb)==$date_absence_fin)){
+					if(($periode_date_debut=='matin')&&($periode_date_fin=='apresmidi')){
+						$nb_jours_travailles-=1;
+					}else{
+						$nb_jours_travailles-=0.5;
+					}
+				}elseif(date('Y-m-d 00:00:00',$dateDeb)==$date_absence_debut){
+					if(($periode_date_debut=='matin')){
+						$nb_jours_travailles-=1;
+					}else{
+						
+						$nb_jours_travailles-=0.5;
+					}
+				}elseif(date('Y-m-d 00:00:00',$dateDeb)==$date_absence_fin){
+					if(($periode_date_fin=='apresmidi')){
+						$nb_jours_travailles-=1;
+					}else{
+						$nb_jours_travailles-=0.5;
+					}
+				}else{
+					$nb_jours_travailles-=1;
+				}
 			}
 		}
 		
