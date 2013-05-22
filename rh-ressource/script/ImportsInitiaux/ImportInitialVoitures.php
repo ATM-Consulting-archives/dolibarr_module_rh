@@ -223,7 +223,7 @@ foreach ($TRessource as $value) {
 foreach ($TContrat as $key => $value) {
 	$value->save($ATMdb);
 }
-
+$ATMdb->close();
 
 //Fin du code PHP : Afficher le temps d'éxecution
 $timeend=microtime(true);

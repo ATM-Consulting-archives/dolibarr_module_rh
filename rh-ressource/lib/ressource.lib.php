@@ -72,30 +72,21 @@ function getLibelle($ressource){
 
 function getTypeEvent($idTypeRessource = 0){
 	global $conf;
-	$TEvent = array(
-		'all'=>''
+	$TEvent = array();
+		/*'all'=>''
 		,'accident'=>'Accident'
 		,'reparation'=>'Réparation'
 		,'facture'=>'Facture'
-	);
-	/*
-	if ($idTypeRessource>0){
-		$ATMdb =new TPDOdb;
-		
-		$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-		WHERE rowid=".$idTypeRessource." AND entity=".$conf->entity;
-		
-		$ATMdb->Execute($sqlReq);
-		while($ATMdb->Get_line()) {
-			$keys = explode(';', $ATMdb->Get_field('liste_evenement_key'));
-			$values = explode(';', $ATMdb->Get_field('liste_evenement_value'));
-			foreach ($values as $i=>$value) {
-				if (!empty($value)){
-					$TEvent[$keys[$i]] = $values[$i];
-				}
-			}
-		}
-	}*/
+	);*/
+	
+	$sql="SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."rh_type_evenement 
+	WHERE (fk_rh_ressource_type=".$idTypeRessource." OR fk_rh_ressource_type=0) AND entity=".$conf->entity;
+	$ATMdb =new TPDOdb;
+	$ATMdb->Execute($sql);
+	while($row = $ATMdb->Get_line()) {
+		$TEvent[$row->code] = $row->libelle;	
+	}
+	$ATMdb->close();
 	return $TEvent;
 }
 
@@ -110,6 +101,7 @@ function getRessource($idTypeRessource = 0){
 	while($ATMdb->Get_line()) {
 		$TRessource[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('libelle').' '.$ATMdb->Get_field('numId'), ENT_COMPAT , 'ISO8859-1');
 		}
+	$ATMdb->close();
 	return $TRessource;
 }
 
@@ -123,6 +115,7 @@ function getIdType($type){
 	while($ATMdb->Get_line()) {
 		$id = $ATMdb->Get_field('rowid');
 		}
+	$ATMdb->close();
 	return $id;
 }
 	
@@ -137,6 +130,7 @@ function getUsers(){
 	while($ATMdb->Get_line()) {
 		$TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 		}
+	$ATMdb->close();
 	return $TUser;
 	
 }
