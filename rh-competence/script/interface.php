@@ -12,21 +12,21 @@ $ATMdb=new Tdb;
 
 $get = isset($_REQUEST['get'])?$_REQUEST['get']:'';
 
-_get($get);
+_get($ATMdb, $get);
 
-function _get($case) {
+function _get(&$ATMdb, $case) {
 	switch ($case) {
 		case 'formation':
-			__out(_formation($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
+			__out($ATMdb, _formation($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
 			break;
 		case 'remuneration':
-			__out(_remuneration($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
+			__out($ATMdb, _remuneration($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
 			break;
 	}
 }
 
 
-function _formation($userId, $date_debut, $date_fin){
+function _formation(&$ATMdb, $userId, $date_debut, $date_fin){
 		
 		$TabRecapFormation=array();
 		
@@ -48,7 +48,7 @@ function _formation($userId, $date_debut, $date_fin){
 		return $TabRecapFormation;
 }
 
-function _remuneration($userId, $date_debut, $date_fin){
+function _remuneration(&$ATMdb, $userId, $date_debut, $date_fin){
 		
 		$TabRecapFormation=array();
 		

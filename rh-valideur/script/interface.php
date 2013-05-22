@@ -10,23 +10,23 @@ $ATMdb=new Tdb;
 
 $get = isset($_REQUEST['get'])?$_REQUEST['get']:'ndf';
 
-_get($get);
+_get($ATMdb, $get);
 
-function _get($case) {
+function _get(&$ATMdb, $case) {
 	switch ($case) {
 		case 'ndf':
-			__out(_ndf($_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['type']));
+			__out(_ndf($ATMdb,$_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['type']));
 			break;
 		case 'situation_perso':
-			__out(_situation_perso($_REQUEST['fk_user']));	
+			__out( _situation_perso($ATMdb,$_REQUEST['fk_user']));	
 			break;
 		case 'situation_pro':
-			__out(_situation_pro($_REQUEST['fk_user']));	
+			__out( _situation_pro($ATMdb,$_REQUEST['fk_user']));	
 			break;
 	}
 }
 
-function _ndf($date_debut, $date_fin, $type){
+function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 	global $langs, $db;
 	
 	$TabNdf=array();
@@ -42,7 +42,7 @@ function _ndf($date_debut, $date_fin, $type){
 	$sql.= " n.rowid as 'NDF_ID',";
 	$sql.= " n.ref,";
 	$sql.= " l.datef,";
-	$sql.= " t.code_compta,";
+	$sql.= " t.accountancy_code,";
 	$sql.= " t.label,";
 	$sql.= " v.taux as 'tva',";
 	$sql.= " CAST(l.total_ht as DECIMAL(16,2)) as 'total_ht',";
@@ -106,7 +106,7 @@ function _ndf($date_debut, $date_fin, $type){
                 	$NDF_ID				=	$obj->NDF_ID;
 					$ref				=	$obj->ref;
 					$datef				=	dol_print_date($obj->datef,"day");
-					$code_compta		=	$obj->code_compta;
+					$code_compta		=	$obj->accountancy_code;
 					$label				=	$obj->label;
 					$tva				=	$obj->tva;
 					$total_ht			=	$obj->total_ht;
@@ -157,7 +157,7 @@ function _ndf($date_debut, $date_fin, $type){
 	return $TabNdf;
 }
 
-function _situation_perso($userId){
+function _situation_perso(&$ATMdb, $userId){
 		
 	$TabRecapSituationPerso=array();
 	
@@ -178,7 +178,7 @@ function _situation_perso($userId){
 	
 }
 
-function _situation_pro($userId){
+function _situation_pro(&$ATMdb, $userId){
 	
 	$TabRecapSituationPro=array();
 	
