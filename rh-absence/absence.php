@@ -21,6 +21,7 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->set_values($_REQUEST);
 				$absence->niveauValidation=1;
+				$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
 				$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
 				
 				if($demandeRecevable==1){
