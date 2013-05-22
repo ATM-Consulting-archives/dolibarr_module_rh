@@ -1160,6 +1160,7 @@ class TRH_EmploiTemps extends TObjetStd {
 					$this->{'date_'.$jour."_heuredam"}=$this->{'date_'.$jour."_heurefam"}=$this->{'date_'.$jour."_heuredpm"}=$this->{'date_'.$jour."_heurefpm"}= strtotime('0:00');
 				}
 		}
+		$this->tempsHebdo=36.25;
 
 	}
 	
