@@ -243,59 +243,7 @@ function getStatut($val){
 	if (empty($val)){return "Libre";}
 	return "Attribué";
 }
-/**
- * Retourne un statut selon le jour donnée. Prend en compte la ressource associé éventuelle (si celle ci est attribué, elle le devient aussi)
- 
-function getAttribution($id, $jour){
-	global $conf;
-	$ATMdb=new Tdb;
-	$sqlReq="SELECT e.date_debut, e.date_fin , firstname, name 
-	FROM ".MAIN_DB_PREFIX."rh_evenement as e  
-	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user=u.rowid) 
-	WHERE fk_rh_ressource=".$id."
-	AND type='emprunt'
-	AND e.entity=".$conf->entity."
-	ORDER BY date_debut";
-	
-	$ATMdb->Execute($sqlReq);
-	$return = $return = array('name'=>''
-				,'firstname'=>''
-				,'statut'=>'Libre') ;
-	while($ATMdb->Get_line()) {
-		if ( date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) <= $jour  
-			&& date("Y-m-d",strtotime($ATMdb->Get_field('date_fin'))) >= $jour ){
-				return array('name'=>htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')
-				,'firstname'=>htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')
-				,'statut'=>'Attribuée') ;
-				//return 'Attribuée à '.htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
-				break;
-		}
-		if (date("Y-m-d",strtotime($ATMdb->Get_field('date_debut'))) >= $jour ){
-			$return =  array('name'=>htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')
-				,'firstname'=>htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')
-				,'statut'=>'Réservée') ;
-				$return='Réservée à '.htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
-				break;
-			}
-	}
-	
-	
-	//le statut est égal est celui de la ressource attribué.
-	$sqlReq="SELECT fk_rh_ressource FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid=".$id." AND entity=".$conf->entity;
-	$ATMdb->Execute($sqlReq);
-	while($row=$ATMdb->Get_line()){
-		if ($ATMdb->Get_field('fk_rh_ressource') !=  0){
-			$return = array('name'=>''
-				,'firstname'=>''
-				,'statut'=>'Libre') ;
-		}
-			//$return = getStatut($ATMdb->Get_field('fk_rh_ressource'), $jour);}
-	}
-	
-	$ATMdb->close();
-	return $return;			
-	}
-*/
+
 
 
 function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
@@ -350,6 +298,8 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 
 	$contrat->load_liste($ATMdb);
 	$emprunt->load_liste($ATMdb);
+	$ressource->load_liste_entity($ATMdb);
+	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
 		,array(
@@ -375,7 +325,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 				,'date_vente'=>(empty($ressource->date_vente) || ($ressource->date_vente<=0) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' , 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
 				//,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TEntity,$ressource->fk_proprietaire)
-				,'fk_utilisatrice'=>$form->combo('','fk_utilisatrice',$ressource->TGroups,$ressource->fk_proprietaire)
+				,'fk_utilisatrice'=>$form->combo('','fk_utilisatrice',$ressource->TAgence,$ressource->fk_utilisatrice)
 			)
 			,'ressourceNew' =>array(
 				'typeCombo'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type"

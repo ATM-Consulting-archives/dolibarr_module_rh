@@ -78,7 +78,7 @@ function getTypeEvent($idTypeRessource = 0){
 		,'reparation'=>'Réparation'
 		,'facture'=>'Facture'
 	);
-	
+	/*
 	if ($idTypeRessource>0){
 		$ATMdb =new TPDOdb;
 		
@@ -95,7 +95,7 @@ function getTypeEvent($idTypeRessource = 0){
 				}
 			}
 		}
-	}
+	}*/
 	return $TEvent;
 }
 

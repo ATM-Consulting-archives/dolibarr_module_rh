@@ -82,7 +82,8 @@ class TRH_Evenement  extends TObjetStd {
 
 	function load_liste_type(&$ATMdb, $idRessourceType){
 		global $conf;
-		$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
+		$this->TType = getTypeEvent($idRessourceType);
+		/*$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
 		WHERE rowid=".$idRessourceType." AND entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
@@ -93,7 +94,7 @@ class TRH_Evenement  extends TObjetStd {
 					$this->TType[$keys[$key]] = $values[$key];
 				}
 			}
-		}
+		}*/
 		
 		
 	}
