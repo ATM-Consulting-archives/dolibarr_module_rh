@@ -24,6 +24,8 @@
 				
 				$emploiTemps->set_values($_REQUEST);
 				
+				$emploiTemps->tempsHebdo=$emploiTemps->calculTempsHebdo($ATMdb, $emploiTemps);
+				
 				$emploiTemps->save($ATMdb);
 				
 				$mesg = '<div class="ok">Demande enregistrée</div>';
@@ -192,6 +194,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				'id'=>$userCourant->id
 				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
 				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
+				,'tempsHebdo'=>$emploiTemps->tempsHebdo
 			)
 			,'view'=>array(
 				'mode'=>$mode
