@@ -41,11 +41,9 @@
 	
 	$TabUser=array();
 	//récupération du tableau utilisateur
-	$sqlReq="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u,".MAIN_DB_PREFIX."usergroup_user as g  
-	WHERE g.fk_user=u.rowid  AND u.entity=".$conf->entity;
-	if($idGroupe!=0){
-		$sqlReq.=" AND g.fk_usergroup=".$_REQUEST['groupe'];
-	}
+	$sqlReq="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u
+	WHERE  u.entity=".$conf->entity;
+
 	$sqlReq.=" ORDER BY name";
 	$ATMdb->Execute($sqlReq);	
 	$TabUser[0] = 'Tous';		

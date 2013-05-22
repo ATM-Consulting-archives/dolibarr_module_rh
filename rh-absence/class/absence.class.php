@@ -795,82 +795,7 @@ class TRH_Absence extends TObjetStd {
 			return $heureT.":".$minuteT;
 		}
 		
-		/*function calculTempsTravailHebdo($ATMdb,$user){
-			
-			//on cherche les jours travaillés par l'employé
-			$sql="SELECT rowid, lundiam, lundipm, 
-			mardiam, mardipm, mercrediam, mercredipm, 
-			jeudiam, jeudipm, vendrediam, vendredipm,
-			samediam, samedipm, dimancheam, dimanchepm
-			
-			,CONCAT(HOUR(date_lundi_heuredam) ,':' , MINUTE(date_lundi_heuredam)) as	date_lundi_heuredam
-			,CONCAT(HOUR(date_lundi_heurefam) ,':' , MINUTE(date_lundi_heurefam)) as	date_lundi_heurefam
-			,CONCAT(HOUR(date_lundi_heuredpm) ,':' , MINUTE(date_lundi_heuredpm)) as	date_lundi_heuredpm
-			,CONCAT(HOUR(date_lundi_heurefpm) ,':' , MINUTE(date_lundi_heurefpm)) as	date_lundi_heurefpm	
-			 	
-			,CONCAT(HOUR(date_mardi_heuredam) ,':' , MINUTE(date_mardi_heuredam)) as	date_mardi_heuredam	
-			,CONCAT(HOUR(date_mardi_heurefam) ,':' , MINUTE(date_mardi_heurefam)) as	date_mardi_heurefam
-			,CONCAT(HOUR(date_mardi_heuredpm) ,':' , MINUTE(date_mardi_heuredpm)) as	date_mardi_heuredpm
-			,CONCAT(HOUR(date_mardi_heurefpm) ,':' , MINUTE(date_mardi_heurefpm)) as	date_mardi_heurefpm
-			
-			,CONCAT(HOUR(date_mercredi_heuredam) ,':' , MINUTE(date_mercredi_heuredam)) as	date_mercredi_heuredam	
-			,CONCAT(HOUR(date_mercredi_heurefam) ,':' , MINUTE(date_mercredi_heurefam)) as	date_mercredi_heurefam
-			,CONCAT(HOUR(date_mercredi_heuredpm) ,':' , MINUTE(date_mercredi_heuredpm)) as	date_mercredi_heuredpm
-			,CONCAT(HOUR(date_mercredi_heurefpm) ,':' , MINUTE(date_mercredi_heurefpm)) as	date_mercredi_heurefpm
-			
-			,CONCAT(HOUR(date_jeudi_heuredam) ,':' , MINUTE(date_jeudi_heuredam)) as	date_jeudi_heuredam	
-			,CONCAT(HOUR(date_jeudi_heurefam) ,':' , MINUTE(date_jeudi_heurefam)) as	date_jeudi_heurefam
-			,CONCAT(HOUR(date_jeudi_heuredpm) ,':' , MINUTE(date_jeudi_heuredpm)) as	date_jeudi_heuredpm
-			,CONCAT(HOUR(date_jeudi_heurefpm) ,':' , MINUTE(date_jeudi_heurefpm)) as	date_jeudi_heurefpm
-			
-			,CONCAT(HOUR(date_vendredi_heuredam) ,':' , MINUTE(date_vendredi_heuredam)) as	date_vendredi_heuredam	
-			,CONCAT(HOUR(date_vendredi_heurefam) ,':' , MINUTE(date_vendredi_heurefam)) as	date_vendredi_heurefam
-			,CONCAT(HOUR(date_vendredi_heuredpm) ,':' , MINUTE(date_vendredi_heuredpm)) as	date_vendredi_heuredpm
-			,CONCAT(HOUR(date_vendredi_heurefpm) ,':' , MINUTE(date_vendredi_heurefpm)) as	date_vendredi_heurefpm
-			
-			,CONCAT(HOUR(date_samedi_heuredam) ,':' , MINUTE(date_samedi_heuredam)) as	date_samedi_heuredam	
-			,CONCAT(HOUR(date_samedi_heurefam) ,':' , MINUTE(date_samedi_heurefam)) as	date_samedi_heurefam
-			,CONCAT(HOUR(date_samedi_heuredpm) ,':' , MINUTE(date_samedi_heuredpm)) as	date_samedi_heuredpm
-			,CONCAT(HOUR(date_samedi_heurefpm) ,':' , MINUTE(date_samedi_heurefpm)) as	date_samedi_heurefpm
-			
-			,CONCAT(HOUR(date_dimanche_heuredam) ,':' , MINUTE(date_dimanche_heuredam)) as	date_dimanche_heuredam	
-			,CONCAT(HOUR(date_dimanche_heurefam) ,':' , MINUTE(date_dimanche_heurefam)) as	date_dimanche_heurefam
-			,CONCAT(HOUR(date_dimanche_heuredpm) ,':' , MINUTE(date_dimanche_heuredpm)) as	date_dimanche_heuredpm
-			,CONCAT(HOUR(date_dimanche_heurefpm) ,':' , MINUTE(date_dimanche_heurefpm)) as	date_dimanche_heurefpm	
-			 
-			FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` 
-			WHERE fk_user=".$this->fk_user; 
-
-			$ATMdb->Execute($sql);
-			$TTravail = array();
-			$TTravailHeure= array();
-			while($ATMdb->Get_line()) {
-				foreach ($this->TJour as $jour) {
-					foreach(array('am','pm') as $moment) {
-						$TTravail[$jour.$moment]=$ATMdb->Get_field($jour.$moment);
-						
-					}
-					foreach(array('dam','fam','dpm','fpm') as $moment) {
-						$TTravailHeure["date_".$jour."_heure".$moment]=$ATMdb->Get_field("date_".$jour."_heure".$moment);
-					}
-				}
-			}
-			$dureeHeure='0:0';
-			foreach ($this->TJour as $jour) {
-				foreach(array('am','pm') as $moment) {
-					if($TTravail[$jour.$moment]==1){
-						$dureeHeure=$this->additionnerHeure($dureeHeure,$this->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
-						
-					}
-				}
-			}
-			$dureeHeure=$this->horaireMinuteEnCentieme($dureeHeure);
-			if($dureeHeure>35){
-				return 1;
-			}else{
-				return 0;
-			}
-		}*/
+		
 		
 		function horaireMinuteEnCentieme($horaire){
 			list($heure, $minute) = explode(':', $horaire);	
@@ -1179,6 +1104,7 @@ class TRH_EmploiTemps extends TObjetStd {
 		}
 					
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
+		parent::add_champs('tempsHebdo','type=float;');
 		parent::add_champs('entity','type=int;');
 		
 		parent::_init_vars();
@@ -1234,11 +1160,12 @@ class TRH_EmploiTemps extends TObjetStd {
 					$this->{'date_'.$jour."_heuredam"}=$this->{'date_'.$jour."_heurefam"}=$this->{'date_'.$jour."_heuredpm"}=$this->{'date_'.$jour."_heurefpm"}= strtotime('0:00');
 				}
 		}
+		$this->tempsHebdo=36.25;
 
 	}
 	
 	//remet à 0 les checkbox avant la sauvegarde
-	function razCheckbox(&$ATMdb, $absence){
+	function razCheckbox(&$ATMdb, $emploiTemps){
 		global $conf, $user;
 		$this->entity = $conf->entity;
 		
@@ -1247,6 +1174,29 @@ class TRH_EmploiTemps extends TObjetStd {
 			 $this->{$jour."pm"}=0;
 		}
 	}
+	
+	//remet à 0 les checkbox avant la sauvegarde
+	function calculTempsHebdo(&$ATMdb, $edt){
+		
+		
+		$tpsHebdo='0:0';
+		foreach ($edt->TJour as $jour) {
+			if($edt->{$jour."am"}=="1"){
+				//echo $edt->{"date_".$jour."_heuredam"}.$edt->{"date_".$jour."_heurefam"};exit;
+				$tpsHebdo=additionnerHeure($tpsHebdo,difheure(date('h:i',$edt->{"date_".$jour."_heuredam"}), date('h:i',$edt->{"date_".$jour."_heurefam"})));
+			}
+			if($edt->{$jour."pm"}=="1"){
+				$tpsHebdo=additionnerHeure($tpsHebdo,difheure(date('h:i',$edt->{"date_".$jour."_heuredpm"}), date('h:i',$edt->{"date_".$jour."_heurefpm"})));
+				
+			}
+		}
+	
+		return horaireMinuteEnCentieme($tpsHebdo);
+	}
+	
+	
+	
+	
 }
 
 
