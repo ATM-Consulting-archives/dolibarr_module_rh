@@ -57,7 +57,7 @@
 
 //CARTE AREA
 	$tempType = new TRH_Ressource_type;
-	$tempType->chargement('Carte Area', 'cartearea', 1, 'Trajet', 'trajet');
+	$tempType->chargement('Badge Area', 'badgearea', 1, 'Trajet', 'trajet');
 	$tempType->save($ATMdb);
 	
 	$tempField = new TRH_Ressource_field;

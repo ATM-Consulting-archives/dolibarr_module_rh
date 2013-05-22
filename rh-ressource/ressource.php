@@ -10,6 +10,8 @@
 	$ATMdb=new Tdb;
 	$emprunt=new TRH_Evenement;
 	$ressource=new TRH_ressource;
+	$contrat=new TRH_Contrat;
+	$contrat_ressource=new TRH_Contrat_Ressource;
 	
 	$mesg = '';
 	$error=false;
@@ -19,7 +21,7 @@
 			case 'add':
 			case 'new':
 				$ressource->set_values($_REQUEST);
-				_fiche($ATMdb, $emprunt, $ressource,'new');
+				_fiche($ATMdb, $emprunt, $ressource, $contrat,'new');
 				break;	
 			case 'edit'	:
 				//$ATMdb->db->debug=true;
@@ -29,7 +31,7 @@
 				$ressource->fk_rh_ressource_type = $_REQUEST['fk_rh_ressource_type'];
 				$ressource->load_ressource_type($ATMdb);
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $emprunt, $ressource,'edit');
+				_fiche($ATMdb, $emprunt, $ressource, $contrat,'edit');
 				break;
 				
 			case 'save':
@@ -83,6 +85,18 @@
 					$emprunt->save($ATMdb);
 				}
 				////////
+				
+				////////
+				if($_REQUEST["fieldChoiceContrat"]=="O"){
+					$contrat->set_values($_REQUEST['contrat']);
+					$contrat->fk_tier_fournisseur=$_REQUEST['fk_tier_fournisseur'];
+					$contrat->fk_rh_ressource_type=$_REQUEST['fk_rh_ressource_type'];
+					$contrat->save($ATMdb);
+					$contrat_ressource->fk_rh_ressource = $ressource->getId();
+					$contrat_ressource->fk_rh_contrat = $contrat->getId();
+					$contrat_ressource->save($ATMdb);
+				}
+				////////
 
 				if ($mesg==''){
 					$mesg = '<div class="ok">Modifications effectuées</div>';
@@ -94,13 +108,13 @@
 				else {$mode = 'edit';}
 				
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $emprunt, $ressource,$mode);
+				_fiche($ATMdb, $emprunt, $ressource, $contrat, $mode);
 				break;
 			
 			case 'view':
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $emprunt, $ressource,'view');
+				_fiche($ATMdb, $emprunt, $ressource, $contrat, 'view');
 				break;
 			
 				
@@ -121,7 +135,7 @@
 	}
 	elseif(isset($_REQUEST['id'])) {
 		$ressource->load($ATMdb, $_REQUEST['id']);
-		_fiche($ATMdb, $emprunt, $ressource, 'view');
+		_fiche($ATMdb, $emprunt, $ressource, $contrat, 'view');
 	}
 	else {
 		/*
@@ -231,7 +245,7 @@ function getStatut($val){
 }
 /**
  * Retourne un statut selon le jour donnée. Prend en compte la ressource associé éventuelle (si celle ci est attribué, elle le devient aussi)
- */
+ 
 function getAttribution($id, $jour){
 	global $conf;
 	$ATMdb=new Tdb;
@@ -281,10 +295,10 @@ function getAttribution($id, $jour){
 	$ATMdb->close();
 	return $return;			
 	}
+*/
 
 
-
-function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
+function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 	global $db,$user;
 	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
 
@@ -334,6 +348,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 		$reqVide=1;
 	}
 
+	$contrat->load_liste($ATMdb);
 	$emprunt->load_liste($ATMdb);
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
@@ -351,14 +366,16 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 				,'titreOrganigramme'=>load_fiche_titre("Organigramme des ressources associées",'', 'title.png', 0, '')
 				,'titreRessourceAssocie'=>load_fiche_titre("Organigramme des ressources associées",'', 'title.png', 0, '')
 				,'titreAttribution'=>load_fiche_titre("Attribution de la ressource",'', 'title.png', 0, '')
+				,'titreContrat'=>load_fiche_titre("Création d'un contrat directement lié",'', 'title.png', 0, '')
 				
 				,'typehidden'=>$form->hidden('fk_rh_ressource_type', $ressource->fk_rh_ressource_type) 
 				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
 				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
 				,'date_vente'=>(empty($ressource->date_vente) || ($ressource->date_vente<=0) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' , 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
-				,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
-				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TAgence,$ressource->fk_proprietaire)
+				//,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
+				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TEntity,$ressource->fk_proprietaire)
+				,'fk_utilisatrice'=>$form->combo('','fk_utilisatrice',$ressource->TGroups,$ressource->fk_proprietaire)
 			)
 			,'ressourceNew' =>array(
 				'typeCombo'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type"
@@ -379,6 +396,22 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, $mode) {
 				,'commentaire'=>$form->texte('','evenement[commentaire]',$emprunt->commentaire, 30,100,'','','-')
 				,'date_debut'=> $form->calendrier('', 'evenement[date_debut]', $emprunt->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'evenement[date_fin]', $emprunt->get_date('date_fin'), 10)
+			)
+			,'contrat'=>array(
+				'id'=>$contrat->getId()
+				,'libelle'=>$form->texte('', 'contrat[libelle]', $contrat->libelle, 50,255,'','','-')
+				,'fk_rh_ressource'=> $form->hidden('contrat[fk_rh_ressource]', $ressource->getId())
+				,'tiersFournisseur'=> $form->combo('','fk_tier_fournisseur',$contrat->TFournisseur,$contrat->fk_tier_fournisseur)
+				,'tiersAgence'=> $form->combo('','contrat[fk_tier_utilisateur]',$contrat->TAgence,$contrat->fk_tier_utilisateur)
+				,'date_debut'=> $form->calendrier('', 'contrat[date_debut]', $contrat->get_date('date_debut'), 10)
+				,'date_fin'=> $form->calendrier('', 'contrat[date_fin]', $contrat->get_date('date_fin'), 10)
+				,'entretien'=>$form->texte('', 'contrat[entretien]', $contrat->entretien, 10,20,'','','')
+				,'assurance'=>$form->texte('', 'contrat[assurance]', $contrat->assurance, 10,20,'','','')
+				,'kilometre'=>$form->texte('', 'contrat[kilometre]', $contrat->kilometre, 8,8,'','','')
+				,'loyer_TTC'=>$form->texte('', 'contrat[loyer_TTC]', $contrat->loyer_TTC, 10,20,'','','')
+				,'TVA'=>$form->combo('','contrat[TVA]',$contrat->TTVA,$contrat->TVA)
+				,'loyer_HT'=>($contrat->loyer_TTC)*(1-(0.01*$contrat->TTVA[$contrat->TVA]))
+				
 			)
 			,'view'=>array(
 				'mode'=>$mode

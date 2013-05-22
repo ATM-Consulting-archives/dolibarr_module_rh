@@ -39,18 +39,19 @@
 		</tr>
 		<tr id="user">
 			<td>Utilisateur</td>
-			<td><a href="[ressource.URLroot;strconv=no;protect=no]/user/fiche.php?id=[NEvent.fk_user;strconv=no;protect=no]" >[NEvent.user;strconv=no;protect=no]</a></td>
+			<td>
+				[onshow;block=begin;when [view.mode]=='view']
+					<a href="[ressource.URLroot;strconv=no;protect=no]/user/fiche.php?id=[NEvent.fk_user;strconv=no;protect=no]" >[NEvent.user;strconv=no;protect=no]</a>
+				[onshow;block=end] 	
+					
+				[onshow;block=begin;when [view.mode]!='view']
+					[NEvent.user;strconv=no;protect=no]
+				[onshow;block=end]
+			</td>
 		</tr>
 		<tr id="responsabilite">
-			<td >Responsabilité</td>
+			<td >Responsabilité de l'utilisateur</td>
 			<td>[NEvent.responsabilite;strconv=no;protect=no]</td>
-			<script>
-				$(document).ready(function(){$('#responsabilite').val(100);})
-			</script>
-		</tr>
-		<tr>
-			<td>Commentaire</td>
-			<td>[NEvent.commentaire;strconv=no;protect=no]</td>
 		</tr>
 		<tr>
 			<td>Coût TTC</td>
@@ -60,6 +61,20 @@
 			<td>Coût pour l'entreprise TTC</td>
 			<td>[NEvent.coutEntrepriseTTC;strconv=no;protect=no] €</td>
 		</tr>
+		<script>
+			function actuHT(){
+				ttc = parseFloat($('#coutEntrepriseTTC').val());
+				tva = parseFloat($('#TVA option:selected').html());
+				ht = ttc*(1-(tva/100));
+				ht = ht.toFixed(2)
+				$('#coutEntrepriseHT').val(ht);
+			}
+			
+			$('#coutEntrepriseTTC').live('keyup', function(){
+				actuHT();});
+			$(function() {$('#TVA').change(function(){actuHT();	});	});
+		</script>
+		
 		<tr>
 			<td>TVA</td>
 			<td>[NEvent.TVA;strconv=no;protect=no]</td>
@@ -67,6 +82,10 @@
 		<tr>
 			<td>Coût pour l'entreprise HT</td>
 			<td>[NEvent.coutEntrepriseHT;strconv=no;protect=no] €</td>
+		</tr>
+		<tr>
+			<td>Commentaire</td>
+			<td>[NEvent.commentaire;strconv=no;protect=no]</td>
 		</tr>
 	</table>
 </div>

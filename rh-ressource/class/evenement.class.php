@@ -55,6 +55,8 @@ class TRH_Evenement  extends TObjetStd {
 			,'facture'=>'Facture'
 			,'divers'=>'Divers'
 		);	
+		
+		$this->TResponsabilite = array('0%', '50%', '100%');
 			
 	}
 
@@ -149,3 +151,36 @@ class TRH_Evenement  extends TObjetStd {
 	}
 	
 }	
+
+
+
+class TRH_Type_Evenement  extends TObjetStd {
+	
+	function __construct(){
+		parent::set_table(MAIN_DB_PREFIX.'rh_type_evenement');
+		parent::add_champs('libelle, code, codeanalytique, supprimable','type=chaine;');
+		parent::add_champs('fk_rh_ressource_type, entity','type=entier;index;');	
+		
+		parent::_init_vars();
+		parent::start();
+		
+	}
+
+	function save(&$db) {
+		global $conf;
+		$this->entity = $conf->entity;
+		$this->supprimable = 'vrai';
+		if (empty($this->fk_rh_ressource_type))
+			{$this->fk_rh_ressource_type = 0;}
+		parent::save($db);
+	}
+
+
+}
+
+
+
+		
+		
+		
+		

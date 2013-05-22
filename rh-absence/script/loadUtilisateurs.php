@@ -16,6 +16,7 @@ if(isset($_REQUEST['groupe'])) {
 			AND g.fk_user=u.rowid AND g.fk_usergroup=".$_REQUEST['groupe'];
 		
 		}
+		$sqlReq.=" ORDER BY name";
 		
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {

@@ -21,7 +21,7 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->set_values($_REQUEST);
 				$absence->niveauValidation=1;
-				$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user']);
+				$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
 				
 				if($demandeRecevable==1){
 					$absence->save($ATMdb);
@@ -406,6 +406,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	echo $form->hidden('id', $absence->getId());
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('userRecapCompteur', isset($_REQUEST['fk_user'])?$_REQUEST['fk_user']:0);
+	echo $form->hidden('userAbsenceCree', isset($absence->fk_user)!=0?$absence->fk_user:0);
+
 	//echo $form->hidden('fk_user', $user->id);
 	
 	
@@ -525,14 +527,14 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			AND s.rowid=u.fk_user
 			AND v.fk_usergroup=u.fk_usergroup
 			AND v.entity=".$conf->entity;
-			
+			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
 	}else $droitsCreation=2; //on n'a pas les droits de création
 	if($droitsCreation==1){
 		$sqlReqUser.=" ORDER BY name";
 		$ATMdb->Execute($sqlReqUser);
 		while($ATMdb->Get_line()) {
-			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 	}
 	

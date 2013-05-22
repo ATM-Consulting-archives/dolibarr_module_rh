@@ -4,21 +4,24 @@ define('INC_FROM_CRON_SCRIPT', true);
 require('../config.php');
 
 //Interface qui renvoie les emprunts de ressources d'un utilisateur
+global $user,$conf;
+
+$ATMdb=new Tdb;
+
 $get = isset($_REQUEST['get'])?$_REQUEST['get']:'emprunt';
 
-_get($get);
+_get($ATMdb, $get);
 
-function _get($case) {
+function _get(&$ATMdb, $case) {
 	switch ($case) {
 		case 'emprunt':
-			__out(_emprunt($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
+			__out($ATMdb, _emprunt($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
 			break;
 	}
 }
 
-function _emprunt($userId, $date_debut, $date_fin){
-		global $user,$conf;
-		$ATMdb=new Tdb;
+function _emprunt(&$ATMdb, $userId, $date_debut, $date_fin){
+		
 		
 		$TabEmprunt=array();
 		

@@ -19,10 +19,6 @@
 </script>
 
 
-[onshow;block=begin;when [view.mode]!='view']
-			<h2>Créer une ressource </h2>
-[onshow;block=end]
-
 <div>
 
 	<!-- entête du tableau -->
@@ -49,17 +45,14 @@
 		<td>[ressource.libelle;strconv=no;protect=no] </td>
 	</tr>
 	<tr>
-		<td>Date d'achat</td>
+		<td>Date début</td>
 		<td>[ressource.date_achat;strconv=no;protect=no]</td>
 	</tr>
 	<tr>
-		<td>Date de vente</td>
+		<td>Date fin</td>
 		<td>[ressource.date_vente;strconv=no;protect=no]</td>
 	</tr>	
-	<tr>
-		<td>Date de garantie</td>
-		<td>[ressource.date_garantie;strconv=no;protect=no]</td>
-	</tr>	
+		
 	<tr>
 		<td>Agence Propriétaire</td>
 		<td>[ressource.fk_proprietaire;strconv=no;protect=no]</td>
@@ -69,8 +62,8 @@
 
 </div>
 <br><br>
-[ressource.titreChamps;strconv=no;protect=no]
 
+[ressource.titreChamps;strconv=no;protect=no]
 <table class="border" style="width:100%">
 	<tr>
 		<td style="width:20%" [ressourceField.obligatoire;strconv=no;protect=no]> 
@@ -80,8 +73,7 @@
 		
 	</tr>
 </table>
-
-<br>
+<br><br>
 
 [onshow;block=begin;when [view.mode]=='edit']
 	[ressource.titreRessourceAssocie;strconv=no;protect=no]
@@ -92,6 +84,7 @@
 
 		
 [onshow;block=begin;when [view.mode]=='edit']
+<br><br>
 [ressource.titreAttribution;strconv=no;protect=no]
 
 <p> Attribuer directement cette ressource à un utilisateur : 
@@ -119,6 +112,69 @@
 		<td>[NEmprunt.commentaire;strconv=no;protect=no]</td>
 	</tr>
 </table>
+
+<br><br>
+[ressource.titreContrat;strconv=no;protect=no]
+
+<p> Attribuer directement cette ressource à un contrat : 
+<INPUT type=radio name="fieldChoiceContrat" value="O" id="ouiCheckedContrat"><label for="ouiCheckedContrat"> Oui</label>
+<INPUT type=radio name="fieldChoiceContrat" value="N" id="nonCheckedContrat" checked="checked"><label for="nonCheckedContrat"> Non</label>
+</p>
+
+<table id="tableContrat" class="border" style="width:100%">
+	[contrat.fk_rh_ressource;strconv=no;protect=no]
+	<tr>
+			<td style="width:20%">Libellé du contrat</td>
+			<td>[contrat.libelle;strconv=no;protect=no]</td>
+		</tr>
+	 	<tr>
+	 		<td>Fournisseur concerné</td>
+	 		<td>[contrat.tiersFournisseur;strconv=no;protect=no]</td>
+	 	</tr>
+	 	<tr>
+	 		<td>Date de début</td>
+	 		<td>[contrat.date_debut;strconv=no;protect=no]</td>
+	 	</tr>
+	 	<tr>
+	 		<td>Date de fin</td>
+	 		<td>[contrat.date_fin;strconv=no;protect=no]</td>
+	 	</tr>
+	 	<tr id="km" >
+	 		<td>Kilomètrage</td>
+	 		<td>[contrat.kilometre;strconv=no;protect=no] km</td>
+	 	</tr>
+	 	<script>
+	 		$('#fk_tier_fournisseur').change(function()
+	 			{actuKm();})
+	 		$(document).ready(function()
+	 			{actuKm();});
+	 		
+	 		function actuKm(){
+	 			if ($('#fk_tier_fournisseur option:selected').html()=='Parcours'){
+	 				$('#km').show();}
+	 			else{
+	 				$('#km').hide();
+	 			}
+	 		}
+	 	</script>
+	 	<tr>
+	 		<td>Montant Entretien</td>
+	 		<td>[contrat.entretien;strconv=no;protect=no] €</td>
+	 	</tr><tr>
+	 		<td>Montant Assurance</td>
+	 		<td>[contrat.assurance;strconv=no;protect=no] €</td>
+	 	</tr><tr>
+	 		<td>Loyer mensuel TTC</td>
+	 		<td>[contrat.loyer_TTC;strconv=no;protect=no] €</td>
+	 	</tr><tr>
+	 		<td>TVA </td>
+	 		<td>[contrat.TVA;strconv=no;protect=no] %</td>
+	 	</tr>
+	 	<tr>
+	 		<td>Loyer mensuel HT</td>
+	 		<td>[contrat.loyer_HT;strconv=no;protect=no] €</td>
+	 	</tr>
+</table>
 [onshow;block=end]
 
 
@@ -130,6 +186,14 @@
 		});
 		$('#nonChecked').click(function(){
 			$('#tableAttribution').hide();
+		})
+		
+		$('#tableContrat').hide();
+		$('#ouiCheckedContrat').click(function(){
+			$('#tableContrat').show();
+		});
+		$('#nonCheckedContrat').click(function(){
+			$('#tableContrat').hide();
 		})
 		
 		//on empêche que la date de début dépasse pas celle de fin

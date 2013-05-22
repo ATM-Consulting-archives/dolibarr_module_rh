@@ -182,9 +182,11 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 				,'date_fin'=> $form->calendrier('', 'date_fin', $contrat->get_date('date_fin'), 10)
 				,'entretien'=>$form->texte('', 'entretien', $contrat->entretien, 10,20,'','','')
 				,'assurance'=>$form->texte('', 'assurance', $contrat->assurance, 10,20,'','','')
+				,'kilometre'=>$form->texte('', 'kilometre', $contrat->kilometre, 8,8,'','','')
 				,'loyer_TTC'=>$form->texte('', 'loyer_TTC', $contrat->loyer_TTC, 10,20,'','','')
 				,'TVA'=>$form->combo('','TVA',$contrat->TTVA,$contrat->TVA)
-				,'loyer_HT'=>($contrat->loyer_TTC)*(1-(0.01*$contrat->TTVA[$contrat->TVA]))
+				,'loyer_HT'=>$form->texte('', 'loyer_HT', number_format(($contrat->loyer_TTC)*(1-($contrat->TTVA[$contrat->TVA]/100)),2), 10,20,'disabled','','')
+				
 				
 			)
 			,'view'=>array(

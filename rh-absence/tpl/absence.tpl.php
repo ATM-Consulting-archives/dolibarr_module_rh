@@ -93,7 +93,7 @@
 			</table>
 
 			
-			<div class="tabsAction" >
+		<div class="tabsAction" >	
 		[onshow;block=begin;when [absenceCourante.etat]!='Refusee']
 		[onshow;block=begin;when [absenceCourante.etat]!='Validee']
 			
@@ -104,32 +104,31 @@
 				
 				[onshow;block=begin;when [view.mode]!='edit']
 					[onshow;block=begin;when [userCourant.valideurConges]=='1']
+					
 						<a class="butAction" id="action-update"  onclick="document.location.href='?action=accept&id=[absenceCourante.id]'">Accepter</a>	
 						<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=refuse&id=[absenceCourante.id]'">Refuser</span>
-						<a style='width:22%' class="butAction" id="action-update"  onclick="document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'">Envoyer au valideur supérieur</a>	
+						<a style='width:30%' class="butAction" id="action-update"  onclick="document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'">Envoyer au valideur supérieur</a>	
+					
 					[onshow;block=end]
 				[onshow;block=end]
-
-				
-			
 		[onshow;block=end]
 		[onshow;block=end]	
 
 		[onshow;block=begin;when when [absenceCourante.etat]!='Validee']
 		[onshow;block=begin;when [view.mode]!='edit']
 				[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
-	
-					<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
-				
+
+						<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
+
 				[onshow;block=end]
 					
 		[onshow;block=end]
 		[onshow;block=end]
-		</div>
-		</div>
+	</div></div>
 		
 		
 		<div>
+		<br/><br/><br/><br/>
 		<h3 style="color: #2AA8B9;">Vos dernières absences</h3>
 		<table  class="liste formdoc noborder" style="width:100%">
 				<tr class="liste_titre">
@@ -210,9 +209,23 @@
 		<script>
 		$(document).ready( function(){
 			if($('#userRecapCompteur').val()==0){
+				
+				if($('#userAbsenceCree').val()!=0){
+					var urlajax='script/chargerCompteurDemandeAbsence.php?user='+$('#userAbsenceCree').val();
+				}else{	
+					
+					if($('#fk_user option:selected').val()){
+						var urlajax='script/chargerCompteurDemandeAbsence.php?user='+$('#fk_user option:selected').val();
+					}else{
+						var urlajax='script/chargerCompteurDemandeAbsence.php?user='+$('#fk_user').val();
+					}			
+					
+				}
+				
 				$.ajax({
-					url: 'script/chargerCompteurDemandeAbsence.php?user='+$('#fk_user option:selected').val()
+					url: urlajax
 				}).done(function(data) {
+
 					liste = JSON.parse(data);
 
 					$('#reste').empty();
@@ -228,7 +241,8 @@
 					$('#mensuel').append(liste.mensuel);
 
 				});
-			}else{
+			}
+			else{
 				$.ajax({
 					url: 'script/chargerCompteurDemandeAbsence.php?user='+$('#userRecapCompteur').val()
 				}).done(function(data) {
