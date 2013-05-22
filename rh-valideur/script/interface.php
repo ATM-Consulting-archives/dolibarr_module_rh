@@ -15,13 +15,13 @@ _get($ATMdb, $get);
 function _get(&$ATMdb, $case) {
 	switch ($case) {
 		case 'ndf':
-			__out($ATMdb, _ndf($_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['type']));
+			__out(_ndf($ATMdb,$_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['type']));
 			break;
 		case 'situation_perso':
-			__out($ATMdb, _situation_perso($_REQUEST['fk_user']));	
+			__out( _situation_perso($ATMdb,$_REQUEST['fk_user']));	
 			break;
 		case 'situation_pro':
-			__out($ATMdb, _situation_pro($_REQUEST['fk_user']));	
+			__out( _situation_pro($ATMdb,$_REQUEST['fk_user']));	
 			break;
 	}
 }
