@@ -42,7 +42,7 @@ function _ndf($date_debut, $date_fin, $type){
 	$sql.= " n.rowid as 'NDF_ID',";
 	$sql.= " n.ref,";
 	$sql.= " l.datef,";
-	$sql.= " t.code_compta,";
+	$sql.= " t.accountancy_code,";
 	$sql.= " t.label,";
 	$sql.= " v.taux as 'tva',";
 	$sql.= " CAST(l.total_ht as DECIMAL(16,2)) as 'total_ht',";
@@ -106,7 +106,7 @@ function _ndf($date_debut, $date_fin, $type){
                 	$NDF_ID				=	$obj->NDF_ID;
 					$ref				=	$obj->ref;
 					$datef				=	dol_print_date($obj->datef,"day");
-					$code_compta		=	$obj->code_compta;
+					$code_compta		=	$obj->accountancy_code;
 					$label				=	$obj->label;
 					$tva				=	$obj->tva;
 					$total_ht			=	$obj->total_ht;
