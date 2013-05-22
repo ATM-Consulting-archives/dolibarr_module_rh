@@ -11,9 +11,10 @@
 
 
 [ressource.titreAgenda;strconv=no;protect=no]
-[ressource.ficheHidden;strconv=no;protect=no][ressource.idHidden;strconv=no;protect=no]
+[ressource.ficheHidden;strconv=no;protect=no]
 
 [onshow;block=begin;when [ressource.fiche]==true]
+	[ressource.idHidden;strconv=no;protect=no]
 	Filtre sur le type d'événément : 
 	[ressource.typeEven;strconv=no;protect=no]
 	[ressource.btValider;strconv=no;protect=no]
@@ -24,11 +25,11 @@
 
 		<table class="border" style="width:100%">
 			<tr>
-				<td>Type</td>
-				<td>Ressource</td>
-				<td>Utilisateur</td>
-				<td>Evénement</td>
-				<td rowspan="2">[ressource.btValider;strconv=no;protect=no]</td>
+				<td style="width:10%">Type</td>
+				<td style="width:30%">Ressource</td>
+				<td style="width:30%">Utilisateur</td>
+				<td style="width:20%">Evénement</td>
+				<td rowspan="2" style="width:10%;text-align:center">[ressource.btValider;strconv=no;protect=no]</td>
 			</tr>
 			<tr>
 				<td>[ressource.type;strconv=no;protect=no]</td>
@@ -62,9 +63,9 @@ $('#type').change(function(){
 			url: 'script/loadRessources.php?type='+$('#type option:selected').val()
 		}).done(function(data) {
 			liste = JSON.parse(data);
-			$("#idCombo").empty(); // remove old options
+			$("#id").empty(); // remove old options
 			$.each(liste, function(key, value) {
-			  $("#idCombo").append($("<option></option>")
+			  $("#id").append($("<option></option>")
 			     .attr("value", key).text(value));
 			});	
 		});
