@@ -4,7 +4,6 @@
 
 [onshow;block=begin;when [view.mode]!='view']
     [view.onglet;strconv=no]
-    <div>
 [onshow;block=end] 
 
 	<table class="border" style="width:100%">
@@ -93,8 +92,6 @@
 [onshow;block=end] 
 [onshow;block=end] 
 
-	
-</div>
 
 	
 

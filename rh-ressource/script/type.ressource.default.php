@@ -16,6 +16,7 @@
 	$ATMdb->db->debug=true;
 
 //VOITURE
+/*
 	$tempType = new TRH_Ressource_type;
 	$tempType->chargement('Voiture', 'voiture', 1);
 	$tempType->save($ATMdb);
@@ -38,23 +39,53 @@
 	$tempField->chargement($ATMdb,'Clé', 'cle', 'checkbox',1, 7, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Kit de Sécurité', 'kit', 'checkbox',1, 8, '', 1, $tempType->rowid);
-	
+	*/
 //CARTE TOTAL
 	$tempType = new TRH_Ressource_type;
 	$tempType->chargement('Carte Total', 'cartetotal', 1);
 	$tempType->save($ATMdb);
-	
+	$cpt = 0;
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Numéro carte', 'numcarte', 'chaine',0, 0, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Numéro carte', 'totalnumcarte', 'chaine',0, $cpt, '', 1, $tempType->rowid);$cpt++;
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Immatriculation carte', 'immCarte', 'chaine',0, 1, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Compte support', 'totalcomptesupport', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Code carte', 'codecarte', 'chaine',1, 2, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Type support', 'totaltypesupport', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Libellé estampé', 'libcarte', 'chaine',1, 3, '', 1, $tempType->rowid);
+	$tempField->chargement($ATMdb,'Infos saisis en station', 'totalinfostation', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Compte support', 'comptesupport', 'chaine',1, 4, '', 1, $tempType->rowid);
-
+	$tempField->chargement($ATMdb,'Libellé estampé', 'totallibeestampe', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Adresse estampée', 'totaladresseestampe', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Type code confidentiel', 'totaltypecodeconfidentiel', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Carburant', 'totalcarburant', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Plafond carburant', 'totalplafondcarburant', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Type plafond Carburant', 'totaltypeplafond', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Produit', 'totalproduit', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Périodicité plafond carburant', 'totalperiodiciteplafond', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Quantité plafond carburant', 'totalqtplafond', 'float',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Unité plafond carburant', 'totaluniteplafond', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Options service', 'totaloptionservice', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Plafond service', 'totalplafondservice', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Service', 'totalserviceplafondservice', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Périodicité plafond service', 'totalperiodiciteplafondservice', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Quantité plafond service', 'totalqtplafondservice', 'float',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Unité plafond service', 'totaluniteplafondservice', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
+/*
 //CARTE AREA
 	$tempType = new TRH_Ressource_type;
 	$tempType->chargement('Badge Area', 'badgearea', 1);

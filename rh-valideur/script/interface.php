@@ -4,8 +4,6 @@ define('INC_FROM_CRON_SCRIPT', true);
 require('../config.php');
 
 //Interface qui renvoie toutes les lignes de notes de frais étant classées comme "comptabilisées"
-global $user,$conf;
-
 $ATMdb=new Tdb;
 
 $get = isset($_REQUEST['get'])?$_REQUEST['get']:'ndf';
@@ -27,7 +25,7 @@ function _get(&$ATMdb, $case) {
 }
 
 function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
-	global $langs, $db;
+	global $langs, $db, $user, $conf;
 	
 	$TabNdf=array();
 	$date_debut=explode("/", $date_debut);
@@ -158,6 +156,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 }
 
 function _situation_perso(&$ATMdb, $userId){
+	global $user, $conf;
 		
 	$TabRecapSituationPerso=array();
 	
@@ -179,6 +178,7 @@ function _situation_perso(&$ATMdb, $userId){
 }
 
 function _situation_pro(&$ATMdb, $userId){
+	global $user, $conf;
 	
 	$TabRecapSituationPro=array();
 	

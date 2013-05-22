@@ -4,36 +4,35 @@ define('INC_FROM_CRON_SCRIPT', true);
 require('../config.php');
 
 //Interface qui renvoie les congés maladie (maintenue ou non) et les jours ancienneté acquis du collaborateur souhaité durant la période demandée
-global $user,$conf;
-
 $ATMdb=new Tdb;
 
 $get = isset($_REQUEST['get'])?$_REQUEST['get']:'';
 
-_get($get);
+_get($ATMdb, $get);
 
-function _get($case) {
+function _get(&$ATMdb, $case) {
 	switch ($case) {
 		case 'jour_anciennete':
-			__out(_jourAnciennete($_REQUEST['fk_user']));	
+			__out(_jourAnciennete($ATMdb, $_REQUEST['fk_user']));	
 			break;
 		case 'maladie_maintenue':
-			__out(_dureeMaladieMaintenue($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
+			__out(_dureeMaladieMaintenue($ATMdb, $_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
 			break;
 		case 'maladie_non_maintenue':
-			__out(_dureeMaladieNonMaintenue($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
+			__out(_dureeMaladieNonMaintenue($ATMdb, $_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
 			break;
 		case 'conges':
-			__out(_conges($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
+			__out(_conges($ATMdb, $_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
 			break;
 		case 'recapAbsence':
-			__out(_recapAbsence($_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['fk_user'], $_REQUEST['fk_usergroup']));	
+			__out(_recapAbsence($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['fk_user'], $_REQUEST['fk_usergroup']));	
 			break;
 	}
 }
 
 
-function _jourAnciennete($userId){
+function _jourAnciennete(&$ATMdb, $userId){
+	global $user, $conf;
 	
 	$TabRecapConges=array();
 	
@@ -50,7 +49,8 @@ function _jourAnciennete($userId){
 	return $TabRecapConges;
 }
 
-function _dureeMaladieMaintenue($userId, $date_debut, $date_fin){
+function _dureeMaladieMaintenue(&$ATMdb, $userId, $date_debut, $date_fin){
+	global $user, $conf;
 	
 	$TabRecapMaladie=array();
 		
@@ -70,7 +70,8 @@ function _dureeMaladieMaintenue($userId, $date_debut, $date_fin){
 	return $TabRecapMaladie;
 }
 
-function _dureeMaladieNonMaintenue($userId, $date_debut, $date_fin){
+function _dureeMaladieNonMaintenue(&$ATMdb, $userId, $date_debut, $date_fin){
+	global $user, $conf;
 	
 	$TabRecapMaladie=array();
 		
@@ -90,10 +91,8 @@ function _dureeMaladieNonMaintenue($userId, $date_debut, $date_fin){
 	return $TabRecapMaladie;
 }
 
-function _conges($userId, $date_debut, $date_fin){
-			
-	////!!!!!! A RETRAVAILLER !!!!!
-	
+function _conges(&$ATMdb, $userId, $date_debut, $date_fin){
+	global $user, $conf;
 			
 	//**********************************************
 	//On récupère le nombre de jours entre les 2 dates
@@ -103,7 +102,7 @@ function _conges($userId, $date_debut, $date_fin){
 	$dateFin = strtotime($date_fin);
 	
 	$nb_jours = ($dateFin-$dateDeb)/(3600*24);
-	$nb_jours_travailles = $nb_jours;
+	$nb_jours_travailles = 0;
 	$nb_jours_conges = 0;
 	$nb_jours_event_famille = 0;
 	$nb_jours_conges_divers = 0;
@@ -141,152 +140,213 @@ function _conges($userId, $date_debut, $date_fin){
 	//Traitement sur chaque jour
 	while ($dateDeb <= $dateFin)
 	{
-		$timestamp = strtotime(date('Y-m-d', $phpDate));
-		$jour = date("w",$timestamp);
+		$timestamp = strtotime(date('Y-m-d', $dateDeb));
+		setlocale(LC_TIME, 'fr_FR.utf8', 'fra');
+		$jour = strftime("%A",$timestamp);
 		
-		//On regarde si le jour est férié
+		//on regarde tout d'abord quand l'utilisateur doit travailler
+		switch ($jour) {
+		    case "lundi":
+				if($EmploiDuTemps['lundiam']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+				if($EmploiDuTemps['lundipm']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+		        break;
+			case "mardi":
+				if($EmploiDuTemps['mardiam']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+				if($EmploiDuTemps['mardipm']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+		        break;
+			case "mercredi":
+				if($EmploiDuTemps['mercrediam']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+				if($EmploiDuTemps['mercredipm']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+		        break;
+		    case "jeudi":
+				if($EmploiDuTemps['jeudiam']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+				if($EmploiDuTemps['jeudipm']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+		        break;
+			case "vendredi":
+				if($EmploiDuTemps['vendrediam']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+				if($EmploiDuTemps['vendredipm']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+		        break;
+			case "samedi":
+				if($EmploiDuTemps['samediam']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+				if($EmploiDuTemps['samedipm']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+		        break;
+			case "dimanche":
+				if($EmploiDuTemps['dimancheam']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+				if($EmploiDuTemps['dimanchepm']){
+		        	$nb_jours_travailles+=0.5;
+		        }
+		        break;
+		}
+		
+		//on regarde ensuite si la personne a déposé un jour d'absence ce jour-ci, si oui, on le décompte
+		$sql="SELECT *
+		FROM ".MAIN_DB_PREFIX."rh_absence as a
+			LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
+		WHERE a.entity=".$conf->entity."
+		AND u.rowid=".$userId."
+		AND a.etat='Validee'
+		AND (a.date_debut<='".date('Y-m-d 00:00:00',$dateDeb)."' AND a.date_fin>='".date('Y-m-d 00:00:00',$dateDeb)."')";
+		
+		$k=0;
+		$m=0;
+		$n=0;
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$date_absence_debut=$ATMdb->Get_field('date_debut');
+			$date_absence_fin=$ATMdb->Get_field('date_fin');
+			$periode_date_debut=$ATMdb->Get_field('ddMoment');
+			$periode_date_fin=$ATMdb->Get_field('dfMoment');
+			if((date('Y-m-d 00:00:00',$dateDeb)==$date_absence_debut)&&(date('Y-m-d 00:00:00',$dateDeb)==$date_absence_fin)){
+				if(($periode_date_debut=='matin')&&($periode_date_fin=='apresmidi')){
+					$nb_jours_travailles-=1;
+					$n++;
+				}elseif($periode_date_fin=='matin'){
+					$nb_jours_travailles-=0.5;
+					$k++;
+				}else{
+					$nb_jours_travailles-=0.5;
+					$m++;
+				}
+			}elseif(date('Y-m-d 00:00:00',$dateDeb)==$date_absence_debut){
+				if(($periode_date_debut=='matin')){
+					$nb_jours_travailles-=1;
+					$n++;
+				}else{
+					$nb_jours_travailles-=0.5;
+					$m++;
+				}
+			}elseif(date('Y-m-d 00:00:00',$dateDeb)==$date_absence_fin){
+				if(($periode_date_fin=='apresmidi')){
+					$nb_jours_travailles-=1;
+					$n++;
+				}else{
+					$nb_jours_travailles-=0.5;
+					$k++;
+				}
+			}else{
+				$nb_jours_travailles-=1;
+				$n++;
+			}
+		}
+		
+		//on regarde si le jour est férié, si oui, on le décompte
 		$sql="SELECT *
 		FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries as a
 		WHERE a.entity=".$conf->entity."
 		AND a.date_jourOff='".date('Y-m-d 00:00:00',$dateDeb)."'";
 		
 		$ATMdb->Execute($sql);
-		$k=0;
 		while($ATMdb->Get_line()) {
+			$typeAbsence=$ATMdb->Get_field('typeAbsence');
 			$periode=$ATMdb->Get_field('moment');
 			if($periode=='matin'){
-				$nb_jours_travailles-=0.5;
-				switch ($jour) {
-				    case "lundi":
-				        if(!$EmploiDuTemps['lundipm']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
-					case "mardi":
-				        if(!$EmploiDuTemps['mardipm']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
-					case "mercredi":
-				        if(!$EmploiDuTemps['mercredipm']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
-				    case "jeudi":
-				        if(!$EmploiDuTemps['jeudipm']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
-					case "vendredi":
-				        if(!$EmploiDuTemps['vendredipm']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
-					case "samedi":
-				        if(!$EmploiDuTemps['samedipm']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
-					case "dimanche":
-				        if(!$EmploiDuTemps['dimanchepm']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
+				//si l'utilisateur n'a pas déposé d'absence le matin de ce jour-ci
+				if($k==0){
+					$nb_jours_travailles-=0.5;
+					switch ($typeAbsence) {
+		    			case "conges":
+							$nb_jours_conges+=0.5;
+							break;
+						case "parternite":
+						case "mariage":
+						case "deuil":
+						case "naissanceadoption":
+						case "enfantmalade":
+						case "maternite":
+						case "congeparental":
+							$nb_jours_event_famille+=0.5;
+							break;
+						default:
+							$nb_jours_conges_divers+=0.5;
+							break;
+					}
 				}
 			}elseif($periode=='apresmidi'){
-				$nb_jours_travailles-=0.5;
-				switch ($jour) {
-				    case "lundi":
-						if($EmploiDuTemps['lundiam']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
-					case "mardi":
-						if($EmploiDuTemps['mardiam']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
-					case "mercredi":
-						if($EmploiDuTemps['mercrediam']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
-				    case "jeudi":
-						if($EmploiDuTemps['jeudiam']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
-					case "vendredi":
-						if($EmploiDuTemps['vendrediam']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
-					case "samedi":
-						if($EmploiDuTemps['samediam']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
-					case "dimanche":
-						if($EmploiDuTemps['dimancheam']){
-				        	$nb_jours_travailles-=0.5;
-				        }
-				        break;
+				//si l'utilisateur n'a pas déposé d'absence l'après-midi de ce jour-ci
+				if($m==0){
+					$nb_jours_travailles-=0.5;
+					switch ($typeAbsence) {
+		    			case "conges":
+							$nb_jours_conges+=0.5;
+							break;
+						case "parternite":
+						case "mariage":
+						case "deuil":
+						case "naissanceadoption":
+						case "enfantmalade":
+						case "maternite":
+						case "congeparental":
+							$nb_jours_event_famille+=0.5;
+							break;
+						default:
+							$nb_jours_conges_divers+=0.5;
+							break;
+					}
 				}
 			}elseif($periode=='allday'){
-				$nb_jours_travailles-=1;
-			}
-			$k++;
-		}
-		
-		//Si le jour n'est pas férié, alors on regarde si la personne a déposé un jour d'absence ce jour-ci
-		if($k=0){
-			$sql="SELECT *
-			FROM ".MAIN_DB_PREFIX."llx_rh_absence as a
-				LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
-			WHERE a.entity=".$conf->entity."
-			AND u.rowid=".$userId."
-			AND a.etat='Validee'
-			AND (a.date_debut<='".date('Y-m-d 00:00:00',$dateDeb)."' AND a.date_fin>='".date('Y-m-d 00:00:00',$dateDeb)."'";
-			
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$date_absence_debut=$ATMdb->Get_field('date_debut');
-				$date_absence_fin=$ATMdb->Get_field('date_fin');
-				$periode_date_debut=$ATMdb->Get_field('ddMoment');
-				$periode_date_fin=$ATMdb->Get_field('dfMoment');
-				if((date('Y-m-d 00:00:00',$dateDeb)==$date_absence_debut)&&(date('Y-m-d 00:00:00',$dateDeb)==$date_absence_fin)){
-					if(($periode_date_debut=='matin')&&($periode_date_fin=='apresmidi')){
-						$nb_jours_travailles-=1;
-					}else{
-						$nb_jours_travailles-=0.5;
-					}
-				}elseif(date('Y-m-d 00:00:00',$dateDeb)==$date_absence_debut){
-					if(($periode_date_debut=='matin')){
-						$nb_jours_travailles-=1;
-					}else{
-						
-						$nb_jours_travailles-=0.5;
-					}
-				}elseif(date('Y-m-d 00:00:00',$dateDeb)==$date_absence_fin){
-					if(($periode_date_fin=='apresmidi')){
-						$nb_jours_travailles-=1;
-					}else{
-						$nb_jours_travailles-=0.5;
-					}
-				}else{
+				//si l'utilisateur n'a pas déposé d'absence ce jour-ci
+				if($n==0){
 					$nb_jours_travailles-=1;
+					switch ($typeAbsence) {
+		    			case "conges":
+							$nb_jours_conges+=1;
+							break;
+						case "parternite":
+						case "mariage":
+						case "deuil":
+						case "naissanceadoption":
+						case "enfantmalade":
+						case "maternite":
+						case "congeparental":
+							$nb_jours_event_famille+=1;
+							break;
+						default:
+							$nb_jours_conges_divers+=1;
+							break;
+					}
 				}
 			}
 		}
 		
+		//on incrémente la date
 		$dateDeb = strtotime('+1 day', $dateDeb);
 	}
+
+	$nb_jours_non_travailles=$nb_jours-$nb_jours_travailles;
 	
 	$TabRecapConges['nbJoursTravailles']=$nb_jours_travailles;
 	$TabRecapConges['nbJoursNonTravailles']=$nb_jours_non_travailles;
 	$TabRecapConges['congesPayes']=$nb_jours_conges;
 	$TabRecapConges['eventFamille']=$nb_jours_event_famille;
 	$TabRecapConges['congesDivers']=$nb_jours_conges_divers;
+	
+	print_r($TabRecapConges);
 	
 	return $TabRecapConges;
 }
