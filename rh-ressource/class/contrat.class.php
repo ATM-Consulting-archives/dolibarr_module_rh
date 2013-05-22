@@ -11,7 +11,6 @@ class TRH_Contrat  extends TObjetStd {
 		parent::add_champs('loyer_TTC, assurance, entretien','type=float;');
 		
 		//Un evenement est lié à une ressource et deux tiers (agence utilisatrice et fournisseur)
-		//parent::add_champs('fk_tier_utilisateur,entity','type=entier;index;');
 		parent::add_champs('fk_tier_fournisseur,entity,fk_rh_ressource_type','type=entier;index;');
 		
 		parent::_init_vars();

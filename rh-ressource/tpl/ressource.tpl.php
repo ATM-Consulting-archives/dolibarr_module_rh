@@ -56,6 +56,10 @@
 	<tr>
 		<td>Agence Propriétaire</td>
 		<td>[ressource.fk_proprietaire;strconv=no;protect=no]</td>
+	</tr>
+	<tr>
+		<td>Agence Utilisatrice</td>
+		<td>[ressource.fk_utilisatrice;strconv=no;protect=no]</td>
 	</tr>		
 	
 </table>

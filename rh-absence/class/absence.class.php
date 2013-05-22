@@ -207,6 +207,7 @@ class TRH_Absence extends TObjetStd {
 			
 			//on calcule la duree de l'absence, en décomptant jours fériés et jours non travaillés par le collaborateur
 			$dureeAbsenceCourante=$this->calculDureeAbsence($db, $this->date_debut, $this->date_fin, $absence);
+			
 			$dureeAbsenceCourante=$this->calculJoursFeries($db, $dureeAbsenceCourante, $this->date_debut, $this->date_fin, $absence);
 			$dureeAbsenceCourante=$this->calculJoursTravailles($db, $dureeAbsenceCourante, $this->date_debut, $this->date_fin, $absence); 
 			
@@ -390,7 +391,7 @@ class TRH_Absence extends TObjetStd {
 				}
 				else{
 					//echo "boucle4";
-					if($jour['date_jourOff']=='allday'){
+					if($jour['moment']=='allday'){
 						$duree-=1;
 					}else{
 						$duree-=0.5;
