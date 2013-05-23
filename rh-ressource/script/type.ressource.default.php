@@ -18,8 +18,7 @@
 //VOITURE
 
 	$tempType = new TRH_Ressource_type;
-	$tempType->chargement('Voiture', 'voiture', 1);
-	$tempType->save($ATMdb);
+	$tempType->chargement($ATMdb, 'Voiture', 'voiture', 1);
 	
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb, 'Immatriculation', 'immatriculation','chaine', 0, 0, '', 1, $tempType->rowid);
@@ -42,8 +41,7 @@
 	
 //CARTE TOTAL
 	$tempType = new TRH_Ressource_type;
-	$tempType->chargement('Carte Total', 'cartetotal', 1);
-	$tempType->save($ATMdb);
+	$tempType->chargement($ATMdb, 'Carte Total', 'cartetotal', 1);
 	$cpt = 0;
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Numéro carte', 'totalnumcarte', 'chaine',0, $cpt, '', 1, $tempType->rowid);$cpt++;
@@ -88,8 +86,7 @@
 
 //CARTE AREA
 	$tempType = new TRH_Ressource_type;
-	$tempType->chargement('Badge Area', 'badgearea', 1);
-	$tempType->save($ATMdb);
+	$tempType->chargement($ATMdb, 'Badge Area', 'badgearea', 1);
 	
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Numéro carte', 'numcarte', 'chaine',0, 0, '', 1, $tempType->rowid);
@@ -101,8 +98,7 @@
 	
 //TELEPHONE
 	$tempType = new TRH_Ressource_type;
-	$tempType->chargement('Téléphone', 'telephone', 1);
-	$tempType->save($ATMdb);
+	$tempType->chargement($ATMdb, 'Téléphone', 'telephone', 1);
 	
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Marque', 'marquetel', 'chaine',0, 0, '', 1, $tempType->rowid);
@@ -112,8 +108,7 @@
 	
 //CARTE SIM
 	$tempType = new TRH_Ressource_type;
-	$tempType->chargement('Carte SIM', 'carteSim', 1);
-	$tempType->save($ATMdb);
+	$tempType->chargement($ATMdb, 'Carte SIM', 'carteSim', 1);
 	
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Numéro', 'numeroTel', 'chaine',0, 0, '', 1, $tempType->rowid);
