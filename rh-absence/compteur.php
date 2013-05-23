@@ -23,6 +23,7 @@
 				
 			case 'save':
 				//$ATMdb->db->debug=true;
+				
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				$compteur->set_values($_REQUEST);
 				$compteur->save($ATMdb);
@@ -135,16 +136,24 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
-	echo $form->hidden('id', $compteur->getId());
+	
 	echo $form->hidden('action', 'save');
 	//echo $form->hidden('fk_user', $_REQUEST['id']);
 	
-		
+	//compteur de l'user courant : 
+	$sql="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$user->id;
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$compteurUserCourant=$ATMdb->Get_field('rowid');
+	}
+	
+	
 	//récupération informations utilisateur dont on modifie le compte
-	$CompteurActuel=$_GET['id']?$_GET['id']:$compteur->getId();
+	$CompteurActuel=$compteurUserCourant;
+
+	echo $form->hidden('id', $CompteurActuel);
 	$sqlReqUser="SELECT fk_user FROM `".MAIN_DB_PREFIX."rh_compteur` where rowid=".$CompteurActuel;//AND entity=".$conf->entity;
 	$ATMdb->Execute($sqlReqUser);
-	$Tab=array();
 	while($ATMdb->Get_line()) {
 				$userCompteurActuel=$ATMdb->Get_field('fk_user');
 	}
@@ -285,6 +294,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'rttTypeAcquis'=>$compteur->rttTypeAcquisition
 				,'reste'=>$form->texte('','total',round2Virgule($rttCourantReste),10,50,'',$class="text", $default='')
 				,'id'=>$compteur->getId()
+				,'reportRtt'=>$form->checkbox1('','reportRtt','1',$absence->reportRtt)
+
 			)
 			
 			,'userCourant'=>array(
