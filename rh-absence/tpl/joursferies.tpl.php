@@ -28,7 +28,7 @@
 		<div  style="text-align:center;">
 			<a class="butAction"  href="?&fk_user=[userCourant.id]">Retour</a>
 			<a class="butAction"  href="?idJour=[joursFeries.id]&fk_user=[userCourant.id]&action=edit">Modifier</a>
-			<a class="butActionDelete"  href="?idJour=[joursFeries.id]&fk_user=[userCourant.id]&action=delete">Supprimer</a>
+			<a class="butActionDelete" onclick="if (confirm('Voulez-vous vraiment supprimer ce jour férié ?')){href='?idJour=[joursFeries.id]&fk_user=[userCourant.id]&action=delete'};">Supprimer</a>
 		</div>
 		</div>
 		[onshow;block=end] 

@@ -117,11 +117,8 @@
 		[onshow;block=begin;when when [absenceCourante.etat]!='Validee']
 		[onshow;block=begin;when [view.mode]!='edit']
 				[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
-
-						<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
-
-				[onshow;block=end]
-					
+						<span class="butActionDelete" id="action-delete"  onclick="if (confirm('Voulez-vous vraiment supprimer la demande d\'absence ?')){document.location.href='?action=delete&id=[absenceCourante.id]'};">Supprimer</span>
+				[onshow;block=end]			
 		[onshow;block=end]
 		[onshow;block=end]
 	</div></div>

@@ -121,7 +121,7 @@
 		echo ($formconfirm ? $formconfirm : '');
 		
 		if($user->rights->absence->myactions->uploadFilesRegle){
-			$formfile->form_attach_new_file($_SERVER["PHP_SELF"], '', 0, 0, $can_upload);
+			$formfile->form_attach_new_file($_SERVER["PHP_SELF"], '', '', 0, $can_upload);
 			$formfile->list_of_documents($filearray, $absence, 'regle', '',0,DIR_DOC_OUTPUT.'regle/',1);
 		}else{
 			$formfile->list_of_documents($filearray, $absence, 'regle', '',0,DIR_DOC_OUTPUT.'regle/',0);

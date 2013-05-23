@@ -89,7 +89,7 @@ function _liste(&$ATMdb, $regle) {
 		,'link'=>array(
 			'ID'=>'<a href=?id=@ID@&action=view&fk_user='.$user->id.'>@val@</a>'
 			,'typeAbsence'=>'<a href=?id=@ID@&action=view&fk_user='.$user->id.'>@val@</a>'
-			,'Supprimer'=>'<a href="?id=@ID@&fk_user='.$user->id.'&action=delete"><img src="./img/delete.png"></a>'
+			,'Supprimer'=>"<a onclick=\"if (confirm('Voulez-vous vraiment supprimer la règle ?')){href='?id=@ID@&fk_user=".$user->id."&action=delete'};\"><img src='./img/delete.png'></a>"
 			
 		)
 		,'translate'=>array(
