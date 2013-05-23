@@ -346,7 +346,5 @@ function _conges(&$ATMdb, $userId, $date_debut, $date_fin){
 	$TabRecapConges['eventFamille']=$nb_jours_event_famille;
 	$TabRecapConges['congesDivers']=$nb_jours_conges_divers;
 	
-	print_r($TabRecapConges);
-	
 	return $TabRecapConges;
 }

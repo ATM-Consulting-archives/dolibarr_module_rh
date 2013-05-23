@@ -22,7 +22,8 @@
 	//$ATMdb->Execute("ALTER TABLE `llx_user` ADD code_analytique INT DEFAULT 0");
 	
 	$extrafields = new ExtraFields($db);
-	$extrafields->addExtraField('CODE_ANA', 'Code analytique', 'int', 0, 10, 'user', 0, 0);
+	$extrafields->addExtraField('CODE_ANA', 'Code analytique', 'varchar', 0, 10, 'user', 0, 0);
+	$extrafields->addExtraField('COMPTE_TIERS', 'Compte tiers', 'varchar', 0, 10, 'user', 0, 0);
 	$extrafields->addExtraField('DDN', 'Date de naissance', 'date', 0, 10, 'user', 0, 0);
 	$extrafields->addExtraField('SIT_FAM', 'Situation de famille', 'varchar', 0, 255, 'user', 0, 0);
 	$extrafields->addExtraField('NB_ENF_CHARGE', 'Nombre d\'enfants à charge', 'int', 0, 10, 'user', 0, 0);

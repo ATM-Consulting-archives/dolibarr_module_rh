@@ -73,7 +73,7 @@ class TRH_Evenement  extends TObjetStd {
 		
 		//chargement d'une liste de touts les users (pour le combo "Utilisateur")
 		$this->TUser = array();
-		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
+		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.") ORDER BY name, firstname";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1'); 
@@ -108,7 +108,7 @@ class TRH_Evenement  extends TObjetStd {
 		}
 		
 		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource 
-		WHERE rowid=".$this->fk_rh_ressource." AND entity=".$conf->entity;
+		WHERE rowid=".$this->fk_rh_ressource;
 		$db->Execute($sqlReq);
 		while($db->Get_line()) {
 			$nom = $db->Get_field('libelle');

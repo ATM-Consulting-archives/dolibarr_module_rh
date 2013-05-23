@@ -308,13 +308,26 @@ class TRH_Ressource_type extends TObjetStd {
 		$this->TType=array('chaine'=>'Texte','entier'=>'Entier','float'=>'Float',"liste"=>'Liste','date'=>'Date', "checkbox"=>'Case à cocher');
 	}
 	
+	
+	function load_by_code($code){
+		$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_type WHERE code='".$code."'";
+		$ATMdb->Execute($sqlReq);
+		
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+	}
+	
 	/**
 	 * Attribut les champs directement, pour créer les types par défauts par exemple. 
 	 */
-	function chargement($libelle, $code, $supprimable){
+	function chargement(&$db, $libelle, $code, $supprimable){
+		$this->load_by_code($code);
 		$this->libelle = $libelle;
 		$this->code = $code;
 		$this->supprimable = $supprimable;
+		$this->save($db);
 	}
 	
 	function load(&$ATMdb, $id) {
