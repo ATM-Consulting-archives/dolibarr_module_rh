@@ -16,7 +16,7 @@ global $conf;
 $ATMdb=new Tdb;
 
 $TUser = array();
-$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
@@ -115,8 +115,7 @@ function chargeVoiture(&$ATMdb){
 	$TRessource = array();
 	$sql="SELECT r.rowid as 'ID', t.rowid as 'IdType', r.numId FROM ".MAIN_DB_PREFIX."rh_ressource as r 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t on (r.fk_rh_ressource_type = t.rowid)
-	WHERE r.entity=".$conf->entity."
-	 AND (t.code='voiture' OR t.code='cartetotal') ";
+	WHERE (t.code='voiture' OR t.code='cartetotal') ";
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		//$idVoiture = $ATMdb->Get_field('IdType');
@@ -130,8 +129,7 @@ function getIdTypeVoiture(&$ATMdb){
 	global $conf;
 	
 	$sql="SELECT rowid as 'IdType' FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-	WHERE entity=".$conf->entity."
-	 AND code='voiture' ";
+	WHERE code='voiture' ";
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		$idVoiture = $ATMdb->Get_field('IdType');
