@@ -14,7 +14,7 @@ $debutAnnee=$anneePrec.'-06-01 00:00:00';
 $finAnnee=$anneeCourante.'-05-31 00:00:00';
 
 $TUserID=array();
-$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
+$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity IN (0,".$conf->entity.")";
 $ATMdb->Execute($sqlReqUser);
 
 while($ATMdb->Get_line()) {
@@ -28,7 +28,7 @@ foreach($TUserID as $user){
 	FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."rh_absence as a 
 	WHERE u.rowid=a.fk_user 
 	AND a.type LIKE 'maladiemaintenue'
-	AND a.entity=".$conf->entity."
+	AND a.entity IN (0,".$conf->entity.")
 	AND a.fk_user=".$user."
 	AND (a.date_debut>'".$debutAnnee."' AND a.date_fin<'".$finAnnee."')";
 	
@@ -44,7 +44,7 @@ foreach($TUserID as $user){
 	FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."rh_absence as a 
 	WHERE u.rowid=a.fk_user 
 	AND a.type LIKE 'maladienonmaintenue'
-	AND a.entity=".$conf->entity."
+	AND a.entity IN (0,".$conf->entity.")
 	AND a.fk_user=".$user."
 	AND (a.date_debut>'".$debutAnnee."' AND a.date_fin<'".$finAnnee."')";
 	

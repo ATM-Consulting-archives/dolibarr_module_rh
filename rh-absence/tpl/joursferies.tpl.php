@@ -1,6 +1,12 @@
 
     [view.head;strconv=no]
-
+	[onshow;block=begin;when [joursFeries.titreAction]=='new']
+		[joursFeries.titreCreate;strconv=no;protect=no]
+	[onshow;block=end] 
+	[onshow;block=begin;when [joursFeries.titreAction]=='view']
+		[joursFeries.titreVisu;strconv=no;protect=no]
+	[onshow;block=end] 
+	
 	<table class="border" style="width:30%">
 		<tr>
 			<td>Jour non travaillé</td>

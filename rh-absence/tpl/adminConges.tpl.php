@@ -2,8 +2,8 @@
 
     [view.head;strconv=no]
 
-       
-	<h1 style="color: #2AA8B9;">Congés payés</h1>                             
+    [compteurGlobal.titreConges;strconv=no;protect=no]
+	                             
 	<div style="display:inline-block; margin-top:-20px;">
 		<div style="display:inline-block;">
 		
@@ -26,7 +26,8 @@
 	
 	<br/><br/>
 	
-	<h1 style="color: #2AA8B9;">RTT</h1>                             
+	 [compteurGlobal.titreRtt;strconv=no;protect=no]     
+	 <br/>                     
 	<div style="display:inline-block; margin-top:-50px;">
 	    
 		

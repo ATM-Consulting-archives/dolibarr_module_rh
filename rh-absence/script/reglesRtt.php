@@ -35,11 +35,11 @@
 		$dateMD=date("dm",$date);
 
 		//COMPTEUR MENSUEL
-		////// 1er mars, tous les rtt de l'année N sont remis à 0 pour ceux qui les accumulent par mois
+		////// 1er mars, tous les rtt de l'année N sont remis à 0 pour ceux qui les accumulent par mois, sauf si reportRtt=1
 		$mars=date("dm");
 		if($mars==$dateMD){
 			//on remet à 0 les compteurs
-			$sqlRaz='UPDATE '.MAIN_DB_PREFIX.'rh_compteur SET rttAcquisMensuel=0, rttPris=0, rttAcquisAnnuelCumule=0, rttAcquisAnnuelNonCumule=0 WHERE rttTypeAcquisition="Mensuel" AND fk_user ='.$TabRtt['fk_user'];
+			$sqlRaz="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttAcquisMensuel=0, rttPris=0, rttAcquisAnnuelCumule=0, rttAcquisAnnuelNonCumule=0 WHERE rttTypeAcquisition='Mensuel' AND reportRtt!='1' AND fk_user =".$TabRtt['fk_user'];
 			$ATMdb->Execute($sqlRaz);
 		}
 		
@@ -48,7 +48,11 @@
 		////// 1er mars, tous les rtt de l'année N sont donnés à ceux qui les accumulent par année
 		if($mars==$dateMD){
 			//on remet à 5 et à 7 des rtt cumules/noncumules les compteurs par exemple, dépend de ce qui est entré sur le compteur
-			$sqlTransfert='UPDATE '.MAIN_DB_PREFIX.'rh_compteur SET rttAcquisAnnuelCumule='.$TabRtt['rttAcquisAnnuelCumuleInit'].', rttAcquisAnnuelNonCumule='.$TabRtt['rttAcquisAnnuelNonCumuleInit'].', rttPris=0  WHERE rttTypeAcquisition="Annuel" AND fk_user ='.$TabRtt['fk_user'];
+			$sqlTransfert='UPDATE '.MAIN_DB_PREFIX.'rh_compteur 
+			SET rttAcquisAnnuelCumule=rttAcquisAnnuelCumule+'.$TabRtt['rttAcquisAnnuelCumuleInit'].', 
+			rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule+'.$TabRtt['rttAcquisAnnuelNonCumuleInit'].', 
+			rttPris=0  WHERE rttTypeAcquisition="Annuel" 
+			AND fk_user ='.$TabRtt['fk_user'];
 			$ATMdb->Execute($sqlTransfert);
 		}	
 			    

@@ -1,18 +1,15 @@
 
-
     [view.head;strconv=no]
 
-
-       
-	<h1 style="color: #2AA8B9;">Congés payés</h1>  
-	<br>                          
+	[congesCourant.titreConges;strconv=no;protect=no] 
+	<br><br/>                     
 	<div style="display:inline-block; margin-top:-20px;">
 		<div style="display:inline-block;">
 		
                        
-		<table class="border" style="width:150%;"  >
+		<table class="border " style="width:200%;"  >
 				<tr>
-					<td colspan="2"><h2 style="color: #2AA8B9;">Année N-1</h2>  </td> 
+					<td colspan="2"> [congesCourant.titreCongesNM;strconv=no;protect=no]   </td> 
 				</tr>
 				<tr>
 					<td>Utilisateur Courant</td>
@@ -48,7 +45,7 @@
 				</tr>
 
 				<tr>
-					<td colspan="2"><h2 style="color: #2AA8B9;">Année N</h2>  </td> 
+					<td colspan="2">[congesCourant.titreCongesN;strconv=no;protect=no]    </td> 
 				</tr>
 				<tr>
 					<td>Acquis Exercice</td>
@@ -78,15 +75,13 @@
 
 
 	
-	<br/><br/><br/><br/>
+	<br/><br/>
 	
-	<h1 style="color: #2AA8B9;">RTT</h1>  
-	                           
- 
-	                       
-		<table class="border" style="width:150%">
+	[rttCourant.titreRtt;strconv=no;protect=no]   
+	 <br/>                              
+		<table class="border" style="width:200%">
 				<tr>
-					 <td colspan="2"><h2 style="color: #2AA8B9;">Compteur de RTT</h2>     </td>
+					 <td colspan="2">[rttCourant.titreRttCompteur;strconv=no;protect=no] </td>
 				</tr>
 
 				<tr>
@@ -103,10 +98,9 @@
 					<td>[rttCourant.reste;strconv=no;protect=no]</td>
 				</tr>
 
-		
 		             
 				<tr>
-					 <td colspan="2"><h2 style="color: #2AA8B9;">Méthode d'acquisition des jours</h2></td>
+					 <td colspan="2">[rttCourant.titreRttMethode;strconv=no;protect=no]</h2></td>
 				</tr>
 				<tr>
 					<td>Métier collaborateur</td>
@@ -136,10 +130,13 @@
 					<td>[rttCourant.annuelNonCumuleInit;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
+					<td>Report des RTT</td>
+					<td>[rttCourant.reportRtt;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
 					<td><b> Dernière clôture RTT</b></td>
 					<td>[rttCourant.date_rttCloture;strconv=no;protect=no]</td>
-				</tr>
-				
+				</tr>	
 		</table>
 	    </div>  
 	</div>            

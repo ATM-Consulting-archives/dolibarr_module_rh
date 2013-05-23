@@ -80,7 +80,7 @@ function _liste(&$ATMdb, $pointage) {
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
 			  date_jourOff, moment as 'Période',  commentaire as 'Commentaire', '' as 'Supprimer'
 		FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
-		WHERE entity=".$conf->entity;
+		WHERE entity IN (0,".$conf->entity.")";
 		
 	
 	$TOrder = array('ID'=>'DESC');
@@ -108,7 +108,7 @@ function _liste(&$ATMdb, $pointage) {
 		,'liste'=>array(
 			'titre'=>'Liste des jours non travaillés'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Aucun jour non travaillé"

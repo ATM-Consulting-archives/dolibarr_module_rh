@@ -1,6 +1,6 @@
 
 	<div>			
-		<h2 style="color: #2AA8B9;">Recherche des absences des collaborateurs</h2>	
+		 [recherche.titreRecherche;block=tr;strconv=no;protect=no]
 		<br/>
 		<table class="border" style="width:100%">	
 			<tr>
