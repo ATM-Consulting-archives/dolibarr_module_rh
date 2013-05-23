@@ -41,7 +41,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			//print_r($infos);
 			
-			
+			 
 			
 			if (empty($infos[9])){
 				null;
