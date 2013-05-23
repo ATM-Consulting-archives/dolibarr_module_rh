@@ -190,7 +190,12 @@
 							if(jf<jd){
 								$("#date_fin").val($("#date_debut").val());
 								return;}
-							else if(jf=jd){return;}
+							else if(jf=jd){
+								if($("#ddMoment").val()=='apresmidi'){
+									$("#dfMoment").val($("#ddMoment").val());
+								}
+								return;
+							}
 							else{return;}
 							
 						}
@@ -203,6 +208,8 @@
 				
 				$("#date_debut").change(comparerDates);
 				$("#date_fin").change(comparerDates);
+				$("#ddMoment").change(comparerDates);
+				$("#dfMoment").change(comparerDates);
 			});
 		</script>
 		
