@@ -45,12 +45,14 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 	$sql.= " v.taux as 'tva',";
 	$sql.= " CAST(l.total_ht as DECIMAL(16,2)) as 'total_ht',";
 	$sql.= " CAST(l.total_ttc as DECIMAL(16,2)) as 'total_ttc',";
-	$sql.= " u.code_analytique";
+	$sql.= " e.CODE_ANA,";
+	$sql.= " e.COMPTE_TIERS";
 	
     $sql.= " FROM ".MAIN_DB_PREFIX."ndfp_det as l";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_exp as t ON t.rowid = l.fk_exp";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = n.fk_user";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as e ON u.rowid = e.fk_object";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva as v ON v.rowid = l.fk_tva";
     $sql.= " WHERE n.statut = 1";
 	$sql.= " AND n.type LIKE '".$type."'";
@@ -72,6 +74,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
                 	if(($obj->ref!=$ref)&&(isset($ref))){
                 		$sql_ndf = "SELECT";
                 		$sql_ndf.= " CAST(SUM(l.total_ht) as DECIMAL(16,2)) as 'total_ht',";
+						$sql_ndf.= " CAST(SUM(l.total_tva) as DECIMAL(16,2)) as 'total_tva',";
 						$sql_ndf.= " CAST(SUM(l.total_ttc) as DECIMAL(16,2)) as 'total_ttc',";
 						$sql_ndf.= " n.datee as 'datef'";
 						
@@ -87,31 +90,40 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 					        $obj_ndf = $db->fetch_object($resql_ndf);
 							
 					        if ($obj_ndf){
-					        	$datef_ndf		=	dol_print_date($obj_ndf->datef,"day");;
+					        	$mois_ndf		=	substr($obj_ndf->datef, 5, 2);
+								$annee_ndf		=	substr($obj_ndf->datef, 0, 4);
+					        	$datef_ndf		=	dol_print_date($obj_ndf->datef,"day");
 					        	$total_ht_ndf	=	$obj_ndf->total_ht;
 								$total_ttc_ndf	=	$obj_ndf->total_ttc;
+								$total_tva_ndf	=	$obj_ndf->total_tva;
 							}
 					    }else{
 					        $error++;
 					        dol_print_error($db);
 					    }
 					    
-						$line = array($ref, "C", $datef_ndf, '', '', '', $total_ht_ndf, $total_ttc_ndf, $code_analytique);
+					    $line = array('ND','425900', 'NDF-'.$mois_ndf.'-'.$annee_ndf, $ref, "D", $datef_ndf, '445660', 'ETAT - TVA deductible', $total_tva_ndf, $code_analytique);
+						$TabNdf[$k]=$line;
+						$k++;
+						$line = array('ND','425900', 'NDF-'.$mois_ndf.'-'.$annee_ndf, $ref, "C", $datef_ndf, $compte_tiers, '', $total_ttc_ndf, $code_analytique);
 						$TabNdf[$k]=$line;
 						$k++;
                 	}
                 	
                 	$NDF_ID				=	$obj->NDF_ID;
 					$ref				=	$obj->ref;
+					$mois				=	substr($obj->datef, 5, 2);
+					$annee				=	substr($obj->datef, 0, 4);
 					$datef				=	dol_print_date($obj->datef,"day");
 					$code_compta		=	$obj->accountancy_code;
 					$label				=	$obj->label;
 					$tva				=	$obj->tva;
 					$total_ht			=	$obj->total_ht;
 					$total_ttc			=	$obj->total_ttc;
-					$code_analytique	=	$obj->code_analytique;
+					$code_analytique	=	$obj->CODE_ANA;
+					$compte_tiers		=	$obj->COMPTE_TIERS;
 					
-					$line = array($ref, "D", $datef, $code_compta, html_entity_decode($langs->trans($label)), $tva, $total_ht, $total_ttc, $code_analytique);
+					$line = array('ND','425900', 'NDF-'.$mois.'-'.$annee, $ref, "D", $datef, $code_compta, html_entity_decode($langs->trans($label)), $total_ht, $code_analytique);
 					$TabNdf[$k]=$line;
 					$k++;
 				}
@@ -120,6 +132,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 
 			$sql_ndf = "SELECT";
     		$sql_ndf.= " CAST(SUM(l.total_ht) as DECIMAL(16,2)) as 'total_ht',";
+			$sql_ndf.= " CAST(SUM(l.total_tva) as DECIMAL(16,2)) as 'total_tva',";
 			$sql_ndf.= " CAST(SUM(l.total_ttc) as DECIMAL(16,2)) as 'total_ttc',";
 			$sql_ndf.= " n.datee as 'datef'";
 			
@@ -127,7 +140,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 			$sql_ndf.= " LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp";
 		    $sql_ndf.= " WHERE n.statut = 1";
 		    $sql_ndf.= " AND n.rowid =".$NDF_ID;
-		    $sql.= " AND (n.dates>='".$date_debut."' AND n.datee<='".$date_fin."')";
+		    //$sql.= " AND (n.dates>='".$date_debut."' AND n.datee<='".$date_fin."')";
 			
 			$resql_ndf=$db->query($sql_ndf);
 			
@@ -135,16 +148,22 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 		        $obj_ndf = $db->fetch_object($resql_ndf);
 				
 		        if ($obj_ndf){
+		        	$mois_ndf		=	substr($obj_ndf->datef, 5, 2);
+					$annee_ndf		=	substr($obj_ndf->datef, 0, 4);
 		        	$datef_ndf		=	dol_print_date($obj_ndf->datef,"day");;
 		        	$total_ht_ndf	=	$obj_ndf->total_ht;
 					$total_ttc_ndf	=	$obj_ndf->total_ttc;
+					$total_tva_ndf	=	$obj_ndf->total_tva;
 				}
 		    }else{
 		        $error++;
 		        dol_print_error($db);
 		    }
 		    
-			$line = array($ref, "C", $datef_ndf, '', '', '', $total_ht_ndf, $total_ttc_ndf, $code_analytique);
+		    $line = array('ND','425900', 'NDF-'.$mois_ndf.'-'.$annee_ndf, $ref, "D", $datef_ndf, '445660', 'ETAT - TVA deductible', $total_tva_ndf, $code_analytique);
+			$TabNdf[$k]=$line;
+			$k++;
+			$line = array('ND','425900', 'NDF-'.$mois_ndf.'-'.$annee_ndf, $ref, "C", $datef_ndf, $compte_tiers, '', $total_ttc_ndf, $code_analytique);
 			$TabNdf[$k]=$line;
         }
     }else{
