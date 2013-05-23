@@ -81,9 +81,9 @@ function _liste(&$ATMdb) {
 	dol_fiche_head($head, 'valideur', $langs->trans('Utilisateur'),0, 'user');
 	
 	?><table width="100%" class="border"><tbody><tr><td width="25%" valign="top">Réf.</td><td>
-			<?=$user->id ?></td></tr>
-		<tr><td width="25%" valign="top">Nom</td><td><?=$user->lastname ?></td></tr>
-		<tr><td width="25%" valign="top">Prénom</td><td><?=$user->firstname ?></td></tr>
+			<?=$fuser->id ?></td></tr>
+		<tr><td width="25%" valign="top">Nom</td><td><?=$fuser->lastname ?></td></tr>
+		<tr><td width="25%" valign="top">Prénom</td><td><?=$fuser->firstname ?></td></tr>
 </tbody></table><br/>
 	
 	<?
@@ -177,8 +177,11 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 				,array(
 					'userCourant'=>array(
 						'id'=>$user->id
-						,'lastname'=>$user->lastname
-						,'firstname'=>$user->firstname
+					)
+					,'user'=>array(
+						'id'=>$fuser->id
+						,'lastname'=>$fuser->lastname
+						,'firstname'=>$fuser->firstname
 					)
 					,'valideur'=>array(
 						'group'=>$form->combo('','fk_usergroup',$valideur->TGroup,$valideur->fk_usergroup)
