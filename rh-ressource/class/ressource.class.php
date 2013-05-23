@@ -44,7 +44,7 @@ class TRH_Ressource extends TObjetStd {
 		
 		$this->TAgence = array('');
 		global $conf;
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TAgence[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
@@ -74,8 +74,7 @@ class TRH_Ressource extends TObjetStd {
 
 		$this->load_ressource_type($ATMdb);
 		//chargement d'une liste de toutes les ressources (pour le combo "ressource associé")
-		$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid!=".$this->getId()."
-		AND entity=".$conf->entity;
+		$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid!=".$this->getId();
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle').' '.$ATMdb->Get_field('numId');
@@ -93,7 +92,7 @@ class TRH_Ressource extends TObjetStd {
 		foreach ($type as $value) {
 			 $sql.= "OR type LIKE '".$value."' ";
 		}
-		$sql .= ") AND entity=".$conf->entity." ORDER BY date_fin";
+		$sql .= ")  ORDER BY date_fin";
 		$ATMdb->Execute($sql);
 		$Tab=array();
 		while($ATMdb->Get_line()){

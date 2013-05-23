@@ -22,16 +22,14 @@ while($ATMdb->Get_line()) {
 
 $TVoiture = array();
 $sql="SELECT rowid, numId FROM ".MAIN_DB_PREFIX."rh_ressource 
-	WHERE fk_rh_ressource_type=".$idVoiture." 
-	AND entity=".$conf->entity;
+	WHERE fk_rh_ressource_type=".$idVoiture;
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TVoiture[$ATMdb->Get_field('numId')] = $ATMdb->Get_field('rowid');
 	}
 
 $TGroups = array();
-$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup 
-	WHERE entity=".$conf->entity;
+$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup ";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TGroups[$ATMdb->Get_field('nom')] = $ATMdb->Get_field('rowid');
@@ -211,13 +209,13 @@ $idTel = getIdType('telephone');
 $idSim = getIdType('carteSim');
 $TUserInexistants = array();
 $TUser = array();
-$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[strtoupper($ATMdb->Get_field('name').' '.$ATMdb->Get_field('firstname'))] = $ATMdb->Get_field('rowid');
 	}
 $TAgence = array();
-$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TAgence[strtolower($ATMdb->Get_field('nom'))] = $ATMdb->Get_field('rowid');
@@ -333,7 +331,7 @@ function getIDRessource(&$ATMdb, $idType){
 	$TRessource = array();
 	
 	$sql="SELECT rowid, numId  FROM ".MAIN_DB_PREFIX."rh_ressource
-	WHERE entity=".$conf->entity."
+	
 	 AND fk_rh_ressource_type=".$idType;
 	// echo $sql.'<br>';
 	$ATMdb->Execute($sql);
