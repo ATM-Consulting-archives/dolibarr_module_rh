@@ -109,7 +109,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup as g ON (r.fk_usergroup = g.rowid)
-		WHERE r.entity=".$conf->entity."
+		WHERE r.entity IN (0,".$conf->entity.")
 		 AND r.fk_rh_ressource_type=".$ressourceType->getId();
 	
 

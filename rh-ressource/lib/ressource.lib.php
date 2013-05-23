@@ -73,14 +73,9 @@ function getLibelle($ressource){
 function getTypeEvent($idTypeRessource = 0){
 	global $conf;
 	$TEvent = array();
-		/*'all'=>''
-		,'accident'=>'Accident'
-		,'reparation'=>'Réparation'
-		,'facture'=>'Facture'
-	);*/
 	
 	$sql="SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."rh_type_evenement 
-	WHERE (fk_rh_ressource_type=".$idTypeRessource." OR fk_rh_ressource_type=0) AND entity=".$conf->entity;
+	WHERE (fk_rh_ressource_type=".$idTypeRessource." OR fk_rh_ressource_type=0) ORDER BY fk_rh_ressource_type";
 	$ATMdb =new TPDOdb;
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {

@@ -99,7 +99,7 @@ function _liste(&$ATMdb, &$contrat) {
 		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_contrat_ressource as cr ON cr.fk_rh_contrat = c.rowid";
 		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=cr.fk_rh_ressource";
 	}
-	$sql.=" WHERE c.entity=".$conf->entity;
+	$sql.=" WHERE c.entity IN (0,".$conf->entity.")";
 	if(!$user->rights->ressource->contrat->viewContract){
 		$sql.=" AND e.type ='emprunt'";
 		$sql.=" AND e.fk_user=".$user->id;
@@ -211,7 +211,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 		if(!$user->rights->ressource->ressource->viewRessource){
 			$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=l.fk_rh_ressource";
 		}
-		$sql.=" WHERE r.entity=".$conf->entity."
+		$sql.=" WHERE r.entity IN (0,".$conf->entity.")
 				AND l.fk_rh_contrat =".$contrat->getId()."
 				AND l.fk_rh_ressource = r.rowid	";
 		if(!$user->rights->ressource->ressource->viewRessource){
@@ -257,7 +257,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 				s.phone as 'Tél pro.', s.phone_mobile as 'Tél portable', s.fax as 'Fax', s.email as 'EMail'
 				FROM ".MAIN_DB_PREFIX."socpeople as s
 				LEFT JOIN	".MAIN_DB_PREFIX."rh_contrat as c ON (s.fk_soc = c.fk_tier_fournisseur)
-				WHERE s.entity=".$conf->entity."
+				WHERE s.entity IN (0,".$conf->entity.")
 				AND c.rowid =".$contrat->getId();
 		$TOrder = array('ID'=>'ASC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -289,7 +289,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 			,'orderBy'=>$TOrder
 			
 		));
-		}
+	}
 	
 	
 	echo $form->end_form();
