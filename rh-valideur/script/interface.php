@@ -54,7 +54,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva as v ON v.rowid = l.fk_tva";
     $sql.= " WHERE n.statut = 1";
 	$sql.= " AND n.type LIKE '".$type."'";
-	$sql.= " AND (n.dates>='".$date_debut."' AND n.datee<='".$date_fin."')";
+	$sql.= " AND (n.datee>='".$date_debut."' AND n.datee<='".$date_fin."')";
 	$sql.= " ORDER BY n.rowid";
 	
 	$resql=$db->query($sql);
@@ -79,7 +79,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 						$sql_ndf.= " LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp";
 					    $sql_ndf.= " WHERE n.statut = 1";
 					    $sql_ndf.= " AND n.rowid =".$NDF_ID;
-					    $sql.= " AND (n.dates>='".$date_debut."' AND n.datee<='".$date_fin."')";
+					   // $sql.= " AND (n.dates>='".$date_debut."' AND n.datee<='".$date_fin."')";
 						
 						$resql_ndf=$db->query($sql_ndf);
 						

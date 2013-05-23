@@ -16,7 +16,7 @@
 	$ATMdb->db->debug=true;
 
 //VOITURE
-/*
+
 	$tempType = new TRH_Ressource_type;
 	$tempType->chargement('Voiture', 'voiture', 1);
 	$tempType->save($ATMdb);
@@ -39,7 +39,7 @@
 	$tempField->chargement($ATMdb,'Clé', 'cle', 'checkbox',1, 7, '', 1, $tempType->rowid);
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Kit de Sécurité', 'kit', 'checkbox',1, 8, '', 1, $tempType->rowid);
-	*/
+	
 //CARTE TOTAL
 	$tempType = new TRH_Ressource_type;
 	$tempType->chargement('Carte Total', 'cartetotal', 1);
@@ -85,7 +85,7 @@
 	$tempField->chargement($ATMdb,'Quantité plafond service', 'totalqtplafondservice', 'float',1, $cpt, '', 1, $tempType->rowid);$cpt++;
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Unité plafond service', 'totaluniteplafondservice', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
-/*
+
 //CARTE AREA
 	$tempType = new TRH_Ressource_type;
 	$tempType->chargement('Badge Area', 'badgearea', 1);

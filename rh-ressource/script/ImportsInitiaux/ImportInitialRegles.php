@@ -100,8 +100,7 @@ function chargeSim(&$ATMdb){
 	$TRessource = array();
 	$sql="SELECT r.rowid as 'ID', t.rowid as 'IdType', r.numId FROM ".MAIN_DB_PREFIX."rh_ressource as r 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t on (r.fk_rh_ressource_type = t.rowid)
-	WHERE r.entity=".$conf->entity."
-	 AND t.code='cartesim' ";
+	WHERE t.code='cartesim' ";
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		$TRessource[$ATMdb->Get_field('numId')] = $ATMdb->Get_field('ID');
@@ -112,8 +111,7 @@ function chargeSim(&$ATMdb){
 function getIdType(&$ATMdb){
 	global $conf;
 	
-	$sql="SELECT rowid , code FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-	WHERE entity=".$conf->entity;
+	$sql="SELECT rowid , code FROM ".MAIN_DB_PREFIX."rh_ressource_type ";
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
