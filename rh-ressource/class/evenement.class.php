@@ -73,7 +73,7 @@ class TRH_Evenement  extends TObjetStd {
 		
 		//chargement d'une liste de touts les users (pour le combo "Utilisateur")
 		$this->TUser = array();
-		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1'); 
@@ -82,7 +82,8 @@ class TRH_Evenement  extends TObjetStd {
 
 	function load_liste_type(&$ATMdb, $idRessourceType){
 		global $conf;
-		$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
+		$this->TType = getTypeEvent($idRessourceType);
+		/*$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
 		WHERE rowid=".$idRessourceType." AND entity=".$conf->entity;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
@@ -93,7 +94,7 @@ class TRH_Evenement  extends TObjetStd {
 					$this->TType[$keys[$key]] = $values[$key];
 				}
 			}
-		}
+		}*/
 		
 		
 	}

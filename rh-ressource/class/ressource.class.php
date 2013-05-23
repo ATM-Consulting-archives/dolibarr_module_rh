@@ -14,7 +14,7 @@ class TRH_Ressource extends TObjetStd {
 		//clé étrangere : groupes propriétaire et utilisatrice
 		parent::add_champs('fk_utilisatrice','type=entier;index;');	//groupe
 		//clé étrangère : société
-		parent::add_champs('fk_soc,entity','type=entier;index;');//fk_soc_leaser : entity
+		parent::add_champs('fk_proprietaire,entity','type=entier;index;');//fk_soc_leaser : entity
 		//clé étrangère : type de la ressource
 		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
 		//clé étrangère : ressource associé
@@ -53,10 +53,20 @@ class TRH_Ressource extends TObjetStd {
 		$this->TContratAssocies = array(); 	//tout les objets rh_contrat_ressource liés à la ressource
 		$this->TContratExaustif = array(); 	//tout les objets contrats
 		$this->TListeContrat = array(); 	//liste des id et libellés de tout les contrats
-		
+		$this->TEntity = array();
 	}
 	
-
+	function load_liste_entity(&$ATMdb){
+		global $conf;
+		
+		$sql="SELECT rowid,label FROM ".MAIN_DB_PREFIX."entity WHERE 1";
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$this->TEntity[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('label'), ENT_COMPAT , 'ISO8859-1');
+			}
+		
+		
+	}
 	
 	function load(&$ATMdb, $id) {
 		global $conf;
@@ -292,8 +302,6 @@ class TRH_Ressource_type extends TObjetStd {
 		parent::add_champs('libelle,code','type=chaine;');
 		parent::add_champs('entity','type=entier;index;');
 		parent::add_champs('supprimable','type=entier;');
-		parent::add_champs('liste_evenement_value','type=chaine;');
-		parent::add_champs('liste_evenement_key','type=chaine;');
 				
 		parent::_init_vars();
 		parent::start();
@@ -304,12 +312,10 @@ class TRH_Ressource_type extends TObjetStd {
 	/**
 	 * Attribut les champs directement, pour créer les types par défauts par exemple. 
 	 */
-	function chargement($libelle, $code, $supprimable, $liste_evenement_value, $liste_evenement_key){
+	function chargement($libelle, $code, $supprimable){
 		$this->libelle = $libelle;
 		$this->code = $code;
 		$this->supprimable = $supprimable;
-		$this->liste_evenement_value = $liste_evenement_value;
-		$this->liste_evenement_key = $liste_evenement_key;
 	}
 	
 	function load(&$ATMdb, $id) {
@@ -390,13 +396,6 @@ class TRH_Ressource_type extends TObjetStd {
 		
 		$this->entity = $conf->entity;
 		$this->code = TRH_Ressource_type::code_format(empty($this->code) ? $this->libelle : $this->code);
-		
-		//on transforme la liste des évenements en liste valide pour être des clés d'un tableau
-		$temp = array();
-		foreach (explode(';', $this->liste_evenement_value) as $value) {
-			$temp[] = TRH_Ressource_type::code_format($value);
-		}
-		$this->liste_evenement_key = implode(';',$temp);
 		
 		$this->code = TRH_Ressource_type::code_format(empty($this->code) ? $this->libelle : $this->code);
 		

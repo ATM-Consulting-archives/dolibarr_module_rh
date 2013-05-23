@@ -85,6 +85,8 @@
 		<br/><br/>
 		<b style="margin-left:320px;">Veuillez respecter le format HH:MM pour les horaires</b>
 	[onshow;block=end]
+	<br/><br/>
+	Temps total de travail hebdomadaire : [userCourant.tempsHebdo;strconv=no;protect=no]h
 	
 	
 	

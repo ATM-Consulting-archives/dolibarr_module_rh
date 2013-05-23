@@ -189,6 +189,16 @@ function saveLibelle($type){
 	}
 }
 
+//fonction qui permet de renvoyer le code de l'absence
+function saveCodeTypeAbsence(&$ATMdb, $type){
+	global $conf;
+	$sql="SELECT codeAbsence FROM `".MAIN_DB_PREFIX."rh_type_absence` WHERE typeAbsence LIKE '".$type."' AND entity=".$conf->entity;
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		return $ATMdb->Get_field('codeAbsence');
+	}	
+}
+
 //fonction permettant de retourner le libelle de l'état de l'absence (à Valider...)
 function saveLibelleEtat($etat){
 	switch($etat){
@@ -305,4 +315,48 @@ function supprimerAccent($chaine){
 }
 
 
+//permet d'additionner deux heures ensemble
+function additionnerHeure($dureeTotale, $dureeDiff){
+	list($heureT, $minuteT) = explode(':', $dureeTotale);
+	//echo "heureT : ".$heureT." minutesT : ".$minuteT;
+	list($heureD, $minuteD) = explode(':', $dureeDiff);
+	
+	$heureT=$heureT+$heureD;
+	$minuteT=$minuteT+$minuteD;
+	
+	while($minuteT>60){
+		$minuteT-=60;
+		$heureT+=1;
+	}
+	
+	return $heureT.":".$minuteT;
+}
+
+		
+//donne la différence entre 2 heures (respecter l'ordre début et fin)
+function difheure($heuredeb,$heurefin)
+	{
+		
+		$hd=explode(":",$heuredeb);
+		$hf=explode(":",$heurefin);
+		$hd[0]=(int)($hd[0]);$hd[1]=(int)($hd[1]);$hd[2]=(int)($hd[2]);
+		$hf[0]=(int)($hf[0]);$hf[1]=(int)($hf[1]);$hf[2]=(int)($hf[2]);
+		if($hf[2]<$hd[2]){$hf[1]=$hf[1]-1;$hf[2]=$hf[2]+60;}
+		if($hf[1]<$hd[1]){$hf[0]=$hf[0]-1;$hf[1]=$hf[1]+60;}
+		if($hf[0]<$hd[0]){$hf[0]=$hf[0]+24;}
+		return (($hf[0]-$hd[0]).":".($hf[1]-$hd[1]).":".($hf[2]-$hd[2]));
+	}
+
+
+
+function horaireMinuteEnCentieme($horaire){
+	list($heure, $minute) = explode(':', $horaire);	
+	$horaireCentieme=$heure+$minute/60;
+	return $horaireCentieme;
+}
+
+//retourne la date au format "Y-m-d H:i:s"
+function php2Date($phpDate){
+    return date("Y-m-d H:i:s", $phpDate);
+}
 
