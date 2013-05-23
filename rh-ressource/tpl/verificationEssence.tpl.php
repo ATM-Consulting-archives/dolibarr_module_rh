@@ -1,5 +1,5 @@
 
-<h1>Vérification des consommations d'essence</h1>
+[infos.titre;strconv=no;protect=no]
 
 Renseignez ici la limite de consommation : [infos.limite;strconv=no;protect=no] L/100km.     
 Sur la période de [infos.plagedebut;strconv=no;protect=no] à [infos.plagefin;strconv=no;protect=no]
