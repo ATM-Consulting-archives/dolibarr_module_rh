@@ -227,7 +227,7 @@ function _liste(&$ATMdb, &$ressource) {
 				,'libelle'=>true
 				,'name'=>true
 				,'firstname'=>true
-				,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
+				//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
 			)
 			: array()
 		,'orderBy'=>$TOrder
@@ -358,6 +358,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 				,'entretien'=>$form->texte('', 'contrat[entretien]', $contrat->entretien, 10,20,'','','')
 				,'assurance'=>$form->texte('', 'contrat[assurance]', $contrat->assurance, 10,20,'','','')
 				,'kilometre'=>$form->texte('', 'contrat[kilometre]', $contrat->kilometre, 8,8,'','','')
+				,'dureemois'=>$form->texte('', 'dureemois', $contrat->dureeMois, 8,8,'','','')
 				,'loyer_TTC'=>$form->texte('', 'contrat[loyer_TTC]', $contrat->loyer_TTC, 10,20,'','','')
 				,'TVA'=>$form->combo('','contrat[TVA]',$contrat->TTVA,$contrat->TVA)
 				,'loyer_HT'=>($contrat->loyer_TTC)*(1-(0.01*$contrat->TTVA[$contrat->TVA]))

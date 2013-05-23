@@ -147,6 +147,10 @@
 	 		<td>Kilomètrage</td>
 	 		<td>[contrat.kilometre;strconv=no;protect=no] km</td>
 	 	</tr>
+	 	<tr id="dureeeenmois" >
+	 		<td>Durée mois</td>
+	 		<td>[contrat.dureemois;strconv=no;protect=no] mois</td>
+	 	</tr>
 	 	<script>
 	 		$('#fk_tier_fournisseur').change(function()
 	 			{actuKm();})
@@ -155,9 +159,11 @@
 	 		
 	 		function actuKm(){
 	 			if ($('#fk_tier_fournisseur option:selected').html()=='Parcours'){
-	 				$('#km').show();}
+	 				$('#km').show();
+	 				$('#dureeeenmois').show();}
 	 			else{
 	 				$('#km').hide();
+	 				$('#dureeeenmois').hide();
 	 			}
 	 		}
 	 	</script>

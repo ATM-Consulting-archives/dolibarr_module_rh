@@ -19,7 +19,7 @@
 		[NEmprunt.fk_rh_ressource;strconv=no;protect=no]
 		[NEmprunt.type;strconv=no;protect=no]
 		<tr>
-			<td>Utilisateur</td>
+			<td style="width:20%">Utilisateur</td>
 			<td>[NEmprunt.fk_user;strconv=no;protect=no]</td>
 		</tr>
 		<tr>
