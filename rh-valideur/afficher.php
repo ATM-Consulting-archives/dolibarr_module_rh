@@ -169,6 +169,8 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 				,array(
 					'userCourant'=>array(
 						'id'=>$user->id
+						,'lastname'=>$user->lastname
+						,'firstname'=>$user->firstname
 					)
 					,'valideur'=>array(
 						'group'=>$form->combo('','fk_usergroup',$valideur->TGroup,$valideur->fk_usergroup)

@@ -6,6 +6,12 @@
 			Liste de vos liens de validation
 		</h2>
 	
+		<table width="100%" class="border"><tbody><tr><td width="25%" valign="top">Réf.</td><td>
+			[userCourant.id]</td></tr>
+		<tr><td width="25%" valign="top">Nom</td><td>[userCourant.lastname]</td></tr>
+		<tr><td width="25%" valign="top">Prénom</td><td>[userCourant.firstname]</td></tr>
+		</tbody></table>
+	
 		<div>
 							
 			<table class="border" style="width:100%">			
