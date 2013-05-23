@@ -11,8 +11,8 @@ llxHeader('','Vérification des consommations d\'essence');
 
 print dol_get_fiche_head(array()  , '', 'Vérification');
 $limite = isset($_REQUEST['limite']) ? $_REQUEST['limite'] : 0;
-$plagedeb = !empty($_REQUEST['plagedebut']) ? $_REQUEST['plagedebut'] : date("Y-m-d 00:00:00",time()-31532400);
-$plagefin = !empty($_REQUEST['plagefin']) ? $_REQUEST['plagefin'] : date("Y-m-d  00:00:00", time()+31532400);
+$plagedeb = !empty($_REQUEST['plagedebut']) ? $_REQUEST['plagedebut'] : date("d/m/Y",time()-31532400);
+$plagefin = !empty($_REQUEST['plagefin']) ? $_REQUEST['plagefin'] : date("d/m/Y", time());
 
 $url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/ressource/script/loadConsommationEssence.php?limite=".$limite."&plagedebut=".$plagedeb."&plagefin=".$plagefin;
 $result = file_get_contents($url);
@@ -30,6 +30,7 @@ print $TBS->render('./tpl/verificationEssence.tpl.php'
 	,array(
 		'infos'=>array(
 			'texte'=>'$texte'
+			,'titre'=>load_fiche_titre("Vérification des consommations d'essence",'', 'title.png', 0, '')
 			,'limite'=>$form->texte('', 'limite', $limite, 10)
 			,'plagedebut'=>$form->calendrier('', 'plagedebut', $plagedeb, 8)
 			,'plagefin'=>$form->calendrier('', 'plagefin', $plagefin, 8)

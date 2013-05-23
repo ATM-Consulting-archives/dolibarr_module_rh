@@ -38,6 +38,8 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('rttMetier','type=chaine;');		
 		parent::add_champs('date_rttCloture','type=date;');	//date de clôture période rtt
 		
+		parent::add_champs('reportRtt','type=int;');	//entier (0 ou 1) pour savoir si l'on reporte les RTT d'une année à l'autre
+		
 		//paramètres globaux
 		parent::add_champs('rttAcquisMensuelInit','type=float;');	
 		parent::add_champs('rttAcquisMensuelTotal','type=float;');	
@@ -116,7 +118,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('date_debut,date_fin','type=date;');	//dates debut fin de congés
 		parent::add_champs('ddMoment, dfMoment','type=chaine;');		//moment (matin ou après midi)
 		parent::add_champs('duree','type=float;');	
-		parent::add_champs('dureeHeure','type=chaine;');			
+		parent::add_champs('dureeHeure','type=chaine;');	
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
 		parent::add_champs('etat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('avertissement','type=int;');	
@@ -205,12 +207,11 @@ class TRH_Absence extends TObjetStd {
 			global $conf, $user;
 			$this->entity = $conf->entity;
 			
+			
 			//on calcule la duree de l'absence, en décomptant jours fériés et jours non travaillés par le collaborateur
 			$dureeAbsenceCourante=$this->calculDureeAbsence($db, $this->date_debut, $this->date_fin, $absence);
-			
 			$dureeAbsenceCourante=$this->calculJoursFeries($db, $dureeAbsenceCourante, $this->date_debut, $this->date_fin, $absence);
 			$dureeAbsenceCourante=$this->calculJoursTravailles($db, $dureeAbsenceCourante, $this->date_debut, $this->date_fin, $absence); 
-			
 			
 			
 			//autres paramètes à sauvegarder
@@ -404,6 +405,9 @@ class TRH_Absence extends TObjetStd {
 		
 		function calculJoursTravailles(&$ATMdb, $duree, $date_debut, $date_fin, &$absence){
 			
+			global $conf;
+			
+						
 			//traitement jour de début
 			$dateDebutAbs=$absence->php2Date($date_debut);
 			$jourDebutSem=$absence->jourSemaine($date_debut);
@@ -414,7 +418,7 @@ class TRH_Absence extends TObjetStd {
 			
 			//on récupère les jours fériés compris dans la demande d'absence
 			$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
-			.$dateDebutAbs."' and '". $dateFinAbs."'"; 
+			.$dateDebutAbs."' and '". $dateFinAbs."' AND entity=".$conf->entity; 
 			//echo $sql;
 			$ATMdb->Execute($sql);
 			$TabFerie = array();
@@ -474,7 +478,7 @@ class TRH_Absence extends TObjetStd {
 			,CONCAT(HOUR(date_dimanche_heurefpm) ,':' , MINUTE(date_dimanche_heurefpm)) as	date_dimanche_heurefpm	
 			 
 			FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` 
-			WHERE fk_user=".$absence->fk_user; 
+			WHERE fk_user=".$absence->fk_user." AND entity=".$conf->entity;  
 
 			$ATMdb->Execute($sql);
 			$TTravail = array();
@@ -505,7 +509,7 @@ class TRH_Absence extends TObjetStd {
 		 				if($jourFerie['moment']=='matin'){
 		 					if($TTravail[$jourSemaineFerie.'pm']==1){
 		 						if($absence->dfMoment=='apresmidi'){
-		 							$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredpm"], $TTravailHeure["date_".$jourSemaineFerie."_heurefpm"]));
+	 								$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredpm"], $TTravailHeure["date_".$jourSemaineFerie."_heurefpm"]));
 									$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
 		 						}
 		 						

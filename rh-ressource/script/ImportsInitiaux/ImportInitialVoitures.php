@@ -29,7 +29,7 @@ while($ATMdb->Get_line()) {
 
 
 $TGroups = array();
-$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup ";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TGroups[strtolower($ATMdb->Get_field('nom'))] = $ATMdb->Get_field('rowid');
@@ -235,8 +235,7 @@ function chargeVoiture(&$ATMdb){
 	$TRessource = array();
 	$sql="SELECT r.rowid as 'ID', t.rowid as 'IdType', r.numId FROM ".MAIN_DB_PREFIX."rh_ressource as r 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t on (r.fk_rh_ressource_type = t.rowid)
-	WHERE r.entity=".$conf->entity."
-	 AND t.code='voiture' ";
+	WHERE t.code='voiture' ";
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		$idVoiture = $ATMdb->Get_field('IdType');
@@ -251,8 +250,7 @@ function chargeVoiture(&$ATMdb){
 function chargeContrat(&$ATMdb, $idVoiture){
 	global $conf;
 	$sql="SELECT rowid, numContrat FROM ".MAIN_DB_PREFIX."rh_contrat
-	WHERE entity=".$conf->entity."
-	AND fk_rh_ressource_type=".$idVoiture;
+	WHERE fk_rh_ressource_type=".$idVoiture;
 	$TListe = array();
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
