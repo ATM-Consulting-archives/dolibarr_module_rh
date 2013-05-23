@@ -164,11 +164,11 @@ function _liste(&$ATMdb, &$ressource) {
 		$sql.=", '' as 'Supprimer'";
 	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r
-		LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON  (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource)
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON ( (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource) AND e.type='emprunt')
 		AND e.entity = ".$conf->entity."
 		AND e.date_debut<='".date("Y-m-d")."' AND e.date_fin >= '". date("Y-m-d")."' 
 	 LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid )";	
-	$sql.=" WHERE  r.entity=".$conf->entity;
+	$sql.=" WHERE  r.entity IN (0,".$conf->entity.")";
 	
 	
 	if(!$user->rights->ressource->ressource->viewRessource){
@@ -188,7 +188,7 @@ function _liste(&$ATMdb, &$ressource) {
 		)
 		,'link'=>array(
 			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
+			,'Supprimer'=>"<a onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=@ID@&action=delete'};\"><img src=\"./img/delete.png\"></a>"
 		)
 		,'eval'=>array(
 			'Statut'=>'getStatut("@val@")'
@@ -227,7 +227,7 @@ function _liste(&$ATMdb, &$ressource) {
 				,'libelle'=>true
 				,'name'=>true
 				,'firstname'=>true
-				//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
+				,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
 			)
 			: array()
 		,'orderBy'=>$TOrder
