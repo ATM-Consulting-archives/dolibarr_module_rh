@@ -141,10 +141,9 @@ function _liste(&$ATMdb, &$ressourceType, &$even) {
 		</table><br>';
 		
 	$r = new TSSRenderControler($ressourceType);
-	$sql="SELECT rowid as ID, libelle, code, codeanalytique, fk_rh_ressource_type, supprimable
+	$sql="SELECT rowid as ID, libelle, code, codecomptable, fk_rh_ressource_type, supprimable
 		FROM ".MAIN_DB_PREFIX."rh_type_evenement as r
-		WHERE entity=".$conf->entity."
-		AND (fk_rh_ressource_type=0 OR fk_rh_ressource_type=".$ressourceType->getId().")";
+		WHERE (fk_rh_ressource_type=0 OR fk_rh_ressource_type=".$ressourceType->getId().")";
 	
 
 	$TOrder = array('fk_rh_ressource_type'=>'ASC');
@@ -171,7 +170,7 @@ function _liste(&$ATMdb, &$ressourceType, &$even) {
 		,'title'=>array(
 			'libelle'=>'Libellé'
 			,'code'=>'Code'
-			,'codeanalytique'=>'Code Analytique'
+			,'codecomptable'=>'Code Comptable'
 			,'supprimable'=>'Type par défaut'
 		)
 		,'hide'=>array('ID', 'fk_rh_ressource_type')

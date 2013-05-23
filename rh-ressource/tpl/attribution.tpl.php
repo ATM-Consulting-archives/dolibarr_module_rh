@@ -4,6 +4,15 @@
 
 [onshow;block=begin;when [view.mode]!='view']
     [view.onglet;strconv=no]
+
+    [onshow;block=begin;when [view.mode]=='new']
+    	[ressource.titreNouvelleAttribution;strconv=no;protect=no]
+    [onshow;block=end]
+    
+    [onshow;block=begin;when [view.mode]=='edit']
+    	[ressource.titreModificationAttribution;strconv=no;protect=no]
+    [onshow;block=end]
+    
 [onshow;block=end] 
 
 	<table class="border" style="width:100%">

@@ -74,7 +74,7 @@ class TRH_Ressource extends TObjetStd {
 
 		$this->load_ressource_type($ATMdb);
 		//chargement d'une liste de toutes les ressources (pour le combo "ressource associé")
-		$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid!=".$this->getId();
+		$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid!=".$this->getId()." AND entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle').' '.$ATMdb->Get_field('numId');
@@ -87,7 +87,7 @@ class TRH_Ressource extends TObjetStd {
 	 */
 	function load_evenement(&$ATMdb, $type=array('emprunt')){
 		global $conf;
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$this->getId();
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$this->getId()." AND entity IN (0,".$conf->entity.")";
 		$sql.=" AND ( 0 ";
 		foreach ($type as $value) {
 			 $sql.= "OR type LIKE '".$value."' ";
@@ -119,7 +119,7 @@ class TRH_Ressource extends TObjetStd {
 		}
 		
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE fk_rh_ressource=".$this->getId()."
-		AND entity=".$conf->entity;
+		AND entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
 		$Tab=array();
 		while($ATMdb->Get_line()){
@@ -133,7 +133,7 @@ class TRH_Ressource extends TObjetStd {
 		// AA c'est un contrat ça ? (outre le fait que je ne comprends pas toutes ces notions de contrats)
 		$this->TTVA = array();
 		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0]."
-		AND entity=".$conf->entity;
+		AND entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
@@ -141,7 +141,7 @@ class TRH_Ressource extends TObjetStd {
 		
 		$this->TListeContrat = array(); 	//liste des id et libellés de tout les contrats
 		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_contrat WHERE fk_rh_ressource_type =".$this->fk_rh_ressource_type."
-		AND entity=".$conf->entity;
+		AND entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TListeContrat[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
@@ -161,7 +161,7 @@ class TRH_Ressource extends TObjetStd {
 				FROM ".MAIN_DB_PREFIX."user as u
 				LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (e.fk_user = u.rowid)
 				LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
-				WHERE e.entity=".$conf->entity."
+				WHERE e.entity IN (0,".$conf->entity.")
 				AND r.rowid =".$this->getId()."
 				AND e.type='emprunt'";
 		$ATMdb->Execute($sql);
@@ -198,7 +198,7 @@ class TRH_Ressource extends TObjetStd {
 	function nouvelEmpruntSeChevauche(&$ATMdb, $newEmprunt, $idRessource){
 		global $conf;
 		$sqlReq="SELECT date_debut,date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$idRessource."
-		AND type='emprunt' AND entity=".$conf->entity." AND rowid != ".$newEmprunt['idEven'];
+		AND type='emprunt' AND entity IN(0, ".$conf->entity.") AND rowid != ".$newEmprunt['idEven'];
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			if ($this->dateSeChevauchent($this->strToTimestamp($newEmprunt['date_debut'])
@@ -257,7 +257,7 @@ class TRH_Ressource extends TObjetStd {
 		global $conf;
 		
 		//avant de supprimer le contrat, on supprime les liaisons contrat-ressource associés.
-		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE entity=".$conf->entity."
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE entity IN (0,".$conf->entity.")
 		AND fk_rh_ressource=".$this->getId();
 		$Tab = array();
 		$temp = new TRH_Contrat_Ressource;
@@ -271,7 +271,7 @@ class TRH_Ressource extends TObjetStd {
 		}
 		
 		//on supprime aussi les évenements associés
-		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_evenement WHERE entity=".$conf->entity."
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_evenement WHERE entity IN (0,".$conf->entity.")
 		AND fk_rh_ressource=".$this->getId();
 		$Tab = array();
 		$temp = new TRH_Evenement;
@@ -309,7 +309,7 @@ class TRH_Ressource_type extends TObjetStd {
 	}
 	
 	
-	function load_by_code($code){
+	function load_by_code(&$ATMdb, $code){
 		$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_type WHERE code='".$code."'";
 		$ATMdb->Execute($sqlReq);
 		
@@ -323,7 +323,7 @@ class TRH_Ressource_type extends TObjetStd {
 	 * Attribut les champs directement, pour créer les types par défauts par exemple. 
 	 */
 	function chargement(&$db, $libelle, $code, $supprimable){
-		$this->load_by_code($code);
+		$this->load_by_code($db, $code);
 		$this->libelle = $libelle;
 		$this->code = $code;
 		$this->supprimable = $supprimable;
@@ -347,7 +347,7 @@ class TRH_Ressource_type extends TObjetStd {
 	
 	function load_field(&$ATMdb) {
 		global $conf;
-		$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." AND entity=".$conf->entity." ORDER BY ordre ASC;";
+		$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()." AND entity IN (0,".$conf->entity.") ORDER BY ordre ASC;";
 		$ATMdb->Execute($sqlReq);
 		
 		$Tab = array();
@@ -385,7 +385,7 @@ class TRH_Ressource_type extends TObjetStd {
 		if ($this->supprimable){
 			//on supprime les champs associés à ce type
 			$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE fk_rh_ressource_type=".$this->getId()."
-			 AND entity=".$conf->entity;
+			 AND entity IN (0,".$conf->entity.")";
 			$ATMdb->Execute($sqlReq);
 			$Tab = array();
 			while($ATMdb->Get_line()) {
@@ -450,7 +450,19 @@ class TRH_Ressource_field extends TObjetStd {
 		
 	}
 	
+	function load_by_code(&$db, $code){
+		$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE code='".$code."'";
+		$db->Execute($sqlReq);
+		
+		if ($db->Get_line()) {
+			return $this->load($db, $db->Get_field('rowid'));
+		}
+		return false;
+	}
+	
+	
 	function chargement(&$db, $libelle, $code, $type, $obligatoire, $ordre, $options, $supprimable, $fk_rh_ressource_type){
+		$this->load_by_code($db, $code);	
 		$this->libelle = $libelle;
 		$this->code = $code;
 		$this->type = $type;

@@ -104,7 +104,7 @@ function _liste(&$ATMdb, &$ressource) {
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT rowid as 'ID', code as 'Code', libelle as 'Libellé'
 		FROM @table@
-		WHERE entity=".$conf->entity;
+		WHERE entity IN (0,".$conf->entity.")";
 	
 	$TOrder = array('Code'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
