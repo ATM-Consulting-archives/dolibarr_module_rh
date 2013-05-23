@@ -1,4 +1,8 @@
 <?php
+set_time_limit(0);
+ini_set('memory_limit','512M');
+
+
 require('../../config.php');
 require('../../class/evenement.class.php');
 require('../../class/ressource.class.php');
