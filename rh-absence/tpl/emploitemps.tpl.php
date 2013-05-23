@@ -1,7 +1,7 @@
 
         [view.head;strconv=no]
 
-		<h2 style="color: #2AA8B9;">Emploi du temps de [userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</h2>
+		[view.titreEdt;strconv=no;protect=no]
 		
 		<div style=" display:inline-block;">                  
 		<table class="border" style="width:130%;" >	

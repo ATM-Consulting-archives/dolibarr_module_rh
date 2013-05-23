@@ -1,6 +1,7 @@
  [view.head;strconv=no]
 
-<h2>Nouvelle règle sur les demandes d'absence</h2>
+	[newRule.titreRegle; strconv=no]
+
 <table width="60%" class="border">
 	<tr>
 		<td>Choix d'application</td>

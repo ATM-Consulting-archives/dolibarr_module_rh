@@ -38,7 +38,7 @@ function _jourAnciennete(&$ATMdb, $userId){
 	
 	$sql="SELECT a.acquisAncienneteNM1 
 	FROM ".MAIN_DB_PREFIX."rh_compteur as a 
-	WHERE a.entity=".$conf->entity."
+	WHERE a.entity IN (0,".$conf->entity.")
 	AND a.fk_user=".$userId;
 	
 	$ATMdb->Execute($sql);
@@ -58,7 +58,7 @@ function _dureeMaladieMaintenue(&$ATMdb, $userId, $date_debut, $date_fin){
 	FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."rh_absence as a 
 	WHERE u.rowid=a.fk_user 
 	AND a.type LIKE 'maladiemaintenue'
-	AND a.entity=".$conf->entity."
+	AND a.entity IN (0,".$conf->entity.")
 	AND a.fk_user=".$userId."
 	AND (a.date_debut>'".$date_debut."' AND a.date_fin<'".$date_fin."')";
 	
@@ -79,7 +79,7 @@ function _dureeMaladieNonMaintenue(&$ATMdb, $userId, $date_debut, $date_fin){
 	FROM ".MAIN_DB_PREFIX."rh_absence as a
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user = u.rowid)
 	WHERE a.type LIKE 'maladienonmaintenue'
-	AND a.entity=".$conf->entity."
+	AND a.entity IN (0,".$conf->entity.")
 	AND a.fk_user=".$userId."
 	AND (a.date_debut>'".$date_debut."' AND a.date_fin<'".$date_fin."')";
 	
@@ -116,7 +116,7 @@ function _conges(&$ATMdb, $userId, $date_debut, $date_fin){
 	$sql="SELECT *
 	FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as a
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user = u.rowid)
-	WHERE a.entity=".$conf->entity."
+	WHERE a.entity IN (0,".$conf->entity.")
 	AND a.fk_user=".$userId;
 	
 	$ATMdb->Execute($sql);
@@ -208,7 +208,7 @@ function _conges(&$ATMdb, $userId, $date_debut, $date_fin){
 		$sql="SELECT *
 		FROM ".MAIN_DB_PREFIX."rh_absence as a
 			LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
-		WHERE a.entity=".$conf->entity."
+		WHERE a.entity IN (0,".$conf->entity.")
 		AND u.rowid=".$userId."
 		AND a.etat='Validee'
 		AND (a.date_debut<='".date('Y-m-d 00:00:00',$dateDeb)."' AND a.date_fin>='".date('Y-m-d 00:00:00',$dateDeb)."')";
@@ -258,7 +258,7 @@ function _conges(&$ATMdb, $userId, $date_debut, $date_fin){
 		//on regarde si le jour est férié, si oui, on le décompte
 		$sql="SELECT *
 		FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries as a
-		WHERE a.entity=".$conf->entity."
+		WHERE a.entity IN (0,".$conf->entity.")
 		AND a.date_jourOff='".date('Y-m-d 00:00:00',$dateDeb)."'";
 		
 		$ATMdb->Execute($sql);

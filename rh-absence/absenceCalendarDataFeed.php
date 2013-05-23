@@ -7,52 +7,56 @@ $ATMdb=new TPDOdb;
 $method = $_GET["method"];
 switch ($method) {
     case "list":
-		
-        if (isset($_GET['idUser'])&&isset($_GET['idGroupe'])){
-	       	 $ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser'], $_GET['idGroupe']);
-		}
+
+	       	$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser'], $_GET['idGroupe']);
+
         break; 
 
 }
 echo json_encode($ret); 
 
 function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
-  	global $conf,$user;
+
+  global $conf,$user;
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
   $ret["start"] = php2JsTime($sd);
   $ret["end"] = php2JsTime($ed);
   $ret['error'] = null;
+
   
   try{
 
   	if($idUser==0&&$idGroupe==0){	//on affiche toutes les absences 
   		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
-  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE `date_debut` between '"
-      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid";  
+  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE r.date_debut <=
+      '".php2MySqlTime($ed)."' and r.date_fin >='". php2MySqlTime($sd)."' AND r.fk_user=u.rowid";  
+      
   	}
   	else if($idUser==0){		//on recherche un groupe
   		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
   		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
-  		WHERE `date_debut` between '"
-      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupe; 
+  		WHERE r.date_debut <=
+      '".php2MySqlTime($ed)."' and r.date_fin >='". php2MySqlTime($sd)."' AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupe; 
  
   	}
   	else if($idGroupe==0){		//on recherche un utilisateur
   		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
   		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
-  		WHERE `date_debut` between '" 
-      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' 
+  		WHERE date_debut <=
+      '".php2MySqlTime($ed)."' and date_fin >='". php2MySqlTime($sd)."'
       AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND u.rowid=".$idUser;
   	}
   	else{		//on recherche un groupe et un utilisateur
   		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
   		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
-  		WHERE `date_debut` between '" 
-      .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."' 
+  		WHERE date_debut <=
+      '".php2MySqlTime($ed)."' and date_fin >='". php2MySqlTime($sd)."'
       AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND u.rowid=".$idUser." AND g.fk_usergroup=".$idGroupe;  
   	}
+	$sql1.= " AND u.entity IN (0,".$conf->entity.") ";
+
     
    
   	$ATMdb->Execute($sql1);
@@ -100,38 +104,39 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
 				break;
     	}*/
     while ($row = $ATMdb->Get_line()) {
-	    	switch($row->etat){
-				case 'Avalider' : 
-					$color=6;
-					break;
-				case 'Refusee':
-					$color=14;
-					break;
-				case 'Validee':
-					$color=8;
-					break;
-			}
-
-      $ret['events'][] = array(
-        $row->rowid,
-        htmlentities($row->name, ENT_COMPAT , 'ISO8859-1').' '.htmlentities($row->firstname, ENT_COMPAT , 'ISO8859-1')." : ".$row->libelle,
-        php2JsTime(mySql2PhpTime($row->date_debut)),
-        php2JsTime(mySql2PhpTime($row->date_fin)),
-        1,//$row->isAllDayEvent,
-        0, //more than one day event
-        //$row->InstanceType,
-        $row->fk_user,//Recurring event,
-        $color,//$row->color,
-        1,//editable
-        "absence.php?id=".$row->rowid."&action=view",//$row->location,
-        '',//$attends
-      );
-	  
+    				
+		$idAbs[]=$row->rowid;
+    	switch($row->etat){
+			case 'Avalider' : 
+				$color=6;
+				break;
+			case 'Refusee':
+				$color=14;
+				break;
+			case 'Validee':
+				$color=8;
+				break;
+		}
+		
+	     $ret['events'][] = array(
+	        $row->rowid,
+	        htmlentities($row->name, ENT_COMPAT , 'ISO8859-1').' '.htmlentities($row->firstname, ENT_COMPAT , 'ISO8859-1')." : ".$row->libelle,
+	        php2JsTime(mySql2PhpTime($row->date_debut)),
+	        php2JsTime(mySql2PhpTime($row->date_fin)),
+	        1,//$row->isAllDayEvent,
+	        0, //more than one day event
+	        //$row->InstanceType,
+	        $row->fk_user,//Recurring event,
+	        $color,//$row->color,
+	        1,//editable
+	        "absence.php?id=".$row->rowid."&action=view",//$row->location,
+	        '',//$attends
+	      );
 	  }  
 	  
 	  //récupération des jours fériés 
 	$sql2=" SELECT DISTINCT * FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
-	 WHERE entity=".$conf->entity;
+	 WHERE entity IN (0,".$conf->entity.")";
 	 //echo $sql2;
   	 $ATMdb->Execute($sql2);
    		
@@ -168,10 +173,12 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
 	}catch(Exception $e){
      $ret['error'] = $e->getMessage();
   }
+
   return $ret;
 }
 
 function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idGroupe){
+  	
   $phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
   switch($type){
@@ -192,6 +199,8 @@ function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idGroupe){
       break;
   }
   //echo $st . "--" . $et;
+  /*$ret=array();
+  $ret=listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idGroupe);*/
   return listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idGroupe);
 }
 

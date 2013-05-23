@@ -24,6 +24,7 @@
 			case 'save':
 				//$ATMdb->db->debug=true;
 				$compteur->load($ATMdb, $_REQUEST['id']);
+				$compteur->reportRtt=0; // on remet à 0 la checkbox avant de setter la nouvelle valeur
 				$compteur->set_values($_REQUEST);
 				$compteur->save($ATMdb);
 				$compteur->load($ATMdb, $_REQUEST['id']);
@@ -81,7 +82,7 @@ function _liste(&$ATMdb, &$compteur) {
 		CAST(r.congesPrisNM1 as DECIMAL(16,1)) as 'Conges Pris N-1',
 		CAST(r.rttPris as DECIMAL(16,1))  as 'RttPris'
 		FROM ".MAIN_DB_PREFIX."rh_compteur as r, ".MAIN_DB_PREFIX."user as c 
-		WHERE r.entity=".$conf->entity." AND r.fk_user=c.rowid";
+		WHERE r.entity IN (0,".$conf->entity.") AND r.fk_user=c.rowid";
 		
 	
 	$TOrder = array('name'=>'ASC');
@@ -105,7 +106,7 @@ function _liste(&$ATMdb, &$compteur) {
 		,'liste'=>array(
 			'titre'=>'Liste des compteurs de congés des collaborateurs'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Il n'y a aucun jour acquis à afficher"
@@ -144,14 +145,14 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 		
 	//récupération informations utilisateur dont on modifie le compte
 	$CompteurActuel=$_GET['id']?$_GET['id']:$compteur->getId();
-	$sqlReqUser="SELECT fk_user FROM `".MAIN_DB_PREFIX."rh_compteur` where rowid=".$CompteurActuel;//AND entity=".$conf->entity;
+	$sqlReqUser="SELECT fk_user FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE rowid=".$CompteurActuel." AND entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
 				$userCompteurActuel=$ATMdb->Get_field('fk_user');
 	}
 	
-	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$userCompteurActuel;//AND entity=".$conf->entity;
+	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$userCompteurActuel." AND entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -165,7 +166,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
-	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=". $userCourant->id; //."AND entity=".$conf->entity;
+	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=". $userCourant->id." AND entity IN (0,".$conf->entity.")";
 	
 	$ATMdb->Execute($sqlReqUser);
 	$congePrec=array();
@@ -255,6 +256,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'reste'=>round2Virgule($congePrecReste)
 				,'idUser'=>$congePrec->fk_user
 				,'user'=>$_REQUEST['id']?$_REQUEST['id']:$user->id
+				
 			)
 			
 			,'congesCourant'=>array(
@@ -267,6 +269,11 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'idUser'=>$congeCourant->fk_user
 				,'date_congesCloture'=>date("d/m/Y",strtotime($compteurGlobal->date_congesClotureInit))
 				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',round2Virgule($compteurGlobal->congesAcquisMensuelInit),10,50,'',$class="text", $default='')	
+				
+				,'titreConges'=>load_fiche_titre("Congés payés",'', 'title.png', 0, '')
+				,'titreCongesNM'=>load_fiche_titre("Année N-1",'', '', 0, '')
+				,'titreCongesN'=>load_fiche_titre("Année N",'', '', 0, '')
+				
 			)
 			
 			,'rttCourant'=>array(
@@ -287,6 +294,12 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'rttTypeAcquis'=>$compteur->rttTypeAcquisition
 				,'reste'=>$form->texte('','total',round2Virgule($rttCourantReste),10,50,'',$class="text", $default='')
 				,'id'=>$compteur->getId()
+				,'reportRtt'=>$form->checkbox1('','reportRtt','1',$compteur->reportRtt)
+				
+				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')
+				,'titreRttCompteur'=>load_fiche_titre("Compteur de RTT",'', '', 0, '')
+				,'titreRttMethode'=>load_fiche_titre("Méthode d'acquisition des jours",'', '', 0, '')
+				
 			)
 			
 			,'userCourant'=>array(

@@ -88,7 +88,7 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
 			  DATE_FORMAT(date_jourOff, '%d/%m/%Y') as 'date_jourOff', moment as 'Période',  commentaire as 'Commentaire', '' as 'Supprimer'
 		FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
-		WHERE entity=".$conf->entity;
+		WHERE entity IN (0,".$conf->entity.")";
 		
 	
 	$TOrder = array('ID'=>'DESC');
@@ -116,7 +116,7 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 		,'liste'=>array(
 			'titre'=>'Liste des jours fériés ou non travaillés'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Aucun jour non travaillé"
@@ -167,6 +167,9 @@ function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 				,'date_jourOff'=>$form->calendrier('', 'date_jourOff', $feries->get_date('date_jourOff'), 10)
 				,'moment'=>$form->combo('','moment',$feries->TMoment,$feries->moment)
 				,'commentaire'=>$form->zonetexte('','commentaire',$feries->commentaire, 40,3,'','','-')
+				,'titreCreate'=>load_fiche_titre("Nouveau jour férié",'', 'title.png', 0, '')
+				,'titreAction'=>$_GET['action']
+				,'titreVisu'=>load_fiche_titre("Visualisation du jour férié",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
 				'id'=>$user->id
