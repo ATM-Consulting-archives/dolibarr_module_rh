@@ -172,17 +172,21 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 		,array(
 			'contrat'=>array(
 				'id'=>$contrat->getId()
+				,'titreModification'=>load_fiche_titre("Modification d'un contrat",'', 'title.png', 0, '')
+				,'titreNouveau'=>load_fiche_titre("Création d'un contrat",'', 'title.png', 0, '')
 				,'libelle'=>$form->texte('', 'libelle', $contrat->libelle, 50,255,'','','-')
+				,'numContrat'=>$form->texte('', 'numContrat', $contrat->numContrat, 50,255,'','','-')
 				//,'typeContrat'=> $form->combo('','bail',$contrat->TBail, $contrat->bail)
 				,'typeRessource'=> $form->combo('','fk_rh_ressource_type',$contrat->TTypeRessource, $contrat->fk_rh_ressource_type)
 				//,'tiersFournisseur'=> ($mode=='edit') ? $html->select_company('','fk_tier_fournisseur','',0, 0,1) : $contrat->fk_tier_fournisseur
 				,'tiersFournisseur'=> $form->combo('','fk_tier_fournisseur',$contrat->TFournisseur,$contrat->fk_tier_fournisseur)
 				,'tiersAgence'=> $form->combo('','fk_tier_utilisateur',$contrat->TAgence,$contrat->fk_tier_utilisateur)
-				,'date_debut'=> $form->calendrier('', 'date_debut', $contrat->get_date('date_debut'), 10)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $contrat->get_date('date_fin'), 10)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $contrat->get_date('date_debut'),12, 10)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $contrat->get_date('date_fin'),12, 10)
 				,'entretien'=>$form->texte('', 'entretien', $contrat->entretien, 10,20,'','','0')
 				,'assurance'=>$form->texte('', 'assurance', $contrat->assurance, 10,20,'','','0')
 				,'kilometre'=>$form->texte('', 'kilometre', $contrat->kilometre, 8,8,'','','')
+				,'dureemois'=>$form->texte('', 'dureemois', $contrat->dureeMois, 8,8,'','','')
 				,'loyer_TTC'=>$form->texte('', 'loyer_TTC', $contrat->loyer_TTC, 10,20,'','','0')
 				,'TVA'=>$form->combo('','TVA',$contrat->TTVA,$contrat->TVA)
 				,'loyer_HT'=>$form->texte('', 'loyer_HT', number_format(($contrat->loyer_TTC)*(1-($contrat->TTVA[$contrat->TVA]/100)),2), 10,20,'disabled','','')
@@ -202,8 +206,9 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 		
 	);
 	
-	print "<br/>";
-	if ($mode != 'new'){
+	
+	if ($mode == 'view'){
+		print "<br/>";
 		//liste des ressources associées
 		$r = new TSSRenderControler($contrat);
 		$sql= "SELECT r.rowid as ID, r.libelle as 'Libellé' , r.numId as 'Numéro Id'

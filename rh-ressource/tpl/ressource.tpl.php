@@ -6,11 +6,9 @@
 	[view.onglet;strconv=no]
 [onshow;block=end]  
 
-
 <link rel="stylesheet" type="text/css" href="./css/jquery.jOrgChart.css" />
 <script>
     jQuery(document).ready(function() {
-    	
     	$("#JQorganigramme").jOrgChart({
             chartElement : '#chart',
             dragAndDrop : false
@@ -131,6 +129,10 @@
 			<td style="width:20%">Libellé du contrat</td>
 			<td>[contrat.libelle;strconv=no;protect=no]</td>
 		</tr>
+		<tr>
+	 		<td>Numéro du contrat</td>
+	 		<td>[contrat.numContrat;strconv=no;protect=no]</td>
+	 	</tr>
 	 	<tr>
 	 		<td>Fournisseur concerné</td>
 	 		<td>[contrat.tiersFournisseur;strconv=no;protect=no]</td>
@@ -147,6 +149,10 @@
 	 		<td>Kilomètrage</td>
 	 		<td>[contrat.kilometre;strconv=no;protect=no] km</td>
 	 	</tr>
+	 	<tr id="dureeeenmois" >
+	 		<td>Durée mois</td>
+	 		<td>[contrat.dureemois;strconv=no;protect=no] mois</td>
+	 	</tr>
 	 	<script>
 	 		$('#fk_tier_fournisseur').change(function()
 	 			{actuKm();})
@@ -155,9 +161,11 @@
 	 		
 	 		function actuKm(){
 	 			if ($('#fk_tier_fournisseur option:selected').html()=='Parcours'){
-	 				$('#km').show();}
+	 				$('#km').show();
+	 				$('#dureeeenmois').show();}
 	 			else{
 	 				$('#km').hide();
+	 				$('#dureeeenmois').hide();
 	 			}
 	 		}
 	 	</script>
@@ -299,10 +307,10 @@
 					<br/>
 					<div id="chart" class="orgChart" ></div>
 						<ul id="JQorganigramme" style="display:none;">
-							<li> [fk_ressource.fk_rh_ressource;strconv=no;protect=no]
+							<li> <a href="?id=[fk_ressource.id]">[fk_ressource.fk_rh_ressource;strconv=no;protect=no]</a>
 								<ul>
 										<li>
-											 [ressource.libelle;strconv=no;protect=no]
+											 [ressource.libelle;strconv=no;protect=no]</a>
 											 (Ressource courante)
 											<ul>
 												

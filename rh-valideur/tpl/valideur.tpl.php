@@ -7,9 +7,9 @@
 		</h2>
 	
 		<table width="100%" class="border"><tbody><tr><td width="25%" valign="top">Réf.</td><td>
-			[userCourant.id]</td></tr>
-		<tr><td width="25%" valign="top">Nom</td><td>[userCourant.lastname]</td></tr>
-		<tr><td width="25%" valign="top">Prénom</td><td>[userCourant.firstname]</td></tr>
+			[user.id]</td></tr>
+		<tr><td width="25%" valign="top">Nom</td><td>[user.lastname]</td></tr>
+		<tr><td width="25%" valign="top">Prénom</td><td>[user.firstname]</td></tr>
 		</tbody></table>
 	
 		<div>
@@ -46,9 +46,9 @@
 
 [onshow;block=begin;when [view.mode]=='edit']
 <table width="100%" class="border"><tbody><tr><td width="25%" valign="top">Réf.</td><td>
-			[userCourant.id]</td></tr>
-		<tr><td width="25%" valign="top">Nom</td><td>[userCourant.lastname]</td></tr>
-		<tr><td width="25%" valign="top">Prénom</td><td>[userCourant.firstname]</td></tr>
+			[user.id]</td></tr>
+		<tr><td width="25%" valign="top">Nom</td><td>[user.lastname]</td></tr>
+		<tr><td width="25%" valign="top">Prénom</td><td>[user.firstname]</td></tr>
 </tbody></table><br/>
 <table  width="100%" class="border">
 	<tr>
@@ -71,7 +71,7 @@
 
 <div class="tabsAction" >
 	<input type="submit" value="Enregistrer" name="save" class="button">
-	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?fk_user=[userCourant.id]'">
+	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?fk_user=[user.id]'">
 </div>
 [onshow;block=end]
 
