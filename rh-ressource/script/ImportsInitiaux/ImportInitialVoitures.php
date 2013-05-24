@@ -13,7 +13,7 @@ $timestart=microtime(true);
 		
 //on charge quelques listes pour avoir les clés externes.
 $TTrigramme = array();
-$sql="SELECT rowid, login FROM ".MAIN_DB_PREFIX."user";
+$sql="SELECT rowid, login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TTrigramme[strtolower($ATMdb->Get_field('login'))] = $ATMdb->Get_field('rowid');
@@ -29,7 +29,7 @@ while($ATMdb->Get_line()) {
 
 
 $TGroups = array();
-$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup ";
+$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TGroups[strtolower($ATMdb->Get_field('nom'))] = $ATMdb->Get_field('rowid');
@@ -127,7 +127,7 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 				$TContrat[$numContrat]->kilometre = $infos[3]*1000;
 				$TContrat[$numContrat]->TVA = $TTVA['19.6'];
 				$TContrat[$numContrat]->fk_rh_ressource_type = $idVoiture;
-				if (empty($TFournisseur['parcours'])){echo 'Pas de fournisseur du nom de \'parcours\' dans la BD<br>';}
+				if (empty($TFournisseur['parcours'])){echo 'Pas de fournisseur du nom de \'Parcours\' dans la BD<br>';}
 				else {$TContrat[$numContrat]->fk_tier_fournisseur = $TFournisseur['parcours'];}
 				$cptContrat++;
 				$TContrat[$numContrat]->save($ATMdb);

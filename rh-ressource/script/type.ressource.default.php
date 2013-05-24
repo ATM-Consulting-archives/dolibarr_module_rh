@@ -110,7 +110,7 @@ $cpt = 0;
 	$tempEven = new TRH_Type_Evenement;
 	$tempEven->chargement($ATMdb, 'Plein d\'essence', 'pleindessence', '', 'faux', $tempType->rowid);
 
-//CARTE AREA
+//BADGE AREA
 	$tempType = new TRH_Ressource_type;
 	$tempType->chargement($ATMdb, 'Badge Area', 'badgearea', 1);
 	
