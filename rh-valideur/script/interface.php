@@ -13,7 +13,7 @@ _get($ATMdb, $get);
 function _get(&$ATMdb, $case) {
 	switch ($case) {
 		case 'ndf':
-			__out(_ndf($ATMdb,$_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['type']));
+			__out(_ndf($ATMdb,$_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['type'], $_REQUEST['entity']));
 			break;
 		case 'situation_perso':
 			__out( _situation_perso($ATMdb,$_REQUEST['fk_user']));	
@@ -24,7 +24,7 @@ function _get(&$ATMdb, $case) {
 	}
 }
 
-function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
+function _ndf(&$ATMdb, $date_debut, $date_fin, $type,$entity){
 	global $langs, $db, $user, $conf;
 	
 	$TabNdf=array();
@@ -77,7 +77,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as e ON u.rowid = e.fk_object";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva as v ON v.rowid = l.fk_tva";
     $sql.= " WHERE n.statut = 1";
-	$sql.= " AND n.entity IN (0,".$conf->entity.")";
+	$sql.= " AND n.entity IN (0,".$entity.")";
 	$sql.= " AND n.type LIKE '".$type."'";
 	$sql.= " AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')";
 	$sql.= " ORDER BY n.rowid";
