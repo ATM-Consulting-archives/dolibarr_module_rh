@@ -70,6 +70,9 @@ function getLibelle($ressource){
 	</table><br>';
 }
 
+/**
+ * Retourne la liste des types d'événement associé à un type de ressource
+ */
 function getTypeEvent($idTypeRessource = 0){
 	global $conf;
 	$TEvent = array();
@@ -85,6 +88,9 @@ function getTypeEvent($idTypeRessource = 0){
 	return $TEvent;
 }
 
+/**
+ * Renvoie un tableau de id=>libelle des ressources de type spécifié. Par défaut toute les ressources.
+ */
 function getRessource($idTypeRessource = 0){
 	global $conf;
 	$TRessource = array('');
@@ -101,23 +107,24 @@ function getRessource($idTypeRessource = 0){
 }
 
 /**
- * Retourne l'ID du type code
+ * Retourne l'ID du type de ressource correspondant à 'code', false si code pas trouvé.
  */
-function getIdType($type){
+function getIdType($code){
 	global $conf;
 	$ATMdb =new TPDOdb;
 	$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_type 
 		WHERE entity IN (0,".$conf->entity.")
-	 	AND code= '".$type."'";
+	 	AND code= '".$code."'";
 	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		$id = $ATMdb->Get_field('rowid');
-		}
+	$id = false;
+	if ($ATMdb->Get_line()) {$id = $ATMdb->Get_field('rowid');}
 	$ATMdb->close();
 	return $id;
 }
 
-
+/**
+ * Renvoie un tableau $numId=>$rowid des ressources du type spécifié.
+ */
 function getIDRessource(&$ATMdb, $idType){
 	global $conf;
 	$TRessource = array();
@@ -133,7 +140,9 @@ function getIDRessource(&$ATMdb, $idType){
 	return $TRessource;
 }
 
-
+/**
+ * Renvoie un tableau $id=> nom des users
+ */
 function getUsers(){
 	global $conf;
 	$TUser = array();
@@ -150,6 +159,9 @@ function getUsers(){
 	
 }
 
+/**
+ * renvoie une liste des groupes $id=>nom
+ */
 function getGroups(){
 	global $conf;
 	$TGroups = array();
@@ -165,13 +177,19 @@ function getGroups(){
 	
 }
 	
-
+/**
+ * renvoie 'Tous' si choixApplication='all', renvoie val sinon. 
+ */
 function stringTous($val, $choixApplication){
 	echo $choixApplication;
 	if ($choixApplication == 'all') return 'Tous';
 	else return $val;
 }
 
+/**
+ * Transforme un nombre de minute (entier) en jolie chaine de caractère donnant l'heure
+ * @return une string
+ */
 function intToString($val = 0){
 	$h = intval($val/60);
 	if ($h < 10){$h = '0'.$h;}
@@ -181,17 +199,28 @@ function intToString($val = 0){
 	return $h.':'.$m;
 }
 
+/**
+ * Donnant le nombre d'heure correspondant à $val minutes
+ * @return une string
+ */
 function intToHour($val){
 	$h = intval($val/60);
 	if ($h < 10){$h = '0'.$h;}
 	return $h;
 }
+/**
+ * Donne le modulo 60 de $val minutes
+ * @return une string
+ */
 function intToMinute($val){
 	$m = $val%60;
 	if ($m < 10){$m = '0'.$m;}
 	return $m;
 }
 
+/**
+ * f(heure, minutes) => minutes
+ */
 function timeToInt($h, $m){
 	return intval($h)*60+intval($m);
 }

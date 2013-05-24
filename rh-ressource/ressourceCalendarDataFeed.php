@@ -16,6 +16,7 @@ switch ($method) {
         break;   
 
 }
+$ATMdb->close();
 echo json_encode($ret); 
 
 function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = 'all' ){

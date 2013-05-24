@@ -16,7 +16,7 @@ $timestart=microtime(true);
 
 //on charge quelques listes pour avoir les clés externes.
 $TTrigramme = array();
-$sql="SELECT rowid, name, firstname,login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity;
+$sql="SELECT rowid, name, firstname,login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	 /*strtoupper($ATMdb->Get_field('firstname')).' '.strtoupper($ATMdb->Get_field('name'))*/
@@ -25,7 +25,7 @@ while($ATMdb->Get_line()) {
 
 
 $TGroups = array();
-$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity;
+$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TGroups[$ATMdb->Get_field('nom')] = $ATMdb->Get_field('rowid');
@@ -38,7 +38,7 @@ $idTel = getIdType('telephone');
 $idSim = getIdType('carteSim');
 $TUserInexistants = array();
 $TUser = array();
-$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
+$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.") ";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[strtoupper($ATMdb->Get_field('name').' '.$ATMdb->Get_field('firstname'))] = $ATMdb->Get_field('rowid');

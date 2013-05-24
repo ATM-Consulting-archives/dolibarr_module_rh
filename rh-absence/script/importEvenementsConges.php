@@ -46,6 +46,7 @@ echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 //début du parsing
 $numLigne = 0;
+$cpt = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle)) != false){
 		
@@ -54,7 +55,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			
 			if (empty( $TUser[strtolower($infos[4])])){	//si le login n'existe pas, on ne traite pas la ligne
-				//echo 'Erreur : Utilisateur '.strtolower($infos[3]).' inexistant ';
+				echo 'Erreur : Utilisateur '.strtolower($infos[3]).' inexistant ';
 			}
 			else{
 					echo 'Traitement de la ligne '.$numLigne.'...';
@@ -116,7 +117,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 
 					
 					$absence->save($ATMdb);
-					
+					$cpt++;
 			}
 			
 			}	
@@ -125,7 +126,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		}
 }
 
-echo 'Fin du traitement. '.($numLigne).' lignes rajoutées à la table.<br><br>';	
+echo 'Fin du traitement. '.($cpt).' lignes rajoutées à la table.<br><br>';	
 
 $ATMdb->close();
 

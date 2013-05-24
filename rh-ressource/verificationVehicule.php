@@ -30,4 +30,5 @@ print $TBS->render('./tpl/verificationVehicule.tpl.php'
 
 
 $form->end();
+$ATMdb->close();
 llxFooter();
