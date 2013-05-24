@@ -68,6 +68,15 @@ class TRH_Ressource extends TObjetStd {
 		
 	}
 	
+	function load_by_numId(&$ATMdb, $numId){
+		$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource WHERE numId='".$numId."'";
+		$ATMdb->Execute($sqlReq);
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+	}
+	
 	function load(&$ATMdb, $id) {
 		global $conf;
 		parent::load($ATMdb, $id);
