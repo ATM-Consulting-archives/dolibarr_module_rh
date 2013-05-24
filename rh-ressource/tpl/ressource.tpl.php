@@ -277,7 +277,7 @@
 									(Ressource courante)
 									<ul>
 											<li>
-												[sous_ressource.libelle;block=li;strconv=no;protect=no]
+												<a href="?id=[fk_ressource.id]"> [sous_ressource.libelle;block=li;strconv=no;protect=no]</a>
 												<ul>
 													
 												</ul>
@@ -299,7 +299,7 @@
 					<br/>
 					<div id="chart" class="orgChart" ></div>
 						<ul id="JQorganigramme" style="display:none;">
-							<li> [fk_ressource.fk_rh_ressource;strconv=no;protect=no]
+							<li> <a href="?id=[fk_ressource.id]">[fk_ressource.fk_rh_ressource;strconv=no;protect=no]</a>
 								<ul>
 										<li>
 											 [ressource.libelle;strconv=no;protect=no]
