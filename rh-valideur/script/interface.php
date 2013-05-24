@@ -45,7 +45,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 	$sql.= " v.taux as 'tva',";
 	$sql.= " CAST(l.total_ht as DECIMAL(16,2)) as 'total_ht',";
 	$sql.= " CAST(l.total_ttc as DECIMAL(16,2)) as 'total_ttc',";
-	$sql.= " e.CODE_ANA,";
+	$sql.= " e.code_analytique,";
 	$sql.= " e.COMPTE_TIERS";
 	
     $sql.= " FROM ".MAIN_DB_PREFIX."ndfp_det as l";
@@ -55,6 +55,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as e ON u.rowid = e.fk_object";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva as v ON v.rowid = l.fk_tva";
     $sql.= " WHERE n.statut = 1";
+	$sql.= " AND n.entity IN (0,".$conf->entity.")";
 	$sql.= " AND n.type LIKE '".$type."'";
 	$sql.= " AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')";
 	$sql.= " ORDER BY n.rowid";
