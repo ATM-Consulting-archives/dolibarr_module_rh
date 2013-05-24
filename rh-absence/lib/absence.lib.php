@@ -205,7 +205,7 @@ function saveLibelleEtat($etat){
 		case 'Avalider':
 			return "En attente de validation";
 		break;
-		case 'Acceptee':
+		case 'Validee':
 			return "Acceptée";
 		break;
 		case 'Refusee':

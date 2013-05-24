@@ -34,7 +34,6 @@
 				break;
 			
 			case 'view':
-			
 				if(isset($_REQUEST['id'])){
 					$compteur->load($ATMdb, $_REQUEST['id']);
 					_fiche($ATMdb, $compteur,'view');
@@ -75,7 +74,7 @@ function _liste(&$ATMdb, &$compteur) {
 	getStandartJS();
 	print dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Administration des congés');
 	$r = new TSSRenderControler($compteur);
-	$sql="SELECT  r.rowid as 'ID', firstname, name, 
+	$sql="SELECT  r.rowid as 'ID', firstname, name, '' as 'Compteur',
 		r.date_cre as 'DateCre', CAST(r.acquisExerciceN as DECIMAL(16,1)) as 'Congés acquis N', 
 		CAST(r.acquisAncienneteN as DECIMAL(16,1)) as 'Congés Ancienneté', 
 		CAST(r.acquisExerciceNM1 as DECIMAL(16,1)) as 'Conges Acquis N-1', 
@@ -97,11 +96,12 @@ function _liste(&$ATMdb, &$compteur) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'firstname'=>'<a href="?id=@ID@&action=view">@val@</a>'
-			,'name'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'Compteur'=>'<a href="?id=@ID@&action=view">Compteur</a>'
+			,'ID'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			
 		)
 		,'translate'=>array()
-		,'hide'=>array('DateCre')
+		,'hide'=>array('DateCre','ID')
 		,'type'=>array()
 		,'liste'=>array(
 			'titre'=>'Liste des compteurs de congés des collaborateurs'
@@ -123,6 +123,10 @@ function _liste(&$ATMdb, &$compteur) {
 			'firstname'=>true
 			,'name'=>true
 		)
+		,'eval'=>array(
+			'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+		)
 		,'orderBy'=>$TOrder
 
 		
@@ -133,7 +137,7 @@ function _liste(&$ATMdb, &$compteur) {
 }	
 	
 function _fiche(&$ATMdb, &$compteur, $mode) {
-	global $db,$user;
+	global $db,$user,$conf;
 	llxHeader('');
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
@@ -151,6 +155,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	while($ATMdb->Get_line()) {
 				$userCompteurActuel=$ATMdb->Get_field('fk_user');
 	}
+
 	
 	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$userCompteurActuel." AND entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReqUser);

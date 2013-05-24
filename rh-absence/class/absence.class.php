@@ -98,8 +98,20 @@ class TRH_Compteur extends TObjetStd {
 		$this->nombreCongesAcquisMensuel=2.08;
 		$this->date_rttCloture=strtotime('2013-03-01 00:00:00'); // AA Ne devrait pas être en dur mais en config
 		$this->date_congesCloture=strtotime('2013-06-01 00:00:00');
+		$this->reportRtt=0;
 	}
 	
+
+	//	fonction permettant le chargement du compteur pour un utilisateur si celui-ci existe	
+	function load_by_fkuser(&$ATMdb, $fk_user){
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur WHERE fk_user='".$fk_user."'";
+		$ATMdb->Execute($sql);
+		
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+	}
 }
 
 
@@ -120,10 +132,12 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('duree','type=float;');	
 		parent::add_champs('dureeHeure','type=chaine;');	
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
+		parent::add_champs('commentaireValideur','type=chaine;');		//commentaire
 		parent::add_champs('etat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('avertissement','type=int;');	
 		parent::add_champs('libelleEtat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('niveauValidation','type=entier;');	//niveau de validation
+		parent::add_champs('idAbsImport','type=entier;');	//niveau de validation
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=int;');	
 		
@@ -1014,7 +1028,7 @@ class TRH_Absence extends TObjetStd {
 			global $conf;
 			
 			//on recherche le nom de la compétence désirée
-			$sql="SELECT  u.name,u.firstname, a.date_debut, 
+			$sql="SELECT  a.rowid as 'ID', u.name,u.firstname, a.date_debut, 
 				a.date_fin, a.libelle, a.libelleEtat
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
 				WHERE a.fk_user=u.rowid 
@@ -1041,8 +1055,8 @@ class TRH_Absence extends TObjetStd {
 						WHERE a.fk_user=u.rowid AND g.fk_user=u.rowid 
 						AND g.fk_usergroup=".$idGroupeRecherche." 
 						AND a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
-						AND a.entity IN (0,".$conf->entity.")";
-
+						AND a.entity IN (0,".$conf->entity."))";
+			
 			return $sql;
 	}
 
@@ -1051,7 +1065,7 @@ class TRH_Absence extends TObjetStd {
 			global $conf;
 			
 			//on recherche le nom de la compétence désirée
-			$sql="SELECT u.name, u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, 
+			$sql="SELECT a.rowid as 'ID', u.name, u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 				WHERE a.fk_user=u.rowid 
@@ -1061,6 +1075,17 @@ class TRH_Absence extends TObjetStd {
 				
 			
 			return $sql;
+	}
+	
+	//	fonction permettant le chargement de l'absence pour un utilisateur si celle-ci existe	
+	function load_by_idImport(&$ATMdb, $idImport){
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur WHERE idAbsImport='".$idImport."'";
+		$ATMdb->Execute($sql);
+		
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
 	}
 			
 }
@@ -1109,6 +1134,7 @@ class TRH_EmploiTemps extends TObjetStd {
 					
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('tempsHebdo','type=float;');
+		parent::add_champs('societeRtt','type=chaine;');
 		parent::add_champs('entity','type=int;');
 		
 		parent::_init_vars();
@@ -1165,6 +1191,7 @@ class TRH_EmploiTemps extends TObjetStd {
 				}
 		}
 		$this->tempsHebdo=36.25;
+		$this->societeRtt='';
 
 	}
 	
@@ -1198,6 +1225,17 @@ class TRH_EmploiTemps extends TObjetStd {
 		return horaireMinuteEnCentieme($tpsHebdo);
 	}
 	
+
+	//fonction permettant le chargement de l'emploi du temps d'un user si celui-ci existe	
+	function load_by_fkuser(&$ATMdb, $fk_user){
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur WHERE fk_user='".$fk_user."'";
+		$ATMdb->Execute($sql);
+		
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+	}
 	
 	
 	
