@@ -103,7 +103,7 @@ class TRH_Compteur extends TObjetStd {
 	
 
 	//	fonction permettant le chargement du compteur pour un utilisateur si celui-ci existe	
-	function load_by_code(&$ATMdb, $fk_user){
+	function load_by_fkuser(&$ATMdb, $fk_user){
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur WHERE fk_user='".$fk_user."'";
 		$ATMdb->Execute($sql);
 		
@@ -132,10 +132,12 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('duree','type=float;');	
 		parent::add_champs('dureeHeure','type=chaine;');	
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
+		parent::add_champs('commentaireValideur','type=chaine;');		//commentaire
 		parent::add_champs('etat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('avertissement','type=int;');	
 		parent::add_champs('libelleEtat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('niveauValidation','type=entier;');	//niveau de validation
+		parent::add_champs('idAbsImport','type=entier;');	//niveau de validation
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=int;');	
 		
@@ -1074,6 +1076,17 @@ class TRH_Absence extends TObjetStd {
 			
 			return $sql;
 	}
+	
+	//	fonction permettant le chargement de l'absence pour un utilisateur si celle-ci existe	
+	function load_by_idImport(&$ATMdb, $idImport){
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur WHERE idAbsImport='".$idImport."'";
+		$ATMdb->Execute($sql);
+		
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+	}
 			
 }
 
@@ -1214,7 +1227,7 @@ class TRH_EmploiTemps extends TObjetStd {
 	
 
 	//fonction permettant le chargement de l'emploi du temps d'un user si celui-ci existe	
-	function load_by_code(&$ATMdb, $fk_user){
+	function load_by_fkuser(&$ATMdb, $fk_user){
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur WHERE fk_user='".$fk_user."'";
 		$ATMdb->Execute($sql);
 		

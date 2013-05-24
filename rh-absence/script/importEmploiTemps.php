@@ -10,7 +10,7 @@ require('../class/absence.class.php');
 global $conf;
 
 $ATMdb=new Tdb;
-$edt=new TRH_EmploiTemps;
+
 
 		
 //on charge quelques listes pour avoir les clés externes.
@@ -58,10 +58,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				echo 'Erreur : Utilisateur '.strtolower($infos[3]).' inexistant ';
 			}
 			else{
-					
+					$edt=new TRH_EmploiTemps;
 					//traitement des lignes et insertion en base
 					//on récupère le compteur de l'utilisateur si celui-ci existe sinon il sera créé
-					$edt->load_by_code($ATMdb, $TUser[strtolower($infos[3])]);
+					$edt->load_by_fkuser($ATMdb, $TUser[strtolower($infos[3])]);
 					
 					$cpt=5;
 					foreach ($edt->TJour as $jour) {
