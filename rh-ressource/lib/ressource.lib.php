@@ -90,7 +90,7 @@ function getRessource($idTypeRessource = 0){
 	$TRessource = array('');
 	$ATMdb =new TPDOdb;
 	
-	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity=".$conf->entity;
+	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity IN (0,".$conf->entity.")";
 	if ($idTypeRessource>0){$sqlReq.= " AND fk_rh_ressource_type=".$idTypeRessource;}
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
@@ -124,7 +124,7 @@ function getIDRessource(&$ATMdb, $idType){
 	
 	$sql="SELECT rowid, numId  FROM ".MAIN_DB_PREFIX."rh_ressource
 	 WHERE fk_rh_ressource_type=".$idType." 
-	 AND entity in (0, ".$conf->entity.")";
+	 AND entity IN (0, ".$conf->entity.")";
 	// echo $sql.'<br>';
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
@@ -139,7 +139,7 @@ function getUsers(){
 	$TUser = array();
 	$ATMdb =new TPDOdb;
 	
-	$sqlReq="SELECT rowid,name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+	$sqlReq="SELECT rowid,name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
 	
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
@@ -155,7 +155,7 @@ function getGroups(){
 	$TGroups = array();
 	$ATMdb =new TPDOdb;
 	
-	$sqlReq="SELECT rowid,nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+	$sqlReq="SELECT rowid,nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 	
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
