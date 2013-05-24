@@ -55,10 +55,10 @@
 		while($ATMdb->Get_line()) {
 			$TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle').' '.$ATMdb->Get_field('numId');
 			}
-	//print_r($TRessource);
+
 	$TType = array_merge(array(''), $ressource->TType);
-	$TTypeEvent = loadListeTypeEvent($ATMdb, $type);
-	if ($fiche) {$TTypeEvent = loadListeTypeEvent($ATMdb, $ressource->fk_rh_ressource_type);}
+	$TTypeEvent = getTypeEvent($type);
+	if ($fiche) {$TTypeEvent = getTypeEvent($ressource->fk_rh_ressource_type);}
 
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'
@@ -98,30 +98,3 @@
 
 	llxFooter();
 	
-function loadListeTypeEvent(&$ATMdb, $type){
-	global $conf;
-	
-	$TEvent = array(
-		'all'=>''
-		,'accident'=>'Accident'
-		,'reparation'=>'Réparation'
-		,'facture'=>'Facture'
-	);	
-	$ATMdb =new TPDOdb;
-	
-
-	$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-	WHERE rowid=".$type." AND entity IN (0,".$conf->entity.")";
-	$ATMdb->Execute($sqlReq);
-	while($ATMdb->Get_line()) {
-		$keys = explode(';', $ATMdb->Get_field('liste_evenement_key'));
-		$values = explode(';', $ATMdb->Get_field('liste_evenement_value'));
-		foreach ($values as $i=>$value) {
-			if (!empty($value)){
-				$TEvent[$keys[$i]] = $values[$i];
-			}
-		}
-	}
-	return $TEvent;
-}
-

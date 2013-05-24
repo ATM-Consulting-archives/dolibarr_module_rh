@@ -57,19 +57,21 @@
 					}
 				}
 				
-				//ensuite on vérifie ici que les champs sont bien du type attendu
+				//ensuite on vérifie ici que les champs (OBLIGATOIRE OU REMPLIS) sont bien du type attendu
 				if ($mesg == ''){
 					foreach($ressource->ressourceType->TField as $k=>$field) {
-						switch ($field->type){
-							case 'float':
-							case 'entier':
-								//la conversion en entier se fera lors de la sauvegarde dans l'objet.
-								if (! is_numeric($_REQUEST[$field->code]) ){
-									$mesg .= '<div class="error">Le champ '.$field->libelle.' doit être un nombre.</div>';
-									}
-								break;
-							default :
-								break;
+						if (! $field->obligatoire || ! empty($_REQUEST[$field->code])){
+							switch ($field->type){
+								case 'float':
+								case 'entier':
+									//la conversion en entier se fera lors de la sauvegarde dans l'objet.
+									if (! is_numeric($_REQUEST[$field->code]) ){
+										$mesg .= '<div class="error">Le champ '.$field->libelle.' doit être un nombre.</div>';
+										}
+									break;
+								default :
+									break;
+							}
 						}
 					}
 				}
@@ -284,14 +286,14 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 
 	//requete pour avoir toutes les ressources associées à la ressource concernées
 	$k=0;
-	$sqlReq="SELECT libelle FROM ".MAIN_DB_PREFIX."rh_ressource WHERE fk_rh_ressource=".$ressource->rowid;
+	$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource WHERE fk_rh_ressource=".$ressource->rowid;
 	$ATMdb->Execute($sqlReq);
 	$Tab=array();
 	$Tab_sous_ressource=array();
 	$reqVide=0;	//variable permettant de savoir si la requete existe, et donc au final si on affichera l'organigramme
 	while($ATMdb->Get_line()) {
 		//récupère les id des différents nom des  groupes de l'utilisateur
-		$Tab_sous_ressource[$k]=array('libelle'=>'<a>'.$ATMdb->Get_field('libelle').'</a>');
+		$Tab_sous_ressource[$k]=array('libelle'=>'<a href="?id='.$ATMdb->Get_field('rowid').'">'.$ATMdb->Get_field('libelle').'</a>');
 		$k++;
 		$reqVide=1;
 	}
@@ -321,8 +323,8 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 				,'typehidden'=>$form->hidden('fk_rh_ressource_type', $ressource->fk_rh_ressource_type) 
 				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
-				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
-				,'date_vente'=>(empty($ressource->date_vente) || ($ressource->date_vente<=0) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' , 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
+				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'),12, 10)
+				,'date_vente'=>(empty($ressource->date_vente) || ($ressource->date_vente<=0) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' ,12, 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente'),12 , 10)
 				//,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TEntity,$ressource->fk_proprietaire)
 				,'fk_utilisatrice'=>$form->combo('','fk_utilisatrice',$ressource->TAgence,$ressource->fk_utilisatrice)
@@ -350,6 +352,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 			,'contrat'=>array(
 				'id'=>$contrat->getId()
 				,'libelle'=>$form->texte('', 'contrat[libelle]', $contrat->libelle, 50,255,'','','-')
+				,'numContrat'=>$form->texte('', 'contrat[numContrat]', $contrat->numContrat, 50,255,'','','-')
 				,'fk_rh_ressource'=> $form->hidden('contrat[fk_rh_ressource]', $ressource->getId())
 				,'tiersFournisseur'=> $form->combo('','fk_tier_fournisseur',$contrat->TFournisseur,$contrat->fk_tier_fournisseur)
 				,'tiersAgence'=> $form->combo('','contrat[fk_tier_utilisateur]',$contrat->TAgence,$contrat->fk_tier_utilisateur)

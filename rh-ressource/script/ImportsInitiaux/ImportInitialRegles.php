@@ -108,16 +108,4 @@ function chargeSim(&$ATMdb){
 	return $TRessource;
 }
 
-function getIdType(&$ATMdb){
-	global $conf;
-	
-	$sql="SELECT rowid , code FROM ".MAIN_DB_PREFIX."rh_ressource_type ";
-	
-	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		if ($ATMdb->Get_field('code')=='telephone'){$idPhone = $ATMdb->Get_field('rowid');}
-		if ($ATMdb->Get_field('code')=='cartesim'){$idSim = $ATMdb->Get_field('rowid');}
-		}
-	return array($idPhone,$idSim);
-}
 	
