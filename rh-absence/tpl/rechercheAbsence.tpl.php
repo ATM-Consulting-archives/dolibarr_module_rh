@@ -4,26 +4,26 @@
 		<br/>
 		<table class="border" style="width:40%">	
 			<tr >
-				<td colspan="4"><b>Veuillez renseigner les paramètres pour la recherche des absences</b></td>	
+				<td colspan="2"><b>Veuillez renseigner les paramètres pour la recherche des absences</b></td>	
 			</tr>
 			<tr >
-				<td> Date début [recherche.date_debut;block=tr;strconv=no;protect=no]</td>
+				<td> Date début</td> <td> [recherche.date_debut;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
-				<td> Date fin [recherche.date_fin;block=tr;strconv=no;protect=no]</td>
+				<td> Date fin</td> <td> [recherche.date_fin;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			
 			<tr >
-				<td> Groupe [recherche.TGroupe;block=tr;strconv=no;protect=no]</td>
+				<td> Groupe</td> <td> [recherche.TGroupe;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
-				<td> 	Utilisateur [recherche.TUser;block=tr;strconv=no;protect=no]</td>
+				<td> 	Utilisateur </td><td> [recherche.TUser;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
-				<td> Aucun congés [recherche.horsConges;block=tr;strconv=no;protect=no]</td>
+				<td> Aucun congés</td> <td> [recherche.horsConges;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
-					<td> [recherche.btValider;block=tr;strconv=no;protect=no]</td>
+				<td colspan="2" style="text-align:center"> [recherche.btValider;block=tr;strconv=no;protect=no]</td>
 			</tr>	
 		</table>	
 	</div>

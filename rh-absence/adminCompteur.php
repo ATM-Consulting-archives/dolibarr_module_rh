@@ -34,7 +34,6 @@
 				break;
 			
 			case 'view':
-			
 				if(isset($_REQUEST['id'])){
 					$compteur->load($ATMdb, $_REQUEST['id']);
 					_fiche($ATMdb, $compteur,'view');
@@ -133,7 +132,7 @@ function _liste(&$ATMdb, &$compteur) {
 }	
 	
 function _fiche(&$ATMdb, &$compteur, $mode) {
-	global $db,$user;
+	global $db,$user,$conf;
 	llxHeader('');
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
@@ -151,6 +150,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	while($ATMdb->Get_line()) {
 				$userCompteurActuel=$ATMdb->Get_field('fk_user');
 	}
+
 	
 	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$userCompteurActuel." AND entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReqUser);

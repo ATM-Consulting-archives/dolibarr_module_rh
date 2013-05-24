@@ -195,7 +195,7 @@ function _listeResult(&$ATMdb, &$absence) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'libelle'=>'<a href="absence.php?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array('libelleEtat'=>array(
 			'Refusée'=>'<b style="color:#A72947">Refusée</b>',
@@ -203,7 +203,7 @@ function _listeResult(&$ATMdb, &$absence) {
 			'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
 			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
 		)
-		,'hide'=>array('fk_user')
+		,'hide'=>array('fk_user', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
 			'titre'=>'Résultat de votre recherche'
