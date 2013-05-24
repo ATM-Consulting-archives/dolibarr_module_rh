@@ -5,9 +5,16 @@
 [onshow;block=end]
 [onshow;block=begin;when [view.mode]!='view']
      
-	[view.onglet;strconv=no] 
-	<div>
-                                
+	[view.onglet;strconv=no]
+	
+	[onshow;block=begin;when [view.mode]=='new']
+		[contrat.titreNouveau;strconv=no;protect=no]
+	[onshow;block=end]
+	[onshow;block=begin;when [view.mode]=='edit']
+		[contrat.titreModification;strconv=no;protect=no]
+	[onshow;block=end]
+	
+                            
 [onshow;block=end]
 
 
@@ -17,6 +24,11 @@
 			<td style="width:20%">Libellé du contrat</td>
 			<td>[contrat.libelle;strconv=no;protect=no]</td>
 		</tr>
+		<tr>
+	 		<td>Numéro du contrat</td>
+	 		<td>[contrat.numContrat;strconv=no;protect=no]</td>
+	 	</tr>
+	 	
 	 	<tr>
 	 		<td>Type de ressource associée</td>
 	 		<td>[contrat.typeRessource;strconv=no;protect=no]</td>
@@ -147,7 +159,7 @@
 		$("#date_fin").change(comparerDates);
 	});
 </script>
-</div>
+
 [onshow;block=begin;when [view.userRight]==1]
 <div class="tabsAction" style="text-align:center;">
 		[onshow;block=begin;when [view.mode]=='edit']

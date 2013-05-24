@@ -6,11 +6,9 @@
 	[view.onglet;strconv=no]
 [onshow;block=end]  
 
-
 <link rel="stylesheet" type="text/css" href="./css/jquery.jOrgChart.css" />
 <script>
     jQuery(document).ready(function() {
-    	
     	$("#JQorganigramme").jOrgChart({
             chartElement : '#chart',
             dragAndDrop : false
@@ -131,6 +129,10 @@
 			<td style="width:20%">Libellé du contrat</td>
 			<td>[contrat.libelle;strconv=no;protect=no]</td>
 		</tr>
+		<tr>
+	 		<td>Numéro du contrat</td>
+	 		<td>[contrat.numContrat;strconv=no;protect=no]</td>
+	 	</tr>
 	 	<tr>
 	 		<td>Fournisseur concerné</td>
 	 		<td>[contrat.tiersFournisseur;strconv=no;protect=no]</td>
@@ -283,7 +285,7 @@
 									(Ressource courante)
 									<ul>
 											<li>
-												<a href="?id=[fk_ressource.id]"> [sous_ressource.libelle;block=li;strconv=no;protect=no]</a>
+												[sous_ressource.libelle;block=li;strconv=no;protect=no]
 												<ul>
 													
 												</ul>
@@ -308,7 +310,7 @@
 							<li> <a href="?id=[fk_ressource.id]">[fk_ressource.fk_rh_ressource;strconv=no;protect=no]</a>
 								<ul>
 										<li>
-											 [ressource.libelle;strconv=no;protect=no]
+											 [ressource.libelle;strconv=no;protect=no]</a>
 											 (Ressource courante)
 											<ul>
 												
