@@ -28,6 +28,27 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 	global $langs, $db, $user, $conf;
 	
 	$TabNdf=array();
+	
+	$sql = "SELECT";
+	$sql.= " e.label";
+    $sql.= " FROM ".MAIN_DB_PREFIX."entity as e";
+    $sql.= " WHERE e.rowid IN (0,".$conf->entity.")";
+	
+	$resql=$db->query($sql);
+	if ($resql){
+        $obj = $db->fetch_object($resql);
+        if ($obj){
+			$label = $obj->label;
+		}
+    }else{
+        $error++;
+        dol_print_error($db);
+    }
+	
+	$k=0;
+	$TabNdf[$k]=$label;
+	$k++;
+	
 	$date_debut=explode("/", $date_debut);
 	$date_debut=date('Y-m-d',mktime(0, 0, 0, $date_debut[1], $date_debut[0], $date_debut[2]));
 	$date_fin=explode("/", $date_fin);
@@ -39,6 +60,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 	$sql = "SELECT";
 	$sql.= " n.rowid as 'NDF_ID',";
 	$sql.= " n.ref,";
+	$sql.= " n.datee as 'datef_ndf',";
 	$sql.= " l.datef,";
 	$sql.= " t.accountancy_code,";
 	$sql.= " t.label,";
@@ -61,8 +83,6 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 	$sql.= " ORDER BY n.rowid";
 	
 	$resql=$db->query($sql);
-	
-	$k=0;
 	if ($resql){
         $num = $db->num_rows($resql);
         $m = 0;
@@ -102,10 +122,10 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 					        dol_print_error($db);
 					    }
 					    
-					    $line = array('ND', $datef_ndf, 'OD', '425900', 'G', $code_analytique, '445660', 'ETAT - TVA deductible', 'V', date('dmy'), 'D', $total_tva_ndf, 'N', $ref);
+					    $line = array('ND', $datef_ndf, 'OD', '425900', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_tva_ndf, 'N', $ref, '', '', 'EUR', '');
 						$TabNdf[$k]=$line;
 						$k++;
-						$line = array('ND', $datef_ndf, 'OD', '425900', 'G', $code_analytique, $compte_tiers, '', 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', $ref);
+						$line = array('ND', $datef_ndf, 'OD', '425900', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', $ref, '', '', 'EUR', '');
 						$TabNdf[$k]=$line;
 						$k++;
                 	}
@@ -114,6 +134,8 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 					$ref				=	$obj->ref;
 					$mois				=	substr($obj->datef, 5, 2);
 					$annee				=	substr($obj->datef, 0, 4);
+					$mois_ndf			=	substr($obj->datef_ndf, 5, 2);
+					$annee_ndf			=	substr($obj->datef_ndf, 0, 4);
 					$datef				=	substr($obj->datef, 8, 2).substr($obj->datef, 5, 2).substr($obj->datef, 2, 2);
 					$code_compta		=	$obj->accountancy_code;
 					$label				=	$obj->label;
@@ -123,7 +145,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 					$code_analytique	=	$obj->CODE_ANA;
 					$compte_tiers		=	$obj->COMPTE_TIERS;
 					
-					$line = array('ND', $datef, 'OD', '425900', 'G', $code_analytique, $code_compta, html_entity_decode($langs->trans($label)), 'V', date('dmy'), 'D', $total_ht, 'N', $ref);
+					$line = array('ND', $datef, 'OD', $code_compta, 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_ht, 'N', $ref, '', '', 'EUR', '');
 					$TabNdf[$k]=$line;
 					$k++;
 				}
@@ -159,10 +181,10 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 		        dol_print_error($db);
 		    }
 		    
-		    $line = array('ND', $datef_ndf, 'OD', '425900', 'G', $code_analytique, '445660', 'ETAT - TVA deductible', 'V', date('dmy'), 'D', $total_tva_ndf, 'N', $ref);
+		    $line = array('ND', $datef_ndf, 'OD', '425900', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_tva_ndf, 'N', $ref, '', '', 'EUR', '');
 			$TabNdf[$k]=$line;
 			$k++;
-			$line = array('ND', $datef_ndf, 'OD', '425900', 'G', $code_analytique, $compte_tiers, '', 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', $ref);
+			$line = array('ND', $datef_ndf, 'OD', '425900', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', $ref, '', '', 'EUR', '');
 			$TabNdf[$k]=$line;
         }
     }else{
