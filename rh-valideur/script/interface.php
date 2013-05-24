@@ -82,6 +82,10 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type){
 	$sql.= " AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')";
 	$sql.= " ORDER BY n.rowid";
 	
+	if(isset($_REQUEST['DEBUG'])) {
+		print $sql;
+	}
+	
 	$resql=$db->query($sql);
 	if ($resql){
         $num = $db->num_rows($resql);
