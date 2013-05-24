@@ -192,7 +192,7 @@ function saveLibelle($type){
 //fonction qui permet de renvoyer le code de l'absence
 function saveCodeTypeAbsence(&$ATMdb, $type){
 	global $conf;
-	$sql="SELECT codeAbsence FROM `".MAIN_DB_PREFIX."rh_type_absence` WHERE typeAbsence LIKE '".$type."' AND entity=".$conf->entity;
+	$sql="SELECT codeAbsence FROM `".MAIN_DB_PREFIX."rh_type_absence` WHERE typeAbsence LIKE '".$type."' AND entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		return $ATMdb->Get_field('codeAbsence');
@@ -243,7 +243,7 @@ function mailConges(&$absence){
 	/*
 	 * Mail destinataire
 	 */
-	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
+	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$absence->fk_user." AND entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sql);
 	$ATMdb->Get_line();
 	

@@ -164,11 +164,11 @@ function _liste(&$ATMdb, &$ressource) {
 		$sql.=", '' as 'Supprimer'";
 	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r
-		LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON  (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource)
-		AND e.entity = ".$conf->entity."
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON ( (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource) AND e.type='emprunt')
+		AND e.entity IN (0, ".$conf->entity.")
 		AND e.date_debut<='".date("Y-m-d")."' AND e.date_fin >= '". date("Y-m-d")."' 
 	 LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid )";	
-	$sql.=" WHERE  r.entity=".$conf->entity;
+	$sql.=" WHERE  r.entity IN (0,".$conf->entity.")";
 	
 	
 	if(!$user->rights->ressource->ressource->viewRessource){
@@ -188,7 +188,7 @@ function _liste(&$ATMdb, &$ressource) {
 		)
 		,'link'=>array(
 			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
+			,'Supprimer'=>"<a onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=@ID@&action=delete'};\"><img src=\"./img/delete.png\"></a>"
 		)
 		,'eval'=>array(
 			'Statut'=>'getStatut("@val@")'
@@ -284,7 +284,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 
 	//requete pour avoir toutes les ressources associées à la ressource concernées
 	$k=0;
-	$sqlReq="SELECT libelle FROM ".MAIN_DB_PREFIX."rh_ressource where fk_rh_ressource=".$ressource->rowid;
+	$sqlReq="SELECT libelle FROM ".MAIN_DB_PREFIX."rh_ressource WHERE fk_rh_ressource=".$ressource->rowid;
 	$ATMdb->Execute($sqlReq);
 	$Tab=array();
 	$Tab_sous_ressource=array();
@@ -321,8 +321,8 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 				,'typehidden'=>$form->hidden('fk_rh_ressource_type', $ressource->fk_rh_ressource_type) 
 				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
 				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
-				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'), 10)
-				,'date_vente'=>(empty($ressource->date_vente) || ($ressource->date_vente<=0) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' , 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente') , 10)
+				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->get_date('date_achat'),12, 10)
+				,'date_vente'=>(empty($ressource->date_vente) || ($ressource->date_vente<=0) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' ,12, 10) : $form->calendrier('', 'date_vente', $ressource->get_date('date_vente'),12 , 10)
 				//,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->get_date('date_garantie'), 10)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TEntity,$ressource->fk_proprietaire)
 				,'fk_utilisatrice'=>$form->combo('','fk_utilisatrice',$ressource->TAgence,$ressource->fk_utilisatrice)
@@ -358,6 +358,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 				,'entretien'=>$form->texte('', 'contrat[entretien]', $contrat->entretien, 10,20,'','','')
 				,'assurance'=>$form->texte('', 'contrat[assurance]', $contrat->assurance, 10,20,'','','')
 				,'kilometre'=>$form->texte('', 'contrat[kilometre]', $contrat->kilometre, 8,8,'','','')
+				,'dureemois'=>$form->texte('', 'dureemois', $contrat->dureeMois, 8,8,'','','')
 				,'loyer_TTC'=>$form->texte('', 'contrat[loyer_TTC]', $contrat->loyer_TTC, 10,20,'','','')
 				,'TVA'=>$form->combo('','contrat[TVA]',$contrat->TTVA,$contrat->TVA)
 				,'loyer_HT'=>($contrat->loyer_TTC)*(1-(0.01*$contrat->TTVA[$contrat->TVA]))

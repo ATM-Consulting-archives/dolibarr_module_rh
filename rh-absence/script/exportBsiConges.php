@@ -8,7 +8,7 @@ global $user,$conf;
 $ATMdb=new Tdb;
 
 $TUserID=array();
-$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
+$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity IN (0,".$conf->entity.")";
 $ATMdb->Execute($sqlReqUser);
 
 while($ATMdb->Get_line()) {
@@ -21,7 +21,7 @@ foreach($TUserID as $user){
 	
 	$sql="SELECT a.acquisAncienneteNM1 
 	FROM ".MAIN_DB_PREFIX."rh_compteur as a 
-	WHERE a.entity=".$conf->entity."
+	WHERE a.entity IN (0,".$conf->entity.")
 	AND a.fk_user=".$user;
 
 	$ATMdb->Execute($sql);

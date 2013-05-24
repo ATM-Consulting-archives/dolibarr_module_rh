@@ -6,6 +6,12 @@
 			Liste de vos liens de validation
 		</h2>
 	
+		<table width="100%" class="border"><tbody><tr><td width="25%" valign="top">Réf.</td><td>
+			[user.id]</td></tr>
+		<tr><td width="25%" valign="top">Nom</td><td>[user.lastname]</td></tr>
+		<tr><td width="25%" valign="top">Prénom</td><td>[user.firstname]</td></tr>
+		</tbody></table>
+	
 		<div>
 							
 			<table class="border" style="width:100%">			
@@ -39,7 +45,12 @@
 
 
 [onshow;block=begin;when [view.mode]=='edit']
-<table
+<table width="100%" class="border"><tbody><tr><td width="25%" valign="top">Réf.</td><td>
+			[user.id]</td></tr>
+		<tr><td width="25%" valign="top">Nom</td><td>[user.lastname]</td></tr>
+		<tr><td width="25%" valign="top">Prénom</td><td>[user.firstname]</td></tr>
+</tbody></table><br/>
+<table  width="100%" class="border">
 	<tr>
 		<td>Groupe</td>
 		<td>Type</td>
@@ -60,7 +71,7 @@
 
 <div class="tabsAction" >
 	<input type="submit" value="Enregistrer" name="save" class="button">
-	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?fk_user=[userCourant.id]'">
+	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?fk_user=[user.id]'">
 </div>
 [onshow;block=end]
 

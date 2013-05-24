@@ -136,14 +136,14 @@ function _liste(&$ATMdb, &$absence) {
 			 	a.libelle,a.fk_user,  a.fk_user, u.firstname, u.name,
 			  	a.libelleEtat as 'Statut demande', a.avertissement
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-				WHERE  a.entity=".$conf->entity." AND u.rowid=a.fk_user";
+				WHERE  a.entity IN (0,".$conf->entity.") AND u.rowid=a.fk_user";
 	}else{
 		//LISTE D'ABSENCES DU COLLABORATEUR
 		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
 				a.libelle,a.fk_user,  a.fk_user, u.firstname, u.name,
 				a.libelleEtat as 'Statut demande', a.avertissement
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-				WHERE a.fk_user=".$user->id." AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
+				WHERE a.fk_user=".$user->id." AND a.entity IN (0,".$conf->entity.") AND u.rowid=a.fk_user";
 	}
 
 	
@@ -174,7 +174,7 @@ function _liste(&$ATMdb, &$absence) {
 		,'liste'=>array(
 			'titre'=>'Liste de vos absences'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Il n'y a aucune absence à afficher"
@@ -224,7 +224,7 @@ function _listeValidation(&$ATMdb, &$absence) {
  			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe`
 			WHERE fk_user=".$user->id." 
 			AND type='Conges'
-			AND entity=".$conf->entity;
+			AND entity IN (0,".$conf->entity.")";
 	//echo $sql;
 	$ATMdb->Execute($sql);
 	$TabGroupe=array();
@@ -251,7 +251,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				AND u.fk_user=a.fk_user 
 				AND u.fk_user=s.rowid
 				AND a.etat LIKE 'AValider'
-				AND v.entity=".$conf->entity." 
+				AND v.entity IN (0,".$conf->entity.")
 				AND v.fk_usergroup=".$TabGroupe[0]['fk_usergroup'];
 				
 				if($TabGroupe[$j]['level']==1){	//on teste le niveau de validation : si il est de niveau 1, il faut qu'il puisse voir le 2 et 3
@@ -281,7 +281,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				AND u.fk_user=a.fk_user 
 				AND u.fk_user=s.rowid
 				AND a.etat LIKE 'AValider'
-				AND v.entity=".$conf->entity;
+				AND v.entity IN (0,".$conf->entity.")";
  		
  		$j=0;
 		foreach($TabGroupe as $TGroupe){ 	//on affiche les absences des différents groupe de validation
@@ -336,7 +336,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 		//LISTE DES ABSENCES À VALIDER
 		$r = new TSSRenderControler($absence);
 		
-		$TOrder = array('Statut demande'=>'ASC');
+		$TOrder = array('name'=>'ASC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 					
@@ -362,7 +362,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 			,'liste'=>array(
 				'titre'=>'Liste des absences à valider'
 				,'image'=>img_picto('','title.png', '', 0)
-				,'picto_precedent'=>img_picto('','back.png', '', 0)
+				,'picto_precedent'=>img_picto('','previous.png', '', 0)
 				,'picto_suivant'=>img_picto('','next.png', '', 0)
 				,'noheader'=> (int)isset($_REQUEST['socid'])
 				,'messageNothing'=>"Il n'y a aucune absence à afficher"
@@ -415,7 +415,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
-	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$user->id;//."AND entity=".$conf->entity;
+	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` 
+				WHERE fk_user=".$user->id." AND entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReqUser);
 	$congePrec=array();
 	while($ATMdb->Get_line()) {
@@ -433,7 +434,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$congePrecReste=$congePrecTotal-$congePrec['congesPris'];
 	
 	//////////////////////////récupération des informations des congés précédents (N-1) de l'utilisateur courant : 
-	$sqlReqUser2="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$user->id." AND anneeN=".$anneeCourante;//."AND entity=".$conf->entity;;
+	$sqlReqUser2="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$user->id." 
+				AND anneeN=".$anneeCourante." AND entity IN (0,".$conf->entity.")";
 	$ATMdb=new Tdb;
 	$ATMdb->Execute($sqlReqUser2);
 	$congeCourant=array();
@@ -466,9 +468,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	//récupération informations utilisateur dont on observe l'absence, ou la crée
 	if($absence->fk_user!=0){
-		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$absence->fk_user;//AND entity=".$conf->entity;
+		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$absence->fk_user. " AND entity IN (0,".$conf->entity.")";
 	}else{
-		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$user->id;//AND entity=".$conf->entity;
+		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id." AND entity IN (0,".$conf->entity.")";
 	}
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
@@ -518,7 +520,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	//création du tableau des utilisateurs liés au groupe du valideur, pour créer une absence, pointage...
 	$TUser = array();
 	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
-		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
+		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity IN (0,".$conf->entity.")";
 		$droitsCreation=1;
 	}else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
 		$sqlReqUser=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
@@ -527,7 +529,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			AND v.type='Conges'
 			AND s.rowid=u.fk_user
 			AND v.fk_usergroup=u.fk_usergroup
-			AND v.entity=".$conf->entity;
+			AND v.entity IN (0,".$conf->entity.")";
 			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
 	}else $droitsCreation=2; //on n'a pas les droits de création
@@ -542,7 +544,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	//Tableau affichant les 10 dernières absences du collaborateur
 	$sql="SELECT DATE_FORMAT(date_debut, '%d/%m/%Y') as 'dateD', DATE_FORMAT(date_fin, '%d/%m/%Y')  as 'dateF', libelle, libelleEtat FROM `".MAIN_DB_PREFIX."rh_absence` WHERE fk_user=".$regleId." 
-	AND entity=".$conf->entity. " GROUP BY date_cre LIMIT 0,10";
+	AND entity IN (0,".$conf->entity.") GROUP BY date_cre LIMIT 0,10";
 	$ATMdb->Execute($sql);
 	$TRecap=array();
 	$k=0;
@@ -615,6 +617,15 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$absence->fk_user):''
 				,'userAbsenceCourant'=>$droitsCreation==1?'':$form->hidden('fk_user', $user->id)
 				,'niveauValidation'=>$absence->niveauValidation
+				
+				,'titreNvDemande'=>load_fiche_titre("Nouvelle demande d'absence",'', 'title.png', 0, '')
+				,'titreRecapAbsence'=>load_fiche_titre("Récapitulatif de la demande d'absence",'', 'title.png', 0, '')
+				,'titreJourRestant'=>load_fiche_titre("Jours restants à prendre",'', 'title.png', 0, '')
+				,'titreDerAbsence'=>load_fiche_titre("Vos dernières absences",'', 'title.png', 0, '')
+				,'titreRegle'=>load_fiche_titre("Règles vous concernant",'', 'title.png', 0, '')
+				
+				
+				
 			)	
 			,'userCourant'=>array(
 				'id'=>$userCourant->id

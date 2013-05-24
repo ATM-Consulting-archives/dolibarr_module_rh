@@ -73,14 +73,9 @@ function getLibelle($ressource){
 function getTypeEvent($idTypeRessource = 0){
 	global $conf;
 	$TEvent = array();
-		/*'all'=>''
-		,'accident'=>'Accident'
-		,'reparation'=>'Réparation'
-		,'facture'=>'Facture'
-	);*/
 	
 	$sql="SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."rh_type_evenement 
-	WHERE (fk_rh_ressource_type=".$idTypeRessource." OR fk_rh_ressource_type=0) AND entity=".$conf->entity;
+	WHERE (fk_rh_ressource_type=".$idTypeRessource." OR fk_rh_ressource_type=0) ORDER BY fk_rh_ressource_type";
 	$ATMdb =new TPDOdb;
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
@@ -95,7 +90,7 @@ function getRessource($idTypeRessource = 0){
 	$TRessource = array('');
 	$ATMdb =new TPDOdb;
 	
-	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity=".$conf->entity;
+	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity IN (0,".$conf->entity.")";
 	if ($idTypeRessource>0){$sqlReq.= " AND fk_rh_ressource_type=".$idTypeRessource;}
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
@@ -105,11 +100,14 @@ function getRessource($idTypeRessource = 0){
 	return $TRessource;
 }
 
+/**
+ * Retourne l'ID du type code
+ */
 function getIdType($type){
 	global $conf;
 	$ATMdb =new TPDOdb;
 	$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-		WHERE entity=".$conf->entity."
+		WHERE entity IN (0,".$conf->entity.")
 	 	AND code= '".$type."'";
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
@@ -118,13 +116,30 @@ function getIdType($type){
 	$ATMdb->close();
 	return $id;
 }
+
+
+function getIDRessource(&$ATMdb, $idType){
+	global $conf;
+	$TRessource = array();
 	
+	$sql="SELECT rowid, numId  FROM ".MAIN_DB_PREFIX."rh_ressource
+	 WHERE fk_rh_ressource_type=".$idType." 
+	 AND entity IN (0, ".$conf->entity.")";
+	// echo $sql.'<br>';
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$TRessource[$ATMdb->Get_field('numId')] = $ATMdb->Get_field('rowid');
+	}
+	return $TRessource;
+}
+
+
 function getUsers(){
 	global $conf;
 	$TUser = array();
 	$ATMdb =new TPDOdb;
 	
-	$sqlReq="SELECT rowid,name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+	$sqlReq="SELECT rowid,name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
 	
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
@@ -140,7 +155,7 @@ function getGroups(){
 	$TGroups = array();
 	$ATMdb =new TPDOdb;
 	
-	$sqlReq="SELECT rowid,nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+	$sqlReq="SELECT rowid,nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 	
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {

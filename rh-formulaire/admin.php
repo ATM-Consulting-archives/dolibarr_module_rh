@@ -86,8 +86,8 @@ elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'
 					<?php
 					$ATMdb = new Tdb;
 					$sql = "SELECT s.sid AS id, sl.surveyls_title AS title
-							FROM lime_surveys AS s
-							LEFT JOIN lime_surveys_languagesettings AS sl ON sl.surveyls_survey_id = s.sid";
+							FROM ".LIME_DB.".lime_surveys AS s
+							LEFT JOIN ".LIME_DB.".lime_surveys_languagesettings AS sl ON sl.surveyls_survey_id = s.sid";
 					$ATMdb->Execute($sql);
 					
 					while($ATMdb->Get_line()){
@@ -124,7 +124,7 @@ $Tlistedroit = new TGroupeFormulaire;
 $r = new TSSRenderControler($Tlistedroit);
 $sql = "SELECT fg.rowid AS 'ID', sl.surveyls_title AS title, gr.nom AS groupe, fg.date_deb AS datedeb, fg.date_fin AS datefin, '' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_formulaire_groupe AS fg
-			LEFT JOIN lime_surveys_languagesettings AS sl ON sl.surveyls_survey_id = fg.fk_survey
+			LEFT JOIN ".LIME_DB.".lime_surveys_languagesettings AS sl ON sl.surveyls_survey_id = fg.fk_survey
 			LEFT JOIN ".MAIN_DB_PREFIX."usergroup AS gr ON gr.rowid = fg.fk_usergroup";
 
 $TOrder = array('datedeb'=>'ASC');

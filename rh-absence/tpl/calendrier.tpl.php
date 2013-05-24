@@ -1,6 +1,7 @@
 
 [view.head3;strconv=no]
-
+		[view.titreCalendar;strconv=no;protect=no] 	
+		
 	 	<br> 
 				Groupe  [absence.TGroupe;strconv=no;protect=no]
 	            Utilisateur    [absence.TUser;strconv=no;protect=no]
@@ -24,9 +25,10 @@
 				});
 		});
 		</script>
+		<br/><br/>
 			
-			
-<h1>Agenda des absences</h1>
+
+
 		
 			<div id="agenda">
 				 <script type="text/javascript">

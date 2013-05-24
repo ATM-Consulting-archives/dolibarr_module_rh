@@ -33,7 +33,7 @@ class TRH_Contrat  extends TObjetStd {
 		//chargement des listes pour les combos
 		
 		$this->TTypeRessource = array();
-		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource_type WHERE entity=".$conf->entity;
+		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource_type WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TTypeRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
@@ -49,7 +49,7 @@ class TRH_Contrat  extends TObjetStd {
 		
 		//chargement d'une liste des tiers
 		$this->TFournisseur = array();
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity=".$conf->entity;
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TFournisseur[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
@@ -80,7 +80,7 @@ class TRH_Contrat  extends TObjetStd {
 	function delete(&$ATMdb){
 		global $conf;
 		//avant de supprimer le contrat, on supprime les liaisons contrat-ressource associés.
-		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE entity=".$conf->entity."
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE entity IN (0,".$conf->entity.") 
 		AND fk_rh_contrat=".$this->getId();
 		$ATMdb->Execute($sql);
 		

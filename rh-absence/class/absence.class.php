@@ -139,7 +139,7 @@ class TRH_Absence extends TObjetStd {
 		//combo box pour le type d'absence admin
 		$this->TTypeAbsenceAdmin=array();
 		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-		WHERE entity=".$conf->entity;
+		WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
 
 		while($ATMdb->Get_line()) {
@@ -150,7 +150,7 @@ class TRH_Absence extends TObjetStd {
 		//combo box pour le type d'absence utilisateur
 		$this->TTypeAbsenceUser=array();
 		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-		WHERE entity=".$conf->entity." AND admin=0";
+		WHERE entity IN (0,".$conf->entity.") AND admin=0";
 		$ATMdb->Execute($sql);
 
 		while($ATMdb->Get_line()) {
@@ -167,7 +167,7 @@ class TRH_Absence extends TObjetStd {
 		 // AA Ne devrait pas être ici mais dans une fonction à l'afficahge quand on en a besoin !
 
 		$this->TUser=array();
-		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity=".$conf->entity;
+		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlReqUser);
 
 		while($ATMdb->Get_line()) {
@@ -418,7 +418,7 @@ class TRH_Absence extends TObjetStd {
 			
 			//on récupère les jours fériés compris dans la demande d'absence
 			$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
-			.$dateDebutAbs."' and '". $dateFinAbs."' AND entity=".$conf->entity; 
+			.$dateDebutAbs."' and '". $dateFinAbs."' AND entity IN (0,".$conf->entity.")"; 
 			//echo $sql;
 			$ATMdb->Execute($sql);
 			$TabFerie = array();
@@ -478,7 +478,7 @@ class TRH_Absence extends TObjetStd {
 			,CONCAT(HOUR(date_dimanche_heurefpm) ,':' , MINUTE(date_dimanche_heurefpm)) as	date_dimanche_heurefpm	
 			 
 			FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` 
-			WHERE fk_user=".$absence->fk_user." AND entity=".$conf->entity;  
+			WHERE fk_user=".$absence->fk_user." AND entity IN (0,".$conf->entity.")";  
 
 			$ATMdb->Execute($sql);
 			$TTravail = array();
@@ -1021,7 +1021,7 @@ class TRH_Absence extends TObjetStd {
 				AND  g.fk_user=u.rowid
 				AND g.fk_usergroup=".$idGroupeRecherche."
 				AND a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
-				AND a.entity=".$conf->entity;
+				AND a.entity IN (0,".$conf->entity.")";
 			
 			return $sql;
 	}
@@ -1034,14 +1034,14 @@ class TRH_Absence extends TObjetStd {
 			$sql="SELECT DISTINCT g.fk_user, u.name, u.firstname
 			FROM ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."user as u
 			WHERE g.fk_usergroup =".$idGroupeRecherche."   AND u.rowid=g.fk_user
-			AND u.entity=".$conf->entity."
+			AND u.entity IN (0,".$conf->entity.")
 			AND g.fk_user NOT IN (
 						SELECT a.fk_user 
 						FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
 						WHERE a.fk_user=u.rowid AND g.fk_user=u.rowid 
 						AND g.fk_usergroup=".$idGroupeRecherche." 
 						AND a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
-						AND a.entity=".$conf->entity.")";
+						AND a.entity IN (0,".$conf->entity.")";
 
 			return $sql;
 	}
@@ -1057,8 +1057,8 @@ class TRH_Absence extends TObjetStd {
 				WHERE a.fk_user=u.rowid 
 				AND a.fk_user=".$idUserRecherche."
 				AND a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
-				AND a.entity=".$conf->entity;
-				echo $sql;
+				AND a.entity IN (0,".$conf->entity.")";
+				
 			
 			return $sql;
 	}
@@ -1259,7 +1259,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		//combo box pour le type d'absence admin
 		$this->TTypeAbsenceAdmin=array();
 		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-		WHERE entity=".$conf->entity;
+		WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
 
 		while($ATMdb->Get_line()) {
@@ -1296,7 +1296,7 @@ class TRH_RegleAbsence extends TObjetStd {
 
 		//LISTE DE GROUPES
 		$this->TGroup  = array();
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TGroup[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
@@ -1304,7 +1304,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		
 		//LISTE DE USERS
 		$this->TUser = array();
-		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');

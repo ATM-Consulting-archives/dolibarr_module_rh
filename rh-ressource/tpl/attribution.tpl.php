@@ -4,13 +4,22 @@
 
 [onshow;block=begin;when [view.mode]!='view']
     [view.onglet;strconv=no]
+
+    [onshow;block=begin;when [view.mode]=='new']
+    	[ressource.titreNouvelleAttribution;strconv=no;protect=no]
+    [onshow;block=end]
+    
+    [onshow;block=begin;when [view.mode]=='edit']
+    	[ressource.titreModificationAttribution;strconv=no;protect=no]
+    [onshow;block=end]
+    
 [onshow;block=end] 
 
 	<table class="border" style="width:100%">
 		[NEmprunt.fk_rh_ressource;strconv=no;protect=no]
 		[NEmprunt.type;strconv=no;protect=no]
 		<tr>
-			<td>Utilisateur</td>
+			<td style="width:20%">Utilisateur</td>
 			<td>[NEmprunt.fk_user;strconv=no;protect=no]</td>
 		</tr>
 		<tr>

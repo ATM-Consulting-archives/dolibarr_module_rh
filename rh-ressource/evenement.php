@@ -105,7 +105,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	echo $form->hidden('action', 'afficherListe');
 	echo $form->hidden('id',$ressource->getId());
 	$evenement->load_liste_type($ATMdb, $ressource->fk_rh_ressource_type);
-
+	
 	?>
 	<table>
 		<tr>
@@ -155,7 +155,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 			LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
 			LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 			LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
-			WHERE e.entity=".$conf->entity."
+			WHERE e.entity IN (0,".$conf->entity.")
 			AND e.fk_rh_ressource=".$ressource->getId().$jointureType;
 	if(!$user->rights->ressource->ressource->manageEvents){
 		$sql.=" AND e.fk_user=".$user->id;
@@ -173,7 +173,8 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		)
 		,'link'=>array(
 			'Motif'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&type='.$type.'&action=deleteEvent"><img src="./img/delete.png"></a>'
+			,'Supprimer'=>"<a onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=".$ressource->getId()."&idEven=@ID@&type=".$type."&action=deleteEvent'};\"><img src=\"./img/delete.png\"></a>"
+			//,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&type='.$type.'&action=deleteEvent"><img src="./img/delete.png"></a>'
 			//,'Utilisateur'=>'<a href="/user/fiche?id=@idUser@">@val@</a>'
 		)
 		,'translate'=>array('Type'=>$evenement->TType)
@@ -227,8 +228,10 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 
 	$evenement->load_liste($ATMdb);
 	$evenement->load_liste_type($ATMdb, $ressource->fk_rh_ressource_type);
+	$idUserCourant =  $ressource->isEmpruntee($ATMdb, date("Y-m-d", time()));
+	$tab = array_splice ( $evenement->TType , 1); //on enlève le champs 'all'
+	
 	$TBS=new TTemplateTBS();
-	$tab = array_splice ( $evenement->TType , 1);
 	print $TBS->render('./tpl/evenement.tpl.php'
 		,array()
 		,array(
@@ -242,18 +245,17 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 			)
 			,'NEvent'=>array(
 				'id'=>$evenement->getId()
-				,'user'=>$form->combo('','fk_user',$evenement->TUser,$evenement->fk_user)
+				,'user'=>$form->combo('','fk_user',$evenement->TUser,$idUserCourant)
 				,'fk_user'=>$evenement->fk_user
+				,'tiersimplique'=>$form->combo('', 'tiersimplique', array("oui"=>"Oui", "non"=>"Non"), $evenement->tiersimplique)
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
 				,'commentaire'=>$form->zonetexte('','commentaire',$evenement->commentaire,100,10,'','','')
 				,'numFacture'=>$form->texte('', 'numFacture', $evenement->numFacture, 10,10)
-				//,'numContrat'=>$form->texte('', 'numContrat', $evenement->numContrat, 10,10)
 				,'idContrat'=>$evenement->fk_contrat
 				,'motif'=>$form->texte('','motif',$evenement->motif, 30,100,'','','-')
-				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'), 10)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->get_date('date_fin'), 10)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'),12, 10)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->get_date('date_fin'),12, 10)
 				,'type'=>$form->combo('', 'type', $tab, $evenement->type)
-				//,'responsabilite'=>$form->texte('','responsabilite',$evenement->responsabilite, 10,10,'','','')
 				,'responsabilite'=>$form->combo('', 'responsabilite', $evenement->TResponsabilite, $evenement->responsabilite)
 				,'coutTTC'=>$form->texte('', 'coutTTC', ($evenement->coutTTC == 0) ? '0': $evenement->coutTTC, 10,10)
 				,'coutEntrepriseTTC'=>$form->texte('', 'coutEntrepriseTTC', $evenement->coutEntrepriseTTC, 10,10)

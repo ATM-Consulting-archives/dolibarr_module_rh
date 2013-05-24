@@ -5,7 +5,6 @@
 
 [onshow;block=begin;when [view.mode]!='view']
     [view.onglet;strconv=no]
-    <div>
 [onshow;block=end] 
 
 [ressource.entete;strconv=no;protect=no]
@@ -48,6 +47,10 @@
 					[NEvent.user;strconv=no;protect=no]
 				[onshow;block=end]
 			</td>
+		</tr>
+		<tr id="tiersimpl">
+			<td >Tiers Impliqué</td>
+			<td>[NEvent.tiersimplique;strconv=no;protect=no]</td>
 		</tr>
 		<tr id="responsabilite">
 			<td >Responsabilité de l'utilisateur</td>
@@ -129,6 +132,7 @@
 		function effacerChamps(){
 			$('#user').hide();
 			$('#responsabilite').hide();
+			$('#tiersimpl').hide();
 			$('#numFacture').hide();
 			$('#numContrat').hide();
 			
@@ -140,10 +144,10 @@
 				case 'accident':
 					$('#user').show();
 					$('#responsabilite').show();
+					$('#tiersimpl').show();
 					break;
 				case 'facture':
 					$('#numFacture').show();
-					//$('#numContrat').show();
 				default : 
 					break;}
 		};

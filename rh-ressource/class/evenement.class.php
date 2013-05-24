@@ -27,6 +27,7 @@ class TRH_Evenement  extends TObjetStd {
 		
 		parent::add_champs('litreEssence','type=float;'); //pour des pleins d'essences
 		parent::add_champs('kilometrage','type=entier;');
+		parent::add_champs('tiersImplique','type=chaine;'); // booleen varchar: oui/non
 		
 		//pour une facture téléphonique
 		parent::add_champs('duree, dureeI, dureeE','type=entier;'); //durée de consommation
@@ -48,14 +49,7 @@ class TRH_Evenement  extends TObjetStd {
 		parent::start();
 
 		
-		$this->TType = array(
-			'all'=>''
-			,'accident'=>'Accident'
-			,'reparation'=>'Réparation'
-			,'facture'=>'Facture'
-			,'divers'=>'Divers'
-		);	
-		
+		$this->TType = array();	
 		$this->TResponsabilite = array('0%', '50%', '100%');
 			
 	}
@@ -76,26 +70,13 @@ class TRH_Evenement  extends TObjetStd {
 		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.") ORDER BY name, firstname";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1'); 
+			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1'); 
 			}
 	}
 
 	function load_liste_type(&$ATMdb, $idRessourceType){
 		global $conf;
-		$this->TType = getTypeEvent($idRessourceType);
-		/*$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-		WHERE rowid=".$idRessourceType." AND entity=".$conf->entity;
-		$ATMdb->Execute($sqlReq);
-		while($ATMdb->Get_line()) {
-			$keys = explode(';', $ATMdb->Get_field('liste_evenement_key'));
-			$values = explode(';', $ATMdb->Get_field('liste_evenement_value'));
-			foreach ($values as $key=>$value) {
-				if (!empty($value)){
-					$this->TType[$keys[$key]] = $values[$key];
-				}
-			}
-		}*/
-		
+		$this->TType = getTypeEvent($idRessourceType);		
 		
 	}
 	
@@ -108,7 +89,7 @@ class TRH_Evenement  extends TObjetStd {
 		}
 		
 		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource 
-		WHERE rowid=".$this->fk_rh_ressource;
+		WHERE rowid=".$this->fk_rh_ressource." AND entity IN(0".$conf->entity.")";
 		$db->Execute($sqlReq);
 		while($db->Get_line()) {
 			$nom = $db->Get_field('libelle');
@@ -159,20 +140,39 @@ class TRH_Type_Evenement  extends TObjetStd {
 	
 	function __construct(){
 		parent::set_table(MAIN_DB_PREFIX.'rh_type_evenement');
-		parent::add_champs('libelle, code, codeanalytique, supprimable','type=chaine;');
-		parent::add_champs('fk_rh_ressource_type, entity','type=entier;index;');	
+		parent::add_champs('libelle, code, codecomptable, supprimable','type=chaine;');
+		parent::add_champs('fk_rh_ressource_type','type=entier;index;');	
 		
 		parent::_init_vars();
 		parent::start();
 		
 	}
-
+	
+	function load_by_code(&$db, $code){
+		$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_type_evenement WHERE code='".$code."'";
+		$db->Execute($sqlReq);
+		
+		if ($db->Get_line()) {
+			return $this->load($db, $db->Get_field('rowid'));
+		}
+		return false;
+	}
+	
+	/**
+	 * Attribut les champs directement, pour créer les types par défauts par exemple. 
+	 */
+	function chargement(&$db, $libelle, $code, $codecomptable, $supprimable, $fk_rh_ressource_type){
+		$this->load_by_code($db, $code);
+		$this->libelle = $libelle;
+		$this->code = $code;
+		$this->codecomptable = $codecomptable;
+		$this->supprimable = $supprimable;
+		$this->fk_rh_ressource_type = $fk_rh_ressource_type;
+		$this->save($db);
+	}
 	function save(&$db) {
-		global $conf;
-		$this->entity = $conf->entity;
-		$this->supprimable = 'vrai';
-		if (empty($this->fk_rh_ressource_type))
-			{$this->fk_rh_ressource_type = 0;}
+		if (empty($this->supprimable)) {$this->supprimable = 'vrai';}
+		if (empty($this->fk_rh_ressource_type)){$this->fk_rh_ressource_type = 0;}
 		parent::save($db);
 	}
 

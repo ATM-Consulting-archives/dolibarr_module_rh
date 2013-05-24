@@ -42,7 +42,7 @@
 	$TabUser=array();
 	//récupération du tableau utilisateur
 	$sqlReq="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u
-	WHERE  u.entity=".$conf->entity;
+	WHERE  u.entity IN (0,".$conf->entity.")";
 
 	$sqlReq.=" ORDER BY name";
 	$ATMdb->Execute($sqlReq);	
@@ -56,7 +56,7 @@
 	$TabGroupe[0] = 'Tous';
 	//récupération du tableau groupe
 	//LISTE DE GROUPES
-	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity." ORDER BY nom";
+	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.") ORDER BY nom";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 		$TabGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
@@ -84,6 +84,7 @@
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'calendrier', 'Absence')
 				,'head3'=>dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', 'Absence')
+				,'titreCalendar'=>load_fiche_titre("Agenda des absences",'', 'title.png', 0, '')
 			)
 			
 			

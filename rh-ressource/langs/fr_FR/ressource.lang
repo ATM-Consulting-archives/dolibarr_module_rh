@@ -1,10 +1,11 @@
 #GLOBAL
-Ressource=Ressource
+Ressource=Ressources
 nouveauTypeRessource=Nouveau
 listeTypeRessource=Liste
 nouvelleRessource=Nouvelle ressource
 attribuerRessource=Attribuer ressource
 listeRessource=Liste des ressources
+listeRessourceLibre=Liste des ressources libres
 nouvelEvenement=Nouvel événement
 listeContrat=Liste des contrats
 nouveauContrat=Nouveau contrat

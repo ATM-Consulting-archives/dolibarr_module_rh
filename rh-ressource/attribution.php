@@ -17,13 +17,10 @@
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'new':
-				/*$ATMdb->db->debug=true;
-				$emprunt->set_values($_REQUEST);
-				//$emprunt->load($ATMdb, 20);
-				$mesg = '<div class="ok">Nouvelle attribution créée</div>';*/
+				/*$ATMdb->db->debug=true;*/
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				
-				_fiche($ATMdb, $emprunt,$ressource, 'edit');
+				_fiche($ATMdb, $emprunt,$ressource, 'new');
 				
 				break;	
 			case 'edit'	:
@@ -113,7 +110,7 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)";
-	$sql.=" WHERE e.entity=".$conf->entity."
+	$sql.=" WHERE e.entity IN (0,".$conf->entity.")
 		AND e.type='emprunt'
 		AND e.fk_rh_ressource=".$ressource->getId();
 	if(!$user->rights->ressource->ressource->manageAttribution){
@@ -132,7 +129,11 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=deleteAttribution"><img src="./img/delete.png"></a>'
+			,'Supprimer'=>"<a onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=".$ressource->getId()."&idEven=@ID@&action=deleteAttribution'};\"><img src=\"./img/delete.png\"></a>"
+			//,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=deleteAttribution"><img src="./img/delete.png"></a>'
+		)
+		,'eval'=>array(
+			'Utilisateur'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		,'translate'=>array()
 		,'hide'=>array('IDRessource')
@@ -181,6 +182,8 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 		,array(
 			'ressource'=>array(
 				'id'=>$ressource->getId()
+				,'titreNouvelleAttribution'=>load_fiche_titre("Nouvelle attribution",'', 'title.png', 0, '')
+				,'titreModificationAttribution'=>load_fiche_titre("Modification d'une attribution",'', 'title.png', 0, '')
 			)
 			,'NEmprunt'=>array(
 				'id'=>$emprunt->getId() //$form->hidden('idEven', $emprunt->getId())

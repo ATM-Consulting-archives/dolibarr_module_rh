@@ -71,7 +71,7 @@ function _liste(&$ATMdb, $regle) {
 		FROM ".MAIN_DB_PREFIX."rh_absence_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup as g ON (r.fk_usergroup = g.rowid)
-		WHERE r.entity=".$conf->entity;
+		WHERE r.entity IN (0,".$conf->entity.")";
 	
 	//echo $sql;
 	$TOrder = array('ID'=>'ASC');
@@ -89,7 +89,7 @@ function _liste(&$ATMdb, $regle) {
 		,'link'=>array(
 			'ID'=>'<a href=?id=@ID@&action=view&fk_user='.$user->id.'>@val@</a>'
 			,'typeAbsence'=>'<a href=?id=@ID@&action=view&fk_user='.$user->id.'>@val@</a>'
-			,'Supprimer'=>'<a href="?id=@ID@&fk_user='.$user->id.'&action=delete"><img src="./img/delete.png"></a>'
+			,'Supprimer'=>"<a onclick=\"if (confirm('Voulez-vous vraiment supprimer la règle ?')){href='?id=@ID@&fk_user=".$user->id."&action=delete'};\"><img src='./img/delete.png'></a>"
 			
 		)
 		,'translate'=>array(
@@ -105,7 +105,7 @@ function _liste(&$ATMdb, $regle) {
 		,'liste'=>array(
 			'titre'=>'Liste des règles sur les demandes d\'absence'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['ID'])
 			,'messageNothing'=>"Il n'y a aucune règle à afficher"
@@ -139,7 +139,7 @@ function _fiche(&$ATMdb, $regle, $mode) {
 	$regle->load_liste($ATMdb);
 	
 
-	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$user->id;//AND entity=".$conf->entity
+	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id." AND entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -164,6 +164,7 @@ function _fiche(&$ATMdb, $regle, $mode) {
 				,'nbJourCumulable'=>$form->texte('', 'nbJourCumulable', $regle->nbJourCumulable,30 ,255,'','','')
 				,'typeAbsence'=>$form->combo('', 'typeAbsence',$regle->TTypeAbsenceAdmin, $regle->typeAbsence)
 				,'restrictif'=>$form->checkbox1('','restrictif','1',$regle->restrictif==1?true:false)
+				,'titreRegle'=>load_fiche_titre("Règle sur les demandes d'absence",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
 				'id'=>$userCourant->id

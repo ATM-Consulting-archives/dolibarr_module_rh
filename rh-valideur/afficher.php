@@ -80,6 +80,14 @@ function _liste(&$ATMdb) {
 	$head = user_prepare_head($fuser);
 	dol_fiche_head($head, 'valideur', $langs->trans('Utilisateur'),0, 'user');
 	
+	?><table width="100%" class="border"><tbody><tr><td width="25%" valign="top">Réf.</td><td>
+			<?=$fuser->id ?></td></tr>
+		<tr><td width="25%" valign="top">Nom</td><td><?=$fuser->lastname ?></td></tr>
+		<tr><td width="25%" valign="top">Prénom</td><td><?=$fuser->firstname ?></td></tr>
+</tbody></table><br/>
+	
+	<?
+	
 	if($user->rights->valideur->myactions->valideur=="1"){
 		$valideur=new TRH_valideur_groupe;
 		$r = new TSSRenderControler($valideur);
@@ -169,6 +177,11 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 				,array(
 					'userCourant'=>array(
 						'id'=>$user->id
+					)
+					,'user'=>array(
+						'id'=>$fuser->id
+						,'lastname'=>$fuser->lastname
+						,'firstname'=>$fuser->firstname
 					)
 					,'valideur'=>array(
 						'group'=>$form->combo('','fk_usergroup',$valideur->TGroup,$valideur->fk_usergroup)

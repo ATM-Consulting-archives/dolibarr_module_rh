@@ -99,7 +99,7 @@ function _liste(&$ATMdb, &$contrat) {
 		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_contrat_ressource as cr ON cr.fk_rh_contrat = c.rowid";
 		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=cr.fk_rh_ressource";
 	}
-	$sql.=" WHERE c.entity=".$conf->entity;
+	$sql.=" WHERE c.entity IN (0,".$conf->entity.")";
 	if(!$user->rights->ressource->contrat->viewContract){
 		$sql.=" AND e.type ='emprunt'";
 		$sql.=" AND e.fk_user=".$user->id;
@@ -178,11 +178,12 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 				//,'tiersFournisseur'=> ($mode=='edit') ? $html->select_company('','fk_tier_fournisseur','',0, 0,1) : $contrat->fk_tier_fournisseur
 				,'tiersFournisseur'=> $form->combo('','fk_tier_fournisseur',$contrat->TFournisseur,$contrat->fk_tier_fournisseur)
 				,'tiersAgence'=> $form->combo('','fk_tier_utilisateur',$contrat->TAgence,$contrat->fk_tier_utilisateur)
-				,'date_debut'=> $form->calendrier('', 'date_debut', $contrat->get_date('date_debut'), 10)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $contrat->get_date('date_fin'), 10)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $contrat->get_date('date_debut'),12, 10)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $contrat->get_date('date_fin'),12, 10)
 				,'entretien'=>$form->texte('', 'entretien', $contrat->entretien, 10,20,'','','0')
 				,'assurance'=>$form->texte('', 'assurance', $contrat->assurance, 10,20,'','','0')
 				,'kilometre'=>$form->texte('', 'kilometre', $contrat->kilometre, 8,8,'','','')
+				,'dureemois'=>$form->texte('', 'dureemois', $contrat->dureeMois, 8,8,'','','')
 				,'loyer_TTC'=>$form->texte('', 'loyer_TTC', $contrat->loyer_TTC, 10,20,'','','0')
 				,'TVA'=>$form->combo('','TVA',$contrat->TTVA,$contrat->TVA)
 				,'loyer_HT'=>$form->texte('', 'loyer_HT', number_format(($contrat->loyer_TTC)*(1-($contrat->TTVA[$contrat->TVA]/100)),2), 10,20,'disabled','','')
@@ -211,7 +212,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 		if(!$user->rights->ressource->ressource->viewRessource){
 			$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=l.fk_rh_ressource";
 		}
-		$sql.=" WHERE r.entity=".$conf->entity."
+		$sql.=" WHERE r.entity IN (0,".$conf->entity.")
 				AND l.fk_rh_contrat =".$contrat->getId()."
 				AND l.fk_rh_ressource = r.rowid	";
 		if(!$user->rights->ressource->ressource->viewRessource){
@@ -257,7 +258,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 				s.phone as 'Tél pro.', s.phone_mobile as 'Tél portable', s.fax as 'Fax', s.email as 'EMail'
 				FROM ".MAIN_DB_PREFIX."socpeople as s
 				LEFT JOIN	".MAIN_DB_PREFIX."rh_contrat as c ON (s.fk_soc = c.fk_tier_fournisseur)
-				WHERE s.entity=".$conf->entity."
+				WHERE s.entity IN (0,".$conf->entity.")
 				AND c.rowid =".$contrat->getId();
 		$TOrder = array('ID'=>'ASC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -289,7 +290,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 			,'orderBy'=>$TOrder
 			
 		));
-		}
+	}
 	
 	
 	echo $form->end_form();

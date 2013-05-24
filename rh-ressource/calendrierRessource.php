@@ -42,14 +42,14 @@
 	
 	//LISTE DE USERS
 	$TUser = array('');
-	$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+	$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 		$TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 		}
 	
 	$TRessource = array('');
-	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity=".$conf->entity;
+	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity IN (0,".$conf->entity.")";
 	if ($type>0){$sqlReq .= " AND fk_rh_ressource_type = ".$type;}
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
@@ -111,7 +111,7 @@ function loadListeTypeEvent(&$ATMdb, $type){
 	
 
 	$sqlReq="SELECT rowid, liste_evenement_value, liste_evenement_key FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-	WHERE rowid=".$type." AND entity=".$conf->entity;
+	WHERE rowid=".$type." AND entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 		$keys = explode(';', $ATMdb->Get_field('liste_evenement_key'));

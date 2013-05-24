@@ -9,10 +9,10 @@
 
 
 			[onshow;block=begin;when [view.mode]=='edit']
-            <h1 style="color: #2AA8B9;"> Nouvelle demande d'absence</h1>                         
+           		[absenceCourante.titreNvDemande;strconv=no;protect=no]                        
 			[onshow;block=end]
 			 [onshow;block=begin;when [view.mode]!='edit']
-            <h1 style="color: #2AA8B9;"> Récapitulatif de la demande d'absence</h1>                         
+           		[absenceCourante.titreRecapAbsence;strconv=no;protect=no]                   
 			[onshow;block=end]
 
 
@@ -70,8 +70,8 @@
 				[onshow;block=end]
 			</table>
 
-    <br/>
-     <h3 style="color: #2AA8B9;">Jours restants à prendre</h3>
+   		 <br/>
+     	[absenceCourante.titreJourRestant;strconv=no;protect=no] 
 							
             <table class="border" style="width:40%">
 				<tr>
@@ -117,11 +117,8 @@
 		[onshow;block=begin;when when [absenceCourante.etat]!='Validee']
 		[onshow;block=begin;when [view.mode]!='edit']
 				[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
-
-						<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[absenceCourante.id]'">Supprimer</span>
-
-				[onshow;block=end]
-					
+						<span class="butActionDelete" id="action-delete"  onclick="if (confirm('Voulez-vous vraiment supprimer la demande d\'absence ?')){document.location.href='?action=delete&id=[absenceCourante.id]'};">Supprimer</span>
+				[onshow;block=end]			
 		[onshow;block=end]
 		[onshow;block=end]
 	</div></div>
@@ -129,7 +126,7 @@
 		
 		<div>
 		<br/><br/><br/><br/>
-		<h3 style="color: #2AA8B9;">Vos dernières absences</h3>
+		[absenceCourante.titreDerAbsence;strconv=no;protect=no] 
 		<table  class="liste formdoc noborder" style="width:100%">
 				<tr class="liste_titre">
 					<td><b>Date de début</b></td>
@@ -148,7 +145,7 @@
 		
 		
 		<div>
-		<h3 style="color: #2AA8B9;">Règles vous concernant</h3>
+		[absenceCourante.titreRegle;strconv=no;protect=no] 
 		<table  class="liste formdoc noborder" style="width:100%">
 				<tr class="liste_titre">
 					<td><b>Type d'absence concerné</b></td>

@@ -67,7 +67,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 			WHERE v.fk_user=".$user->id." 
 			AND v.type='Conges'
 			AND v.fk_usergroup=u.fk_usergroup
-			AND v.entity=".$conf->entity;
+			AND v.entity IN (0,".$conf->entity.")";
 		
 	$ATMdb->Execute($sql);
 	$TabUser=array();
@@ -81,13 +81,13 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	$sql="SELECT DISTINCT e.rowid as 'ID', e.date_cre as 'DateCre', e.fk_user as 'Id Utilisateur', '' as 'Emploi du temps', u.firstname, u.name, '' as '','' as ''
 		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."user as u, 
 		`".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as g 
-		WHERE e.entity=".$conf->entity." AND u.rowid=e.fk_user";
+		WHERE e.entity IN (0,".$conf->entity.") AND u.rowid=e.fk_user ";
 
 	if($user->rights->absence->myactions->modifierEdt!="1"){
 		$sql.=" AND e.fk_user=".$user->id;
 	}
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');	
-	$TOrder = array('ID'=>'DESC');
+	$TOrder = array('name'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -111,7 +111,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 		,'liste'=>array(
 			'titre'=>'Liste des emplois du temps des collaborateurs'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Il n'y a aucun emploi du temps à afficher"
@@ -135,7 +135,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 }	
 	
 function _fiche(&$ATMdb, &$emploiTemps, $mode) {
-	global $db,$user,$idUserCompt, $idComptEnCours;
+	global $db,$user,$idUserCompt, $idComptEnCours,$conf;
 	llxHeader('','Emploi du temps');
 	$emploiTemps->load($ATMdb, $_REQUEST['id']);
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
@@ -144,8 +144,8 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('fk_user', $emploiTemps->fk_user);
 
-	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$emploiTemps->fk_user;//AND entity=".$conf->entity;
-	$ATMdb->Execute($sqlReqUser);
+	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$emploiTemps->fk_user." AND entity IN (0,".$conf->entity.")";
+	$ATMdb->Execute($sql);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
 				$userCourant=new User($db);
@@ -153,6 +153,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				$userCourant->id=$ATMdb->Get_field('rowid');
 				$userCourant->lastname=$ATMdb->Get_field('name');
 	}
+	
 	
 	$TPlanning=array();
 	foreach($emploiTemps->TJour as $jour) {
@@ -200,6 +201,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence')
 				,'compteur_id'=>$emploiTemps->getId()
+				,'titreEdt'=>load_fiche_titre("Emploi du temps de ".htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')." ".htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'),'', 'title.png', 0, '')
 			)
 			,'droits'=>array(
 				'modifierEdt'=>$droitsEdt

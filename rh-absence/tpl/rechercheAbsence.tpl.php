@@ -1,23 +1,30 @@
 
 	<div>			
-		<h2 style="color: #2AA8B9;">Recherche des absences des collaborateurs</h2>	
+		 [recherche.titreRecherche;block=tr;strconv=no;protect=no]
 		<br/>
-		<table class="border" style="width:100%">	
-			<tr>
-				<td><b>Veuillez renseigner les paramètres pour la recherche des absences</b></td>	
+		<table class="border" style="width:40%">	
+			<tr >
+				<td colspan="4"><b>Veuillez renseigner les paramètres pour la recherche des absences</b></td>	
 			</tr>
-			<tr>
-				<td>
-					Date début [recherche.date_debut;block=tr;strconv=no;protect=no]
-					Date fin [recherche.date_fin;block=tr;strconv=no;protect=no]
-					<br/>
-					Groupe [recherche.TGroupe;block=tr;strconv=no;protect=no]
-					Utilisateur [recherche.TUser;block=tr;strconv=no;protect=no]
-					Aucun congés [recherche.horsConges;block=tr;strconv=no;protect=no]
-					[recherche.btValider;block=tr;strconv=no;protect=no]
-					
-				</td>
+			<tr >
+				<td> Date début [recherche.date_debut;block=tr;strconv=no;protect=no]</td>
 			</tr>
+			<tr >
+				<td> Date fin [recherche.date_fin;block=tr;strconv=no;protect=no]</td>
+			</tr>
+			
+			<tr >
+				<td> Groupe [recherche.TGroupe;block=tr;strconv=no;protect=no]</td>
+			</tr>
+			<tr >
+				<td> 	Utilisateur [recherche.TUser;block=tr;strconv=no;protect=no]</td>
+			</tr>
+			<tr >
+				<td> Aucun congés [recherche.horsConges;block=tr;strconv=no;protect=no]</td>
+			</tr>
+			<tr >
+					<td> [recherche.btValider;block=tr;strconv=no;protect=no]</td>
+			</tr>	
 		</table>	
 	</div>
 

@@ -44,7 +44,7 @@ function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 			AND v.type='Conges'
 			AND v.fk_usergroup=u.fk_usergroup
 			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$fk_user.")
-			AND v.entity=".$conf->entity;
+			AND v.entity IN (0,".$conf->entity.")";
 		
 	$ATMdb->Execute($sql);
 	$TabUser=array();
@@ -62,7 +62,7 @@ function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 				  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
 				  a.libelleEtat as 'Statut demande', '' as 'Supprimer'
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-			WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity=".$conf->entity." AND u.rowid=a.fk_user";
+			WHERE a.fk_user IN(".implode(',', $TabUser).") AND a.entity IN (0,".$conf->entity.") AND u.rowid=a.fk_user";
 	
 	$ATMdb->Execute($sql);
 	$ATMdb->Get_line();

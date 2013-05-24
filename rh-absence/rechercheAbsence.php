@@ -52,7 +52,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 	
 	//tableau pour la combobox des groupes
 	$TGroupe  = array();
-	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 		$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
@@ -62,7 +62,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 	$TUser=array();
 	$TUser[0]='Tous';
 	$sqlReqUser="SELECT u.rowid, u.name,  u.firstname FROM `".MAIN_DB_PREFIX."user` as u, ".MAIN_DB_PREFIX."usergroup_user as g
-	 WHERE u.entity=".$conf->entity;
+	 WHERE u.entity IN (0,".$conf->entity.")";
 	if($idGroupeRecherche!=0){
 		$sqlReqUser.=" AND g.fk_user=u.rowid AND g.fk_usergroup=".$idGroupeRecherche;
 	}
@@ -85,6 +85,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
 				,'horsConges'=>$form->checkbox1('','horsConges','1','')
+				,'titreRecherche'=>load_fiche_titre("Recherche des absences des collaborateurs",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id
@@ -119,7 +120,7 @@ function _listeResult(&$ATMdb, &$absence) {
 	
 	if($idGroupeRecherche!=0){	//on recherche le nom du groupe
 		$sql="SELECT nom FROM ".MAIN_DB_PREFIX."usergroup
-		WHERE rowid =".$idGroupeRecherche." AND entity=".$conf->entity;
+		WHERE rowid =".$idGroupeRecherche." AND entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
 			$nomGroupeRecherche=$ATMdb->Get_field('nom');
@@ -131,7 +132,7 @@ function _listeResult(&$ATMdb, &$absence) {
 	
 	if($idUserRecherche!=0){	//on recherche le nom de l'utilisateur
 		$sql="SELECT name,  firstname FROM ".MAIN_DB_PREFIX."user
-		WHERE rowid =".$idUserRecherche." AND entity=".$conf->entity;
+		WHERE rowid =".$idUserRecherche." AND entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
 			$nomUserRecherche=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
@@ -144,9 +145,10 @@ function _listeResult(&$ATMdb, &$absence) {
 		$typeRecherche='Ceux qui n\'ont pas pris de congés pendant cette période';
 	}else $typeRecherche='Absences durant cette période';
 		
+	
+	print load_fiche_titre("Mots clés utilisés",'', 'title.png', 0, '');
 	?>
 	<div>			
-		<h2 style="color: #2AA8B9;">Résultat de votre recherche</h2>	
 		<br/>
 		<table class="border" style="width:100%">	
 			<tr>
@@ -204,9 +206,9 @@ function _listeResult(&$ATMdb, &$absence) {
 		,'hide'=>array('fk_user')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
-			'titre'=>'Récapitulatif'
+			'titre'=>'Résultat de votre recherche'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Il n'y a aucune absence à afficher"

@@ -24,4 +24,4 @@
 	require(COREROOT.'inc.core.php');
 	
 	define('DOL_ADMIN_USER', 'admin');
-	
+	define('LIME_DB','limesurvey');
