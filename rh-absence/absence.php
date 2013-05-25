@@ -79,7 +79,7 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
 				$mesg = '<div class="ok">Demande d\'absence acceptée</div>';
-				_fiche($ATMdb, $absence,'view');
+				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
 				
 			case 'niveausuperieur':
@@ -101,7 +101,17 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
 				$mesg = '<div class="error">Demande d\'absence refusée</div>';
+				_ficheCommentaire($ATMdb, $absence,'edit');
+				break;
+				
+			case 'saveComment':
+				if($_REQUEST['commentValid']!=''){
+					$absence->load($ATMdb, $_REQUEST['id']);
+					$absence->commentaireValideur=$_REQUEST['commentValid'];
+					$absence->save($ATMdb);
+				}
 				_fiche($ATMdb, $absence,'view');
+
 				break;
 			case 'listeValidation' : 
 				_listeValidation($ATMdb, $absence);
@@ -397,7 +407,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 	
 	llxFooter();
 }	
-	
+
 function _fiche(&$ATMdb, &$absence, $mode) {
 	global $db,$user,$conf;
 	llxHeader('','Demande d\'absence');
@@ -586,12 +596,14 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$absence->fk_user):''
 				,'userAbsenceCourant'=>$droitsCreation==1?'':$form->hidden('fk_user', $user->id)
 				,'niveauValidation'=>$absence->niveauValidation
+				,'commentaireValideur'=>$absence->commentaireValideur
 				
 				,'titreNvDemande'=>load_fiche_titre("Nouvelle demande d'absence",'', 'title.png', 0, '')
 				,'titreRecapAbsence'=>load_fiche_titre("Récapitulatif de la demande d'absence",'', 'title.png', 0, '')
 				,'titreJourRestant'=>load_fiche_titre("Jours restants à prendre",'', 'title.png', 0, '')
 				,'titreDerAbsence'=>load_fiche_titre("Vos dernières absences",'', 'title.png', 0, '')
 				,'titreRegle'=>load_fiche_titre("Règles vous concernant",'', 'title.png', 0, '')
+				
 				
 				
 				
@@ -626,6 +638,34 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	llxFooter();
 }
 
+function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
+	global $db,$user,$conf;
+	llxHeader('','Demande d\'absence');
+
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
+	$form->Set_typeaff($mode);
+	echo $form->hidden('id', $absence->getId());
+	echo $form->hidden('action', 'saveComment');
+	
+	print dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence');
+	
+	print "Vous pouvez ajouter un commentaire pour justifier votre choix <br/><br/><br/>";
+	print'<input type="text" name="commentValid">       ';
+	print'<INPUT TYPE="submit" name="bt_submit" id="commentaire" VALUE=" Envoyer le commentaire "><br><br>';
+
+	
+	?><a class="butAction" style="width:30%" href="?action=view&id=<?=$absence->getId()?>">Continuer sans commentaire</a><div style="clear:both"></div><?
+		
+	
+	//echo $form->btsubmit('Valider', 'valider');
+	
+	echo $form->end_form();
+	// End of page
+	
+	global $mesg, $error;
+	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	llxFooter();
+}
 
 	
 	

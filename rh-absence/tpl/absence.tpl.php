@@ -46,6 +46,10 @@
 					<td>Commentaire</td>
 					<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
 				</tr>
+				<tr>
+					<td>Commentaire du valideur</td>
+					<td>[absenceCourante.commentaireValideur;strconv=no;protect=no]</td>
+				</tr>
 				[onshow;block=begin;when [view.mode]!='edit']
 					<tr>
 						<td>Duree (en demi-journées)</td>
@@ -105,8 +109,8 @@
 				[onshow;block=begin;when [view.mode]!='edit']
 					[onshow;block=begin;when [userCourant.valideurConges]=='1']
 					
-						<a class="butAction" id="action-update"  onclick="document.location.href='?action=accept&id=[absenceCourante.id]'">Accepter</a>	
-						<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=refuse&id=[absenceCourante.id]'">Refuser</span>
+						<a class="butAction" id="action-update"  onclick="if (confirm('Voulez-vous vraiment accepter la demande d\'absence ?')){document.location.href='?action=accept&id=[absenceCourante.id]'};">Accepter</a>	
+						<span class="butActionDelete" id="action-delete"  onclick="if (confirm('Voulez-vous vraiment refuser la demande d\'absence ?')){document.location.href='?action=refuse&id=[absenceCourante.id]'};">Refuser</span>
 						<a style='width:30%' class="butAction" id="action-update"  onclick="document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'">Envoyer au valideur supérieur</a>	
 					
 					[onshow;block=end]
@@ -114,7 +118,7 @@
 		[onshow;block=end]
 		[onshow;block=end]	
 
-		[onshow;block=begin;when when [absenceCourante.etat]!='Validee']
+		[onshow;block=begin;when [absenceCourante.etat]!='Validee']
 		[onshow;block=begin;when [view.mode]!='edit']
 				[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
 						<span class="butActionDelete" id="action-delete"  onclick="if (confirm('Voulez-vous vraiment supprimer la demande d\'absence ?')){document.location.href='?action=delete&id=[absenceCourante.id]'};">Supprimer</span>
