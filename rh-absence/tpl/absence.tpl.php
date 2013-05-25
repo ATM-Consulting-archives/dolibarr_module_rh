@@ -83,17 +83,14 @@
 					<td id='reste'>[congesPrec.reste;strconv=no;protect=no]</td>
 				</tr>	
 				<tr>
-					<td>RTT cumulés </td>
-					<td id='cumule'>[rttCourant.annuelCumule;strconv=no;protect=no]</td>
+					<td>RTT cumulés</td>
+					<td id='cumule'>[rttCourant.cumuleReste;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>RTT non cumulés</td>
-					<td id='noncumule'>[rttCourant.annuelNonCumule;strconv=no;protect=no]</td>
+					<td id='noncumule'>[rttCourant.nonCumuleReste;strconv=no;protect=no]</td>
 				</tr>
-				<tr>
-					<td>RTT mensuels</td>
-					<td id='mensuel'>[rttCourant.mensuel;strconv=no;protect=no]</td>
-				</tr>
+
 			</table>
 
 			

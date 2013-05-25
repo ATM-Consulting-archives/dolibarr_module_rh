@@ -145,8 +145,7 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 		r.date_cre as 'DateCre', CAST(r.acquisExerciceN as DECIMAL(16,1)) as 'Congés acquis N', 
 		CAST(r.acquisAncienneteN as DECIMAL(16,1)) as 'Congés Ancienneté', 
 		CAST(r.acquisExerciceNM1 as DECIMAL(16,1)) as 'Conges Acquis N-1', 
-		CAST(r.congesPrisNM1 as DECIMAL(16,1)) as 'Conges Pris N-1',
-		CAST(r.rttPris as DECIMAL(16,1))  as 'RttPris'
+		CAST(r.congesPrisNM1 as DECIMAL(16,1)) as 'Conges Pris N-1'
 		FROM ".MAIN_DB_PREFIX."rh_compteur as r, ".MAIN_DB_PREFIX."user as c 
 		WHERE r.entity IN (0,".$conf->entity.") AND r.fk_user=c.rowid";
 	
@@ -277,12 +276,24 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				
 				$rttCourant['id']=$ATMdb->Get_field('rowid');
 				$rttCourant['typeAcquisition']=$ATMdb->Get_field('rttTypeAcquisition');
-				if($rttCourant['typeAcquisition']=='Annuel'){
+				/*if($rttCourant['typeAcquisition']=='Annuel'){
 					$rttCourant['acquis']=$ATMdb->Get_field('rttAcquisMensuelInit')+$ATMdb->Get_field('rttAcquisAnnuelCumuleInit')+$ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit');
 				}else if($rttCourant['typeAcquisition']=='Mensuel'){
 					$rttCourant['acquis']=$ATMdb->Get_field('rttAcquisMensuelTotal');
-				}
-				$rttCourant['pris']=$ATMdb->Get_field('rttPris');
+				}*/
+				
+				
+				// RTT cumulés
+				$rttCourant['cumuleAcquis']=$ATMdb->Get_field('rttAcquisAnnuelCumuleInit');
+				$rttCourant['cumulePris']=$ATMdb->Get_field('rttCumulePris');
+				$rttCourant['cumuleReste']=$rttCourant['cumuleAcquis']-$rttCourant['cumulePris'];
+				
+				//RTT non cumulés
+				$rttCourant['nonCumuleAcquis']=$ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit');
+				$rttCourant['nonCumulePris']=$ATMdb->Get_field('rttNonCumulePris');
+				$rttCourant['nonCumuleReste']=$rttCourant['nonCumuleAcquis']-$rttCourant['nonCumulePris'];
+				
+				
 				$rttCourant['mensuel']=$ATMdb->Get_field('rttAcquisMensuel');
 				$rttCourant['annuelCumule']=$ATMdb->Get_field('rttAcquisAnnuelCumule');
 				$rttCourant['annuelNonCumule']=$ATMdb->Get_field('rttAcquisAnnuelNonCumule');
@@ -360,7 +371,6 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'acquis'=>$form->texte('','rttAcquis',round2Virgule($rttCourant['acquis']),10,50,'',$class="text", $default='')
 				,'rowid'=>$form->texte('','rowid',round2Virgule($rttCourant['id']),10,50,'',$class="text", $default='')
-				,'pris'=>$form->texte('','rttPris',round2Virgule($rttCourant['pris']),10,50,'',$class="text", $default='')
 				,'mensuel'=>$form->texte('','rttAcquisMensuel',round2Virgule($rttCourant['mensuel']),10,50,'',$class="text", $default='')
 				,'annuelCumule'=>$form->texte('','rttAcquisAnnuelCumule',round2Virgule($rttCourant['annuelCumule']),10,50,'',$class="text", $default='')
 				,'annuelNonCumule'=>$form->texte('','rttAcquisAnnuelNonCumule',round2Virgule($rttCourant['annuelNonCumule']),10,50,'',$class="text", $default='')
@@ -376,8 +386,17 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'id'=>$compteur->getId()
 				,'reportRtt'=>$form->checkbox1('','reportRtt','1',$compteur->reportRtt)
 				
+				,'cumuleAcquis'=>$form->texte('','rttAcquisAnnuelCumuleInit',round2Virgule($rttCourant['cumuleAcquis']),10,50,'',$class="text", $default='')
+				,'cumulePris'=>$form->texte('','rttCumulePris',round2Virgule($rttCourant['cumulePris']),10,50,'',$class="text", $default='')
+				,'cumuleReste'=>$rttCourant['cumuleReste']
+				,'nonCumuleAcquis'=>$form->texte('','rttAcquisAnnuelNonCumuleInit',round2Virgule($rttCourant['nonCumuleAcquis']),10,50,'',$class="text", $default='')
+				,'nonCumulePris'=>$form->texte('','rttNonCumulePris',round2Virgule($rttCourant['nonCumulePris']),10,50,'',$class="text", $default='')
+				,'nonCumuleReste'=>$rttCourant['nonCumuleReste']
+				
+				
 				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')
-				,'titreRttCompteur'=>load_fiche_titre("Compteur de RTT",'', '', 0, '')
+				,'titreRttCumuleCompteur'=>load_fiche_titre("Compteur de RTT cumulés",'', '', 0, '')
+				,'titreRttNonCumuleCompteur'=>load_fiche_titre("Compteur de RTT non cumulés",'', '', 0, '')
 				,'titreRttMethode'=>load_fiche_titre("Méthode d'acquisition des jours",'', '', 0, '')
 
 			)

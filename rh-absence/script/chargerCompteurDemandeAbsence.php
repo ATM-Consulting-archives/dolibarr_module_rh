@@ -12,9 +12,9 @@ if(isset($_REQUEST['user'])) {
 		
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
-			$TCompteur['mensuel']=round2Virgule($ATMdb->Get_field('rttAcquisMensuel'));
-			$TCompteur['annuelCumule']=round2Virgule($ATMdb->Get_field('rttAcquisAnnuelCumule'));
-			$TCompteur['annuelNonCumule']=round2Virgule($ATMdb->Get_field('rttAcquisAnnuelNonCumule'));
+			
+			$TCompteur['annuelCumule']=round2Virgule($ATMdb->Get_field('rttAcquisAnnuelCumuleInit')-$ATMdb->Get_field('rttCumulePris'));
+			$TCompteur['annuelNonCumule']=round2Virgule($ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit')-$ATMdb->Get_field('rttNonCumulePris'));
 			
 			$congePrec['acquisEx']=$ATMdb->Get_field('acquisExerciceNM1');
 			$congePrec['acquisAnc']=$ATMdb->Get_field('acquisAncienneteNM1');

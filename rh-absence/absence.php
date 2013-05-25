@@ -450,13 +450,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				
 				
 				$rttCourant['id']=$ATMdb->Get_field('rowid');
-				$rttCourant['acquis']=$ATMdb->Get_field('rttAcquisMensuel')+$ATMdb->Get_field('rttAcquisAnnuelCumule')+$ATMdb->Get_field('rttAcquisAnnuelNonCumule');
-				$rttCourant['pris']=$ATMdb->Get_field('rttPris');
-				$rttCourant['mensuel']=$ATMdb->Get_field('rttAcquisMensuel');
-				$rttCourant['annuelCumule']=$ATMdb->Get_field('rttAcquisAnnuelCumule');
-				$rttCourant['annuelNonCumule']=$ATMdb->Get_field('rttAcquisAnnuelNonCumule');
-				$rttCourant['typeAcquisition']=$ATMdb->Get_field('rttTypeAcquisition');
-				$rttCourant['annee']=substr($ATMdb->Get_field('anneertt'),0,4);
+				$rttCourant['cumuleReste']=$ATMdb->Get_field('rttAcquisAnnuelCumuleInit')-$ATMdb->Get_field('rttCumulePris');
+				$rttCourant['nonCumuleReste']=$ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit')-$ATMdb->Get_field('rttNonCumulePris');
 				$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
 	
 	
@@ -569,12 +564,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'acquis'=>$form->texte('','rttAcquis',$rttCourant['acquis'],10,50,'',$class="text", $default='')
 				,'rowid'=>$form->texte('','rowid',$rttCourant['id'],10,50,'',$class="text", $default='')
 				//,'id'=>$form->texte('','fk_user',$_REQUEST['id'],10,50,'',$class="text", $default='')
-				,'pris'=>$form->texte('','rttPris',$rttCourant['pris'],10,50,'',$class="text", $default='')
 				,'mensuel'=>round2Virgule($rttCourant['mensuel'])
-				,'annuelCumule'=>round2Virgule($rttCourant['annuelCumule'])
-				,'annuelNonCumule'=>round2Virgule($rttCourant['annuelNonCumule'])
-				,'typeAcquisition'=>$form->texte('','typeAcquisition',$rttCourant['typeAcquisition'],10,50,'',$class="text", $default='')
-				,'reste'=>$form->texte('','total',$rttCourantReste,10,50,'',$class="text", $default='')
+				,'cumuleReste'=>round2Virgule($rttCourant['cumuleReste'])
+				,'nonCumuleReste'=>round2Virgule($rttCourant['nonCumuleReste'])
 				,'idNum'=>$idRttCourant
 			)
 			,'absenceCourante'=>array(

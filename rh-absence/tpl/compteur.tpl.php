@@ -81,21 +81,35 @@
 	 <br/>                              
 		<table class="border" style="width:200%">
 				<tr>
-					 <td colspan="2">[rttCourant.titreRttCompteur;strconv=no;protect=no] </td>
+					 <td colspan="2">[rttCourant.titreRttCumuleCompteur;strconv=no;protect=no] </td>
 				</tr>
 
 				<tr>
-					<td>Jours RTT Acquis</td>
-					<td>[rttCourant.acquis;strconv=no;protect=no]</td>
-				</tr>
-
-				<tr>
-					<td>Jours RTT Pris</td>
-					<td>[rttCourant.pris;strconv=no;protect=no]	</td>
+					<td>Jours RTT cumulés acquis</td>
+					<td>[rttCourant.cumuleAcquis;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Jours RTT Restant à prendre</td>
-					<td>[rttCourant.reste;strconv=no;protect=no]</td>
+					<td>Jours RTT cumulés pris</td>
+					<td>[rttCourant.cumulePris;strconv=no;protect=no]	</td>
+				</tr>
+				<tr>
+					<td>Jours RTT cumulés à prendre</td>
+					<td>[rttCourant.cumuleReste;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					 <td colspan="2">[rttCourant.titreRttNonCumuleCompteur;strconv=no;protect=no] </td>
+				</tr>
+				<tr>
+					<td>Jours RTT non cumulés acquis</td>
+					<td>[rttCourant.nonCumuleAcquis;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Jours RTT non cumulés pris</td>
+					<td>[rttCourant.nonCumulePris;strconv=no;protect=no]	</td>
+				</tr>
+				<tr>
+					<td>Jours RTT non cumulés à prendre</td>
+					<td>[rttCourant.nonCumuleReste;strconv=no;protect=no]</td>
 				</tr>
 
 		             
@@ -118,15 +132,15 @@
 					 </td>
 				</tr>
 				<tr>
-					<td>Jours acquis par mois</td>
+					<td>Jours RTT acquis par mois</td>
 					<td>[rttCourant.mensuelInit;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
-					<td>Jours cumulés annuel</td>
+					<td>Jours RTT cumulés annuels</td>
 					<td>[rttCourant.annuelCumuleInit;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Jours non cumulés annuel</td>
+					<td>Jours RTT non cumulés annuels</td>
 					<td>[rttCourant.annuelNonCumuleInit;strconv=no;protect=no]</td>
 				</tr>
 				<tr>

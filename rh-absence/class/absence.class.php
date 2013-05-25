@@ -26,26 +26,35 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('anneeNM1','type=int;');					
 		parent::add_champs('dureeNM1','type=entier;');				
 		
-		//RTT
-		parent::add_champs('fk_user','type=entier;');			//utilisateur concerné
-		parent::add_champs('rttPris','type=float;');					
-		parent::add_champs('rttTypeAcquisition','type=chaine;');				//heure, jour...
-		parent::add_champs('rttAcquisMensuel','type=float;');	
-		parent::add_champs('rttAcquisAnnuelCumule','type=float;');
-		parent::add_champs('rttAcquisAnnuelNonCumule','type=float;');
+		//RTT cumulés 
+		parent::add_champs('rttCumulePris','type=float;');
+		parent::add_champs('rttAcquisAnnuelCumuleInit','type=float;');
 		
+		
+		//RTT non cumulés 
+		parent::add_champs('rttNonCumulePris','type=float;');				
+		parent::add_champs('rttAcquisAnnuelNonCumuleInit','type=float;');
+		
+		
+		//RTT mensuels
+		parent::add_champs('rttAcquisMensuelInit','type=float;');	
+		parent::add_champs('rttAcquisMensuelTotal','type=float;');	
+		
+
+		/*
+		parent::add_champs('rttAcquisMensuel','type=float;');	
+		parent::add_champs('rttAcquisAnnuelCumule','type=float;');  
+		parent::add_champs('rttAcquisAnnuelNonCumule','type=float;');*/
+		
+		parent::add_champs('rttTypeAcquisition','type=chaine;');				//annuel, mensuel...
+		parent::add_champs('fk_user','type=entier;');			//utilisateur concerné
 		parent::add_champs('rttannee','type=int;');	
 		parent::add_champs('rttMetier','type=chaine;');		
 		parent::add_champs('date_rttCloture','type=date;');	//date de clôture période rtt
 		
 		parent::add_champs('reportRtt','type=int;');	//entier (0 ou 1) pour savoir si l'on reporte les RTT d'une année à l'autre
 		
-		//paramètres globaux
-		parent::add_champs('rttAcquisMensuelInit','type=float;');	
-		parent::add_champs('rttAcquisMensuelTotal','type=float;');	
-		parent::add_champs('rttAcquisAnnuelCumuleInit','type=float;');
-		parent::add_champs('rttAcquisAnnuelNonCumuleInit','type=float;');
-		
+
 		parent::add_champs('entity','type=int;');					
 					
 		parent::_init_vars();
@@ -90,9 +99,9 @@ class TRH_Compteur extends TObjetStd {
 		$this->rttAcquisMensuelTotal=0;
 		$this->rttAcquisAnnuelCumuleInit=5;
 		$this->rttAcquisAnnuelNonCumuleInit=7;
-		$this->rttAcquisMensuel=0;
-		$this->rttAcquisAnnuelCumule=5;
-		$this->rttAcquisAnnuelNonCumule=7;
+		$this->rttCumulePris=0;
+		$this->rttNonCumulePris=0;
+
 		$this->rttMetier='cadre';
 		$this->rttannee=$annee;
 		$this->nombreCongesAcquisMensuel=2.08;
@@ -302,26 +311,26 @@ class TRH_Absence extends TObjetStd {
 		}
 		
 		///////décompte des congés
-		if($this->type=="rttcumule"&&$methode=="Annuel"){
-			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante."  where fk_user=".$userConcerne;
+		if($this->type=="rttcumule"){//&&$methode=="Annuel"){
+			
+			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttCumulePris=0+rttCumulePris+".$dureeAbsenceCourante."  WHERE fk_user=".$userConcerne;
+			
 			$db->Execute($sqlDecompte);
-			$this->rttPris=$this->rttPris+$dureeAbsenceCourante;
-			$this->rttAcquisAnnuelCumule=$this->rttAcquisAnnuelCumule-$dureeAbsenceCourante;
+			$this->rttCumulePris=$this->rttCumulePris+$dureeAbsenceCourante;
 			
 		}
-		else if($this->type=="rttnoncumule"&&$methode=="Annuel"){
-			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule-".$dureeAbsenceCourante." where fk_user=".$userConcerne;
+		else if($this->type=="rttnoncumule"){//&&$methode=="Annuel"){
+			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttNonCumulePris=rttNonCumulePris+".$dureeAbsenceCourante." where fk_user=".$userConcerne;
 			$db->Execute($sqlDecompte);
-			$this->rttPris=$this->rttPris-$dureeAbsenceCourante;
-			$this->rttAcquisAnnuelNonCumule=$this->rttAcquisAnnuelNonCumule-$dureeAbsenceCourante;
+			$this->rttNonCumulePris=$this->rttNonCumulePris-$dureeAbsenceCourante;
 		}
-		else if($this->type=="rttnoncumule"&&$methode=="Mensuel"||$this->type=="rttcumule"&&$methode=="Mensuel"){
+		/*else if($this->type=="rttnoncumule"&&$methode=="Mensuel"||$this->type=="rttcumule"&&$methode=="Mensuel"){
 			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisMensuel=rttAcquisMensuel-".$dureeAbsenceCourante."  where fk_user=".$userConcerne;
 			$db->Execute($sqlDecompte);
 			$this->rttPris=$this->rttPris+$dureeAbsenceCourante;
 			$this->rttAcquisMensuel=$this->rttAcquisMensuel-$dureeAbsenceCourante;
 			
-		}
+		}*/
 		else if($this->type=="conges"){	//autre que RTT : décompte les congés
 			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$userConcerne;
 			$db->Execute($sqlDecompte);
@@ -885,34 +894,12 @@ class TRH_Absence extends TObjetStd {
 		if($this->etat!='Refusee'){
 			switch($this->type){
 				case "rttcumule" : 
-					//on récupère la méthode d'acquisition des jours de l'utilisateur en cours : si par mois ou annuel
-					$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$user->id;
-					$ATMdb->Execute($sqlMethode);
-					while($ATMdb->Get_line()) {
-						$methode= $ATMdb->Get_field('rttTypeAcquisition');
-					}
-					if($methode=="Annuel"){
-						$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule+".$this->duree."  where fk_user=".$user->id;
-						$ATMdb->Execute($sqlRecredit);
-					}else if ($methode =="Mensuel"){
-						$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttPris=rttPris-".$this->duree.",rttAcquisMensuel=rttAcquisMensuel+".$this->duree."  where fk_user=".$user->id;
-						$ATMdb->Execute($sqlRecredit);
-					}
-					
+						$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttCumulePris=rttCumulePris-".$this->duree."  where fk_user=".$user->id;
+						$ATMdb->Execute($sqlRecredit);	
 				break;
 				case "rttnoncumule" : 
-					$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$user->id;
-					$ATMdb->Execute($sqlMethode);
-					while($ATMdb->Get_line()) {
-						$methode= $ATMdb->Get_field('rttTypeAcquisition');
-					}
-					if($methode=="Annuel"){
-						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule+".$this->duree."  where fk_user=".$user->id;
+						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttNonCumulePris=rttNonCumulePris-".$this->duree."  where fk_user=".$user->id;
 						$ATMdb->Execute($sqlRecredit);
-					}else if ($methode =="Mensuel"){
-						$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttPris=rttPris-".$this->duree.",rttAcquisMensuel=rttAcquisMensuel+".$this->duree."  where fk_user=".$user->id;
-						$ATMdb->Execute($sqlRecredit);
-					}
 				break;
 				case 'conges':
 					$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
