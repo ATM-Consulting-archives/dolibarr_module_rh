@@ -13,7 +13,7 @@
 		switch($_REQUEST['action']) {
 			
 			case 'view':
-				
+				_fiche($ATMdb,$absence, 'edit');
 				break;
 			case 'edit':
 				
@@ -24,7 +24,7 @@
 		_listeResult($ATMdb,$absence);
 	}
 	else{
-		_fiche($ATMdb,$absence, 'edit');
+		_listeResult($ATMdb,$absence);
 	}
 	
 	$ATMdb->close();
@@ -221,10 +221,11 @@ function _listeResult(&$ATMdb, &$absence) {
 			,'date_fin'=>'Date fin'
 			,'libelle'=>'Type d\'absence'
 			,'firstname'=>'Prénom'
-			,'name'=>'Nom'
+			,'login'=>'Login'
 			,'libelleEtat'=>'Statut demande'
 		)
 		,'search'=>array(
+			
 		)
 		,'eval'=>array(
 				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
@@ -235,7 +236,7 @@ function _listeResult(&$ATMdb, &$absence) {
 	));
 	
 	$form->end();
-	?><a class="butAction" href="?">Retour</a><div style="clear:both"></div><?
+	?><a class="butAction" href="?action=view">Retour</a><div style="clear:both"></div><?
 	
 	llxFooter();
 }	

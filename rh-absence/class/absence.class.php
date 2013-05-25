@@ -1063,7 +1063,7 @@ class TRH_Absence extends TObjetStd {
 			global $conf;
 			
 			//on recherche le nom de la compétence désirée
-			$sql="SELECT  a.rowid as 'ID', u.name,u.firstname, a.date_debut, 
+			$sql="SELECT  a.rowid as 'ID', u.login, u.name,u.firstname, a.date_debut, 
 				a.date_fin, a.libelle, a.libelleEtat
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
 				WHERE a.fk_user=u.rowid 
@@ -1082,7 +1082,7 @@ class TRH_Absence extends TObjetStd {
 			global $conf;
 
 			//on recherche le nom de la compétence désirée
-			$sql="SELECT DISTINCT g.fk_user, u.name, u.firstname
+			$sql="SELECT DISTINCT g.fk_user,  u.login, u.name, u.firstname
 			FROM ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."user as u
 			WHERE g.fk_usergroup =".$idGroupeRecherche."   AND u.rowid=g.fk_user
 			AND u.entity IN (0,".$conf->entity.")
@@ -1103,7 +1103,7 @@ class TRH_Absence extends TObjetStd {
 			global $conf;
 			
 			//on recherche le nom de la compétence désirée
-			$sql="SELECT a.rowid as 'ID', u.name, u.firstname, 
+			$sql="SELECT a.rowid as 'ID',  u.login, u.name, u.firstname, 
 				DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u

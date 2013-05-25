@@ -208,18 +208,12 @@ class modAbsence extends DolibarrModules
 		$r++;
 		
 		$this->rights[$r][0] = 7107;
-		$this->rights[$r][1] = 'Modifier l\'emploi du temps d\'un collaborateur';
+		$this->rights[$r][1] = 'Modifier l\'emploi du temps des collaborateurs';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierEdt';
 		$r++;
-		
-		$this->rights[$r][0] = 7108;
-		$this->rights[$r][1] = 'Modifier son emploi du temps';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'myactions';
-        $this->rights[$r][5] = 'modifierSonEdt';
-		$r++;
+
 		
 		$this->rights[$r][0] = 7109;
 		$this->rights[$r][1] = 'Voir toutes les absences des collaborateurs';
@@ -262,6 +256,8 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'rechercherAbsence';
 		$r++;
+		
+
 		
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
@@ -425,7 +421,7 @@ class modAbsence extends DolibarrModules
 		        	'titre'=> $langs->trans('Recherche Absence'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> '',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/rechercheAbsence.php',
+					'url'=> '/absence/rechercheAbsence.php?action=view',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 105,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.

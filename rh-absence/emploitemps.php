@@ -47,7 +47,13 @@
 			$emploiTemps->load($ATMdb, $_REQUEST['fk_user']);
 			_liste($ATMdb, $emploiTemps);
 		}else{
-			$emploiTemps->load($ATMdb, $user->id);
+			//on récupère les infos de l'edt de l'utilisateur courant
+			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
+			WHERE entity IN (0,".$conf->entity.") AND fk_user=".$user->id;
+			$ATMdb->Execute($sql);
+			if($ATMdb->Get_line()) {
+						$emploiTemps->load($ATMdb, $ATMdb->Get_field('rowid'));
+			}
 			_fiche($ATMdb, $emploiTemps,'view');
 		}
 		
@@ -63,7 +69,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	getStandartJS();
 	print dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence');
 	
-	$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
+	/*$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
 			WHERE v.fk_user=".$user->id." 
 			AND v.type='Conges'
 			AND v.fk_usergroup=u.fk_usergroup
@@ -75,14 +81,16 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	while($ATMdb->Get_line()) {
 				$TabUser[]=$ATMdb->Get_field('fk_user');
 				$k++;
-	}
+	}*/
 	
 	$r = new TSSRenderControler($emploiTemps);
-	$sql="SELECT DISTINCT e.rowid as 'ID', e.date_cre as 'DateCre', e.fk_user as 'Id Utilisateur', '' as 'Emploi du temps', u.firstname, u.name, '' as '','' as ''
+	$sql="SELECT DISTINCT e.rowid as 'ID', e.date_cre as 'DateCre', 
+	 e.fk_user as 'Id Utilisateur', '' as 'Emploi du temps', u.login,
+	u.firstname, u.name, '' as '','' as ''
 		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."user as u
 		WHERE e.entity IN (0,".$conf->entity.") AND u.rowid=e.fk_user ";
 
-	if($user->rights->absence->myactions->modifierEdt!="1"){
+	if($user->rights->absence->myactions->voirTousEdt!="1"){
 		$sql.=" AND e.fk_user=".$user->id;
 	}
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');	
@@ -103,6 +111,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 		,'title'=>array(
 			'firstname'=>'Prénom'
 			,'name'=>'Nom'
+			,'login'=>'Login'
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre','ID')
@@ -122,6 +131,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 		,'search'=>array(
 			'firstname'=>true
 			,'name'=>true
+			,'login'=>true
 		)
 		,'eval'=>array(
 				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
@@ -168,19 +178,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 		}
 	} 
 	
-	$droitsEdt=0;
-	if($user->rights->absence->myactions->modifierEdt&&!$user->rights->absence->myactions->modifierSonEdt){
-		if($user->id!=$emploiTemps->fk_user){
-			$droitsEdt=$user->rights->absence->myactions->modifierEdt;
-		}
-	}
-	else if($user->rights->absence->myactions->modifierEdt){
-		$droitsEdt=$user->rights->absence->myactions->modifierEdt;
-	}
-	else if($user->rights->absence->myactions->modifierSonEdt&&$user->id==$emploiTemps->fk_user){
-		$droitsEdt=$user->rights->absence->myactions->modifierSonEdt;
-	}
-	else $droitsEdt=0;
+	
 	
 	//echo "salut".$user->rights->absence->myactions->modifierSonEdt;
 	$TBS=new TTemplateTBS();
@@ -203,9 +201,8 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				,'titreEdt'=>load_fiche_titre("Emploi du temps de ".htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')." ".htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'),'', 'title.png', 0, '')
 			)
 			,'droits'=>array(
-				'modifierEdt'=>$droitsEdt
+				'modifierEdt'=>$droitsEdt=$user->rights->absence->myactions->modifierEdt
 			)
-			
 			
 		)	
 		
