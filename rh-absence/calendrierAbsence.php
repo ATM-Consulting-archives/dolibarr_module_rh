@@ -40,17 +40,7 @@
 	
 	
 	$TabUser=array();
-	//récupération du tableau utilisateur
-	$sqlReq="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u
-	WHERE  u.entity IN (0,".$conf->entity.")";
-
-	$sqlReq.=" ORDER BY name";
-	$ATMdb->Execute($sqlReq);	
-	$TabUser[0] = 'Tous';		
-	while($ATMdb->Get_line()) {
-		$TabUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
-	}
-	
+	$TabUser=$absence->recupererTUser($ATMdb);
 	
 	$TabGroupe=array();
 	$TabGroupe[0] = 'Tous';

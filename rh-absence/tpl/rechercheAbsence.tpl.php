@@ -2,7 +2,7 @@
 	<div>			
 		 [recherche.titreRecherche;block=tr;strconv=no;protect=no]
 		<br/>
-		<table class="border" style="width:40%">	
+		<table class="border" style="width:60%">	
 			<tr >
 				<td colspan="2"><b>Veuillez renseigner les paramètres pour la recherche des absences</b></td>	
 			</tr>
@@ -49,7 +49,7 @@
 				});
 		});
 		
-		$(document).ready( function(){
+		/*$(document).ready( function(){
 			$.ajax({
 					url: 'script/loadUtilisateurs.php?groupe='+$('#groupe option:selected').val()
 				}).done(function(data) {
@@ -60,6 +60,6 @@
 					     .attr("value", key).text(value));
 					});	
 			});
-		});
+		});*/
 		</script>
 	

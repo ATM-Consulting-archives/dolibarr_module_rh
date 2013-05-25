@@ -419,6 +419,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				WHERE fk_user=".$user->id." AND entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReqUser);
 	$congePrec=array();
+	$congeCourant=array();
+	$rttCourant=array();
 	while($ATMdb->Get_line()) {
 				$congePrec['id']=$ATMdb->Get_field('rowid');
 				$congePrec['acquisEx']=$ATMdb->Get_field('acquisExerciceNM1');
@@ -428,32 +430,15 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				$congePrec['congesPris']=$ATMdb->Get_field('congesPrisNM1');
 				$congePrec['annee']=$ATMdb->Get_field('anneeNM1');
 				$congePrec['fk_user']=$ATMdb->Get_field('fk_user');
-	}
 	
-	$congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+$congePrec['acquisHorsPer']+$congePrec['reportConges'];
-	$congePrecReste=$congePrecTotal-$congePrec['congesPris'];
-	
-	//////////////////////////récupération des informations des congés précédents (N-1) de l'utilisateur courant : 
-	$sqlReqUser2="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$user->id." 
-				AND anneeN=".$anneeCourante." AND entity IN (0,".$conf->entity.")";
-	$ATMdb=new Tdb;
-	$ATMdb->Execute($sqlReqUser2);
-	$congeCourant=array();
-	while($ATMdb->Get_line()) {
 				$congeCourant['id']=$ATMdb->Get_field('rowid');
 				$congeCourant['acquisEx']=$ATMdb->Get_field('acquisExerciceN');
 				$congeCourant['acquisAnc']=$ATMdb->Get_field('acquisAncienneteN');
 				$congeCourant['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeN');
 				$congeCourant['annee']=$ATMdb->Get_field('anneeN');
 				$congeCourant['fk_user']=$ATMdb->Get_field('fk_user');
-	}
-	$congeCourantTotal=$congeCourant['acquisEx']+$congeCourant['acquisAnc']+$congeCourant['acquisHorsPer'];
-	
-	//////////////////////////////récupération des informations des rtt courants (année N) de l'utilisateur courant : 
-	$sqlRtt="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$user->id;
-	$ATMdb->Execute($sqlRtt);
-	$rttCourant=array();
-	while($ATMdb->Get_line()) {
+				
+				
 				$rttCourant['id']=$ATMdb->Get_field('rowid');
 				$rttCourant['acquis']=$ATMdb->Get_field('rttAcquisMensuel')+$ATMdb->Get_field('rttAcquisAnnuelCumule')+$ATMdb->Get_field('rttAcquisAnnuelNonCumule');
 				$rttCourant['pris']=$ATMdb->Get_field('rttPris');
@@ -463,8 +448,19 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				$rttCourant['typeAcquisition']=$ATMdb->Get_field('rttTypeAcquisition');
 				$rttCourant['annee']=substr($ATMdb->Get_field('anneertt'),0,4);
 				$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
+	
+	
+	
 	}
+	
+	$congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+$congePrec['acquisHorsPer']+$congePrec['reportConges'];
+	$congePrecReste=$congePrecTotal-$congePrec['congesPris'];
+	
+	$congeCourantTotal=$congeCourant['acquisEx']+$congeCourant['acquisAnc']+$congeCourant['acquisHorsPer'];
+	
 	$rttCourantReste=$rttCourant['acquis']-$rttCourant['pris'];
+	
+	
 	
 	//récupération informations utilisateur dont on observe l'absence, ou la crée
 	if($absence->fk_user!=0){
@@ -494,28 +490,10 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	}else $regleId=$absence->fk_user;
 	
 	
-	//affichage des règles liées à l'utilisateur 
-	$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, r.fk_user, r.fk_usergroup, r.choixApplication
-		FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
-		WHERE( r.fk_user=u.rowid AND r.fk_user=".$regleId." AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
-		OR (r.choixApplication Like 'all' AND u.rowid=".$regleId." and u.rowid=g.fk_user) 
-		OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$regleId.") 
-		ORDER BY r.nbJourCumulable";
+	//récupération des règles liées à l'utilisateur 
+	$TRegle=array();
+	$TRegle=$absence->recuperationRegleUser($ATMdb, $regleId);
 
-		$ATMdb->Execute($sql);
-		$TRegle = array();
-		$k=0;
-		while($ATMdb->Get_line()) {
-			$TRegle[$k]['rowid']= $ATMdb->Get_field('rowid');
-			$TRegle[$k]['typeAbsence']= $ATMdb->Get_field('typeAbsence');
-			$TRegle[$k]['libelle']= saveLibelle($ATMdb->Get_field('typeAbsence'));
-			$TRegle[$k]['nbJourCumulable']= $ATMdb->Get_field('nbJourCumulable');
-			$TRegle[$k]['restrictif']= $ATMdb->Get_field('restrictif')==1?'Oui':'Non';
-			$TRegle[$k]['fk_user']= $ATMdb->Get_field('fk_user');
-			$TRegle[$k]['fk_usergroup']= $ATMdb->Get_field('fk_usergroup');
-			$TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
-			$k++;
-		}
 
 	//création du tableau des utilisateurs liés au groupe du valideur, pour créer une absence, pointage...
 	$TUser = array();
@@ -543,18 +521,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	
 	//Tableau affichant les 10 dernières absences du collaborateur
-	$sql="SELECT DATE_FORMAT(date_debut, '%d/%m/%Y') as 'dateD', DATE_FORMAT(date_fin, '%d/%m/%Y')  as 'dateF', libelle, libelleEtat FROM `".MAIN_DB_PREFIX."rh_absence` WHERE fk_user=".$regleId." 
-	AND entity IN (0,".$conf->entity.") GROUP BY date_cre LIMIT 0,10";
-	$ATMdb->Execute($sql);
 	$TRecap=array();
-	$k=0;
-	while($ATMdb->Get_line()) {		
-		$TRecap[$k]['date_debut']=$ATMdb->Get_field('dateD');
-		$TRecap[$k]['date_fin']=$ATMdb->Get_field('dateF');
-		$TRecap[$k]['libelle']=$ATMdb->Get_field('libelle');
-		$TRecap[$k]['libelleEtat']=$ATMdb->Get_field('libelleEtat');
-		$k++;
-	}
+	$TRecap=$absence->recuperationDerAbsUser($ATMdb, $regleId);
+	
 	
 		
 	$TBS=new TTemplateTBS();

@@ -35,7 +35,7 @@
 
 function _fiche(&$ATMdb, $absence,  $mode) {
 	global $db,$user, $langs, $conf;
-	llxHeader('','Formations');
+	llxHeader('','Recherche Absences');
 
 	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Recherche');
 	
@@ -52,6 +52,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 	
 	//tableau pour la combobox des groupes
 	$TGroupe  = array();
+	$TGroupe[0]  = 'Tous';
 	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
@@ -61,11 +62,9 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 	//tableau pour la combobox des utilisateurs
 	$TUser=array();
 	$TUser[0]='Tous';
-	$sqlReqUser="SELECT u.rowid, u.name,  u.firstname FROM `".MAIN_DB_PREFIX."user` as u, ".MAIN_DB_PREFIX."usergroup_user as g
+	$sqlReqUser="SELECT u.rowid, u.name,  u.firstname FROM `".MAIN_DB_PREFIX."user` as u
 	 WHERE u.entity IN (0,".$conf->entity.")";
-	if($idGroupeRecherche!=0){
-		$sqlReqUser.=" AND g.fk_user=u.rowid AND g.fk_usergroup=".$idGroupeRecherche;
-	}
+
 	$ATMdb->Execute($sqlReqUser);
 	while($ATMdb->Get_line()) {
 		$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
@@ -204,7 +203,7 @@ function _listeResult(&$ATMdb, &$absence) {
 			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
 		)
 		,'hide'=>array('fk_user', 'ID')
-		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
+		,'type'=>array()
 		,'liste'=>array(
 			'titre'=>'Résultat de votre recherche'
 			,'image'=>img_picto('','title.png', '', 0)

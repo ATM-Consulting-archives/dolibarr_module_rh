@@ -178,585 +178,575 @@ class TRH_Absence extends TObjetStd {
 		
 		//on crée un tableau des utilisateurs pour l'afficher en combo box, et ensuite sélectionner quelles absences afficher
 		
-		 // AA Ne devrait pas être ici mais dans une fonction à l'afficahge quand on en a besoin !
+	}
 
-		$this->TUser=array();
+	//renvoie le tableau des utilisateurs
+	function recupererTUser(&$ATMdb){
+		global $conf;
+		$TUser=array();
+		$TUser[0] = 'Tous';	
 		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlReqUser);
 
 		while($ATMdb->Get_line()) {
-			$this->TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 		}
-		
-		
-		//on sélectionne les règles relatives à un utilisateurs
-		$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, r.fk_user, r.fk_usergroup, r.choixApplication
-		FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
-		WHERE( r.fk_user=u.rowid AND r.fk_user=".$user->id." AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
-		OR (r.choixApplication Like 'all' AND u.rowid=".$user->id." and u.rowid=g.fk_user) 
-		OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$user->id.") 
-		ORDER BY r.nbJourCumulable";
-
-		$ATMdb->Execute($sql);
-		$this->TRegle = array();
-		$k=0;
-		while($ATMdb->Get_line()) {
-			$this->TRegle[$k]['rowid']= $ATMdb->Get_field('rowid');
-			$this->TRegle[$k]['typeAbsence']= $ATMdb->Get_field('typeAbsence');
-			$this->TRegle[$k]['libelle']= saveLibelle($ATMdb->Get_field('typeAbsence'));
-			$this->TRegle[$k]['nbJourCumulable']= $ATMdb->Get_field('nbJourCumulable');
-			$this->TRegle[$k]['restrictif']= $ATMdb->Get_field('restrictif');
-			$this->TRegle[$k]['fk_user']= $ATMdb->Get_field('fk_user');
-			$this->TRegle[$k]['fk_usergroup']= $ATMdb->Get_field('fk_usergroup');
-			$this->TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
-			$k++;
-		}
-		
-		
+		return $TUser;
 	}
 
 
-		function testDemande(&$db, $userConcerne, &$absence){
-			$ATMdb=new Tdb;
-			global $conf, $user;
-			$this->entity = $conf->entity;
-			
-			
-			//on calcule la duree de l'absence, en décomptant jours fériés et jours non travaillés par le collaborateur
-			$dureeAbsenceCourante=$this->calculDureeAbsence($db, $this->date_debut, $this->date_fin, $absence);
-			$dureeAbsenceCourante=$this->calculJoursFeries($db, $dureeAbsenceCourante, $this->date_debut, $this->date_fin, $absence);
-			$dureeAbsenceCourante=$this->calculJoursTravailles($db, $dureeAbsenceCourante, $this->date_debut, $this->date_fin, $absence); 
-			
-			
-			//autres paramètes à sauvegarder
-			$this->libelle=saveLibelle($this->type);
-			$this->duree=$dureeAbsenceCourante;
-			$this->etat="Avalider";
-			$this->libelleEtat=saveLibelleEtat($this->etat);
-			
-			//on teste s'il y a des règles qui s'appliquent à cette demande d'absence
-			//$this->findRegleUser($db);
-			$dureeAbsenceRecevable=$this->dureeAbsenceRecevable();
-			
+	//permet la récupération des règles liées à un utilisateur 
+	//utile lors de l'affichage à la création d'une demande d'absence
+	function recuperationRegleUser(&$ATMdb, $fk_user){
+		global $conf;
+		//on sélectionne les règles relatives à un utilisateurs
+		$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, r.fk_user, r.fk_usergroup, r.choixApplication
+		FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
+		WHERE( r.fk_user=u.rowid AND r.fk_user=".$fk_user." AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
+		OR (r.choixApplication Like 'all' AND u.rowid=".$fk_user." and u.rowid=g.fk_user) 
+		OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$fk_user.") 
+		AND r.entity IN (0,".$conf->entity.")
+		ORDER BY r.nbJourCumulable";
+
+		$ATMdb->Execute($sql);
+		$TRegle = array();
+		$k=0;
+		while($ATMdb->Get_line()) {
+			$TRegle[$k]['rowid']= $ATMdb->Get_field('rowid');
+			$TRegle[$k]['typeAbsence']= $ATMdb->Get_field('typeAbsence');
+			$TRegle[$k]['libelle']= saveLibelle($ATMdb->Get_field('typeAbsence'));
+			$TRegle[$k]['nbJourCumulable']= $ATMdb->Get_field('nbJourCumulable');
+			$TRegle[$k]['restrictif']= $ATMdb->Get_field('restrictif');
+			$TRegle[$k]['fk_user']= $ATMdb->Get_field('fk_user');
+			$TRegle[$k]['fk_usergroup']= $ATMdb->Get_field('fk_usergroup');
+			$TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
+			$k++;
+		}
 		
-			if($dureeAbsenceRecevable==0){
-				return 0;
+		return $TRegle;
+	}
+	
+	
+	
+	//permet la récupération des règles liées à un utilisateur 
+	//utile lors de l'affichage à la création d'une demande d'absence
+	function recuperationDerAbsUser(&$ATMdb, $fk_user){
+		global $conf;
+		$sql="SELECT DATE_FORMAT(date_debut, '%d/%m/%Y') as 'dateD', 
+		DATE_FORMAT(date_fin, '%d/%m/%Y')  as 'dateF', libelle, libelleEtat 
+		FROM `".MAIN_DB_PREFIX."rh_absence` WHERE fk_user=".$fk_user." 
+		AND entity IN (0,".$conf->entity.") GROUP BY date_cre LIMIT 0,10";
+
+		$ATMdb->Execute($sql);
+		$TRecap=array();
+		$k=0;
+		while($ATMdb->Get_line()) {		
+			$TRecap[$k]['date_debut']=$ATMdb->Get_field('dateD');
+			$TRecap[$k]['date_fin']=$ATMdb->Get_field('dateF');
+			$TRecap[$k]['libelle']=$ATMdb->Get_field('libelle');
+			$TRecap[$k]['libelleEtat']=$ATMdb->Get_field('libelleEtat');
+			$k++;
+		}
+		return $TRecap;
+	}
+	
+
+	function testDemande(&$db, $userConcerne, &$absence){
+		$ATMdb=new Tdb;
+		global $conf, $user;
+		$this->entity = $conf->entity;
+		
+		
+		//on calcule la duree de l'absence, en décomptant jours fériés et jours non travaillés par le collaborateur
+		$dureeAbsenceCourante=$this->calculDureeAbsence($db, $this->date_debut, $this->date_fin, $absence);
+		$dureeAbsenceCourante=$this->calculJoursFeries($db, $dureeAbsenceCourante, $this->date_debut, $this->date_fin, $absence);
+		$dureeAbsenceCourante=$this->calculJoursTravailles($db, $dureeAbsenceCourante, $this->date_debut, $this->date_fin, $absence); 
+		
+		
+		//autres paramètes à sauvegarder
+		$this->libelle=saveLibelle($this->type);
+		$this->duree=$dureeAbsenceCourante;
+		$this->etat="Avalider";
+		$this->libelleEtat=saveLibelleEtat($this->etat);
+		
+		//on teste s'il y a des règles qui s'appliquent à cette demande d'absence
+		//$this->findRegleUser($db);
+		$dureeAbsenceRecevable=$this->dureeAbsenceRecevable();
+		
+	
+		if($dureeAbsenceRecevable==0){
+			return 0;
+		}
+		
+		//on teste si c'est une demande de jours non cumulés, 
+		//si les jours N-1 début absence et N+1 fin absence sont travaillés
+		if($this->type=='rttnoncumule'){
+			$absenceAutoriseeDebut=$this->isWorkingDayPrevious($ATMdb, $this->date_debut);// AA plus simple 1fct -> isWorkingDay($ATMdb, strtotime( '-1day', $this->date_debut) )
+			$absenceAutoriseeFin=$this->isWorkingDayNext($ATMdb, $this->date_fin);// AA plus simple 1fct -> isWorkingDay($ATMdb, strtotime( '+1day', $this->date_fin) )
+			if($absenceAutoriseeDebut==0||$absenceAutoriseeFin==0){
+				return 3; //etat pour le message d'erreur lié aux rtt non cumulés
 			}
-			
-			//on teste si c'est une demande de jours non cumulés, 
-			//si les jours N-1 début absence et N+1 fin absence sont travaillés
-			if($this->type=='rttnoncumule'){
-				$absenceAutoriseeDebut=$this->isWorkingDayPrevious($ATMdb, $this->date_debut);// AA plus simple 1fct -> isWorkingDay($ATMdb, strtotime( '-1day', $this->date_debut) )
-				$absenceAutoriseeFin=$this->isWorkingDayNext($ATMdb, $this->date_fin);// AA plus simple 1fct -> isWorkingDay($ATMdb, strtotime( '+1day', $this->date_fin) )
-				if($absenceAutoriseeDebut==0||$absenceAutoriseeFin==0){
-					return 3; //etat pour le message d'erreur lié aux rtt non cumulés
-				}
-				//on teste finalement si le collaborateur n'a pas déjà pris un jour de rtt non cumulés dans les 2 mois précédents
-				$absenceAutorisee1Jour2Mois=$this->rttnoncumuleDuree2mois($ATMdb, $this->date_debut);
-				if($absenceAutorisee1Jour2Mois==0){
-					return 4; //etat pour le message d'erreur lié aux rtt non cumulés, et indiquant qu'un seul jour peut être pris par 2 mois
-				}
+			//on teste finalement si le collaborateur n'a pas déjà pris un jour de rtt non cumulés dans les 2 mois précédents
+			$absenceAutorisee1Jour2Mois=$this->rttnoncumuleDuree2mois($ATMdb, $this->date_debut);
+			if($absenceAutorisee1Jour2Mois==0){
+				return 4; //etat pour le message d'erreur lié aux rtt non cumulés, et indiquant qu'un seul jour peut être pris par 2 mois
 			}
-			
-			
-			//on récupère la méthode d'acquisition des jours de l'utilisateur en cours : si par mois ou annuel
-			$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$userConcerne;
-			$ATMdb->Execute($sqlMethode);
-			while($ATMdb->Get_line()) {
-				$methode= $ATMdb->Get_field('rttTypeAcquisition');
-			}
-			
-			///////décompte des congés
-			if($this->type=="rttcumule"&&$methode=="Annuel"){
-				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante."  where fk_user=".$userConcerne;
-				$db->Execute($sqlDecompte);
-				$this->rttPris=$this->rttPris+$dureeAbsenceCourante;
-				$this->rttAcquisAnnuelCumule=$this->rttAcquisAnnuelCumule-$dureeAbsenceCourante;
-				
-			}
-			else if($this->type=="rttnoncumule"&&$methode=="Annuel"){
-				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule-".$dureeAbsenceCourante." where fk_user=".$userConcerne;
-				$db->Execute($sqlDecompte);
-				$this->rttPris=$this->rttPris-$dureeAbsenceCourante;
-				$this->rttAcquisAnnuelNonCumule=$this->rttAcquisAnnuelNonCumule-$dureeAbsenceCourante;
-			}
-			else if($this->type=="rttnoncumule"&&$methode=="Mensuel"||$this->type=="rttcumule"&&$methode=="Mensuel"){
-				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisMensuel=rttAcquisMensuel-".$dureeAbsenceCourante."  where fk_user=".$userConcerne;
-				$db->Execute($sqlDecompte);
-				$this->rttPris=$this->rttPris+$dureeAbsenceCourante;
-				$this->rttAcquisMensuel=$this->rttAcquisMensuel-$dureeAbsenceCourante;
-				
-			}
-			else if($this->type=="conges"){	//autre que RTT : décompte les congés
-				$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$userConcerne;
-				$db->Execute($sqlDecompte);
-				$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
-			}
-			
-			return $dureeAbsenceRecevable;
 		}
 		
 		
-		function save(&$db) {
-
-			global $conf, $user;
-			$this->entity = $conf->entity;
-			parent::save($db);
-		}
-
-		
-		//calcul de la durée initiale de l'absence (sans jours fériés, sans les jours travaillés du salariés)
-		function calculDureeAbsence(&$ATMdb, $date_debut, $date_fin, &$absence){
-			$diff=$date_fin-$date_debut;
-			$duree=$diff/3600/24;
-
-			//prise en compte du matin et après midi
-			
-			if($absence->ddMoment=="matin"&&$absence->dfMoment=="apresmidi"){
-				$duree+=1;
-			}
-			else if($absence->ddMoment==$absence->dfMoment){
-				$duree+=0.5;
-			}
-			
-			return $duree; 
+		//on récupère la méthode d'acquisition des jours de l'utilisateur en cours : si par mois ou annuel
+		$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$userConcerne;
+		$ATMdb->Execute($sqlMethode);
+		while($ATMdb->Get_line()) {
+			$methode= $ATMdb->Get_field('rttTypeAcquisition');
 		}
 		
-		
-		//calcul la durée de l'absence après le décompte des jours fériés
-		function calculJoursFeries(&$ATMdb, $duree, $date_debut, $date_fin, &$absence){
-
-			$dateDebutAbs=$absence->php2Date($date_debut);
-			$dateFinAbs=$absence->php2Date($date_fin);
+		///////décompte des congés
+		if($this->type=="rttcumule"&&$methode=="Annuel"){
+			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule-".$dureeAbsenceCourante."  where fk_user=".$userConcerne;
+			$db->Execute($sqlDecompte);
+			$this->rttPris=$this->rttPris+$dureeAbsenceCourante;
+			$this->rttAcquisAnnuelCumule=$this->rttAcquisAnnuelCumule-$dureeAbsenceCourante;
 			
-			//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
-			$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
-			.$dateDebutAbs."' and '". $dateFinAbs."'"; 
-			//echo $sql;
-			$ATMdb->Execute($sql);
-			$Tab = array();
-			while($ATMdb->Get_line()) {
-				$Tab[$ATMdb->Get_field('rowid')]= array(
-					'date_jourOff'=>$ATMdb->Get_field('date_jourOff')
-					,'moment'=>$ATMdb->Get_field('moment')
-					);
-			}
-			//print "ddmoment =".$this->ddMoment. "   debutAbs".$dateDebutAbs."   fin abs".$dateFinAbs;
-			//traitement pour chaque jour férié
-			foreach ($Tab as $key=>$jour) {
-				//on teste si le jour est égal à l'une des extrémités de la demande d'absence, sinon il n'y a pas de test spécial à faire
-				if($dateDebutAbs==$jour['date_jourOff']&&$dateFinAbs==$jour['date_jourOff']){ //date début absence == jour férié et date fin absence == même jour férié
-					//echo "boucle1";
-					if($absence->ddMoment==$absence->dfMoment&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
-						$duree-=0.5;
-					}
-					else if($absence->ddMoment==$absence->dfMoment&&$absence->ddMoment=='matin'&&$jour['moment']=='matin'){
-						$duree-=0.5;
-					}
-					else if($absence->ddMoment==$absence->dfMoment&&$absence->ddMoment=='apresmidi'&&$jour['moment']=='apresmidi'){
-						$duree-=0.5;
-					}
-					else if($absence->ddMoment=='matin'&&$absence->dfMoment=='apresmidi'&&$jour['moment']=='apresmidi'){
-						$duree-=0.5;
-					}
-					else if($absence->ddMoment=='matin'&&$absence->dfMoment=='apresmidi'&&$jour['moment']=='matin'){
-						$duree-=0.5;
-					}
-					else if($absence->ddMoment=='matin'&&$absence->dfMoment=='apresmidi'&&$jour['moment']=='allday'){
-						$duree-=1;
-					}
-				}else if($dateDebutAbs==$jour['date_jourOff']){	//si la date début est égale à la date du jour férié
-					//echo "boucle2";
-					if($absence->ddMoment=='matin'&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
-						$duree-=1;
-					}
-					else if($absence->ddMoment=='matin'&&$jour['moment']=='matin'){ //traite le cas matin et apresmidi
-						$duree-=0.5;
-					}
-					else if($absence->ddMoment=='matin'&&$jour['moment']=='apresmidi'){ //traite le cas matin et apresmidi
-						$duree-=0.5;
-					}
-					else if($absence->ddMoment=='apresmidi'&&$jour['moment']=='apresmidi'){ //traite le cas matin et apresmidi
-						$duree-=0.5;
-					}
-					else if($absence->ddMoment=='apresmidi'&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
-						$duree-=0.5;
-					}
-				}
-				else if($dateFinAbs==$jour['date_jourOff']){	//si la date début est égale à la date du jour férié
-				//	echo "boucle3";
-					if($absence->dfMoment=='matin'&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
-						$duree-=0.5;
-					}
-					else if($absence->dfMoment=='matin'&&$jour['moment']=='matin'){ //traite le cas matin et apresmidi
-						$duree-=0.5;
-					}
-					else if($absence->dfMoment=='matin'&&$jour['moment']=='apresmidi'){ //traite le cas matin et apresmidi
-						$duree-=0.5;
-					}
-					else if($absence->dfMoment=='apresmidi'&&$jour['moment']=='apresmidi'){ //traite le cas matin et apresmidi
-						$duree-=0.5;
-					}
-					else if($absence->dfMoment=='apresmidi'&&$jour['moment']=='matin'){ //traite le cas matin et apresmidi
-						$duree-=0.5;
-					}
-					else if($absence->dfMoment=='apresmidi'&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
-						$duree-=1;
-					}
-				}
-				else{
-					//echo "boucle4";
-					if($jour['moment']=='allday'){
-						$duree-=1;
-					}else{
-						$duree-=0.5;
-					}
-				}
-			}
-			return $duree;
 		}
-
+		else if($this->type=="rttnoncumule"&&$methode=="Annuel"){
+			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule-".$dureeAbsenceCourante." where fk_user=".$userConcerne;
+			$db->Execute($sqlDecompte);
+			$this->rttPris=$this->rttPris-$dureeAbsenceCourante;
+			$this->rttAcquisAnnuelNonCumule=$this->rttAcquisAnnuelNonCumule-$dureeAbsenceCourante;
+		}
+		else if($this->type=="rttnoncumule"&&$methode=="Mensuel"||$this->type=="rttcumule"&&$methode=="Mensuel"){
+			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris+".$dureeAbsenceCourante.",rttAcquisMensuel=rttAcquisMensuel-".$dureeAbsenceCourante."  where fk_user=".$userConcerne;
+			$db->Execute($sqlDecompte);
+			$this->rttPris=$this->rttPris+$dureeAbsenceCourante;
+			$this->rttAcquisMensuel=$this->rttAcquisMensuel-$dureeAbsenceCourante;
+			
+		}
+		else if($this->type=="conges"){	//autre que RTT : décompte les congés
+			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$userConcerne;
+			$db->Execute($sqlDecompte);
+			$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
+		}
 		
-		function calculJoursTravailles(&$ATMdb, $duree, $date_debut, $date_fin, &$absence){
-			
-			global $conf;
-			
-						
-			//traitement jour de début
-			$dateDebutAbs=$absence->php2Date($date_debut);
-			$jourDebutSem=$absence->jourSemaine($date_debut);
-			
-			//traitement jour de fin
-			$dateFinAbs=$absence->php2Date($date_fin);
-			$jourFinSem=$absence->jourSemaine($date_fin);
-			
-			//on récupère les jours fériés compris dans la demande d'absence
-			$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
-			.$dateDebutAbs."' and '". $dateFinAbs."' AND entity IN (0,".$conf->entity.")"; 
-			//echo $sql;
-			$ATMdb->Execute($sql);
-			$TabFerie = array();
-			
-			while($ATMdb->Get_line()) {
-				$TabFerie[$ATMdb->Get_field('rowid')]= array(
-					'date_jourOff'=>$ATMdb->Get_field('date_jourOff')
-					,'moment'=>$ATMdb->Get_field('moment')
-					);
-				
-			}				
-			
-			//on cherche le temps total de travail d'un employé par semaine : 
-			//cela va permettre de savoir si la durée d'une absence doit être limité à 7h par jour et 35h par semaine ou non
-			//si $tempsTravail supérieur à 35h, on limite les durées
-			//$tempsTravail=$this->calculTempsTravailHebdo($ATMdb,$this->fk_user);
-			
-			//on cherche les jours travaillés par l'employé
-			$sql="SELECT rowid, lundiam, lundipm, 
-			mardiam, mardipm, mercrediam, mercredipm, 
-			jeudiam, jeudipm, vendrediam, vendredipm,
-			samediam, samedipm, dimancheam, dimanchepm
-			
-			,CONCAT(HOUR(date_lundi_heuredam) ,':' , MINUTE(date_lundi_heuredam)) as	date_lundi_heuredam
-			,CONCAT(HOUR(date_lundi_heurefam) ,':' , MINUTE(date_lundi_heurefam)) as	date_lundi_heurefam
-			,CONCAT(HOUR(date_lundi_heuredpm) ,':' , MINUTE(date_lundi_heuredpm)) as	date_lundi_heuredpm
-			,CONCAT(HOUR(date_lundi_heurefpm) ,':' , MINUTE(date_lundi_heurefpm)) as	date_lundi_heurefpm	
-			 	
-			,CONCAT(HOUR(date_mardi_heuredam) ,':' , MINUTE(date_mardi_heuredam)) as	date_mardi_heuredam	
-			,CONCAT(HOUR(date_mardi_heurefam) ,':' , MINUTE(date_mardi_heurefam)) as	date_mardi_heurefam
-			,CONCAT(HOUR(date_mardi_heuredpm) ,':' , MINUTE(date_mardi_heuredpm)) as	date_mardi_heuredpm
-			,CONCAT(HOUR(date_mardi_heurefpm) ,':' , MINUTE(date_mardi_heurefpm)) as	date_mardi_heurefpm
-			
-			,CONCAT(HOUR(date_mercredi_heuredam) ,':' , MINUTE(date_mercredi_heuredam)) as	date_mercredi_heuredam	
-			,CONCAT(HOUR(date_mercredi_heurefam) ,':' , MINUTE(date_mercredi_heurefam)) as	date_mercredi_heurefam
-			,CONCAT(HOUR(date_mercredi_heuredpm) ,':' , MINUTE(date_mercredi_heuredpm)) as	date_mercredi_heuredpm
-			,CONCAT(HOUR(date_mercredi_heurefpm) ,':' , MINUTE(date_mercredi_heurefpm)) as	date_mercredi_heurefpm
-			
-			,CONCAT(HOUR(date_jeudi_heuredam) ,':' , MINUTE(date_jeudi_heuredam)) as	date_jeudi_heuredam	
-			,CONCAT(HOUR(date_jeudi_heurefam) ,':' , MINUTE(date_jeudi_heurefam)) as	date_jeudi_heurefam
-			,CONCAT(HOUR(date_jeudi_heuredpm) ,':' , MINUTE(date_jeudi_heuredpm)) as	date_jeudi_heuredpm
-			,CONCAT(HOUR(date_jeudi_heurefpm) ,':' , MINUTE(date_jeudi_heurefpm)) as	date_jeudi_heurefpm
-			
-			,CONCAT(HOUR(date_vendredi_heuredam) ,':' , MINUTE(date_vendredi_heuredam)) as	date_vendredi_heuredam	
-			,CONCAT(HOUR(date_vendredi_heurefam) ,':' , MINUTE(date_vendredi_heurefam)) as	date_vendredi_heurefam
-			,CONCAT(HOUR(date_vendredi_heuredpm) ,':' , MINUTE(date_vendredi_heuredpm)) as	date_vendredi_heuredpm
-			,CONCAT(HOUR(date_vendredi_heurefpm) ,':' , MINUTE(date_vendredi_heurefpm)) as	date_vendredi_heurefpm
-			
-			,CONCAT(HOUR(date_samedi_heuredam) ,':' , MINUTE(date_samedi_heuredam)) as	date_samedi_heuredam	
-			,CONCAT(HOUR(date_samedi_heurefam) ,':' , MINUTE(date_samedi_heurefam)) as	date_samedi_heurefam
-			,CONCAT(HOUR(date_samedi_heuredpm) ,':' , MINUTE(date_samedi_heuredpm)) as	date_samedi_heuredpm
-			,CONCAT(HOUR(date_samedi_heurefpm) ,':' , MINUTE(date_samedi_heurefpm)) as	date_samedi_heurefpm
-			
-			,CONCAT(HOUR(date_dimanche_heuredam) ,':' , MINUTE(date_dimanche_heuredam)) as	date_dimanche_heuredam	
-			,CONCAT(HOUR(date_dimanche_heurefam) ,':' , MINUTE(date_dimanche_heurefam)) as	date_dimanche_heurefam
-			,CONCAT(HOUR(date_dimanche_heuredpm) ,':' , MINUTE(date_dimanche_heuredpm)) as	date_dimanche_heuredpm
-			,CONCAT(HOUR(date_dimanche_heurefpm) ,':' , MINUTE(date_dimanche_heurefpm)) as	date_dimanche_heurefpm	
-			 
-			FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` 
-			WHERE fk_user=".$absence->fk_user." AND entity IN (0,".$conf->entity.")";  
+		return $dureeAbsenceRecevable;
+	}
+		
+		
+	function save(&$db) {
 
-			$ATMdb->Execute($sql);
-			$TTravail = array();
-			$TTravailHeure= array();
-			while($ATMdb->Get_line()) {
-				foreach ($absence->TJour as $jour) {
-					foreach(array('am','pm') as $moment) {
-						$TTravail[$jour.$moment]=$ATMdb->Get_field($jour.$moment);
-						
-					}
-					foreach(array('dam','fam','dpm','fpm') as $moment) {
-						$TTravailHeure["date_".$jour."_heure".$moment]=$ATMdb->Get_field("date_".$jour."_heure".$moment);
-					}
-				}
-				$rowid=$ATMdb->Get_field($rowid);
-			}	
-						
-			//on traite les jours de début et de fin indépendemment des autres
-			if($date_debut==$date_fin){	//si les jours de début et de fin sont les mêmes
-				$ferie=0;
-				foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite paspour les jours, car déjà traité avant pour les jours 
-													//on le traite pour les heures
-		 			if(strtotime($jourFerie['date_jourOff'])==$date_debut){
-		 				$ferie=1;
-		 				
-		 				$jourSemaineFerie=$absence->jourSemaine($jourFerie['date_jourOff']);
-		 				//on traite le cas des heures
-		 				if($jourFerie['moment']=='matin'){
-		 					if($TTravail[$jourSemaineFerie.'pm']==1){
-		 						if($absence->dfMoment=='apresmidi'){
-	 								$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredpm"], $TTravailHeure["date_".$jourSemaineFerie."_heurefpm"]));
-									$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
-		 						}
-		 						
-		 					}
-		 				}
-		 				if($jourFerie['moment']=='apresmidi'){
-		 					if($TTravail[$jourSemaineFerie.'am']==1){
-		 						if($absence->ddMoment=='matin'){
-			 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredam"], $TTravailHeure["date_".$jourSemaineFerie."_heurefam"]));
-									$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
-								}
-		 					}
-		 				}
-		 				
-		 			}
-		 		}
-				if(!$ferie){
-					//echo "boucle1";
-					if($absence->dfMoment=='matin'){		// si la date de fin est le matin, il n'y a donc que le cas matin à traiter
-						if($TTravail[$jourDebutSem.'am']==0){
-							$duree-=0.5;
-						}else{
-							$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredam"], $TTravailHeure["date_".$jourDebutSem."_heurefam"]));
-							$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);	
+		global $conf, $user;
+		$this->entity = $conf->entity;
+		parent::save($db);
+	}
 
-						}
-					}else if($absence->ddMoment=='apresmidi'){		// si la date de debut est lapres midi, il n'y a donc que le cas pm à traiter
-						if($TTravail[$jourDebutSem.'pm']==0){
-							$duree-=0.5;
-						}
-						else{
-							$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredpm"], $TTravailHeure["date_".$jourDebutSem."_heurefpm"]));
-							$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
-						}
-					}else{	//sinon on traite les cas matin et apres midi
-						if($TTravail[$jourDebutSem.'am']==0){
-							$duree-=0.5;
-						}else{
-							$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredam"], $TTravailHeure["date_".$jourDebutSem."_heurefam"]));
-							$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
-						}
-						
-						if($TTravail[$jourDebutSem.'pm']==0){
-							$duree-=0.5;
-						}else{
-							$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredpm"], $TTravailHeure["date_".$jourDebutSem."_heurefpm"]));
-							$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
-						}
-					}
-					return $duree;
-				}
-				else return $duree;
-				
-			}else{	//les jours de début et de fin sont différents
-				//////////////////////////jour de début
-				$ferie=0;		
-				foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas pour les jours, car déjà traité avant
-													//on le traite pour les heures
-		 			if(strtotime($jourFerie['date_jourOff'])==$date_debut){
-		 				$ferie=1;
-						$jourSemaineFerie=$absence->jourSemaine($jourFerie['date_jourOff']);
-		 				//on traite le cas des heures
-		 				if($jourFerie['moment']=='matin'){
-		 					if($TTravail[$jourSemaineFerie.'pm']==1){
-		 							$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredpm"], $TTravailHeure["date_".$jourSemaineFerie."_heurefpm"]));
-									$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
-		 					}
-		 				}
-		 				if($jourFerie['moment']=='apresmidi'){
-		 					if($TTravail[$jourSemaineFerie.'am']==1){
-		 						if($absence->ddMoment=='matin'){
-			 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredam"], $TTravailHeure["date_".$jourSemaineFerie."_heurefam"]));
-									$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
-								}
-		 					}
-		 				}
-		 			}
-		 		}
-				if(!$ferie){
-					if($absence->ddMoment=='matin'){
-						if($TTravail[$jourDebutSem.'am']==0){
-							$duree-=0.5;
-						}
-						if($TTravail[$jourDebutSem.'pm']==0){
-							$duree-=0.5;
-						}
-					}else if($absence->ddMoment=='apresmidi'){
-						if($TTravail[$jourDebutSem.'pm']==0){
-							$duree-=0.5;
-						}
-					}
-				}
-				
-				///////////////////////////jour de fin
-				$ferie=0;		
-				foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
-		 			if(strtotime($jourFerie['date_jourOff'])==$date_fin){
-		 				$ferie=1;
-						$jourSemaineFerie=$absence->jourSemaine($jourFerie['date_jourOff']);
-		 				//on traite le cas des heures
-		 				if($jourFerie['moment']=='matin'){
-		 					if($TTravail[$jourSemaineFerie.'pm']==1){
-		 						if($absence->dfMoment=='apresmidi'){
-		 							$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredpm"], $TTravailHeure["date_".$jourSemaineFerie."_heurefpm"]));
-									$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
-		 						}
-		 						
-		 					}
-		 				}
-		 				if($jourFerie['moment']=='apresmidi'){
-		 					if($TTravail[$jourSemaineFerie.'am']==1){
-			 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredam"], $TTravailHeure["date_".$jourSemaineFerie."_heurefam"]));
-									$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
-		 					}
-		 				}
-		 			}
-		 		}
-				if(!$ferie){
-					if($absence->dfMoment=='matin'){
-						if($TTravail[$jourFinSem.'am']==0){
-							$duree-=0.5;
-						}
-					}else if($absence->dfMoment=='apresmidi'){
-						if($TTravail[$jourFinSem.'am']==0){
-							$duree-=0.5;
-						}
-						if($TTravail[$jourFinSem.'pm']==0){
-							$duree-=0.5;
-						}
-					}
-				}
-			}
-			
-			//pour chaque jour, du début de l'absence jusqu'à sa fin, on teste si l'employé travaille
-			$jourEnCours=strtotime('+1day',$date_debut);
-			$jourFin=$date_fin;
-			while($jourEnCours!=$jourFin){
-				$ferie=0;
+	
+	//calcul de la durée initiale de l'absence (sans jours fériés, sans les jours travaillés du salariés)
+	function calculDureeAbsence(&$ATMdb, $date_debut, $date_fin, &$absence){
+		$diff=$date_fin-$date_debut;
+		$duree=$diff/3600/24;
+
+		//prise en compte du matin et après midi
+		
+		if($absence->ddMoment=="matin"&&$absence->dfMoment=="apresmidi"){
+			$duree+=1;
+		}
+		else if($absence->ddMoment==$absence->dfMoment){
+			$duree+=0.5;
+		}
+		
+		return $duree; 
+	}
+	
+	
+	//calcul la durée de l'absence après le décompte des jours fériés
+	function calculJoursFeries(&$ATMdb, $duree, $date_debut, $date_fin, &$absence){
+
+		$dateDebutAbs=$absence->php2Date($date_debut);
+		$dateFinAbs=$absence->php2Date($date_fin);
+		
+		//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
+		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
+		.$dateDebutAbs."' and '". $dateFinAbs."'"; 
+		//echo $sql;
+		$ATMdb->Execute($sql);
+		$Tab = array();
+		while($ATMdb->Get_line()) {
+			$Tab[$ATMdb->Get_field('rowid')]= array(
+				'date_jourOff'=>$ATMdb->Get_field('date_jourOff')
+				,'moment'=>$ATMdb->Get_field('moment')
+				);
+		}
+		//print "ddmoment =".$this->ddMoment. "   debutAbs".$dateDebutAbs."   fin abs".$dateFinAbs;
+		//traitement pour chaque jour férié
+		foreach ($Tab as $key=>$jour) {
+			//on teste si le jour est égal à l'une des extrémités de la demande d'absence, sinon il n'y a pas de test spécial à faire
+			if($dateDebutAbs==$jour['date_jourOff']&&$dateFinAbs==$jour['date_jourOff']){ //date début absence == jour férié et date fin absence == même jour férié
 				//echo "boucle1";
-				
-				foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas en jours, car déjà traité avant. 
-													//on traite les heures
-		 			if(strtotime($jourFerie['date_jourOff'])==$jourEnCours){
-		 				$ferie=1;
-		 				//on traite le cas des heures
-		 				$jourSemaineFerie=$absence->jourSemaine($jourFerie['date_jourOff']);
-						if($jourFerie['moment']=='matin'){
-		 					if($TTravail[$jourSemaineFerie.'pm']==1){
-		 							$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredpm"], $TTravailHeure["date_".$jourSemaineFerie."_heurefpm"]));
-									$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);	
-		 					}
-		 				}
-		 				if($jourFerie['moment']=='apresmidi'){
-		 					if($TTravail[$jourSemaineFerie.'am']==1){
-			 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredam"], $TTravailHeure["date_".$jourSemaineFerie."_heurefam"]));
-									$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
-		 					}
-		 				}
-		 			}
-		 		}
-				if(!$ferie){
-					$jourEnCoursSem=$absence->jourSemaine($jourEnCours);
-					//echo $jourEnCoursSem;
-					foreach ($absence->TJour as $jour) {
-						if($jour==$jourEnCoursSem){
-							foreach(array('am','pm') as $moment) {
-								if($TTravail[$jour.$moment]==0){
-									$duree-=0.5;
-								}
-							}
-						}
-					}
+				if($absence->ddMoment==$absence->dfMoment&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
+					$duree-=0.5;
 				}
-				$jourEnCours=strtotime('+1day',$jourEnCours);
-				
-			}
-			
-			//////////////////////////////////////////////////////////////TRAITEMENT DES HEURES
-			
-			//pour chaque jour, du début de l'absence jusqu'à sa fin, on teste si l'employé travaille et on compte les heures
-			$jourEnCours=$date_debut;
-			$jourFin=$date_fin;
-			$dureeHeure=$absence->dureeHeure;
-			$cpt=0;
-			while($jourEnCours!=$jourFin){
-				$ferie=0;
-				//echo "boucle1";
-				
-				foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
-		 			if(strtotime($jourFerie['date_jourOff'])==$jourEnCours){
-		 				$ferie=1;
-		 			}
-		 		}
-				if(!$ferie){
-					$jourEnCoursSem=$absence->jourSemaine($jourEnCours);
-					//echo $jourEnCoursSem;
-					foreach ($absence->TJour as $jour) {
-						if($jour==$jourEnCoursSem){
-							foreach(array('am','pm') as $moment) {
-								if($TTravail[$jour.$moment]==0){
-								}
-								else{
-									if($cpt==0){   //on traite le premier jour de l'absence
-										if($moment=="am"){
-											if($absence->ddMoment=="matin"){
-												$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
-											}else if($absence->ddMoment=="apresmidi"){
-											}
-										}
-										else if($moment=="pm"){
-											if($absence->ddMoment=="apresmidi"){
-												$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
-											}else if($absence->ddMoment=="matin"){
-												$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
-											}
-										}
-										
-									}else{
-										$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
-									}
-									
-								}
-							}
-						}
-						
-					}
+				else if($absence->ddMoment==$absence->dfMoment&&$absence->ddMoment=='matin'&&$jour['moment']=='matin'){
+					$duree-=0.5;
 				}
-				$jourEnCours=$jourEnCours+3600*24;
-				$cpt++;
+				else if($absence->ddMoment==$absence->dfMoment&&$absence->ddMoment=='apresmidi'&&$jour['moment']=='apresmidi'){
+					$duree-=0.5;
+				}
+				else if($absence->ddMoment=='matin'&&$absence->dfMoment=='apresmidi'&&$jour['moment']=='apresmidi'){
+					$duree-=0.5;
+				}
+				else if($absence->ddMoment=='matin'&&$absence->dfMoment=='apresmidi'&&$jour['moment']=='matin'){
+					$duree-=0.5;
+				}
+				else if($absence->ddMoment=='matin'&&$absence->dfMoment=='apresmidi'&&$jour['moment']=='allday'){
+					$duree-=1;
+				}
+			}else if($dateDebutAbs==$jour['date_jourOff']){	//si la date début est égale à la date du jour férié
+				//echo "boucle2";
+				if($absence->ddMoment=='matin'&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
+					$duree-=1;
+				}
+				else if($absence->ddMoment=='matin'&&$jour['moment']=='matin'){ //traite le cas matin et apresmidi
+					$duree-=0.5;
+				}
+				else if($absence->ddMoment=='matin'&&$jour['moment']=='apresmidi'){ //traite le cas matin et apresmidi
+					$duree-=0.5;
+				}
+				else if($absence->ddMoment=='apresmidi'&&$jour['moment']=='apresmidi'){ //traite le cas matin et apresmidi
+					$duree-=0.5;
+				}
+				else if($absence->ddMoment=='apresmidi'&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
+					$duree-=0.5;
+				}
 			}
+			else if($dateFinAbs==$jour['date_jourOff']){	//si la date début est égale à la date du jour férié
+			//	echo "boucle3";
+				if($absence->dfMoment=='matin'&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
+					$duree-=0.5;
+				}
+				else if($absence->dfMoment=='matin'&&$jour['moment']=='matin'){ //traite le cas matin et apresmidi
+					$duree-=0.5;
+				}
+				else if($absence->dfMoment=='matin'&&$jour['moment']=='apresmidi'){ //traite le cas matin et apresmidi
+					$duree-=0.5;
+				}
+				else if($absence->dfMoment=='apresmidi'&&$jour['moment']=='apresmidi'){ //traite le cas matin et apresmidi
+					$duree-=0.5;
+				}
+				else if($absence->dfMoment=='apresmidi'&&$jour['moment']=='matin'){ //traite le cas matin et apresmidi
+					$duree-=0.5;
+				}
+				else if($absence->dfMoment=='apresmidi'&&$jour['moment']=='allday'){ //traite le cas matin et apresmidi
+					$duree-=1;
+				}
+			}
+			else{
+				//echo "boucle4";
+				if($jour['moment']=='allday'){
+					$duree-=1;
+				}else{
+					$duree-=0.5;
+				}
+			}
+		}
+		return $duree;
+	}
+
+		
+	function calculJoursTravailles(&$ATMdb, $duree, $date_debut, $date_fin, &$absence){
+		
+		global $conf;
+		
+					
+		//traitement jour de début
+		$dateDebutAbs=$absence->php2Date($date_debut);
+		$jourDebutSem=$absence->jourSemaine($date_debut);
+		
+		//traitement jour de fin
+		$dateFinAbs=$absence->php2Date($date_fin);
+		$jourFinSem=$absence->jourSemaine($date_fin);
+		
+		//on récupère les jours fériés compris dans la demande d'absence
+		$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
+		.$dateDebutAbs."' and '". $dateFinAbs."' AND entity IN (0,".$conf->entity.")"; 
+		//echo $sql;
+		$ATMdb->Execute($sql);
+		$TabFerie = array();
+		
+		while($ATMdb->Get_line()) {
+			$TabFerie[$ATMdb->Get_field('rowid')]= array(
+				'date_jourOff'=>$ATMdb->Get_field('date_jourOff')
+				,'moment'=>$ATMdb->Get_field('moment')
+				);
 			
-			///////////////////////////////////////////////TRAITEMENT DU DERNIER JOUR POUR LES HEURES
+		}				
+		
+		//on cherche le temps total de travail d'un employé par semaine : 
+		//cela va permettre de savoir si la durée d'une absence doit être limité à 7h par jour et 35h par semaine ou non
+		//si $tempsTravail supérieur à 35h, on limite les durées
+		//$tempsTravail=$this->calculTempsTravailHebdo($ATMdb,$this->fk_user);
+		
+		//on cherche les jours travaillés par l'employé
+		$sql="SELECT rowid, lundiam, lundipm, 
+		mardiam, mardipm, mercrediam, mercredipm, 
+		jeudiam, jeudipm, vendrediam, vendredipm,
+		samediam, samedipm, dimancheam, dimanchepm
+		
+		,CONCAT(HOUR(date_lundi_heuredam) ,':' , MINUTE(date_lundi_heuredam)) as	date_lundi_heuredam
+		,CONCAT(HOUR(date_lundi_heurefam) ,':' , MINUTE(date_lundi_heurefam)) as	date_lundi_heurefam
+		,CONCAT(HOUR(date_lundi_heuredpm) ,':' , MINUTE(date_lundi_heuredpm)) as	date_lundi_heuredpm
+		,CONCAT(HOUR(date_lundi_heurefpm) ,':' , MINUTE(date_lundi_heurefpm)) as	date_lundi_heurefpm	
+		 	
+		,CONCAT(HOUR(date_mardi_heuredam) ,':' , MINUTE(date_mardi_heuredam)) as	date_mardi_heuredam	
+		,CONCAT(HOUR(date_mardi_heurefam) ,':' , MINUTE(date_mardi_heurefam)) as	date_mardi_heurefam
+		,CONCAT(HOUR(date_mardi_heuredpm) ,':' , MINUTE(date_mardi_heuredpm)) as	date_mardi_heuredpm
+		,CONCAT(HOUR(date_mardi_heurefpm) ,':' , MINUTE(date_mardi_heurefpm)) as	date_mardi_heurefpm
+		
+		,CONCAT(HOUR(date_mercredi_heuredam) ,':' , MINUTE(date_mercredi_heuredam)) as	date_mercredi_heuredam	
+		,CONCAT(HOUR(date_mercredi_heurefam) ,':' , MINUTE(date_mercredi_heurefam)) as	date_mercredi_heurefam
+		,CONCAT(HOUR(date_mercredi_heuredpm) ,':' , MINUTE(date_mercredi_heuredpm)) as	date_mercredi_heuredpm
+		,CONCAT(HOUR(date_mercredi_heurefpm) ,':' , MINUTE(date_mercredi_heurefpm)) as	date_mercredi_heurefpm
+		
+		,CONCAT(HOUR(date_jeudi_heuredam) ,':' , MINUTE(date_jeudi_heuredam)) as	date_jeudi_heuredam	
+		,CONCAT(HOUR(date_jeudi_heurefam) ,':' , MINUTE(date_jeudi_heurefam)) as	date_jeudi_heurefam
+		,CONCAT(HOUR(date_jeudi_heuredpm) ,':' , MINUTE(date_jeudi_heuredpm)) as	date_jeudi_heuredpm
+		,CONCAT(HOUR(date_jeudi_heurefpm) ,':' , MINUTE(date_jeudi_heurefpm)) as	date_jeudi_heurefpm
+		
+		,CONCAT(HOUR(date_vendredi_heuredam) ,':' , MINUTE(date_vendredi_heuredam)) as	date_vendredi_heuredam	
+		,CONCAT(HOUR(date_vendredi_heurefam) ,':' , MINUTE(date_vendredi_heurefam)) as	date_vendredi_heurefam
+		,CONCAT(HOUR(date_vendredi_heuredpm) ,':' , MINUTE(date_vendredi_heuredpm)) as	date_vendredi_heuredpm
+		,CONCAT(HOUR(date_vendredi_heurefpm) ,':' , MINUTE(date_vendredi_heurefpm)) as	date_vendredi_heurefpm
+		
+		,CONCAT(HOUR(date_samedi_heuredam) ,':' , MINUTE(date_samedi_heuredam)) as	date_samedi_heuredam	
+		,CONCAT(HOUR(date_samedi_heurefam) ,':' , MINUTE(date_samedi_heurefam)) as	date_samedi_heurefam
+		,CONCAT(HOUR(date_samedi_heuredpm) ,':' , MINUTE(date_samedi_heuredpm)) as	date_samedi_heuredpm
+		,CONCAT(HOUR(date_samedi_heurefpm) ,':' , MINUTE(date_samedi_heurefpm)) as	date_samedi_heurefpm
+		
+		,CONCAT(HOUR(date_dimanche_heuredam) ,':' , MINUTE(date_dimanche_heuredam)) as	date_dimanche_heuredam	
+		,CONCAT(HOUR(date_dimanche_heurefam) ,':' , MINUTE(date_dimanche_heurefam)) as	date_dimanche_heurefam
+		,CONCAT(HOUR(date_dimanche_heuredpm) ,':' , MINUTE(date_dimanche_heuredpm)) as	date_dimanche_heuredpm
+		,CONCAT(HOUR(date_dimanche_heurefpm) ,':' , MINUTE(date_dimanche_heurefpm)) as	date_dimanche_heurefpm	
+		 
+		FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` 
+		WHERE fk_user=".$absence->fk_user." AND entity IN (0,".$conf->entity.")";  
+
+		$ATMdb->Execute($sql);
+		$TTravail = array();
+		$TTravailHeure= array();
+		while($ATMdb->Get_line()) {
+			foreach ($absence->TJour as $jour) {
+				foreach(array('am','pm') as $moment) {
+					$TTravail[$jour.$moment]=$ATMdb->Get_field($jour.$moment);
+					
+				}
+				foreach(array('dam','fam','dpm','fpm') as $moment) {
+					$TTravailHeure["date_".$jour."_heure".$moment]=$ATMdb->Get_field("date_".$jour."_heure".$moment);
+				}
+			}
+			$rowid=$ATMdb->Get_field($rowid);
+		}	
+					
+		//on traite les jours de début et de fin indépendemment des autres
+		if($date_debut==$date_fin){	//si les jours de début et de fin sont les mêmes
 			$ferie=0;
+			foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite paspour les jours, car déjà traité avant pour les jours 
+												//on le traite pour les heures
+	 			if(strtotime($jourFerie['date_jourOff'])==$date_debut){
+	 				$ferie=1;
+	 				
+	 				$jourSemaineFerie=$absence->jourSemaine($jourFerie['date_jourOff']);
+	 				//on traite le cas des heures
+	 				if($jourFerie['moment']=='matin'){
+	 					if($TTravail[$jourSemaineFerie.'pm']==1){
+	 						if($absence->dfMoment=='apresmidi'){
+ 								$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredpm"], $TTravailHeure["date_".$jourSemaineFerie."_heurefpm"]));
+								$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+	 						}
+	 						
+	 					}
+	 				}
+	 				if($jourFerie['moment']=='apresmidi'){
+	 					if($TTravail[$jourSemaineFerie.'am']==1){
+	 						if($absence->ddMoment=='matin'){
+		 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredam"], $TTravailHeure["date_".$jourSemaineFerie."_heurefam"]));
+								$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+							}
+	 					}
+	 				}
+	 				
+	 			}
+	 		}
+			if(!$ferie){
+				//echo "boucle1";
+				if($absence->dfMoment=='matin'){		// si la date de fin est le matin, il n'y a donc que le cas matin à traiter
+					if($TTravail[$jourDebutSem.'am']==0){
+						$duree-=0.5;
+					}else{
+						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredam"], $TTravailHeure["date_".$jourDebutSem."_heurefam"]));
+						$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);	
+
+					}
+				}else if($absence->ddMoment=='apresmidi'){		// si la date de debut est lapres midi, il n'y a donc que le cas pm à traiter
+					if($TTravail[$jourDebutSem.'pm']==0){
+						$duree-=0.5;
+					}
+					else{
+						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredpm"], $TTravailHeure["date_".$jourDebutSem."_heurefpm"]));
+						$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+					}
+				}else{	//sinon on traite les cas matin et apres midi
+					if($TTravail[$jourDebutSem.'am']==0){
+						$duree-=0.5;
+					}else{
+						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredam"], $TTravailHeure["date_".$jourDebutSem."_heurefam"]));
+						$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+					}
+					
+					if($TTravail[$jourDebutSem.'pm']==0){
+						$duree-=0.5;
+					}else{
+						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredpm"], $TTravailHeure["date_".$jourDebutSem."_heurefpm"]));
+						$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+					}
+				}
+				return $duree;
+			}
+			else return $duree;
+			
+		}else{	//les jours de début et de fin sont différents
+			//////////////////////////jour de début
+			$ferie=0;		
+			foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas pour les jours, car déjà traité avant
+												//on le traite pour les heures
+	 			if(strtotime($jourFerie['date_jourOff'])==$date_debut){
+	 				$ferie=1;
+					$jourSemaineFerie=$absence->jourSemaine($jourFerie['date_jourOff']);
+	 				//on traite le cas des heures
+	 				if($jourFerie['moment']=='matin'){
+	 					if($TTravail[$jourSemaineFerie.'pm']==1){
+	 							$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredpm"], $TTravailHeure["date_".$jourSemaineFerie."_heurefpm"]));
+								$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+	 					}
+	 				}
+	 				if($jourFerie['moment']=='apresmidi'){
+	 					if($TTravail[$jourSemaineFerie.'am']==1){
+	 						if($absence->ddMoment=='matin'){
+		 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredam"], $TTravailHeure["date_".$jourSemaineFerie."_heurefam"]));
+								$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+							}
+	 					}
+	 				}
+	 			}
+	 		}
+			if(!$ferie){
+				if($absence->ddMoment=='matin'){
+					if($TTravail[$jourDebutSem.'am']==0){
+						$duree-=0.5;
+					}
+					if($TTravail[$jourDebutSem.'pm']==0){
+						$duree-=0.5;
+					}
+				}else if($absence->ddMoment=='apresmidi'){
+					if($TTravail[$jourDebutSem.'pm']==0){
+						$duree-=0.5;
+					}
+				}
+			}
+			
+			///////////////////////////jour de fin
+			$ferie=0;		
+			foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
+	 			if(strtotime($jourFerie['date_jourOff'])==$date_fin){
+	 				$ferie=1;
+					$jourSemaineFerie=$absence->jourSemaine($jourFerie['date_jourOff']);
+	 				//on traite le cas des heures
+	 				if($jourFerie['moment']=='matin'){
+	 					if($TTravail[$jourSemaineFerie.'pm']==1){
+	 						if($absence->dfMoment=='apresmidi'){
+	 							$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredpm"], $TTravailHeure["date_".$jourSemaineFerie."_heurefpm"]));
+								$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+	 						}
+	 						
+	 					}
+	 				}
+	 				if($jourFerie['moment']=='apresmidi'){
+	 					if($TTravail[$jourSemaineFerie.'am']==1){
+		 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredam"], $TTravailHeure["date_".$jourSemaineFerie."_heurefam"]));
+								$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+	 					}
+	 				}
+	 			}
+	 		}
+			if(!$ferie){
+				if($absence->dfMoment=='matin'){
+					if($TTravail[$jourFinSem.'am']==0){
+						$duree-=0.5;
+					}
+				}else if($absence->dfMoment=='apresmidi'){
+					if($TTravail[$jourFinSem.'am']==0){
+						$duree-=0.5;
+					}
+					if($TTravail[$jourFinSem.'pm']==0){
+						$duree-=0.5;
+					}
+				}
+			}
+		}
+		
+		//pour chaque jour, du début de l'absence jusqu'à sa fin, on teste si l'employé travaille
+		$jourEnCours=strtotime('+1day',$date_debut);
+		$jourFin=$date_fin;
+		while($jourEnCours!=$jourFin){
+			$ferie=0;
+			//echo "boucle1";
+			
+			foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas en jours, car déjà traité avant. 
+												//on traite les heures
+	 			if(strtotime($jourFerie['date_jourOff'])==$jourEnCours){
+	 				$ferie=1;
+	 				//on traite le cas des heures
+	 				$jourSemaineFerie=$absence->jourSemaine($jourFerie['date_jourOff']);
+					if($jourFerie['moment']=='matin'){
+	 					if($TTravail[$jourSemaineFerie.'pm']==1){
+	 							$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredpm"], $TTravailHeure["date_".$jourSemaineFerie."_heurefpm"]));
+								$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);	
+	 					}
+	 				}
+	 				if($jourFerie['moment']=='apresmidi'){
+	 					if($TTravail[$jourSemaineFerie.'am']==1){
+		 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredam"], $TTravailHeure["date_".$jourSemaineFerie."_heurefam"]));
+								$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+	 					}
+	 				}
+	 			}
+	 		}
+			if(!$ferie){
+				$jourEnCoursSem=$absence->jourSemaine($jourEnCours);
+				//echo $jourEnCoursSem;
+				foreach ($absence->TJour as $jour) {
+					if($jour==$jourEnCoursSem){
+						foreach(array('am','pm') as $moment) {
+							if($TTravail[$jour.$moment]==0){
+								$duree-=0.5;
+							}
+						}
+					}
+				}
+			}
+			$jourEnCours=strtotime('+1day',$jourEnCours);
+			
+		}
+		
+		//////////////////////////////////////////////////////////////TRAITEMENT DES HEURES
+		
+		//pour chaque jour, du début de l'absence jusqu'à sa fin, on teste si l'employé travaille et on compte les heures
+		$jourEnCours=$date_debut;
+		$jourFin=$date_fin;
+		$dureeHeure=$absence->dureeHeure;
+		$cpt=0;
+		while($jourEnCours!=$jourFin){
+			$ferie=0;
+			//echo "boucle1";
+			
 			foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
 	 			if(strtotime($jourFerie['date_jourOff'])==$jourEnCours){
 	 				$ferie=1;
@@ -768,240 +758,285 @@ class TRH_Absence extends TObjetStd {
 				foreach ($absence->TJour as $jour) {
 					if($jour==$jourEnCoursSem){
 						foreach(array('am','pm') as $moment) {
-							if($TTravail[$jour.$moment]==0){	
+							if($TTravail[$jour.$moment]==0){
 							}
 							else{
-								if($moment=="am"){
-									if($absence->dfMoment=="matin"){
-										$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
-									}else if($absence->dfMoment=="apresmidi"){
-										$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+								if($cpt==0){   //on traite le premier jour de l'absence
+									if($moment=="am"){
+										if($absence->ddMoment=="matin"){
+											$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+										}else if($absence->ddMoment=="apresmidi"){
+										}
 									}
-								}
-								else if($moment=="pm"){
-									if($absence->dfMoment=="apresmidi"){
-										$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
-									}else if($absence->dfMoment=="matin"){
+									else if($moment=="pm"){
+										if($absence->ddMoment=="apresmidi"){
+											$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+										}else if($absence->ddMoment=="matin"){
+											$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+										}
 									}
+									
+								}else{
+									$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
 								}
+								
 							}
 						}
 					}
 					
 				}
 			}
-			
-			$absence->dureeHeure=$dureeHeure;
-			$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
-		    return $duree;
+			$jourEnCours=$jourEnCours+3600*24;
+			$cpt++;
 		}
 		
-		//permet d'additionner deux heures ensemble
-		function additionnerHeure($dureeTotale, $dureeDiff){
-			list($heureT, $minuteT) = explode(':', $dureeTotale);
-			//echo "heureT : ".$heureT." minutesT : ".$minuteT;
-			list($heureD, $minuteD) = explode(':', $dureeDiff);
-			
-			$heureT=$heureT+$heureD;
-			$minuteT=$minuteT+$minuteD;
-			
-			while($minuteT>60){
-				$minuteT-=60;
-				$heureT+=1;
-			}
-			
-			return $heureT.":".$minuteT;
-		}
-		
-		
-		
-		function horaireMinuteEnCentieme($horaire){
-			list($heure, $minute) = explode(':', $horaire);	
-			$horaireCentieme=$heure+$minute/60;
-			return $horaireCentieme;
-		}
-		
-		//renvoie le jour de la semaine correspondant à la date passée en paramètre
-		function jourSemaine($phpDate){
-			$timestamp = strtotime(date('Y-m-d', $phpDate));
-
-			// affichage du jour de la semaine
-			return $this->Tjoursem[date("w",$timestamp)];
-		}
-		
-		
-		//retourne la date au format "Y-m-d H:i:s"
-		function php2Date($phpDate){
-		    return date("Y-m-d H:i:s", $phpDate);
-		}
-		
-		
-		//retourne la date au format "d/m/Y"
-		function php2dmy($phpDate){
-		    return date("d/m/Y", $phpDate);
-		}
-		
-		
-		//recrédite les heures au compteur lors de la suppression d'une absence 
-		function recrediterHeure(&$ATMdb){
-			global $conf, $user;
-			$this->entity = $conf->entity;
-			
-			if($this->etat!='Refusee'){
-				switch($this->type){
-					case "rttcumule" : 
-						//on récupère la méthode d'acquisition des jours de l'utilisateur en cours : si par mois ou annuel
-						$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$user->id;
-						$ATMdb->Execute($sqlMethode);
-						while($ATMdb->Get_line()) {
-							$methode= $ATMdb->Get_field('rttTypeAcquisition');
+		///////////////////////////////////////////////TRAITEMENT DU DERNIER JOUR POUR LES HEURES
+		$ferie=0;
+		foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas, car déjà traité avant. 
+ 			if(strtotime($jourFerie['date_jourOff'])==$jourEnCours){
+ 				$ferie=1;
+ 			}
+ 		}
+		if(!$ferie){
+			$jourEnCoursSem=$absence->jourSemaine($jourEnCours);
+			//echo $jourEnCoursSem;
+			foreach ($absence->TJour as $jour) {
+				if($jour==$jourEnCoursSem){
+					foreach(array('am','pm') as $moment) {
+						if($TTravail[$jour.$moment]==0){	
 						}
-						if($methode=="Annuel"){
-							$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule+".$this->duree."  where fk_user=".$user->id;
-							$ATMdb->Execute($sqlRecredit);
-						}else if ($methode =="Mensuel"){
-							$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttPris=rttPris-".$this->duree.",rttAcquisMensuel=rttAcquisMensuel+".$this->duree."  where fk_user=".$user->id;
-							$ATMdb->Execute($sqlRecredit);
+						else{
+							if($moment=="am"){
+								if($absence->dfMoment=="matin"){
+									$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+								}else if($absence->dfMoment=="apresmidi"){
+									$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+								}
+							}
+							else if($moment=="pm"){
+								if($absence->dfMoment=="apresmidi"){
+									$dureeHeure=$absence->additionnerHeure($dureeHeure,$absence->difheure($TTravailHeure["date_".$jour."_heured".$moment], $TTravailHeure["date_".$jour."_heuref".$moment]));
+								}else if($absence->dfMoment=="matin"){
+								}
+							}
 						}
-						
-					break;
-					case "rttnoncumule" : 
-						$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$user->id;
-						$ATMdb->Execute($sqlMethode);
-						while($ATMdb->Get_line()) {
-							$methode= $ATMdb->Get_field('rttTypeAcquisition');
-						}
-						if($methode=="Annuel"){
-							$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule+".$this->duree."  where fk_user=".$user->id;
-							$ATMdb->Execute($sqlRecredit);
-						}else if ($methode =="Mensuel"){
-							$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttPris=rttPris-".$this->duree.",rttAcquisMensuel=rttAcquisMensuel+".$this->duree."  where fk_user=".$user->id;
-							$ATMdb->Execute($sqlRecredit);
-						}
-					break;
-					case 'conges':
-						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
-						$ATMdb->Execute($sqlRecredit);
-					break;
-				}
-			}
-		}
-
-		
-		
-		//donne la différence entre 2 heures (respecter l'ordre début et fin)
-		function difheure($heuredeb,$heurefin)
-		{
-			$hd=explode(":",$heuredeb);
-			$hf=explode(":",$heurefin);
-			$hd[0]=(int)($hd[0]);$hd[1]=(int)($hd[1]);$hd[2]=(int)($hd[2]);
-			$hf[0]=(int)($hf[0]);$hf[1]=(int)($hf[1]);$hf[2]=(int)($hf[2]);
-			if($hf[2]<$hd[2]){$hf[1]=$hf[1]-1;$hf[2]=$hf[2]+60;}
-			if($hf[1]<$hd[1]){$hf[0]=$hf[0]-1;$hf[1]=$hf[1]+60;}
-			if($hf[0]<$hd[0]){$hf[0]=$hf[0]+24;}
-			return (($hf[0]-$hd[0]).":".($hf[1]-$hd[1]).":".($hf[2]-$hd[2]));
-		}
-
-		
-		function dureeAbsenceRecevable(){
-			$avertissement=0;
-			foreach($this->TRegle as $TR){
-				if($TR['typeAbsence']==$this->type){
-					if($this->duree>$TR['nbJourCumulable']){
-						if($TR['restrictif']==1){
-								 return 0;
-						}
-						else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
 					}
 				}
+				
 			}
-			if($avertissement==0){
-				return 1;
-			}
-			return $avertissement;
 		}
 		
-		function isWorkingDayNext(&$ATMdb, $dateTest){
-
-			$dateNext=strtotime('+1day',$dateTest); // +3600*24; // AA cf mon autre comm, quand l'horloge change d'heure ceci fonctionne mal
-			//$jourNext=$this->jourSemaine($dateNext);
-			
-			//on teste si c'est un jour férié
-			$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
-			.$this->php2Date($this->date_debut)."' and '".$dateNext."'"; 
-			
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				if($this->php2Date($dateNext)==$ATMdb->Get_field('date_jourOff')&&$ATMdb->Get_field('date_jourOff')!='apresmidi'){
-					return 0;
-				}
-			}
-			
-			//on teste si le jour suivant est un rtt cumulé ou un congés ce qui est interdit
-			$sql="SELECT rowid, date_debut, dfMoment FROM ".MAIN_DB_PREFIX."rh_absence 
-			WHERE date_debut LIKE '".$this->php2Date($dateNext)."'
-			AND (type LIKE 'rttcumule' OR type LIKE 'conges') 
-			AND etat <> 'refusee'"; 
-			$ATMdb->Execute($sql);
-
-			while($ATMdb->Get_line()) {
-				//echo $this->php2Date($dateNext);
-				if($this->php2Date($dateNext)==$ATMdb->Get_field('date_debut')&&$ATMdb->Get_field('date_debut')!='apresmidi'){
-					return 0;
-				}
-			}
-			return 1;
+		$absence->dureeHeure=$dureeHeure;
+		$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+	    return $duree;
+	}
+		
+	//permet d'additionner deux heures ensemble
+	function additionnerHeure($dureeTotale, $dureeDiff){
+		list($heureT, $minuteT) = explode(':', $dureeTotale);
+		//echo "heureT : ".$heureT." minutesT : ".$minuteT;
+		list($heureD, $minuteD) = explode(':', $dureeDiff);
+		
+		$heureT=$heureT+$heureD;
+		$minuteT=$minuteT+$minuteD;
+		
+		while($minuteT>60){
+			$minuteT-=60;
+			$heureT+=1;
 		}
 		
-		function isWorkingDayPrevious(&$ATMdb, $dateTest){
+		return $heureT.":".$minuteT;
+	}
+	
+	
+	
+	function horaireMinuteEnCentieme($horaire){
+		list($heure, $minute) = explode(':', $horaire);	
+		$horaireCentieme=$heure+$minute/60;
+		return $horaireCentieme;
+	}
+	
+	//renvoie le jour de la semaine correspondant à la date passée en paramètre
+	function jourSemaine($phpDate){
+		$timestamp = strtotime(date('Y-m-d', $phpDate));
 
-			$datePrec=$dateTest-3600*24;
-			//$jourPrec=$this->jourSemaine($datePrec);
-			
-			//on teste si c'est un jour férié
-			$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
-			.$jourPrec."' and '". $this->php2Date($this->date_debut)."'"; 
-			
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				if($this->php2Date($dateTest)==$ATMdb->Get_field('date_jourOff')){
-					return 0;
+		// affichage du jour de la semaine
+		return $this->Tjoursem[date("w",$timestamp)];
+	}
+	
+	
+	//retourne la date au format "Y-m-d H:i:s"
+	function php2Date($phpDate){
+	    return date("Y-m-d H:i:s", $phpDate);
+	}
+	
+	
+	//retourne la date au format "d/m/Y"
+	function php2dmy($phpDate){
+	    return date("d/m/Y", $phpDate);
+	}
+	
+	
+	//recrédite les heures au compteur lors de la suppression d'une absence 
+	function recrediterHeure(&$ATMdb){
+		global $conf, $user;
+		$this->entity = $conf->entity;
+		
+		if($this->etat!='Refusee'){
+			switch($this->type){
+				case "rttcumule" : 
+					//on récupère la méthode d'acquisition des jours de l'utilisateur en cours : si par mois ou annuel
+					$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$user->id;
+					$ATMdb->Execute($sqlMethode);
+					while($ATMdb->Get_line()) {
+						$methode= $ATMdb->Get_field('rttTypeAcquisition');
+					}
+					if($methode=="Annuel"){
+						$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelCumule=rttAcquisAnnuelCumule+".$this->duree."  where fk_user=".$user->id;
+						$ATMdb->Execute($sqlRecredit);
+					}else if ($methode =="Mensuel"){
+						$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttPris=rttPris-".$this->duree.",rttAcquisMensuel=rttAcquisMensuel+".$this->duree."  where fk_user=".$user->id;
+						$ATMdb->Execute($sqlRecredit);
+					}
+					
+				break;
+				case "rttnoncumule" : 
+					$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$user->id;
+					$ATMdb->Execute($sqlMethode);
+					while($ATMdb->Get_line()) {
+						$methode= $ATMdb->Get_field('rttTypeAcquisition');
+					}
+					if($methode=="Annuel"){
+						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttPris=rttPris-".$this->duree.",rttAcquisAnnuelNonCumule=rttAcquisAnnuelNonCumule+".$this->duree."  where fk_user=".$user->id;
+						$ATMdb->Execute($sqlRecredit);
+					}else if ($methode =="Mensuel"){
+						$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttPris=rttPris-".$this->duree.",rttAcquisMensuel=rttAcquisMensuel+".$this->duree."  where fk_user=".$user->id;
+						$ATMdb->Execute($sqlRecredit);
+					}
+				break;
+				case 'conges':
+					$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1-".$this->duree."  where fk_user=".$user->id;
+					$ATMdb->Execute($sqlRecredit);
+				break;
+			}
+		}
+	}
+
+	
+	
+	//donne la différence entre 2 heures (respecter l'ordre début et fin)
+	function difheure($heuredeb,$heurefin)
+	{
+		$hd=explode(":",$heuredeb);
+		$hf=explode(":",$heurefin);
+		$hd[0]=(int)($hd[0]);$hd[1]=(int)($hd[1]);$hd[2]=(int)($hd[2]);
+		$hf[0]=(int)($hf[0]);$hf[1]=(int)($hf[1]);$hf[2]=(int)($hf[2]);
+		if($hf[2]<$hd[2]){$hf[1]=$hf[1]-1;$hf[2]=$hf[2]+60;}
+		if($hf[1]<$hd[1]){$hf[0]=$hf[0]-1;$hf[1]=$hf[1]+60;}
+		if($hf[0]<$hd[0]){$hf[0]=$hf[0]+24;}
+		return (($hf[0]-$hd[0]).":".($hf[1]-$hd[1]).":".($hf[2]-$hd[2]));
+	}
+
+	
+	function dureeAbsenceRecevable(){
+		$avertissement=0;
+		foreach($this->TRegle as $TR){
+			if($TR['typeAbsence']==$this->type){
+				if($this->duree>$TR['nbJourCumulable']){
+					if($TR['restrictif']==1){
+							 return 0;
+					}
+					else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
 				}
 			}
-			
-			//on teste si le jour précédent est un rtt cumulé ou un congés ce qui est interdit
-			$sql="SELECT rowid, date_debut, dfMoment FROM ".MAIN_DB_PREFIX."rh_absence 
-			WHERE date_fin LIKE '".$this->php2Date($datePrec)."'
-			AND (type LIKE 'rttcumule' OR type LIKE 'conges')
-			AND etat <> 'refusee'"; 
-			$ATMdb->Execute($sql);
-
-			while($ATMdb->Get_line()) {
-				//echo $this->php2Date($datePrec);
-				if($this->php2Date($datePrec)==$ATMdb->Get_field('date_fin')&&$ATMdb->Get_field('date_fin')!='matin'){
-					return 0;
-				}
-			}
+		}
+		if($avertissement==0){
 			return 1;
 		}
+		return $avertissement;
+	}
+	
+	function isWorkingDayNext(&$ATMdb, $dateTest){
 
-		function rttnoncumuleDuree2mois(&$ATMdb, $dateDebut){
-			
-			//on calcule 2 mois entre la date de début de la demande d'absence, et la prise d'un rtt non cumulé
-			$dateLimite=$dateDebut-3600*24*58;
-			
-			$sql="SELECT SUM(duree) as 'somme' FROM ".MAIN_DB_PREFIX."rh_absence 
-			WHERE date_debut between '".$this->php2Date($dateLimite)."' AND '".$this->php2Date($dateDebut)."'
-			AND type LIKE 'rttnoncumule' AND etat <> 'refusee'"; 
-			$ATMdb->Execute($sql);
-			
-			while($ATMdb->Get_line()) {
-				if($ATMdb->Get_field('somme')>=1){
-					return 0;
-				}
+		$dateNext=strtotime('+1day',$dateTest); // +3600*24; // AA cf mon autre comm, quand l'horloge change d'heure ceci fonctionne mal
+		//$jourNext=$this->jourSemaine($dateNext);
+		
+		//on teste si c'est un jour férié
+		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
+		.$this->php2Date($this->date_debut)."' and '".$dateNext."'"; 
+		
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			if($this->php2Date($dateNext)==$ATMdb->Get_field('date_jourOff')&&$ATMdb->Get_field('date_jourOff')!='apresmidi'){
+				return 0;
 			}
-			return 1;
 		}
+		
+		//on teste si le jour suivant est un rtt cumulé ou un congés ce qui est interdit
+		$sql="SELECT rowid, date_debut, dfMoment FROM ".MAIN_DB_PREFIX."rh_absence 
+		WHERE date_debut LIKE '".$this->php2Date($dateNext)."'
+		AND (type LIKE 'rttcumule' OR type LIKE 'conges') 
+		AND etat <> 'refusee'"; 
+		$ATMdb->Execute($sql);
+
+		while($ATMdb->Get_line()) {
+			//echo $this->php2Date($dateNext);
+			if($this->php2Date($dateNext)==$ATMdb->Get_field('date_debut')&&$ATMdb->Get_field('date_debut')!='apresmidi'){
+				return 0;
+			}
+		}
+		return 1;
+	}
+	
+	function isWorkingDayPrevious(&$ATMdb, $dateTest){
+
+		$datePrec=$dateTest-3600*24;
+		//$jourPrec=$this->jourSemaine($datePrec);
+		
+		//on teste si c'est un jour férié
+		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
+		.$jourPrec."' and '". $this->php2Date($this->date_debut)."'"; 
+		
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			if($this->php2Date($dateTest)==$ATMdb->Get_field('date_jourOff')){
+				return 0;
+			}
+		}
+		
+		//on teste si le jour précédent est un rtt cumulé ou un congés ce qui est interdit
+		$sql="SELECT rowid, date_debut, dfMoment FROM ".MAIN_DB_PREFIX."rh_absence 
+		WHERE date_fin LIKE '".$this->php2Date($datePrec)."'
+		AND (type LIKE 'rttcumule' OR type LIKE 'conges')
+		AND etat <> 'refusee'"; 
+		$ATMdb->Execute($sql);
+
+		while($ATMdb->Get_line()) {
+			//echo $this->php2Date($datePrec);
+			if($this->php2Date($datePrec)==$ATMdb->Get_field('date_fin')&&$ATMdb->Get_field('date_fin')!='matin'){
+				return 0;
+			}
+		}
+		return 1;
+	}
+
+	function rttnoncumuleDuree2mois(&$ATMdb, $dateDebut){
+		
+		//on calcule 2 mois entre la date de début de la demande d'absence, et la prise d'un rtt non cumulé
+		$dateLimite=$dateDebut-3600*24*58;
+		
+		$sql="SELECT SUM(duree) as 'somme' FROM ".MAIN_DB_PREFIX."rh_absence 
+		WHERE date_debut between '".$this->php2Date($dateLimite)."' AND '".$this->php2Date($dateDebut)."'
+		AND type LIKE 'rttnoncumule' AND etat <> 'refusee'"; 
+		$ATMdb->Execute($sql);
+		
+		while($ATMdb->Get_line()) {
+			if($ATMdb->Get_field('somme')>=1){
+				return 0;
+			}
+		}
+		return 1;
+	}
 		
 		
 		
@@ -1017,7 +1052,7 @@ class TRH_Absence extends TObjetStd {
 			else if($idGroupeRecherche!=0&&$idUserRecherche==0){ //on recherche les absences d'un groupe
 				$sql=$this->rechercheAbsenceGroupe($ATMdb, $idGroupeRecherche, $date_debut, $date_fin);
 			}
-			else if($idUserRecherche!=0){ //on recherche les absences d'un utilisateur
+			else{ //if($idUserRecherche!=0){ //on recherche les absences d'un utilisateur
 				$sql=$this->rechercheAbsenceUser($ATMdb,$idUserRecherche, $date_debut, $date_fin);
 			}
 			return $sql;
@@ -1034,7 +1069,9 @@ class TRH_Absence extends TObjetStd {
 				WHERE a.fk_user=u.rowid 
 				AND  g.fk_user=u.rowid
 				AND g.fk_usergroup=".$idGroupeRecherche."
-				AND a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
+				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
+				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."')
+				
 				AND a.entity IN (0,".$conf->entity.")";
 			
 			return $sql;
@@ -1054,7 +1091,8 @@ class TRH_Absence extends TObjetStd {
 						FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
 						WHERE a.fk_user=u.rowid AND g.fk_user=u.rowid 
 						AND g.fk_usergroup=".$idGroupeRecherche." 
-						AND a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
+						AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
+						OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."')
 						AND a.entity IN (0,".$conf->entity."))";
 			
 			return $sql;
@@ -1065,13 +1103,18 @@ class TRH_Absence extends TObjetStd {
 			global $conf;
 			
 			//on recherche le nom de la compétence désirée
-			$sql="SELECT a.rowid as 'ID', u.name, u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, 
+			$sql="SELECT a.rowid as 'ID', u.name, u.firstname, 
+				DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 				WHERE a.fk_user=u.rowid 
-				AND a.fk_user=".$idUserRecherche."
-				AND a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
+				
+				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
+				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."')
 				AND a.entity IN (0,".$conf->entity.")";
+			if($idUserRecherche!=0){
+				$sql.="AND a.fk_user=".$idUserRecherche;
+			}
 				
 			
 			return $sql;
