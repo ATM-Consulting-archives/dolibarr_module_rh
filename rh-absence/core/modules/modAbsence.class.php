@@ -390,7 +390,7 @@ class modAbsence extends DolibarrModules
 		        	'titre'=> $langs->trans('Administration compteur'),
 		        	'mainmenu'=> 'absence',
 		        	'leftmenu'=> 'admin',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/adminCompteur.php',
+					'url'=> '/absence/compteur.php?action=compteurAdmin',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 105,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.

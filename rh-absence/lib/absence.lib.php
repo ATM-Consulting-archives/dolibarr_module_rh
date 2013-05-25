@@ -19,14 +19,14 @@ function absencePrepareHead(&$obj, $type='absence') {
 	}
 }
 
-function compteurPrepareHead(&$obj, $type='absence') {
+function compteurPrepareHead(&$obj, $type='absence', $nomUser, $prenomUser) {
 	global $user;
 	switch ($type) {
 		
 		case 'compteur':
 			//eif($user->rights->absence->myactions->modifierParamGlobalConges=="1"){
 			return array(
-			array(DOL_URL_ROOT_ALT.'/absence/compteur.php?action=view', 'Compteur de '.$user->lastname,'compteur')
+			array(DOL_URL_ROOT_ALT.'/absence/compteur.php?action=view', 'Compteur de '.$nomUser." ".$prenomUser,'compteur')
 			//,array(DOL_URL_ROOT_ALT.'/absence/adminCompteur.php?action=view', 'Administration générale congés','adminconges')
 			);
 			break;

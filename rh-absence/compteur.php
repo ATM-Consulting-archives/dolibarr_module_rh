@@ -15,7 +15,9 @@
 			case 'new':
 				_fiche($ATMdb, $compteur,'edit');
 				break;	
-				
+			case 'compteurAdmin':
+				_listeAdmin($ATMdb, $compteur);
+				break;
 			case 'edit'	:
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $compteur,'edit');
@@ -131,6 +133,78 @@ function _liste(&$ATMdb, &$compteur) {
 	llxFooter();
 }	
 	
+	
+	
+function _listeAdmin(&$ATMdb, &$compteur) {
+	global $langs, $conf, $db, $user;	
+	llxHeader('','Liste des compteurs de congés des collaborateurs');
+	getStandartJS();
+	print dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Administration des congés');
+	$r = new TSSRenderControler($compteur);
+	$sql="SELECT  r.rowid as 'ID', firstname, name, '' as 'Compteur',
+		r.date_cre as 'DateCre', CAST(r.acquisExerciceN as DECIMAL(16,1)) as 'Congés acquis N', 
+		CAST(r.acquisAncienneteN as DECIMAL(16,1)) as 'Congés Ancienneté', 
+		CAST(r.acquisExerciceNM1 as DECIMAL(16,1)) as 'Conges Acquis N-1', 
+		CAST(r.congesPrisNM1 as DECIMAL(16,1)) as 'Conges Pris N-1',
+		CAST(r.rttPris as DECIMAL(16,1))  as 'RttPris'
+		FROM ".MAIN_DB_PREFIX."rh_compteur as r, ".MAIN_DB_PREFIX."user as c 
+		WHERE r.entity IN (0,".$conf->entity.") AND r.fk_user=c.rowid";
+	
+	
+	$TOrder = array('name'=>'ASC');
+	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
+	echo $form->hidden('action', 'compteurAdmin');				
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
+	//print $page;
+	$r->liste($ATMdb, $sql, array(
+		'limit'=>array(
+			'page'=>$page
+			,'nbLine'=>'30'
+		)
+		,'link'=>array(
+			'Compteur'=>'<a href="?id=@ID@&action=view">Compteur</a>'
+			,'ID'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			
+		)
+		,'translate'=>array()
+		,'hide'=>array('DateCre','ID')
+		,'type'=>array()
+		,'liste'=>array(
+			'titre'=>'Liste des compteurs de congés des collaborateurs'
+			,'image'=>img_picto('','title.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
+			,'picto_suivant'=>img_picto('','next.png', '', 0)
+			,'noheader'=> (int)isset($_REQUEST['socid'])
+			,'messageNothing'=>"Il n'y a aucun jour acquis à afficher"
+			,'order_down'=>img_picto('','1downarrow.png', '', 0)
+			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			
+		)
+		,'title'=>array(
+			'firstname'=>'Prénom'
+			,'name'=>'Nom'
+		)
+		,'search'=>array(
+			'firstname'=>true
+			,'name'=>true
+		)
+		,'eval'=>array(
+			'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+		)
+		,'orderBy'=>$TOrder
+
+		
+	));
+	
+	$form->end();
+	llxFooter();
+}	
+	
+	
 function _fiche(&$ATMdb, &$compteur, $mode) {
 	global $db,$user,$conf;
 	llxHeader('');
@@ -142,7 +216,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	//echo $form->hidden('fk_user', $_REQUEST['id']);
 	
 	//compteur de l'user courant : 
-	$sql="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$user->id;
+	$sql="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$compteur->fk_user;
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		$compteurUserCourant=$ATMdb->Get_field('rowid');
@@ -160,6 +234,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	}
 	
 	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$userCompteurActuel." AND entity IN (0,".$conf->entity.")";
+
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
@@ -245,7 +320,6 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	}
 	
 	
-	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/compteur.tpl.php'
 		,array(
@@ -317,7 +391,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 			
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Absence')
+				,'head'=>dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur', htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1'), htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'))  , 'compteur', 'Absence')
 			)
 		)	
 		
@@ -332,5 +406,4 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 }
 
 
-	
 	
