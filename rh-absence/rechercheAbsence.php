@@ -11,13 +11,16 @@
 	
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
-			
+			case 'recherche':
+				_listeResult($ATMdb,$absence);
+				break;
 			case 'view':
 				_fiche($ATMdb,$absence, 'edit');
 				break;
 			case 'edit':
 				
 				break;
+			
 		}
 	}
 	else if(isset($_REQUEST['valider'])){
@@ -114,6 +117,13 @@ function _listeResult(&$ATMdb, &$absence) {
 	
 	$r = new TSSRenderControler($absence);
 	
+	
+	if(isset($_REQUEST['groupe'])) $idGroupeRecherche=$_REQUEST['idGroupeRecherche'];
+	if(isset($_REQUEST['user'])) $idUserRecherche=$_REQUEST['idUserRecherche'];
+	if(isset($_REQUEST['horsConges'])) $horsConges=$_REQUEST['horsConges'];
+	if(isset($_REQUEST['date_debut'])) $date_debut=$_REQUEST['date_debut'];
+	if(isset($_REQUEST['date_fin'])) $date_fin=$_REQUEST['date_fin'];
+
 	$idGroupeRecherche=$_REQUEST['groupe'];
 	$idUserRecherche=$_REQUEST['user'];
 	
@@ -177,6 +187,7 @@ function _listeResult(&$ATMdb, &$absence) {
 	</div><br/><br/>
 	<?
 
+	
 	//on va obtenir la requête correspondant à la recherche désirée
 	$sql=$absence->requeteRechercheAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, $horsConges, $_REQUEST['date_debut'], $_REQUEST['date_fin']);
 	
@@ -187,6 +198,13 @@ function _listeResult(&$ATMdb, &$absence) {
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');		
+	echo $form->hidden('action','recherche');
+	echo $form->hidden('groupe',$idGroupeRecherche);
+	echo $form->hidden('user',$idUserRecherche);
+	echo $form->hidden('horsConges',$horsConges);
+	echo $form->hidden('date_debut',$_REQUEST['date_debut']);
+	echo $form->hidden('date_fin',$_REQUEST['date_fin']);
+	
 
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
@@ -225,7 +243,7 @@ function _listeResult(&$ATMdb, &$absence) {
 			,'libelleEtat'=>'Statut demande'
 		)
 		,'search'=>array(
-			
+			'login'=>true
 		)
 		,'eval'=>array(
 				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'

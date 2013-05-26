@@ -101,8 +101,7 @@ class TRH_Compteur extends TObjetStd {
 		$this->rttAcquisAnnuelNonCumuleInit=7;
 		$this->rttCumulePris=0;
 		$this->rttNonCumulePris=0;
-
-		$this->rttMetier='cadre';
+		$this->rttMetier='noncadre37cpro';
 		$this->rttannee=$annee;
 		$this->nombreCongesAcquisMensuel=2.08;
 		$this->date_rttCloture=strtotime('2013-03-01 00:00:00'); // AA Ne devrait pas être en dur mais en config
@@ -113,7 +112,9 @@ class TRH_Compteur extends TObjetStd {
 
 	//	fonction permettant le chargement du compteur pour un utilisateur si celui-ci existe	
 	function load_by_fkuser(&$ATMdb, $fk_user){
-		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur WHERE fk_user='".$fk_user."'";
+		global $conf;
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur 
+		WHERE fk_user='".$fk_user."' AND entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
 		
 		if ($ATMdb->Get_line()) {
@@ -173,7 +174,7 @@ class TRH_Absence extends TObjetStd {
 		//combo box pour le type d'absence utilisateur
 		$this->TTypeAbsenceUser=array();
 		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-		WHERE entity IN (0,".$conf->entity.") AND admin=0";
+				WHERE entity IN (0,".$conf->entity.") AND admin=0";
 		$ATMdb->Execute($sql);
 
 		while($ATMdb->Get_line()) {
@@ -194,7 +195,8 @@ class TRH_Absence extends TObjetStd {
 		global $conf;
 		$TUser=array();
 		$TUser[0] = 'Tous';	
-		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity IN (0,".$conf->entity.")";
+		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` 
+						WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlReqUser);
 
 		while($ATMdb->Get_line()) {
@@ -209,9 +211,11 @@ class TRH_Absence extends TObjetStd {
 	function recuperationRegleUser(&$ATMdb, $fk_user){
 		global $conf;
 		//on sélectionne les règles relatives à un utilisateurs
-		$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, r.fk_user, r.fk_usergroup, r.choixApplication
+		$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, 
+		r.fk_user, r.fk_usergroup, r.choixApplication
 		FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
-		WHERE( r.fk_user=u.rowid AND r.fk_user=".$fk_user." AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
+		WHERE( r.fk_user=u.rowid AND r.fk_user=".$fk_user." 
+		AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
 		OR (r.choixApplication Like 'all' AND u.rowid=".$fk_user." and u.rowid=g.fk_user) 
 		OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$fk_user.") 
 		AND r.entity IN (0,".$conf->entity.")
@@ -304,7 +308,8 @@ class TRH_Absence extends TObjetStd {
 		
 		
 		//on récupère la méthode d'acquisition des jours de l'utilisateur en cours : si par mois ou annuel
-		$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$userConcerne;
+		$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` 
+		WHERE fk_user=".$userConcerne. " AND entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sqlMethode);
 		while($ATMdb->Get_line()) {
 			$methode= $ATMdb->Get_field('rttTypeAcquisition');
@@ -313,14 +318,18 @@ class TRH_Absence extends TObjetStd {
 		///////décompte des congés
 		if($this->type=="rttcumule"){//&&$methode=="Annuel"){
 			
-			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttCumulePris=0+rttCumulePris+".$dureeAbsenceCourante."  WHERE fk_user=".$userConcerne;
+			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
+				SET rttCumulePris=0+rttCumulePris+".$dureeAbsenceCourante."  
+				WHERE fk_user=".$userConcerne." AND entity IN (0,".$conf->entity.")";
 			
 			$db->Execute($sqlDecompte);
 			$this->rttCumulePris=$this->rttCumulePris+$dureeAbsenceCourante;
 			
 		}
 		else if($this->type=="rttnoncumule"){//&&$methode=="Annuel"){
-			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET rttNonCumulePris=rttNonCumulePris+".$dureeAbsenceCourante." where fk_user=".$userConcerne;
+			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
+				SET rttNonCumulePris=rttNonCumulePris+".$dureeAbsenceCourante." 
+				WHERE fk_user=".$userConcerne." AND entity IN (0,".$conf->entity.")";
 			$db->Execute($sqlDecompte);
 			$this->rttNonCumulePris=$this->rttNonCumulePris-$dureeAbsenceCourante;
 		}
@@ -332,7 +341,9 @@ class TRH_Absence extends TObjetStd {
 			
 		}*/
 		else if($this->type=="conges"){	//autre que RTT : décompte les congés
-			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." where fk_user=".$userConcerne;
+			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
+				SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." 
+				WHERE fk_user=".$userConcerne." AND entity IN (0,".$conf->entity.")";;
 			$db->Execute($sqlDecompte);
 			$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 		}
@@ -374,7 +385,8 @@ class TRH_Absence extends TObjetStd {
 		$dateFinAbs=$absence->php2Date($date_fin);
 		
 		//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
-		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
+		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` 
+		WHERE date_jourOff between '"
 		.$dateDebutAbs."' and '". $dateFinAbs."'"; 
 		//echo $sql;
 		$ATMdb->Execute($sql);
@@ -1071,8 +1083,11 @@ class TRH_Absence extends TObjetStd {
 			//on recherche le nom de la compétence désirée
 			$sql="SELECT DISTINCT g.fk_user,  u.login, u.name, u.firstname
 			FROM ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."user as u
-			WHERE g.fk_usergroup =".$idGroupeRecherche."   AND u.rowid=g.fk_user
-			AND u.entity IN (0,".$conf->entity.")
+			WHERE u.rowid=g.fk_user";
+			if($idGroupeRecherche!=0){
+					$sql.=" AND g.fk_usergroup=".$idGroupeRecherche;
+			}
+			$sql.=" AND u.entity IN (0,".$conf->entity.")
 			AND g.fk_user NOT IN (
 						SELECT a.fk_user 
 						FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
@@ -1210,18 +1225,24 @@ class TRH_EmploiTemps extends TObjetStd {
 		$this->dimancheam=0;
 		
 		foreach ($this->TJour as $jour) {
-			if($jour!='samedi' && $jour!='dimanche') {
-				 $this->{'date_'.$jour."_heuredam"}= strtotime('9:00');
-				 $this->{'date_'.$jour."_heurefam"}=strtotime('12:15');
+			if($jour!='samedi' && $jour!='dimanche'&&$jour!='vendredi') {
+				 $this->{'date_'.$jour."_heuredam"}= strtotime('8:15');
+				 $this->{'date_'.$jour."_heurefam"}=strtotime('12:00');
 				 $this->{'date_'.$jour."_heuredpm"}=strtotime('14:00');
-				 $this->{'date_'.$jour."_heurefpm"}=strtotime('18:00');
+				 $this->{'date_'.$jour."_heurefpm"}=strtotime('17:45');
 			}
-				else {
-					$this->{'date_'.$jour."_heuredam"}=$this->{'date_'.$jour."_heurefam"}=$this->{'date_'.$jour."_heuredpm"}=$this->{'date_'.$jour."_heurefpm"}= strtotime('0:00');
-				}
+			elseif($jour=='vendredi'){
+				 $this->{'date_'.$jour."_heuredam"}= strtotime('8:15');
+				 $this->{'date_'.$jour."_heurefam"}=strtotime('12:00');
+				 $this->{'date_'.$jour."_heuredpm"}=strtotime('14:00');
+				 $this->{'date_'.$jour."_heurefpm"}=strtotime('17:15');
+			}
+			else{
+				$this->{'date_'.$jour."_heuredam"}=$this->{'date_'.$jour."_heurefam"}=$this->{'date_'.$jour."_heuredpm"}=$this->{'date_'.$jour."_heurefpm"}= strtotime('0:00');
+			}
 		}
-		$this->tempsHebdo=36.25;
-		$this->societeRtt='';
+		$this->tempsHebdo=37;
+		$this->societeRtt='aucune';
 
 	}
 	
@@ -1258,11 +1279,14 @@ class TRH_EmploiTemps extends TObjetStd {
 
 	//fonction permettant le chargement de l'emploi du temps d'un user si celui-ci existe	
 	function load_by_fkuser(&$ATMdb, $fk_user){
-		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur WHERE fk_user='".$fk_user."'";
+		global $conf;
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur 
+		WHERE fk_user='".$fk_user."' AND entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
 		
-		if ($ATMdb->Get_line()) {
+		if($ATMdb->Get_line()) {
 			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+			
 		}
 		return false;
 	}

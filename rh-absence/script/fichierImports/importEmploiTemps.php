@@ -3,8 +3,8 @@
 set_time_limit(0);
 ini_set("memory_limit", "512M");
 
-require('../config.php');
-require('../class/absence.class.php');
+require('../../config.php');
+require('../../class/absence.class.php');
 
 
 global $conf;
@@ -39,13 +39,14 @@ while($ATMdb->Get_line()) {
 
 
 //----------------DEBUT DU TRAITEMENT DES LIGNES D'APPELS----------------------------------------------------------
-$nomFichier = "./fichierImports/Horaire.csv";
+$nomFichier = "./Horaire.csv";
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 
 
 //début du parsing
 $numLigne = 0;
+$ligneok=0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle)) != false){
 		
@@ -58,13 +59,16 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				echo 'Erreur : Utilisateur '.strtolower($infos[3]).' inexistant ';
 			}
 			else{
+					
 					$edt=new TRH_EmploiTemps;
+					
 					//traitement des lignes et insertion en base
 					//on récupère le compteur de l'utilisateur si celui-ci existe sinon il sera créé
 					$edt->load_by_fkuser($ATMdb, $TUser[strtolower($infos[3])]);
-					
-					$cpt=5;
+					//echo $edt->rowid;exit;
+					$cpt=4;
 					foreach ($edt->TJour as $jour) {
+						$cpt++;
 						if($jour!='samedi' && $jour!='dimanche') {
 								//	traitement du matin
 								 if(!empty($infos[$cpt])){
@@ -108,9 +112,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 							}
 							
 						}
-						$edt->tempsHebdo=$infos[4];
+						$edt->tempsHebdo=$infos[4];						
 						$edt->societeRtt=$infos[0];
 						$edt->save($ATMdb);
+						$ligneok++;
 				
 			}
 			
@@ -120,7 +125,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		}
 }
 
-echo 'Fin du traitement. '.($numLigne).' lignes rajoutées à la table.<br><br>';	
+echo 'Fin du traitement. '.($ligneok).' lignes rajoutées à la table.<br><br>';	
 
 $ATMdb->close();
 

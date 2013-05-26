@@ -12,19 +12,19 @@
 					<td colspan="2"> [congesCourant.titreCongesNM;strconv=no;protect=no]   </td> 
 				</tr>
 				<tr>
-					<td>Utilisateur Courant</td>
+					<td>Utilisateur courant</td>
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
 				</tr>	
 				<tr>
-					<td>Acquis Exercice</td>
+					<td>Acquis exercice</td>
 					<td>[congesPrec.acquisEx;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Acquis Ancienneté</td>
+					<td>Acquis ancienneté</td>
 					<td> [congesPrec.acquisAnc;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Acquis Hors-Période</td>
+					<td>Acquis hors-période</td>
 					<td>[congesPrec.acquisHorsPer;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
@@ -32,11 +32,11 @@
 					<td>[congesPrec.reportConges;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td><b>Total Congés</b></td>
+					<td><b>Total congés</b></td>
 					<td><b>[congesPrec.total;strconv=no;protect=no] </b></td>
 				</tr>
 				<tr>
-					<td>Congés Pris</td>
+					<td>Congés pris</td>
 					<td>[congesPrec.congesPris;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
@@ -48,19 +48,19 @@
 					<td colspan="2">[congesCourant.titreCongesN;strconv=no;protect=no]    </td> 
 				</tr>
 				<tr>
-					<td>Acquis Exercice</td>
+					<td>Acquis exercice</td>
 					<td>[congesCourant.acquisEx;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Acquis Ancienneté</td>
+					<td>Acquis ancienneté</td>
 					<td>[congesCourant.acquisAnc;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
-					<td>Acquis Hors-Période</td>
+					<td>Acquis hors-période</td>
 					<td>[congesCourant.acquisHorsPer;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Acquis Par Mois</td>
+					<td>Nombre de jours acquis par mois</td>
 					<td> [congesCourant.nombreCongesAcquisMensuel;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
@@ -68,7 +68,7 @@
 					<td><b>[congesCourant.total;strconv=no;protect=no]</b></td>
 				</tr>
 				<tr>
-					<td><b>Dernière clôture Congés</b></td>
+					<td><b>Dernière clôture congés</b></td>
 					<td>[congesCourant.date_congesCloture;strconv=no;protect=no]</td>
 				</tr>
 		</table>

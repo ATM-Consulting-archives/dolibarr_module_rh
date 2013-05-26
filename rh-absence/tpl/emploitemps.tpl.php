@@ -2,7 +2,7 @@
         [view.head;strconv=no]
 
 		[view.titreEdt;strconv=no;protect=no]
-		
+		<br>
 		<div style=" display:inline-block;">                  
 		<table class="border" style="width:130%;" >	
 				<tr>
@@ -85,8 +85,9 @@
 		<br/><br/>
 		<b style="margin-left:320px;">Veuillez respecter le format HH:MM pour les horaires</b>
 	[onshow;block=end]
-	<br/><br/>
-	Temps total de travail hebdomadaire : [userCourant.tempsHebdo;strconv=no;protect=no]h
+	<br/><br/><br>
+	Temps total de travail hebdomadaire : [userCourant.tempsHebdo;strconv=no;protect=no]h<br>
+	Société : [userCourant.societe;strconv=no;protect=no]
 	
 	
 	
@@ -102,15 +103,10 @@
 			<div class="tabsAction" >
 				<a class="butAction"  href="?id=[view.compteur_id]&action=edit">Modifier</a>
 			</div>
-			<br/>
 			[onshow;block=end]
 	[onshow;block=end]
 	
-	[onshow;block=begin;when [view.mode]!='edit']
-			[onshow;block=begin;when [droits.modifierEdt]!='1']
-			<br/><br/>
-			[onshow;block=end]
-	[onshow;block=end]
+
 			
 	<script>
 		$(document).ready( function(){

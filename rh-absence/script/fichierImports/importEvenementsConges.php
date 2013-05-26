@@ -3,9 +3,9 @@
 set_time_limit(0);
 ini_set("memory_limit", "512M");
 
-require('../config.php');
-require('../class/absence.class.php');
-require('../lib/absence.lib.php');
+require('../../config.php');
+require('../../class/absence.class.php');
+require('../../lib/absence.lib.php');
 
 
 global $conf;
@@ -40,7 +40,7 @@ while($ATMdb->Get_line()) {
 
 
 //----------------DEBUT DU TRAITEMENT DES LIGNES D'APPELS----------------------------------------------------------
-$nomFichier = "./fichierImports/evenements.csv";
+$nomFichier = "./evenements.csv";
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 

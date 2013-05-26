@@ -5,8 +5,8 @@
  */
  	define('INC_FROM_CRON_SCRIPT', true);
 	
-	require('../config.php');
-	require('../class/absence.class.php');
+	require('../../config.php');
+	require('../../class/absence.class.php');
 	
 	$ATMdb=new Tdb;
 	$ATMdb->db->debug=true;

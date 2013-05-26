@@ -193,6 +193,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
 				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
 				,'tempsHebdo'=>$emploiTemps->tempsHebdo
+				,'societe'=>$emploiTemps->societeRtt
 			)
 			,'view'=>array(
 				'mode'=>$mode
