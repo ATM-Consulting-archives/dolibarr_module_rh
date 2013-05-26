@@ -97,8 +97,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$anneePrec=$annee-1;
 		
 				
-				//$compteur->acquisAncienneteN=0;
-				//$compteur->acquisHorsPeriodeN=0;
+				
+				
 				$compteur->anneeN=$annee;
 				$compteur->anneeNM1=$anneePrec;
 				
@@ -118,17 +118,35 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$compteur->acquisExerciceN=$infos[13]; 
 				
 				
-				//$compteur->acquisAncienneteNM1=0;
-				//$compteur->acquisHorsPeriodeNM1=0;
-				//$compteur->reportCongesNM1=0;
+				//$infos[91] //cloture sociale : 28/02/2013
+				
+				
+				$compteur->acquisAncienneteNM1=$infos[93];
+				$compteur->acquisAncienneteN=$infos[119];
+				
+				$compteur->acquisHorsPeriodeNM1=$infos[94];
+				$compteur->acquisHorsPeriodeN=$infos[120];
+				
+				$compteur->reportCongesNM1=$infos[95];
+				
+				//reports de RTT : 
+				//colonne 140 (report employé) à 141 (report salarié)
+				
 				
 				//$compteur->rttTypeAcquisition='Annuel';
 				//$compteur->rttAcquisMensuelInit=0;
 				
-				//$compteur->rttAcquisMensuel=0;
-				//$compteur->rttAcquisAnnuelCumule=5;
-				//$compteur->rttAcquisAnnuelNonCumule=7;
-				//$compteur->rttMetier='cadre';
+				//$infos[71]//info cadre VRAI ou FAUX
+				if($infos[71]=="VRAI"){
+					$compteur->rttMetier='cadre';
+				}
+				else{
+					
+				}
+				
+				
+				
+				
 				$compteur->rttannee=$annee;
 				$compteur->nombreCongesAcquisMensuel=2.08;
 				$compteur->date_rttCloture=strtotime('2013-03-01 00:00:00'); // AA Ne devrait pas être en dur mais en config

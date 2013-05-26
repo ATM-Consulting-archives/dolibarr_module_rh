@@ -5,8 +5,8 @@
  */
  	define('INC_FROM_CRON_SCRIPT', true);
 	
-	require('../config.php');
-	require('../class/absence.class.php');
+	require('../../config.php');
+	require('../../class/absence.class.php');
 
 	$ATMdb=new Tdb;
 	$ATMdb->db->debug=true;
@@ -39,7 +39,12 @@
 		$mars=date("dm");
 		if($mars==$dateMD){
 			//on remet à 0 les compteurs
-			$sqlRaz="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET rttAcquisMensuel=0, rttPris=0, rttAcquisAnnuelCumule=0, rttAcquisAnnuelNonCumule=0 WHERE rttTypeAcquisition='Mensuel' AND reportRtt!='1' AND fk_user =".$TabRtt['fk_user'];
+			$sqlRaz="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
+			SET rttAcquisMensuel=0, rttPris=0, rttAcquisAnnuelCumule=0, 
+			rttAcquisAnnuelNonCumule=0 
+			WHERE rttTypeAcquisition='Mensuel' 
+			AND reportRtt!='1' 
+			AND fk_user =".$TabRtt['fk_user'];
 			$ATMdb->Execute($sqlRaz);
 		}
 		
@@ -62,7 +67,9 @@
 	/////chaque mois, les rtt sont incrémentés de 1 pour ceux qui les accumulent par mois
 	$jour=date("d");
 	if($jour=="01"){
-		$sqlMois="SELECT fk_user, rttAcquisMensuelInit FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE rttTypeAcquisition='Mensuel'";
+		$sqlMois="SELECT fk_user, rttAcquisMensuelInit 
+		FROM `".MAIN_DB_PREFIX."rh_compteur` 
+		WHERE rttTypeAcquisition='Mensuel'";
 		$ATMdb->Execute($sqlMois);
 		$Tab=array();
 		while($ATMdb->Get_line()) {
@@ -72,7 +79,10 @@
 
 		foreach($Tab as $TabMois){
 			//on incrémente de 1 par exemple, suivant ce qui est donné dans la base
-			$sqlIncr='UPDATE '.MAIN_DB_PREFIX.'rh_compteur SET rttAcquisMensuelTotal=0+rttAcquisMensuelTotal+'.$TabMois['rttAcquisMensuelInit'].' WHERE rttTypeAcquisition="Mensuel" AND fk_user='.$TabMois['fk_user'];
+			$sqlIncr='UPDATE '.MAIN_DB_PREFIX.'rh_compteur 
+			SET rttAcquisMensuelTotal=0+rttAcquisMensuelTotal+'.$TabMois['rttAcquisMensuelInit'].' 
+			WHERE rttTypeAcquisition="Mensuel" 
+			AND fk_user='.$TabMois['fk_user'];
 			$ATMdb->Execute($sqlIncr);
 		}
 		
