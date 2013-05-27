@@ -53,16 +53,17 @@ elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'
 	$TGroupeForm->delete($ATMdb);
 }
 
-?>
+print dol_get_fiche_head(array()  , '', 'Administration des formulaires');
 
-<h1>Administration des formulaires</h1>
-<hr>
-<h3>Gestion des droits</h3>
+$title = 'Gestion des droits';
+print_fiche_titre($title, '', 'form32.png@formulaire');
+
+?>
 <form action="" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="action" id="action" value="add" />
 	<table>
-		<tr height="50px;">
-			<td>Groupe : </td>
+		<tr>
+			<td width="30%">Groupe : </td>
 			<td>
 				<select name="groupe" id="groupe">
 					<?php
@@ -80,6 +81,8 @@ elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'
 					?>
 				</select>
 			</td>
+		</tr>
+		<tr>
 			<td>Formulaire : </td>
 			<td>
 				<select name="survey" id="survey">
@@ -99,9 +102,11 @@ elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'
 				</select>
 			</td>
 		</tr>
-		<tr height="50px;">
+		<tr>
 			<td>Du : </td>
 			<td><?php $form->select_date('','datedeb','','','',"add",1,1); ?></td>
+		</tr>
+		<tr>
 			<td>Au : </td>
 			<td><?php $form->select_date('','datefin','','','',"add",1,1); ?></td>
 		</tr>
@@ -109,14 +114,11 @@ elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'
 		</tr>
 		<tr>
 			<td colspan="4" align="center">
-				<input type="submit" value="Ajouter un droit d'accès" />
+				<input type="submit" class="button" value="Ajouter un droit d'accès" />
 			</td>
 		</tr>
 	</table>
 </form>
-<br>
-<hr>
-<h3>Liste des droits</h3>
 <br>
 <?php
 $Tlistedroit = new TGroupeFormulaire;
@@ -144,10 +146,12 @@ $r->liste($ATMdb, $sql, array(
 		'datefin' => 'date'
 	)
 	,'liste'=>array(
-		'picto_precedent'=>img_picto('','back.png', '', 0)
+		'titre'=>'Liste des droits'
+		,'image'=>img_picto('','form32.png@formulaire', '', 0)
+		,'picto_precedent'=>img_picto('','back.png', '', 0)
 		,'picto_suivant'=>img_picto('','next.png', '', 0)
 		,'noheader'=> (int)isset($_REQUEST['socid'])
-		,'messageNothing'=>"Auncuns droits configuré"
+		,'messageNothing'=>"Aucun droit configuré."
 		,'order_down'=>img_picto('','1downarrow.png', '', 0)
 		,'order_up'=>img_picto('','1uparrow.png', '', 0)
 		,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
@@ -161,7 +165,7 @@ $r->liste($ATMdb, $sql, array(
 	,'search'=>array(
 	)
 	,'link'=>array(
-			'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="../img/delete.png"></a>'
+			'Supprimer'=>"<a onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=@ID@&action=delete'};\" style='cursor:pointer;'><img src=\"./img/delete.png\"></a>"
 		)
 	,'orderBy'=>$TOrder
 	

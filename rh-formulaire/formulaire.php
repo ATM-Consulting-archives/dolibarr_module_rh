@@ -12,7 +12,7 @@ $TSurvey = array();
 
 $sql = "SELECT fg.fk_usergroup AS groupe, fg.fk_survey AS survey, sl.surveyls_title AS title, fg.date_deb AS date_deb, fg.date_fin AS date_fin
 		FROM ".MAIN_DB_PREFIX."rh_formulaire_groupe AS fg
-			LEFT JOIN lime_surveys_languagesettings AS sl ON sl.surveyls_survey_id = fg.fk_survey
+			LEFT JOIN ".LIME_DB.".lime_surveys_languagesettings AS sl ON sl.surveyls_survey_id = fg.fk_survey
 		WHERE fg.date_deb <= NOW() AND fg.date_fin >= NOW()";
 		echo $sql;
 $ATMdb->Execute($sql);
@@ -27,7 +27,7 @@ while($ATMdb->Get_line()){
 			
 		$ATMdb2 = new Tdb;
 		$sql = "SELECT tid, token
-				FROM lime_tokens_".$ATMdb->Get_field('survey')." 
+				FROM ".LIME_DB.".lime_tokens_".$ATMdb->Get_field('survey')." 
 				WHERE firstname = '".$user->firstname."' AND lastname = '".$user->lastname."' AND email = '".$user->email."'";
 
 		$ATMdb2->Execute($sql);
@@ -49,8 +49,10 @@ while($ATMdb->Get_line()){
 		
 	$TSurvey[] = $Tligne;
 }
+
+$title = 'Questionnaire';
+print_fiche_titre($title, '', 'form32.png@formulaire');
 ?>
-<h1>Questionnaire</h1>
 <?php
 $r = new TListviewTBS('liste_ventilation_caisse', ROOT.'custom/formulaire/tpl/html.list.tbs.php');
 	
