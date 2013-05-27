@@ -121,13 +121,6 @@ print_fiche_titre($title, '', 'form32.png@formulaire');
 </form>
 <br>
 <?php
-
-$title = 'Liste des droits';
-print_fiche_titre($title, '', 'form32.png@formulaire');
-
-?>
-<br>
-<?php
 $Tlistedroit = new TGroupeFormulaire;
 
 $r = new TSSRenderControler($Tlistedroit);
@@ -151,6 +144,17 @@ $r->liste($ATMdb, $sql, array(
 	,'type'=>array(
 		'datedeb' => 'date',
 		'datefin' => 'date'
+	)
+	,'liste'=>array(
+		'titre'=>'Liste des droits'
+		,'image'=>img_picto('','form32.png@formulaire', '', 0)
+		,'picto_precedent'=>img_picto('','back.png', '', 0)
+		,'picto_suivant'=>img_picto('','next.png', '', 0)
+		,'noheader'=> (int)isset($_REQUEST['socid'])
+		,'messageNothing'=>"Aucun droit configuré."
+		,'order_down'=>img_picto('','1downarrow.png', '', 0)
+		,'order_up'=>img_picto('','1uparrow.png', '', 0)
+		,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 	)
 	,'title'=>array(
 		'datedeb'=>'Date début'
