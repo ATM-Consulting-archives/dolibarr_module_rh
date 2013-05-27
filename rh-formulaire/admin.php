@@ -53,16 +53,17 @@ elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'
 	$TGroupeForm->delete($ATMdb);
 }
 
-?>
+print dol_get_fiche_head(array()  , '', 'Administration des formulaires');
 
-<h1>Administration des formulaires</h1>
-<hr>
-<h3>Gestion des droits</h3>
+$title = 'Gestion des droits';
+print_fiche_titre($title, '', 'form32.png@formulaire');
+
+?>
 <form action="" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="action" id="action" value="add" />
 	<table>
-		<tr height="50px;">
-			<td>Groupe : </td>
+		<tr>
+			<td width="30%">Groupe : </td>
 			<td>
 				<select name="groupe" id="groupe">
 					<?php
@@ -80,6 +81,8 @@ elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'
 					?>
 				</select>
 			</td>
+		</tr>
+		<tr>
 			<td>Formulaire : </td>
 			<td>
 				<select name="survey" id="survey">
@@ -99,9 +102,11 @@ elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'
 				</select>
 			</td>
 		</tr>
-		<tr height="50px;">
+		<tr>
 			<td>Du : </td>
 			<td><?php $form->select_date('','datedeb','','','',"add",1,1); ?></td>
+		</tr>
+		<tr>
 			<td>Au : </td>
 			<td><?php $form->select_date('','datefin','','','',"add",1,1); ?></td>
 		</tr>
@@ -109,14 +114,18 @@ elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'
 		</tr>
 		<tr>
 			<td colspan="4" align="center">
-				<input type="submit" value="Ajouter un droit d'accès" />
+				<input type="submit" class="button" value="Ajouter un droit d'accès" />
 			</td>
 		</tr>
 	</table>
 </form>
 <br>
-<hr>
-<h3>Liste des droits</h3>
+<?php
+
+$title = 'Liste des droits';
+print_fiche_titre($title, '', 'form32.png@formulaire');
+
+?>
 <br>
 <?php
 $Tlistedroit = new TGroupeFormulaire;
@@ -161,7 +170,7 @@ $r->liste($ATMdb, $sql, array(
 	,'search'=>array(
 	)
 	,'link'=>array(
-			'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="../img/delete.png"></a>'
+			'Supprimer'=>"<a onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=@ID@&action=delete'};\" style='cursor:pointer;'><img src=\"./img/delete.png\"></a>"
 		)
 	,'orderBy'=>$TOrder
 	
