@@ -638,12 +638,17 @@ function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
 	
 	print dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence');
 	
-	print "Vous pouvez ajouter un commentaire pour justifier votre choix <br/><br/><br/>";
-	print'<input type="text" name="commentValid">       ';
-	print'<INPUT TYPE="submit" name="bt_submit" id="commentaire" VALUE=" Envoyer le commentaire "><br><br>';
+	print "<br><t style='color: #2AA8B9; 
+	font-size: 15px;font-family: arial,tahoma,verdana,helvetica;
+    font-weight: bold;
+    text-decoration: none;
+    text-shadow: 1px 1px 2px #CFCFCF;'>
+    Vous pouvez ajouter un commentaire pour justifier votre choix </t><br/><br/><br/>";
+	print'<textarea name="commentValid" rows="3" cols="40"></textarea><br><br>';
+	print'<INPUT class="button" TYPE="submit"   id="commentaire" VALUE="Continuer"><br><br>';
 
 	
-	?><a class="butAction" style="width:30%" href="?action=view&id=<?=$absence->getId()?>">Continuer sans commentaire</a><div style="clear:both"></div><?
+	//<a class="butAction" style="width:30%" href="?action=view&id=<?=$absence->getId()">Continuer sans commentaire</a><div style="clear:both"></div><?
 		
 	
 	//echo $form->btsubmit('Valider', 'valider');

@@ -292,8 +292,9 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				//RTT non cumulés
 				$rttCourant['nonCumuleAcquis']=$ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit');
 				$rttCourant['nonCumulePris']=$ATMdb->Get_field('rttNonCumulePris');
-				$rttCourant['NonCumuleReport']=$ATMdb->Get_field('rttNonCumuleReportNM1');
-				$rttCourant['NonCumuleTotal']=$rttCourant['NonCumuleAcquis']+$rttCourant['cumuleReport']-$rttCourant['cumulePris'];
+				$rttCourant['nonCumuleReport']=$ATMdb->Get_field('rttNonCumuleReportNM1');
+				$rttCourant['nonCumuleTotal']=$rttCourant['nonCumuleAcquis']+$rttCourant['nonCumuleReport']-$rttCourant['nonCumulePris'];
+				
 				
 				
 				$rttCourant['mensuel']=$ATMdb->Get_field('rttAcquisMensuel');
@@ -392,13 +393,13 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'cumulePris'=>$form->texte('','rttCumulePris',round2Virgule($rttCourant['cumulePris']),10,50,'',$class="text", $default='')
 				,'cumuleReport'=>$form->texte('','rttCumuleReportNM1',round2Virgule($rttCourant['cumuleReport']),10,50,'',$class="text", $default='')
 				,'cumuleTotal'=>$form->texte('','rttCumuleTotal',round2Virgule($rttCourant['cumuleTotal']),10,50,'',$class="text", $default='')
-				
+				,'cumuleAcquisAffichage'=>round2Virgule($rttCourant['cumuleAcquis'])
 				
 				,'nonCumuleAcquis'=>$form->texte('','rttAcquisAnnuelNonCumuleInit',round2Virgule($rttCourant['nonCumuleAcquis']),10,50,'',$class="text", $default='')
 				,'nonCumulePris'=>$form->texte('','rttNonCumulePris',round2Virgule($rttCourant['nonCumulePris']),10,50,'',$class="text", $default='')
 				,'nonCumuleReport'=>$form->texte('','rttNonCumuleReportNM1',round2Virgule($rttCourant['nonCumuleReport']),10,50,'',$class="text", $default='')
 				,'nonCumuleTotal'=>$form->texte('','rttNonCumuleTotal',round2Virgule($rttCourant['nonCumuleTotal']),10,50,'',$class="text", $default='')
-			
+				,'nonCumuleAcquisAffichage'=>round2Virgule($rttCourant['nonCumuleAcquis'])
 				
 				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')
 				,'titreRttCumuleCompteur'=>load_fiche_titre("Compteur de RTT cumulés",'', '', 0, '')

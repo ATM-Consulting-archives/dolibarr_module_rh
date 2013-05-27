@@ -64,14 +64,16 @@
 						<td>[absenceCourante.niveauValidation;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
-						<td>Commentaire</td>
-						<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
-					</tr>
-					<tr>
 						<td>Commentaire du valideur</td>
 						<td>[absenceCourante.commentaireValideur;strconv=no;protect=no]</td>
 					</tr>
-				[onshow;block=end]
+					[onshow;block=end]
+					<tr>
+						<td>Commentaire</td>
+						<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
+					</tr>
+					
+				
 			</table>
 
    		 <br/>
