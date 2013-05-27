@@ -106,19 +106,23 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				//RTT cumulés
 				$compteur->rttCumulePris=$prisRttCumule;
 				$compteur->rttAcquisAnnuelCumuleInit=$infos[18];
+				$compteur->rttCumuleReportNM1=$infos[140];
+				$compteur->rttCumuleTotal=$compteur->rttAcquisAnnuelCumuleInit+$compteur->rttCumuleReportNM1-$compteur->rttCumulePris;
 				
 				
 				//RTT non cumulés
 				$compteur->rttNonCumulePris=$prisRttNonCumule;
 				$compteur->rttAcquisAnnuelNonCumuleInit=7;
+				$compteur->rttNonCumuleReportNM1=$infos[141];	//	report
+				$compteur->rttNonCumuleTotal=$compteur->rttAcquisAnnuelNonCumuleInit+$compteur->rttNonCumuleReportNM1-$compteur->rttNonCumulePris;
 				
 				//congés
 				$compteur->acquisExerciceNM1=$infos[11];
 				$compteur->congesPrisNM1=$infos[12];
-				$compteur->acquisExerciceN=$infos[13]; 
+				$compteur->acquisExerciceN=$infos[13]; 	//	report
 				
-				
-				//$infos[91] //cloture sociale : 28/02/2013
+				$compteur->date_rttCloture=strtotime(str_replace('/', '-', $infos[91]));
+				$compteur->date_congesCloture=strtotime('31/05/2013');
 				
 				
 				$compteur->acquisAncienneteNM1=$infos[93];
@@ -129,8 +133,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				$compteur->reportCongesNM1=$infos[95];
 				
-				//reports de RTT : 
-				//colonne 140 (report employé) à 141 (report salarié)
+	
 				
 				
 				//$compteur->rttTypeAcquisition='Annuel';
@@ -141,17 +144,53 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$compteur->rttMetier='cadre';
 				}
 				else{
+					//on récupère le temps de travail du salarié pour le calcul du rtt enfonction du métier et entreprise
+					$sql="SELECT tempsHebdo, societeRtt
+						FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
+						WHERE entity IN (0,".$conf->entity.") .
+						AND fk_user=".$TUser[strtolower($infos[3])];
+					$ATMdb->Execute($sql);
+					if($ATMdb->Get_line()) {
+						$tpsHebdoUser=$ATMdb->Get_field('tempsHebdo');
+						$societe=$ATMdb->Get_field('societeRtt');
+					}
 					
+					switch($societe){
+						case "C'PRO":
+						case "C'PRO GROUPE":	
+							if($tpsHebdoUser==37){
+								$compteur->rttMetier='noncadre37cpro';
+							}elseif($tpsHebdoUser==38){
+								$compteur->rttMetier='noncadre38cpro';
+							}elseif($tpsHebdoUser==39){
+								$compteur->rttMetier='noncadre39';
+							}
+							break;
+
+						case "C'PRO INFORMATIQUE":
+							if($tpsHebdoUser==37){
+								$compteur->rttMetier='noncadre37cproinfo';
+							}elseif($tpsHebdoUser==38){
+								$compteur->rttMetier='noncadre38cproinfo';
+							}elseif($tpsHebdoUser==39){
+								$compteur->rttMetier='noncadre39';
+							}
+							break;
+							
+						case "GLOBAL IMPRESSION":
+							$compteur->rttMetier='aucunrtt';
+							break;
+						case "AGT":	//aucun RTT
+							$compteur->rttMetier='aucunrtt';
+							break;
+						
+					}
 				}
-				
-				
-				
 				
 				$compteur->rttannee=$annee;
 				$compteur->nombreCongesAcquisMensuel=2.08;
-				$compteur->date_rttCloture=strtotime('2013-03-01 00:00:00'); // AA Ne devrait pas être en dur mais en config
-				$compteur->date_congesCloture=strtotime('2013-06-01 00:00:00');
-				//$compteur->reportRtt=0;
+
+				$compteur->reportRtt=0;
 
 				exit;
 				//$compteur->save($ATMdb);*/

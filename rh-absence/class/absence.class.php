@@ -29,11 +29,15 @@ class TRH_Compteur extends TObjetStd {
 		//RTT cumulés 
 		parent::add_champs('rttCumulePris','type=float;');
 		parent::add_champs('rttAcquisAnnuelCumuleInit','type=float;');
+		parent::add_champs('rttCumuleReportNM1','type=float;');
+		parent::add_champs('rttCumuleTotal','type=float;');
 		
 		
 		//RTT non cumulés 
 		parent::add_champs('rttNonCumulePris','type=float;');				
 		parent::add_champs('rttAcquisAnnuelNonCumuleInit','type=float;');
+		parent::add_champs('rttNonCumuleReportNM1','type=float;');
+		parent::add_champs('rttNonCumuleTotal','type=float;');
 		
 		
 		//RTT mensuels
@@ -41,10 +45,6 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('rttAcquisMensuelTotal','type=float;');	
 		
 
-		/*
-		parent::add_champs('rttAcquisMensuel','type=float;');	
-		parent::add_champs('rttAcquisAnnuelCumule','type=float;');  
-		parent::add_champs('rttAcquisAnnuelNonCumule','type=float;');*/
 		
 		parent::add_champs('rttTypeAcquisition','type=chaine;');				//annuel, mensuel...
 		parent::add_champs('fk_user','type=entier;');			//utilisateur concerné
@@ -64,7 +64,7 @@ class TRH_Compteur extends TObjetStd {
 		$this->TMetier = array('cadre'=>'Cadre',
 		'noncadre37cpro'=>'Non Cadre 37h C\'PRO','noncadre37cproinfo'=>'Non Cadre 37h C\'PRO Info',
 		'noncadre38cpro'=>'Non Cadre 38h C\'PRO', 'noncadre38cproinfo'=>'Non Cadre 38h C\'PRO Info',
-		'noncadre39'=>'Non Cadre 39h', 
+		'noncadre39'=>'Non Cadre 39h', 'aucunrtt' => 'Aucun RTT',
 		'autre'=>'Autre');
 	}
 	
@@ -95,17 +95,27 @@ class TRH_Compteur extends TObjetStd {
 		$this->anneeNM1=$anneePrec;
 		$this->rttPris=0;
 		$this->rttTypeAcquisition='Annuel';
+		
 		$this->rttAcquisMensuelInit=0;
 		$this->rttAcquisMensuelTotal=0;
 		$this->rttAcquisAnnuelCumuleInit=5;
 		$this->rttAcquisAnnuelNonCumuleInit=7;
+		$this->rttCumuleReportNM1=0;
+		$this->rttNonCumuleReportNM1=0;
 		$this->rttCumulePris=0;
 		$this->rttNonCumulePris=0;
+		
+		$this->rttCumuleReportNM1=0;
+		$this->rttCumuleReportNM1=0;
+		
+		$this->rttCumuleTotal=$this->rttAcquisAnnuelCumuleInit+$this->rttCumuleReportNM1-$this->rttCumulePris;
+		$this->rttNonCumuleTotal=$this->rttAcquisAnnuelNonCumuleInit+$this->rttNonCumuleReportNM1-$this->rttNonCumulePris;
+		
 		$this->rttMetier='noncadre37cpro';
 		$this->rttannee=$annee;
 		$this->nombreCongesAcquisMensuel=2.08;
-		$this->date_rttCloture=strtotime('2013-03-01 00:00:00'); // AA Ne devrait pas être en dur mais en config
-		$this->date_congesCloture=strtotime('2013-06-01 00:00:00');
+		$this->date_rttCloture=strtotime('2013-02-28 00:00:00'); // AA Ne devrait pas être en dur mais en config
+		$this->date_congesCloture=strtotime('2013-05-31 00:00:00');
 		$this->reportRtt=0;
 	}
 	
@@ -284,7 +294,7 @@ class TRH_Absence extends TObjetStd {
 		
 		//on teste s'il y a des règles qui s'appliquent à cette demande d'absence
 		//$this->findRegleUser($db);
-		$dureeAbsenceRecevable=$this->dureeAbsenceRecevable();
+		$dureeAbsenceRecevable=$this->dureeAbsenceRecevable($ATMdb);
 		
 	
 		if($dureeAbsenceRecevable==0){
@@ -937,9 +947,10 @@ class TRH_Absence extends TObjetStd {
 	}
 
 	
-	function dureeAbsenceRecevable(){
+	function dureeAbsenceRecevable(&$ATMdb){
 		$avertissement=0;
-		foreach($this->TRegle as $TR){
+		$TRegle=$this->recuperationRegleUser($ATMdb,$this->fk_user);
+		foreach($TRegle as $TR){
 			if($TR['typeAbsence']==$this->type){
 				if($this->duree>$TR['nbJourCumulable']){
 					if($TR['restrictif']==1){
@@ -1124,7 +1135,10 @@ class TRH_Absence extends TObjetStd {
 	
 	//	fonction permettant le chargement de l'absence pour un utilisateur si celle-ci existe	
 	function load_by_idImport(&$ATMdb, $idImport){
-		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur WHERE idAbsImport='".$idImport."'";
+		global $conf;
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence 
+		WHERE idAbsImport='".$idImport."' AND entity IN (0,".$conf->entity.")";
+
 		$ATMdb->Execute($sql);
 		
 		if ($ATMdb->Get_line()) {
@@ -1280,8 +1294,9 @@ class TRH_EmploiTemps extends TObjetStd {
 	//fonction permettant le chargement de l'emploi du temps d'un user si celui-ci existe	
 	function load_by_fkuser(&$ATMdb, $fk_user){
 		global $conf;
-		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur 
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
 		WHERE fk_user='".$fk_user."' AND entity IN (0,".$conf->entity.")";
+
 		$ATMdb->Execute($sql);
 		
 		if($ATMdb->Get_line()) {

@@ -65,6 +65,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					//traitement des lignes et insertion en base
 					//on récupère le compteur de l'utilisateur si celui-ci existe sinon il sera créé
 					$edt->load_by_fkuser($ATMdb, $TUser[strtolower($infos[3])]);
+					
 					//echo $edt->rowid;exit;
 					$cpt=4;
 					foreach ($edt->TJour as $jour) {
@@ -116,6 +117,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 						$edt->societeRtt=$infos[0];
 						$edt->save($ATMdb);
 						$ligneok++;
+						
 				
 			}
 			

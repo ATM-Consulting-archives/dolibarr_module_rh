@@ -450,8 +450,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				
 				
 				$rttCourant['id']=$ATMdb->Get_field('rowid');
-				$rttCourant['cumuleReste']=$ATMdb->Get_field('rttAcquisAnnuelCumuleInit')-$ATMdb->Get_field('rttCumulePris');
-				$rttCourant['nonCumuleReste']=$ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit')-$ATMdb->Get_field('rttNonCumulePris');
+				$rttCourant['cumuleReste']=$ATMdb->Get_field('rttCumuleTotal');
+				$rttCourant['nonCumuleReste']=$ATMdb->Get_field('rttNonCumuleTotal');
 				$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
 	
 	
@@ -461,9 +461,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+$congePrec['acquisHorsPer']+$congePrec['reportConges'];
 	$congePrecReste=$congePrecTotal-$congePrec['congesPris'];
 	
-	$congeCourantTotal=$congeCourant['acquisEx']+$congeCourant['acquisAnc']+$congeCourant['acquisHorsPer'];
-	
-	$rttCourantReste=$rttCourant['acquis']-$rttCourant['pris'];
+
 	
 	
 	
@@ -556,7 +554,6 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'acquisAnc'=>$form->texte('','acquisAncienneteN',$congeCourant['acquisAnc'],10,50,'',$class="text", $default='')
 				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeN',$congeCourant['acquisHorsPer'],10,50,'',$class="text", $default='')
 				,'anneeCourante'=>$form->texte('','anneeN',$anneeCourante,10,50,'',$class="text", $default='')
-				,'total'=>$form->texte('','total',$congeCourantTotal,10,50,'',$class="text", $default='')
 				,'idUser'=>$_REQUEST['id']
 			)
 			,'rttCourant'=>array(

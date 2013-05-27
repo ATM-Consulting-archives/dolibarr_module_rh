@@ -55,14 +55,14 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			
 			if (empty( $TUser[strtolower($infos[4])])){	//si le login n'existe pas, on ne traite pas la ligne
-				echo 'Erreur : Utilisateur '.strtolower($infos[3]).' inexistant ';
+				echo 'Erreur : Utilisateur '.strtolower($infos[3]).' inexistant <br>';
 			}
 			else{
 					echo 'Traitement de la ligne '.$numLigne.'...';
 					echo $infos[4];
 					echo '<br/>';
 					$absence=new TRH_Absence;
-					$absence->load_by_idImport($ATMdb,$TUser[strtolower($infos[4])]);
+					$absence->load_by_idImport($ATMdb,$infos[0]);
 					
 					$absence->fk_user=$TUser[strtolower($infos[4])];
 					$absence->idAbsImport=$infos[0];
@@ -74,21 +74,25 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 							$absence->type='conges';
 							$absence->libelle=saveLibelle($absence->type);
 							$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
+							
 							break;
 						case 73:
 							$absence->type='rttcumule';
 							$absence->libelle=saveLibelle($absence->type);
 							$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
+
 							break;
 						case 74:
 							$absence->type='rttnoncumule';
 							$absence->libelle=saveLibelle($absence->type);
 							$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
+
 							break;
 					}
 					
 					$absence->libelle=saveLibelle($absence->type);
-					$absence->libelleEtat=saveLibelleEtat($absence->type);
+					$absence->libelleEtat=$absence->libelleEtat='Acceptée';
+					
 					
 					//on teste si le début de la demande d'absence et sa fin est le matin ou l'pm
 					//début d'absence

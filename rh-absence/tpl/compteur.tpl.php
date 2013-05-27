@@ -93,8 +93,12 @@
 					<td>[rttCourant.cumulePris;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
+					<td>Jours RTT cumulés reportés N-1</td>
+					<td>[rttCourant.cumuleReport;strconv=no;protect=no]	</td>
+				</tr>
+				<tr>
 					<td>Jours RTT cumulés à prendre</td>
-					<td>[rttCourant.cumuleReste;strconv=no;protect=no]</td>
+					<td>[rttCourant.cumuleTotal;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					 <td colspan="2">[rttCourant.titreRttNonCumuleCompteur;strconv=no;protect=no] </td>
@@ -108,8 +112,12 @@
 					<td>[rttCourant.nonCumulePris;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
+					<td>Jours RTT non cumulés reportés N-1</td>
+					<td>[rttCourant.nonCumuleReport;strconv=no;protect=no]	</td>
+				</tr>
+				<tr>
 					<td>Jours RTT non cumulés à prendre</td>
-					<td>[rttCourant.nonCumuleReste;strconv=no;protect=no]</td>
+					<td>[rttCourant.nonCumuleTotal;strconv=no;protect=no]</td>
 				</tr>
 
 		             

@@ -42,14 +42,6 @@
 					<td>Date fin</td>
 					<td>[absenceCourante.date_fin;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]</td>
 				</tr>
-				<tr>
-					<td>Commentaire</td>
-					<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
-				</tr>
-				<tr>
-					<td>Commentaire du valideur</td>
-					<td>[absenceCourante.commentaireValideur;strconv=no;protect=no]</td>
-				</tr>
 				[onshow;block=begin;when [view.mode]!='edit']
 					<tr>
 						<td>Duree (en demi-journées)</td>
@@ -70,6 +62,14 @@
 					<tr>
 						<td>Niveau de validation</td>
 						<td>[absenceCourante.niveauValidation;strconv=no;protect=no]</td>
+					</tr>
+					<tr>
+						<td>Commentaire</td>
+						<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
+					</tr>
+					<tr>
+						<td>Commentaire du valideur</td>
+						<td>[absenceCourante.commentaireValideur;strconv=no;protect=no]</td>
 					</tr>
 				[onshow;block=end]
 			</table>
