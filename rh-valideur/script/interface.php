@@ -24,7 +24,7 @@ function _get(&$ATMdb, $case) {
 	}
 }
 
-function _ndf(&$ATMdb, $date_debut, $date_fin, $type,$entity){
+function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	global $langs, $db, $user, $conf;
 	
 	$TabNdf=array();
