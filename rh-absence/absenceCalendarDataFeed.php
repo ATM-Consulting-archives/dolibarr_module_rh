@@ -30,29 +30,28 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
 
   	if($idUser==0&&$idGroupe==0){	//on affiche toutes les absences 
   		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
-  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u WHERE r.date_debut <=
-      '".php2MySqlTime($ed)."' and r.date_fin >='". php2MySqlTime($sd)."' AND r.fk_user=u.rowid";  
+  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u 
+  		WHERE (r.date_debut <= '".php2MySqlTime($ed)."' AND r.date_fin >='". php2MySqlTime($sd)."') 
+  		AND r.fk_user=u.rowid";  
       
   	}
   	else if($idUser==0){		//on recherche un groupe
   		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
   		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
-  		WHERE r.date_debut <=
-      '".php2MySqlTime($ed)."' and r.date_fin >='". php2MySqlTime($sd)."' AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupe; 
+  		WHERE (r.date_debut <= '".php2MySqlTime($ed)."' AND r.date_fin >='". php2MySqlTime($sd)."')
+       AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupe; 
  
   	}
   	else if($idGroupe==0){		//on recherche un utilisateur
   		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
   		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
-  		WHERE date_debut <=
-      '".php2MySqlTime($ed)."' and date_fin >='". php2MySqlTime($sd)."'
+  		WHERE (date_debut <= '".php2MySqlTime($ed)."' AND date_fin >='". php2MySqlTime($sd)."' )
       AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND u.rowid=".$idUser;
   	}
   	else{		//on recherche un groupe et un utilisateur
   		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
   		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
-  		WHERE date_debut <=
-      '".php2MySqlTime($ed)."' and date_fin >='". php2MySqlTime($sd)."'
+  		WHERE (date_debut <= '".php2MySqlTime($ed)."' AND date_fin >='". php2MySqlTime($sd)."' )
       AND r.fk_user=u.rowid AND u.rowid=g.fk_user AND u.rowid=".$idUser." AND g.fk_usergroup=".$idGroupe;  
   	}
 	$sql1.= " AND u.entity IN (0,".$conf->entity.") ";
@@ -131,12 +130,14 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
 	        1,//editable
 	        "absence.php?id=".$row->rowid."&action=view",//$row->location,
 	        '',//$attends
+	        $row->fk_user
 	      );
 	  }  
 	  
 	  //récupération des jours fériés 
 	$sql2=" SELECT DISTINCT * FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
-	 WHERE entity IN (0,".$conf->entity.")";
+	 WHERE entity IN (0,".$conf->entity.")
+	 AND date_jourOff <='".php2MySqlTime($ed)."' AND date_jourOff >='". php2MySqlTime($sd)."' ";
 	 //echo $sql2;
   	 $ATMdb->Execute($sql2);
    		
