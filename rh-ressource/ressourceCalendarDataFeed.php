@@ -9,9 +9,21 @@ $ATMdb=new TPDOdb;
 $method = $_GET["method"];
 switch ($method) {
     case "list": 
-		
+		if (isset($_REQUEST['id'])){
+			//on regarde si la ressource courante est une sous-ressource
+			$sql = "SELECT fk_rh_ressource FROM ".MAIN_DB_PREFIX."rh_ressource 
+			WHERE rowid=".$_REQUEST['id']."
+			AND entity IN (0, ".$conf->entity.")";
+			$ATMdb->Execute($sql);
+			if ($row=$ATMdb->Get_line()) {
+				$id = ($row->fk_rh_ressource != 0) ? $row->fk_rh_ressource : $_REQUEST['id'];
+			}
+		}
+		else {$id = 0;}
+		echo $sql;
+		echo $id;
 		$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], 
-					$_REQUEST['type'], $_REQUEST['id'], $_REQUEST['fk_user'], $_REQUEST['typeEven']);
+					$_REQUEST['type'], $id, $_REQUEST['fk_user'], $_REQUEST['typeEven']);
         
         break;   
 

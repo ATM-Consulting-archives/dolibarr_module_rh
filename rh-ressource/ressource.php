@@ -81,10 +81,18 @@
 				
 				////////
 				if($_REQUEST["fieldChoice"]=="O"){
-					$emprunt->load($ATMdb, $_REQUEST['idEven']);
-					$emprunt->set_values($_REQUEST['evenement']);
-					$emprunt->fk_rh_ressource = $ressource->getId();
-					$emprunt->save($ATMdb);
+					//print_r($_REQUEST['evenement']);
+					if ($ressource->nouvelEmpruntSeChevauche($ATMdb, $_REQUEST['id'], $_REQUEST['evenement']) ){
+						$mesg = '<div class="error">Impossible d\'attributer la ressource. Les dates choisies se superposent avec d\'autres attributions.</div>';
+					}
+					else {
+						$emprunt->load($ATMdb, $_REQUEST['idEven']);
+						$emprunt->set_values($_REQUEST['evenement']);
+						$emprunt->fk_rh_ressource = $ressource->getId();
+						$emprunt->save($ATMdb);
+					}
+				
+					
 				}
 				////////
 				
@@ -301,6 +309,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 	$contrat->load_liste($ATMdb);
 	$emprunt->load_liste($ATMdb);
 	$ressource->load_liste_entity($ATMdb);
+	$listeContrat = $ressource->liste_contrat($ATMdb);
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
@@ -343,11 +352,15 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 			,'NEmprunt'=>array(
 				'id'=>$emprunt->getId()
 				,'type'=>$form->hidden('evenement[type]', 'emprunt')
+				,'idEven'=>$form->hidden('evenement[idEven]', $emprunt->getId())
 				,'fk_user'=>$form->combo('','evenement[fk_user]',$emprunt->TUser,$emprunt->fk_user)
 				,'fk_rh_ressource'=> $form->hidden('evenement[fk_rh_ressource]', $ressource->getId())
 				,'commentaire'=>$form->texte('','evenement[commentaire]',$emprunt->commentaire, 30,100,'','','-')
 				,'date_debut'=> $form->calendrier('', 'evenement[date_debut]', $emprunt->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'evenement[date_fin]', $emprunt->get_date('date_fin'), 10)
+			)
+			,'listeContrat'=>array(
+				'liste' => $listeContrat	
 			)
 			,'contrat'=>array(
 				'id'=>$contrat->getId()
