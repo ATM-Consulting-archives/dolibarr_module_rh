@@ -49,39 +49,40 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		
 		
 		if($numLigne>0){
-				$data[0]=str_replace(",",'.',$data[0]);
-				$infos = explode(';', $data[0]);
 			
 				
-				/*if (empty( $TUser[strtolower($data[3])])){
-					echo 'Erreur : Utilisateur '.strtolower($data[3]).' inexistant ';
-					break;
-				}*/ 
-			
+			$data[0]=str_replace(",",'.',$data[0]);
+			$infos = explode(';', $data[0]);
+
+			if (empty( $TUser[strtolower($infos[3])])){
+				echo 'Erreur : Utilisateur '.strtolower($infos[3]).' inexistant ';
+			}else{
+				$compteur=new TRH_Compteur;	
+				echo 'Ligne traitée : '.strtolower($infos[3]).'';
 				$ResteConges=$infos[11]-$infos[12];
-				echo "Trigramme : ".$infos[3].' <br/>';	//colonne D
-				echo "Congés Total Acquis N-1: ".$infos[11].' <br/>';//colonne L
-				echo "Congés pris à N-1: ".$infos[12].' <br/>';//colonne M
-				echo "Reste Congés N-1: ".$ResteConges.' <br/>';
-				echo $infos[13].'<br>';
-				echo "Congés Acquis Exercice N: ".$infos[13].' <br/>';  //colonne N
+				//echo "Trigramme : ".$infos[3].' <br/>';	//colonne D
+				//echo "Congés Total Acquis N-1: ".$infos[11].' <br/>';//colonne L
+				//echo "Congés pris à N-1: ".$infos[12].' <br/>';//colonne M
+				//echo "Reste Congés N-1: ".$ResteConges.' <br/>';
+				//echo $infos[13].'<br>';
+				//echo "Congés Acquis Exercice N: ".$infos[13].' <br/>';  //colonne N
 				
 				$resteRttTotal=$infos[15]-$infos[16];
-				echo "RTT Acquis TOTAL : ".$infos[15].' <br/>';
+				//echo "RTT Acquis TOTAL : ".$infos[15].' <br/>';
 				
 				
 				//RTT Cumulés
 				$prisRttCumule=$infos[18]-$infos[21];
-				echo "RTT Cumulés acquis : ".$infos[18].' <br/>';	//colonne S
-				echo "RTT Cumulés pris : ".$prisRttCumule.' <br/>';	//colonne S-V
-				echo "RTT Cumulés A poser : ".$infos[21].' <br/>';	//colonne V
+				//echo "RTT Cumulés acquis : ".$infos[18].' <br/>';	//colonne S
+				//echo "RTT Cumulés pris : ".$prisRttCumule.' <br/>';	//colonne S-V
+				//echo "RTT Cumulés A poser : ".$infos[21].' <br/>';	//colonne V
 			
 				
 				//RTT Non cumulés
 				$prisRttNonCumule=$infos[17]-$infos[20];
-				echo "RTT Non Cumulés acquis : ".$infos[17].' <br/>';	//colonne R
-				echo "RTT Non Cumulés pris : ".$prisRttNonCumule.' <br/>';	//colonne R-U
-				echo "RTT Non Cumulés A poser : ".$infos[20].' <br/>';	//colonne U
+				//echo "RTT Non Cumulés acquis : ".$infos[17].' <br/>';	//colonne R
+				//echo "RTT Non Cumulés pris : ".$prisRttNonCumule.' <br/>';	//colonne R-U
+				//echo "RTT Non Cumulés A poser : ".$infos[20].' <br/>';	//colonne U
 				
 				
 				
@@ -112,7 +113,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				//RTT non cumulés
 				$compteur->rttNonCumulePris=$prisRttNonCumule;
-				$compteur->rttAcquisAnnuelNonCumuleInit=7;
+				$compteur->rttAcquisAnnuelNonCumuleInit=$infos[17];
 				$compteur->rttNonCumuleReportNM1=$infos[141];	//	report
 				$compteur->rttNonCumuleTotal=$compteur->rttAcquisAnnuelNonCumuleInit+$compteur->rttNonCumuleReportNM1-$compteur->rttNonCumulePris;
 				
@@ -121,34 +122,31 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$compteur->congesPrisNM1=$infos[12];
 				$compteur->acquisExerciceN=$infos[13]; 	//	report
 				
-				$compteur->date_rttCloture=strtotime(str_replace('/', '-', $infos[91]));
-				$compteur->date_congesCloture=strtotime('31/05/2013');
+				$compteur->date_rttCloture=strtotime(DATE_RTT_CLOTURE);
+				$compteur->date_congesCloture=strtotime(DATE_CONGES_CLOTURE);
 				
 				
-				$compteur->acquisAncienneteNM1=$infos[93];
-				$compteur->acquisAncienneteN=$infos[119];
 				
-				$compteur->acquisHorsPeriodeNM1=$infos[94];
-				$compteur->acquisHorsPeriodeN=$infos[120];
+				$compteur->acquisAncienneteNM1=$infos[94];
+				$compteur->acquisAncienneteN=$infos[120];
 				
-				$compteur->reportCongesNM1=$infos[95];
+				$compteur->acquisHorsPeriodeNM1=$infos[95];
+				$compteur->acquisHorsPeriodeN=$infos[121];
 				
-	
+				$compteur->reportCongesNM1=$infos[96];
 				
-				
-				//$compteur->rttTypeAcquisition='Annuel';
-				//$compteur->rttAcquisMensuelInit=0;
-				
+				$compteur->rttAcquisMensuelInit=0;
+			
 				//$infos[71]//info cadre VRAI ou FAUX
 				if($infos[71]=="VRAI"){
 					$compteur->rttMetier='cadre';
+					$compteur->rttTypeAcquisition='Annuel';
 				}
 				else{
 					//on récupère le temps de travail du salarié pour le calcul du rtt enfonction du métier et entreprise
 					$sql="SELECT tempsHebdo, societeRtt
 						FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
-						WHERE entity IN (0,".$conf->entity.") .
-						AND fk_user=".$TUser[strtolower($infos[3])];
+						WHERE fk_user=".$TUser[strtolower($infos[3])];
 					$ATMdb->Execute($sql);
 					if($ATMdb->Get_line()) {
 						$tpsHebdoUser=$ATMdb->Get_field('tempsHebdo');
@@ -165,22 +163,31 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 							}elseif($tpsHebdoUser==39){
 								$compteur->rttMetier='noncadre39';
 							}
+							$compteur->rttTypeAcquisition='Annuel';
 							break;
 
 						case "C'PRO INFORMATIQUE":
 							if($tpsHebdoUser==37){
 								$compteur->rttMetier='noncadre37cproinfo';
+								$compteur->rttAcquisMensuelInit=1;
 							}elseif($tpsHebdoUser==38){
 								$compteur->rttMetier='noncadre38cproinfo';
+								$compteur->rttAcquisMensuelInit=0.5;
 							}elseif($tpsHebdoUser==39){
 								$compteur->rttMetier='noncadre39';
+							}else{
+								$compteur->rttMetier='Autre';
 							}
+							$compteur->rttAcquisMensuelInit=0.5;
+							$compteur->rttTypeAcquisition='Mensuel';
 							break;
 							
 						case "GLOBAL IMPRESSION":
+							$compteur->rttTypeAcquisition='Annuel';
 							$compteur->rttMetier='aucunrtt';
 							break;
 						case "AGT":	//aucun RTT
+						$compteur->rttTypeAcquisition='Annuel';
 							$compteur->rttMetier='aucunrtt';
 							break;
 						
@@ -191,14 +198,14 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$compteur->nombreCongesAcquisMensuel=2.08;
 
 				$compteur->reportRtt=0;
-
-				exit;
-				//$compteur->save($ATMdb);*/
 				
-			}	
-			$numLigne++;	
-			echo '<br>';
+				$compteur->save($ATMdb);
+			}
 		}
+		$numLigne++;	
+		echo '<br>';
+			
+	}
 }
 
 echo 'Fin du traitement. '.($numLigne).' lignes rajoutés à la table.<br><br>';	

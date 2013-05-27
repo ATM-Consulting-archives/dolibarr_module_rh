@@ -173,3 +173,11 @@ $r->liste($ATMdb, $sql, array(
 $form->end();
 ?>
 <br>
+<?
+
+	print_fiche_titre("Créer un nouveau formulaire", '', 'form32.png@formulaire');
+	
+?><div class="tabsAction">
+    <a href="./limesurvey/admin/" class="butAction" target="_blank">Gestionnaire formulaires</a>
+    
+  </div>	
