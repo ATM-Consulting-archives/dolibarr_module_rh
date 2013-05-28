@@ -26,7 +26,27 @@
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				$compteur->set_values($_REQUEST);
 				$compteur->save($ATMdb);
+				
 				$compteur->load($ATMdb, $_REQUEST['id']);
+				
+				
+				//on récupère la liste des utilisateurs 
+				$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user";
+				$ATMdb->Execute($sql);
+				$TUser=array();
+				While($ATMdb->Get_line()) {
+							$TUser[]=$ATMdb->Get_field('rowid');
+				}
+				
+				foreach($TUser as $fk_user){
+					//on modifie les infos des compteurs de chaque employé
+					$sql="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
+					SET date_rttCloture='".date('Y-m-d h:i:s',$compteur->date_rttClotureInit)."', date_congesCloture='".date('Y-m-d h:i:s',$compteur->date_congesClotureInit)."'
+					,nombreCongesAcquisMensuel=".$compteur->congesAcquisMensuelInit." WHERE fk_user=".$fk_user;
+					$ATMdb->Execute($sql);
+				}
+				
+				
 				$mesg = '<div class="ok">Modifications effectuées</div>';
 				_fiche($ATMdb, $compteur,'view');
 			
@@ -34,20 +54,15 @@
 			
 			case 'view':
 			
-				if(isset($_REQUEST['id'])){
-					$compteur->load($ATMdb, $_REQUEST['id']);
-					_fiche($ATMdb, $compteur,'view');
-				}else{
-					//récupération compteur en cours
-					$sqlReqUser="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$user->id;
-					$ATMdb->Execute($sqlReqUser);
-					while($ATMdb->Get_line()) {
+					//récupération compteur admin
+					$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_admin_compteur";
+					$ATMdb->Execute($sql);
+					if($ATMdb->Get_line()) {
 								$idComptEnCours=$ATMdb->Get_field('rowid');
 					}
 					$compteur->load($ATMdb, $idComptEnCours);
 					_fiche($ATMdb, $compteur,'view');
 					
-				}
 				break;
 
 			case 'delete':
@@ -78,17 +93,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	echo $form->hidden('action', 'save');
 	//echo $form->hidden('fk_user', $_REQUEST['id']);
 
-	
-	//////////////////////////récupération des informations des congés précédents (N-1) de l'utilisateur courant : 
-	$sqlReq="SELECT * FROM `".MAIN_DB_PREFIX."rh_admin_compteur` where rowid=1";
-	$ATMdb->Execute($sqlReq);
-	while($ATMdb->Get_line()) {
-				$compteurGlobal=new User($db);
-				$compteurGlobal->rowid=$ATMdb->Get_field('rowid');
-				$compteurGlobal->congesAcquisMensuelInit=$ATMdb->Get_field('congesAcquisMensuelInit');
-				$compteurGlobal->date_rttClotureInit=$ATMdb->Get_field('date_rttClotureInit');
-				$compteurGlobal->date_congesClotureInit=$ATMdb->Get_field('date_congesClotureInit');
-	}
+
 	
 	
 	$TBS=new TTemplateTBS();
@@ -98,10 +103,10 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 		)
 		,array(
 			'compteurGlobal'=>array(
-				'rowid'=>$compteurGlobal->rowid
+				'rowid'=>$compteur->rowid
 				,'date_rttClotureInit'=>$form->calendrier('', 'date_rttClotureInit', $compteur->get_date('date_rttClotureInit'), 10)
 				,'date_congesClotureInit'=>$form->calendrier('', 'date_congesClotureInit', $compteur->get_date('date_congesClotureInit'), 10)
-				,'congesAcquisMensuelInit'=>$form->texte('','congesAcquisMensuelInit',round2Virgule($compteurGlobal->congesAcquisMensuelInit),10,50,'',$class="text", $default='')
+				,'congesAcquisMensuelInit'=>$form->texte('','congesAcquisMensuelInit',round2Virgule($compteur->congesAcquisMensuelInit),10,50,'',$class="text", $default='')
 				,'titreConges'=>load_fiche_titre("Congés payés",'', 'title.png', 0, '')
 				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')
 			)

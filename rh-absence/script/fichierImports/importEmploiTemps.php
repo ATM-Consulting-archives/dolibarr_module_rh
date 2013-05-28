@@ -113,8 +113,15 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 							}
 							
 						}
-						$edt->tempsHebdo=$infos[4];						
-						$edt->societeRtt=$infos[0];
+						$edt->tempsHebdo=$infos[4];	
+						
+						$sql='SELECT label, rowid FROM '.MAIN_DB_PREFIX.'entity WHERE label LIKE "'.$infos[0].'"';
+						$ATMdb->Execute($sql);
+						
+						if($ATMdb->Get_line()) {
+							$edt->societeRtt=$ATMdb->Get_field('rowid');
+						}					
+						
 						$edt->save($ATMdb);
 						$ligneok++;
 						

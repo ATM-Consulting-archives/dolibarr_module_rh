@@ -33,7 +33,9 @@
 			case 'save':
 				//$ATMdb->db->debug=true;				
 				//on vérifie que la date choisie ne superpose pas avec les autres emprunts.
-				if ($ressource->nouvelEmpruntSeChevauche($ATMdb, $_REQUEST ,$_REQUEST['id']) ){
+				
+				echo $_REQUEST['id'] .' '. $_REQUEST['idEven'];
+				if ($ressource->nouvelEmpruntSeChevauche($ATMdb,  $_REQUEST['id'], $_REQUEST) ){
 					$mesg = '<div class="error">Impossible d\'attributer la ressource. Les dates choisies se superposent avec d\'autres attributions.</div>';
 				}
 				else {
@@ -129,7 +131,7 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>"<a onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=".$ressource->getId()."&idEven=@ID@&action=deleteAttribution'};\"><img src=\"./img/delete.png\"></a>"
+			,'Supprimer'=>"<a style=\"cursor:pointer;\" onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=".$ressource->getId()."&idEven=@ID@&action=deleteAttribution'};\"><img src=\"./img/delete.png\"></a>"
 			//,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=deleteAttribution"><img src="./img/delete.png"></a>'
 		)
 		,'eval'=>array(

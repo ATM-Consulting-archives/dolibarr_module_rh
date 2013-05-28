@@ -126,10 +126,10 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					        dol_print_error($db);
 					    }
 					    
-					    $line = array('ND', $datef_ndf, 'OD', '425900', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_tva_ndf, 'N', $ref, '', '', 'EUR', '');
+					    $line = array('NDF', $datef_ndf, 'OD', '445660', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_tva_ndf, 'N', $ref, '', '', 'EUR', '');
 						$TabNdf[$k]=$line;
 						$k++;
-						$line = array('ND', $datef_ndf, 'OD', '425900', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', $ref, '', '', 'EUR', '');
+						$line = array('NDF', $datef_ndf, 'OD', '425902', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', $ref, '', '', 'EUR', '');
 						$TabNdf[$k]=$line;
 						$k++;
                 	}
@@ -149,7 +149,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					$code_analytique	=	$obj->CODE_ANA;
 					$compte_tiers		=	$obj->COMPTE_TIERS;
 					
-					$line = array('ND', $datef, 'OD', $code_compta, 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_ht, 'N', $ref, '', '', 'EUR', '');
+					$line = array('NDF', $datef, 'OD', $code_compta, 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_ht, 'N', $ref, '', '', 'EUR', '');
 					$TabNdf[$k]=$line;
 					$k++;
 				}
@@ -185,10 +185,10 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		        dol_print_error($db);
 		    }
 		    
-		    $line = array('ND', $datef_ndf, 'OD', '425900', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_tva_ndf, 'N', $ref, '', '', 'EUR', '');
+		    $line = array('NDF', $datef_ndf, 'OD', '445660', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_tva_ndf, 'N', $ref, '', '', 'EUR', '');
 			$TabNdf[$k]=$line;
 			$k++;
-			$line = array('ND', $datef_ndf, 'OD', '425900', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', $ref, '', '', 'EUR', '');
+			$line = array('NDF', $datef_ndf, 'OD', '425902', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', $ref, '', '', 'EUR', '');
 			$TabNdf[$k]=$line;
         }
     }else{

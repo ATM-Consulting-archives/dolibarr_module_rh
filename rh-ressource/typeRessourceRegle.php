@@ -93,7 +93,7 @@
 	
 	
 function _liste(&$ATMdb, &$ressourceType, &$regle) {
-	global $langs,$conf, $db;	
+	global $langs,$conf, $db, $user;	
 	
 	llxHeader('','Règles sur les Ressources');
 	dol_fiche_head(ressourcePrepareHead($ressourceType, 'type-ressource')  , 'regle', 'Type de ressource');
@@ -112,7 +112,6 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		WHERE r.entity IN (0,".$conf->entity.")
 		 AND r.fk_rh_ressource_type=".$ressourceType->getId();
 	
-
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -130,7 +129,8 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=delete"><img src="./img/delete.png"></a>'
+			,'Supprimer'=>"<a style=\"cursor:pointer;\" onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=".$ressourceType->getId()."&idRegle=@ID@&action=delete'};\"><img src=\"./img/delete.png\"></a>"
+			//'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		) 
 		,'eval'=>array(
 			'dureeInt'=>'intToString(@val@)'
@@ -207,6 +207,7 @@ function TousOuPas($choix, $val){
 }
 
 function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
+	global $user;
 	llxHeader('','Règle sur les Ressources', '', '', 0, 0);
 	
 
@@ -262,7 +263,7 @@ function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-			/*	,'userRight'=>((int)$user->rights->financement->affaire->write)*/
+				,'userRight'=>((int)$user->rights->ressource->ressource->manageRegle)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressourceType)  , 'regle', 'Type de ressource')
 				,'onglet'=>dol_get_fiche_head(array()  , '', 'Règle')
 			)

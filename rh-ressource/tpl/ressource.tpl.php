@@ -97,6 +97,7 @@
 <table id="tableAttribution" class="border" style="width:100%">
 	[NEmprunt.fk_rh_ressource;strconv=no;protect=no]
 	[NEmprunt.type;strconv=no;protect=no]
+	[NEmprunt.idEven;strconv=no;protect=no]
 	<tr>
 		<td>Utilisateur</td>
 		<td>[NEmprunt.fk_user;strconv=no;protect=no]</td>
@@ -248,8 +249,6 @@
 	});
 </script>
 
-
-
 [onshow;block=begin;when [view.userRight]==1]
 <div class="tabsAction" style="text-align:center;" >
 		[onshow;block=begin;when [view.mode]=='edit']
@@ -268,6 +267,12 @@
 		[onshow;block=end]
 </div>
 [onshow;block=end]
+
+
+[onshow;block=begin;when [view.mode]=='view']
+	[listeContrat.liste;strconv=no;protect=no]
+[onshow;block=end]<br>
+
 
 
 <!--  href='ressource.php?id=[fk_ressource.id]'-->

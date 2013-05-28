@@ -87,7 +87,7 @@
 	[onshow;block=end]
 	<br/><br/><br>
 	Temps total de travail hebdomadaire : [userCourant.tempsHebdo;strconv=no;protect=no]h<br>
-	Société : [userCourant.societe;strconv=no;protect=no]
+	Société : [entity.TEntity;strconv=no;protect=no]
 	
 	
 	
@@ -118,8 +118,8 @@
 					$("#date_lundi_heurefam").val("00:00");
 				}
 				else{
-					$("#date_lundi_heuredam").val("09:00");
-					$("#date_lundi_heurefam").val("12:15");
+					$("#date_lundi_heuredam").val("08:15");
+					$("#date_lundi_heurefam").val("12:00");
 				}
 			});
 			
@@ -131,7 +131,7 @@
 				}
 				else{
 					$("#date_lundi_heuredpm").val("14:00");
-					$("#date_lundi_heurefpm").val("18:00");
+					$("#date_lundi_heurefpm").val("17:45");
 				}
 			});
 			
@@ -142,8 +142,8 @@
 					$("#date_mardi_heurefam").val("00:00");
 				}
 				else{
-					$("#date_mardi_heuredam").val("09:00");
-					$("#date_mardi_heurefam").val("12:15");
+					$("#date_mardi_heuredam").val("08:15");
+					$("#date_mardi_heurefam").val("12:00");
 				}
 			});
 			
@@ -155,7 +155,7 @@
 				}
 				else{
 					$("#date_mardi_heuredpm").val("14:00");
-					$("#date_mardi_heurefpm").val("18:00");
+					$("#date_mardi_heurefpm").val("17:45");
 				}
 			});
 			
@@ -166,8 +166,8 @@
 					$("#date_mercredi_heurefam").val("00:00");
 				}
 				else{
-					$("#date_mercredi_heuredam").val("09:00");
-					$("#date_mercredi_heurefam").val("12:15");
+					$("#date_mercredi_heuredam").val("08:15");
+					$("#date_mercredi_heurefam").val("12:00");
 				}
 			});
 			
@@ -179,7 +179,7 @@
 				}
 				else{
 					$("#date_mercredi_heuredpm").val("14:00");
-					$("#date_mercredi_heurefpm").val("18:00");
+					$("#date_mercredi_heurefpm").val("17:45");
 				}
 			});
 			
@@ -190,8 +190,8 @@
 					$("#date_jeudi_heurefam").val("00:00");
 				}
 				else{
-					$("#date_jeudi_heuredam").val("09:00");
-					$("#date_jeudi_heurefam").val("12:15");
+					$("#date_jeudi_heuredam").val("08:15");
+					$("#date_jeudi_heurefam").val("12:00");
 				}
 			});
 			
@@ -203,7 +203,7 @@
 				}
 				else{
 					$("#date_jeudi_heuredpm").val("14:00");
-					$("#date_jeudi_heurefpm").val("18:00");
+					$("#date_jeudi_heurefpm").val("17:45");
 				}
 			});
 			
@@ -214,8 +214,8 @@
 					$("#date_vendredi_heurefam").val("00:00");
 				}
 				else{
-					$("#date_vendredi_heuredam").val("09:00");
-					$("#date_vendredi_heurefam").val("12:15");
+					$("#date_vendredi_heuredam").val("08:15");
+					$("#date_vendredi_heurefam").val("12:00");
 				}
 			});
 			
@@ -227,7 +227,7 @@
 				}
 				else{
 					$("#date_vendredi_heuredpm").val("14:00");
-					$("#date_vendredi_heurefpm").val("18:00");
+					$("#date_vendredi_heurefpm").val("17:15");
 				}
 			});
 			
@@ -238,8 +238,8 @@
 					$("#date_samedi_heurefam").val("00:00");
 				}
 				else{
-					$("#date_samedi_heuredam").val("09:00");
-					$("#date_samedi_heurefam").val("12:15");
+					$("#date_samedi_heuredam").val("08:15");
+					$("#date_samedi_heurefam").val("12:00");
 				}
 			});
 			
@@ -251,7 +251,7 @@
 				}
 				else{
 					$("#date_samedi_heuredpm").val("14:00");
-					$("#date_samedi_heurefpm").val("18:00");
+					$("#date_samedi_heurefpm").val("17:45");
 				}
 			});
 			
@@ -262,8 +262,8 @@
 					$("#date_dimanche_heurefam").val("00:00");
 				}
 				else{
-					$("#date_dimanche_heuredam").val("09:00");
-					$("#date_dimanche_heurefam").val("12:15");
+					$("#date_dimanche_heuredam").val("08:15");
+					$("#date_dimanche_heurefam").val("12:00");
 				}
 			});
 			
@@ -275,7 +275,7 @@
 				}
 				else{
 					$("#date_dimanche_heuredpm").val("14:00");
-					$("#date_dimanche_heurefpm").val("18:00");
+					$("#date_dimanche_heurefpm").val("17:45");
 				}
 			});
 			

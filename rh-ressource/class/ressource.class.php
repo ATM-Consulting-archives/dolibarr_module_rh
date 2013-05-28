@@ -157,6 +157,52 @@ class TRH_Ressource extends TObjetStd {
 			}
 	}
 	
+	/**
+	 * Retourne une liste de type ATM des contrats associés à la ressource
+	 */
+	function liste_contrat(&$ATMdb){
+		global $user, $conf;
+		$r = new TListviewTBS('lol');
+		$sql="SELECT DISTINCT a.rowid as 'ID',  c.rowid as 'IDContrat' , c.libelle as 'Libellé',
+			DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin', a.commentaire as 'Commentaire'
+			FROM ".MAIN_DB_PREFIX."rh_contrat_ressource as a
+			LEFT JOIN ".MAIN_DB_PREFIX."rh_contrat as c ON (a.fk_rh_contrat = c.rowid)
+			LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (a.fk_rh_ressource = r.rowid)
+			WHERE a.entity IN (0,".$conf->entity.")
+			AND a.fk_rh_ressource=".$this->getId();
+		$TOrder = array('Date début'=>'ASC');
+		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+		
+		$res = $r->render($ATMdb, $sql, array(
+			'limit'=>array(
+				'page'=>$page
+				,'nbLine'=>'30'
+			)
+			,'link'=>array(
+				'ID'=>'<a href="?id='.$this->getId().'&idAssoc=@ID@">@val@</a>'
+				,'Libellé'=>'<a href="contrat.php?id=@IDContrat@">@val@</a>'
+			)
+			,'translate'=>array()
+			,'hide'=>array('DateCre', 'IDContrat')
+			,'type'=>array(
+				'Date début'=>'date'
+				,'Date fin'=>'date'
+				)
+			,'liste'=>array(
+				'titre'=>'Liste des contrats associés'
+				,'image'=>img_picto('','title.png', '', 0)
+				,'picto_precedent'=>img_picto('','previous.png', '', 0)
+				,'picto_suivant'=>img_picto('','next.png', '', 0)
+				,'noheader'=> (int)isset($_REQUEST['socid'])
+				,'messageNothing'=>"Il n'y a aucun contrat à afficher"
+				,'order_down'=>img_picto('','1downarrow.png', '', 0)
+				,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			)
+			,'orderBy'=>$TOrder
+		));
+		return $res;
+	}
 
 	/**
 	 * La fonction renvoie le rowid de l'user qui a la ressource à la date T, 0 sinon.
@@ -204,10 +250,10 @@ class TRH_Ressource extends TObjetStd {
 	/**
 	 * La fonction renvoie vrai si les nouvelles date proposé pour un emprunt se chevauchent avec d'autres.
 	 */
-	function nouvelEmpruntSeChevauche(&$ATMdb, $newEmprunt, $idRessource){
+	function nouvelEmpruntSeChevauche(&$ATMdb,  $idRessource, $newEmprunt){
 		global $conf;
 		$sqlReq="SELECT date_debut,date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$idRessource."
-		AND type='emprunt' AND entity IN(0, ".$conf->entity.") AND rowid != ".$newEmprunt['idEven'];
+		AND type='emprunt' AND entity IN(0, ".$conf->entity.") AND rowid != ".$newEmprunt['idEven']; 
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			if ($this->dateSeChevauchent($this->strToTimestamp($newEmprunt['date_debut'])

@@ -1,6 +1,6 @@
 <?php
 /*
- * Script créant et vérifiant que les champs requis s'ajoutent bien
+ * SCRIPT 2 à exécuter
  * 
  */
  	define('INC_FROM_CRON_SCRIPT', true);
@@ -29,7 +29,9 @@
 		foreach($Tab as $idUser => $nombreConges )
 		{
 		    //on incrémente chaque mois les jours de congés
-			$sqlIncr="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET acquisExerciceN=acquisExerciceN+".$nombreConges." WHERE fk_user=".$idUser;
+			$sqlIncr="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
+				SET acquisExerciceN=acquisExerciceN+".$nombreConges." 
+				WHERE fk_user=".$idUser;
 			$ATMdb->Execute($sqlIncr);
 		}
 		

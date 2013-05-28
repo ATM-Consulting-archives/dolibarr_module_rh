@@ -215,7 +215,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	//echo $form->hidden('fk_user', $_REQUEST['id']);
 	
 	//compteur de l'user courant : 
-	$sql="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$compteur->fk_user;
+	$sql="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$compteur->fk_user;
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		$compteurUserCourant=$ATMdb->Get_field('rowid');
@@ -284,33 +284,37 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				
 				
 				// RTT cumulés
-				$rttCourant['cumuleAcquis']=$ATMdb->Get_field('rttAcquisAnnuelCumuleInit');
+				
+				
+				$rttCourant['cumuleAcquisInit']=$ATMdb->Get_field('rttAcquisAnnuelCumuleInit');
+				$rttCourant['cumuleAcquis']=$ATMdb->Get_field('rttCumuleAcquis')+$ATMdb->Get_field('rttAcquisMensuelInit');
 				$rttCourant['cumulePris']=$ATMdb->Get_field('rttCumulePris');
 				$rttCourant['cumuleReport']=$ATMdb->Get_field('rttCumuleReportNM1');
 				$rttCourant['cumuleTotal']=$rttCourant['cumuleAcquis']+$rttCourant['cumuleReport']-$rttCourant['cumulePris'];
 				
 				//RTT non cumulés
-				$rttCourant['nonCumuleAcquis']=$ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit');
+				$rttCourant['nonCumuleAcquisInit']=$ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit');
+				$rttCourant['nonCumuleAcquis']=$ATMdb->Get_field('rttNonCumuleAcquis');
 				$rttCourant['nonCumulePris']=$ATMdb->Get_field('rttNonCumulePris');
-				$rttCourant['NonCumuleReport']=$ATMdb->Get_field('rttNonCumuleReportNM1');
-				$rttCourant['NonCumuleTotal']=$rttCourant['NonCumuleAcquis']+$rttCourant['cumuleReport']-$rttCourant['cumulePris'];
+				$rttCourant['nonCumuleReport']=$ATMdb->Get_field('rttNonCumuleReportNM1');
+				$rttCourant['nonCumuleTotal']=$rttCourant['nonCumuleAcquis']+$rttCourant['nonCumuleReport']-$rttCourant['nonCumulePris'];
 				
-				
-				$rttCourant['mensuel']=$ATMdb->Get_field('rttAcquisMensuel');
-				$rttCourant['annuelCumule']=$ATMdb->Get_field('rttAcquisAnnuelCumule');
-				$rttCourant['annuelNonCumule']=$ATMdb->Get_field('rttAcquisAnnuelNonCumule');
+
 				
 				$rttCourant['rttMetier']=$ATMdb->Get_field('rttMetier');
 				$rttCourant['annuelCumuleInit']=$ATMdb->Get_field('rttAcquisAnnuelCumuleInit');
 				$rttCourant['annuelNonCumuleInit']=$ATMdb->Get_field('rttAcquisAnnuelNonCumuleInit');
 				$rttCourant['mensuelInit']=$ATMdb->Get_field('rttAcquisMensuelInit');
-				$rttCourant['mensuelTotal']=$ATMdb->Get_field('rttAcquisMensuelTotal');
 				$rttCourant['annee']=substr($ATMdb->Get_field('anneertt'),0,4);
 				$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
 				
+				$rttCourant['dateConges']=$ATMdb->Get_field('date_congesCloture');
+				$rttCourant['dateRtt']=$ATMdb->Get_field('date_rttCloture');
+				$rttCourant['nombreCongesAcquisMensuel']=$ATMdb->Get_field('nombreCongesAcquisMensuel');
 				
 				
 	}
+
 
 	$congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+	$congePrec['acquisHorsPer']+$congePrec['reportConges'];
 	$congePrecReste=$congePrecTotal-$congePrec['congesPris'];
@@ -321,7 +325,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	
 
 	//récupération des informations globales du compteur
-	$sqlReq="SELECT * FROM `".MAIN_DB_PREFIX."rh_admin_compteur`";	
+	/*$sqlReq="SELECT * FROM `".MAIN_DB_PREFIX."rh_admin_compteur`";	
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 				$compteurGlobal=new User($db);
@@ -330,7 +334,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				$compteurGlobal->date_rttClotureInit=$ATMdb->Get_field('date_rttClotureInit');
 				$compteurGlobal->date_congesClotureInit=$ATMdb->Get_field('date_congesClotureInit');
 				break;
-	}
+	}*/
 	
 	
 	$TBS=new TTemplateTBS();
@@ -360,8 +364,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'anneeCourante'=>$form->texte('','anneeN',round2Virgule($anneeCourante),10,50,'',$class="text", $default='')
 				,'total'=>round2Virgule($congeCourantTotal)
 				,'idUser'=>$congeCourant->fk_user
-				,'date_congesCloture'=>date("d/m/Y",strtotime($compteurGlobal->date_congesClotureInit))
-				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',round2Virgule($compteurGlobal->congesAcquisMensuelInit),10,50,'',$class="text", $default='')	
+				,'date_congesCloture'=>date("d/m/Y",strtotime($rttCourant['dateConges']))
+				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',round2Virgule($rttCourant['nombreCongesAcquisMensuel']),10,50,'',$class="text", $default='')	
 				
 				,'titreConges'=>load_fiche_titre("Congés payés",'', 'title.png', 0, '')
 				,'titreCongesNM'=>load_fiche_titre("Année N-1",'', '', 0, '')
@@ -376,7 +380,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'mensuel'=>$form->texte('','rttAcquisMensuel',round2Virgule($rttCourant['mensuel']),10,50,'',$class="text", $default='')
 				,'annuelCumule'=>$form->texte('','rttAcquisAnnuelCumule',round2Virgule($rttCourant['annuelCumule']),10,50,'',$class="text", $default='')
 				,'annuelNonCumule'=>$form->texte('','rttAcquisAnnuelNonCumule',round2Virgule($rttCourant['annuelNonCumule']),10,50,'',$class="text", $default='')
-				,'date_rttCloture'=>date("d/m/Y",strtotime($compteurGlobal->date_rttClotureInit))
+				,'date_rttCloture'=>date("d/m/Y",strtotime($rttCourant['dateRtt']))
 				,'mensuelInit'=>$form->texte('','rttAcquisMensuelInit',round2Virgule($rttCourant['mensuelInit']),10,50,'',$class="text", $default='')
 				,'mensuelTotal'=>$form->texte('','rttAcquisMensuelTotal',round2Virgule($rttCourant['mensuelTotal']),10,50,'',$class="text", $default='')
 				,'annuelCumuleInit'=>$form->texte('','rttAcquisAnnuelCumuleInit',round2Virgule($rttCourant['annuelCumuleInit']),10,50,'',$class="text", $default='')
@@ -388,17 +392,21 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'id'=>$compteur->getId()
 				,'reportRtt'=>$form->checkbox1('','reportRtt','1',$compteur->reportRtt)
 				
-				,'cumuleAcquis'=>$form->texte('','rttAcquisAnnuelCumuleInit',round2Virgule($rttCourant['cumuleAcquis']),10,50,'',$class="text", $default='')
+
+				
+				,'cumuleAcquisInit'=>$form->texte('','rttAcquisAnnuelCumuleInit',round2Virgule($rttCourant['cumuleAcquisInit']),10,50,'',$class="text", $default='')
+				,'cumuleAcquis'=>$form->texte('','rttCumuleAcquis',round2Virgule($rttCourant['cumuleAcquis']),10,50,'',$class="text", $default='')
 				,'cumulePris'=>$form->texte('','rttCumulePris',round2Virgule($rttCourant['cumulePris']),10,50,'',$class="text", $default='')
 				,'cumuleReport'=>$form->texte('','rttCumuleReportNM1',round2Virgule($rttCourant['cumuleReport']),10,50,'',$class="text", $default='')
 				,'cumuleTotal'=>$form->texte('','rttCumuleTotal',round2Virgule($rttCourant['cumuleTotal']),10,50,'',$class="text", $default='')
+
 				
-				
-				,'nonCumuleAcquis'=>$form->texte('','rttAcquisAnnuelNonCumuleInit',round2Virgule($rttCourant['nonCumuleAcquis']),10,50,'',$class="text", $default='')
+				,'nonCumuleAcquisInit'=>$form->texte('','rttAcquisAnnuelNonCumuleInit',round2Virgule($rttCourant['nonCumuleAcquisInit']),10,50,'',$class="text", $default='')
+				,'nonCumuleAcquis'=>$form->texte('','rttNonCumuleAcquis',round2Virgule($rttCourant['nonCumuleAcquis']),10,50,'',$class="text", $default='')
 				,'nonCumulePris'=>$form->texte('','rttNonCumulePris',round2Virgule($rttCourant['nonCumulePris']),10,50,'',$class="text", $default='')
 				,'nonCumuleReport'=>$form->texte('','rttNonCumuleReportNM1',round2Virgule($rttCourant['nonCumuleReport']),10,50,'',$class="text", $default='')
 				,'nonCumuleTotal'=>$form->texte('','rttNonCumuleTotal',round2Virgule($rttCourant['nonCumuleTotal']),10,50,'',$class="text", $default='')
-			
+
 				
 				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')
 				,'titreRttCumuleCompteur'=>load_fiche_titre("Compteur de RTT cumulés",'', '', 0, '')

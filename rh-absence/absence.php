@@ -74,7 +74,10 @@
 				
 			case 'accept':
 				$absence->load($ATMdb, $_REQUEST['id']);
-				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` SET etat='Validee', libelleEtat='Acceptée' where fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
+				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
+					SET etat='Validee', libelleEtat='Acceptée' 
+					WHERE fk_user=".$absence->fk_user. " 
+					AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
@@ -84,7 +87,8 @@
 				
 			case 'niveausuperieur':
 				$absence->load($ATMdb, $_REQUEST['id']);
-				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` SET niveauValidation=niveauValidation+1 where rowid=".$absence->getId();
+				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
+					SET niveauValidation=niveauValidation+1 WHERE rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
@@ -96,7 +100,9 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->recrediterHeure($ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
-				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` SET etat='Refusee', libelleEtat='Refusée' where fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
+				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
+					SET etat='Refusee', libelleEtat='Refusée' 
+					WHERE fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
@@ -105,11 +111,10 @@
 				break;
 				
 			case 'saveComment':
-				if($_REQUEST['commentValid']!=''){
-					$absence->load($ATMdb, $_REQUEST['id']);
-					$absence->commentaireValideur=$_REQUEST['commentValid'];
-					$absence->save($ATMdb);
-				}
+				
+				$absence->load($ATMdb, $_REQUEST['id']);
+				$absence->commentaireValideur=$_REQUEST['commentValid'];
+				$absence->save($ATMdb);
 				_fiche($ATMdb, $absence,'view');
 
 				break;
@@ -146,14 +151,14 @@ function _liste(&$ATMdb, &$absence) {
 			 	a.libelle,a.fk_user,  a.fk_user, u.firstname, u.name,
 			  	a.libelleEtat as 'Statut demande', a.avertissement
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-				WHERE  a.entity IN (0,".$conf->entity.") AND u.rowid=a.fk_user";
+				WHERE u.rowid=a.fk_user";
 	}else{
 		//LISTE D'ABSENCES DU COLLABORATEUR
 		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
 				a.libelle,a.fk_user,  a.fk_user, u.firstname, u.name,
 				a.libelleEtat as 'Statut demande', a.avertissement
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-				WHERE a.fk_user=".$user->id." AND a.entity IN (0,".$conf->entity.") AND u.rowid=a.fk_user";
+				WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user";
 	}
 
 	
@@ -261,7 +266,6 @@ function _listeValidation(&$ATMdb, &$absence) {
 				AND u.fk_user=a.fk_user 
 				AND u.fk_user=s.rowid
 				AND a.etat LIKE 'AValider'
-				AND v.entity IN (0,".$conf->entity.")
 				AND v.fk_usergroup=".$TabGroupe[0]['fk_usergroup'];
 				
 				if($TabGroupe[$j]['level']==1){	//on teste le niveau de validation : si il est de niveau 1, il faut qu'il puisse voir le 2 et 3
@@ -290,8 +294,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				AND v.fk_usergroup=u.fk_usergroup
 				AND u.fk_user=a.fk_user 
 				AND u.fk_user=s.rowid
-				AND a.etat LIKE 'AValider'
-				AND v.entity IN (0,".$conf->entity.")";
+				AND a.etat LIKE 'AValider'";
  		
  		$j=0;
 		foreach($TabGroupe as $TGroupe){ 	//on affiche les absences des différents groupe de validation
@@ -426,7 +429,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
 	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` 
-				WHERE fk_user=".$user->id." AND entity IN (0,".$conf->entity.")";
+				WHERE fk_user=".$user->id;
 	$ATMdb->Execute($sqlReqUser);
 	$congePrec=array();
 	$congeCourant=array();
@@ -450,8 +453,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				
 				
 				$rttCourant['id']=$ATMdb->Get_field('rowid');
-				$rttCourant['cumuleReste']=$ATMdb->Get_field('rttCumuleTotal');
-				$rttCourant['nonCumuleReste']=$ATMdb->Get_field('rttNonCumuleTotal');
+				$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('rttCumuleTotal'));
+				$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('rttNonCumuleTotal'));
 				$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
 	
 	
@@ -467,9 +470,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	//récupération informations utilisateur dont on observe l'absence, ou la crée
 	if($absence->fk_user!=0){
-		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$absence->fk_user. " AND entity IN (0,".$conf->entity.")";
+		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$absence->fk_user;
 	}else{
-		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id." AND entity IN (0,".$conf->entity.")";
+		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id;
 	}
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
@@ -561,7 +564,6 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'acquis'=>$form->texte('','rttAcquis',$rttCourant['acquis'],10,50,'',$class="text", $default='')
 				,'rowid'=>$form->texte('','rowid',$rttCourant['id'],10,50,'',$class="text", $default='')
 				//,'id'=>$form->texte('','fk_user',$_REQUEST['id'],10,50,'',$class="text", $default='')
-				,'mensuel'=>round2Virgule($rttCourant['mensuel'])
 				,'cumuleReste'=>round2Virgule($rttCourant['cumuleReste'])
 				,'nonCumuleReste'=>round2Virgule($rttCourant['nonCumuleReste'])
 				,'idNum'=>$idRttCourant
@@ -638,15 +640,17 @@ function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
 	
 	print dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence');
 	
-	print "Vous pouvez ajouter un commentaire pour justifier votre choix <br/><br/><br/>";
-	print'<input type="text" name="commentValid">       ';
-	print'<INPUT TYPE="submit" name="bt_submit" id="commentaire" VALUE=" Envoyer le commentaire "><br><br>';
+	?> 
+	<br><t style='color: #2AA8B9; 
+		font-size: 15px;font-family: arial,tahoma,verdana,helvetica;
+	    font-weight: bold;
+	    text-decoration: none;
+	    text-shadow: 1px 1px 2px #CFCFCF;'>
+    Vous pouvez ajouter un commentaire pour justifier votre choix </t><br/><br/><br/>
+	<textarea name="commentValid" rows="3" cols="40"></textarea><br><br>
+	<INPUT class="button" TYPE="submit"   id="commentaire" VALUE="Continuer"><br><br>
 
-	
-	?><a class="butAction" style="width:30%" href="?action=view&id=<?=$absence->getId()?>">Continuer sans commentaire</a><div style="clear:both"></div><?
-		
-	
-	//echo $form->btsubmit('Valider', 'valider');
+	<?
 	
 	echo $form->end_form();
 	// End of page

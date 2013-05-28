@@ -145,11 +145,11 @@
 				</tr>
 				<tr>
 					<td>Jours RTT cumulés annuels</td>
-					<td>[rttCourant.annuelCumuleInit;strconv=no;protect=no]</td>
+					<td>[rttCourant.cumuleAcquisInit;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>Jours RTT non cumulés annuels</td>
-					<td>[rttCourant.annuelNonCumuleInit;strconv=no;protect=no]</td>
+					<td>[rttCourant.nonCumuleAcquisInit;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>Report des RTT</td>
@@ -209,9 +209,9 @@
 					$("#rttAcquisAnnuelNonCumuleInit").val(7);
 				}
 				else if($('#rttMetier').val()=="noncadre37cproinfo"){
-					$("#rttTypeAcquisition").val("Annuel").attr('selected');
-					$("#rttAcquisMensuelInit").val(0);
-					$("#rttAcquisAnnuelCumuleInit").val(12);
+					$("#rttTypeAcquisition").val("Mensuel").attr('selected');
+					$("#rttAcquisMensuelInit").val(1);
+					$("#rttAcquisAnnuelCumuleInit").val(0);
 					$("#rttAcquisAnnuelNonCumuleInit").val(0);
 				}
 				else if($('#rttMetier').val()=="noncadre38cpro"){
@@ -227,6 +227,11 @@
 					$("#rttAcquisAnnuelNonCumuleInit").val(0);
 				}
 				else if($('#rttMetier').val()=="noncadre39"){
+					$("#rttTypeAcquisition").val("Annuel").attr('selected');
+					$("#rttAcquisMensuelInit").val(0);
+					$("#rttAcquisAnnuelCumuleInit").val(0);
+					$("#rttAcquisAnnuelNonCumuleInit").val(0);
+				}else{
 					$("#rttTypeAcquisition").val("Annuel").attr('selected');
 					$("#rttAcquisMensuelInit").val(0);
 					$("#rttAcquisAnnuelCumuleInit").val(0);

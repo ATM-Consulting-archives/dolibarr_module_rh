@@ -97,7 +97,7 @@ legend {
 .maintitle {
     font-size: 14pt;
     font-weight: 700;
-    color: #8CCE00;
+    color: #2AA8B9;
     text-align: left;
     padding:0.2em 1em 0.2em 0.2em;
     border-bottom: 1px solid #eee;
@@ -158,7 +158,7 @@ div.menubar .ui-widget-header
     font-size: 11px;
     text-align: left;
     border-color: #efefef;
-    background-color:#EFFBDB;
+    background-color:#eeeeee;
     padding:0 0.2%;
     min-height:14px;
 }
@@ -373,7 +373,7 @@ textarea {
 }
 
 .settingentryhighlight {
-    color: #94D200;
+    color: #2AA8B9;
     font-weight: bold;
 }
 
@@ -462,7 +462,7 @@ tr.even, .evenrow
     background-color: #fff;
 }
 tr.odd,.oddrow,.answertable tr.highlight {
-    background-color: #EFFBDB;
+    background-color: #eeeeee;
 }
 
 tr.editedrow{
@@ -745,7 +745,7 @@ ul.assessmentscope li label:first-child {
 
 .browsetable tfoot td {
     text-align: left;
-    background-color: #EFFBDB;
+    background-color: #eeeeee;
     padding:4px;
 }
 
@@ -998,7 +998,7 @@ table.statisticstable, table.statisticssummary {
 .statisticsbrowsecolumn {
     text-align: left;
     width: 100%;
-    background-color: #EFFBDB;
+    background-color: #eeeeee;
 }
 .statisticscolumnid {
     float: left;
@@ -1014,7 +1014,8 @@ table.statisticstable, table.statisticssummary {
 div.messagebox {
     width: 550px;
     margin:10px auto;
-    background-color: #EFFBDB;
+    background-color: #fff;
+      border: 1px solid #3CC3D2;
     text-align: center;
     padding:10px;
 }
@@ -1033,7 +1034,7 @@ div.successheader{
 div.errorheader{
     font-weight:bold;
     color:#fff;
-    background-color: #94D200;
+    background-color: #2AA8B9;
     margin: 5px 0;
     padding:2px;
 }
@@ -1044,7 +1045,7 @@ div.uploadsummary li {
 div.warningheader, div.messagebox .warningheader{
     font-weight:bold;
     color:#85BD00;
-    background-color: #EFFBDB;
+    background-color: #eeeeee;
     margin: 5px 0;
     padding:2px;
 }
@@ -1145,7 +1146,7 @@ div.partialheader{
 .data-entry-tbl .data-entry-separator td {
     padding: 0;
     height: 2px;
-    background-color: #EFFBDB;
+    background-color: #eeeeee;
 }
 
 .data-entry-explanation {
@@ -1382,7 +1383,7 @@ div.right {
 }
 
 .statistics-tbl-separator td {
-    background-color:#EFFBDB;
+    background-color:#eeeeee;
     height:2px;
     padding:0;
 }
@@ -1417,7 +1418,7 @@ div.right {
 
 /* Statistics filter */
 .filtertable  {
-    background:#EFFBDB;
+    background:#eeeeee;
     text-align:center;
     margin:5px auto;
     border:1px #fff solid;
@@ -1464,13 +1465,13 @@ div.right {
     text-align: center;
     zoom: 1;
     border: 1px solid #CDF078;
-    background: #EFFBDB url(images/ui-bg_glass_100_effbdb_1x400.png) 50% 50%
+    background: #eeeeee url(images/ui-bg_glass_100_effbdb_1x400.png) 50% 50%
     repeat-x;
 }
 
 .limebutton.ui-state-hover
 {
-    border: 1px solid #94D200;
+    border: 1px solid #2AA8B9;
 }
 
 
@@ -1612,7 +1613,7 @@ ol.organizer {
 }
 
 .organizer li ol li div{
-    background-color:#EFFBDB;
+    background-color:#eeeeee;
     color:#666;
 }
 
@@ -1669,12 +1670,12 @@ ol.organizer {
 }
 
 .cke_skin_office2003 .cke_top, .cke_skin_office2003 .cke_bottom, .cke_shared .cke_skin_office2003 {
-    background-color: #EFFBDB !important;
+    background-color: #eeeeee !important;
 }
 
 .cke_skin_office2003 .cke_button a:hover, .cke_skin_office2003 .cke_button a:focus, .cke_skin_office2003 .cke_button a:active {
-    background-color: #EFFBDB !important;
-    border: 1px solid #94D200 !important;
+    background-color: #eeeeee !important;
+    border: 1px solid #2AA8B9 !important;
 }
 
 .cke_skin_office2003 .cke_top, .cke_skin_office2003 .cke_bottom, .cke_shared .cke_skin_office2003 {
