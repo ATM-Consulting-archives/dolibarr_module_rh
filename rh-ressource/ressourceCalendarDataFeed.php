@@ -9,9 +9,23 @@ $ATMdb=new TPDOdb;
 $method = $_GET["method"];
 switch ($method) {
     case "list": 
+		if (isset($_REQUEST['id'])){
+			//on regarde si la ressource courante est une sous-ressource
+			$sql = "SELECT fk_rh_ressource FROM ".MAIN_DB_PREFIX."rh_ressource 
+			WHERE rowid=".$_REQUEST['id']."
+			AND entity IN (0, ".$conf->entity.")";
+			$ATMdb->Execute($sql);
+			if ($row=$ATMdb->Get_line()) {
+				$idRessourceSup = $row->fk_rh_ressource ;
+			}
+		}
+		else {$idRessourceSup = 0;}
 		
+		if ($idRessourceSup!= 0){$type = 0;}
+		else {$type = $_REQUEST['type'];}
+		//echo $sql.' '.$id;
 		$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], 
-					$_REQUEST['type'], $_REQUEST['id'], $_REQUEST['fk_user'], $_REQUEST['typeEven']);
+					$type, $_REQUEST['id'], $_REQUEST['fk_user'], $_REQUEST['typeEven'],$idRessourceSup);
         
         break;   
 
@@ -19,7 +33,7 @@ switch ($method) {
 $ATMdb->close();
 echo json_encode($ret); 
 
-function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = 'all' ){
+function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = 'all', $idRessourceSup = 0){
   global $user;
   $ret = array();
   $ret['events'] = array();
@@ -43,7 +57,12 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
     //  .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."'";
     
 	if ($idTypeRessource!=0) {$sql .= " AND r.fk_rh_ressource_type=".$idTypeRessource;}
-	if ($idRessource!=0) {$sql .= " AND e.fk_rh_ressource=".$idRessource;}
+	
+	if ($idRessource!=0) {
+		if ($idRessourceSup!=0){	
+			$sql .= " AND (e.fk_rh_ressource=".$idRessource." OR e.fk_rh_ressource=".$idRessourceSup.") ";}
+		else {$sql .= " AND e.fk_rh_ressource=".$idRessource;}
+	}
 	if ($fk_user!=0) {$sql .= " AND e.fk_user=".$fk_user;}
 	if ($typeEven && $typeEven!='all') {$sql .= " AND e.type='".$typeEven."'";}
 	//echo $sql;
@@ -54,7 +73,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
 	if (!$user->rights->ressource->agenda->viewAgenda){
     	$sql.=" AND e.fk_user=".$user->id;
 	}
-	//echo $sql;
+	//echo '     '.$sql;
    $ATMdb->Execute($sql);
     while ($row=$ATMdb->Get_line()) {
       //$ret['events'][] = $row;
@@ -75,7 +94,8 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
 	  $sujet = '';
 	  $sujet .= (empty($idRessource) || ($idRessource==0)) ? $TRessource[$row->fk_rh_ressource].', ' : '';
 	  $sujet .=  ($typeEven=='all') ? $TEvent[$row->type] : '' ;
-	  $sujet .= ($fk_user==0) ? ', '.$TUser[$row->fk_user] : '';  
+	  $sujet .= ($fk_user==0) ? ', '.$TUser[$row->fk_user] : ''; 
+	  if (empty($sujet)){$sujet=' Emprunt ';}
       $ret['events'][] = array(
        $row->rowid,
         $sujet,
@@ -98,7 +118,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
   return $ret;
 }
 
-function listCalendar(&$ATMdb, $day, $type, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = 'all'){
+function listCalendar(&$ATMdb, $day, $type, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = 'all', $idRessourceSup = 0){
   $phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
   switch($type){
@@ -119,7 +139,7 @@ function listCalendar(&$ATMdb, $day, $type, $idTypeRessource=0, $idRessource = 0
       break;
   }
  
-	return listCalendarByRange($ATMdb, $st, $et, $idTypeRessource, $idRessource ,$fk_user , $typeEven );
+	return listCalendarByRange($ATMdb, $st, $et, $idTypeRessource, $idRessource ,$fk_user , $typeEven, $idRessourceSup );
   
 
 }

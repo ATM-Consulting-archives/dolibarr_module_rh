@@ -265,6 +265,18 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'contrat';
 		$this->rights[$r][5] = 'viewPrixContrat';
+		$r++;
+		$this->rights[$r][0] = 7018;
+		$this->rights[$r][1] = 'Voir ses règles téléphoniques';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'viewRegle';
+		$r++;
+		$this->rights[$r][0] = 7019;
+		$this->rights[$r][1] = 'Gérer les règles téléphoniques';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'manageRegle';
 		
 		
 		

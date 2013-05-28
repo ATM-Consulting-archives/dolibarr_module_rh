@@ -115,7 +115,8 @@ class modValideur extends DolibarrModules
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
         $this->tabs = array('user:+valideur:Validation:valideur@valideur:/valideur/afficher.php?fk_user=__ID__' // To add a new tab identified by code tabname1
-                                    );
+                            ,'user:+analytique:Analytique:valideur@valideur:/valideur/analytique.php?fk_user=__ID__'
+							);
 
         // Dictionnaries
         //if (! isset($conf->ressource->enabled)) $conf->ressource->enabled='1';
@@ -157,6 +158,34 @@ class modValideur extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'valideur';
+		$r++;
+		$this->rights[$r][0] = 7802;
+    	$this->rights[$r][1] = 'Définir les codes analytiques';
+		$this->rights[$r][2] = 'e';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'definirCodeAnalytique';
+		$r++;
+		$this->rights[$r][0] = 7803;
+    	$this->rights[$r][1] = 'Affecter un code analytique à un utilisateur';
+		$this->rights[$r][2] = 'e';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'affecterCodeAnalytique';
+		$r++;
+		$this->rights[$r][0] = 7804;
+    	$this->rights[$r][1] = 'Consulter les codes analytiques d\'un utilisateur';
+		$this->rights[$r][2] = 'e';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'consulterCodeAnalytique_All';
+		$r++;
+		$this->rights[$r][0] = 7805;
+    	$this->rights[$r][1] = 'Consulter ses codes analytiques';
+		$this->rights[$r][2] = 'e';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'consulterCodeAnalytique_Own';
 		$r++;
 
 		// Main menu entries
