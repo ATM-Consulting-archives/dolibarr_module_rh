@@ -251,7 +251,6 @@ function _listeValidation(&$ATMdb, &$absence) {
 				$TabGroupe[$k]['level']=$ATMdb->Get_field('level');
 				$k++;
 	}
-	//print_r($TabGroupe);
 	
 	//LISTE USERS À VALIDER
 	if($k==1){		//on n'a qu'un groupe de validation
@@ -268,20 +267,20 @@ function _listeValidation(&$ATMdb, &$absence) {
 				AND a.etat LIKE 'AValider'
 				AND v.fk_usergroup=".$TabGroupe[0]['fk_usergroup'];
 				
-				if($TabGroupe[$j]['level']==1){	//on teste le niveau de validation : si il est de niveau 1, il faut qu'il puisse voir le 2 et 3
-					$sql.=" AND ( a.niveauValidation=1 OR a.niveauValidation=2 OR a.niveauValidation=3)";
-				}else if($TabGroupe[$j]['level']==2){
-					$sql.=" AND ( a.niveauValidation=3 OR a.niveauValidation=2)";
+				if($TabGroupe[0]['level']==1){	//on teste le niveau de validation : si il est de niveau 1, il faut qu'il puisse voir le 2 et 3
+					$sql.=" AND ( a.niveauValidation>=1)";
+				}else if($TabGroupe[0]['level']==2){
+					$sql.=" AND ( a.niveauValidation>=2)";
 				}
-				else if($TabGroupe[$j]['level']==3){
-					$sql.=" AND a.niveauValidation=3";
+				else if($TabGroupe[0]['level']==3){
+					$sql.=" AND a.niveauValidation>=3";
 				}
-				
+
 				
 			if($TabGroupe[0]['validate_himself']==0){
 				$sql.=" AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$user->id.")";
 			}
-		
+
 		
 	}else if($k>1){		//on a plusieurs groupes de validation
 		$sql=" SELECT DISTINCT u.fk_user, 
@@ -301,18 +300,18 @@ function _listeValidation(&$ATMdb, &$absence) {
 			if($j==0){
 				if($TabGroupe[$j]['level']==1){	//on teste le niveau de validation  si il est de niveau 1, il faut qu'il puisse voir le 2 et 3
 					$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-					AND (a.niveauValidation=1 OR a.niveauValidation=2 OR a.niveauValidation=3)
+					AND (a.niveauValidation>=1)
 					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
 					)";
 				}else if($TabGroupe[$j]['level']==2){
 					$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-					AND (a.niveauValidation=3 OR a.niveauValidation=2)
+					AND (a.niveauValidation>=2)
 					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
 					)";
 				}
 				else if($TabGroupe[$j]['level']==3){
 					$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-					AND a.niveauValidation=3
+					AND a.niveauValidation>=3
 					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
 					)";
 				}
@@ -320,19 +319,19 @@ function _listeValidation(&$ATMdb, &$absence) {
 			}else{
 				if($TabGroupe[$j]['level']==1){	//on teste le niveau de validation
 					$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-						AND (a.niveauValidation=1 OR a.niveauValidation=2 OR a.niveauValidation=3) 
+						AND (a.niveauValidation>=1) 
 						AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
 						)";
 				}
 				else if($TabGroupe[$j]['level']==2){
 					$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-						AND (a.niveauValidation=3 OR a.niveauValidation=2) 
+						AND (a.niveauValidation>=2) 
 						AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
 						)";
 				}
 				else if($TabGroupe[$j]['level']==3){
 					$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-						AND a.niveauValidation=3
+						AND a.niveauValidation>=3
 						AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
 						)";
 				}	
@@ -341,7 +340,6 @@ function _listeValidation(&$ATMdb, &$absence) {
 			$j++;
  		}
  		$sql.=")";
- 		//echo $sql;
 	}
  	
  

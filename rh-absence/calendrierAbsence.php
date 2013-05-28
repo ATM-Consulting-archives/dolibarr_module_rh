@@ -64,7 +64,7 @@
 				,'TGroupe'=>$form->combo('', 'groupe', $TabGroupe,  $idGroupe)
 				//,'TUser'=>$user->rights->absence->myactions->voirToutesAbsences?$form->combo('', 'rowid', $absence->TUser,  $absence->TUser):$form->combo('', 'rowid',$TabUser,  $TabUser)
 				,'TUser'=>$form->combo('', 'idUtilisateur', $TabUser,  $idUser)
-				//,'droits'=>$droits
+				,'droits'=>$user->rights->absence->myactions->voirToutesAbsences?1:0
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 				//,'idAfficher'=>$_REQUEST['rowid']? $_REQUEST['rowid']:0
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)

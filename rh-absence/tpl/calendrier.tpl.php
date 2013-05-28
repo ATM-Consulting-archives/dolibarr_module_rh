@@ -2,13 +2,14 @@
 [view.head3;strconv=no]
 		[view.titreCalendar;strconv=no;protect=no] 	
 		
-	 	<br> 
-				Groupe  [absence.TGroupe;strconv=no;protect=no]
-	            Utilisateur    [absence.TUser;strconv=no;protect=no]
-
-	                [absence.btValider;strconv=no;protect=no] 
-	    <br>
-
+		[onshow;block=begin;when [absence.droits]=='1']
+		 	<br> 
+					Groupe  [absence.TGroupe;strconv=no;protect=no]
+		            Utilisateur    [absence.TUser;strconv=no;protect=no]
+	
+		                [absence.btValider;strconv=no;protect=no] 
+		    <br>
+		[onshow;block=end]
 	
 		<script>
 		$('#groupe').change(function(){
