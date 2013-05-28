@@ -119,7 +119,7 @@ function _liste(&$ATMdb, &$contrat) {
 		)
 		,'link'=>array(
 			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>'<a href="?id=@ID@&action=delete"><img src="./img/delete.png"></a>'
+			,'Supprimer'=>"<a style=\"cursor:pointer;\"  onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=@ID@&action=delete'};\"><img src=\"./img/delete.png\"></a>"
 		)
 		,'translate'=>array()
 		,'hide'=>array()
