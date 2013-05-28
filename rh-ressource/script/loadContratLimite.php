@@ -1,4 +1,6 @@
 <?php
+
+define('INC_FROM_CRON_SCRIPT', true);
 require('../config.php');
 require('../lib/ressource.lib.php');
 global $conf;
@@ -124,10 +126,11 @@ foreach ($TAssociations as $value) {
 
 
 
-
-echo json_encode($TRetour);
-
+//print_r($TRetour);
+//echo json_encode($TRetour);
+__out($TRetour);
 exit();
+
 
 /*
  * prend un format d/m/Y et renvoie un timestamp

@@ -1,10 +1,11 @@
 
 <h1>Vérification des contrats</h1>
 
-Contrats dont la fin est comprise entre [infos.date_debut;strconv=no;protect=no] et [infos.date_fin;strconv=no;protect=no] <br><br>
+Contrats dont la fin est comprise entre [infos.plagedebut;strconv=no;protect=no] et [infos.plagefin;strconv=no;protect=no] 
+[infos.valider;strconv=no;protect=no]<br><br>
 
 <script>
-
+/*
 function ajax(){
 	$.ajax({
 			url: 'script/loadContratLimite.php?plagedebut='+$('#date_debut').val()+'&plagefin='+$('#date_fin').val()
@@ -29,18 +30,7 @@ function ajax(){
 			}
 		});
 }
-
-$('#date_debut').change(function(){
-	ajax();	
-});
-
-$('#date_fin').change(function(){
-	ajax();	
-});
-
-$(document).ready(function(){
-	ajax();
-});
+*/
 
 </script>
 <div>
@@ -65,13 +55,21 @@ $(document).ready(function(){
 			</tr>
 		</thead>
 		
-		<tbody id="content">
-			[infos.texte;strconv=no;protect=no]
+		<tbody>
+			<td>[ressource.societe;block=tbody;strconv=no;protect=no]</td>
+			<td>[ressource.collaborateur;strconv=no;protect=no]</td>
+			<td>[ressource.immatriculation;strconv=no;protect=no]</td>
+			<td>[ressource.marque;strconv=no;protect=no]</td>
+			<td>[ressource.version;strconv=no;protect=no]</td>
+			<td>[ressource.loyer;strconv=no;protect=no]</td>
+			<td>[ressource.assurance;strconv=no;protect=no]</td>
+			<td>[ressource.entretien;strconv=no;protect=no]</td>
+			<td>[ressource.date_debut;strconv=no;protect=no]</td>
+			<td>[ressource.date_fin;strconv=no;protect=no]</td>
+			<td>[ressource.fournisseur;strconv=no;protect=no]</td>
 		</tbody>
 	
 	</table>
 	
 
 </div>
-
-
