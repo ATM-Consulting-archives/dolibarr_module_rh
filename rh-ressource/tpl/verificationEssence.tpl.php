@@ -1,34 +1,13 @@
 
 [infos.titre;strconv=no;protect=no]
 
-Renseignez ici la limite de consommation : [infos.limite;strconv=no;protect=no] L/100km.     
-Sur la période de [infos.plagedebut;strconv=no;protect=no] à [infos.plagefin;strconv=no;protect=no]
-[infos.valider;strconv=no;protect=no] <br><br>
+Renseignez ici la limite de consommation : [infos.limite;strconv=no;protect=no] L/100km. 
+Sur la période de [infos.plagedebut;strconv=no;protect=no] à [infos.plagefin;strconv=no;protect=no] <br><br> 
+Utilisateur : [infos.fk_user;strconv=no;protect=no]. <br><br>
 
-<script>
-/*
-function ajax(){
-	$.ajax({
-			url: 'script/loadConsommationEssence.php?limite='+$('#limite').val()
-		}).done(function(data) {
-			liste = JSON.parse(data);
-			$('#content').html('');
-			for (var i=0; i<liste.length; i++){
-				$('#content').html($('#content').html()+liste[i].nom+'<br>');
-				$('#content').html($('#content').html()+liste[i].info);
-			}
-		});
-}
+[infos.valider;strconv=no;protect=no] <br>
+<br>
 
-$('#limite').live("keyup", function(){
-	ajax();	
-});
-
-$(document).ready(function(){
-	ajax();
-});
-*/
-</script>
 <div id="content">
 <table class="liste formdoc noborder" style="width:100%">
 	<thead >

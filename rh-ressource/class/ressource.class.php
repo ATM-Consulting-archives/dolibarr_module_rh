@@ -14,7 +14,7 @@ class TRH_Ressource extends TObjetStd {
 		//clé étrangere : groupes propriétaire et utilisatrice
 		parent::add_champs('fk_utilisatrice','type=entier;index;');	//groupe
 		//clé étrangère : société
-		parent::add_champs('fk_proprietaire,entity','type=entier;index;');//fk_soc_leaser : entity
+		parent::add_champs('fk_proprietaire,entity','type=entier;index;');
 		//clé étrangère : type de la ressource
 		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
 		//clé étrangère : ressource associé

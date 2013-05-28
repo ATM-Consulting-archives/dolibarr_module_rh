@@ -10,17 +10,18 @@ $TCartes = getRessource($idTotal);
 
 $plagedeb = !empty($_REQUEST['plagedebut']) ? dateToInt($_REQUEST['plagedebut']) : (time()-31532400);
 $plagefin = !empty($_REQUEST['plagefin']) ? dateToInt($_REQUEST['plagefin']) : (time()+31532400);
+$fk_user = !empty($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : 0 ;
 //$plagedeb = !empty($_REQUEST['plagedebut']) ? date("Y-m-d 00:00:00", dateToInt($_REQUEST['plagedebut'])) : date("Y-m-d 00:00:00",time()-31532400);
 //$plagefin = !empty($_REQUEST['plagefin']) ? date("Y-m-d 00:00:00", dateToInt($_REQUEST['plagefin'])) : date("Y-m-d  00:00:00", time()+31532400);
 
 $TPleins = array();
-$sql="SELECT e.rowid, DATE_FORMAT(date_debut,'%d/%m/%Y') as point,  date_debut , e.fk_rh_ressource, e.motif, e.commentaire, e.litreEssence, e.kilometrage, u.name, u.firstname
+$sql="SELECT e.rowid, DATE_FORMAT(date_debut,'%d/%m/%Y') as point,  date_debut , e.fk_rh_ressource, e.motif, e.commentaire, e.litreEssence, e.kilometrage, e.fk_user 
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
-	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user=u.rowid)
 	WHERE e.entity=".$conf->entity." 
 	AND type='pleindessence' 
 	ORDER BY date_debut";
 
+$TUser = getUsers();
 
 $ATMdb->Execute($sql);
 while($row = $ATMdb->Get_line()) {	
@@ -28,11 +29,10 @@ while($row = $ATMdb->Get_line()) {
 		//'idcarte'=>$row->fk_rh_ressource
 		//,'km'=>$row->kilometrage
 		'litre'=>$row->litreEssence
-		,'nom'=>$row->firstname.' '.$row->name
+		,'fk_user'=>$row->fk_user //firstname.' '.$row->name
 		,'date'=>$row->point
 		,'date_debut'=>date2ToInt($row->date_debut)
 	);
-	
 }	
 
 $TRessource = array();
@@ -62,7 +62,7 @@ foreach ($TPleins as $idcarte => $value) {
 			$TRessource[] = array(
 				'nom'=>$TCartes[$idcarte]
 				,'info'=> $texte
-				,'user'=> htmlentities($tab['nom'], ENT_COMPAT , 'ISO8859-1')
+				,'user'=> htmlentities($TUser($tab['fk_user']), ENT_COMPAT , 'ISO8859-1')
 				,'date'=> $tab['date']
 				,'ok'=>$tab['date_debut']
 			);
