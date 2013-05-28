@@ -153,14 +153,13 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('fk_user', $emploiTemps->fk_user);
 
-	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$emploiTemps->fk_user." AND entity IN (0,".$conf->entity.")";
+	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$emploiTemps->fk_user;
 	$ATMdb->Execute($sql);
-	$Tab=array();
+	$userCourant=array();
 	while($ATMdb->Get_line()) {
-				$userCourant=new User($db);
-				$userCourant->firstname=$ATMdb->Get_field('firstname');
-				$userCourant->id=$ATMdb->Get_field('rowid');
-				$userCourant->lastname=$ATMdb->Get_field('name');
+				
+				$userCourant['firstname']=$ATMdb->Get_field('firstname');
+				$userCourant['name']=$ATMdb->Get_field('name');
 	}
 	
 	
@@ -177,7 +176,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 			$THoraire[$jour.'_heure'.$pm]=$form->texte('','date_'.$jour.'_heure'.$pm, date('H:i',$emploiTemps->{'date_'.$jour.'_heure'.$pm}) ,5,5);
 		}
 	} 
-	
+
 	$TEntity=array();
 	$TEntity=$emploiTemps->load_entities($ATMdb);
 	
@@ -191,8 +190,6 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 			,'horaires'=>$THoraire
 			,'userCourant'=>array(
 				'id'=>$userCourant->id
-				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
-				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
 				,'tempsHebdo'=>$emploiTemps->tempsHebdo
 				,'societe'=>$emploiTemps->societeRtt
 			)
@@ -203,7 +200,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence')
 				,'compteur_id'=>$emploiTemps->getId()
-				,'titreEdt'=>load_fiche_titre("Emploi du temps de ".htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')." ".htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'),'', 'title.png', 0, '')
+				,'titreEdt'=>load_fiche_titre("Emploi du temps de ".htmlentities($userCourant['firstname'], ENT_COMPAT , 'ISO8859-1')." ".htmlentities($userCourant['name'], ENT_COMPAT , 'ISO8859-1'),'', 'title.png', 0, '')
 			)
 			,'droits'=>array(
 				'modifierEdt'=>$user->rights->absence->myactions->modifierEdt

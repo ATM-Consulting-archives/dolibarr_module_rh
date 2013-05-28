@@ -572,7 +572,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'id'=>$absence->getId()
 				,'commentaire'=>$form->zonetexte('','commentaire',$absence->commentaire, 30,3,'','','-')
-				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut') ,10)
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
