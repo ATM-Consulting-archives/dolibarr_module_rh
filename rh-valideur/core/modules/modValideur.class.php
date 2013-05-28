@@ -115,7 +115,8 @@ class modValideur extends DolibarrModules
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
         $this->tabs = array('user:+valideur:Validation:valideur@valideur:/valideur/afficher.php?fk_user=__ID__' // To add a new tab identified by code tabname1
-                                    );
+                            ,'user:+analytique:Analytique:valideur@valideur:/valideur/analytique.php?fk_user=__ID__'
+							);
 
         // Dictionnaries
         //if (! isset($conf->ressource->enabled)) $conf->ressource->enabled='1';
@@ -157,6 +158,13 @@ class modValideur extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'valideur';
+		$r++;
+		$this->rights[$r][0] = 7802;
+    	$this->rights[$r][1] = 'Définir les codes analytiques';
+		$this->rights[$r][2] = 'e';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'analytique';
 		$r++;
 
 		// Main menu entries
