@@ -244,9 +244,76 @@ function _liste(&$ATMdb, &$ressource) {
 		
 	));
 	
+	//si on est en mode utilisateur : on voit la liste des règles le concernant
+	if($user->rights->ressource->ressource->viewRegle){
+		echo '<br>';
+		$r = new TSSRenderControler($ressource);
+		$sql="SELECT DISTINCT r.rowid as 'ID', r.choixApplication as 'CA', u.firstname ,u.name, g.nom as 'Groupe',
+		duree, dureeInt,dureeExt, natureDeduire, CONCAT (CAST(montantDeduire as DECIMAL(16,2)), ' €') as 'Montant à déduire'
+		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
+		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
+		LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup as g ON (r.fk_usergroup = g.rowid)
+		WHERE r.entity IN (0,".$conf->entity.")
+		AND (r.fk_user=".$user->id." 
+			OR r.choixApplication = 'all' 
+			OR g.rowid IS NOT NULL)";
+		
+		$idTelephone=getIdType('telephone');
+		$TOrder = array('ID'=>'ASC');
+		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+					
+		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
+		$form=new TFormCore($_SERVER['PHP_SELF'].'','formtranslateList','GET');
+		
+		$r->liste($ATMdb, $sql, array(
+			'link'=>array(
+				'ID'=>'<a href="typeRessourceRegle.php?id='.$idTelephone.'&idRegle=@ID@&action=view">@val@</a>'
+			)
+			,'eval'=>array(
+				'dureeInt'=>'intToString(@val@)'
+				,'dureeExt'=>'intToString(@val@)'
+				,'duree'=>'intToString(@val@)'
+				,'Groupe'=>'TousOuPas(@CA@,"@val@")'
+				,'firstname'=>'TousOuPas(@CA@,"@val@")'
+				,'name'=>'TousOuPas(@CA@,"@val@")'
+			)
+			,'title'=>array(
+				'name'=>'Nom'
+				,'firstname'=>'Prénom'
+				,'duree'=>'Lim. générale'
+				,'dureeInt'=>'Lim. interne'
+				,'dureeExt'=>'Lim. externe'
+				,'natureDeduire' => 'Nature à déduire'
+			)
+			,'hide'=>array('CA')
+			,'type'=>array()
+			,'liste'=>array(
+				'titre'=>'Liste des règles téléphoniques'
+				,'image'=>img_picto('','title.png', '', 0)
+				,'picto_precedent'=>img_picto('','previous.png', '', 0)
+				,'picto_suivant'=>img_picto('','next.png', '', 0)
+				,'noheader'=> (int)isset($_REQUEST['ID'])
+				,'messageNothing'=>"Il n'y a aucune règle à afficher"
+				,'order_down'=>img_picto('','1downarrow.png', '', 0)
+				,'order_up'=>img_picto('','1uparrow.png', '', 0)
+				,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			)
+			,'orderBy'=>$TOrder
+		));
+	}
+	
 	$form->end();
 	llxFooter();
 }	
+
+
+function TousOuPas($choix, $val){
+	if ($choix=='all'){
+		return 'Tous';
+	}
+	return htmlentities($val, ENT_COMPAT , "ISO8859-1");
+}
 
 
 function getStatut($val){
