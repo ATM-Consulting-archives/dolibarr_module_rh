@@ -114,21 +114,23 @@ class TRH_Compteur extends TObjetStd {
 		$this->rttMetier='noncadre37cpro';
 		$this->rttannee=$annee;
 		$this->nombreCongesAcquisMensuel=2.08;
-		$this->date_rttCloture=strtotime('2013-02-28 00:00:00'); // AA Ne devrait pas être en dur mais en config
-		$this->date_congesCloture=strtotime('2013-05-31 00:00:00');
+		$this->date_rttCloture=strtotime(DATE_RTT_CLOTURE); // AA Ne devrait pas être en dur mais en config
+		$this->date_congesCloture=strtotime(DATE_CONGES_CLOTURE);
 		$this->reportRtt=0;
 	}
 	
 
 	//	fonction permettant le chargement du compteur pour un utilisateur si celui-ci existe	
 	function load_by_fkuser(&$ATMdb, $fk_user){
-		global $conf;
+
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur 
-		WHERE fk_user='".$fk_user."' AND entity IN (0,".$conf->entity.")";
+		WHERE fk_user=".$fk_user;
+
 		$ATMdb->Execute($sql);
-		
 		if ($ATMdb->Get_line()) {
-			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+			
+			$this->load($ATMdb, $ATMdb->Get_field('rowid'));
+			
 		}
 		return false;
 	}

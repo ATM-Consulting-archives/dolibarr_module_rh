@@ -207,7 +207,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 	);
 	
 	
-	if ($mode == 'view'){
+	if ($mode == 'view' ){
 		print "<br/>";
 		//liste des ressources associées
 		$r = new TSSRenderControler($contrat);

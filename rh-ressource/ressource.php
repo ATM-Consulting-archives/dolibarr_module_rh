@@ -81,10 +81,18 @@
 				
 				////////
 				if($_REQUEST["fieldChoice"]=="O"){
-					$emprunt->load($ATMdb, $_REQUEST['idEven']);
-					$emprunt->set_values($_REQUEST['evenement']);
-					$emprunt->fk_rh_ressource = $ressource->getId();
-					$emprunt->save($ATMdb);
+					//print_r($_REQUEST['evenement']);
+					if ($ressource->nouvelEmpruntSeChevauche($ATMdb, $_REQUEST['id'], $_REQUEST['evenement']) ){
+						$mesg = '<div class="error">Impossible d\'attributer la ressource. Les dates choisies se superposent avec d\'autres attributions.</div>';
+					}
+					else {
+						$emprunt->load($ATMdb, $_REQUEST['idEven']);
+						$emprunt->set_values($_REQUEST['evenement']);
+						$emprunt->fk_rh_ressource = $ressource->getId();
+						$emprunt->save($ATMdb);
+					}
+				
+					
 				}
 				////////
 				
@@ -236,9 +244,76 @@ function _liste(&$ATMdb, &$ressource) {
 		
 	));
 	
+	//si on est en mode utilisateur : on voit la liste des règles le concernant
+	if($user->rights->ressource->ressource->viewRegle){
+		echo '<br>';
+		$r = new TSSRenderControler($ressource);
+		$sql="SELECT DISTINCT r.rowid as 'ID', r.choixApplication as 'CA', u.firstname ,u.name, g.nom as 'Groupe',
+		duree, dureeInt,dureeExt, natureDeduire, CONCAT (CAST(montantDeduire as DECIMAL(16,2)), ' €') as 'Montant à déduire'
+		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
+		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
+		LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup as g ON (r.fk_usergroup = g.rowid)
+		WHERE r.entity IN (0,".$conf->entity.")
+		AND (r.fk_user=".$user->id." 
+			OR r.choixApplication = 'all' 
+			OR g.rowid IS NOT NULL)";
+		
+		$idTelephone=getIdType('telephone');
+		$TOrder = array('ID'=>'ASC');
+		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+					
+		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
+		$form=new TFormCore($_SERVER['PHP_SELF'].'','formtranslateList','GET');
+		
+		$r->liste($ATMdb, $sql, array(
+			'link'=>array(
+				'ID'=>'<a href="typeRessourceRegle.php?id='.$idTelephone.'&idRegle=@ID@&action=view">@val@</a>'
+			)
+			,'eval'=>array(
+				'dureeInt'=>'intToString(@val@)'
+				,'dureeExt'=>'intToString(@val@)'
+				,'duree'=>'intToString(@val@)'
+				,'Groupe'=>'TousOuPas(@CA@,"@val@")'
+				,'firstname'=>'TousOuPas(@CA@,"@val@")'
+				,'name'=>'TousOuPas(@CA@,"@val@")'
+			)
+			,'title'=>array(
+				'name'=>'Nom'
+				,'firstname'=>'Prénom'
+				,'duree'=>'Lim. générale'
+				,'dureeInt'=>'Lim. interne'
+				,'dureeExt'=>'Lim. externe'
+				,'natureDeduire' => 'Nature à déduire'
+			)
+			,'hide'=>array('CA')
+			,'type'=>array()
+			,'liste'=>array(
+				'titre'=>'Liste des règles téléphoniques'
+				,'image'=>img_picto('','title.png', '', 0)
+				,'picto_precedent'=>img_picto('','previous.png', '', 0)
+				,'picto_suivant'=>img_picto('','next.png', '', 0)
+				,'noheader'=> (int)isset($_REQUEST['ID'])
+				,'messageNothing'=>"Il n'y a aucune règle à afficher"
+				,'order_down'=>img_picto('','1downarrow.png', '', 0)
+				,'order_up'=>img_picto('','1uparrow.png', '', 0)
+				,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			)
+			,'orderBy'=>$TOrder
+		));
+	}
+	
 	$form->end();
 	llxFooter();
 }	
+
+
+function TousOuPas($choix, $val){
+	if ($choix=='all'){
+		return 'Tous';
+	}
+	return htmlentities($val, ENT_COMPAT , "ISO8859-1");
+}
 
 
 function getStatut($val){
@@ -301,6 +376,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 	$contrat->load_liste($ATMdb);
 	$emprunt->load_liste($ATMdb);
 	$ressource->load_liste_entity($ATMdb);
+	$listeContrat = $ressource->liste_contrat($ATMdb);
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
@@ -343,11 +419,15 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 			,'NEmprunt'=>array(
 				'id'=>$emprunt->getId()
 				,'type'=>$form->hidden('evenement[type]', 'emprunt')
+				,'idEven'=>$form->hidden('evenement[idEven]', $emprunt->getId())
 				,'fk_user'=>$form->combo('','evenement[fk_user]',$emprunt->TUser,$emprunt->fk_user)
 				,'fk_rh_ressource'=> $form->hidden('evenement[fk_rh_ressource]', $ressource->getId())
 				,'commentaire'=>$form->texte('','evenement[commentaire]',$emprunt->commentaire, 30,100,'','','-')
 				,'date_debut'=> $form->calendrier('', 'evenement[date_debut]', $emprunt->get_date('date_debut'), 10)
 				,'date_fin'=> $form->calendrier('', 'evenement[date_fin]', $emprunt->get_date('date_fin'), 10)
+			)
+			,'listeContrat'=>array(
+				'liste' => $listeContrat	
 			)
 			,'contrat'=>array(
 				'id'=>$contrat->getId()

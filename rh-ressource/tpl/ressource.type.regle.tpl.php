@@ -1,5 +1,10 @@
 [onshow;block=begin;when [view.mode]=='view']
-	[view.head;strconv=no]                     
+	[onshow;block=begin;when [view.userRight]==1]
+		[view.head;strconv=no]
+	[onshow;block=end]
+	[onshow;block=begin;when [view.userRight]!=1]
+		[view.onglet;strconv=no]    
+	[onshow;block=end]       
 [onshow;block=end]  
 
 [onshow;block=begin;when [view.mode]!='view']
@@ -73,7 +78,6 @@
 		[onshow;block=begin;when [view.mode]=='view']
 			<td>[newRule.choixLimiteViewMode; strconv=no]</td>
 		[onshow;block=end]
-		
 			<script>
 			$(document).ready(function(){
 				$('#choixLimite_1').click(function(){
@@ -87,11 +91,11 @@
 					$('#externe').show();
 				})
 				
-				[onshow;block=begin;when [newRule.choixLimiteViewMode]=='Général']
+				[onshow;block=begin;when [newRule.choixLimiteViewMode]=='Générale']
 					$('#interne,#externe').hide();
 				[onshow;block=end]
 				
-				[onshow;block=begin;when [newRule.choixLimiteViewMode]!='Général']
+				[onshow;block=begin;when [newRule.choixLimiteViewMode]!='Générale']
 					$('#general').hide();
 				[onshow;block=end]
 				
@@ -143,22 +147,21 @@
 	</tr>
 </table>
 
-
-[onshow;block=begin;when [view.mode]!='edit']
-	
-		
+[onshow;block=begin;when [view.userRight]==1]
+	[onshow;block=begin;when [view.mode]!='edit']
+			</div>
+		<div class="tabsAction">
+			<a href="?id=[ressourceType.id]&idRegle=[newRule.id]&action=edit" class="butAction">Modifier</a>
+			<a class="butActionDelete"  href="?id=[ressourceType.id]&idRegle=[newRule.id]&action=delete">Supprimer</a>
 		</div>
-		
-	<div class="tabsAction">
-		<a href="?id=[ressourceType.id]&idRegle=[newRule.id]&action=edit" class="butAction">Modifier</a>
-		<a class="butActionDelete"  href="?id=[ressourceType.id]&idRegle=[newRule.id]&action=delete">Supprimer</a>
+	[onshow;block=end]	
+	
+	
+	[onshow;block=begin;when [view.mode]=='edit']
+	<div class="tabsAction" style="text-align:center;">
+		<input type="submit" value="Enregistrer" name="save" class="button"> 
+		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
 	</div>
-[onshow;block=end]	
-[onshow;block=begin;when [view.mode]=='edit']
-
-
-<div class="tabsAction" style="text-align:center;">
-	<input type="submit" value="Enregistrer" name="save" class="button"> 
-	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[ressourceType.id]'">
-</div>
+	[onshow;block=end]
 [onshow;block=end]
+
