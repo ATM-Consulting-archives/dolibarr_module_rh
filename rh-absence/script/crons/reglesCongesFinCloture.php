@@ -1,6 +1,6 @@
 <?php
 /*
- * Script créant et vérifiant que les champs requis s'ajoutent bien
+ * SCRIPT 1 à exécuter
  * 
  */
  	define('INC_FROM_CRON_SCRIPT', true);
@@ -35,16 +35,22 @@
 		$juin=date("dm");
 		if($juin==$dateMD){
 			//on transfère les jours N-1 non pris vers jours report
-			$sqlTransfert="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET reportCongesNM1=acquisExerciceNM1+acquisAncienneteNM1+acquisHorsPeriodeNM1 WHERE fk_user =".$idUser;
+			$sqlTransfert="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
+				SET reportCongesNM1=acquisExerciceNM1+acquisAncienneteNM1+acquisHorsPeriodeNM1 
+				WHERE fk_user =".$idUser;
 			$ATMdb->Execute($sqlTransfert);
 			
 			//on transfère les jours acquis N vers N-1
-			$sqlTransfert2="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET acquisExerciceNM1=acquisExerciceN, acquisAncienneteNM1=acquisAncienneteN,acquisHorsPeriodeNM1=acquisHorsPeriodeN WHERE fk_user =".$idUser;
+			$sqlTransfert2="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
+			SET acquisExerciceNM1=acquisExerciceN, acquisAncienneteNM1=acquisAncienneteN,
+			acquisHorsPeriodeNM1=acquisHorsPeriodeN 
+			WHERE fk_user =".$idUser;
 			$ATMdb->Execute($sqlTransfert2);
 			
 			//on remet à 0 les jours année courante
 			//L'ancienneté devra normalement être gérée manuellement. 
-			$sqlRaz="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET acquisExerciceN=0, acquisHorsPeriodeN=0 WHERE fk_user =".$idUser;
+			$sqlRaz="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
+			SET acquisExerciceN=0, acquisHorsPeriodeN=0 WHERE fk_user =".$idUser;
 			$ATMdb->Execute($sqlRaz);
 			
 		}

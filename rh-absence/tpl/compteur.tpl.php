@@ -86,7 +86,7 @@
 
 				<tr>
 					<td>Jours RTT cumulés acquis</td>
-					<td>[rttCourant.cumuleAcquisAffichage;strconv=no;protect=no]</td>
+					<td>[rttCourant.cumuleAcquis;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>Jours RTT cumulés pris</td>
@@ -105,7 +105,7 @@
 				</tr>
 				<tr>
 					<td>Jours RTT non cumulés acquis</td>
-					<td>[rttCourant.nonCumuleAcquisAffichage;strconv=no;protect=no]</td>
+					<td>[rttCourant.nonCumuleAcquis;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>Jours RTT non cumulés pris</td>
@@ -145,11 +145,11 @@
 				</tr>
 				<tr>
 					<td>Jours RTT cumulés annuels</td>
-					<td>[rttCourant.cumuleAcquis;strconv=no;protect=no]</td>
+					<td>[rttCourant.cumuleAcquisInit;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>Jours RTT non cumulés annuels</td>
-					<td>[rttCourant.nonCumuleAcquis;strconv=no;protect=no]</td>
+					<td>[rttCourant.nonCumuleAcquisInit;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>Report des RTT</td>
@@ -227,6 +227,11 @@
 					$("#rttAcquisAnnuelNonCumuleInit").val(0);
 				}
 				else if($('#rttMetier').val()=="noncadre39"){
+					$("#rttTypeAcquisition").val("Annuel").attr('selected');
+					$("#rttAcquisMensuelInit").val(0);
+					$("#rttAcquisAnnuelCumuleInit").val(0);
+					$("#rttAcquisAnnuelNonCumuleInit").val(0);
+				}else{
 					$("#rttTypeAcquisition").val("Annuel").attr('selected');
 					$("#rttAcquisMensuelInit").val(0);
 					$("#rttAcquisAnnuelCumuleInit").val(0);

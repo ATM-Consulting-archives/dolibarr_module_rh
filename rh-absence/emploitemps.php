@@ -178,7 +178,8 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 		}
 	} 
 	
-	
+	$TEntity=array();
+	$TEntity=$emploiTemps->load_entities($ATMdb);
 	
 	//echo "salut".$user->rights->absence->myactions->modifierSonEdt;
 	$TBS=new TTemplateTBS();
@@ -195,6 +196,9 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				,'tempsHebdo'=>$emploiTemps->tempsHebdo
 				,'societe'=>$emploiTemps->societeRtt
 			)
+			,'entity'=>array(
+				'TEntity'=>$form->combo('','societeRtt',$TEntity,$emploiTemps->societeRtt)
+			)
 			,'view'=>array(
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence')
@@ -202,7 +206,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				,'titreEdt'=>load_fiche_titre("Emploi du temps de ".htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')." ".htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'),'', 'title.png', 0, '')
 			)
 			,'droits'=>array(
-				'modifierEdt'=>$droitsEdt=$user->rights->absence->myactions->modifierEdt
+				'modifierEdt'=>$user->rights->absence->myactions->modifierEdt
 			)
 			
 		)	
