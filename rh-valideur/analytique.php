@@ -114,11 +114,14 @@ function _liste(&$ATMdb) {
 	
 	<?
 	
-	if($user->rights->valideur->myactions->analytique=="1"){
+	if((($user->rights->valideur->myactions->consulterCodeAnalytique_Own=="1")&&($user->id==$fuser->id))||($user->rights->valideur->myactions->consulterCodeAnalytique_All=="1")){
 		$analytique_user=new TRH_analytique_user;
 		$r = new TSSRenderControler($analytique_user);
-		$sql= "SELECT u.rowid as 'ID', a.code as 'Code analytique', u.pourcentage as 'Pourcentage', '' as 'Supprimer'
-			FROM ".MAIN_DB_PREFIX."rh_analytique_user as u
+		$sql= "SELECT u.rowid as 'ID', a.code as 'Code analytique', u.pourcentage as 'Pourcentage'";
+		if($user->rights->valideur->myactions->affecterCodeAnalytique=="1"){
+			$sql.=",'' as 'Supprimer'";
+		}
+		$sql.="FROM ".MAIN_DB_PREFIX."rh_analytique_user as u
 				LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique as a ON (a.rowid = u.fk_code)
 			WHERE u.fk_user = ".$fuser->id." AND u.entity IN (0, ".$conf->entity.")";
 		
@@ -154,9 +157,20 @@ function _liste(&$ATMdb) {
 			
 		));
 		
-		?><a class="butAction" href="?action=new_code&fk_user=<?=$fuser->id ?>">Affecter un code</a>
+		if($user->rights->valideur->myactions->affecterCodeAnalytique=="1"){
+			?><a class="butAction" href="?action=new_code&fk_user=<?=$fuser->id ?>">Affecter un code</a>
+			<div style="clear:both;"></div><?
+		}else{
+			?><br><br><?
+		}
+	}else{
+		?>
+		<p>Vous ne disposez pas du droit pour consulter les codes analytiques de cet utilisateur.</p>
 		<?
-		
+	}
+	
+	if($user->rights->valideur->myactions->definirCodeAnalytique=="1"){
+			
 		$analytique=new TRH_analytique;
 		$r = new TSSRenderControler($analytique);
 		$sql= "SELECT a.rowid as 'ID', a.code as 'Code analytique', '' as 'Supprimer'
@@ -221,7 +235,7 @@ function _fiche(&$ATMdb, &$analytique, $mode) {
 	$current_head = 'analytique';
 	dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
 	
-	if($user->rights->valideur->myactions->analytique=="1"){
+	if($user->rights->valideur->myactions->definirCodeAnalytique=="1"){
 		$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 		$form->Set_typeaff($mode);
 		echo $form->hidden('fk_user', $fuser->id);
@@ -256,7 +270,9 @@ function _fiche(&$ATMdb, &$analytique, $mode) {
 	
 	}else{
 		?>
-		<p>Vous ne disposez pas du droit pour ajouter des codes analytiques.</p>
+		<p>Vous ne disposez pas du droit pour ajouter/modifier des codes analytiques.</p>
+		<a class="butAction" href="javascript:history.back()">Retour</a>
+		<div style="clear:both;"></div>
 		<?
 	}
 	
@@ -282,7 +298,7 @@ function _fiche_code(&$ATMdb, &$analytique_user, $mode) {
 	
 	$analytique_user->loadListAnalytique($ATMdb);
 	
-	if($user->rights->valideur->myactions->analytique=="1"){
+	if($user->rights->valideur->myactions->affecterCodeAnalytique=="1"){
 		$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 		$form->Set_typeaff($mode);
 		echo $form->hidden('fk_user', $fuser->id);
@@ -318,7 +334,9 @@ function _fiche_code(&$ATMdb, &$analytique_user, $mode) {
 	
 	}else{
 		?>
-		<p>Vous ne disposez pas du droit pour ajouter des codes analytiques.</p>
+		<p>Vous ne disposez pas du droit pour affecter des codes analytiques.</p>
+		<a class="butAction" href="javascript:history.back()">Retour</a>
+		<div style="clear:both;"></div>
 		<?
 	}
 	

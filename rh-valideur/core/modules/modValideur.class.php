@@ -164,7 +164,28 @@ class modValideur extends DolibarrModules
 		$this->rights[$r][2] = 'e';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
-        $this->rights[$r][5] = 'analytique';
+        $this->rights[$r][5] = 'definirCodeAnalytique';
+		$r++;
+		$this->rights[$r][0] = 7803;
+    	$this->rights[$r][1] = 'Affecter un code analytique à un utilisateur';
+		$this->rights[$r][2] = 'e';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'affecterCodeAnalytique';
+		$r++;
+		$this->rights[$r][0] = 7804;
+    	$this->rights[$r][1] = 'Consulter les codes analytiques d\'un utilisateur';
+		$this->rights[$r][2] = 'e';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'consulterCodeAnalytique_All';
+		$r++;
+		$this->rights[$r][0] = 7805;
+    	$this->rights[$r][1] = 'Consulter ses codes analytiques';
+		$this->rights[$r][2] = 'e';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'consulterCodeAnalytique_Own';
 		$r++;
 
 		// Main menu entries
