@@ -159,13 +159,6 @@ class modValideur extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'valideur';
 		$r++;
-		$this->rights[$r][0] = 7802;
-    	$this->rights[$r][1] = 'Définir les codes analytiques';
-		$this->rights[$r][2] = 'e';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'myactions';
-        $this->rights[$r][5] = 'definirCodeAnalytique';
-		$r++;
 		$this->rights[$r][0] = 7803;
     	$this->rights[$r][1] = 'Affecter un code analytique à un utilisateur';
 		$this->rights[$r][2] = 'e';

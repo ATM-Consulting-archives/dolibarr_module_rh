@@ -7,7 +7,6 @@
 	
 	require('../config.php');
 	require('../class/valideur.class.php');
-	require('../class/analytique.class.php');
 	require('../class/analytique_user.class.php');
 	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 	
@@ -17,8 +16,6 @@
 	$ATMdb->db->debug=true;
 
 	$o=new TRH_valideur_groupe;
-	$o->init_db_by_vars($ATMdb);
-	$o=new TRH_analytique;
 	$o->init_db_by_vars($ATMdb);
 	$o=new TRH_analytique_user;
 	$o->init_db_by_vars($ATMdb);
