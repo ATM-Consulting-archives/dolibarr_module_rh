@@ -172,7 +172,7 @@
 			[onshow;block=end]
 			[onshow;block=begin;when [view.mode]!='new']
 				<a class="butAction"  href="?id=[contrat.id]&action=edit">Modifier</a>
-				&nbsp; &nbsp;<a class="butActionDelete"  href="?id=[contrat.id]&action=delete">Supprimer</a>
+				&nbsp; &nbsp;<a class="butActionDelete"  onclick="if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=[contrat.id]&action=delete'};">Supprimer</a>
 			[onshow;block=end]
 		[onshow;block=end]
 </div>

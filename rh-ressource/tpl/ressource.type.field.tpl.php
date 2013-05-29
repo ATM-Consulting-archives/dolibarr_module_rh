@@ -100,7 +100,6 @@
 [onshow;block=begin;when [view.mode]!='edit']
 	<div class="tabsAction">
 		<a href="?id=[ressourceType.id]&action=edit" class="butAction">Modifier</a>
-		<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[ressourceType.id]'">Supprimer</span>
 	</div>
 [onshow;block=end]	
 [onshow;block=begin;when [view.mode]=='edit']

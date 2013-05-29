@@ -27,174 +27,154 @@ function _get(&$ATMdb, $case) {
 function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	global $langs, $db, $user, $conf;
 	
+	$langs->load('ndfp@ndfp');
+	$langs->load('main');
+	
 	$TabNdf=array();
-	
-	$sql = "SELECT";
-	$sql.= " e.label";
-    $sql.= " FROM ".MAIN_DB_PREFIX."entity as e";
-    $sql.= " WHERE e.rowid IN (0,".$conf->entity.")";
-	
-	$resql=$db->query($sql);
-	if ($resql){
-        $obj = $db->fetch_object($resql);
-        if ($obj){
-			$label = $obj->label;
-		}
-    }else{
-        $error++;
-        dol_print_error($db);
-    }
-	
-	$k=0;
-	$TabNdf[$k]=$label;
-	$k++;
 	
 	$date_debut=explode("/", $date_debut);
 	$date_debut=date('Y-m-d',mktime(0, 0, 0, $date_debut[1], $date_debut[0], $date_debut[2]));
 	$date_fin=explode("/", $date_fin);
 	$date_fin=date('Y-m-d',mktime(0, 0, 0, $date_fin[1], $date_fin[0], $date_fin[2]));
 	
-	$langs->load('ndfp@ndfp');
-	$langs->load('main');
+	/**----***********************----**/
+	/**----** Ligne de l'entité **----**/
+	/**----***********************----**/
 	
-	$sql = "SELECT";
-	$sql.= " n.rowid as 'NDF_ID',";
-	$sql.= " n.ref,";
-	$sql.= " n.datee as 'datef_ndf',";
-	$sql.= " l.datef,";
-	$sql.= " t.accountancy_code,";
-	$sql.= " t.label,";
-	$sql.= " v.taux as 'tva',";
-	$sql.= " CAST(l.total_ht as DECIMAL(16,2)) as 'total_ht',";
-	$sql.= " CAST(l.total_ttc as DECIMAL(16,2)) as 'total_ttc',";
-	$sql.= " e.code_analytique,";
-	$sql.= " e.COMPTE_TIERS";
+	$sql = "SELECT
+			e.label as 'label'
+			FROM ".MAIN_DB_PREFIX."entity as e
+			WHERE e.rowid IN (0,".$entity.")";
 	
-    $sql.= " FROM ".MAIN_DB_PREFIX."ndfp_det as l";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_exp as t ON t.rowid = l.fk_exp";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = n.fk_user";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as e ON u.rowid = e.fk_object";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva as v ON v.rowid = l.fk_tva";
-    $sql.= " WHERE n.statut = 1";
-	$sql.= " AND n.entity IN (0,".$entity.")";
-	$sql.= " AND n.type LIKE '".$type."'";
-	$sql.= " AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')";
-	$sql.= " ORDER BY n.rowid";
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$TabNdf[]=$ATMdb->Get_field('label');
+	}
+	
+	/**----**********************----**/
+	/**----** Lignes de débit **----**/
+	/**----**********************----**/
+	
+	$sql = "SELECT
+			t.accountancy_code
+			,CAST(SUM(l.total_ht) as DECIMAL(16,2)) as 'total_ht'
+			
+			FROM ".MAIN_DB_PREFIX."ndfp_det as l
+				LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp
+				LEFT JOIN ".MAIN_DB_PREFIX."c_exp as t ON t.rowid = l.fk_exp
+			
+			WHERE n.statut = 1
+			AND n.entity IN (".$entity.")
+			AND n.type LIKE '".$type."'
+			AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')
+			GROUP BY t.accountancy_code";
 	
 	if(isset($_REQUEST['DEBUG'])) {
 		print $sql;
 	}
 	
-	$resql=$db->query($sql);
-	if ($resql){
-        $num = $db->num_rows($resql);
-        $m = 0;
-        if ($num){
-            while ($m < $num){
-                $obj = $db->fetch_object($resql);
-
-                if ($obj){
-                	// Si l'on a parcouru toutes les lignes d'une note de frais
-                	if(($obj->ref!=$ref)&&(isset($ref))){
-                		$sql_ndf = "SELECT";
-                		$sql_ndf.= " CAST(SUM(l.total_ht) as DECIMAL(16,2)) as 'total_ht',";
-						$sql_ndf.= " CAST(SUM(l.total_tva) as DECIMAL(16,2)) as 'total_tva',";
-						$sql_ndf.= " CAST(SUM(l.total_ttc) as DECIMAL(16,2)) as 'total_ttc',";
-						$sql_ndf.= " n.datee as 'datef'";
-						
-					    $sql_ndf.= " FROM ".MAIN_DB_PREFIX."ndfp_det as l";
-						$sql_ndf.= " LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp";
-					    $sql_ndf.= " WHERE n.statut = 1";
-					    $sql_ndf.= " AND n.rowid =".$NDF_ID;
-						
-						$resql_ndf=$db->query($sql_ndf);
-						
-						if ($resql_ndf){
-					        $obj_ndf = $db->fetch_object($resql_ndf);
-							
-					        if ($obj_ndf){
-					        	$mois_ndf		=	substr($obj_ndf->datef, 5, 2);
-								$annee_ndf		=	substr($obj_ndf->datef, 0, 4);
-					        	$datef_ndf		=	substr($obj_ndf->datef, 8, 2).substr($obj_ndf->datef, 5, 2).substr($obj_ndf->datef, 2, 2);
-					        	$total_ht_ndf	=	$obj_ndf->total_ht;
-								$total_ttc_ndf	=	$obj_ndf->total_ttc;
-								$total_tva_ndf	=	$obj_ndf->total_tva;
-							}
-					    }else{
-					        $error++;
-					        dol_print_error($db);
-					    }
-					    
-					    $line = array('NDF', $datef_ndf, 'OD', '445660', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_tva_ndf, 'N', $ref, '', '', 'EUR', '');
-						$TabNdf[$k]=$line;
-						$k++;
-						$line = array('NDF', $datef_ndf, 'OD', '425902', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', $ref, '', '', 'EUR', '');
-						$TabNdf[$k]=$line;
-						$k++;
-                	}
-                	
-                	$NDF_ID				=	$obj->NDF_ID;
-					$ref				=	$obj->ref;
-					$mois				=	substr($obj->datef, 5, 2);
-					$annee				=	substr($obj->datef, 0, 4);
-					$mois_ndf			=	substr($obj->datef_ndf, 5, 2);
-					$annee_ndf			=	substr($obj->datef_ndf, 0, 4);
-					$datef				=	substr($obj->datef, 8, 2).substr($obj->datef, 5, 2).substr($obj->datef, 2, 2);
-					$code_compta		=	$obj->accountancy_code;
-					$label				=	$obj->label;
-					$tva				=	$obj->tva;
-					$total_ht			=	$obj->total_ht;
-					$total_ttc			=	$obj->total_ttc;
-					$code_analytique	=	$obj->CODE_ANA;
-					$compte_tiers		=	$obj->COMPTE_TIERS;
+	$ATMdb2=new Tdb;
+			
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$code_compta		=	$ATMdb->Get_field('accountancy_code');
+		$total_ht			=	$ATMdb->Get_field('total_ht');
+		
+		$line = array('NDF', date('dmy'), 'OD', $code_compta, 'G', '', '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', '', 'EUR', '');
+		$TabNdf[]=$line;
+		
+		$sql_anal = "SELECT
+						l.rowid
+						, l.total_ht as 'total_ht'
+						, a.code as 'code_analytique'
+						, a.pourcentage as 'pourcentage'
 					
-					$line = array('NDF', $datef, 'OD', $code_compta, 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_ht, 'N', $ref, '', '', 'EUR', '');
-					$TabNdf[$k]=$line;
-					$k++;
-				}
-                $m++;
-            }
-
-			$sql_ndf = "SELECT";
-    		$sql_ndf.= " CAST(SUM(l.total_ht) as DECIMAL(16,2)) as 'total_ht',";
-			$sql_ndf.= " CAST(SUM(l.total_tva) as DECIMAL(16,2)) as 'total_tva',";
-			$sql_ndf.= " CAST(SUM(l.total_ttc) as DECIMAL(16,2)) as 'total_ttc',";
-			$sql_ndf.= " n.datee as 'datef'";
+					FROM ".MAIN_DB_PREFIX."ndfp_det as l
+						LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp
+						LEFT JOIN ".MAIN_DB_PREFIX."c_exp as t ON t.rowid = l.fk_exp
+						LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON a.fk_user = n.fk_user
+					
+					WHERE n.statut = 1
+					AND n.entity IN (".$entity.")
+					AND n.type LIKE '".$type."'
+					AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')
+					AND t.accountancy_code = ".$code_compta."
+		";
+		
+		if(isset($_REQUEST['DEBUG'])) {
+			print $sql_anal;
+		}
+		
+		$ATMdb2->Execute($sql_anal);
+		while($ATMdb2->Get_line()) {
+			$code_analytique	=	$ATMdb2->Get_field('code_analytique');
+			$pourcentage		=	$ATMdb2->Get_field('pourcentage');
+			$total_ht			=	$ATMdb2->Get_field('total_ht');
+			$total_ht			=	$total_ht*($pourcentage/100);
 			
-		    $sql_ndf.= " FROM ".MAIN_DB_PREFIX."ndfp_det as l";
-			$sql_ndf.= " LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp";
-		    $sql_ndf.= " WHERE n.statut = 1";
-		    $sql_ndf.= " AND n.rowid =".$NDF_ID;
-			
-			$resql_ndf=$db->query($sql_ndf);
-			
-			if ($resql_ndf){
-		        $obj_ndf = $db->fetch_object($resql_ndf);
-				
-		        if ($obj_ndf){
-		        	$mois_ndf		=	substr($obj_ndf->datef, 5, 2);
-					$annee_ndf		=	substr($obj_ndf->datef, 0, 4);
-		        	$datef_ndf		=	substr($obj_ndf->datef, 8, 2).substr($obj_ndf->datef, 5, 2).substr($obj_ndf->datef, 2, 2);
-		        	$total_ht_ndf	=	$obj_ndf->total_ht;
-					$total_ttc_ndf	=	$obj_ndf->total_ttc;
-					$total_tva_ndf	=	$obj_ndf->total_tva;
-				}
-		    }else{
-		        $error++;
-		        dol_print_error($db);
-		    }
-		    
-		    $line = array('NDF', $datef_ndf, 'OD', '445660', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_tva_ndf, 'N', $ref, '', '', 'EUR', '');
-			$TabNdf[$k]=$line;
-			$k++;
-			$line = array('NDF', $datef_ndf, 'OD', '425902', 'G', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', $ref, '', '', 'EUR', '');
-			$TabNdf[$k]=$line;
-        }
-    }else{
-        $error++;
-        dol_print_error($db);
-    }
+			$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', '', 'EUR', '');
+			$TabNdf[]=$line;
+		}
+	}
+	
+	/**----**********************----**/
+	/**----**** Ligne de TVA ****----**/
+	/**----**********************----**/
+	
+	$sql = "SELECT
+					CAST(SUM(n.total_tva) as DECIMAL(16,2)) as 'total_tva'
+				FROM ".MAIN_DB_PREFIX."ndfp as n
+				WHERE n.statut = 1
+				AND n.entity IN (".$entity.")
+				AND n.type LIKE '".$type."'
+				AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')";
+	
+	if(isset($_REQUEST['DEBUG'])) {
+		print $sql;
+	}
+	
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$total_tva_ndf	=	$ATMdb->Get_field('total_tva');
+		
+		$line = array('NDF', date('dmy'), 'OD', '445660', 'G', '', '', 'NOTE DE FRAIS '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva_ndf, 'N', '', '', '', 'EUR', '');
+		$TabNdf[]=$line;
+	}
+	
+	/**----**********************----**/
+	/**----** Lignes de crédit **----**/
+	/**----**********************----**/
+	
+	$sql = "SELECT
+					n.ref as 'ref'
+					,CAST(n.total_ttc as DECIMAL(16,2)) as 'total_ttc'
+					,n.datee as 'datef'
+					,e.COMPTE_TIERS as 'compte_tiers'
+				FROM ".MAIN_DB_PREFIX."ndfp as n
+					LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = n.fk_user
+						LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as e ON u.rowid = e.fk_object
+				WHERE n.statut = 1
+				AND n.entity IN (".$entity.")
+				AND n.type LIKE '".$type."'
+				AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')
+				GROUP BY n.rowid";
+	
+	if(isset($_REQUEST['DEBUG'])) {
+		print $sql;
+	}
+	
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$ref			=	$ATMdb->Get_field('ref');
+		$compte_tiers	=	$ATMdb->Get_field('compte_tiers');
+		$mois_ndf		=	substr($ATMdb->Get_field('datef'), 5, 2);
+		$annee_ndf		=	substr($ATMdb->Get_field('datef'), 0, 4);
+    	$datef_ndf		=	substr($ATMdb->Get_field('datef'), 8, 2).substr($ATMdb->Get_field('datef'), 5, 2).substr($ATMdb->Get_field('datef'), 2, 2);
+    	$total_ttc_ndf	=	$ATMdb->Get_field('total_ttc');
+		
+		$line = array('NDF', $datef_ndf, 'OD', '425902', 'X', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', $ref, '', '', 'EUR', '');
+		$TabNdf[]=$line;
+	}
 	
 	return $TabNdf;
 }
