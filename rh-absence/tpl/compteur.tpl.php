@@ -9,7 +9,8 @@
                        
 		<table class="border " style="width:200%;"  >
 				<tr>
-					<td colspan="2"> [congesCourant.titreCongesNM;strconv=no;protect=no]   </td> 
+					<td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" > 
+				    Année N-1   </td> </div>
 				</tr>
 				<tr>
 					<td>Utilisateur courant</td>
@@ -45,7 +46,8 @@
 				</tr>
 
 				<tr>
-					<td colspan="2">[congesCourant.titreCongesN;strconv=no;protect=no]    </td> 
+					<td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" > 
+						Année N    </td> 
 				</tr>
 				<tr>
 					<td>Acquis exercice</td>
@@ -81,7 +83,8 @@
 	 <br/>                              
 		<table class="border" style="width:200%">
 				<tr>
-					 <td colspan="2">[rttCourant.titreRttCumuleCompteur;strconv=no;protect=no] </td>
+					 <td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" >
+					 	Compteur de RTT cumulés </td>
 				</tr>
 
 				<tr>
@@ -97,11 +100,12 @@
 					<td>[rttCourant.cumuleReport;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
-					<td>Jours RTT cumulés à prendre</td>
+					<td><b>Jours RTT cumulés à prendre</b></td>
 					<td>[rttCourant.cumuleTotal;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					 <td colspan="2">[rttCourant.titreRttNonCumuleCompteur;strconv=no;protect=no] </td>
+					 <td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" >
+					 	Compteur de RTT non cumulés</td>
 				</tr>
 				<tr>
 					<td>Jours RTT non cumulés acquis</td>
@@ -116,13 +120,14 @@
 					<td>[rttCourant.nonCumuleReport;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
-					<td>Jours RTT non cumulés à prendre</td>
+					<td><b>Jours RTT non cumulés à prendre</b></td>
 					<td>[rttCourant.nonCumuleTotal;strconv=no;protect=no]</td>
 				</tr>
 
 		             
 				<tr>
-					 <td colspan="2">[rttCourant.titreRttMethode;strconv=no;protect=no]</h2></td>
+					  <td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" >
+					 	Méthode d'acquisition des jours</h2></td>
 				</tr>
 				<tr>
 					<td>Métier collaborateur</td>

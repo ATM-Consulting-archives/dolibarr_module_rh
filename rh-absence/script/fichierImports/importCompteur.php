@@ -106,16 +106,18 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				//RTT cumulés
 				$compteur->rttCumulePris=$prisRttCumule;
-				$compteur->rttAcquisAnnuelCumuleInit=$infos[18];
+				$compteur->rttCumuleAcquis=$infos[18];
 				$compteur->rttCumuleReportNM1=$infos[140];
-				$compteur->rttCumuleTotal=$compteur->rttAcquisAnnuelCumuleInit+$compteur->rttCumuleReportNM1-$compteur->rttCumulePris;
+				$compteur->rttCumuleTotal=$compteur->rttCumuleAcquis+$compteur->rttCumuleReportNM1-$compteur->rttCumulePris;
+				$compteur->rttAcquisAnnuelCumuleInit=0; 	//à revoir
 				
 				
 				//RTT non cumulés
 				$compteur->rttNonCumulePris=$prisRttNonCumule;
-				$compteur->rttAcquisAnnuelNonCumuleInit=$infos[17];
+				$compteur->rttNonCumuleAcquis=$infos[17];
 				$compteur->rttNonCumuleReportNM1=$infos[141];	//	report
-				$compteur->rttNonCumuleTotal=$compteur->rttAcquisAnnuelNonCumuleInit+$compteur->rttNonCumuleReportNM1-$compteur->rttNonCumulePris;
+				$compteur->rttNonCumuleTotal=$compteur->rttNonCumuleAcquis+$compteur->rttNonCumuleReportNM1-$compteur->rttNonCumulePris;
+				$compteur->rttAcquisAnnuelNonCumuleInit=0;		//à revoir
 				
 				//congés
 				$compteur->acquisExerciceNM1=$infos[11];
@@ -141,6 +143,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				if($infos[71]=="VRAI"){
 					$compteur->rttMetier='cadre';
 					$compteur->rttTypeAcquisition='Annuel';
+					$compteur->rttAcquisAnnuelCumuleInit=5;			////////////////////revoiiir
+					$compteur->rttAcquisAnnuelNonCumuleInit=0;
+					
 				}
 				else{
 					//on récupère le temps de travail du salarié pour le calcul du rtt enfonction du métier et entreprise
@@ -150,7 +155,16 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$ATMdb->Execute($sql);
 					if($ATMdb->Get_line()) {
 						$tpsHebdoUser=$ATMdb->Get_field('tempsHebdo');
-						$societe=$ATMdb->Get_field('societeRtt');
+						$idSociete=$ATMdb->Get_field('societeRtt');
+					}
+					
+					//on récupère le nom de la société :
+					$sql="SELECT label
+						FROM ".MAIN_DB_PREFIX."entity
+						WHERE rowid=".$idSociete;
+					$ATMdb->Execute($sql);
+					if($ATMdb->Get_line()) {
+						$societe=$ATMdb->Get_field('label');
 					}
 					
 					switch($societe){
@@ -158,10 +172,16 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 						case "C'PRO GROUPE":	
 							if($tpsHebdoUser==37){
 								$compteur->rttMetier='noncadre37cpro';
+								$compteur->rttAcquisAnnuelCumuleInit=5;
+								$compteur->rttAcquisAnnuelNonCumuleInit=7;
 							}elseif($tpsHebdoUser==38){
 								$compteur->rttMetier='noncadre38cpro';
+								$compteur->rttAcquisAnnuelCumuleInit=3;
+								$compteur->rttAcquisAnnuelNonCumuleInit=3;
 							}elseif($tpsHebdoUser==39){
 								$compteur->rttMetier='noncadre39';
+								$compteur->rttAcquisAnnuelCumuleInit=0;
+								$compteur->rttAcquisAnnuelNonCumuleInit=0;
 							}
 							$compteur->rttTypeAcquisition='Annuel';
 							break;
@@ -170,16 +190,20 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 							if($tpsHebdoUser==37){
 								$compteur->rttMetier='noncadre37cproinfo';
 								$compteur->rttAcquisMensuelInit=1;
+								$compteur->rttTypeAcquisition='Mensuel';
 							}elseif($tpsHebdoUser==38){
 								$compteur->rttMetier='noncadre38cproinfo';
 								$compteur->rttAcquisMensuelInit=0.5;
+								$compteur->rttTypeAcquisition='Mensuel';
 							}elseif($tpsHebdoUser==39){
 								$compteur->rttMetier='noncadre39';
+								$compteur->rttAcquisMensuelInit=0;
+								$compteur->rttTypeAcquisition='Mensuel';
 							}else{
 								$compteur->rttMetier='Autre';
+								$compteur->rttAcquisMensuelInit=0;
+								$compteur->rttTypeAcquisition='Annuel';
 							}
-							$compteur->rttAcquisMensuelInit=0.5;
-							$compteur->rttTypeAcquisition='Mensuel';
 							break;
 							
 						case "GLOBAL IMPRESSION":

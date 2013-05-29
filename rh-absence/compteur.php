@@ -370,8 +370,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',round2Virgule($rttCourant['nombreCongesAcquisMensuel']),10,50,'',$class="text", $default='')	
 				
 				,'titreConges'=>load_fiche_titre("Congés payés",'', 'title.png', 0, '')
-				,'titreCongesNM'=>load_fiche_titre("Année N-1",'', '', 0, '')
-				,'titreCongesN'=>load_fiche_titre("Année N",'', '', 0, '')
+
 				
 			)
 			
@@ -411,9 +410,6 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 
 				
 				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')
-				,'titreRttCumuleCompteur'=>load_fiche_titre("Compteur de RTT cumulés",'', '', 0, '')
-				,'titreRttNonCumuleCompteur'=>load_fiche_titre("Compteur de RTT non cumulés",'', '', 0, '')
-				,'titreRttMethode'=>load_fiche_titre("Méthode d'acquisition des jours",'', '', 0, '')
 
 			)
 			

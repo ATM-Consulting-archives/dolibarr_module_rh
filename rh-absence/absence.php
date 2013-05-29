@@ -28,7 +28,7 @@
 					$absence->save($ATMdb);
 					$absence->load($ATMdb, $_REQUEST['id']);
 					mailConges($absence);
-					$mesg = '<div class="ok">Demande enregistrée</div>';
+					$mesg = '<div class="error">Demande enregistrée</div>';
 					_fiche($ATMdb, $absence,'view');
 				}else{
 					if($demandeRecevable==0){
@@ -81,7 +81,7 @@
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="ok">Demande d\'absence acceptée</div>';
+				$mesg = '<div class="error">Demande d\'absence acceptée</div>';
 				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
 				
@@ -92,7 +92,7 @@
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="ok">Demande d\'absence envoyée au valideur supérieur</div>';
+				$mesg = '<div class="error">Demande d\'absence envoyée au valideur supérieur</div>';
 				_fiche($ATMdb, $absence,'view');
 				break;
 				
@@ -141,12 +141,13 @@ function _liste(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de vos absences');
 	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
+
 	//getStandartJS();
 	
 	$r = new TSSRenderControler($absence);
 	
-	//droits d'admin : accès à toutes les absences
-	if($user->rights->absence->myactions->voirToutesAbsences){
+	//droits d'admin : accès à toutes les absences sur la liste
+	if($user->rights->absence->myactions->voirToutesAbsencesListe){
 		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
 			 	a.libelle,a.fk_user,  a.fk_user, u.firstname, u.name,
 			  	a.libelleEtat as 'Statut demande', a.avertissement
@@ -412,15 +413,14 @@ function _listeValidation(&$ATMdb, &$absence) {
 function _fiche(&$ATMdb, &$absence, $mode) {
 	global $db,$user,$conf;
 	llxHeader('','Demande d\'absence');
-
+	echo $_REQUEST['validation'];
+	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $absence->getId());
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('userRecapCompteur', isset($_REQUEST['fk_user'])?$_REQUEST['fk_user']:0);
 	echo $form->hidden('userAbsenceCree', isset($absence->fk_user)!=0?$absence->fk_user:0);
-
-	//echo $form->hidden('fk_user', $user->id);
 	
 	
 	$anneeCourante=date('Y');

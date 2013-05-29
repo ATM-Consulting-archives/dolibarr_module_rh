@@ -17,7 +17,7 @@ $ATMdb=new Tdb;
 //on charge quelques listes pour avoir les clés externes.
 $TUser = array();
 
-$sql="SELECT rowid, login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
+$sql="SELECT rowid, login FROM ".MAIN_DB_PREFIX."user";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[$ATMdb->Get_field('login')] = $ATMdb->Get_field('rowid');
@@ -29,7 +29,6 @@ while($ATMdb->Get_line()) {
 $TGroups= array();
 $sql="SELECT fk_user, fk_usergroup
 	FROM ".MAIN_DB_PREFIX."usergroup_user
-	WHERE entity IN (0,".$conf->entity.")
 	";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
@@ -55,7 +54,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			
 			if (empty( $TUser[strtolower($infos[4])])){	//si le login n'existe pas, on ne traite pas la ligne
-				echo 'Erreur : Utilisateur '.strtolower($infos[3]).' inexistant <br>';
+				//echo 'Erreur : Utilisateur '.strtolower($infos[3]).' inexistant <br>';
 			}
 			else{
 					echo 'Traitement de la ligne '.$numLigne.'...';
@@ -68,6 +67,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$absence->idAbsImport=$infos[0];
 					$absence->etat='Validee';
 					$absence->commentaireValideur=$infos[2];
+					
 					
 					switch($infos[1]){
 						case 40:
@@ -114,11 +114,31 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$absence->date_debut=strtotime($infos[7]);
 					$absence->date_fin=strtotime($infos[8]);
 					
-			
+					$absence->duree=0;
+					$absence->dureeHeure=0;
 
-		//parent::add_champs('date_debut,date_fin','type=date;');	//dates debut fin de congés
-		//parent::add_champs('ddMoment, dfMoment','type=chaine;');		//moment (matin ou après midi)
+					//calcul de la durée des absences en jours
+					$dureeAbsenceCourante=$absence->calculDureeAbsence($ATMdb, $absence->date_debut, $absence->date_fin, $absence);
 
+					$dureeAbsenceCourante=$absence->calculJoursFeries($ATMdb, $dureeAbsenceCourante, $absence->date_debut, $absence->date_fin, $absence);
+
+					$dureeAbsenceCourante=$absence->calculJoursTravailles($ATMdb, $dureeAbsenceCourante, $absence->date_debut, $absence->date_fin, $absence); 
+
+					$absence->duree=$dureeAbsenceCourante;
+ 					
+					
+					//on calcule la durée des absences en heures pour l'export en paie
+					$sql="SELECT tempsHebdo FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps 
+					WHERE fk_user=".$absence->fk_user;
+					$ATMdb->Execute($sql);
+					while($ATMdb->Get_line()) {
+						$tpsHebdo=$ATMdb->Get_field('tempsHebdo');
+					}
+					
+					if($tpsHebdo>=35){
+						$absence->dureeHeurePaie = $absence->duree*7;
+					}
+					else $absence->dureeHeurePaie = $absence->dureeHeure;
 					
 					$absence->save($ATMdb);
 					$cpt++;
