@@ -10,7 +10,7 @@ require('./lib/ressource.lib.php');
 llxHeader('','Vérification des Véhicules');
 
 print dol_get_fiche_head(array()  , '', 'Vérification');
-$plagedeb = !empty($_REQUEST['plagedebut']) ? $_REQUEST['plagedebut'] : date("d/m/Y",time()-31532400);
+$plagedeb = !empty($_REQUEST['plagedebut']) ? $_REQUEST['plagedebut'] : date("d/m/Y",time());
 $plagefin = !empty($_REQUEST['plagefin']) ? $_REQUEST['plagefin'] : date("d/m/Y", time()+31532400);
 
 $url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/ressource/script/loadContratLimite.php?plagedebut=".$plagedeb."&plagefin=".$plagefin;
@@ -28,8 +28,9 @@ print $TBS->render('./tpl/verificationVehicule.tpl.php'
 	)
 	,array(
 		'infos'=>array(
-			'plagedebut'=>$form->calendrier('', 'plagedebut', $plagedeb, 8)
-			,'plagefin'=>$form->calendrier('', 'plagefin', $plagefin, 8)
+			'titre'=>load_fiche_titre("Vérification des contrats des véhicules",'', 'title.png', 0, '')
+			,'plagedebut'=>$form->calendrier('', 'plagedebut', $plagedeb, 10)
+			,'plagefin'=>$form->calendrier('', 'plagefin', $plagefin, 10)
 			,'valider'=>$form->btsubmit('Valider', 'valider')
 		)
 	)	

@@ -277,7 +277,12 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'ressource';
 		$this->rights[$r][5] = 'manageRegle';
-		
+		$r++;
+		$this->rights[$r][0] = 7020;
+		$this->rights[$r][1] = 'Sélectionner les paramètres sur l\'agenda général';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'agenda';
+		$this->rights[$r][5] =  'manageAgenda';
 		
 		
 

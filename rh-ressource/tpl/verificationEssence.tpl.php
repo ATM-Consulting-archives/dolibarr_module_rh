@@ -3,7 +3,7 @@
 
 Renseignez ici la limite de consommation : [infos.limite;strconv=no;protect=no] L/100km. 
 Sur la période de [infos.plagedebut;strconv=no;protect=no] à [infos.plagefin;strconv=no;protect=no] <br><br> 
-Utilisateur : [infos.fk_user;strconv=no;protect=no]. <br><br>
+Utilisateur : [infos.fk_user;strconv=no;protect=no] <br><br>
 
 [infos.valider;strconv=no;protect=no] <br>
 <br>

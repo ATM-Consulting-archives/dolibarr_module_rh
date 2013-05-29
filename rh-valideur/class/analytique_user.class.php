@@ -15,6 +15,8 @@ class TRH_analytique_user extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		
+		$this->pourcentage=100;
+		
 	}
 
 	function save(&$db) {
