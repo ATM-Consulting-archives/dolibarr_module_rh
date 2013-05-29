@@ -99,6 +99,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					AND n.type LIKE '".$type."'
 					AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')
 					AND t.accountancy_code = ".$code_compta."
+					
 		";
 		
 		if(isset($_REQUEST['DEBUG'])) {
@@ -112,8 +113,12 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 			$total_ht			=	$ATMdb2->Get_field('total_ht');
 			$total_ht			=	$total_ht*($pourcentage/100);
 			
-			$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', '', 'EUR', '');
-			$TabNdf[]=$line;
+			if(!empty($code_analytique)) {
+				$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', '', 'EUR', '');
+				$TabNdf[]=$line;
+				
+			}
+			
 		}
 	}
 	
@@ -151,7 +156,9 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					,n.datee as 'datef'
 					,e.COMPTE_TIERS as 'compte_tiers'
 					,u.login as 'login'
-				FROM ".MAIN_DB_PREFIX."ndfp as n
+					,u.firstname as 'firstname'
+					,u.name as 'lastname'
+					FROM ".MAIN_DB_PREFIX."ndfp as n
 					LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = n.fk_user
 						LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as e ON u.rowid = e.fk_object
 				WHERE n.statut = 1
@@ -170,7 +177,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		$compte_tiers	=	$ATMdb->Get_field('compte_tiers');
 		
 		if(isset($_REQUEST['withLogin'])) {
-			$compte_tiers.=" (".$ATMdb->Get_field('login').")";
+			$compte_tiers.=" (".$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('lastname').")";
 		}
 		
 		$mois_ndf		=	substr($ATMdb->Get_field('datef'), 5, 2);
