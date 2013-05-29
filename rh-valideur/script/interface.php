@@ -152,7 +152,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					,e.COMPTE_TIERS as 'compte_tiers'
 					,u.login as 'login'
 					,u.firstname as 'firstname'
-					,u.lastname as 'lastname'
+					,u.name as 'lastname'
 					FROM ".MAIN_DB_PREFIX."ndfp as n
 					LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = n.fk_user
 						LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as e ON u.rowid = e.fk_object
