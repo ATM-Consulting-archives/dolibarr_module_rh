@@ -177,8 +177,8 @@ function _fiche_code(&$ATMdb, &$analytique_user, $mode) {
 				)
 				,'analytique'=>array(
 					'id'=>$analytique_user->getId()
-					,'code'=>$form->texte('', 'code', $analytique_user->code, 7,10,'','','-')
-					,'pourcentage'=>$form->texte('', 'pourcentage', $analytique_user->pourcentage, 3,3,'','','-')
+					,'code'=>$form->texte('', 'code', $analytique_user->code, 30,255)
+					,'pourcentage'=>$form->texte('', 'pourcentage', $analytique_user->pourcentage, 3,3)
 				)
 				,'view'=>array(
 					'mode'=>$mode

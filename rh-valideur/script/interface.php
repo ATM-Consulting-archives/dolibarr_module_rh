@@ -99,6 +99,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					AND n.type LIKE '".$type."'
 					AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')
 					AND t.accountancy_code = ".$code_compta."
+					
 		";
 		
 		if(isset($_REQUEST['DEBUG'])) {
@@ -112,8 +113,12 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 			$total_ht			=	$ATMdb2->Get_field('total_ht');
 			$total_ht			=	$total_ht*($pourcentage/100);
 			
-			$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', '', 'EUR', '');
-			$TabNdf[]=$line;
+			if(!empty($code_analytique)) {
+				$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', '', 'EUR', '');
+				$TabNdf[]=$line;
+				
+			}
+			
 		}
 	}
 	
@@ -150,7 +155,10 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					,CAST(n.total_ttc as DECIMAL(16,2)) as 'total_ttc'
 					,n.datee as 'datef'
 					,e.COMPTE_TIERS as 'compte_tiers'
-				FROM ".MAIN_DB_PREFIX."ndfp as n
+					,u.login as 'login'
+					,u.firstname as 'firstname'
+					,u.name as 'lastname'
+					FROM ".MAIN_DB_PREFIX."ndfp as n
 					LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = n.fk_user
 						LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as e ON u.rowid = e.fk_object
 				WHERE n.statut = 1
@@ -167,6 +175,11 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	while($ATMdb->Get_line()) {
 		$ref			=	$ATMdb->Get_field('ref');
 		$compte_tiers	=	$ATMdb->Get_field('compte_tiers');
+		
+		if(isset($_REQUEST['withLogin'])) {
+			$compte_tiers.=" (".$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('lastname').")";
+		}
+		
 		$mois_ndf		=	substr($ATMdb->Get_field('datef'), 5, 2);
 		$annee_ndf		=	substr($ATMdb->Get_field('datef'), 0, 4);
     	$datef_ndf		=	substr($ATMdb->Get_field('datef'), 8, 2).substr($ATMdb->Get_field('datef'), 5, 2).substr($ATMdb->Get_field('datef'), 2, 2);
