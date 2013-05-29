@@ -44,7 +44,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	$sql = "SELECT
 			e.label as 'label'
 			FROM ".MAIN_DB_PREFIX."entity as e
-			WHERE e.rowid IN (0,".$conf->entity.")";
+			WHERE e.rowid IN (0,".$entity.")";
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
@@ -67,7 +67,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 				LEFT JOIN ".MAIN_DB_PREFIX."c_exp as t ON t.rowid = l.fk_exp
 			
 			WHERE n.statut = 1
-			AND n.entity IN (0,".$entity.")
+			AND n.entity IN (".$entity.")
 			AND n.type LIKE '".$type."'
 			AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')
 			GROUP BY t.accountancy_code";
@@ -97,7 +97,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					CAST(SUM(n.total_tva) as DECIMAL(16,2)) as 'total_tva'
 				FROM ".MAIN_DB_PREFIX."ndfp as n
 				WHERE n.statut = 1
-				AND n.entity IN (0,".$entity.")
+				AND n.entity IN (".$entity.")
 				AND n.type LIKE '".$type."'
 				AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')";
 	
@@ -126,7 +126,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = n.fk_user
 						LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as e ON u.rowid = e.fk_object
 				WHERE n.statut = 1
-				AND n.entity IN (0,".$entity.")
+				AND n.entity IN (".$entity.")
 				AND n.type LIKE '".$type."'
 				AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')
 				GROUP BY n.rowid";
