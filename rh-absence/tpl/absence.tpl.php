@@ -110,7 +110,7 @@
 					
 						<a class="butAction" id="action-update"  onclick="if (confirm('Voulez-vous vraiment accepter la demande d\'absence ?')){document.location.href='?action=accept&id=[absenceCourante.id]'};">Accepter</a>	
 						<span class="butActionDelete" id="action-delete"  onclick="if (confirm('Voulez-vous vraiment refuser la demande d\'absence ?')){document.location.href='?action=refuse&id=[absenceCourante.id]'};">Refuser</span>
-						<a style='width:30%' class="butAction" id="action-update"  onclick="document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'">Envoyer au valideur supérieur</a>	
+						<a style='width:30%' class="butAction" id="action-update"  onclick="if (confirm('Voulez-vous vraiment envoyer la demande d\'absence au valideur supérieur ?')){document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'};">Envoyer au valideur supérieur</a>	
 					
 					[onshow;block=end]
 				[onshow;block=end]

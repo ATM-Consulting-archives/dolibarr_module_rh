@@ -149,14 +149,14 @@ function _liste(&$ATMdb, &$absence) {
 	//droits d'admin : accès à toutes les absences sur la liste
 	if($user->rights->absence->myactions->voirToutesAbsencesListe){
 		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-			 	a.libelle,a.fk_user,  a.fk_user, u.firstname, u.name,
+			 	a.libelle,a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
 			  	a.libelleEtat as 'Statut demande', a.avertissement
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 				WHERE u.rowid=a.fk_user";
 	}else{
 		//LISTE D'ABSENCES DU COLLABORATEUR
 		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-				a.libelle,a.fk_user,  a.fk_user, u.firstname, u.name,
+				a.libelle,a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
 				a.libelleEtat as 'Statut demande', a.avertissement
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 				WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user";
@@ -206,12 +206,14 @@ function _liste(&$ATMdb, &$absence) {
 			,'libelle'=>'Type d\'absence'
 			,'firstname'=>'Prénom'
 			,'name'=>'Nom'
+			,'login'=>'Login'
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
 			,'libelle'=>true
 			,"firstname"=>true
 			,"name"=>true
+			,"login"=>true
 		)
 		,'eval'=>array(
 			'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
