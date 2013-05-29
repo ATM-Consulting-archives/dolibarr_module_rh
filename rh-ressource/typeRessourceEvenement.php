@@ -35,7 +35,10 @@
 					if (empty($_REQUEST['libelle'])){
 						$mesg = '<div class="error">Veuillez remplir le libellé.</div>';						
 					}
-					else if (empty($_REQUEST['codeanalytique'])){
+					else if (empty($_REQUEST['code'])){
+						$mesg = '<div class="error">Veuillez remplir le code.</div>';						
+					}
+					else if (empty($_REQUEST['codecomptable'])){
 						$mesg = '<div class="error">Veuillez remplir le code analytique.</div>';						
 					}
 					else {
@@ -172,8 +175,8 @@ function _fiche(&$ATMdb, &$typeEven, &$ressourceType, $mode) {
 			,'newEvent'=>array(
 				'id'=>$typeEven->getId()
 				,'libelle'=>$form->texte('', 'libelle', $typeEven->libelle, 20,30,'','','')
-				,'code'=>$form->texte('', 'code', $typeEven->code, 20,30,'disabled','','')
-				,'codeanalytique'=>$form->texte('', 'codeanalytique', $typeEven->codeanalytique, 20,30,'','','')
+				,'code'=>$form->texte('', 'code', $typeEven->code, 20,30,'','','')
+				,'codecomptable'=>$form->texte('', 'codecomptable', $typeEven->codecomptable, 20,30,'','','')
 				,'supprimable'=>$typeEven->supprimable
 				
 			)

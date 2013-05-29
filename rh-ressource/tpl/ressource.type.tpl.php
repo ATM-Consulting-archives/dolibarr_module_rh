@@ -39,7 +39,8 @@
 [onshow;block=begin;when [view.mode]!='edit']
 	<div class="tabsAction">
 		<a href="?id=[ressourceType.id]&action=edit" class="butAction">Modifier</a>
-		<span class="butActionDelete" id="action-delete"  onclick="document.location.href='?action=delete&id=[ressourceType.id]'">Supprimer</span>
+		<span class="butActionDelete" id="action-delete"  
+		onclick="if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=[ressourceType.id]&action=delete'};">Supprimer</span>
 	</div>
 [onshow;block=end]	
 

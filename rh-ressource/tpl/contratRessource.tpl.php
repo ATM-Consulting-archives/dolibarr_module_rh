@@ -25,7 +25,7 @@
 	[onshow;block=begin;when [view.userRight]==1]
 	<div class="tabsAction" style="text-align:center;">
 		<a class="butAction"  href="?id=[ressource.id]&idAssoc=[NAssociation.id]&action=edit">Modifier</a>
-		<a class="butActionDelete"  href="?id=[ressource.id]&idAssoc=[NAssociation.id]&action=deleteAssoc">Supprimer</a>
+		<a class="butActionDelete" onclick="if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=[ressource.id]&idAssoc=[NAssociation.id]&action=deleteAssoc'};">Supprimer</a>
 	</div>
 	[onshow;block=end]
 [onshow;block=end] 

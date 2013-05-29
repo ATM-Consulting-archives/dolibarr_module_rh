@@ -47,13 +47,13 @@
 		
 		$('#libelle').change(function(){
 			texte = $('#libelle').val();
-			$('#code').val(texte.sansAccent());			
+			$('#code').val(texte.sansAccent());
 		})
 		
 	</script>
 	<tr>
-		<td>Code Analytique</td>
-		<td>[newEvent.codeanalytique;strconv=no]</td>
+		<td>Code Comptable</td>
+		<td>[newEvent.codecomptable;strconv=no]</td>
 	</tr>
 	
 </table>
@@ -63,7 +63,8 @@
 	<div class="tabsAction">
 		<a href="?id=[ressourceType.id]&idTypeEvent=[newEvent.id]&action=edit" class="butAction">Modifier</a>
 		[onshow;block=begin;when [newEvent.supprimable]=='vrai']		
-			<a class="butActionDelete"  href="?id=[ressourceType.id]&idTypeEvent=[newEvent.id]&action=delete">Supprimer</a>
+			<a class="butActionDelete" onclick="if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=[ressourceType.id]&idTypeEvent=[newEvent.id]&action=delete'};">Supprimer</a>
+			
 		[onshow;block=end]	
 	</div>
 [onshow;block=end]	
