@@ -23,6 +23,12 @@ while($ATMdb->Get_line()) {
 	$TUser[$ATMdb->Get_field('login')] = $ATMdb->Get_field('rowid');
 }
 
+$sql="SELECT rowid, fk_user FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps";
+$ATMdb->Execute($sql);
+while($ATMdb->Get_line()) {
+	$TUserEdt[$ATMdb->Get_field('fk_user')] = $ATMdb->Get_field('rowid');
+}
+
 
 
 //chargement des groupes et des users dans la liste $TGroups;
@@ -53,7 +59,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$infos = explode(';', $data[0]);
 			
 			
-			if (empty( $TUser[strtolower($infos[4])])){	//si le login n'existe pas, on ne traite pas la ligne
+			if (empty( $TUserEdt[$TUser[strtolower($infos[4])]] )){	//si le login n'existe pas, on ne traite pas la ligne
 				//echo 'Erreur : Utilisateur '.strtolower($infos[3]).' inexistant <br>';
 			}
 			else{
