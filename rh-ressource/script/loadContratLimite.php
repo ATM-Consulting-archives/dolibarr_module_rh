@@ -17,7 +17,7 @@ $idVoiture = getIdType('voiture');
 
 //chargement des voitures
 $TVoitures = getRessource($idVoiture);
-$sql = "SELECT r.rowid, fk_proprietaire,  immatriculation , marquevoit, modlevoit, name, firstname, date_debut, date_fin
+$sql = "SELECT r.rowid, fk_utilisatrice,  immatriculation , marquevoit, modlevoit, name, firstname, date_debut, date_fin
 	FROM ".MAIN_DB_PREFIX."rh_ressource as r
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (
 										e.type='emprunt' 
@@ -32,7 +32,7 @@ while($row = $ATMdb->Get_line()) {
 	
 	//echo $plagedeb.'   '.$row->date_debut.'<br>';
 	$TVoitures[$row->rowid] = array(
-		'societe'=>$row->fk_proprietaire
+		'societe'=>$row->fk_utilisatrice
 		,'fk_user'=>htmlentities($row->firstname.' '.$row->name, ENT_COMPAT , 'ISO8859-1')
 		,'immatriculation'=>$row->immatriculation
 		,'marque'=>$row->marquevoit

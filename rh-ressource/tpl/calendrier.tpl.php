@@ -21,8 +21,8 @@
 	<br><br>
 [onshow;block=end]
 		
-[onshow;block=begin;when [ressource.fiche]!=true]  
-
+[onshow;block=begin;when [ressource.fiche]!=true] 
+[onshow;block=begin;when [view.userDroitAgenda]==1] 
 		<table class="border" style="width:100%">
 			<tr>
 				<td style="width:10%">Type</td>
@@ -38,10 +38,9 @@
 				<td>[ressource.typeEven;strconv=no;protect=no]</td>
 			</tr>
 			
-		</table>
-			
-			
+		</table>			
          <br><br>
+[onshow;block=end]
 [onshow;block=end] 	
 
 <script>
@@ -254,7 +253,7 @@ $('#type').change(function(){
                 OpenModelWindow(url,{ width: 500, height: 400, caption: "Créer un nouveau calendrier"});
             });
 */            //go to today
-            $("#showtodaybtn").click(function(e) {
+            $("#showtodaybtn").click(function(e) { 
                 var p = $("#gridcontainer").gotoDate().BcalGetOp();
                 if (p && p.datestrshow) {
                     $("#txtdatetimeshow").text(p.datestrshow);
@@ -272,6 +271,7 @@ $('#type').change(function(){
             });
             //next date range
             $("#sfnextbtn").click(function(e) {
+            	
                 var p = $("#gridcontainer").nextRange().BcalGetOp();
                 if (p && p.datestrshow) {
                     $("#txtdatetimeshow").text(p.datestrshow);

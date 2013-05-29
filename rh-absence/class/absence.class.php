@@ -157,6 +157,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('ddMoment, dfMoment','type=chaine;');		//moment (matin ou après midi)
 		parent::add_champs('duree','type=float;');	
 		parent::add_champs('dureeHeure','type=chaine;');	
+		parent::add_champs('dureeHeurePaie','type=chaine;');
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
 		parent::add_champs('commentaireValideur','type=chaine;');		//commentaire
 		parent::add_champs('etat','type=chaine;');			//état (à valider, validé...)
