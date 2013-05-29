@@ -59,6 +59,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle)) != false){
 		
 		if($numLigne>1){
+			
 			$infos = explode(';', $data[0]);
 
 			$login = strtolower($infos[4]);
