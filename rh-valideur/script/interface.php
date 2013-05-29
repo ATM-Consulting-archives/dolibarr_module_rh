@@ -95,7 +95,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 						LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON a.fk_user = n.fk_user
 					
 					WHERE n.statut = 1
-					AND n.entity IN (0,".$entity.")
+					AND n.entity IN (".$entity.")
 					AND n.type LIKE '".$type."'
 					AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')
 					AND t.accountancy_code = ".$code_compta."
