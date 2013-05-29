@@ -373,7 +373,7 @@ class TRH_Absence extends TObjetStd {
 	//calcul de la durée initiale de l'absence (sans jours fériés, sans les jours travaillés du salariés)
 	function calculDureeAbsence(&$ATMdb, $date_debut, $date_fin, &$absence){
 		$diff=$date_fin-$date_debut;
-		$duree=$diff/3600/24;
+		$duree=intval($diff/3600/24);
 
 		//prise en compte du matin et après midi
 		
@@ -488,7 +488,7 @@ class TRH_Absence extends TObjetStd {
 		global $conf;
 		
 		//echo $duree." ".$date_debut." ".$date_fin." <br>";
-					
+
 		//traitement jour de début
 		$dateDebutAbs=$absence->php2Date($date_debut);
 		$jourDebutSem=$absence->jourSemaine($date_debut);
@@ -496,6 +496,7 @@ class TRH_Absence extends TObjetStd {
 		//traitement jour de fin
 		$dateFinAbs=$absence->php2Date($date_fin);
 		$jourFinSem=$absence->jourSemaine($date_fin);
+		
 		
 		//on récupère les jours fériés compris dans la demande d'absence
 		$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
@@ -559,7 +560,7 @@ class TRH_Absence extends TObjetStd {
 		,CONCAT(HOUR(date_dimanche_heurefpm) ,':' , MINUTE(date_dimanche_heurefpm)) as	date_dimanche_heurefpm	
 		 
 		FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` 
-		WHERE fk_user=".$absence->fk_user." AND entity IN (0,".$conf->entity.")";  
+		WHERE fk_user=".$absence->fk_user;  
 
 		$ATMdb->Execute($sql);
 		$TTravail = array();
@@ -579,6 +580,7 @@ class TRH_Absence extends TObjetStd {
 					
 		//on traite les jours de début et de fin indépendemment des autres
 		if($date_debut==$date_fin){	//si les jours de début et de fin sont les mêmes
+
 			$ferie=0;
 			foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite paspour les jours, car déjà traité avant pour les jours 
 												//on le traite pour les heures
@@ -608,6 +610,7 @@ class TRH_Absence extends TObjetStd {
 	 			}
 	 		}
 			if(!$ferie){
+				
 				//echo "boucle1";
 				if($absence->dfMoment=='matin'){		// si la date de fin est le matin, il n'y a donc que le cas matin à traiter
 					if($TTravail[$jourDebutSem.'am']==0){
@@ -647,6 +650,7 @@ class TRH_Absence extends TObjetStd {
 		}else{	//les jours de début et de fin sont différents
 			//////////////////////////jour de début
 			$ferie=0;		
+			
 			foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas pour les jours, car déjà traité avant
 												//on le traite pour les heures
 	 			if(strtotime($jourFerie['date_jourOff'])==$date_debut){
@@ -818,7 +822,7 @@ class TRH_Absence extends TObjetStd {
 					
 				}
 			}
-			$jourEnCours=$jourEnCours+3600*24;
+			$jourEnCours=strtotime('+1day',$jourEnCours);
 			$cpt++;
 		}
 		
