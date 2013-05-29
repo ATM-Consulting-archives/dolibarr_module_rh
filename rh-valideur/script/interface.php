@@ -44,7 +44,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	$sql = "SELECT
 			e.label as 'label'
 			FROM ".MAIN_DB_PREFIX."entity as e
-			WHERE e.rowid IN (0,".$conf->entity.")";
+			WHERE e.rowid IN (0,".$entity.")";
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
@@ -56,10 +56,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	/**----**********************----**/
 	
 	$sql = "SELECT
-			n.ref
-			,n.datee as 'datef_ndf'
-			,l.datef
-			,t.accountancy_code
+			t.accountancy_code
 			,CAST(SUM(l.total_ht) as DECIMAL(16,2)) as 'total_ht'
 			
 			FROM ".MAIN_DB_PREFIX."ndfp_det as l
@@ -75,18 +72,49 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	if(isset($_REQUEST['DEBUG'])) {
 		print $sql;
 	}
+	
+	$ATMdb2=new Tdb;
 			
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
-		$ref				=	$ATMdb->Get_field('ref');
-		$mois_ndf			=	substr($ATMdb->Get_field('datef_ndf'), 5, 2);
-		$annee_ndf			=	substr($ATMdb->Get_field('datef_ndf'), 0, 4);
-		$datef				=	substr($ATMdb->Get_field('datef'), 8, 2).substr($ATMdb->Get_field('datef'), 5, 2).substr($ATMdb->Get_field('datef'), 2, 2);
 		$code_compta		=	$ATMdb->Get_field('accountancy_code');
 		$total_ht			=	$ATMdb->Get_field('total_ht');
 		
-		$line = array('NDF', $datef, 'OD', $code_compta, 'G', '', $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'D', $total_ht, 'N', $ref, '', '', 'EUR', '');
+		$line = array('NDF', date('dmy'), 'OD', $code_compta, 'G', '', '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', '', 'EUR', '');
 		$TabNdf[]=$line;
+		
+		$sql_anal = "SELECT
+						l.rowid
+						, l.total_ht as 'total_ht'
+						, a.code as 'code_analytique'
+						, a.pourcentage as 'pourcentage'
+					
+					FROM ".MAIN_DB_PREFIX."ndfp_det as l
+						LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp
+						LEFT JOIN ".MAIN_DB_PREFIX."c_exp as t ON t.rowid = l.fk_exp
+						LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON a.fk_user = n.fk_user
+					
+					WHERE n.statut = 1
+					AND n.entity IN (0,".$entity.")
+					AND n.type LIKE '".$type."'
+					AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')
+					AND t.accountancy_code = ".$code_compta."
+		";
+		
+		if(isset($_REQUEST['DEBUG'])) {
+			print $sql_anal;
+		}
+		
+		$ATMdb2->Execute($sql_anal);
+		while($ATMdb2->Get_line()) {
+			$code_analytique	=	$ATMdb2->Get_field('code_analytique');
+			$pourcentage		=	$ATMdb2->Get_field('pourcentage');
+			$total_ht			=	$ATMdb2->Get_field('total_ht');
+			$total_ht			=	$total_ht*($pourcentage/100);
+			
+			$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', '', 'EUR', '');
+			$TabNdf[]=$line;
+		}
 	}
 	
 	/**----**********************----**/
