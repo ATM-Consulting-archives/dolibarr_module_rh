@@ -73,7 +73,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
 	if (!$user->rights->ressource->agenda->viewAgenda){
     	$sql.=" AND e.fk_user=".$user->id;
 	}
-	//echo '     '.$sql;
+	//echo '     '.$sql.'      ';
    $ATMdb->Execute($sql);
     while ($row=$ATMdb->Get_line()) {
       //$ret['events'][] = $row;
@@ -92,10 +92,11 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
 	 
 	  //on écrit l'intitulé du calendrier en fonction des données de la fonction
 	  $sujet = '';
-	  $sujet .= (empty($idRessource) || ($idRessource==0)) ? $TRessource[$row->fk_rh_ressource].', ' : '';
+	  $sujet .= (empty($idRessource) || ($idRessource==0)) ? html_entity_decode($TRessource[$row->fk_rh_ressource], ENT_COMPAT , "ISO8859-1").', ' : '';
 	  $sujet .=  ($typeEven=='all') ? $TEvent[$row->type] : '' ;
 	  $sujet .= ($fk_user==0) ? ', '.$TUser[$row->fk_user] : ''; 
 	  if (empty($sujet)){$sujet=' Emprunt ';}
+	  
       $ret['events'][] = array(
        $row->rowid,
         $sujet,

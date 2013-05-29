@@ -1,5 +1,5 @@
 
-<h1>Vérification des contrats</h1>
+[infos.titre;strconv=no;protect=no]
 
 Contrats dont la fin est comprise entre [infos.plagedebut;strconv=no;protect=no] et [infos.plagefin;strconv=no;protect=no] 
 [infos.valider;strconv=no;protect=no]<br><br>

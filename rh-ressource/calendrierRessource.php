@@ -84,7 +84,7 @@
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				/*,'userRight'=>((int)$user->rights->financement->affaire->write)*/
+				,'userDroitAgenda'=>((int)$user->rights->ressource->agenda->manageAgenda)
 				,'head'=>dol_get_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'calendrier', 'Ressource')
 				,'onglet'=>dol_get_fiche_head(array()  , '', 'Agenda')
 			)
