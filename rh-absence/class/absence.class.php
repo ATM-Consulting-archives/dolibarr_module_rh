@@ -487,6 +487,7 @@ class TRH_Absence extends TObjetStd {
 		
 		global $conf;
 		
+		//echo $duree." ".$date_debut." ".$date_fin." <br>";
 					
 		//traitement jour de début
 		$dateDebutAbs=$absence->php2Date($date_debut);

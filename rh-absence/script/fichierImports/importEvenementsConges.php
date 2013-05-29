@@ -58,7 +58,7 @@ $cpt = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle)) != false){
 		
-		if($numLigne>1&&$numLigne<350){
+		if($numLigne>1){
 			$infos = explode(';', $data[0]);
 			
 			$login = strtolower($infos[4]);
@@ -88,19 +88,19 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 						case 40:
 							$absence->type='conges';
 							$absence->libelle=saveLibelle($absence->type);
-							$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
+							$absence->code=950;//saveCodeTypeAbsence($ATMdb, $absence->type);
 							
 							break;
 						case 73:
 							$absence->type='rttcumule';
 							$absence->libelle=saveLibelle($absence->type);
-							$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
+							$absence->code=940;//saveCodeTypeAbsence($ATMdb, $absence->type);
 
 							break;
 						case 74:
 							$absence->type='rttnoncumule';
 							$absence->libelle=saveLibelle($absence->type);
-							$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
+							$absence->code=930;//saveCodeTypeAbsence($ATMdb, $absence->type);
 
 							break;
 					}
