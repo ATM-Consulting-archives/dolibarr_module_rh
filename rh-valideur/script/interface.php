@@ -150,6 +150,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					,CAST(n.total_ttc as DECIMAL(16,2)) as 'total_ttc'
 					,n.datee as 'datef'
 					,e.COMPTE_TIERS as 'compte_tiers'
+					,u.login as 'login'
 				FROM ".MAIN_DB_PREFIX."ndfp as n
 					LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = n.fk_user
 						LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as e ON u.rowid = e.fk_object
@@ -167,6 +168,11 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	while($ATMdb->Get_line()) {
 		$ref			=	$ATMdb->Get_field('ref');
 		$compte_tiers	=	$ATMdb->Get_field('compte_tiers');
+		
+		if(isset($_REQUEST['withLogin'])) {
+			$compte_tiers.=" (".$ATMdb->Get_field('login').")";
+		}
+		
 		$mois_ndf		=	substr($ATMdb->Get_field('datef'), 5, 2);
 		$annee_ndf		=	substr($ATMdb->Get_field('datef'), 0, 4);
     	$datef_ndf		=	substr($ATMdb->Get_field('datef'), 8, 2).substr($ATMdb->Get_field('datef'), 5, 2).substr($ATMdb->Get_field('datef'), 2, 2);
