@@ -1,5 +1,13 @@
+<table width="100%" class="border"><tbody>
+	<tr><td width="25%" valign="top">Réf.</td><td>[user.id]</td></tr>
+	<tr><td width="25%" valign="top">Nom</td><td>[user.lastname]</td></tr>
+	<tr><td width="25%" valign="top">Prénom</td><td>[user.firstname]</td></tr>
+</tbody></table>
+<br>
+
 <div class="fiche">
-		<div>				
+		<div>
+			
 			<h2 style="color: #2AA8B9;">Description de vos rémunérations</h2>
 			<table class="border" style="width:20%">	
 				<tr>

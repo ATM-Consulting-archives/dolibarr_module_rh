@@ -184,6 +184,8 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 	$taux_resultat_bon=$requeteRecherche['nbUserBon']*100/$requeteRecherche['nbUser'];
 	$taux_resultat_excellent=$requeteRecherche['nbUserExcellent']*100/$requeteRecherche['nbUser'];
 	$taux_resultat_autres=100-$taux_resultat_faible-$taux_resultat_moyen-$taux_resultat_bon-$taux_resultat_excellent;
+	
+	$nb_resultat_autres=$requeteRecherche['nbUser']-$requeteRecherche['nbUserFaible']-$requeteRecherche['nbUserMoyen']-$requeteRecherche['nbUserBon']-$requeteRecherche['nbUserExcellent'];
 
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/statCompetenceResult.tpl.php'
@@ -205,6 +207,11 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 				,'bon'=>$taux_resultat_bon
 				,'excellent'=>$taux_resultat_excellent
 				,'autres'=>$taux_resultat_autres
+				,'nb_faible'=>$requeteRecherche['nbUserFaible']
+				,'nb_moyen'=>$requeteRecherche['nbUserMoyen']
+				,'nb_bon'=>$requeteRecherche['nbUserBon']
+				,'nb_excellent'=>$requeteRecherche['nbUserExcellent']
+				,'nb_autres'=>$nb_resultat_autres
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id

@@ -78,6 +78,13 @@ function _liste(&$ATMdb, $remuneration) {
 	$head = user_prepare_head($fuser);
 	dol_fiche_head($head, 'remuneration', $langs->trans('Utilisateur'),0, 'user');
 	
+	?><table width="100%" class="border"><tbody>
+		<tr><td width="25%" valign="top">Réf.</td><td><?=$fuser->id ?></td></tr>
+		<tr><td width="25%" valign="top">Nom</td><td><?=$fuser->lastname ?></td></tr>
+		<tr><td width="25%" valign="top">Prénom</td><td><?=$fuser->firstname ?></td></tr>
+	</tbody></table>
+	<br/><?
+	
 	////////////AFFICHAGE DES LIGNES DE REMUNERATION
 	$r = new TSSRenderControler($remuneration);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', DATE_FORMAT(r.date_debutRemuneration, '%d/%m/%Y') as 'Date début', DATE_FORMAT(r.date_finRemuneration, '%d/%m/%Y') as 'Date fin', 
@@ -110,7 +117,7 @@ function _liste(&$ATMdb, $remuneration) {
 		,'hide'=>array('DateCre', 'fk_user')
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'VISUALISATION DE VOS REMUNERATIONS'
+			'titre'=>'Visualisation de vos rémunérations'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
@@ -190,6 +197,11 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 			,'userCourant'=>array(
 				'id'=>$_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id
 				,'ajoutRem'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration
+			)
+			,'user'=>array(
+				'id'=>$fuser->id
+				,'lastname'=>$fuser->lastname
+				,'firstname'=>$fuser->firstname
 			)
 			,'view'=>array(
 				'mode'=>$mode

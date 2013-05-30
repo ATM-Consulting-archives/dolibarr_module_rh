@@ -17,17 +17,17 @@
     data.addColumn('string', 'Topping');
     data.addColumn('number', 'Slices');
     data.addRows([
-      ['Utilisateurs de niveau faible', [resultat.faible;strconv=no;protect=no]],
-      ['Utilisateurs de niveau moyen', [resultat.moyen;strconv=no;protect=no]],
-      ['Utilisateurs de niveau bon', [resultat.bon;strconv=no;protect=no]],
-      ['Utilisateurs de niveau excellent', [resultat.excellent;strconv=no;protect=no]],
-      ['Autres utilisateurs', [resultat.autres;strconv=no;protect=no]]
+      ['Utilisateurs de niveau faible', [resultat.nb_faible;strconv=no;protect=no]],
+      ['Utilisateurs de niveau moyen', [resultat.nb_moyen;strconv=no;protect=no]],
+      ['Utilisateurs de niveau bon', [resultat.nb_bon;strconv=no;protect=no]],
+      ['Utilisateurs de niveau excellent', [resultat.nb_excellent;strconv=no;protect=no]],
+      ['Autres utilisateurs', [resultat.nb_autres;strconv=no;protect=no]]
     ]);
 
     // Set chart options
     var options = {'title':'Graphique',
                    'width':400,
-                   'height':300};
+                   'height':250};
 
     // Instantiate and draw our chart, passing in some options.
     var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
@@ -81,5 +81,8 @@
 	<br/>
 	
 	<div id="chart_div"></div>
+	
+	<a class="butAction" href="?">Retour</a>
+	<div style="clear:both;"></div>
 	
 </div>

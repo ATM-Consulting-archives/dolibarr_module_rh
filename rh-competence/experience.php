@@ -188,6 +188,13 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 	$head = user_prepare_head($fuser);
 	dol_fiche_head($head, 'competence', $langs->trans('Utilisateur'),0, 'user');
 	
+	?><table width="100%" class="border"><tbody>
+		<tr><td width="25%" valign="top">Réf.</td><td><?=$fuser->id ?></td></tr>
+		<tr><td width="25%" valign="top">Nom</td><td><?=$fuser->lastname ?></td></tr>
+		<tr><td width="25%" valign="top">Prénom</td><td><?=$fuser->firstname ?></td></tr>
+	</tbody></table>
+	<br/><?
+	
 	////////////AFFICHAGE DES LIGNES DE CV 
 	$r = new TSSRenderControler($lignecv);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
@@ -217,7 +224,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 		,'hide'=>array('DateCre', 'fk_user')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
-			'titre'=>'VISUALISATION DE VOTRE CV'
+			'titre'=>'Visualisation de votre CV'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
@@ -245,7 +252,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 
 		?>
 		<a class="butAction" href="?id=0&action=newlignecv&fk_user=<?=$fuser->id?>">Ajouter une expérience</a><div style="clear:both"></div>
-		<br/><br/><br/><br/><br/>
+		<br/>
 		<?
 	$form->end();
 	
@@ -284,7 +291,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 		,'hide'=>array('DateCre','fk_user', 'commentaireFormation')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date', 'date_formationEcheance'=>'date')
 		,'liste'=>array(
-			'titre'=>'LISTE DE VOS FORMATIONS EFFECTUEES'
+			'titre'=>'Liste de vos formations effectuées'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','back.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
@@ -330,13 +337,19 @@ function _ficheCV(&$ATMdb, $lignecv,  $mode) {
 	$current_head = 'competence';
 	dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
 	
+	?><table width="100%" class="border"><tbody>
+		<tr><td width="25%" valign="top">Réf.</td><td><?=$fuser->id ?></td></tr>
+		<tr><td width="25%" valign="top">Nom</td><td><?=$fuser->lastname ?></td></tr>
+		<tr><td width="25%" valign="top">Prénom</td><td><?=$fuser->firstname ?></td></tr>
+	</tbody></table>
+	<br/><?
+	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $lignecv->getId());
 	echo $form->hidden('fk_user', $_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id);
 	echo $form->hidden('entity', $conf->entity);
 	echo $form->hidden('action', 'savecv');
-
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/cv.tpl.php'
@@ -354,6 +367,11 @@ function _ficheCV(&$ATMdb, $lignecv,  $mode) {
 			)
 			,'userCourant'=>array(
 				'id'=>$_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id
+			)
+			,'user'=>array(
+				'id'=>$fuser->id
+				,'lastname'=>$fuser->lastname
+				,'firstname'=>$fuser->firstname
 			)
 			,'view'=>array(
 				'mode'=>$mode
@@ -429,6 +447,11 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				'id'=>$fuser->id
 				,'nom'=>$fuser->lastname
 				,'prenom'=>$fuser->firstname
+			)
+			,'user'=>array(
+				'id'=>$fuser->id
+				,'lastname'=>$fuser->lastname
+				,'firstname'=>$fuser->firstname
 			)
 			,'view'=>array(
 				'mode'=>$mode
