@@ -58,7 +58,6 @@ function _fiche(&$ATMdb, $tagCompetence,  $mode) {
 	WHERE c.entity=".$conf->entity;
 	$ATMdb->Execute($sql);
 	$TTagCompetence=array();
-	$TTagCompetence[0]='Tous';
 	while($ATMdb->Get_line()) {
 		$TTagCompetence[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('libelleCompetence');
 	}
