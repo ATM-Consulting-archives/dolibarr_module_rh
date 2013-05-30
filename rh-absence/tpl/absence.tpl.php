@@ -52,6 +52,10 @@
 						<td>[absenceCourante.dureeHeure;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
+						<td>Duree comptabilisée (en heures)</td>
+						<td>[absenceCourante.dureeHeurePaie;strconv=no;protect=no]</td>
+					</tr>
+					<tr>
 						<td>Etat</td>
 						<td>[absenceCourante.libelleEtat;strconv=no;protect=no]</td>
 					</tr>

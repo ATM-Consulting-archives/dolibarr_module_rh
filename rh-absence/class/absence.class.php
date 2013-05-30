@@ -320,14 +320,15 @@ class TRH_Absence extends TObjetStd {
 		
 		//on teste si c'est une demande de jours non cumulés, 
 		//si les jours N-1 début absence et N+1 fin absence sont travaillés
-		if($this->type=='rttnoncumule'){
+		//////////////////// FINALEMENT AUCUNE REGLES SUR LES RTT NON CUMULES : LAISSER PLACE AUX EXCEPTIONS
+		/*if($this->type=='rttnoncumule'){
 			$absenceAutoriseeDebut=$this->isWorkingDayPrevious($ATMdb, $this->date_debut);// AA plus simple 1fct -> isWorkingDay($ATMdb, strtotime( '-1day', $this->date_debut) )
 			$absenceAutoriseeFin=$this->isWorkingDayNext($ATMdb, $this->date_fin);// AA plus simple 1fct -> isWorkingDay($ATMdb, strtotime( '+1day', $this->date_fin) )
 			if($absenceAutoriseeDebut==0||$absenceAutoriseeFin==0){
 				return 3; //etat pour le message d'erreur lié aux rtt non cumulés
 			}
 
-		}
+		}*/
 		
 		
 		//on récupère la méthode d'acquisition des jours de l'utilisateur en cours : si par mois ou annuel
@@ -564,7 +565,7 @@ class TRH_Absence extends TObjetStd {
 		,CONCAT(HOUR(date_dimanche_heurefam) ,':' , MINUTE(date_dimanche_heurefam)) as	date_dimanche_heurefam
 		,CONCAT(HOUR(date_dimanche_heuredpm) ,':' , MINUTE(date_dimanche_heuredpm)) as	date_dimanche_heuredpm
 		,CONCAT(HOUR(date_dimanche_heurefpm) ,':' , MINUTE(date_dimanche_heurefpm)) as	date_dimanche_heurefpm	
-		 
+		, tempsHebdo
 		FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` 
 		WHERE fk_user=".$absence->fk_user;  
 
@@ -581,7 +582,8 @@ class TRH_Absence extends TObjetStd {
 					$TTravailHeure["date_".$jour."_heure".$moment]=$ATMdb->Get_field("date_".$jour."_heure".$moment);
 				}
 			}
-			$rowid=$ATMdb->Get_field($rowid);
+			$rowid=$ATMdb->Get_field('rowid');
+			$tpsHebdoUser=$ATMdb->Get_field('tempsHebdo');
 		}	
 					
 		//on traite les jours de début et de fin indépendemment des autres
@@ -649,9 +651,21 @@ class TRH_Absence extends TObjetStd {
 						$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
 					}
 				}
+				
+				if($tpsHebdoUser>=35){
+					$absence->dureeHeurePaie=7*$duree;
+				}
+				else$absence->dureeHeurePaie=$absence->dureeHeure;
 				return $duree;
 			}
-			else return $duree;
+			
+			else {
+				if($tpsHebdoUser>=35){
+					$absence->dureeHeurePaie=7*$duree;
+				}
+				else $absence->dureeHeurePaie=$absence->dureeHeure;
+				return $duree;
+			}
 			
 		}else{	//les jours de début et de fin sont différents
 			//////////////////////////jour de début
@@ -869,6 +883,11 @@ class TRH_Absence extends TObjetStd {
 		}
 		
 		$absence->dureeHeure=$dureeHeure;
+		if($tpsHebdoUser>=35){
+			$absence->dureeHeurePaie=7*$duree;
+		}
+		else $absence->dureeHeurePaie=$absence->dureeHeure;
+		
 		$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
 	    return $duree;
 	}
@@ -1120,7 +1139,7 @@ class TRH_Absence extends TObjetStd {
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin))
 							";
-				}
+			}
 			else
 			{	//	on recherche les utilisateurs d'un groupe n'ayant pas eu d'absences pendant la période désirée
 
