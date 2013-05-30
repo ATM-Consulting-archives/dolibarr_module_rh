@@ -59,8 +59,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle)) != false){
 		
 		if($numLigne>1){
-			$infos = explode(';', $data[0]);
 			
+			$infos = explode(';', $data[0]);
+
 			$login = strtolower($infos[4]);
 			//echo $infos[4].$TUserEdt[$TUser[strtolower($infos[4])]]."<br>";
 			if (!isset( $TUser[$login] )){	//si le login n'existe pas, on ne traite pas la ligne
@@ -80,6 +81,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					
 					$absence->fk_user=$TUser[strtolower($infos[4])];
 					$absence->idAbsImport=$infos[0];
+					echo $absence->idAbsImport;
 					$absence->etat='Validee';
 					$absence->commentaireValideur=$infos[2];
 					
@@ -136,7 +138,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$dureeAbsenceCourante=$absence->calculDureeAbsence($ATMdb, $absence->date_debut, $absence->date_fin, $absence);
 					
 					$dureeAbsenceCourante=$absence->calculJoursFeries($ATMdb, $dureeAbsenceCourante, $absence->date_debut, $absence->date_fin, $absence);
-
+					//echo "ici".$dureeAbsenceCourante;exit;
 					$dureeAbsenceCourante=$absence->calculJoursTravailles($ATMdb, $dureeAbsenceCourante, $absence->date_debut, $absence->date_fin, $absence); 
 
 					$absence->duree=$dureeAbsenceCourante;

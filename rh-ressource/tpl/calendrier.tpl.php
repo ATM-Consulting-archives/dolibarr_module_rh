@@ -117,14 +117,14 @@ $('#type').change(function(){
             var dvH = $dv.height() + 2;
             op.height = _MH - dvH;
             op.eventItems =[];
-
+			
             var p = $("#gridcontainer").bcalendar(op).BcalGetOp();
             if (p && p.datestrshow) {
                 $("#txtdatetimeshow").text(p.datestrshow);
             }
             $("#caltoolbar").noSelect();
             
-            $("#hdtxtshow").datepicker({ picker: "#txtdatetimeshow", showtarget: $("#txtdatetimeshow"),
+            $("#hdtxtshow").datepicker({ picker: "#txtdatetimeshow", dateFormat: 'dd-mm-yyyy', showtarget: $("#txtdatetimeshow"),
             onReturn:function(r){                          
                             var p = $("#gridcontainer").gotoDate(r).BcalGetOp();
                             if (p && p.datestrshow) {
@@ -151,6 +151,7 @@ $('#type').change(function(){
             }
             function cal_afterrequest(type)
             {
+            	$("#txtdatetimeshow").text(p.datestrshow);
                 switch(type)
                 {
                     case 1:
