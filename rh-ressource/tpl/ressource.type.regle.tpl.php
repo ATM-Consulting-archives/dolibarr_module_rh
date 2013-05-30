@@ -140,7 +140,10 @@
 		<td>Forfait Mail</td>
 		<td>[newRule.mailforfait;strconv=no]</td>
 	</tr>
-	
+	<tr>
+		<td>Données 15 Mo</td>
+		<td>[newRule.data15Mo;strconv=no]</td>
+	</tr>
 	<tr>
 		<td>Numéros Exclus (les séparer par des ";")</td>
 		<td>[newRule.numeroExclus;strconv=no]</td>
