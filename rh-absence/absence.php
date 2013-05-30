@@ -45,10 +45,7 @@
 					else if($demandeRecevable==3){		// demande rtt non cumulés acollée à un congé, ou rtt ou jour férié
 						$mesg = '<div class="error">Demande refusée à cause des règles sur les RTT non cumulés</div>';
 						_fiche($ATMdb, $absence,'edit');
-					}else if($demandeRecevable==4){		// doit attendre 2 mois avant de reprendre un jour de rtt non cumulés
-						$mesg = '<div class="error">Demande refusée : attendre 2 mois entre 2 jours de RTT non cumulés</div>';
-						_fiche($ATMdb, $absence,'edit');
-					}		
+					}
 				}
 				break;
 			
@@ -641,11 +638,7 @@ function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
 	print dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence');
 	
 	?> 
-	<br><t style='color: #2AA8B9; 
-		font-size: 15px;font-family: arial,tahoma,verdana,helvetica;
-	    font-weight: bold;
-	    text-decoration: none;
-	    text-shadow: 1px 1px 2px #CFCFCF;'>
+	<br><t style='color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica;font-weight: bold;text-decoration: none;text-shadow: 1px 1px 2px #CFCFCF;'>
     Vous pouvez ajouter un commentaire pour justifier votre choix </t><br/><br/><br/>
 	<textarea name="commentValid" rows="3" cols="40"></textarea><br><br>
 	<INPUT class="button" TYPE="submit"   id="commentaire" VALUE="Continuer"><br><br>
