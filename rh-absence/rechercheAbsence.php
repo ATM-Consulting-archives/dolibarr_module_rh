@@ -239,6 +239,7 @@ function _listeResult(&$ATMdb, &$absence) {
 			,'date_fin'=>'Date fin'
 			,'libelle'=>'Type d\'absence'
 			,'firstname'=>'Prénom'
+			,'name'=>'Nom'
 			,'login'=>'Login'
 			,'libelleEtat'=>'Statut demande'
 		)
@@ -258,4 +259,5 @@ function _listeResult(&$ATMdb, &$absence) {
 	
 	llxFooter();
 }	
+
 
