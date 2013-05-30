@@ -158,11 +158,13 @@
 					<td><b>Nombre de jours cumulables possible</b></td>
 					<td><b>Restrictif</b></td>
 				</tr>
-				<tr class="pair">
-					<td>[TRegle.libelle;block=tr;strconv=no;protect=no]</td>
-					<td>[TRegle.nbJourCumulable;block=tr;strconv=no;protect=no]</td>
-					<td>[TRegle.restrictif;block=tr;strconv=no;protect=no]</td>
-				</tr>	
+				<tbody  id="TRecapRegle">
+					<tr class="pair">
+						<td>[TRegle.libelle;block=tr;strconv=no;protect=no]</td>
+						<td>[TRegle.nbJourCumulable;block=tr;strconv=no;protect=no]</td>
+						<td>[TRegle.restrictif;block=tr;strconv=no;protect=no]</td>
+					</tr>
+				</tbody>	
 		</table>
 		</div>
 		
@@ -370,5 +372,76 @@
 				});
 		});
 		</script>
+		
+		
+		
+		
+		<script>
+		// 	script qui charge les règles de l'utilisateur courant
+		$(document).ready( function(){
+			if($('#userRecapCompteur').val()==0){
+				
+				if($('#userAbsenceCree').val()!=0){
+					var urlajax='script/chargerRecapRegleUser.php?idUser='+$('#userAbsenceCree').val();
+				}else{	
+					
+					if($('#fk_user option:selected').val()){
+						var urlajax='script/chargerRecapRegleUser.php?idUser='+$('#fk_user option:selected').val();
+					}else{
+						var urlajax='script/chargerRecapRegleUser.php?idUser='+$('#fk_user').val();
+					}				
+				}
+				
+				$.ajax({
+					url: 'script/chargerRecapRegleUser.php?idUser='+$('#fk_user option:selected').val()
+				}).done(function(data) {
+					liste = JSON.parse(data);
+					$('#TRecapRegle').html('');
+					for (var i=0; i<liste.length; i++){
+						var texte = "<tr>"
+							+"<td>"+liste[i].libelle+"</td>"
+							+"<td>"+liste[i].nbJourCumulable+"</td>"
+							+"<td>"+liste[i].restrictif+"</td>"
+							+"</tr>";
+						$('#TRecapRegle').html($('#TRecapRegle').html()+texte);
+					}
+				});
+			}
+			else{
+				$.ajax({
+					url: 'script/chargerRecapRegleUser.php?idUser='+$('#userRecapCompteur').val()
+				}).done(function(data) {
+					liste = JSON.parse(data);
+					$('#TRecapRegle').html('');
+					for (var i=0; i<liste.length; i++){
+						var texte = "<tr>"
+							+"<td>"+liste[i].libelle+"</td>"
+							+"<td>"+liste[i].nbJourCumulable+"</td>"
+							+"<td>"+liste[i].restrictif+"</td>"
+							+"</tr>";
+						$('#TRecapRegle').html($('#TRecapRegle').html()+texte);
+					}
+				});
+			}
+		});
+		
+		$('#fk_user').change(function(){
+				$.ajax({
+					url: 'script/chargerRecapRegleUser.php?idUser='+$('#fk_user option:selected').val()
+				}).done(function(data) {
+					liste = JSON.parse(data);
+					$('#TRecapRegle').html('');
+					for (var i=0; i<liste.length; i++){
+						var texte = "<tr>"
+							+"<td>"+liste[i].libelle+"</td>"
+							+"<td>"+liste[i].nbJourCumulable+"</td>"
+							+"<td>"+liste[i].restrictif+"</td>"
+							+"</tr>";
+						$('#TRecapRegle').html($('#TRecapRegle').html()+texte);
+					}
+				});
+		});
+		</script>
+
 
 

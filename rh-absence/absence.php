@@ -584,7 +584,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')
 				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png">  Ne respecte pas les règles en vigueur</img>':'Aucun'
 				,'fk_user'=>$absence->fk_user
-				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$absence->fk_user):''
+				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$user->id):''
 				,'userAbsenceCourant'=>$droitsCreation==1?'':$form->hidden('fk_user', $user->id)
 				,'niveauValidation'=>$absence->niveauValidation
 				,'commentaireValideur'=>$absence->commentaireValideur
