@@ -1,7 +1,7 @@
 [onshow;block=begin;when [view.mode]=='view'] 
 <div class="fiche">
-
-		<div>				
+		<div>
+				
 			<h2 style="color: #2AA8B9;">Description de l'expérience Professionnelle</h2>
 
 			<table class="border" style="width:100%">			

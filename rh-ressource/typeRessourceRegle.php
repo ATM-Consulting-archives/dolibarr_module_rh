@@ -258,6 +258,7 @@ function _fiche(&$ATMdb, &$regle, &$ressourceType, $mode) {
 				,'dataIphone'=>$form->combo('', 'dataIphone',$TBool, $regle->dataIphone)
 				,'smsIllimite'=>$form->combo('', 'smsIllimite',$TBool, $regle->smsIllimite)
 				,'mailforfait'=>$form->combo('', 'mailforfait',$TBool, $regle->mailforfait)
+				,'data15Mo'=>$form->combo('', 'data15Mo',$TBool, $regle->data15Mo)
 				,'numeroExclus'=>$form->texte('', 'numeroExclus', $regle->numeroExclus,30 ,255,'','','')
 		
 			)

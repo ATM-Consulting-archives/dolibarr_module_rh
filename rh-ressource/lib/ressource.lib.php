@@ -195,7 +195,7 @@ function intToString($val = 0){
 	if ($h < 10){$h = '0'.$h;}
 	$m = $val%60;
 	if ($m < 10){$m = '0'.$m;}
-	if ($h==0 && $m==0){return '';}
+	if ($h==0 && $m==0){return '00:00';}
 	return $h.':'.$m;
 }
 

@@ -1,5 +1,5 @@
 [infos.action;strconv=no;protect=no]
-<h1>Vérification des consommations téléphoniques</h1>
+[infos.titre;strconv=no;protect=no]
 <table>
 	<tr>
 		<td>[infos.date_debut;strconv=no;protect=no]</td>
