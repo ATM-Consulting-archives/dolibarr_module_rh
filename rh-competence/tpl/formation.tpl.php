@@ -5,9 +5,7 @@
 </tbody></table>
 <br>
 <div class="fiche">
-		
 		<div>
-				
 			<h2 style="color: #2AA8B9;">Description de la formation</h2>	
 			<table class="border" style="width:100%">			
 				<tr>
@@ -16,9 +14,6 @@
 					<td><b>Date début</b></td>
 					<td><b>Date fin</b></td>
 					<td><b>Date d'expiration de la formation</b></td>
-					<td><b>Coût de la formation</b></td>
-					<td><b>Montant pris en charge par l'organisme</b></td>
-					<td><b>Montant pris en charge par l'entreprise</b></td>
 				</tr>
 				<tr>
 					<td>[userCourant.nom;block=tr;strconv=no;protect=no]</td>
@@ -26,11 +21,23 @@
 					<td>[formation.date_debut;block=tr;strconv=no;protect=no]</td>
 					<td>[formation.date_fin;strconv=no;protect=no]</td>
 					<td>[formation.date_formationEcheance;strconv=no;protect=no]</td>
+				</tr>
+			</table>
+			
+			<br/><br/>
+			<table class="border" style="width:100%">			
+				<tr>
+					<td><b>Coût de la formation</b></td>
+					<td><b>Montant pris en charge par l'organisme</b></td>
+					<td><b>Montant pris en charge par l'entreprise</b></td>
+				</tr>
+				<tr>
 					<td>[formation.coutFormation;strconv=no;protect=no]€</td>
 					<td>[formation.montantOrganisme;strconv=no;protect=no]€</td>
 					<td>[formation.montantEntreprise;strconv=no;protect=no]€</td>
 				</tr>
 			</table>
+			
 			<br/><br/>
 			<table class="border" style="width:100%">			
 				<tr>
@@ -51,49 +58,36 @@
 				<tr>
 					<td>[formation.commentaireFormation;strconv=no;protect=no]</td>
 				</tr>
-					
 			</table>
 			<br/><br/>
 			
 			<table class="border" style="width:40%">
+				[newCompetence.hidden;strconv=no;protect=no]
+				[newCompetence.fk_user_formation;strconv=no;protect=no]
 				<tr>
 					<td><b>Compétences acquises</b></td>
-					<td><b> Niveau acquis</b></td>
-				</tr>
-				
+					<td style="text-align:center;"><b>Niveau acquis</b></td>
+					[onshow;block=begin;when [view.mode]=='edit']
+						<td style="text-align:center;"><b>Action</b></td>
+					[onshow;block=end]
 				<tr>
-					
 					<td>[TCompetence.libelleCompetence;block=tr;strconv=no;protect=no]</td>
 					<td>[TCompetence.niveauCompetence;block=tr;strconv=no;protect=no]</td>
-					
 					[onshow;block=begin;when [view.mode]=='edit']
-					<td>
-					<a href="?id=[formation.id;strconv=no;protect=no]&idForm=[TCompetence.id;block=tr;strconv=no;protect=no]&action=deleteCompetence"><img src="./img/delete.png"></a>
-					</td>
+						<td style="text-align:center;">
+							<a href="?id=[formation.id;strconv=no;protect=no]&idForm=[TCompetence.id;block=tr;strconv=no;protect=no]&action=deleteCompetence"><img title="Supprimer ce tag" style="width:25px;" src="./img/delete_tag.png"></a>
+						</td>
 					[onshow;block=end]
-				</tr>	
-			</table>
-			
-			<br/><br/>
-			[onshow;block=begin;when [view.mode]=='edit']
-			<table class="border" style="width:30%">
-				
-				<tr>	
-						
-						[newCompetence.hidden;strconv=no;protect=no]
-						[newCompetence.fk_user_formation;strconv=no;protect=no]
-						[newCompetence.libelleCompetence;strconv=no;protect=no]
-						[newCompetence.niveauCompetence;strconv=no;protect=no]
+					
 				</tr>
+				[onshow;block=begin;when [view.mode]=='edit']
 				<tr>
-					<input  type="submit" value="Ajouter" name="newCompetence" class="button">
+					<td>[newCompetence.libelleCompetence;strconv=no;protect=no]</td>
+					<td>[newCompetence.niveauCompetence;strconv=no;protect=no]</td>
+					<td><input type="submit" value="Ajouter" name="newCompetence" class="button"></td>
 				</tr>
-				
-				
+				[onshow;block=end]
 			</table>
-			[onshow;block=end]
-			
-			
 			<br/><br/>
 			
 			<table class="border" style="width:100%;">
@@ -107,12 +101,6 @@
 
 	</div>
 </div>
-
-
-
-
-
-	
 	
 [onshow;block=begin;when [view.mode]=='edit']
 	<div class="tabsAction" style="text-align:center">
@@ -122,4 +110,3 @@
 	
 </div>
 [onshow;block=end]
-
