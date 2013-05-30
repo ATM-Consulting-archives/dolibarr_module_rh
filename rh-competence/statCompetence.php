@@ -179,6 +179,11 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 	//on va obtenir un tableau permettant d'avoir les stats des compétences suivant la recherche
 	$requeteRecherche=$tagCompetence->requeteStatistique($ATMdb, $idGroupeRecherche, $idTagRecherche, $idUserRecherche);
 
+	$taux_resultat_faible=$requeteRecherche['nbUserFaible']*100/$requeteRecherche['nbUser'];
+	$taux_resultat_moyen=$requeteRecherche['nbUserMoyen']*100/$requeteRecherche['nbUser'];
+	$taux_resultat_bon=$requeteRecherche['nbUserBon']*100/$requeteRecherche['nbUser'];
+	$taux_resultat_excellent=$requeteRecherche['nbUserExcellent']*100/$requeteRecherche['nbUser'];
+	$taux_resultat_autres=100-$taux_resultat_faible-$taux_resultat_moyen-$taux_resultat_bon-$taux_resultat_excellent;
 
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/statCompetenceResult.tpl.php'
@@ -195,10 +200,11 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 			)
 			,'resultat'=>array(
 				'total'=>$requeteRecherche['nbUser']
-				,'faible'=>$requeteRecherche['nbUserFaible']*100/$requeteRecherche['nbUser']
-				,'moyen'=>$requeteRecherche['nbUserMoyen']*100/$requeteRecherche['nbUser']
-				,'bon'=>$requeteRecherche['nbUserBon']*100/$requeteRecherche['nbUser']
-				,'excellent'=>$requeteRecherche['nbUserExcellent']*100/$requeteRecherche['nbUser']
+				,'faible'=>$taux_resultat_faible
+				,'moyen'=>$taux_resultat_moyen
+				,'bon'=>$taux_resultat_bon
+				,'excellent'=>$taux_resultat_excellent
+				,'autres'=>$taux_resultat_autres
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id
