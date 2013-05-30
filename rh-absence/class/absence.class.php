@@ -227,14 +227,14 @@ class TRH_Absence extends TObjetStd {
 	//utile lors de l'affichage à la création d'une demande d'absence
 	function recuperationRegleUser(&$ATMdb, $fk_user){
 		global $conf;
-		//on sélectionne les règles relatives à un utilisateurs
-		$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, 
+		
+		
+		$sql="SELECT DISTINCT r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, 
 		r.fk_user, r.fk_usergroup, r.choixApplication
-		FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
-		WHERE( r.fk_user=u.rowid AND r.fk_user=".$fk_user." 
-		AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
-		OR (r.choixApplication Like 'all' AND u.rowid=".$fk_user." and u.rowid=g.fk_user) 
-		OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$fk_user.") 
+		FROM ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
+		WHERE r.choixApplication Like 'user' AND r.fk_user=".$fk_user."
+		OR (r.choixApplication Like 'all')
+		OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND g.fk_user=".$fk_user.") 
 		AND r.entity IN (0,".$conf->entity.")
 		ORDER BY r.nbJourCumulable";
 
@@ -242,7 +242,6 @@ class TRH_Absence extends TObjetStd {
 		$TRegle = array();
 		$k=0;
 		while($ATMdb->Get_line()) {
-			$TRegle[$k]['rowid']= $ATMdb->Get_field('rowid');
 			$TRegle[$k]['typeAbsence']= $ATMdb->Get_field('typeAbsence');
 			$TRegle[$k]['libelle']= saveLibelle($ATMdb->Get_field('typeAbsence'));
 			$TRegle[$k]['nbJourCumulable']= $ATMdb->Get_field('nbJourCumulable');
@@ -252,6 +251,17 @@ class TRH_Absence extends TObjetStd {
 			$TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
 			$k++;
 		}
+		
+		/*$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, 
+		r.fk_user, r.fk_usergroup, r.choixApplication
+		FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
+		WHERE( r.fk_user=u.rowid AND r.fk_user=".$fk_user." 
+		AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
+		OR (r.choixApplication Like 'all' AND u.rowid=".$fk_user." and u.rowid=g.fk_user) 
+		OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$fk_user.") 
+		AND r.entity IN (0,".$conf->entity.")
+		ORDER BY r.nbJourCumulable";
+		*/
 		
 		return $TRegle;
 	}
@@ -316,11 +326,7 @@ class TRH_Absence extends TObjetStd {
 			if($absenceAutoriseeDebut==0||$absenceAutoriseeFin==0){
 				return 3; //etat pour le message d'erreur lié aux rtt non cumulés
 			}
-			//on teste finalement si le collaborateur n'a pas déjà pris un jour de rtt non cumulés dans les 2 mois précédents
-			$absenceAutorisee1Jour2Mois=$this->rttnoncumuleDuree2mois($ATMdb, $this->date_debut);
-			if($absenceAutorisee1Jour2Mois==0){
-				return 4; //etat pour le message d'erreur lié aux rtt non cumulés, et indiquant qu'un seul jour peut être pris par 2 mois
-			}
+
 		}
 		
 		
@@ -1041,23 +1047,7 @@ class TRH_Absence extends TObjetStd {
 		return 1;
 	}
 
-	function rttnoncumuleDuree2mois(&$ATMdb, $dateDebut){
-		
-		//on calcule 2 mois entre la date de début de la demande d'absence, et la prise d'un rtt non cumulé
-		$dateLimite=$dateDebut-3600*24*58;
-		
-		$sql="SELECT SUM(duree) as 'somme' FROM ".MAIN_DB_PREFIX."rh_absence 
-		WHERE date_debut between '".$this->php2Date($dateLimite)."' AND '".$this->php2Date($dateDebut)."'
-		AND type LIKE 'rttnoncumule' AND etat <> 'refusee'"; 
-		$ATMdb->Execute($sql);
-		
-		while($ATMdb->Get_line()) {
-			if($ATMdb->Get_field('somme')>=1){
-				return 0;
-			}
-		}
-		return 1;
-	}
+
 		
 		
 		
