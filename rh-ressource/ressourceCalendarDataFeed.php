@@ -52,7 +52,8 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 	WHERE ";
 	
-	$sql .= " date_debut<='".php2MySqlTime($ed)."' AND date_fin >= '". php2MySqlTime($sd)."' ";
+	$sql .= " 1 ";
+	//$sql .= " AND date_debut<='".php2MySqlTime($ed)."' AND date_fin >= '". php2MySqlTime($sd)."' ";
 	//$sql .= " `date_debut` between '"
     //  .php2MySqlTime($sd)."' and '". php2MySqlTime($ed)."'";
     

@@ -1224,6 +1224,8 @@
                 events = data.events;
             }
             ConcatEvents(events, start, end);
+            //option.eventItems = [];
+            //option.eventItems = events;
             render();
 
         }
@@ -1254,12 +1256,13 @@
                 events = [];
             }
             if (events) {
+            	option.eventItems = []; //Vidage du tableau pour ne pas avoir d'evenements dupliqués
                 if (option.eventItems.length == 0) {
                     option.eventItems = events;
                 }
                 else {
                     //remove duplicated one
-                    clearrepeat(events, start, end);
+                    //clearrepeat(events, start, end);
                     var l = events.length;
                     var sl = option.eventItems.length;
                     var sI = -1;
@@ -1396,7 +1399,7 @@
             var d = getRdate();
             var loaded = checkInEr(d.start, d.end);
             if (!loaded) {
-                populate();
+                //populate();
             }
         }
 
