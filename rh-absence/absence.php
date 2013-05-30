@@ -641,11 +641,7 @@ function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
 	print dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence');
 	
 	?> 
-	<br><t style='color: #2AA8B9; 
-		font-size: 15px;font-family: arial,tahoma,verdana,helvetica;
-	    font-weight: bold;
-	    text-decoration: none;
-	    text-shadow: 1px 1px 2px #CFCFCF;'>
+	<br><t style='color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica;font-weight: bold;text-decoration: none;text-shadow: 1px 1px 2px #CFCFCF;'>
     Vous pouvez ajouter un commentaire pour justifier votre choix </t><br/><br/><br/>
 	<textarea name="commentValid" rows="3" cols="40"></textarea><br><br>
 	<INPUT class="button" TYPE="submit"   id="commentaire" VALUE="Continuer"><br><br>

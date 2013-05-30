@@ -137,14 +137,17 @@
 					<td><b>Type d'absence</b></td>
 					<td><b>Etat</b></td>
 				</tr>
-				<tr class="pair">
-					<td>[TRecap.date_debut;block=tr;strconv=no;protect=no]</td>
-					<td>[TRecap.date_fin;block=tr;strconv=no;protect=no]</td>
-					<td>[TRecap.libelle;block=tr;strconv=no;protect=no]</td>
-					<td>[TRecap.libelleEtat;block=tr;strconv=no;protect=no]</td>
-				</tr>	
+				<tbody  id="TRecapAbs">
+					<tr class="pair">
+						<td>[TRecap.date_debut;block=tr;strconv=no;protect=no]</td>
+						<td>[TRecap.date_fin;block=tr;strconv=no;protect=no]</td>
+						<td>[TRecap.libelle;block=tr;strconv=no;protect=no]</td>
+						<td>[TRecap.libelleEtat;block=tr;strconv=no;protect=no]</td>
+					</tr>	
+				</tbody>
 		</table>
 		</div>
+		<br>
 		
 		
 		<div>
@@ -166,6 +169,7 @@
 		
 
 		<script>
+			//	script vérifiant que la date de début ne dépasse pas celle de fin
 			$(document).ready( function(){
 				//on empêche que la date de début dépasse pas celle de fin
 				function comparerDates(){
@@ -214,6 +218,7 @@
 		</script>
 		
 		<script>
+		//	script qui charge le compteur de jours du salarié
 		$(document).ready( function(){
 			if($('#userRecapCompteur').val()==0){
 				
@@ -296,5 +301,74 @@
 		</script>
 
 
+	<script>
+		// 	script qui charge les dernières absences de l'utilisateur
+		$(document).ready( function(){
+			if($('#userRecapCompteur').val()==0){
+				
+				if($('#userAbsenceCree').val()!=0){
+					var urlajax='script/chargerRecapAbsenceUser.php?idUser='+$('#userAbsenceCree').val();
+				}else{	
+					
+					if($('#fk_user option:selected').val()){
+						var urlajax='script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user option:selected').val();
+					}else{
+						var urlajax='script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user').val();
+					}				
+				}
+				
+				$.ajax({
+					url: 'script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user option:selected').val()
+				}).done(function(data) {
+					liste = JSON.parse(data);
+					$('#TRecapAbs').html('');
+					for (var i=0; i<liste.length; i++){
+						var texte = "<tr>"
+							+"<td>"+liste[i].date_debut+"</td>"
+							+"<td>"+liste[i].date_fin+"</td>"
+							+"<td>"+liste[i].libelle+"</td>"
+							+"<td>"+liste[i].libelleEtat+"</td>"
+							+"</tr>";
+						$('#TRecapAbs').html($('#TRecapAbs').html()+texte);
+					}
+				});
+			}
+			else{
+				$.ajax({
+					url: 'script/chargerRecapAbsenceUser.php?idUser='+$('#userRecapCompteur').val()
+				}).done(function(data) {
+					liste = JSON.parse(data);
+					$('#TRecapAbs').html('');
+					for (var i=0; i<liste.length; i++){
+						var texte = "<tr>"
+							+"<td>"+liste[i].date_debut+"</td>"
+							+"<td>"+liste[i].date_fin+"</td>"
+							+"<td>"+liste[i].libelle+"</td>"
+							+"<td>"+liste[i].libelleEtat+"</td>"
+							+"</tr>";
+						$('#TRecapAbs').html($('#TRecapAbs').html()+texte);
+					}
+				});
+			}
+		});
+		
+		$('#fk_user').change(function(){
+				$.ajax({
+					url: 'script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user option:selected').val()
+				}).done(function(data) {
+					liste = JSON.parse(data);
+					$('#TRecapAbs').html('');
+					for (var i=0; i<liste.length; i++){
+						var texte = "<tr>"
+							+"<td>"+liste[i].date_debut+"</td>"
+							+"<td>"+liste[i].date_fin+"</td>"
+							+"<td>"+liste[i].libelle+"</td>"
+							+"<td>"+liste[i].libelleEtat+"</td>"
+							+"</tr>";
+						$('#TRecapAbs').html($('#TRecapAbs').html()+texte);
+					}
+				});
+		});
+		</script>
 
 
