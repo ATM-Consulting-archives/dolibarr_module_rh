@@ -21,12 +21,12 @@
       ['Utilisateurs de niveau moyen', [resultat.nb_moyen;strconv=no;protect=no]],
       ['Utilisateurs de niveau bon', [resultat.nb_bon;strconv=no;protect=no]],
       ['Utilisateurs de niveau excellent', [resultat.nb_excellent;strconv=no;protect=no]],
-      ['Autres utilisateurs', [resultat.nb_autres;strconv=no;protect=no]]
+      ['Utilisateurs sans la compétence', [resultat.nb_autres;strconv=no;protect=no]]
     ]);
 
     // Set chart options
     var options = {'title':'Graphique',
-                   'width':400,
+                   'width':500,
                    'height':250};
 
     // Instantiate and draw our chart, passing in some options.
@@ -38,45 +38,49 @@
 <div>			
 	<h2 style="color: #2AA8B9;">Résultat de votre recherche</h2>	
 	<br/>
-	<table class="border" style="width:100%">	
-		<tr>
-			<td><b>Mots clés utilisés</b></td>	
-		</tr>
-		<tr>
-			<td style="width:30%"> Libellé compétence </td>
-			<td > [demande.nomTagRecherche;block=tr;strconv=no;protect=no]</td>
-		</tr>
-		<tr>
-			<td style="width:30%"> Groupe </td>
-			<td> [demande.nomGroupeRecherche;block=tr;strconv=no;protect=no]</td>
-		</tr>
-		<tr>
-			<td style="width:30%"> Utilisateur </td>
-			<td> [demande.nomUserRecherche;block=tr;strconv=no;protect=no]</td>
-		</tr> 
+	<table class="liste formdoc noborder" style="width:700px">
+		<thead>
+			<tr class="liste_titre">
+				<th colspan="2" style="font-size:140%">Mots clés utilisés</th>	
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td style="width:30%"><b>Libellé compétence</b></td>
+				<td > [demande.nomTagRecherche;block=tr;strconv=no;protect=no]</td>
+			</tr>
+			<tr>
+				<td style="width:30%"><b>Groupe</b></td>
+				<td> [demande.nomGroupeRecherche;block=tr;strconv=no;protect=no]</td>
+			</tr>
+		</tbody>
 	</table>	
 	
 	<br/><br/>
-	<table class="border" style="width:100%">	
-		<tr>
-			<td><b>Statistiques</b></td>	
-		</tr>
-		<tr>
-			<td style="width:30%">Niveau faible</td>
-			<td > [resultat.faible;block=tr;strconv=no;protect=no;frm=0,00]%</td>
-		</tr>
-		<tr>
-			<td style="width:30%">Niveau Moyen</td>
-			<td> [resultat.moyen;block=tr;strconv=no;protect=no;frm=0,00]%</td>
-		</tr>
-		<tr>
-			<td style="width:30%">Niveau Bon</td>
-			<td> [resultat.bon;block=tr;strconv=no;protect=no;frm=0,00]%</td>
-		</tr> 
-		<tr>
-			<td style="width:30%">Niveau Excellent</td>
-			<td> [resultat.excellent;block=tr;strconv=no;protect=no;frm=0,00]%</td>
-		</tr>
+	<table class="liste formdoc noborder" style="width:700px">
+		<thead>
+			<tr class="liste_titre">
+				<td colspan="2" style="font-size:140%">Statistiques</td>	
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td style="width:30%"><b>Niveau faible</b></td>
+				<td > [resultat.faible;block=tr;strconv=no;protect=no;frm=0,00]% ([resultat.nb_faible;strconv=no;protect=no] utilisateur(s))</td>
+			</tr>
+			<tr>
+				<td style="width:30%"><b>Niveau Moyen</b></td>
+				<td> [resultat.moyen;block=tr;strconv=no;protect=no;frm=0,00]% ([resultat.nb_moyen;strconv=no;protect=no] utilisateur(s))</td>
+			</tr>
+			<tr>
+				<td style="width:30%"><b>Niveau Bon</b></td>
+				<td> [resultat.bon;block=tr;strconv=no;protect=no;frm=0,00]% ([resultat.nb_bon;strconv=no;protect=no] utilisateur(s))</td>
+			</tr> 
+			<tr>
+				<td style="width:30%"><b>Niveau Excellent</b></td>
+				<td> [resultat.excellent;block=tr;strconv=no;protect=no;frm=0,00]% ([resultat.nb_excellent;strconv=no;protect=no] utilisateur(s))</td>
+			</tr>
+		</tbody>
 	</table>
 	<br/>
 	

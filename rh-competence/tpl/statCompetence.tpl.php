@@ -9,7 +9,6 @@
 			<tr>
 				<td> Libellé compétence [competence.Tlibelle;block=tr;strconv=no;protect=no]
 				Groupe [competence.TGroupe;block=tr;strconv=no;protect=no]
-				Utilisateur [competence.TUser;block=tr;strconv=no;protect=no]
 				[competence.btValider;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			
@@ -20,21 +19,4 @@
 [onshow;block=begin;when [userCourant.droitRecherche]!='1']
 		Vous ne possédez pas les droits pour connaître les statistiques des compétences dans l'entreprise.		
 [onshow;block=end]
-
-
-
-	<script>
-		$('#groupe').change(function(){
-				$.ajax({
-					url: 'script/loadUtilisateurs.php?groupe='+$('#groupe option:selected').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
-					$("#user").empty(); // remove old options
-					$.each(liste, function(key, value) {
-					  $("#user").append($("<option></option>")
-					     .attr("value", key).text(value));
-					});	
-				});
-		});
-	</script>
 	

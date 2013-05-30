@@ -72,18 +72,7 @@ function _fiche(&$ATMdb, $tagCompetence,  $mode) {
 		$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 	}
 	
-	//tableau pour la combobox des utilisateurs
-	$TUser=array();
-	$TUser[0]='Tous';
-	$sqlReqUser="SELECT u.rowid, u.name,  u.firstname FROM `".MAIN_DB_PREFIX."user` as u, ".MAIN_DB_PREFIX."usergroup_user as g
-	 WHERE u.entity=".$conf->entity;
-	if($idGroupeRecherche!=0){
-		$sqlReqUser.=" AND g.fk_user=u.rowid AND g.fk_usergroup=".$idGroupeRecherche;
-	}
-	$ATMdb->Execute($sqlReqUser);
-	while($ATMdb->Get_line()) {
-		$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
-	}
+
 	
 	
 	
@@ -96,7 +85,6 @@ function _fiche(&$ATMdb, $tagCompetence,  $mode) {
 			'competence'=>array(
 				'Tlibelle'=>$form->combo('','libelle',$TTagCompetence,$idTagRecherche)
 				,'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche)
-				,'TUser'=>$form->combo('','user',$TUser,$idUserRecherche)
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 			)
 			,'userCourant'=>array(
