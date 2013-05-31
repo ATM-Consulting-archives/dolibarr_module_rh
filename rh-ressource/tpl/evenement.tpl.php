@@ -33,6 +33,10 @@
 			<td>[NEvent.numFacture;strconv=no;protect=no]</td>
 		</tr>
 		<tr>
+			<td>Référence externe</td>
+			<td>[NEvent.refexterne;strconv=no;protect=no]</td>
+		</tr>
+		<tr>
 			<td>Motif</td>
 			<td>[NEvent.motif;strconv=no;protect=no]</td>[NEvent.fk_rh_ressource;strconv=no;protect=no]
 		</tr>
@@ -89,6 +93,10 @@
 		<tr>
 			<td>Commentaire</td>
 			<td>[NEvent.commentaire;strconv=no;protect=no]</td>
+		</tr>
+		<tr>
+			<td>Liste des appels</td>
+			<td><pre>[NEvent.appels;strconv=no;protect=no]</pre></td>
 		</tr>
 	</table>
 </div>

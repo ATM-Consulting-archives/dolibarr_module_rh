@@ -4,7 +4,7 @@ define('INC_FROM_CRON_SCRIPT', true);
 require('../config.php');
 
 //Interface qui renvoie les emprunts de ressources d'un utilisateur
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 
 $get = isset($_REQUEST['get'])?$_REQUEST['get']:'emprunt';
 
@@ -13,9 +13,47 @@ _get($ATMdb, $get);
 function _get(&$ATMdb, $case) {
 	switch ($case) {
 		case 'emprunt':
-			__out($ATMdb, _emprunt($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
+			__out( _emprunt($ATMdb, $_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
+			break;
+		case 'orange':
+			__out(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
+			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
+			break;
+		default:
 			break;
 	}
+}
+
+function _exportOrange(&$ATMdb, $date_debut, $date_fin, $entity){
+	$TabLigne = array();
+	
+	$sql="SELECT totalI, totalE, natureRefac, montantRefac, name, firstname, COMPTE_TIERS
+	FROM ".MAIN_DB_PREFIX."rh_evenement as e
+	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
+	LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as c ON (c.fk_object = e.fk_user)
+	WHERE e.entity=".$entity."
+	AND e.type='factTel' 
+	AND (e.date_debut<='".$date_fin."' OR e.date_debut>='".$date_debut."')";
+	//echo $sql;
+	$ATMdb->Execute($sql);
+	while($row = $ATMdb->Get_line()) {
+		$total = number_format($row->totalI+$row->totalE+$row->montantRefac, 2);
+		if ($total>0){
+			$TabLigne[] = array(
+				'user'=>htmlentities($row->firstname.' '.$row->name, ENT_COMPAT , 'ISO8859-1')
+				,'comptetiers'=>$row->COMPTE_TIERS
+				,'int'=>number_format($row->totalI,2)
+				,'ext'=>number_format($row->totalE,2)
+				,'naturerefact'=>$row->natureRefac
+				,'montantrefact'=>number_format($row->montantRefac, 2)
+				,'total'=>$total
+				);
+		}
+	}
+	
+	
+	$ATMdb->close();
+	return $TabLigne;
 }
 
 function _emprunt(&$ATMdb, $userId, $date_debut, $date_fin){
@@ -39,6 +77,7 @@ function _emprunt(&$ATMdb, $userId, $date_debut, $date_fin){
 		);
 	}
 	
+	$ATMdb->close();
 	return $TabEmprunt;
 }
 

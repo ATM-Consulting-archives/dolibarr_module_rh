@@ -86,7 +86,7 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 	
 	$r = new TSSRenderControler($feries);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
-			  DATE_FORMAT(date_jourOff, '%d/%m/%Y') as 'date_jourOff', moment as 'Période',  commentaire as 'Commentaire', '' as 'Supprimer'
+			  DATE_FORMAT(date_jourOff, '%m/%d/%Y') as 'date_jourOff', moment as 'Période',  commentaire as 'Commentaire', '' as 'Supprimer'
 		FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
 		WHERE entity IN (0,".$conf->entity.")";
 		
@@ -165,6 +165,7 @@ function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 			'joursFeries'=>array(
 				'id'=>$feries->getId()
 				,'date_jourOff'=>$form->calendrier('', 'date_jourOff', $feries->get_date('date_jourOff'), 10)
+				,'date_jourOff_view'=>$form->texte('', 'date_jourOff_view', $feries->get_date('date_jourOff'), 10)
 				,'moment'=>$form->combo('','moment',$feries->TMoment,$feries->moment)
 				,'commentaire'=>$form->zonetexte('','commentaire',$feries->commentaire, 40,3,'','','-')
 				,'titreCreate'=>load_fiche_titre("Nouveau jour férié",'', 'title.png', 0, '')

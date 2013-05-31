@@ -176,6 +176,16 @@ function getGroups(){
 	return $TGroups;
 	
 }
+
+
+/**
+ * si le choix limite est cohérant avec la colonne, on affiche la valeur
+ */
+function afficheOuPas($val, $choixLimite,$colonne){
+	if ($colonne==$choixLimite){return intToString($val);}
+	return '';
+}
+
 	
 /**
  * renvoie 'Tous' si choixApplication='all', renvoie val sinon. 

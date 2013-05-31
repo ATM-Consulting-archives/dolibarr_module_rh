@@ -141,6 +141,12 @@ $cpt = 0;
 	
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Numéro', 'numeroTel', 'chaine',0, 0, '', 1, $tempType->rowid);
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Coût minute interne', 'coutMinuteInt', 'float',0, 1, '', 1, $tempType->rowid);
+	$tempField = new TRH_Ressource_field;
+	$tempField->chargement($ATMdb,'Coût minute externe', 'coutMinuteExt', 'float',0, 2, '', 1, $tempType->rowid);
+	
+	
 	
 	$tempEven = new TRH_Type_Evenement;
 	$tempEven->chargement($ATMdb, 'Facture Téléphonique', 'factTel', '', 'faux', $tempType->rowid);

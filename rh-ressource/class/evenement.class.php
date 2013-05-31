@@ -7,7 +7,7 @@ class TRH_Evenement  extends TObjetStd {
 		parent::add_champs('fk_rh_ressource','type=entier;index;');	
 		parent::add_champs('fk_user,entity','type=entier;index;');
 		parent::add_champs('motif','type=chaine;');
-		parent::add_champs('commentaire','type=chaine;');
+		parent::add_champs('commentaire, refexterne','type=chaine;');
 		
 		//type : accident, répération, emprunt, appel ou facture
 		parent::add_champs('type','type=chaine;');
@@ -31,13 +31,10 @@ class TRH_Evenement  extends TObjetStd {
 		
 		//pour une facture téléphonique
 		parent::add_champs('duree, dureeI, dureeE','type=entier;'); //durée de consommation
-		
-		//pour un appel
-		parent::add_champs('appelHeure','type=chaine;');
-		parent::add_champs('appelNumero','type=chaine;');
-		parent::add_champs('appelDureeReel','type=chaine;');
-		parent::add_champs('appelDureeFacturee','type=chaine;');
-		parent::add_champs('fk_facture','type=entier;index');
+		parent::add_champs('appels','type=chaine;');
+		parent::add_champs('totalI, totalE ','type=float;'); //montant facturé en interne et en externe 
+		parent::add_champs('montantRefac','type=float;'); //nature et montant refacturé
+		parent::add_champs('natureRefac','type=chaine;'); //nature et montant refacturé
 		
 		//pour une facture
 		parent::add_champs('numFacture','type=chaine;');

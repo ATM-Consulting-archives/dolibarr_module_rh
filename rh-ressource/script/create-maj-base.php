@@ -31,6 +31,9 @@
 	
 	$p=new TRH_Evenement;
 	$p->init_db_by_vars($ATMdb);
+	//ALTER table customer modify Addr char(30)
+	$sqlReq="ALTER TABLE ".MAIN_DB_PREFIX."rh_evenement MODIFY appels LONGTEXT";
+	$ATMdb->Execute($sqlReq);
 	
 	$p=new TRH_Type_Evenement;
 	$p->init_db_by_vars($ATMdb);
