@@ -1,4 +1,4 @@
-Note de Frais
+
 <hr>
 
 <p>Bonjour [validation.prenom;strconv=no;protect=no] [validation.nom;strconv=no;protect=no].</p>

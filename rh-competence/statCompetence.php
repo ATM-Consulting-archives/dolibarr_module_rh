@@ -58,7 +58,6 @@ function _fiche(&$ATMdb, $tagCompetence,  $mode) {
 	WHERE c.entity=".$conf->entity;
 	$ATMdb->Execute($sql);
 	$TTagCompetence=array();
-	$TTagCompetence[0]='Tous';
 	while($ATMdb->Get_line()) {
 		$TTagCompetence[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('libelleCompetence');
 	}
@@ -73,18 +72,7 @@ function _fiche(&$ATMdb, $tagCompetence,  $mode) {
 		$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 	}
 	
-	//tableau pour la combobox des utilisateurs
-	$TUser=array();
-	$TUser[0]='Tous';
-	$sqlReqUser="SELECT u.rowid, u.name,  u.firstname FROM `".MAIN_DB_PREFIX."user` as u, ".MAIN_DB_PREFIX."usergroup_user as g
-	 WHERE u.entity=".$conf->entity;
-	if($idGroupeRecherche!=0){
-		$sqlReqUser.=" AND g.fk_user=u.rowid AND g.fk_usergroup=".$idGroupeRecherche;
-	}
-	$ATMdb->Execute($sqlReqUser);
-	while($ATMdb->Get_line()) {
-		$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
-	}
+
 	
 	
 	
@@ -97,7 +85,6 @@ function _fiche(&$ATMdb, $tagCompetence,  $mode) {
 			'competence'=>array(
 				'Tlibelle'=>$form->combo('','libelle',$TTagCompetence,$idTagRecherche)
 				,'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche)
-				,'TUser'=>$form->combo('','user',$TUser,$idUserRecherche)
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 			)
 			,'userCourant'=>array(
@@ -179,6 +166,13 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 	//on va obtenir un tableau permettant d'avoir les stats des compétences suivant la recherche
 	$requeteRecherche=$tagCompetence->requeteStatistique($ATMdb, $idGroupeRecherche, $idTagRecherche, $idUserRecherche);
 
+	$taux_resultat_faible=$requeteRecherche['nbUserFaible']*100/$requeteRecherche['nbUser'];
+	$taux_resultat_moyen=$requeteRecherche['nbUserMoyen']*100/$requeteRecherche['nbUser'];
+	$taux_resultat_bon=$requeteRecherche['nbUserBon']*100/$requeteRecherche['nbUser'];
+	$taux_resultat_excellent=$requeteRecherche['nbUserExcellent']*100/$requeteRecherche['nbUser'];
+	$taux_resultat_autres=100-$taux_resultat_faible-$taux_resultat_moyen-$taux_resultat_bon-$taux_resultat_excellent;
+	
+	$nb_resultat_autres=$requeteRecherche['nbUser']-$requeteRecherche['nbUserFaible']-$requeteRecherche['nbUserMoyen']-$requeteRecherche['nbUserBon']-$requeteRecherche['nbUserExcellent'];
 
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/statCompetenceResult.tpl.php'
@@ -195,10 +189,16 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 			)
 			,'resultat'=>array(
 				'total'=>$requeteRecherche['nbUser']
-				,'faible'=>$requeteRecherche['nbUserFaible']*100/$requeteRecherche['nbUser']
-				,'moyen'=>$requeteRecherche['nbUserMoyen']*100/$requeteRecherche['nbUser']
-				,'bon'=>$requeteRecherche['nbUserBon']*100/$requeteRecherche['nbUser']
-				,'excellent'=>$requeteRecherche['nbUserExcellent']*100/$requeteRecherche['nbUser']
+				,'faible'=>$taux_resultat_faible
+				,'moyen'=>$taux_resultat_moyen
+				,'bon'=>$taux_resultat_bon
+				,'excellent'=>$taux_resultat_excellent
+				,'autres'=>$taux_resultat_autres
+				,'nb_faible'=>$requeteRecherche['nbUserFaible']
+				,'nb_moyen'=>$requeteRecherche['nbUserMoyen']
+				,'nb_bon'=>$requeteRecherche['nbUserBon']
+				,'nb_excellent'=>$requeteRecherche['nbUserExcellent']
+				,'nb_autres'=>$nb_resultat_autres
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id

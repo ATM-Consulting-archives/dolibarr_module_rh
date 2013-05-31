@@ -10,7 +10,12 @@
 	<table class="border" style="width:30%">
 		<tr>
 			<td>Jour non travaillé</td>
+			[onshow;block=begin;when [view.mode]=='view']
+			<td>[joursFeries.date_jourOff_view;strconv=no;protect=no]</td>
+			[onshow;block=end]
+			[onshow;block=begin;when [view.mode]!='view']
 			<td>[joursFeries.date_jourOff;strconv=no;protect=no]</td>
+			[onshow;block=end]
 		</tr>
 		<tr>
 			<td>Période</td>

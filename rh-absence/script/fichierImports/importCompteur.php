@@ -60,31 +60,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$compteur=new TRH_Compteur;	
 				echo 'Ligne traitée : '.strtolower($infos[3]).'';
 				$ResteConges=$infos[11]-$infos[12];
-				//echo "Trigramme : ".$infos[3].' <br/>';	//colonne D
-				//echo "Congés Total Acquis N-1: ".$infos[11].' <br/>';//colonne L
-				//echo "Congés pris à N-1: ".$infos[12].' <br/>';//colonne M
-				//echo "Reste Congés N-1: ".$ResteConges.' <br/>';
-				//echo $infos[13].'<br>';
-				//echo "Congés Acquis Exercice N: ".$infos[13].' <br/>';  //colonne N
 				
 				$resteRttTotal=$infos[15]-$infos[16];
 				//echo "RTT Acquis TOTAL : ".$infos[15].' <br/>';
-				
-				
-				//RTT Cumulés
-				$prisRttCumule=$infos[18]-$infos[21];
-				//echo "RTT Cumulés acquis : ".$infos[18].' <br/>';	//colonne S
-				//echo "RTT Cumulés pris : ".$prisRttCumule.' <br/>';	//colonne S-V
-				//echo "RTT Cumulés A poser : ".$infos[21].' <br/>';	//colonne V
 			
-				
-				//RTT Non cumulés
-				$prisRttNonCumule=$infos[17]-$infos[20];
-				//echo "RTT Non Cumulés acquis : ".$infos[17].' <br/>';	//colonne R
-				//echo "RTT Non Cumulés pris : ".$prisRttNonCumule.' <br/>';	//colonne R-U
-				//echo "RTT Non Cumulés A poser : ".$infos[20].' <br/>';	//colonne U
-				
-				
 				
 				echo '<br>';
 				
@@ -96,25 +75,25 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 
 				$annee=date('Y');
 				$anneePrec=$annee-1;
-		
-				
-				
+
 				
 				$compteur->anneeN=$annee;
 				$compteur->anneeNM1=$anneePrec;
+
+
 				
 				
 				//RTT cumulés
-				$compteur->rttCumulePris=$prisRttCumule;
-				$compteur->rttCumuleAcquis=$infos[18];
+				$compteur->rttCumulePris=$infos[123];
+				$compteur->rttCumuleAcquis=$infos[125];
 				$compteur->rttCumuleReportNM1=$infos[140];
 				$compteur->rttCumuleTotal=$compteur->rttCumuleAcquis+$compteur->rttCumuleReportNM1-$compteur->rttCumulePris;
 				$compteur->rttAcquisAnnuelCumuleInit=0; 	//à revoir
 				
 				
 				//RTT non cumulés
-				$compteur->rttNonCumulePris=$prisRttNonCumule;
-				$compteur->rttNonCumuleAcquis=$infos[17];
+				$compteur->rttNonCumulePris=$infos[124];
+				$compteur->rttNonCumuleAcquis=$infos[126];
 				$compteur->rttNonCumuleReportNM1=$infos[141];	//	report
 				$compteur->rttNonCumuleTotal=$compteur->rttNonCumuleAcquis+$compteur->rttNonCumuleReportNM1-$compteur->rttNonCumulePris;
 				$compteur->rttAcquisAnnuelNonCumuleInit=0;		//à revoir
@@ -143,9 +122,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				if($infos[71]=="VRAI"){
 					$compteur->rttMetier='cadre';
 					$compteur->rttTypeAcquisition='Annuel';
-					$compteur->rttAcquisAnnuelCumuleInit=5;			////////////////////revoiiir
-					$compteur->rttAcquisAnnuelNonCumuleInit=0;
-					
+					$compteur->rttAcquisAnnuelCumuleInit=$infos[125];	
+					$compteur->rttAcquisAnnuelNonCumuleInit=$infos[126];
 				}
 				else{
 					//on récupère le temps de travail du salarié pour le calcul du rtt enfonction du métier et entreprise

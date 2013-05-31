@@ -265,6 +265,7 @@ function mailConges(&$absence){
 					,'date_fin'=>php2dmy($absence->date_fin)
 					,'libelle'=>$absence->libelle
 					,'libelleEtat'=>$absence->libelleEtat
+					
 				)
 				)
 		);
@@ -280,6 +281,7 @@ function mailConges(&$absence){
 					,'date_fin'=>php2dmy($absence->date_fin)
 					,'libelle'=>$absence->libelle
 					,'libelleEtat'=>$absence->libelleEtat
+					,'commentaireValideur'=>$absence->commentaireValideur
 				)
 				)
 		);
@@ -296,6 +298,7 @@ function mailConges(&$absence){
 					,'date_fin'=>php2dmy($absence->date_fin)
 					,'libelle'=>$absence->libelle
 					,'libelleEtat'=>$absence->libelleEtat
+					,'commentaireValideur'=>$absence->commentaireValideur
 				)
 				)
 		);
