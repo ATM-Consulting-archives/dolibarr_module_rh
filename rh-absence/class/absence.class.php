@@ -252,16 +252,7 @@ class TRH_Absence extends TObjetStd {
 			$k++;
 		}
 		
-		/*$sql="SELECT DISTINCT u.rowid, r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, 
-		r.fk_user, r.fk_usergroup, r.choixApplication
-		FROM ".MAIN_DB_PREFIX."user as u,  ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
-		WHERE( r.fk_user=u.rowid AND r.fk_user=".$fk_user." 
-		AND r.choixApplication Like 'user' AND g.fk_user=u.rowid) 
-		OR (r.choixApplication Like 'all' AND u.rowid=".$fk_user." and u.rowid=g.fk_user) 
-		OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND u.rowid=g.fk_user AND g.fk_user=".$fk_user.") 
-		AND r.entity IN (0,".$conf->entity.")
-		ORDER BY r.nbJourCumulable";
-		*/
+
 		
 		return $TRegle;
 	}
@@ -381,16 +372,18 @@ class TRH_Absence extends TObjetStd {
 	function calculDureeAbsence(&$ATMdb, $date_debut, $date_fin, &$absence){
 		$diff=$date_fin-$date_debut;
 		$duree=intval($diff/3600/24);
+		//echo $duree;exit;
 
 		//prise en compte du matin et après midi
 		
 		if($absence->ddMoment=="matin"&&$absence->dfMoment=="apresmidi"){
+			
 			$duree+=1;
 		}
 		else if($absence->ddMoment==$absence->dfMoment){
 			$duree+=0.5;
 		}
-		
+
 		return $duree; 
 	}
 	
