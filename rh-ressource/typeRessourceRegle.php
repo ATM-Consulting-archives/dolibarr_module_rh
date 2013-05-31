@@ -104,7 +104,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		</table><br>';
 		
 	$r = new TSSRenderControler($ressourceType);
-	$sql="SELECT DISTINCT r.rowid as 'ID', r.choixApplication as 'CA', u.firstname ,u.name, g.nom as 'Groupe',
+	$sql="SELECT DISTINCT r.rowid as 'ID', r.choixApplication as 'CA',  r.choixLimite as 'CL', u.firstname ,u.name, g.nom as 'Groupe',
 		duree, dureeInt,dureeExt,dataIllimite, dataIphone, mailforfait, smsIllimite, data15Mo, '' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
@@ -133,9 +133,9 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 			//'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		) 
 		,'eval'=>array(
-			'dureeInt'=>'intToString(@val@)'
-			,'dureeExt'=>'intToString(@val@)'
-			,'duree'=>'intToString(@val@)'
+			'dureeInt'=>'afficheOuPas(@val@, @CL@, "extint")'
+			,'dureeExt'=>'afficheOuPas(@val@, @CL@, "extint")'
+			,'duree'=>'afficheOuPas(@val@, @CL@, "gen")'
 			,'Groupe'=>'TousOuPas(@CA@,"@val@")'
 			,'firstname'=>'TousOuPas(@CA@,"@val@")'
 			,'name'=>'TousOuPas(@CA@,"@val@")'
@@ -164,7 +164,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 			,'data15Mo' => $TOuiRien
 			//,'carteJumelle' => $TOuiRien
 		)
-		,'hide'=>array('CA')
+		,'hide'=>array('CA', 'CL')
 		,'type'=>array()
 		,'liste'=>array(
 			'titre'=>'Liste des règles'

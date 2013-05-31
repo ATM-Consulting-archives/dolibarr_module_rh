@@ -76,8 +76,13 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $mode) {
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff('new');
 	
-	$TTelephone = array();
 	
+	//Traitement pour obtenir les dépassements téléphonique.
+	
+	
+	
+	
+	$TTelephone = array();
 	$ATMdb->Execute($sql);
 	$k=0;
 	while($ATMdb->Get_line()) {
@@ -102,7 +107,8 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $mode) {
 		)
 		,array(
 			'infos'=>array(
-				'date_debut'=>$form->calendrier('Date de début', 'date_debut', $date_debut, 10)
+				'titre'=>load_fiche_titre("Vérification des consommations téléphoniques",'', 'title.png', 0, '')
+				,'date_debut'=>$form->calendrier('Date de début', 'date_debut', $date_debut, 10)
 				,'date_fin'=>$form->calendrier('Date de fin', 'date_fin', $date_fin, 10)
 				,'action'=>$form->hidden('action','save')
 			)

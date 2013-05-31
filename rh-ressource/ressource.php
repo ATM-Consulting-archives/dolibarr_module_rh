@@ -248,7 +248,7 @@ function _liste(&$ATMdb, &$ressource) {
 	if($user->rights->ressource->ressource->viewRegle){
 		echo '<br>';
 		$r = new TSSRenderControler($ressource);
-		$sql="SELECT DISTINCT r.rowid as 'ID', r.choixApplication as 'CA', u.firstname ,u.name, g.nom as 'Groupe',
+		$sql="SELECT DISTINCT r.rowid as 'ID', r.choixLimite as 'CL', r.choixApplication as 'CA', u.firstname ,u.name, g.nom as 'Groupe',
 		duree, dureeInt,dureeExt, natureDeduire, CONCAT (CAST(montantDeduire as DECIMAL(16,2)), ' €') as 'Montant à déduire'
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
@@ -271,9 +271,9 @@ function _liste(&$ATMdb, &$ressource) {
 				'ID'=>'<a href="typeRessourceRegle.php?id='.$idTelephone.'&idRegle=@ID@&action=view">@val@</a>'
 			)
 			,'eval'=>array(
-				'dureeInt'=>'intToString(@val@)'
-				,'dureeExt'=>'intToString(@val@)'
-				,'duree'=>'intToString(@val@)'
+				'dureeInt'=>'afficheOuPas(@val@, @CL@, "extint")'
+				,'dureeExt'=>'afficheOuPas(@val@, @CL@, "extint")'
+				,'duree'=>'afficheOuPas(@val@, @CL@, "gen")'
 				,'Groupe'=>'TousOuPas(@CA@,"@val@")'
 				,'firstname'=>'TousOuPas(@CA@,"@val@")'
 				,'name'=>'TousOuPas(@CA@,"@val@")'
@@ -286,7 +286,7 @@ function _liste(&$ATMdb, &$ressource) {
 				,'dureeExt'=>'Lim. externe'
 				,'natureDeduire' => 'Nature à déduire'
 			)
-			,'hide'=>array('CA')
+			,'hide'=>array('CA', 'CL')
 			,'type'=>array()
 			,'liste'=>array(
 				'titre'=>'Liste des règles téléphoniques'
@@ -306,7 +306,6 @@ function _liste(&$ATMdb, &$ressource) {
 	$form->end();
 	llxFooter();
 }	
-
 
 function TousOuPas($choix, $val){
 	if ($choix=='all'){

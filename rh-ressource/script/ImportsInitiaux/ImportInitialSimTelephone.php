@@ -9,7 +9,7 @@ require('../../class/ressource.class.php');
 require('../../lib/ressource.lib.php');
 
 global $conf;
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 // relever le point de départ
 $timestart=microtime(true);
 
@@ -115,8 +115,8 @@ if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 				$sim->set_date('date_vente', '');
 				$sim->set_date('date_garantie', '');
 				$sim->numerotel = $numIdSim;
-				$sim->coutminuteinterne = 0.09;
-				$sim->coutminuteexterne = 0.09;
+				$sim->coutminuteint = 0.09;
+				$sim->coutminuteext = 0.09;
 				$sim->save($ATMdb);
 				$TNumero[$numIdSim] = $sim->getId();
 				
@@ -144,7 +144,6 @@ foreach ($TUserInexistants as $nom => $value) {
 	echo $nom.', ';
 }
 echo '<br>';
-fclose($handle);
 echo $cptTel.' telephone créés importes.<br>';
 echo $cptAttr.' Telephones liés à un user.<br>'; 
 
