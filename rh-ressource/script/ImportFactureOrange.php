@@ -317,7 +317,7 @@ foreach ($TUser as $nom => $id) {
 		($dataFact<0) ? $dataFact = 0 : null;
 		
 		$fact->totalI = $dureeFactInt*$coutMinuteInt;
-		$fact->totatE = $dureeFactExt*$coutMinuteExt ;
+		$fact->totalE = $dureeFactExt*$coutMinuteExt ;
 		$fact->natureRefac = $TLimites[$id]['natureRefac'];
 		$fact->montantRefac = $TLimites[$id]['montantRefac'];
 		
