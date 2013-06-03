@@ -251,3 +251,26 @@ function send_mail_resources($subject, $message){
 	return (int)$result;
 }
 	
+	
+
+/**
+ * La fonction renvoie le rowid de l'user qui a la ressource $idRessource à la date $jour, 0 sinon.
+ */
+function ressourceIsEmpruntee(&$ATMdb, $idRessource, $jour){
+		global $conf;
+		$sql = "SELECT e.fk_user, e.date_debut , e.date_fin
+				FROM ".MAIN_DB_PREFIX."rh_evenement as e
+				LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource) 
+				WHERE e.type='emprunt'
+				AND r.rowid = ".$idRessource."
+				AND e.entity IN (0, ".$conf->entity.") 
+				AND e.date_debut<='".$jour."' AND e.date_fin >= '".$jour."' 
+				";
+		$ATMdb->Execute($sql);
+		if ($ATMdb->Get_line()){
+			return $ATMdb->Get_field('fk_user');
+		}
+		return 0;
+}	
+	
+	
