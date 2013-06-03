@@ -64,6 +64,9 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 			$numId = strtoupper($infos[6]);
 			if ($numId[0]==7){$numId = substr($numId, 7);} //on enlève la partie "7010010" si elle existe au début du numId
 			
+			//TODO : numId (colonne 6 du fichier) pas unique ?!?
+			$numId = $numId + $infos[4];
+			
 			if (empty($numId)){
 				null;
 			}

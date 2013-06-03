@@ -3,17 +3,18 @@
 /**
  * Importation de la facture Total
  * On créé un évenement par ligne de ce fichier
- * et une évenement de type facture
+ * 
  */
  
- /*
+ 
 require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');
+require('../lib/ressource.lib.php');
 //*/
 global $conf;
 
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 
 $TUser = array();
 $sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user";
@@ -22,12 +23,58 @@ while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
 }
 
-		
-$idVoiture = getIdTypeVoiture($ATMdb);
-if (empty($nomFichier)){$nomFichier = "./fichierImports/fichier facture total.csv";}
-$message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
+//	Chargement des types d'événements
+$TEvents = array();
+$sql="SELECT rowid, code, libelle, codecomptable FROM ".MAIN_DB_PREFIX."rh_type_evenement ";
+$ATMdb->Execute($sql);
+while($ATMdb->Get_line()) {
+	$TEvents[strtolower($ATMdb->Get_field('libelle'))] = $ATMdb->Get_field('code');
+}
 
-$TRessource = chargeVoiture($ATMdb);
+$idVoiture = getIdType('voiture');
+$idCarteTotal = getIdType('cartetotal');
+
+
+$TRessource = getIDRessource($ATMdb, $idVoiture);
+
+//charge une liste rowid de la voiture =>plaque de la voiture
+$TPlaque = array();
+$sql="SELECT rowid, numId FROM ".MAIN_DB_PREFIX."rh_ressource 
+		WHERE fk_rh_ressource_type=".$idVoiture;
+$ATMdb->Execute($sql);
+while($row = $ATMdb->Get_line()) {
+	$TPlaque[$row->rowid] = $row->numId;
+}
+
+//donne la carte (rowid) utilisée par une voiture (plaque)  : plaque de la voiture => rowid de la carte total
+$TCarte = array();
+$sql="SELECT rowid, numId, fk_rh_ressource FROM ".MAIN_DB_PREFIX."rh_ressource 
+		WHERE fk_rh_ressource_type = ".$idCarteTotal;
+$ATMdb->Execute($sql);
+while($row = $ATMdb->Get_line()) {
+	if ($row->fk_rh_ressource!=0){
+		$TCarte[$TPlaque[$row->fk_rh_ressource]] = $row->rowid;
+	}
+}
+print_r($TCarte);
+echo count($TCarte);
+echo '<br><br>';
+
+//donne l'user qui utilise la carte
+$TAttribution = array();
+foreach ($TCarte as $numId => $rowid) {
+	$idUser = ressourceIsEmpruntee($ATMdb, $rowid, date("Y-m-d", time()) );
+	if ($idUser!=0){$TAttribution[$numId] = $idUser;} 
+}
+
+print_r($TAttribution);
+echo count($TAttribution);
+
+
+if (empty($nomFichier)){$nomFichier = "./fichierImports/Facture TOTAL.csv";}
+$message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
+echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
+
 $TCarteInexistantes = array();
 //print_r($TRessource);
 $cpt = 0;
@@ -42,41 +89,42 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			//print_r($infos);
 			
 			 
+			$plaque = $infos[11];
+			$plaque = str_replace('-VU', '', $plaque);
+			$plaque = str_replace('-', '', $plaque);
+			$plaque = str_replace(' ', '', $plaque);
 			
-			if (empty($infos[9])){
+			if (empty ($TCarte[$plaque])){
+				//echo $plaque.' : carte pas lié à une voiture.<br>';
 				null;
 			}
-			else if (! array_key_exists ( $infos[9] , $TRessource )){
-				$TCarteInexistantes[$infos[9]] = 1;
+			else if (empty ($TAttribution[$plaque])){
+				//echo $plaque.' : carte liée à une voiture, mais non attribué.<br>';
+				null;
 			}
 			else {
 				//print_r($infos);echo '<br>';
 				$temp = new TRH_Evenement;
 				$temp->load_liste($ATMdb);
 				$temp->load_liste_type($ATMdb, $idVoiture);
-				$temp->fk_rh_ressource = $TRessource[$infos[9]];
+				$temp->fk_rh_ressource = $TCarte[$plaque];
+				$temp->fk_rh_ressource_type = $idCarteTotal;
 				$t = explode(' ',$infos[30]);
 				array_shift($t); 
 				$nomPeage = htmlentities(implode(' ', $t), ENT_COMPAT , 'ISO8859-1'); 
 				
-				if ((strpos((string) $infos[17], 'age TVA') !== FALSE ) || (strpos((string) $infos[17], 'PEAGE') !== FALSE ) ){
-					$temp->type = 'page';
-					$temp->motif = 'Péage '.$nomPeage;
-				}
-				else if ( (strpos((string) $infos[17], 'Gazole') !== FALSE ) ){
-					$temp->type = 'pleindessence';
-					$temp->motif = 'Essence '.$nomPeage;
-					$temp->commentaire = $infos[18].'L d\'essence';
-					if ($infos[31]!=''){
-						$temp->commentaire .= (isset($infos[31]) ? ', Kilometrage : '.$infos[31] : '');	
-					}	
+				if ( !empty($TEvents[strtolower($infos[17])]) ){
+					$temp->type = $TEvents[strtolower($infos[17])];
+					
 				}
 				else {
 					$temp->type = 'divers';
-					$temp->motif = htmlentities($infos[17], ENT_COMPAT , 'ISO8859-1');
 				}
 				
-				$temp->fk_user = $TUser[strtolower($infos[12])];
+				$temp->motif = htmlentities($infos[17], ENT_COMPAT , 'ISO8859-1');
+				$temp->commentaire = htmlentities($infos[30], ENT_COMPAT , 'ISO8859-1');
+				
+				$temp->fk_user = $TAttribution[$plaque];
 				
 				$temp->set_date('date_debut', $infos[15]);
 				$temp->set_date('date_fin', $infos[15]);
@@ -90,10 +138,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->litreEssence = floatval(strtr($infos[18],',','.'));
 				$temp->kilometrage = intval($infos[31]);
 				
-				
-				//$temp->motif = htmlentities($infos[17], ENT_COMPAT , 'ISO8859-1');
-				
+				echo 'lol';
 				$temp->save($ATMdb);
+				echo 'lol2<br>';
 				$cpt++;
 			}
 			
@@ -109,13 +156,14 @@ foreach ($TCarteInexistantes as $key => $value) {
 }
 $message .= 'Fin du traitement. '.$cpt.' événements rajoutés créés.<br><br>';
 send_mail_resources('Import - Factures TOTAL',$message);
+echo $message;
 	
 function chargeVoiture(&$ATMdb){
 	global $conf;
 	$TRessource = array();
 	$sql="SELECT r.rowid as 'ID', t.rowid as 'IdType', r.numId FROM ".MAIN_DB_PREFIX."rh_ressource as r 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t on (r.fk_rh_ressource_type = t.rowid)
-	WHERE (t.code='voiture' OR t.code='cartetotal') ";
+	WHERE (t.code='voiture') ";
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		//$idVoiture = $ATMdb->Get_field('IdType');
@@ -125,15 +173,4 @@ function chargeVoiture(&$ATMdb){
 }
 
 
-function getIdTypeVoiture(&$ATMdb){
-	global $conf;
-	
-	$sql="SELECT rowid as 'IdType' FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-	WHERE code='voiture' ";
-	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		$idVoiture = $ATMdb->Get_field('IdType');
-		}
-	return $idVoiture;
-}
 	

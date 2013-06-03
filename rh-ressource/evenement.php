@@ -5,7 +5,6 @@
 	require('./lib/ressource.lib.php');
 	$langs->load('ressource@ressource');
 	
-	//if (!$user->rights->financement->affaire->read)	{ accessforbidden(); }
 	$ATMdb=new Tdb;
 	$evenement=new TRH_Evenement;
 	$ressource = new TRH_Ressource;
@@ -104,7 +103,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	
 	echo $form->hidden('action', 'afficherListe');
 	echo $form->hidden('id',$ressource->getId());
-	$evenement->load_liste_type($ATMdb, $ressource->fk_rh_ressource_type);
+	$evenement->load_liste_type( $ressource->fk_rh_ressource_type);
 	
 	?>
 	<table>
@@ -229,7 +228,6 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	$idUserCourant =  $ressource->isEmpruntee($ATMdb, date("Y-m-d", time()));
 	$tab = array_splice ( $evenement->TType , 1); //on enlève le champs 'all'
 	
-	//echo $evenement->appels;
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/evenement.tpl.php'
 		,array()

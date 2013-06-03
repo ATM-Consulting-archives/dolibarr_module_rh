@@ -158,6 +158,7 @@
 					$('#numFacture').show();
 					break;
 				case 'facttel':
+				case 'facture téléphonique' :
 					$('#listeappels').show();
 				default : 
 					break;}
