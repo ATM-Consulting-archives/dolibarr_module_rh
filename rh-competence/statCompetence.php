@@ -55,7 +55,7 @@ function _fiche(&$ATMdb, $tagCompetence,  $mode) {
 
 	//tableau pour la combobox des tags de compétences
 	$sql="SELECT c.rowid, c.libelleCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv as c
-	WHERE c.entity=".$conf->entity;
+	WHERE c.entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sql);
 	$TTagCompetence=array();
 	while($ATMdb->Get_line()) {
@@ -66,7 +66,7 @@ function _fiche(&$ATMdb, $tagCompetence,  $mode) {
 	//tableau pour la combobox des groupes
 	$TGroupe  = array();
 	$TGroupe[0]='Tous';
-	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity=".$conf->entity;
+	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 		$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
@@ -130,7 +130,7 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 	if($idGroupeRecherche!=0){	//on recherche le nom du groupe
 		//echo $idGroupeRecherche;exit;
 		$sql="SELECT nom FROM ".MAIN_DB_PREFIX."usergroup
-		WHERE rowid =".$idGroupeRecherche." AND entity=".$conf->entity;
+		WHERE rowid =".$idGroupeRecherche." AND entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
 			$nomGroupeRecherche=$ATMdb->Get_field('nom');
@@ -142,7 +142,7 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 	
 	if($idTagRecherche!=0){	//on recherche le nom du tag
 		$sql="SELECT libelleCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv
-		WHERE rowid =".$idTagRecherche." AND entity=".$conf->entity;
+		WHERE rowid =".$idTagRecherche." AND entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
 			$nomTagRecherche=$ATMdb->Get_field('libelleCompetence');
@@ -154,7 +154,7 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 	
 	if($idUserRecherche!=0){	//on recherche le nom de l'utilisateur
 		$sql="SELECT name,  firstname FROM ".MAIN_DB_PREFIX."user
-		WHERE rowid =".$idUserRecherche." AND entity=".$conf->entity;
+		WHERE rowid =".$idUserRecherche." AND entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
 			$nomUserRecherche=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
