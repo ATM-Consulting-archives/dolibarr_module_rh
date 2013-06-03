@@ -412,7 +412,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 function _fiche(&$ATMdb, &$absence, $mode) {
 	global $db,$user,$conf;
 	llxHeader('','Demande d\'absence');
-	echo $_REQUEST['validation'];
+	//echo $_REQUEST['validation'];
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);

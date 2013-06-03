@@ -876,12 +876,13 @@ class TRH_Absence extends TObjetStd {
 		}
 		
 		$absence->dureeHeure=$dureeHeure;
+		$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
 		if($tpsHebdoUser>=35){
 			$absence->dureeHeurePaie=7*$duree;
 		}
 		else $absence->dureeHeurePaie=$absence->dureeHeure;
 		
-		$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+		
 	    return $duree;
 	}
 		
