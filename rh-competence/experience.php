@@ -13,15 +13,17 @@
 	$lignecv=new TRH_ligne_cv;
 	$formation=new TRH_formation_cv;
 	$tagCompetence=new TRH_competence_cv;
+	$tagCompetenceCV=new TRH_competence_cv;
 
 	if(isset($_REQUEST['action'])) {
+
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'newlignecv':
 				//$ATMdb->db->debug=true;
 				$lignecv->load($ATMdb, $_REQUEST['id']);
 				$lignecv->set_values($_REQUEST);
-				_ficheCV($ATMdb, $lignecv, 'edit');
+				_ficheCV($ATMdb, $lignecv, $tagCompetenceCV,'edit');
 				break;
 			case 'newformationcv':
 				//$ATMdb->db->debug=true;
@@ -39,30 +41,25 @@
 			case 'editCv'	:
 				//$ATMdb->db->debug=true;
 				$lignecv->load($ATMdb, $_REQUEST['id']);
-				_ficheCV($ATMdb, $lignecv, 'edit');
+				_ficheCV($ATMdb, $lignecv, $tagCompetenceCV,'edit');
 				break;
 				
 			case 'savecv':
-				
 				$lignecv->load($ATMdb, $_REQUEST['id']);
 				$lignecv->set_values($_REQUEST);
 				$mesg = '<div class="ok">Ligne de CV ajoutée</div>';
-
 				$lignecv->save($ATMdb);
 				_liste($ATMdb, $lignecv , $formation);
 				//_ficheCV($ATMdb, $lignecv,$mode);
 				break;
 				
 			case 'saveformation':
-				
 				$formation->load($ATMdb, $_REQUEST['id']);
 				$formation->set_values($_REQUEST);
 				$mesg = '<div class="ok">Nouvelle formation ajoutée</div>';
 				$mode = 'view';
-
 				$formation->save($ATMdb);
 				_liste($ATMdb, $lignecv , $formation);
-				//_ficheCV($ATMdb, $competence,$mode);
 				break;
 				
 			case 'savecompetence':
@@ -72,7 +69,6 @@
 				
 				$tagCompetence->load($ATMdb, $_REQUEST['addId']);
 				$tagCompetence->set_values($_REQUEST);
-				print_r($tagCompetence);
 				$tagCompetence->save($ATMdb);
 				
 				$mesg = '<div class="ok">Nouvelle compétence ajoutée</div>';
@@ -84,9 +80,7 @@
 				
 			case 'newCompetence':
 				if ($_REQUEST['TNComp']['libelle']!=''){
-					
 					if($_REQUEST['id']!=0){
-						
 						$formation->load($ATMdb, $_REQUEST['id']);
 						$formation->set_values($_REQUEST);
 						$formation->save($ATMdb);
@@ -119,9 +113,44 @@
 				}
 				break;
 				
+			case 'newCompetenceCV':
+				
+				if ($_REQUEST['TNComp']['libelle']!=''){
+					if($_REQUEST['id']!=0){						
+						$lignecv->load($ATMdb, $_REQUEST['id']);
+						$lignecv->set_values($_REQUEST);
+						$lignecv->save($ATMdb);
+						
+						$tagCompetenceCV->set_values($_REQUEST);
+						$tagCompetenceCV->libelleCompetence=$_REQUEST['TNComp']['libelle'];
+						$tagCompetenceCV->fk_user_lignecv=$_REQUEST['TNComp']['fk_user_lignecv'];
+						$tagCompetenceCV->save($ATMdb);
+					}
+					else{
+						$lignecv->set_values($_REQUEST);
+						$lignecv->save($ATMdb);
+						
+						$tagCompetenceCV->set_values($_REQUEST);
+						$tagCompetenceCV->libelleCompetence=$_REQUEST['TNComp']['libelle'];
+						$tagCompetenceCV->fk_user_lignecv=$lignecv->getId();
+						$tagCompetenceCV->save($ATMdb);
+					}
+					
+					_ficheCV($ATMdb, $lignecv,$tagCompetenceCV,'edit');
+				}
+				else{
+					$lignecv->load($ATMdb, $_REQUEST['id']);
+					$lignecv->set_values($_REQUEST);
+					$mesg = '<div class="ok">Nouvelle expérience ajoutée</div>';
+					$mode = 'view';
+					$lignecv->save($ATMdb);
+					_liste($ATMdb, $lignecv , $formation);
+				}
+				break;
+				
 			case 'viewCV':
 				$lignecv->load($ATMdb, $_REQUEST['id']);
-				_ficheCV($ATMdb, $lignecv, 'view');
+				_ficheCV($ATMdb, $lignecv, $tagCompetence,'view');
 				break;
 				
 			case 'viewFormation':
@@ -131,6 +160,8 @@
 				
 			case 'deleteCV':
 				//$ATMdb->db->debug=true;
+				$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_competence_cv WHERE fk_user_lignecv =".$_REQUEST['id'];
+				$ATMdb->Execute($sql);
 				$lignecv->load($ATMdb, $_REQUEST['id']);
 				$lignecv->delete($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">La ligne de CV a bien été supprimée</div>';
@@ -152,11 +183,22 @@
 			case 'deleteCompetence':
 				//$ATMdb->db->debug=true;
 				//on supprime la compétence
+				
 				$tagCompetence->load($ATMdb, $_REQUEST['idForm']);
 				$tagCompetence->delete($ATMdb, $_REQUEST['idForm']);
 				$formation->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="error">Le tag de formation a bien été supprimé</div>';
 				_ficheFormation($ATMdb, $formation, $tagCompetence,'edit');
+				break;
+				
+			case 'deleteCompetenceCV':
+				//$ATMdb->db->debug=true;
+				//on supprime la compétence
+				$tagCompetenceCV->load($ATMdb, $_REQUEST['idForm']);
+				$tagCompetenceCV->delete($ATMdb, $_REQUEST['idForm']);
+				$lignecv->load($ATMdb, $_REQUEST['id']);
+				$mesg = '<div class="error">Le tag de formation a bien été supprimé</div>';
+				_ficheCV($ATMdb, $lignecv, $tagCompetenceCV,'edit');
 				break;
 		}
 	}
@@ -325,12 +367,12 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 }	
 
 	
-function _ficheCV(&$ATMdb, $lignecv,  $mode) {
+function _ficheCV(&$ATMdb, $lignecv, $tagCompetence, $mode) {
 	global $db,$user,$langs,$conf;
 	llxHeader('','Expériences professionnelles');
 	
 	$fuser = new User($db);
-	$fuser->fetch(isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : $formation->fk_user);
+	$fuser->fetch(isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : $lignecv->fk_user);
 	$fuser->getrights();
 	
 	$head = user_prepare_head($fuser);
@@ -351,9 +393,28 @@ function _ficheCV(&$ATMdb, $lignecv,  $mode) {
 	echo $form->hidden('entity', $conf->entity);
 	echo $form->hidden('action', 'savecv');
 	
+	
+	$sql="SELECT c.rowid, c.libelleCompetence, c.niveauCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."rh_ligne_cv as f 
+	WHERE c.fk_user_lignecv=".$lignecv->getID(). " AND c.fk_user_lignecv=f.rowid AND c.fk_user=".$fuser->id;
+	$k=0;
+	$ATMdb->Execute($sql);
+	$TTagCompetence=array();
+	while($ATMdb->Get_line()) {
+			$TTagCompetence[]=array(
+				'id'=>$ATMdb->Get_field('rowid')
+				,'libelleCompetence'=>$ATMdb->Get_field('libelleCompetence')
+				,'niveauCompetence'=>$ATMdb->Get_field('niveauCompetence')
+			);
+		$k++;
+	}
+	
+	$TNComp=array();
+	
+	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/cv.tpl.php'
 		,array(
+			'TCompetence'=>$TTagCompetence
 		)
 		,array(
 			'cv'=>array(
@@ -375,6 +436,13 @@ function _ficheCV(&$ATMdb, $lignecv,  $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
+			)
+			,'newCompetence'=>array(
+				'hidden'=>$form->hidden('action', 'newCompetenceCV')
+				,'id'=>$k
+				,'libelleCompetence'=>$form->texte('Libellé','TNComp[libelle]','', 30,100,'','','-')
+				,'fk_user_lignecv'=>$form->hidden('TNComp[fk_user_lignecv]', $lignecv->getId())
+				,'niveauCompetence'=>$form->combo(' Niveau ','niveauCompetence',$tagCompetence->TNiveauCompetence,'')
 			)
 		)	
 	);
