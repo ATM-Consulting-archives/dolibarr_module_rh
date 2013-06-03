@@ -142,12 +142,12 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 						WHERE rowid=".$idSociete;
 					$ATMdb->Execute($sql);
 					if($ATMdb->Get_line()) {
-						$societe=$ATMdb->Get_field('label');
+						$societe=strtolower($ATMdb->Get_field('label'));
 					}
 					
 					switch($societe){
-						case "C'PRO":
-						case "C'PRO GROUPE":	
+						case "cpro":
+						case "c'pro groupe":	
 							if($tpsHebdoUser==37){
 								$compteur->rttMetier='noncadre37cpro';
 								$compteur->rttAcquisAnnuelCumuleInit=5;
@@ -164,7 +164,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 							$compteur->rttTypeAcquisition='Annuel';
 							break;
 
-						case "C'PRO INFORMATIQUE":
+						case "c'pro informatique":
 							if($tpsHebdoUser==37){
 								$compteur->rttMetier='noncadre37cproinfo';
 								$compteur->rttAcquisMensuelInit=1;
@@ -184,11 +184,11 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 							}
 							break;
 							
-						case "GLOBAL IMPRESSION":
+						case "global impression":
 							$compteur->rttTypeAcquisition='Annuel';
 							$compteur->rttMetier='aucunrtt';
 							break;
-						case "AGT":	//aucun RTT
+						case "agt":	//aucun RTT
 						$compteur->rttTypeAcquisition='Annuel';
 							$compteur->rttMetier='aucunrtt';
 							break;
