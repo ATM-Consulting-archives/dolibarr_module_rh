@@ -124,6 +124,7 @@ function _fiche(&$ATMdb,$tagCompetence, $mode) {
 		,array(
 			'recherche'=>array(
 				'libelle'=>$form->texte('','libelleCompetence','', 30,100,'','','-')
+				,'titreRecherche'=>load_fiche_titre("Recherche d'un profil",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
 				'id'=>$user->id

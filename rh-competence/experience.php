@@ -363,6 +363,7 @@ function _ficheCV(&$ATMdb, $lignecv,  $mode) {
 				,'libelleExperience'=>$form->texte('','libelleExperience',$lignecv->libelleExperience, 30,100,'','','-')
 				,'descriptionExperience'=>$form->zonetexte('','descriptionExperience',$lignecv->descriptionExperience, 40,3,'','','-')
 				,'lieuExperience'=>$form->texte('','lieuExperience',$lignecv->lieuExperience, 30,100,'','','-')
+				,'titre'=>load_fiche_titre("Expérience professionnelle",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
 				'id'=>$_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id
@@ -441,6 +442,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				,'commentaireFormation'=>$form->zonetexte('','commentaireFormation',$lignecv->commentaireFormation, 40,3,'','','-')
 				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 30,100,'','','-')
 				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->date_formationEcheance, 12)
+				,'titre'=>load_fiche_titre("Description de la formation",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id

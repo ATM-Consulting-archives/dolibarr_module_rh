@@ -36,7 +36,7 @@
 </script>
 
 <div>			
-	<h2 style="color: #2AA8B9;">Résultat de votre recherche</h2>	
+	[resultat.titreRecherche;block=tr;strconv=no;protect=no]	
 	<br/>
 	<table class="liste formdoc noborder" style="width:700px">
 		<thead>

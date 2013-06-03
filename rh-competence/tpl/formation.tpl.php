@@ -6,7 +6,7 @@
 <br>
 <div class="fiche">
 		<div>
-			<h2 style="color: #2AA8B9;">Description de la formation</h2>	
+			[formation.titre;strconv=no;protect=no]
 			<table class="border" style="width:100%">			
 				<tr>
 					<td><b>Nom</b></td>
