@@ -63,8 +63,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$infos = explode(';', $data[0]);
 
 			$login = strtolower($infos[4]);
+			
 			//echo $infos[4].$TUserEdt[$TUser[strtolower($infos[4])]]."<br>";
-			if (!isset( $TUser[$login] )){	//si le login n'existe pas, on ne traite pas la ligne
+			if(!isset( $TUser[$login] )){	//si le login n'existe pas, on ne traite pas la ligne
 				echo 'pas de '.strtolower($infos[4]).'<br>';}
 			else {
 				echo $TUser[$login].'<br>';

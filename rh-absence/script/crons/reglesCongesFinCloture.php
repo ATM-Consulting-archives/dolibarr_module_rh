@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 /*
  * SCRIPT 1 à exécuter
