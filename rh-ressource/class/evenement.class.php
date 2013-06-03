@@ -72,7 +72,7 @@ class TRH_Evenement  extends TObjetStd {
 			}
 	}
 
-	function load_liste_type(&$ATMdb, $idRessourceType){
+	function load_liste_type($idRessourceType){
 		global $conf;
 		$this->TType = getTypeEvent($idRessourceType);		
 		
@@ -94,7 +94,7 @@ class TRH_Evenement  extends TObjetStd {
 		}
 			
 		$this->load_liste($db);
-		$this->load_liste_type($db, $this->fk_rh_ressource_type);
+		$this->load_liste_type($this->fk_rh_ressource_type);
 		
 		switch($this->type){
 			case 'accident':
@@ -159,10 +159,10 @@ class TRH_Type_Evenement  extends TObjetStd {
 	/**
 	 * Attribut les champs directement, pour créer les types par défauts par exemple. 
 	 */
-	function chargement(&$db, $libelle, $code, $codecomptable, $supprimable, $fk_rh_ressource_type){
+	function chargement(&$db, $libelle, $codecomptable, $supprimable, $fk_rh_ressource_type){
 		$this->load_by_code($db, $code);
 		$this->libelle = $libelle;
-		$this->code = $code;
+		$this->code = TRH_Ressource_type::code_format($libelle);
 		$this->codecomptable = $codecomptable;
 		$this->supprimable = $supprimable;
 		$this->fk_rh_ressource_type = $fk_rh_ressource_type;
