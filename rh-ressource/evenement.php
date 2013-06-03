@@ -228,6 +228,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	$evenement->load_liste_type($ATMdb, $ressource->fk_rh_ressource_type);
 	$idUserCourant =  $ressource->isEmpruntee($ATMdb, date("Y-m-d", time()));
 	$tab = array_splice ( $evenement->TType , 1); //on enlève le champs 'all'
+	
 	//echo $evenement->appels;
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/evenement.tpl.php'
@@ -252,14 +253,14 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				,'refexterne'=>$form->texte('', 'refexterne', $evenement->refexterne, 30,60)
 				,'idContrat'=>$evenement->fk_contrat
 				,'motif'=>$form->texte('','motif',$evenement->motif, 30,100,'','','-')
-				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->get_date('date_debut'),12, 10)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->get_date('date_fin'),12, 10)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->date_debut,12, 12)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->date_fin,12, 12)
 				,'type'=>$form->combo('', 'type', $tab, $evenement->type)
 				,'responsabilite'=>$form->combo('', 'responsabilite', $evenement->TResponsabilite, $evenement->responsabilite)
 				,'coutTTC'=>$form->texte('', 'coutTTC', ($evenement->coutTTC == 0) ? '0': $evenement->coutTTC, 10,10)
-				,'coutEntrepriseTTC'=>$form->texte('', 'coutEntrepriseTTC', $evenement->coutEntrepriseTTC, 10,10)
+				,'coutEntrepriseTTC'=>$form->texte('', 'coutEntrepriseTTC', $evenement->coutEntrepriseTTC, 10,10, '','','0')
 				,'TVA'=>$form->combo('','TVA',$evenement->TTVA,$evenement->TVA)
-				,'coutEntrepriseHT'=>$form->texte('', 'coutEntrepriseHT', $evenement->coutEntrepriseHT, 10,10, 'disabled' )
+				,'coutEntrepriseHT'=>$form->texte('', 'coutEntrepriseHT', $evenement->coutEntrepriseHT, 10,10, 'disabled' ,'','0')
 				,'appels'=>$evenement->appels
 				//($evenement->coutEntrepriseHT)*(1-(0.01*$evenement->TTVA[$evenement->TVA]))
 			)

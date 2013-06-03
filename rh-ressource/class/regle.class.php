@@ -9,8 +9,8 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		
 		//valeurs
 		parent::add_champs('duree, dureeInt, dureeExt','type=entier;');
-		parent::add_champs('natureDeduire','type=chaine;');
-		parent::add_champs('montantDeduire','type=float;');
+		parent::add_champs('natureRefac','type=chaine;');
+		parent::add_champs('montantRefac','type=float;');
 		parent::add_champs('dataIllimite,dataIphone,mailforfait,smsIllimite,data15Mo,carteJumelle,numeroExclus','type=chaine;'); //booléen
 
 		

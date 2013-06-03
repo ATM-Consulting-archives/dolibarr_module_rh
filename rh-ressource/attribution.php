@@ -193,8 +193,8 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 				,'fk_user'=>$form->combo('','fk_user',$emprunt->TUser,$emprunt->fk_user)
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
 				,'commentaire'=>$form->texte('','commentaire',$emprunt->commentaire, 30,100,'','','-')
-				,'date_debut'=> $form->calendrier('', 'date_debut', $emprunt->get_date('date_debut'), 10)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $emprunt->get_date('date_fin'), 10)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $emprunt->date_debut, 12)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $emprunt->date_fin, 12)
 			)
 			,'view'=>array(
 				'mode'=>$mode

@@ -19,7 +19,7 @@ $TUser = array();
 $sql="SELECT rowid, login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
-	$TUser[$ATMdb->Get_field('login')] = $ATMdb->Get_field('rowid');
+	$TUser[strtolower($ATMdb->Get_field('login'))] = $ATMdb->Get_field('rowid');
 }
 
 

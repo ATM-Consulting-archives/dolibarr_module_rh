@@ -2,7 +2,7 @@
 <div class="fiche">
 		<div>
 				
-			<h2 style="color: #2AA8B9;">Description de l'expérience Professionnelle</h2>
+			[cv.titre;strconv=no;protect=no]
 
 			<table class="border" style="width:100%">			
 				<tr>
@@ -34,7 +34,7 @@
 
 
 [onshow;block=begin;when [view.mode]=='edit']
-<h2 style="color: #2AA8B9;">Expérience professionnelle</h2>
+[cv.titre;strconv=no;protect=no]
 <table
 	<tr>
 		<td>Date début</td>

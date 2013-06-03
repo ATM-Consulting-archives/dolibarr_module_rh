@@ -161,7 +161,7 @@ function _liste(&$ATMdb, &$absence) {
 
 	
 	
-	$TOrder = array('Statut demande'=>'ASC');
+	$TOrder = array('date_fin'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -347,7 +347,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 		//LISTE DES ABSENCES À VALIDER
 		$r = new TSSRenderControler($absence);
 		
-		$TOrder = array('name'=>'ASC');
+		$TOrder = array('date_fin'=>'ASC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 					
@@ -412,7 +412,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 function _fiche(&$ATMdb, &$absence, $mode) {
 	global $db,$user,$conf;
 	llxHeader('','Demande d\'absence');
-	echo $_REQUEST['validation'];
+	//echo $_REQUEST['validation'];
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
@@ -569,11 +569,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'id'=>$absence->getId()
 				,'commentaire'=>$form->zonetexte('','commentaire',$absence->commentaire, 30,3,'','','-')
-				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'),10)
-				,'date_debut_view'=> $form->texte('', 'date_debut_view', $absence->get_date('date_debut'),10)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->date_debut,12)
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
-				,'date_fin_view'=> $form->texte('', 'date_fin_view', $absence->get_date('date_fin'),10)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
 				,'idUser'=>$user->id
 				,'comboType'=>$droitsCreation==1?$form->combo('','type',$absence->TTypeAbsenceAdmin,$absence->type):$form->combo('','type',$absence->TTypeAbsenceUser,$absence->type)

@@ -86,6 +86,7 @@ function _fiche(&$ATMdb, $tagCompetence,  $mode) {
 				'Tlibelle'=>$form->combo('','libelle',$TTagCompetence,$idTagRecherche)
 				,'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche)
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
+				,'titreRecherche'=>load_fiche_titre("Statistiques sur les compétences des collaborateurs de l'entreprise",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id
@@ -199,6 +200,8 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 				,'nb_bon'=>$requeteRecherche['nbUserBon']
 				,'nb_excellent'=>$requeteRecherche['nbUserExcellent']
 				,'nb_autres'=>$nb_resultat_autres
+				,'titreRecherche'=>load_fiche_titre("Résultat de votre recherche",'', 'title.png', 0, '')
+				
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id

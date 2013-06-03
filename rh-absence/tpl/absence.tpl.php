@@ -36,21 +36,11 @@
 				</tr>
 				<tr>
 					<td>Date début</td>
-					[onshow;block=begin;when [view.mode]=='view']
-					<td>[absenceCourante.date_debut_view;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.ddMoment;strconv=no;protect=no]</td>
-					[onshow;block=end]
-			 		[onshow;block=begin;when [view.mode]!='view']
 			 		<td>[absenceCourante.date_debut;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.ddMoment;strconv=no;protect=no]</td>
-					[onshow;block=end]
 				</tr>
 				<tr>
 					<td>Date fin</td>
-					[onshow;block=begin;when [view.mode]=='view']
-					<td>[absenceCourante.date_fin_view;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]</td>
-					[onshow;block=end]
-			 		[onshow;block=begin;when [view.mode]!='view']
 			 		<td>[absenceCourante.date_fin;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]</td>
-					[onshow;block=end]
 				</tr>
 				[onshow;block=begin;when [view.mode]!='edit']
 					<tr>
@@ -125,7 +115,7 @@
 						<a class="butAction" id="action-update"  onclick="if (confirm('Voulez-vous vraiment accepter la demande d\'absence ?')){document.location.href='?action=accept&id=[absenceCourante.id]'};">Accepter</a>	
 						<span class="butActionDelete" id="action-delete"  onclick="if (confirm('Voulez-vous vraiment refuser la demande d\'absence ?')){document.location.href='?action=refuse&id=[absenceCourante.id]'};">Refuser</span>
 						<a style='width:30%' class="butAction" id="action-update"  onclick="if (confirm('Voulez-vous vraiment envoyer la demande d\'absence au valideur supérieur ?')){document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'};">Envoyer au valideur supérieur</a>	
-					
+									
 					[onshow;block=end]
 				[onshow;block=end]
 		[onshow;block=end]
@@ -135,14 +125,16 @@
 		[onshow;block=begin;when [view.mode]!='edit']
 				[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
 						<span class="butActionDelete" id="action-delete"  onclick="if (confirm('Voulez-vous vraiment supprimer la demande d\'absence ?')){document.location.href='?action=delete&id=[absenceCourante.id]'};">Supprimer</span>
+						
 				[onshow;block=end]			
 		[onshow;block=end]
 		[onshow;block=end]
+		<div style="clear:both;"></div>
 	</div></div>
-		
+	
+
 		
 		<div>
-		<br/><br/><br/><br/>
 		[absenceCourante.titreDerAbsence;strconv=no;protect=no] 
 		<table  class="liste formdoc noborder" style="width:100%">
 				<tr class="liste_titre">
@@ -181,7 +173,7 @@
 				</tbody>	
 		</table>
 		</div>
-		
+
 		
 
 		<script>

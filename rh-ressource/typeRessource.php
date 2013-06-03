@@ -181,8 +181,6 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'code'=>$form->texte('', 'code', $ressource->code, 20,255,'','','à saisir')
 				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 20,255,'','','à saisir') 
 				,'supprimable'=>$form->hidden('supprimable', 1)
-				,'date_maj'=>$ressource->get_date('date_maj','d/m/Y à H:i:s')
-				,'date_cre'=>$ressource->get_date('date_cre','d/m/Y')
 			)
 			,'view'=>array(
 				'mode'=>$mode
