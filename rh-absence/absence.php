@@ -570,10 +570,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'id'=>$absence->getId()
 				,'commentaire'=>$form->zonetexte('','commentaire',$absence->commentaire, 30,3,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->date_debut,12)
-				,'date_debut_view'=> $form->texte('', 'date_debut_view', $absence->date_debut,10)
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
-				,'date_fin_view'=> $form->texte('', 'date_fin_view', $absence->date_fin,10)
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
 				,'idUser'=>$user->id
 				,'comboType'=>$droitsCreation==1?$form->combo('','type',$absence->TTypeAbsenceAdmin,$absence->type):$form->combo('','type',$absence->TTypeAbsenceUser,$absence->type)

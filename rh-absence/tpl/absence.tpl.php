@@ -36,21 +36,11 @@
 				</tr>
 				<tr>
 					<td>Date début</td>
-					[onshow;block=begin;when [view.mode]=='view']
-					<td>[absenceCourante.date_debut_view;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.ddMoment;strconv=no;protect=no]</td>
-					[onshow;block=end]
-			 		[onshow;block=begin;when [view.mode]!='view']
 			 		<td>[absenceCourante.date_debut;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.ddMoment;strconv=no;protect=no]</td>
-					[onshow;block=end]
 				</tr>
 				<tr>
 					<td>Date fin</td>
-					[onshow;block=begin;when [view.mode]=='view']
-					<td>[absenceCourante.date_fin_view;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]</td>
-					[onshow;block=end]
-			 		[onshow;block=begin;when [view.mode]!='view']
 			 		<td>[absenceCourante.date_fin;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]</td>
-					[onshow;block=end]
 				</tr>
 				[onshow;block=begin;when [view.mode]!='edit']
 					<tr>
