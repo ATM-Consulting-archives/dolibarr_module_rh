@@ -358,8 +358,8 @@ function _ficheCV(&$ATMdb, $lignecv,  $mode) {
 		,array(
 			'cv'=>array(
 				'id'=>$lignecv->getId()
-				,'date_debut'=>$form->calendrier('', 'date_debut', $lignecv->date_debut, 10)
-				,'date_fin'=>$form->calendrier('', 'date_fin', $lignecv->date_fin, 10)
+				,'date_debut'=>$form->calendrier('', 'date_debut', $lignecv->date_debut, 12)
+				,'date_fin'=>$form->calendrier('', 'date_fin', $lignecv->date_fin, 12)
 				,'libelleExperience'=>$form->texte('','libelleExperience',$lignecv->libelleExperience, 30,100,'','','-')
 				,'descriptionExperience'=>$form->zonetexte('','descriptionExperience',$lignecv->descriptionExperience, 40,3,'','','-')
 				,'lieuExperience'=>$form->texte('','lieuExperience',$lignecv->lieuExperience, 30,100,'','','-')
@@ -432,15 +432,15 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 		,array(
 			'formation'=>array(
 				'id'=>$formation->getId()
-				,'date_debut'=>$form->calendrier('', 'date_debut', $formation->date_debut, 10)
-				,'date_fin'=>$form->calendrier('', 'date_fin', $formation->date_fin, 10)
+				,'date_debut'=>$form->calendrier('', 'date_debut', $formation->date_debut, 12)
+				,'date_fin'=>$form->calendrier('', 'date_fin', $formation->date_fin, 12)
 				,'libelleFormation'=>$form->texte('','libelleFormation',$formation->libelleFormation, 30,100,'','','-')
 				,'coutFormation'=>$form->texte('','coutFormation',$formation->coutFormation, 10,50,'','','-')
 				,'montantOrganisme'=>$form->texte('','montantOrganisme',$formation->montantOrganisme, 10,50,'','','-')
 				,'montantEntreprise'=>$form->texte('','montantEntreprise',$formation->montantEntreprise, 10,50,'','','-')
 				,'commentaireFormation'=>$form->zonetexte('','commentaireFormation',$lignecv->commentaireFormation, 40,3,'','','-')
 				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 30,100,'','','-')
-				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->date_formationEcheance, 10)
+				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->date_formationEcheance, 12)
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id

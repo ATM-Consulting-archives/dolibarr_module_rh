@@ -252,8 +252,8 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				,'refexterne'=>$form->texte('', 'refexterne', $evenement->refexterne, 30,60)
 				,'idContrat'=>$evenement->fk_contrat
 				,'motif'=>$form->texte('','motif',$evenement->motif, 30,100,'','','-')
-				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->date_debut,12, 10)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->date_fin,12, 10)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->date_debut,12, 12)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $evenement->date_fin,12, 12)
 				,'type'=>$form->combo('', 'type', $tab, $evenement->type)
 				,'responsabilite'=>$form->combo('', 'responsabilite', $evenement->TResponsabilite, $evenement->responsabilite)
 				,'coutTTC'=>$form->texte('', 'coutTTC', ($evenement->coutTTC == 0) ? '0': $evenement->coutTTC, 10,10)
