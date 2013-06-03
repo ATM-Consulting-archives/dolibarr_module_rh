@@ -283,7 +283,11 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'agenda';
 		$this->rights[$r][5] =  'manageAgenda';
-		
+		$r++;
+		$this->rights[$r][0] = 7021;
+		$this->rights[$r][1] = 'Visualiser les fichiers des ressources';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'read';
 		
 
 		// Main menu entries
