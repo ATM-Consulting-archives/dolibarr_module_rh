@@ -115,7 +115,20 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 						}
 						$edt->tempsHebdo=$infos[4];	
 						
-						$sql='SELECT label, rowid FROM '.MAIN_DB_PREFIX.'entity WHERE label LIKE "'.$infos[0].'"';
+						if(stristr($infos[0],'agt')!=false){	//on est chez AGT
+							 $entreprise='%agt%';
+						}
+						elseif(stristr($infos[0],'groupe')!=false){	//on est chez cpro groupe
+							$entreprise='%groupe%';
+						}
+						elseif(stristr($infos[0],'impression')!=false){	//on est chez global impression
+							$entreprise='%impression%';
+						}
+						else{//on est chez 
+							$entreprise='%cpro%';
+						}
+						$sql='SELECT label, rowid FROM '.MAIN_DB_PREFIX.'entity WHERE label LIKE "'.$entreprise.'"';
+
 						$ATMdb->Execute($sql);
 						
 						if($ATMdb->Get_line()) {
