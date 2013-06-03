@@ -84,7 +84,7 @@
 		
 		<tr>
 			<td>TVA</td>
-			<td>[NEvent.TVA;strconv=no;protect=no]</td>
+			<td>[NEvent.TVA;strconv=no;protect=no] %</td>
 		</tr>
 		<tr>
 			<td>Coût pour l'entreprise HT</td>
@@ -94,7 +94,7 @@
 			<td>Commentaire</td>
 			<td>[NEvent.commentaire;strconv=no;protect=no]</td>
 		</tr>
-		<tr>
+		<tr id="listeappels">
 			<td>Liste des appels</td>
 			<td><pre>[NEvent.appels;strconv=no;protect=no]</pre></td>
 		</tr>
@@ -143,7 +143,7 @@
 			$('#tiersimpl').hide();
 			$('#numFacture').hide();
 			$('#numContrat').hide();
-			
+			$('#listeappels').hide();
 		};
 		
 		function afficherSelonType(type){
@@ -156,6 +156,9 @@
 					break;
 				case 'facture':
 					$('#numFacture').show();
+					break;
+				case 'facttel':
+					$('#listeappels').show();
 				default : 
 					break;}
 		};

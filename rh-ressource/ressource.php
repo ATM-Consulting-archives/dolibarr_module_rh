@@ -245,11 +245,11 @@ function _liste(&$ATMdb, &$ressource) {
 	));
 	
 	//si on est en mode utilisateur : on voit la liste des règles le concernant
-	if($user->rights->ressource->ressource->viewRegle){
+	if(! $user->rights->ressource->ressource->hideRegle){
 		echo '<br>';
 		$r = new TSSRenderControler($ressource);
 		$sql="SELECT DISTINCT r.rowid as 'ID', r.choixLimite as 'CL', r.choixApplication as 'CA', u.firstname ,u.name, g.nom as 'Groupe',
-		duree, dureeInt,dureeExt, natureDeduire, CONCAT (CAST(montantDeduire as DECIMAL(16,2)), ' €') as 'Montant à déduire'
+		duree, dureeInt,dureeExt, natureRefac,  CONCAT (CAST(montantRefac as DECIMAL(16,2)), ' €') as 'Montant à déduire'
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup as g ON (r.fk_usergroup = g.rowid)
@@ -284,7 +284,7 @@ function _liste(&$ATMdb, &$ressource) {
 				,'duree'=>'Lim. générale'
 				,'dureeInt'=>'Lim. interne'
 				,'dureeExt'=>'Lim. externe'
-				,'natureDeduire' => 'Nature à déduire'
+				,'natureRefac' => 'Nature à déduire'
 			)
 			,'hide'=>array('CA', 'CL')
 			,'type'=>array()

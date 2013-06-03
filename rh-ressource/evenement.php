@@ -228,6 +228,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	$evenement->load_liste_type($ATMdb, $ressource->fk_rh_ressource_type);
 	$idUserCourant =  $ressource->isEmpruntee($ATMdb, date("Y-m-d", time()));
 	$tab = array_splice ( $evenement->TType , 1); //on enlève le champs 'all'
+	
 	//echo $evenement->appels;
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/evenement.tpl.php'
@@ -257,9 +258,9 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				,'type'=>$form->combo('', 'type', $tab, $evenement->type)
 				,'responsabilite'=>$form->combo('', 'responsabilite', $evenement->TResponsabilite, $evenement->responsabilite)
 				,'coutTTC'=>$form->texte('', 'coutTTC', ($evenement->coutTTC == 0) ? '0': $evenement->coutTTC, 10,10)
-				,'coutEntrepriseTTC'=>$form->texte('', 'coutEntrepriseTTC', $evenement->coutEntrepriseTTC, 10,10)
+				,'coutEntrepriseTTC'=>$form->texte('', 'coutEntrepriseTTC', $evenement->coutEntrepriseTTC, 10,10, '','','0')
 				,'TVA'=>$form->combo('','TVA',$evenement->TTVA,$evenement->TVA)
-				,'coutEntrepriseHT'=>$form->texte('', 'coutEntrepriseHT', $evenement->coutEntrepriseHT, 10,10, 'disabled' )
+				,'coutEntrepriseHT'=>$form->texte('', 'coutEntrepriseHT', $evenement->coutEntrepriseHT, 10,10, 'disabled' ,'','0')
 				,'appels'=>$evenement->appels
 				//($evenement->coutEntrepriseHT)*(1-(0.01*$evenement->TTVA[$evenement->TVA]))
 			)
