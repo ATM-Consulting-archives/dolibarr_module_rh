@@ -1,6 +1,6 @@
 [onshow;block=begin;when [userCourant.droitRecherche]=='1']
 	<div>			
-		<h2 style="color: #2AA8B9;">Recherche d'un profil</h2>	
+			[recherche.titreRecherche;block=tr;strconv=no;protect=no]
 		<br/>
 		<table class="border" style="width:100%">	
 			<tr>
