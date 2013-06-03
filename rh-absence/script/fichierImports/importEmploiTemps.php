@@ -16,7 +16,7 @@ $ATMdb=new Tdb;
 //on charge quelques listes pour avoir les clés externes.
 $TUser = array();
 
-$sql="SELECT rowid, login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
+$sql="SELECT rowid, login FROM ".MAIN_DB_PREFIX."user";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[$ATMdb->Get_field('login')] = $ATMdb->Get_field('rowid');
@@ -28,7 +28,7 @@ while($ATMdb->Get_line()) {
 $TGroups= array();
 $sql="SELECT fk_user, fk_usergroup
 	FROM ".MAIN_DB_PREFIX."usergroup_user
-	WHERE entity IN (0,".$conf->entity.")
+	
 	";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
