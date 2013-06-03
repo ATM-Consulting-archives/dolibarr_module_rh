@@ -33,7 +33,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'add'){
 		$datedeb = explode("/",$datedeb);
 		$datedeb =  $datedeb[2]."-".$datedeb[1]."-".$datedeb[0];
 		$datefin = explode("/",$datefin);
-		$datefin =  $datefin[2]."-".$datefin[1]."-".$datefin[0];
+		$datefin =  $datefin[2]."-".$datefin[1]."-".$datefin[0]." 23:59:59";
 		
 		$TGroupeForm->fk_usergroup = $_POST['groupe'];
 		$TGroupeForm->fk_survey = $_POST['survey'];
