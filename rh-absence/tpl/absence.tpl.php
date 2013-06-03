@@ -236,6 +236,7 @@
 		<script>
 		//	script qui charge le compteur de jours du salarié
 		$(document).ready( function(){
+			
 			if($('#userRecapCompteur').val()==0){
 				
 				if($('#userAbsenceCree').val()!=0){
@@ -320,9 +321,11 @@
 	<script>
 		// 	script qui charge les dernières absences de l'utilisateur
 		$(document).ready( function(){
+			
 			if($('#userRecapCompteur').val()==0){
-				
+
 				if($('#userAbsenceCree').val()!=0){
+					
 					var urlajax='script/chargerRecapAbsenceUser.php?idUser='+$('#userAbsenceCree').val();
 				}else{	
 					
@@ -334,7 +337,7 @@
 				}
 				
 				$.ajax({
-					url: 'script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user option:selected').val()
+					url: urlajax//'script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user option:selected').val()
 				}).done(function(data) {
 					liste = JSON.parse(data);
 					$('#TRecapAbs').html('');
@@ -407,7 +410,7 @@
 				}
 				
 				$.ajax({
-					url: 'script/chargerRecapRegleUser.php?idUser='+$('#fk_user option:selected').val()
+					url: urlajax//'script/chargerRecapRegleUser.php?idUser='+$('#fk_user option:selected').val()
 				}).done(function(data) {
 					liste = JSON.parse(data);
 					$('#TRecapRegle').html('');
