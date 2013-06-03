@@ -174,9 +174,9 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 		,array(
 			'remuneration'=>array(
 				'id'=>$remuneration->getId()
-				,'date_entreeEntreprise'=>$form->calendrier('', 'date_entreeEntreprise', $remuneration->get_date('date_entreeEntreprise'), 10)
-				,'date_debutRemuneration'=>$form->calendrier('', 'date_debutRemuneration', $remuneration->get_date('date_debutRemuneration'), 10)
-				,'date_finRemuneration'=>$form->calendrier('', 'date_finRemuneration', $remuneration->get_date('date_finRemuneration'), 10)
+				,'date_entreeEntreprise'=>$form->calendrier('', 'date_entreeEntreprise', $remuneration->date_entreeEntreprise, 10)
+				,'date_debutRemuneration'=>$form->calendrier('', 'date_debutRemuneration', $remuneration->date_debutRemuneration, 10)
+				,'date_finRemuneration'=>$form->calendrier('', 'date_finRemuneration', $remuneration->date_finRemuneration, 10)
 				,'bruteAnnuelle'=>$form->texte('','bruteAnnuelle',$remuneration->bruteAnnuelle, 30,100,'','','-')
 				,'salaireMensuel'=>$form->texte('','salaireMensuel',$remuneration->salaireMensuel, 30,100,'','','-')
 				,'primeAnciennete'=>$form->texte('','primeAnciennete',$remuneration->primeAnciennete, 30,100,'','','-')

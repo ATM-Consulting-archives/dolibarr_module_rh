@@ -164,8 +164,8 @@ function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 		,array(
 			'joursFeries'=>array(
 				'id'=>$feries->getId()
-				,'date_jourOff'=>$form->calendrier('', 'date_jourOff', $feries->get_date('date_jourOff'), 10)
-				,'date_jourOff_view'=>$form->texte('', 'date_jourOff_view', $feries->get_date('date_jourOff'), 10)
+				,'date_jourOff'=>$form->calendrier('', 'date_jourOff', $feries->date_jourOff, 10)
+				,'date_jourOff_view'=>$form->texte('', 'date_jourOff_view', $feries->date_jourOff, 10)
 				,'moment'=>$form->combo('','moment',$feries->TMoment,$feries->moment)
 				,'commentaire'=>$form->zonetexte('','commentaire',$feries->commentaire, 40,3,'','','-')
 				,'titreCreate'=>load_fiche_titre("Nouveau jour férié",'', 'title.png', 0, '')

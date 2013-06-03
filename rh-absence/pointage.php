@@ -155,7 +155,7 @@ function _fiche(&$ATMdb, $pointage, $mode) {
 		,array(
 			'joursFeries'=>array(
 				'id'=>$feries->getId()
-				,'date_jourOff'=>$form->calendrier('', 'date_jourOff', $feries->get_date('date_jourOff'), 10)
+				,'date_jourOff'=>$form->calendrier('', 'date_jourOff', $feries->date_jourOff, 10)
 				,'moment'=>$form->combo('','moment',$feries->TMoment,$feries->moment)
 				//,'matin'=>$form->checkbox1('','matin','1',$feries->matin==1?true:false)
 				//,'apresmidi'=>$form->checkbox1('','apresmidi','1',$feries->apresmidi==1?true:false)

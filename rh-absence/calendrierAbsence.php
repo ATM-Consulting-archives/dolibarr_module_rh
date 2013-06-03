@@ -67,8 +67,8 @@
 				,'droits'=>$user->rights->absence->myactions->voirToutesAbsences?1:0
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 				//,'idAfficher'=>$_REQUEST['rowid']? $_REQUEST['rowid']:0
-				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->date_debut, 10)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 10)
 			)
 			,'view'=>array(
 				'mode'=>$mode

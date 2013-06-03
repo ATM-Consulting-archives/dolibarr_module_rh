@@ -181,8 +181,8 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 				//,'tiersFournisseur'=> ($mode=='edit') ? $html->select_company('','fk_tier_fournisseur','',0, 0,1) : $contrat->fk_tier_fournisseur
 				,'tiersFournisseur'=> $form->combo('','fk_tier_fournisseur',$contrat->TFournisseur,$contrat->fk_tier_fournisseur)
 				,'tiersAgence'=> $form->combo('','fk_tier_utilisateur',$contrat->TAgence,$contrat->fk_tier_utilisateur)
-				,'date_debut'=> $form->calendrier('', 'date_debut', $contrat->get_date('date_debut'),12, 10)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $contrat->get_date('date_fin'),12, 10)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $contrat->date_debut,12, 10)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $contrat->date_fin,12, 10)
 				,'entretien'=>$form->texte('', 'entretien', $contrat->entretien, 10,20,'','','0')
 				,'assurance'=>$form->texte('', 'assurance', $contrat->assurance, 10,20,'','','0')
 				,'kilometre'=>$form->texte('', 'kilometre', $contrat->kilometre, 8,8,'','','')

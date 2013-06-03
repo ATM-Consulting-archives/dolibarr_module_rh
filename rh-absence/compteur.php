@@ -338,7 +338,6 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				break;
 	}*/
 	
-	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/compteur.tpl.php'
 		,array(
