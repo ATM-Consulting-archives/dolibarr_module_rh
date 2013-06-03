@@ -1,6 +1,6 @@
 
 	<div>			
-		<h2 style="color: #2AA8B9;">Statistiques sur les compétences des collaborateurs de l'entreprise</h2>	
+			[competence.titreRecherche;block=tr;strconv=no;protect=no]
 		<br/>
 		<table class="border" style="width:100%">	
 			<tr>

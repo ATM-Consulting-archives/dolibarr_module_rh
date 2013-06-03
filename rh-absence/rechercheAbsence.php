@@ -88,6 +88,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
 				,'horsConges'=>$form->checkbox1('','horsConges','1','')
 				,'titreRecherche'=>load_fiche_titre("Recherche des absences des collaborateurs",'', 'title.png', 0, '')
+				
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id

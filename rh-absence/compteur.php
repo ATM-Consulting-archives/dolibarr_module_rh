@@ -91,7 +91,7 @@ function _liste(&$ATMdb, &$compteur) {
 	$TOrder = array('DateCre'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
-				
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
 	//print $page;
 	$r->liste($ATMdb, $sql, array(
@@ -129,7 +129,7 @@ function _liste(&$ATMdb, &$compteur) {
 		
 	));
 	
-	
+		$form->end();
 	llxFooter();
 }	
 	
@@ -153,10 +153,12 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 	$TOrder = array('name'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
-	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
-	echo $form->hidden('action', 'compteurAdmin');				
+	
+			
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
 	//print $page;
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
+	echo $form->hidden('action', 'compteurAdmin');		
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page

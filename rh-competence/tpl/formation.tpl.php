@@ -6,7 +6,7 @@
 <br>
 <div class="fiche">
 		<div>
-			<h2 style="color: #2AA8B9;">Description de la formation</h2>	
+			[formation.titre;strconv=no;protect=no]
 			<table class="border" style="width:100%">			
 				<tr>
 					<td><b>Nom</b></td>
@@ -75,7 +75,7 @@
 					<td>[TCompetence.niveauCompetence;block=tr;strconv=no;protect=no]</td>
 					[onshow;block=begin;when [view.mode]=='edit']
 						<td style="text-align:center;">
-							<a href="?id=[formation.id;strconv=no;protect=no]&idForm=[TCompetence.id;block=tr;strconv=no;protect=no]&action=deleteCompetence"><img title="Supprimer ce tag" style="width:25px;" src="./img/delete_tag.png"></a>
+							<a href="?id=[formation.id;strconv=no;protect=no]&idForm=[TCompetence.id;block=tr;strconv=no;protect=no]&action=deleteCompetence"><img title="Supprimer ce tag" src="./img/delete.png"></a>
 						</td>
 					[onshow;block=end]
 					

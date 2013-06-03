@@ -124,6 +124,7 @@ function _fiche(&$ATMdb,$tagCompetence, $mode) {
 		,array(
 			'recherche'=>array(
 				'libelle'=>$form->texte('','libelleCompetence','', 30,100,'','','-')
+				,'titreRecherche'=>load_fiche_titre("Recherche d'un profil",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
 				'id'=>$user->id
@@ -196,6 +197,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				,'commentaireFormation'=>$form->texte('','commentaireFormation',$formation->commentaireFormation, 50,300,'style="width:400px;height:80px;"','','-')
 				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 30,100,'','','-')
 				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->get_date('date_formationEcheance'), 10)
+				
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id
