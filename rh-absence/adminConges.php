@@ -104,8 +104,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 		,array(
 			'compteurGlobal'=>array(
 				'rowid'=>$compteur->rowid
-				,'date_rttClotureInit'=>$form->calendrier('', 'date_rttClotureInit', $compteur->get_date('date_rttClotureInit'), 10)
-				,'date_congesClotureInit'=>$form->calendrier('', 'date_congesClotureInit', $compteur->get_date('date_congesClotureInit'), 10)
+				,'date_rttClotureInit'=>$form->calendrier('', 'date_rttClotureInit', $compteur->date_rttClotureInit, 12)
+				,'date_congesClotureInit'=>$form->calendrier('', 'date_congesClotureInit', $compteur->date_congesClotureInit, 12)
 				,'congesAcquisMensuelInit'=>$form->texte('','congesAcquisMensuelInit',round2Virgule($compteur->congesAcquisMensuelInit),10,50,'',$class="text", $default='')
 				,'titreConges'=>load_fiche_titre("Congés payés",'', 'title.png', 0, '')
 				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')

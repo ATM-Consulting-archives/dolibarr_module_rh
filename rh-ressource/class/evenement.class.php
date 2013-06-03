@@ -32,9 +32,10 @@ class TRH_Evenement  extends TObjetStd {
 		//pour une facture téléphonique
 		parent::add_champs('duree, dureeI, dureeE','type=entier;'); //durée de consommation
 		parent::add_champs('appels','type=chaine;');
-		parent::add_champs('totalI, totalE ','type=float;'); //montant facturé en interne et en externe 
-		parent::add_champs('montantRefac','type=float;'); //nature et montant refacturé
-		parent::add_champs('natureRefac','type=chaine;'); //nature et montant refacturé
+		parent::add_champs('totalIFact, totalEFact','type=float;'); //montant facturé en interne et en externe
+		parent::add_champs('totalFact','type=float;'); //montant facturé en général
+		parent::add_champs('montantRefac','type=float;'); //montant refacturé
+		parent::add_champs('natureRefac','type=chaine;'); //nature refacturée
 		
 		//pour une facture
 		parent::add_champs('numFacture','type=chaine;');

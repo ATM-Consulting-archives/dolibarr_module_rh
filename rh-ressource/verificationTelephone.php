@@ -52,8 +52,8 @@ function _fiche(&$ATMdb, $mode) {
 		,array(
 			'infos'=>array(
 				'titre'=>load_fiche_titre("Vérification des consommations téléphoniques",'', 'title.png', 0, '')
-				,'date_debut'=>$form->calendrier('Date de début', 'date_debut', $date_debut, 10)
-				,'date_fin'=>$form->calendrier('Date de fin', 'date_fin', $date_fin, 10)
+				,'date_debut'=>$form->calendrier('Date de début', 'date_debut', $date_debut, 12)
+				,'date_fin'=>$form->calendrier('Date de fin', 'date_fin', $date_fin, 12)
 				,'action'=>$form->hidden('action','save')
 			)
 			,'view'=>array(
@@ -108,8 +108,8 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $mode) {
 		,array(
 			'infos'=>array(
 				'titre'=>load_fiche_titre("Vérification des consommations téléphoniques",'', 'title.png', 0, '')
-				,'date_debut'=>$form->calendrier('Date de début', 'date_debut', $date_debut, 10)
-				,'date_fin'=>$form->calendrier('Date de fin', 'date_fin', $date_fin, 10)
+				,'date_debut'=>$form->calendrier('Date de début', 'date_debut', $date_debut, 12)
+				,'date_fin'=>$form->calendrier('Date de fin', 'date_fin', $date_fin, 12)
 				,'action'=>$form->hidden('action','save')
 			)
 			,'view'=>array(

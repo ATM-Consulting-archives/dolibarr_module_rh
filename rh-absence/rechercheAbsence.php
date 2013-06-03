@@ -84,8 +84,8 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 				'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche)
 				,'TUser'=>$form->combo('','user',$TUser,$idUserRecherche)
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
-				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->get_date('date_debut'), 10)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->get_date('date_fin'), 10)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->date_debut, 12)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
 				,'horsConges'=>$form->checkbox1('','horsConges','1','')
 				,'titreRecherche'=>load_fiche_titre("Recherche des absences des collaborateurs",'', 'title.png', 0, '')
 				
