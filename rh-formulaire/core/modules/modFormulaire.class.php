@@ -168,6 +168,12 @@ class modFormulaire extends DolibarrModules
 		$this->rights[$r][4] = 'formulaire';
 		$this->rights[$r][5] = 'read';
 		$r++;
+		$this->rights[$r][0] = 7302;
+		$this->rights[$r][1] = 'Gérer les formulaires';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'formulaire';
+		$this->rights[$r][5] = 'write';
+		$r++;
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
 		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
@@ -210,7 +216,7 @@ class modFormulaire extends DolibarrModules
 						'langs'=> 'formulaire@formulaire',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						'position'=> 101,
 						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-						'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						'perms'=> '$user->rights->formulaire->formulaire->read',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						'target'=> '',
 						'user'=> 2	// 0=Menu for internal users, 1=external users, 2=both
         );
@@ -226,7 +232,7 @@ class modFormulaire extends DolibarrModules
 					'langs'=> 'formulaire@formulaire',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 102,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'perms'=> '$user->rights->formulaire->formulaire->write',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
 					'user'=> 2
         );

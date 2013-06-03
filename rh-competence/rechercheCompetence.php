@@ -124,6 +124,7 @@ function _fiche(&$ATMdb,$tagCompetence, $mode) {
 		,array(
 			'recherche'=>array(
 				'libelle'=>$form->texte('','libelleCompetence','', 30,100,'','','-')
+				,'titreRecherche'=>load_fiche_titre("Recherche d'un profil",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
 				'id'=>$user->id
@@ -190,12 +191,13 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 		,array(
 			'formation'=>array(
 				'id'=>$formation->getId()
-				,'date_debut'=>$form->calendrier('', 'date_debut', $formation->get_date('date_debut'), 10)
-				,'date_fin'=>$form->calendrier('', 'date_fin', $formation->get_date('date_fin'), 10)
+				,'date_debut'=>$form->calendrier('', 'date_debut', $formation->date_debut, 12)
+				,'date_fin'=>$form->calendrier('', 'date_fin', $formation->date_fin, 12)
 				,'libelleFormation'=>$form->texte('','libelleFormation',$formation->libelleFormation, 30,100,'','','-')
 				,'commentaireFormation'=>$form->texte('','commentaireFormation',$formation->commentaireFormation, 50,300,'style="width:400px;height:80px;"','','-')
 				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 30,100,'','','-')
-				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->get_date('date_formationEcheance'), 10)
+				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->date_formationEcheance, 12)
+				,'titreResultat'=>load_fiche_titre("Description de la formation correspondant à la compétence recherchée",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id

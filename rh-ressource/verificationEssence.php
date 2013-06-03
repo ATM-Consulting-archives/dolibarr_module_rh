@@ -33,8 +33,8 @@ print $TBS->render('./tpl/verificationEssence.tpl.php'
 			'texte'=>'$texte'
 			,'titre'=>load_fiche_titre("Vérification des consommations d'essence",'', 'title.png', 0, '')
 			,'limite'=>$form->texte('', 'limite', $limite, 10)
-			,'plagedebut'=>$form->calendrier('', 'plagedebut', $plagedeb, 8)
-			,'plagefin'=>$form->calendrier('', 'plagefin', $plagefin, 8)
+			,'plagedebut'=>$form->calendrier('', 'plagedebut', $plagedeb, 12)
+			,'plagefin'=>$form->calendrier('', 'plagefin', $plagefin, 12)
 			,'fk_user'=>$form->combo('', 'fk_user', $TUser, $fk_user)
 			,'valider'=>$form->btsubmit('Valider', 'valider')
 			)

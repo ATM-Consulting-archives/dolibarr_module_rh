@@ -125,7 +125,7 @@
 						<a class="butAction" id="action-update"  onclick="if (confirm('Voulez-vous vraiment accepter la demande d\'absence ?')){document.location.href='?action=accept&id=[absenceCourante.id]'};">Accepter</a>	
 						<span class="butActionDelete" id="action-delete"  onclick="if (confirm('Voulez-vous vraiment refuser la demande d\'absence ?')){document.location.href='?action=refuse&id=[absenceCourante.id]'};">Refuser</span>
 						<a style='width:30%' class="butAction" id="action-update"  onclick="if (confirm('Voulez-vous vraiment envoyer la demande d\'absence au valideur supérieur ?')){document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'};">Envoyer au valideur supérieur</a>	
-					
+									
 					[onshow;block=end]
 				[onshow;block=end]
 		[onshow;block=end]
@@ -135,14 +135,16 @@
 		[onshow;block=begin;when [view.mode]!='edit']
 				[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
 						<span class="butActionDelete" id="action-delete"  onclick="if (confirm('Voulez-vous vraiment supprimer la demande d\'absence ?')){document.location.href='?action=delete&id=[absenceCourante.id]'};">Supprimer</span>
+						
 				[onshow;block=end]			
 		[onshow;block=end]
 		[onshow;block=end]
+		<div style="clear:both;"></div>
 	</div></div>
-		
+	
+
 		
 		<div>
-		<br/><br/><br/><br/>
 		[absenceCourante.titreDerAbsence;strconv=no;protect=no] 
 		<table  class="liste formdoc noborder" style="width:100%">
 				<tr class="liste_titre">
@@ -181,7 +183,7 @@
 				</tbody>	
 		</table>
 		</div>
-		
+
 		
 
 		<script>
@@ -236,6 +238,7 @@
 		<script>
 		//	script qui charge le compteur de jours du salarié
 		$(document).ready( function(){
+			
 			if($('#userRecapCompteur').val()==0){
 				
 				if($('#userAbsenceCree').val()!=0){
@@ -320,9 +323,11 @@
 	<script>
 		// 	script qui charge les dernières absences de l'utilisateur
 		$(document).ready( function(){
+			
 			if($('#userRecapCompteur').val()==0){
-				
+
 				if($('#userAbsenceCree').val()!=0){
+					
 					var urlajax='script/chargerRecapAbsenceUser.php?idUser='+$('#userAbsenceCree').val();
 				}else{	
 					
@@ -334,7 +339,7 @@
 				}
 				
 				$.ajax({
-					url: 'script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user option:selected').val()
+					url: urlajax//'script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user option:selected').val()
 				}).done(function(data) {
 					liste = JSON.parse(data);
 					$('#TRecapAbs').html('');
@@ -407,7 +412,7 @@
 				}
 				
 				$.ajax({
-					url: 'script/chargerRecapRegleUser.php?idUser='+$('#fk_user option:selected').val()
+					url: urlajax//'script/chargerRecapRegleUser.php?idUser='+$('#fk_user option:selected').val()
 				}).done(function(data) {
 					liste = JSON.parse(data);
 					$('#TRecapRegle').html('');

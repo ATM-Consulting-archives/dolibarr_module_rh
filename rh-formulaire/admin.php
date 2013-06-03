@@ -35,7 +35,6 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'add'){
 		$datefin = explode("/",$datefin);
 		$datefin =  $datefin[2]."-".$datefin[1]."-".$datefin[0];
 		
-		echo $datedeb." ".$datefin;
 		$TGroupeForm->fk_usergroup = $_POST['groupe'];
 		$TGroupeForm->fk_survey = $_POST['survey'];
 		$TGroupeForm->date_deb = strtotime($datedeb);
@@ -43,7 +42,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'add'){
 		
 		$TGroupeForm->save($ATMdb);
 		
-		echo dol_htmloutput_mesg('Les droits ont été enregistré.', '', 'ok', 0);
+		echo dol_htmloutput_mesg('Les droits ont été enregistrés.', '', 'ok', 0);
 	}
 }
 elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))

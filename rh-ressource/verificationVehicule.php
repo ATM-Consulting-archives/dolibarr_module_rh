@@ -29,8 +29,8 @@ print $TBS->render('./tpl/verificationVehicule.tpl.php'
 	,array(
 		'infos'=>array(
 			'titre'=>load_fiche_titre("Vérification des contrats des véhicules",'', 'title.png', 0, '')
-			,'plagedebut'=>$form->calendrier('', 'plagedebut', $plagedeb, 10)
-			,'plagefin'=>$form->calendrier('', 'plagefin', $plagefin, 10)
+			,'plagedebut'=>$form->calendrier('', 'plagedebut', $plagedeb, 12)
+			,'plagefin'=>$form->calendrier('', 'plagefin', $plagefin, 12)
 			,'valider'=>$form->btsubmit('Valider', 'valider')
 		)
 	)	
