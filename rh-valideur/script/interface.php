@@ -74,6 +74,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	}
 	
 	$ATMdb2=new Tdb;
+	$ndf_exist=0;
 			
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
@@ -120,30 +121,33 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 			}
 			
 		}
+		
+		$ndf_exist=1;
 	}
 	
 	/**----**********************----**/
 	/**----**** Ligne de TVA ****----**/
 	/**----**********************----**/
 	
-	$sql = "SELECT
-					CAST(SUM(n.total_tva) as DECIMAL(16,2)) as 'total_tva'
-				FROM ".MAIN_DB_PREFIX."ndfp as n
-				WHERE n.statut = 1
-				AND n.entity IN (".$entity.")
-				AND n.type LIKE '".$type."'
-				AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')";
-	
-	if(isset($_REQUEST['DEBUG'])) {
-		print $sql;
-	}
-	
-	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		$total_tva_ndf	=	$ATMdb->Get_field('total_tva');
+	if($ndf_exist){
+		$sql = "SELECT CAST(SUM(n.total_tva) as DECIMAL(16,2)) as 'total_tva'
+					FROM ".MAIN_DB_PREFIX."ndfp as n
+					WHERE n.statut = 1
+					AND n.entity IN (".$entity.")
+					AND n.type LIKE '".$type."'
+					AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')";
 		
-		$line = array('NDF', date('dmy'), 'OD', '445660', 'G', '', '', 'NOTE DE FRAIS '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva_ndf, 'N', '', '', '', 'EUR', '');
-		$TabNdf[]=$line;
+		if(isset($_REQUEST['DEBUG'])) {
+			print $sql;
+		}
+		
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$total_tva_ndf	=	$ATMdb->Get_field('total_tva');
+			
+			$line = array('NDF', date('dmy'), 'OD', '445660', 'G', '', '', 'NOTE DE FRAIS '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva_ndf, 'N', '', '', '', 'EUR', '');
+			$TabNdf[]=$line;
+		}
 	}
 	
 	/**----**********************----**/
