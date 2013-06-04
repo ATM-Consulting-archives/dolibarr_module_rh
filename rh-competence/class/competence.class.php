@@ -112,7 +112,7 @@ class TRH_competence_cv extends TObjetStd {
 	}
 	
 	
-	//renvoie la requête finale de la recherche (onglet recherche profil)
+	//renvoie la requête finale de la recherche (onglet recherche compétences)
 	function requeteRecherche(&$ATMdb,  $recherche){
 		global $conf;
 		
