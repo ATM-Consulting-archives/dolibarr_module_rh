@@ -189,7 +189,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
     	$datef_ndf		=	substr($ATMdb->Get_field('datef'), 8, 2).substr($ATMdb->Get_field('datef'), 5, 2).substr($ATMdb->Get_field('datef'), 2, 2);
     	$total_ttc_ndf	=	$ATMdb->Get_field('total_ttc');
 		
-		$line = array('NDF', $datef_ndf, 'OD', '425902', 'X', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', $ref, '', '', 'EUR', '');
+		$line = array('NDF', $datef_ndf, 'OD', '425902', 'X', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', '', '', '', 'EUR', '');
 		$TabNdf[]=$line;
 	}
 	
