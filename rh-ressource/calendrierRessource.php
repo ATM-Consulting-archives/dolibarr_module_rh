@@ -56,6 +56,7 @@
 			$TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle').' '.$ATMdb->Get_field('numId');
 			}
 
+	$ressource->load_liste_type_ressource($ATMdb);
 	$TType = array_merge(array(''), $ressource->TType);
 	$TTypeEvent = getTypeEvent($type);
 	if ($fiche) {$TTypeEvent = getTypeEvent($ressource->fk_rh_ressource_type);}

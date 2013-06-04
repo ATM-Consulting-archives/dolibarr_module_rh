@@ -150,6 +150,7 @@ function _fiche(&$ATMdb,  &$association, &$ressource,  $mode) {
 	
 	
 	$ressource->load_contrat($ATMdb);
+	$ressource->load_liste_type_ressource($ATMdb);
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/contratRessource.tpl.php'
 		,array(

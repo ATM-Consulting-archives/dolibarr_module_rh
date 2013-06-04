@@ -18,9 +18,6 @@ class TRH_Contrat  extends TObjetStd {
 		
 		$this->TBail = array('location'=>'Location','immobilisation'=>'Immobilisation');
 		
-		$ATMdb=new Tdb;
-		
-
 		$this->TTypeRessource = array();
 		$this->TAgence = array();
 		$this->TTVA = array();
