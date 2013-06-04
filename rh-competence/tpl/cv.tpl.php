@@ -42,7 +42,7 @@
 			<td style="text-align:center;">Action</td>
 		[onshow;block=end]
 	<tr>
-		<td style="text-align:center;">[TCompetence.libelleCompetence;block=tr;strconv=no;protect=no]</td>
+		<td>[TCompetence.libelleCompetence;block=tr;strconv=no;protect=no]</td>
 		<td style="text-align:center;">[TCompetence.niveauCompetence;block=tr;strconv=no;protect=no]</td>
 		[onshow;block=begin;when [view.mode]=='edit']
 			<td style="text-align:center;">
@@ -53,7 +53,7 @@
 	</tr>
 	[onshow;block=begin;when [view.mode]=='edit']
 	<tr>
-		<td style="text-align:center;">[newCompetence.libelleCompetence;strconv=no;protect=no]</td>
+		<td>[newCompetence.libelleCompetence;strconv=no;protect=no]</td>
 		<td style="text-align:center;">[newCompetence.niveauCompetence;strconv=no;protect=no]</td>
 		<td style="text-align:center;"><input type="submit" value="Ajouter" name="newCompetenceCV" class="button"></td>
 	</tr>
