@@ -26,34 +26,41 @@ class TRH_Ressource extends TObjetStd {
 		$this->TField=array();
 		$this->ressourceType=new TRH_Ressource_type;
 
-		$ATMdb=new Tdb;
-		// AA Cela est-il vraiment nécessaire ici ? Je n'aime pas les connexions dans les constructeur :(
-		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type', array());
-		
-		//chargement d'une liste de tout les types de ressources
-		$temp = new TRH_Ressource_type;
 		$this->TType = array();
-		foreach($Tab as $k=>$id){
-			$temp->load($ATMdb, $id);
-			$this->TType[$temp->getId()] = $temp->libelle;
-		}
 		$this->TBail = array('location'=>'Location','immobilisation'=>'Immobilisation');
 		
 		$this->TRessource = array('');
 		$this->TEvenement = array();
 		
 		$this->TAgence = array('');
-		global $conf;
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
-		$ATMdb->Execute($sqlReq);
-		while($ATMdb->Get_line()) {
-			$this->TAgence[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
-			}
+		
 		$this->TTVA = array();
 		$this->TContratAssocies = array(); 	//tout les objets rh_contrat_ressource liés à la ressource
 		$this->TContratExaustif = array(); 	//tout les objets contrats
 		$this->TListeContrat = array(); 	//liste des id et libellés de tout les contrats
 		$this->TEntity = array();
+	}
+	
+	function load_liste_type_ressource(&$ATMdb){
+		//chargement d'une liste de tout les types de ressources
+		$temp = new TRH_Ressource_type;
+		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type', array());
+		$this->TType = array();
+		foreach($Tab as $k=>$id){
+			$temp->load($ATMdb, $id);
+			$this->TType[$temp->getId()] = $temp->libelle;
+		}
+		
+	}
+	
+	function load_agence(&$ATMdb){
+		global $conf;
+		$this->TAgence = array('');
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$this->TAgence[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+			}
 	}
 	
 	function load_liste_entity(&$ATMdb){

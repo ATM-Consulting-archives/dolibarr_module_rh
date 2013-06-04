@@ -51,7 +51,7 @@ function _liste(&$ATMdb, &$ressource) {
 	if(!$user->rights->ressource->ressource->viewRessource){
 		$sql.=" AND e.fk_user=".$user->id;
 	}
-
+	$ressource->load_liste_type_ressource($ATMdb);
 
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');

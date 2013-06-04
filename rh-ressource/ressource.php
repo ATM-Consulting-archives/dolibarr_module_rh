@@ -184,6 +184,7 @@ function _liste(&$ATMdb, &$ressource) {
 	if(!$user->rights->ressource->ressource->viewRessource){
 		$sql.=" AND e.fk_user=".$user->id;
 	}
+	$ressource->load_liste_type_ressource($ATMdb);
 	
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -375,6 +376,8 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 	$contrat->load_liste($ATMdb);
 	$emprunt->load_liste($ATMdb);
 	$ressource->load_liste_entity($ATMdb);
+	$ressource->load_agence($ATMdb);
+	$ressource->load_liste_type_ressource($ATMdb);
 	$listeContrat = $ressource->liste_contrat($ATMdb);
 	
 	$TBS=new TTemplateTBS();

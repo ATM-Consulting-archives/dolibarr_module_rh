@@ -126,6 +126,7 @@ if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 					$emprunt->type = 'emprunt';
 					$emprunt->fk_user = $TUser[strtoupper($nom.' '.$prenom)];
 					$emprunt->fk_rh_ressource = $tel->getId();
+					$emprunt->fk_rh_ressource_type = $idTel;
 					$emprunt->set_date('date_debut', '01/01/2013');
 					$emprunt->set_date('date_fin', '31/12/2013');
 					$emprunt->save($ATMdb);

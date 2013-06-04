@@ -19,10 +19,57 @@ function _get(&$ATMdb, $case) {
 			__out(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
+		case 'parcours':
+			__out(_exportParcours($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
+			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
+			break;
+		
 		default:
 			break;
 	}
 }
+
+function _exportParcours(&$ATMdb, $date_debut, $date_fin, $entity){
+	$TLignes = array();
+	
+	//chargement des comptes liés aux type d'évenements
+	$TComptes = array();
+	$sql="SELECT code, codecomptable FROM ".MAIN_DB_PREFIX."rh_type_evenement";
+	$ATMdb->Execute($sql);
+	while($row = $ATMdb->Get_line()) {
+		$TComptes[$row->code] = $row->codecomptable;	
+	}
+		
+	$sql="SELECT coutEntrepriseTTC, coutEntrepriseHT, type, date_debut, typeVehicule, name, firstname, a.code
+	FROM ".MAIN_DB_PREFIX."rh_evenement as e
+	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
+	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
+	LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
+	WHERE e.entity=".$entity."
+	AND e.type='factTel' 
+	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')";
+	//echo $sql.'<br>';
+	$ATMdb->Execute($sql);
+	while($row = $ATMdb->Get_line()) {
+	
+	$TLignes[] = array(
+		'date'=>$row->date_debut
+		,'type'=>'ok ? Péage ?'
+		,'user'=>$row->name.' '.$row->firstname
+		,'compte'=>$TComptes[$row->type]
+		,'codeanalytique'=>$row->code
+		,'sens'=>'C'
+		,'total'=>$row->typeVehicule
+		);
+		
+	}
+	return $TLignes;
+	
+	
+}
+
+
+
 
 function _exportOrange(&$ATMdb, $date_debut, $date_fin, $entity){
 	$TabLigne = array();

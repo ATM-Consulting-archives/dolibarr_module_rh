@@ -7,7 +7,7 @@ require('../../lib/ressource.lib.php');
 
 global $conf;
 
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 // relever le point de départ
 $timestart=microtime(true);
 		
@@ -150,13 +150,14 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 }	
 echo $cpt.' voiture creees.<br>';
 echo $cptContrat.' contrats creees.<br>';
+fclose($handle);
 //exit();
 
 
 //----------------------------------------------------------------------------------------------------------------
-//SECOND FICHER VOITURES NON PARCOURS
+//SECOND FICHER  : VOITURES NON PARCOURS
 //----------------------------------------------------------------------------------------------------------------
-/*$nomFichier = 'Etat Parc autre parcours.csv';
+$nomFichier = 'Etat Parc autre parcours.csv';
 echo '<br><br>Traitement du fichier '.$nomFichier.' : <br>';
 
 $TIdContrat = chargeContrat($ATMdb, $idVoiture); //numContrat=>rowid
@@ -170,14 +171,15 @@ $numLigne = 0;
 if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle, 0,'\r')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=1){
+		if ($numLigne >=2){
 			$infos = explode(';', $data[0]);
 			//print_r($infos);
 			
-			$plaque = strtoupper(str_replace('-','',$infos[7])); //immatriculation : on enlève les espaces et on met les lettres en majuscules
+			$plaque = strtoupper(str_replace('-','',$infos[8])); //immatriculation : on enlève les espaces et on met les lettres en majuscules
+			$plaque = strtoupper(str_replace(' ','',$plaque));
 			//on regarde si la plaque d'immatriculation est dans la base
 			if (empty($plaque)){
-				echo 'plaque vide.<br>';null;
+				null;
 			}
 			else if (!empty($TIdRessource[$plaque])){
 				echo $plaque.' existe déjà<br>';
@@ -189,9 +191,15 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 				$TRessource[$plaque] = new TRH_Ressource;
 				$TRessource[$plaque]->fk_rh_ressource_type = $idVoiture;
 				$TRessource[$plaque]->load_ressource_type($ATMdb);
+				$TRessource[$plaque]->libelle = $infos[6].' '.$infos[7];
 				$TRessource[$plaque]->numId = $plaque;
-				$TRessource[$plaque]->set_date('date_achat', $infos[12]);
-				$TRessource[$plaque]->set_date('date_vente', $infos[13]);
+				$TRessource[$plaque]->marqueVoit = $infos[6];
+				$TRessource[$plaque]->modleVoit = $infos[7];
+				$TRessource[$plaque]->typeVehicule = $infos[10];
+				$TRessource[$plaque]->bailVoit = $infos[12];
+				$TRessource[$plaque]->modleVoitversioncomm = $infos[9]; 
+				$TRessource[$plaque]->set_date('date_achat', $infos[13]);
+				$TRessource[$plaque]->set_date('date_vente', $infos[14]);
 				$TRessource[$plaque]->set_date('date_garantie', '');
 				if (empty($TGroups[strtolower($infos[1])])){echo 'Pas de groupe du nom '.$infos[1].'<br>';}
 				else {$TRessource[$plaque]->fk_utilisatrice = $TGroups[strtolower($infos[1])];}
@@ -205,57 +213,56 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 				//echo $plaque.' ajoutee.<BR>';
 				
 				//si il trouve la personne, il sauvegarde une attribution
-				if (!empty($TTrigramme[strtolower($infos[15])])){
+				if (!empty($TTrigramme[strtolower($infos[2])])){
 					$emprunt = new TRH_Evenement;
 					$emprunt->type = 'emprunt';
-					$emprunt->fk_user = $TTrigramme[strtolower($infos[15])]; 
+					$emprunt->fk_user = $TTrigramme[strtolower($infos[2])]; 
 					$emprunt->fk_rh_ressource = $TRessource[$plaque]->getId();
-					$emprunt->set_date('date_debut', $infos[5]);
+					$emprunt->set_date('date_debut', $infos[13]);
 					$emprunt->set_date('date_fin', $infos[14]);
 					$emprunt->save($ATMdb);
 				}
 				else {
-					echo 'Trigramme inexistant : '.$infos[15].' : '.$infos[16].'<br>';
+					null;//echo 'Trigramme inexistant : '.$infos[2].' : '.$infos[16].'<br>';
+				}
+			
+
+				//si le nb de mois est spécifié, on créé un contrat associé au véhicule
+				if (strtolower($infos[12])=='immo'){
+					//le num du contrat est une produit des km, de la durée et du loyer.
+					$numContrat = $infos[15]*5+$infos[16]+intval(str_replace(',', '.', $infos[17]));
+					$TContrat[$numContrat] = new TRH_Contrat;
+					$TContrat[$numContrat]->numContrat = $numContrat; 
+					$TContrat[$numContrat]->libelle = 'Contrat n°'.$numContrat;
+					$TContrat[$numContrat]->set_date('date_debut', $infos[13]);
+					$TContrat[$numContrat]->set_date('date_fin', $infos[14]);
+					$TContrat[$numContrat]->dureeMois = $infos[15];
+					$TContrat[$numContrat]->kilometre = $infos[16];
+					$TContrat[$numContrat]->TVA = $TTVA['19.6'];
+					$TContrat[$numContrat]->loyer_TTC = str_replace(',', '.', $infos[17]);
+					$TContrat[$numContrat]->fk_rh_ressource_type = $idVoiture;
+					if (empty($TFournisseur[strtolower($infos[11])])){echo 'Pas de fournisseur du nom de '.$infos[11].' dans la BD<br>';}
+					else {$TContrat[$numContrat]->fk_tier_fournisseur = $TFournisseur[strtolower($infos[11])];}
+					$cptContrat++;
+					$TContrat[$numContrat]->save($ATMdb);
+					$TIdContrat[$numContrat] = $TContrat[$numContrat]->getId();
+					//association contrat-ressource
+					$assoc = new TRH_Contrat_Ressource;
+					$assoc->fk_rh_ressource = $TRessource[$plaque]->getId();
+					$assoc->fk_rh_contrat = $TContrat[$numContrat]->getId();
+					$assoc->commentaire = 'Créé à l\'import initial';
+					$assoc->save($ATMdb);
 				}
 			}
-
-			$numContrat = $infos[0];
-			
-			
-			if (empty($TIdContrat[$numContrat])){
-				$TContrat[$numContrat] = new TRH_Contrat;
-				$TContrat[$numContrat]->numContrat = $infos[0];
-				$TContrat[$numContrat]->libelle = 'Contrat n°'.$infos[0];
-				$TContrat[$numContrat]->set_date('date_debut', $infos[5]);
-				$TContrat[$numContrat]->set_date('date_fin', $infos[14]);
-				$TContrat[$numContrat]->dureeMois = $infos[2];
-				$TContrat[$numContrat]->kilometre = $infos[3]*1000;
-				$TContrat[$numContrat]->TVA = $TTVA['19.6'];
-				$TContrat[$numContrat]->fk_rh_ressource_type = $idVoiture;
-				if (empty($TFournisseur['parcours'])){echo 'Pas de fournisseur du nom de \'Parcours\' dans la BD<br>';}
-				else {$TContrat[$numContrat]->fk_tier_fournisseur = $TFournisseur['parcours'];}
-				$cptContrat++;
-				$TContrat[$numContrat]->save($ATMdb);
-				$TIdContrat[$numContrat] = $TContrat[$numContrat]->getId();
-				//association contrat-ressource
-				$assoc = new TRH_Contrat_Ressource;
-				$assoc->fk_rh_ressource = $TRessource[$plaque]->getId();
-				$assoc->fk_rh_contrat = $TContrat[$numContrat]->getId();
-				$assoc->commentaire = 'Créé à l\'import initial';
-				$assoc->save($ATMdb);
-			}
-			else {
-				$TContrat[$numContrat] = new TRH_Contrat;
-				$TContrat[$numContrat]->load($ATMdb, $TIdContrat[$numContrat]);
-			}
 		}
+		
 		$numLigne++;
 	}
 }	
 echo $cpt.' voiture creees.<br>';
 echo $cptContrat.' contrats creees.<br>';
+fclose($handle);
 
-*/
 
 
 
@@ -315,6 +322,7 @@ if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 	}
 	echo $cpt.' voitures completees.<br>';
 	echo $cptContrat.' contrats completees.<br>';
+	fclose($handle);
 	$cpt = 0;
 	$cptContrat = 0;
 	}
