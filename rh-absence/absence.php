@@ -213,7 +213,7 @@ function _liste(&$ATMdb, &$absence) {
 			,"login"=>true
 		)
 		,'eval'=>array(
-			'name'=>'strtoupper(htmlentities("@val@", ENT_COMPAT , "ISO8859-1"))'
+			'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		,'orderBy'=>$TOrder
@@ -397,7 +397,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				,"name"=>true
 			)
 			,'eval'=>array(
-				'name'=>'strtoupper(htmlentities("@val@", ENT_COMPAT , "ISO8859-1"))'
+				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 			)
 			
@@ -518,7 +518,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$sqlReqUser.=" ORDER BY name";
 		$ATMdb->Execute($sqlReqUser);
 		while($ATMdb->Get_line()) {
-			$TUser[$ATMdb->Get_field('rowid')]=strtoupper(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1'))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 	}
 	

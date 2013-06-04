@@ -13,11 +13,11 @@
 		<table class="border" style="width:150%;" >	
 				<br/><br/>
 				<tr>
-					<td>Nombre de jours acquis Par Mois</td>
+					<td>Nombre de jours acquis par mois</td>
 					<td> [compteurGlobal.congesAcquisMensuelInit;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Date clôture Congés</td>
+					<td>Date clôture congés</td>
 					<td>[compteurGlobal.date_congesClotureInit;strconv=no;protect=no]</td>
 				</tr>
 		</table>

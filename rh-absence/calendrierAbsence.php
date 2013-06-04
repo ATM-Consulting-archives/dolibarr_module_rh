@@ -63,7 +63,14 @@
 	}
 	
 	//on récupère le tableau des users suivant le groupe
+	$TabUser=array();
+	$TabUser[0]='Tous';
 	if($idGroupe==0){
+		$sql="SELECT rowid,name, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$user->id;
+		$ATMdb->Execute($sql);
+		if($ATMdb->Get_line()) {
+			$TabUser[$ATMdb->Get_field('rowid')]=html_entity_decode(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
+		}
 		$sql="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u";
 	}else{
 		$sql="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u,
@@ -71,11 +78,12 @@
 		WHERE g.fk_user=u.rowid AND g.fk_usergroup=".$idGroupe;
 	}
 	$sql.=" ORDER BY name";
-	$TabUser=array();
+	
 	$ATMdb->Execute($sql);
-	$TabUser[0]='Tous';
+	
+	
 	while($ATMdb->Get_line()) {
-		$TabUser[$ATMdb->Get_field('rowid')]=strtoupper(html_entity_decode(htmlentities($ATMdb->Get_field('name')), ENT_COMPAT , 'ISO8859-1')).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
+		$TabUser[$ATMdb->Get_field('rowid')]=html_entity_decode(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
 	}
 
 
@@ -94,7 +102,7 @@
 				,'TGroupe'=>$form->combo('', 'groupe', $TabGroupe,  $idGroupe)
 				//,'TUser'=>$user->rights->absence->myactions->voirToutesAbsences?$form->combo('', 'rowid', $absence->TUser,  $absence->TUser):$form->combo('', 'rowid',$TabUser,  $TabUser)
 				,'TUser'=>$form->combo('', 'idUtilisateur', $TabUser,  $idUser)
-				,'TTypeAbsence'=>$form->combo('', 'typeAbsence', $TTypeAbsence,  'Tous')
+				,'TTypeAbsence'=>$form->combo('', 'typeAbsence', $TTypeAbsence,  $typeAbsence)
 				,'droits'=>$user->rights->absence->myactions->voirToutesAbsences?1:0
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 				//,'idAfficher'=>$_REQUEST['rowid']? $_REQUEST['rowid']:0
