@@ -221,8 +221,7 @@ class TRH_competence_cv extends TObjetStd {
 			$nomTagRecherche="%".strtolower($nomTagRecherche)."%";
 			
 			//on calcule le nombre d'utilisateurs total en vue des stats
-			$sql="SELECT COUNT(rowid) as 'NombreUser' FROM ".MAIN_DB_PREFIX."user
-			WHERE entity=".$conf->entity;
+			$sql="SELECT COUNT(rowid) as 'NombreUser' FROM ".MAIN_DB_PREFIX."user";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUser']=$ATMdb->Get_field('NombreUser');
