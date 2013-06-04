@@ -114,7 +114,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 			,'login'=>'Login'
 		)
 		,'translate'=>array()
-		,'hide'=>array('DateCre','ID')
+		,'hide'=>array('DateCre','ID', 'Id Utilisateur')
 		,'type'=>array()
 		,'liste'=>array(
 			'titre'=>'Liste des emplois du temps des collaborateurs'

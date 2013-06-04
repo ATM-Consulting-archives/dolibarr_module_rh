@@ -9,30 +9,22 @@
 	$ATMdb=new Tdb;
 	$lignecv=new TRH_ligne_cv;
 	$tagCompetence=new TRH_competence_cv;
-
 	
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
-			
 			case 'view':
-				
 				break;
 			case 'edit':
-				
 				break;
 		}
-	}
-	else if(isset($_REQUEST['valider'])){
+	}else if(isset($_REQUEST['valider'])){
 		_ficheResult($ATMdb,$tagCompetence, 'edit');
-	}
-	else{
+	}else{
 		_fiche($ATMdb,$tagCompetence, 'edit');
 	}
 	
 	$ATMdb->close();
-	
 	llxFooter();
-	
 	
 
 function _fiche(&$ATMdb, $tagCompetence,  $mode) {
@@ -51,17 +43,17 @@ function _fiche(&$ATMdb, $tagCompetence,  $mode) {
 	
 	$idTagRecherche=isset($_REQUEST['libelle']) ? $_REQUEST['libelle'] : 0;
 	$idGroupeRecherche=isset($_REQUEST['groupe']) ? $_REQUEST['groupe'] : 0;
-	$idUserRecherche=isset($_REQUEST['user']) ? $_REQUEST['user'] : 0;
 
 	//tableau pour la combobox des tags de compétences
-	$sql="SELECT c.rowid, c.libelleCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv as c
+	$sql="SELECT DISTINCT(c.libelleCompetence) FROM ".MAIN_DB_PREFIX."rh_competence_cv as c
 	WHERE c.entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sql);
+	$k=1;
 	$TTagCompetence=array();
 	while($ATMdb->Get_line()) {
-		$TTagCompetence[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('libelleCompetence');
+		$TTagCompetence[$k]=$ATMdb->Get_field('libelleCompetence');
+		$k++;
 	}
-	
 	
 	//tableau pour la combobox des groupes
 	$TGroupe  = array();
@@ -71,10 +63,6 @@ function _fiche(&$ATMdb, $tagCompetence,  $mode) {
 	while($ATMdb->Get_line()) {
 		$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 	}
-	
-
-	
-	
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/statCompetence.tpl.php'
@@ -123,10 +111,8 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 	$fuser->fetch(isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : $user->id);
 	$fuser->getrights();
 	
-	
 	$idTagRecherche=isset($_REQUEST['libelle']) ? $_REQUEST['libelle'] : 0;
 	$idGroupeRecherche=isset($_REQUEST['groupe']) ? $_REQUEST['groupe'] : 0;
-	$idUserRecherche=isset($_REQUEST['user']) ? $_REQUEST['user'] : 0;
 	
 	if($idGroupeRecherche!=0){	//on recherche le nom du groupe
 		//echo $idGroupeRecherche;exit;
@@ -139,33 +125,26 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 	}else{
 		$nomGroupeRecherche='Tous';
 	}
-
 	
 	if($idTagRecherche!=0){	//on recherche le nom du tag
-		$sql="SELECT libelleCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv
-		WHERE rowid =".$idTagRecherche." AND entity IN (0,".$conf->entity.")";
+		$sql="SELECT DISTINCT(c.libelleCompetence) FROM ".MAIN_DB_PREFIX."rh_competence_cv as c
+		WHERE c.entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
+		$k=1;
+		$TTagCompetence=array();
 		while($ATMdb->Get_line()) {
-			$nomTagRecherche=$ATMdb->Get_field('libelleCompetence');
+			$TTagCompetence[$k]=$ATMdb->Get_field('libelleCompetence');
+			$k++;
 		}
+		
+		$nomTagRecherche=$TTagCompetence[$idTagRecherche];
+		
 	}else{
 		$nomTagRecherche='Tous';
 	}
-
-	
-	if($idUserRecherche!=0){	//on recherche le nom de l'utilisateur
-		$sql="SELECT name,  firstname FROM ".MAIN_DB_PREFIX."user
-		WHERE rowid =".$idUserRecherche." AND entity IN (0,".$conf->entity.")";
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			$nomUserRecherche=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
-		}
-	}else{
-		$nomUserRecherche='Tous';
-	}
 	
 	//on va obtenir un tableau permettant d'avoir les stats des compétences suivant la recherche
-	$requeteRecherche=$tagCompetence->requeteStatistique($ATMdb, $idGroupeRecherche, $idTagRecherche, $idUserRecherche);
+	$requeteRecherche=$tagCompetence->requeteStatistique($ATMdb, $idGroupeRecherche, $idTagRecherche, $nomTagRecherche);
 
 	$taux_resultat_faible=$requeteRecherche['nbUserFaible']*100/$requeteRecherche['nbUser'];
 	$taux_resultat_moyen=$requeteRecherche['nbUserMoyen']*100/$requeteRecherche['nbUser'];
@@ -186,7 +165,6 @@ function _ficheResult(&$ATMdb, $tagCompetence,  $mode) {
 				,'idUserRecherche'=>$idUserRecherche
 				,'nomTagRecherche'=>$nomTagRecherche
 				,'nomGroupeRecherche'=>$nomGroupeRecherche
-				,'nomUserRecherche'=>$nomUserRecherche
 			)
 			,'resultat'=>array(
 				'total'=>$requeteRecherche['nbUser']

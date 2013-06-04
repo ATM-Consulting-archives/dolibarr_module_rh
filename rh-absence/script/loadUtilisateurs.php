@@ -20,7 +20,7 @@ if(isset($_REQUEST['groupe'])) {
 		
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$TUser[$ATMdb->Get_field('rowid')] = html_entity_decode(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
+			$TUser[$ATMdb->Get_field('rowid')] = strtoupper(html_entity_decode(htmlentities($ATMdb->Get_field('name')), ENT_COMPAT , 'ISO8859-1')).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
 		}
 		
 		echo json_encode($TUser);

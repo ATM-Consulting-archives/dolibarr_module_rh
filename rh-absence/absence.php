@@ -213,7 +213,7 @@ function _liste(&$ATMdb, &$absence) {
 			,"login"=>true
 		)
 		,'eval'=>array(
-			'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			'name'=>'strtoupper(htmlentities("@val@", ENT_COMPAT , "ISO8859-1"))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		,'orderBy'=>$TOrder
@@ -397,7 +397,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				,"name"=>true
 			)
 			,'eval'=>array(
-				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+				'name'=>'strtoupper(htmlentities("@val@", ENT_COMPAT , "ISO8859-1"))'
 				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 			)
 			
@@ -501,7 +501,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	//création du tableau des utilisateurs liés au groupe du valideur, pour créer une absence, pointage...
 	$TUser = array();
 	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
-		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity IN (0,".$conf->entity.")";
+		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 	}else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
 		$sqlReqUser=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
@@ -510,7 +510,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			AND v.type='Conges'
 			AND s.rowid=u.fk_user
 			AND v.fk_usergroup=u.fk_usergroup
-			AND v.entity IN (0,".$conf->entity.")";
+			";
 			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
 	}else $droitsCreation=2; //on n'a pas les droits de création
@@ -518,7 +518,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$sqlReqUser.=" ORDER BY name";
 		$ATMdb->Execute($sqlReqUser);
 		while($ATMdb->Get_line()) {
-			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$TUser[$ATMdb->Get_field('rowid')]=strtoupper(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1'))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 	}
 	
