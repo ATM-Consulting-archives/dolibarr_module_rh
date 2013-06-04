@@ -6,6 +6,7 @@
 		 	<br> 
 					Groupe  [absence.TGroupe;strconv=no;protect=no]
 		            Utilisateur    [absence.TUser;strconv=no;protect=no]
+		            Type    [absence.TTypeAbsence;strconv=no;protect=no]
 	
 		                [absence.btValider;strconv=no;protect=no] 
 		    <br>
@@ -36,7 +37,7 @@
         $(document).ready(function() {     
             var view="month";          
            
-            var DATA_FEED_URL = "absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]"
+            var DATA_FEED_URL = "absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]&typeAbsence=[absence.typeAbsence;strconv=no;protect=no]"
             var op = {
                 view: view,
                 theme:3,

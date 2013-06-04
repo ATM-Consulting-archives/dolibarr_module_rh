@@ -501,7 +501,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	//création du tableau des utilisateurs liés au groupe du valideur, pour créer une absence, pointage...
 	$TUser = array();
 	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
-		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity IN (0,".$conf->entity.")";
+		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 	}else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
 		$sqlReqUser=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
@@ -510,7 +510,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			AND v.type='Conges'
 			AND s.rowid=u.fk_user
 			AND v.fk_usergroup=u.fk_usergroup
-			AND v.entity IN (0,".$conf->entity.")";
+			";
 			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
 	}else $droitsCreation=2; //on n'a pas les droits de création

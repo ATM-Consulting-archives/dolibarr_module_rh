@@ -179,8 +179,7 @@ class TRH_Absence extends TObjetStd {
 		
 		//combo box pour le type d'absence admin
 		$this->TTypeAbsenceAdmin=array();
-		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-		WHERE entity IN (0,".$conf->entity.")";
+		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence`";
 		$ATMdb->Execute($sql);
 
 		while($ATMdb->Get_line()) {
@@ -213,11 +212,11 @@ class TRH_Absence extends TObjetStd {
 		$TUser=array();
 		$TUser[0] = 'Tous';	
 		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` 
-						WHERE entity IN (0,".$conf->entity.")";
+						ORDER BY name";
 		$ATMdb->Execute($sqlReqUser);
 
 		while($ATMdb->Get_line()) {
-			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+			$TUser[$ATMdb->Get_field('rowid')]=strtoupper(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1'))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 		return $TUser;
 	}
