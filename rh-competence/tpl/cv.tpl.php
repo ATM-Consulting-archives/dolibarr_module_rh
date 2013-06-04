@@ -1,61 +1,66 @@
 
-<div class="fiche">
-		<div>
-				
-			[cv.titre;strconv=no;protect=no]
 
-			<table class="border" style="width:100%">			
-				<tr>
-					<td>Date début</td>
-					<td>Date fin</td>
-					<td>Libellé Expérience</td>
-					<td>Description </td>
-					<td>Lieu Expérience</td>
-				</tr>
-				<tr>
-					<td>[cv.date_debut;block=tr;strconv=no;protect=no]</td>
-					<td>[cv.date_fin;strconv=no;protect=no]</td>
-					<td>[cv.libelleExperience;strconv=no;protect=no]</td>
-					<td>[cv.descriptionExperience;strconv=no;protect=no]</td>
-					<td>[cv.lieuExperience;strconv=no;protect=no]</td>
-				</tr>
-			</table>
+	<div>
 			
-		</div>
+		[cv.titre;strconv=no;protect=no]
 
-</div>
+		<table class="border" style="width:100%">			
+			<tr>
+				<td>Date début</td>
+				<td>[cv.date_debut;block=tr;strconv=no;protect=no]</td>
+			<tr/>
+			<tr>
+				<td>Date fin</td>
+				<td>[cv.date_fin;strconv=no;protect=no]</td>
+			</tr>
+			<tr>
+				<td>Libellé Expérience</td>
+				<td>[cv.libelleExperience;strconv=no;protect=no]</td>
+			</tr>
+			<tr>
+				<td>Description </td>
+				<td>[cv.descriptionExperience;strconv=no;protect=no]</td>
+			</tr>
+			<tr>
+				<td>Lieu Expérience</td>
+				<td>[cv.lieuExperience;strconv=no;protect=no]</td>
+			</tr>
+		</table>
+		
+	</div>
 
 
-<br>
+	<br><br>
 
-<table class="border" style="width:40%">
-[newCompetence.hidden;strconv=no;protect=no]
-[newCompetence.fk_user_lignecv;strconv=no;protect=no]
-<tr>
-	<td><b>Compétences acquises</b></td>
-	<td style="text-align:center;"><b>Niveau acquis</b></td>
+	<table class="border" style="width:60%">
+	[newCompetence.hidden;strconv=no;protect=no]
+	[newCompetence.fk_user_lignecv;strconv=no;protect=no]
+	<tr>
+		<td>Compétences acquises</td>
+		<td style="text-align:center;">Niveau acquis</td>
+		[onshow;block=begin;when [view.mode]=='edit']
+			<td style="text-align:center;">Action</td>
+		[onshow;block=end]
+	<tr>
+		<td style="text-align:center;">[TCompetence.libelleCompetence;block=tr;strconv=no;protect=no]</td>
+		<td style="text-align:center;">[TCompetence.niveauCompetence;block=tr;strconv=no;protect=no]</td>
+		[onshow;block=begin;when [view.mode]=='edit']
+			<td style="text-align:center;">
+				<a href="?id=[cv.id;strconv=no;protect=no]&idForm=[TCompetence.id;block=tr;strconv=no;protect=no]&action=deleteCompetenceCV"><img title="Supprimer ce tag" src="./img/delete.png"></a>
+			</td>
+		[onshow;block=end]
+		
+	</tr>
 	[onshow;block=begin;when [view.mode]=='edit']
-		<td style="text-align:center;"><b>Action</b></td>
+	<tr>
+		<td style="text-align:center;">[newCompetence.libelleCompetence;strconv=no;protect=no]</td>
+		<td style="text-align:center;">[newCompetence.niveauCompetence;strconv=no;protect=no]</td>
+		<td style="text-align:center;"><input type="submit" value="Ajouter" name="newCompetenceCV" class="button"></td>
+	</tr>
 	[onshow;block=end]
-<tr>
-	<td>[TCompetence.libelleCompetence;block=tr;strconv=no;protect=no]</td>
-	<td>[TCompetence.niveauCompetence;block=tr;strconv=no;protect=no]</td>
-	[onshow;block=begin;when [view.mode]=='edit']
-		<td style="text-align:center;">
-			<a href="?id=[cv.id;strconv=no;protect=no]&idForm=[TCompetence.id;block=tr;strconv=no;protect=no]&action=deleteCompetenceCV"><img title="Supprimer ce tag" src="./img/delete.png"></a>
-		</td>
-	[onshow;block=end]
-	
-</tr>
-[onshow;block=begin;when [view.mode]=='edit']
-<tr>
-	<td>[newCompetence.libelleCompetence;strconv=no;protect=no]</td>
-	<td>[newCompetence.niveauCompetence;strconv=no;protect=no]</td>
-	<td><input type="submit" value="Ajouter" name="newCompetenceCV" class="button"></td>
-</tr>
-[onshow;block=end]
-</table>
-<br/><br/>
+	</table>
+	<br/><br/>
+
 
 [onshow;block=begin;when [view.mode]=='view']
 <table class="border" style="width:100%;">
