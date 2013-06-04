@@ -105,10 +105,34 @@ $cpt = 0;
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Unité plafond service', 'totaluniteplafondservice', 'chaine',1, $cpt, '', 1, $tempType->rowid);$cpt++;
 	
+	
 	$tempEven = new TRH_Type_Evenement;
-	$tempEven->chargement($ATMdb, 'Péage', 'page', '', 'faux', $tempType->rowid);
+	$tempEven->chargement($ATMdb, 'Péage TVA',  '', 'faux', $tempType->rowid);
 	$tempEven = new TRH_Type_Evenement;
-	$tempEven->chargement($ATMdb, 'Plein d\'essence', 'pleindessence', '', 'faux', $tempType->rowid);
+	$tempEven->chargement($ATMdb, 'FRAIS DE SERVICE PEAGE', '', 'faux', $tempType->rowid);
+	$tempEven = new TRH_Type_Evenement;
+	$tempEven->chargement($ATMdb, 'Gazole Premier', '', 'faux', $tempType->rowid);
+	$tempEven = new TRH_Type_Evenement;
+	$tempEven->chargement($ATMdb, 'Gazole Excellium', '', 'faux', $tempType->rowid);
+	$tempEven = new TRH_Type_Evenement;
+	$tempEven->chargement($ATMdb, 'GESTION +', '', 'faux', $tempType->rowid);
+	$tempEven = new TRH_Type_Evenement;
+	$tempEven->chargement($ATMdb, 'FRAIS DE SERVICE PEAGE PARKING', '', 'faux', $tempType->rowid);
+	$tempEven = new TRH_Type_Evenement;
+	$tempEven->chargement($ATMdb, 'FRAIS DE SERVICE PEAGE', '', 'faux', $tempType->rowid);
+	$tempEven = new TRH_Type_Evenement;
+	$tempEven->chargement($ATMdb, 'Carte à puce offline', '', 'faux', $tempType->rowid);
+	$tempEven = new TRH_Type_Evenement;
+	$tempEven->chargement($ATMdb, 'Parking', '', 'faux', $tempType->rowid);
+	$tempEven = new TRH_Type_Evenement;
+	$tempEven->chargement($ATMdb, 'SECU 24/24', '', 'faux', $tempType->rowid);
+	
+	
+
+
+	
+	
+	
 
 //BADGE AREA
 	$tempType = new TRH_Ressource_type;

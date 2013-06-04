@@ -144,34 +144,24 @@ class TRH_competence_cv extends TObjetStd {
 	}
 
 	//va permettre la création de la requête pour les recherches stats et effectuer la recherche et obtenir les pourcentages désirés
-	function requeteStatistique(&$ATMdb, $idGroupeRecherche, $idTagRecherche, $idUserRecherche){	
-			if($idTagRecherche!=0&&$idGroupeRecherche==0&&$idUserRecherche==0){ //on recherche uniquement une compétence
-				$sql=$this->rechercheCompetenceStat($ATMdb,$idTagRecherche);
+	function requeteStatistique(&$ATMdb, $idGroupeRecherche, $idTagRecherche, $nomTagRecherche){	
+			if($idTagRecherche!=0&&$idGroupeRecherche==0){ //on recherche uniquement une compétence
+				$sql=$this->rechercheCompetenceStat($ATMdb,$nomTagRecherche);
 			}
-			else if($idTagRecherche!=0&&$idGroupeRecherche!=0&&$idUserRecherche==0){ //on recherche une compétence et un groupe
-				$sql=$this->rechercheCompetenceGroupeStat($ATMdb,$idTagRecherche, $idGroupeRecherche);
+			else if($idTagRecherche!=0&&$idGroupeRecherche!=0){ //on recherche une compétence et un groupe
+				$sql=$this->rechercheCompetenceGroupeStat($ATMdb,$nomTagRecherche, $idGroupeRecherche);
 			}
-			else if($idUserRecherche!=0){ //on recherche une compétence et un utilisateur
-				$sql=$this->rechercheCompetenceUserStat($ATMdb,$idTagRecherche, $idUserRecherche);
-			}
-			else if($idTagRecherche==0&&$idGroupeRecherche==0&&$idUserRecherche==0){ //on recherche toutes les stats dans l'entreprise
+			else if($idTagRecherche==0&&$idGroupeRecherche==0){ //on recherche toutes les stats dans l'entreprise
 				$sql=$this->rechercheStatComplete($ATMdb);
 			}
 			return $sql;
 	}
 	
 	//requete avec un tag précis recherché
-	function rechercheCompetenceStat(&$ATMdb, $idTagRecherche){ 
+	function rechercheCompetenceStat(&$ATMdb, $nomTagRecherche){ 
 			global $conf;
 			
 			$TabStat=array();
-			//on recherche le nom de la compétence désirée
-			$sql="SELECT libelleCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv
-			WHERE rowid =".$idTagRecherche." AND entity=".$conf->entity;
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$nomTagRecherche=$ATMdb->Get_field('libelleCompetence');
-			}
 			
 			$nomTagRecherche="%".strtolower($nomTagRecherche)."%";
 			
@@ -182,7 +172,6 @@ class TRH_competence_cv extends TObjetStd {
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUser']=$ATMdb->Get_field('NombreUser');
 			}
-			
 			
 			//on teste pour chaque difficulté, la proportion des collaborateurs concernés
 			//faible
@@ -225,17 +214,10 @@ class TRH_competence_cv extends TObjetStd {
 
 
 	//requete avec un tag précis recherché et groupe précis
-	function rechercheCompetenceGroupeStat(&$ATMdb, $idTagRecherche, $idGroupeRecherche){ 
+	function rechercheCompetenceGroupeStat(&$ATMdb, $nomTagRecherche, $idGroupeRecherche){ 
 			global $conf;
 			
 			$TabStat=array();
-			//on recherche le nom de la compétence désirée
-			$sql="SELECT libelleCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv
-			WHERE rowid =".$idTagRecherche." AND entity=".$conf->entity;
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$nomTagRecherche=$ATMdb->Get_field('libelleCompetence');
-			}
 			
 			$nomTagRecherche="%".strtolower($nomTagRecherche)."%";
 			
@@ -247,14 +229,13 @@ class TRH_competence_cv extends TObjetStd {
 				$TabStat['nbUser']=$ATMdb->Get_field('NombreUser');
 			}
 			
-			
 			//on teste pour chaque difficulté, la proportion des collaborateurs concernés
 			//faible
 			$sql="SELECT COUNT(c.rowid) as 'NombreUserFaible' FROM ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."usergroup_user as g
 			WHERE g.fk_usergroup=".$idGroupeRecherche." 
 			AND g.fk_user=c.fk_user
 			AND c.libelleCompetence LIKE '".$nomTagRecherche."' 
-			AND  c.niveauCompetence LIKE 'faible' AND c.entity=".$conf->entity;
+			AND c.niveauCompetence LIKE 'faible' AND c.entity=".$conf->entity;
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUserFaible']=$ATMdb->Get_field('NombreUserFaible');
@@ -266,7 +247,7 @@ class TRH_competence_cv extends TObjetStd {
 			WHERE g.fk_usergroup=".$idGroupeRecherche." 
 			AND g.fk_user=c.fk_user
 			AND c.libelleCompetence LIKE '".$nomTagRecherche."' 
-			AND  c.niveauCompetence LIKE 'moyen' AND c.entity=".$conf->entity;
+			AND c.niveauCompetence LIKE 'moyen' AND c.entity=".$conf->entity;
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUserMoyen']=$ATMdb->Get_field('NombreUserMoyen');
@@ -278,7 +259,7 @@ class TRH_competence_cv extends TObjetStd {
 			WHERE g.fk_usergroup=".$idGroupeRecherche." 
 			AND g.fk_user=c.fk_user
 			AND c.libelleCompetence LIKE '".$nomTagRecherche."' 
-			AND  c.niveauCompetence LIKE 'bon' AND c.entity=".$conf->entity;
+			AND c.niveauCompetence LIKE 'bon' AND c.entity=".$conf->entity;
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUserBon']=$ATMdb->Get_field('NombreUserBon');
@@ -290,74 +271,7 @@ class TRH_competence_cv extends TObjetStd {
 			WHERE g.fk_usergroup=".$idGroupeRecherche." 
 			AND g.fk_user=c.fk_user
 			AND c.libelleCompetence LIKE '".$nomTagRecherche."' 
-			AND  c.niveauCompetence LIKE 'excellent' AND c.entity=".$conf->entity;
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$TabStat['nbUserExcellent']=$ATMdb->Get_field('NombreUserExcellent');
-			}
-
-			return $TabStat;
-	}
-
-	//requete avec un tag précis recherché et un user précis
-	function rechercheCompetenceUserStat(&$ATMdb, $idTagRecherche, $idUserRecherche){ 
-			global $conf;
-			
-			$TabStat=array();
-			//on recherche le nom de la compétence désirée
-			$sql="SELECT libelleCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv
-			WHERE rowid =".$idTagRecherche." AND entity=".$conf->entity;
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$nomTagRecherche=$ATMdb->Get_field('libelleCompetence');
-			}
-			
-			$nomTagRecherche="%".strtolower($nomTagRecherche)."%";
-			
-			//on calcule le nombre d'utilisateurs total en vue des stats
-			$sql="SELECT COUNT(rowid) as 'NombreUser' FROM ".MAIN_DB_PREFIX."user
-			WHERE entity=".$conf->entity;
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$TabStat['nbUser']=$ATMdb->Get_field('NombreUser');
-			}
-			
-			
-			//on teste pour chaque difficulté, la proportion des collaborateurs concernés
-			//faible
-			$sql="SELECT COUNT(rowid) as 'NombreUserFaible' FROM ".MAIN_DB_PREFIX."rh_competence_cv
-			WHERE fk_user=".$idUserRecherche." AND libelleCompetence LIKE '".$nomTagRecherche."' 
-			AND  niveauCompetence LIKE 'faible' AND entity=".$conf->entity;
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$TabStat['nbUserFaible']=$ATMdb->Get_field('NombreUserFaible');
-			}
-			
-			//on teste pour chaque difficulté, la proportion des collaborateurs concernés
-			//moyen
-			$sql="SELECT COUNT(rowid) as 'NombreUserMoyen' FROM ".MAIN_DB_PREFIX."rh_competence_cv
-			WHERE fk_user=".$idUserRecherche." AND libelleCompetence LIKE '".$nomTagRecherche."' 
-			AND  niveauCompetence LIKE 'moyen' AND entity=".$conf->entity;
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$TabStat['nbUserMoyen']=$ATMdb->Get_field('NombreUserMoyen');
-			}
-			
-			//on teste pour chaque difficulté, la proportion des collaborateurs concernés
-			//bon
-			$sql="SELECT COUNT(rowid) as 'NombreUserBon' FROM ".MAIN_DB_PREFIX."rh_competence_cv
-			WHERE fk_user=".$idUserRecherche." AND libelleCompetence LIKE '".$nomTagRecherche."' 
-			AND  niveauCompetence LIKE 'bon' AND entity=".$conf->entity;
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$TabStat['nbUserBon']=$ATMdb->Get_field('NombreUserBon');
-			}
-			
-			//on teste pour chaque difficulté, la proportion des collaborateurs concernés
-			//excellent
-			$sql="SELECT COUNT(rowid) as 'NombreUserExcellent' FROM ".MAIN_DB_PREFIX."rh_competence_cv
-			WHERE fk_user=".$idUserRecherche." AND libelleCompetence LIKE '".$nomTagRecherche."' 
-			AND  niveauCompetence LIKE 'excellent' AND entity=".$conf->entity;
+			AND c.niveauCompetence LIKE 'excellent' AND c.entity=".$conf->entity;
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUserExcellent']=$ATMdb->Get_field('NombreUserExcellent');

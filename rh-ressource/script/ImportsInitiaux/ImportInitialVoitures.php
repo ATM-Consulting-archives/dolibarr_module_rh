@@ -154,9 +154,9 @@ echo $cptContrat.' contrats creees.<br>';
 
 
 //----------------------------------------------------------------------------------------------------------------
-//SECOND FICHER PARCOURS
+//SECOND FICHER VOITURES NON PARCOURS
 //----------------------------------------------------------------------------------------------------------------
-$nomFichier = 'Etat Parc autre parcours.csv';
+/*$nomFichier = 'Etat Parc autre parcours.csv';
 echo '<br><br>Traitement du fichier '.$nomFichier.' : <br>';
 
 $TIdContrat = chargeContrat($ATMdb, $idVoiture); //numContrat=>rowid
@@ -255,7 +255,7 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 echo $cpt.' voiture creees.<br>';
 echo $cptContrat.' contrats creees.<br>';
 
-
+*/
 
 
 

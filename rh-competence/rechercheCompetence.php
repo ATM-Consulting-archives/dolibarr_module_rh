@@ -111,7 +111,7 @@ function _fiche(&$ATMdb,$tagCompetence, $mode) {
 	llxHeader('','Recherche Profil');
 	print dol_get_fiche_head(competencePrepareHead($tagCompetence, '')  , '', 'Compétences');
 	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','GET');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('fk_user', $user->id);
 	echo $form->hidden('entity', $conf->entity);
