@@ -68,7 +68,7 @@ class TRH_Evenement  extends TObjetStd {
 		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.") ORDER BY name, firstname";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1'); 
+			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname')." ".strtoupper($ATMdb->Get_field('name')), ENT_COMPAT , 'ISO8859-1'); 
 			}
 	}
 
