@@ -124,14 +124,14 @@ class TRH_competence_cv extends TObjetStd {
 				$sql.="SELECT c.fk_user_formation as 'ID' , u.rowid as 'fkuser', c.rowid , c.date_cre as 'DateCre', 
 			 	CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence, c.fk_user, COUNT(*) as 'Niveau'
 				FROM   ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."user as u 
-				WHERE  c.entity=".$conf->entity. " AND c.fk_user=u.rowid AND( ";
+				WHERE c.fk_user=u.rowid AND( ";
 		 		$sql.=$this->separerEt($tagRecherche). ") GROUP BY c.fk_user ";
 		 		
 		 	}else{
 		 		$sql.=" UNION SELECT c.fk_user_formation as 'ID' , u.rowid as 'fkuser', c.rowid , c.date_cre as 'DateCre', 
 			 	CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence, c.fk_user, COUNT(*) as 'Niveau'
 				FROM   ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."user as u 
-				WHERE  c.entity=".$conf->entity. " AND c.fk_user=u.rowid AND( ";
+				WHERE  c.fk_user=u.rowid AND( ";
 		 		$sql.=$this->separerEt($tagRecherche). ") GROUP BY c.fk_user ";
 		 	}
 			$k++;
@@ -220,8 +220,10 @@ class TRH_competence_cv extends TObjetStd {
 			
 			$nomTagRecherche="%".strtolower($nomTagRecherche)."%";
 			
-			//on calcule le nombre d'utilisateurs total en vue des stats
-			$sql="SELECT COUNT(rowid) as 'NombreUser' FROM ".MAIN_DB_PREFIX."user";
+			//on calcule le nombre d'utilisateurs total du groupe en vue des stats
+			$sql="SELECT COUNT(u.rowid) as 'NombreUser' FROM ".MAIN_DB_PREFIX."user as u
+				LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (g.fk_user = u.rowid)
+				WHERE g.fk_usergroup = ".$idGroupeRecherche;
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUser']=$ATMdb->Get_field('NombreUser');
