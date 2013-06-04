@@ -263,7 +263,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 		)
 		,'translate'=>array(
 		)
-		,'hide'=>array('DateCre', 'fk_user')
+		,'hide'=>array('DateCre', 'fk_user', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
 			'titre'=>'Visualisation de votre CV'
@@ -330,7 +330,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 		)
 		,'translate'=>array(
 		)
-		,'hide'=>array('DateCre','fk_user', 'commentaireFormation')
+		,'hide'=>array('DateCre','fk_user', 'commentaireFormation', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date', 'date_formationEcheance'=>'date')
 		,'liste'=>array(
 			'titre'=>'Liste de vos formations effectuées'
