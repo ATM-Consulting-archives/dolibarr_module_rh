@@ -166,8 +166,7 @@ class TRH_competence_cv extends TObjetStd {
 			$nomTagRecherche="%".strtolower($nomTagRecherche)."%";
 			
 			//on calcule le nombre d'utilisateurs total en vue des stats
-			$sql="SELECT COUNT(rowid) as 'NombreUser' FROM ".MAIN_DB_PREFIX."user
-			WHERE entity=".$conf->entity;
+			$sql="SELECT COUNT(rowid) as 'NombreUser' FROM ".MAIN_DB_PREFIX."user";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUser']=$ATMdb->Get_field('NombreUser');
@@ -176,7 +175,7 @@ class TRH_competence_cv extends TObjetStd {
 			//on teste pour chaque difficulté, la proportion des collaborateurs concernés
 			//faible
 			$sql="SELECT COUNT(rowid) as 'NombreUserFaible' FROM ".MAIN_DB_PREFIX."rh_competence_cv
-			WHERE libelleCompetence LIKE '".$nomTagRecherche."' AND  niveauCompetence LIKE 'faible' AND entity=".$conf->entity;
+			WHERE libelleCompetence LIKE '".$nomTagRecherche."' AND  niveauCompetence LIKE 'faible'";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUserFaible']=$ATMdb->Get_field('NombreUserFaible');
@@ -185,7 +184,7 @@ class TRH_competence_cv extends TObjetStd {
 			//on teste pour chaque difficulté, la proportion des collaborateurs concernés
 			//moyen
 			$sql="SELECT COUNT(rowid) as 'NombreUserMoyen' FROM ".MAIN_DB_PREFIX."rh_competence_cv
-			WHERE libelleCompetence LIKE '".$nomTagRecherche."' AND  niveauCompetence LIKE 'moyen' AND entity=".$conf->entity;
+			WHERE libelleCompetence LIKE '".$nomTagRecherche."' AND  niveauCompetence LIKE 'moyen'";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUserMoyen']=$ATMdb->Get_field('NombreUserMoyen');
@@ -194,7 +193,7 @@ class TRH_competence_cv extends TObjetStd {
 			//on teste pour chaque difficulté, la proportion des collaborateurs concernés
 			//bon
 			$sql="SELECT COUNT(rowid) as 'NombreUserBon' FROM ".MAIN_DB_PREFIX."rh_competence_cv
-			WHERE libelleCompetence LIKE '".$nomTagRecherche."' AND  niveauCompetence LIKE 'bon' AND entity=".$conf->entity;
+			WHERE libelleCompetence LIKE '".$nomTagRecherche."' AND  niveauCompetence LIKE 'bon'";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUserBon']=$ATMdb->Get_field('NombreUserBon');
@@ -203,7 +202,7 @@ class TRH_competence_cv extends TObjetStd {
 			//on teste pour chaque difficulté, la proportion des collaborateurs concernés
 			//excellent
 			$sql="SELECT COUNT(rowid) as 'NombreUserExcellent' FROM ".MAIN_DB_PREFIX."rh_competence_cv
-			WHERE libelleCompetence LIKE '".$nomTagRecherche."' AND  niveauCompetence LIKE 'excellent' AND entity=".$conf->entity;
+			WHERE libelleCompetence LIKE '".$nomTagRecherche."' AND  niveauCompetence LIKE 'excellent'";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUserExcellent']=$ATMdb->Get_field('NombreUserExcellent');
@@ -235,7 +234,7 @@ class TRH_competence_cv extends TObjetStd {
 			WHERE g.fk_usergroup=".$idGroupeRecherche." 
 			AND g.fk_user=c.fk_user
 			AND c.libelleCompetence LIKE '".$nomTagRecherche."' 
-			AND c.niveauCompetence LIKE 'faible' AND c.entity=".$conf->entity;
+			AND c.niveauCompetence LIKE 'faible'";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUserFaible']=$ATMdb->Get_field('NombreUserFaible');
@@ -247,7 +246,7 @@ class TRH_competence_cv extends TObjetStd {
 			WHERE g.fk_usergroup=".$idGroupeRecherche." 
 			AND g.fk_user=c.fk_user
 			AND c.libelleCompetence LIKE '".$nomTagRecherche."' 
-			AND c.niveauCompetence LIKE 'moyen' AND c.entity=".$conf->entity;
+			AND c.niveauCompetence LIKE 'moyen'";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUserMoyen']=$ATMdb->Get_field('NombreUserMoyen');
@@ -259,7 +258,7 @@ class TRH_competence_cv extends TObjetStd {
 			WHERE g.fk_usergroup=".$idGroupeRecherche." 
 			AND g.fk_user=c.fk_user
 			AND c.libelleCompetence LIKE '".$nomTagRecherche."' 
-			AND c.niveauCompetence LIKE 'bon' AND c.entity=".$conf->entity;
+			AND c.niveauCompetence LIKE 'bon'";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUserBon']=$ATMdb->Get_field('NombreUserBon');
@@ -271,7 +270,7 @@ class TRH_competence_cv extends TObjetStd {
 			WHERE g.fk_usergroup=".$idGroupeRecherche." 
 			AND g.fk_user=c.fk_user
 			AND c.libelleCompetence LIKE '".$nomTagRecherche."' 
-			AND c.niveauCompetence LIKE 'excellent' AND c.entity=".$conf->entity;
+			AND c.niveauCompetence LIKE 'excellent'";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TabStat['nbUserExcellent']=$ATMdb->Get_field('NombreUserExcellent');
@@ -288,8 +287,7 @@ class TRH_competence_cv extends TObjetStd {
 			
 			//on récupère toutes les compétences existantes, et on en sort des stats. 
 			
-			$sql="SELECT c.rowid, c.libelleCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv as c
-			WHERE c.entity=".$conf->entity;
+			$sql="SELECT c.rowid, c.libelleCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv as c";
 			$ATMdb->Execute($sql);
 			$TTagCompetence=array();
 			$TTagCompetence[0]='Tous';
@@ -303,7 +301,7 @@ class TRH_competence_cv extends TObjetStd {
 				//on teste pour chaque difficulté, la proportion des collaborateurs concernés
 				//faible
 				$sql="SELECT COUNT(rowid) as 'NombreUserFaible' FROM ".MAIN_DB_PREFIX."rh_competence_cv
-				WHERE libelleCompetence LIKE '".$tag."' AND  niveauCompetence LIKE 'faible' AND entity=".$conf->entity;
+				WHERE libelleCompetence LIKE '".$tag."' AND  niveauCompetence LIKE 'faible'";
 				$ATMdb->Execute($sql);
 				while($ATMdb->Get_line()) {
 					$TabStat[$k]['nbUserFaible']=$ATMdb->Get_field('NombreUserFaible');
@@ -312,7 +310,7 @@ class TRH_competence_cv extends TObjetStd {
 				//on teste pour chaque difficulté, la proportion des collaborateurs concernés
 				//moyen
 				$sql="SELECT COUNT(rowid) as 'NombreUserMoyen' FROM ".MAIN_DB_PREFIX."rh_competence_cv
-				WHERE libelleCompetence LIKE '".$tag."' AND  niveauCompetence LIKE 'moyen' AND entity=".$conf->entity;
+				WHERE libelleCompetence LIKE '".$tag."' AND  niveauCompetence LIKE 'moyen'";
 				$ATMdb->Execute($sql);
 				while($ATMdb->Get_line()) {
 					$TabStat[$k]['nbUserMoyen']=$ATMdb->Get_field('NombreUserMoyen');
@@ -321,7 +319,7 @@ class TRH_competence_cv extends TObjetStd {
 				//on teste pour chaque difficulté, la proportion des collaborateurs concernés
 				//bon
 				$sql="SELECT COUNT(rowid) as 'NombreUserBon' FROM ".MAIN_DB_PREFIX."rh_competence_cv
-				WHERE libelleCompetence LIKE '".$tag."' AND  niveauCompetence LIKE 'bon' AND entity=".$conf->entity;
+				WHERE libelleCompetence LIKE '".$tag."' AND  niveauCompetence LIKE 'bon'";
 				$ATMdb->Execute($sql);
 				while($ATMdb->Get_line()) {
 					$TabStat[$k]['nbUserBon']=$ATMdb->Get_field('NombreUserBon');
@@ -330,7 +328,7 @@ class TRH_competence_cv extends TObjetStd {
 				//on teste pour chaque difficulté, la proportion des collaborateurs concernés
 				//excellent
 				$sql="SELECT COUNT(rowid) as 'NombreUserExcellent' FROM ".MAIN_DB_PREFIX."rh_competence_cv
-				WHERE libelleCompetence LIKE '".$tag."' AND  niveauCompetence LIKE 'excellent' AND entity=".$conf->entity;
+				WHERE libelleCompetence LIKE '".$tag."' AND  niveauCompetence LIKE 'excellent'";
 				$ATMdb->Execute($sql);
 				while($ATMdb->Get_line()) {
 					$TabStat[$k]['nbUserExcellent']=$ATMdb->Get_field('NombreUserExcellent');
@@ -339,8 +337,7 @@ class TRH_competence_cv extends TObjetStd {
 			}
 				
 			//on calcule le nombre d'utilisateurs total en vue des stats
-			$sql="SELECT COUNT(rowid) as 'NombreUser' FROM ".MAIN_DB_PREFIX."user
-			WHERE entity=".$conf->entity;
+			$sql="SELECT COUNT(rowid) as 'NombreUser' FROM ".MAIN_DB_PREFIX."user";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()){
 				$TabStat[$k]['nbUser']=$ATMdb->Get_field('NombreUser');

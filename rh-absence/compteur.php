@@ -195,7 +195,7 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 			,'login'=>true
 		)
 		,'eval'=>array(
-			'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			'name'=>'strtoupper(htmlentities("@val@", ENT_COMPAT , "ISO8859-1"))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		,'orderBy'=>$TOrder
