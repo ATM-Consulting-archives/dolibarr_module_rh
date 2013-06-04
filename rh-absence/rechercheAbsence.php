@@ -250,7 +250,7 @@ function _listeResult(&$ATMdb, &$absence) {
 			,'firstname'=>true
 		)
 		,'eval'=>array(
-				'name'=>'strtoupper(htmlentities("@val@", ENT_COMPAT , "ISO8859-1"))'
+				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		,'orderBy'=>$TOrder
