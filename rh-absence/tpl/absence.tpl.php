@@ -44,15 +44,15 @@
 				</tr>
 				[onshow;block=begin;when [view.mode]!='edit']
 					<tr>
-						<td>Duree (en demi-journées)</td>
+						<td>Durée (en demi-journées)</td>
 						<td>[absenceCourante.duree;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
-						<td>Duree (en heures)</td>
+						<td>Durée (en heures)</td>
 						<td>[absenceCourante.dureeHeure;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
-						<td>Duree comptabilisée (en heures)</td>
+						<td>Durée comptabilisée (en heures)</td>
 						<td>[absenceCourante.dureeHeurePaie;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
@@ -81,8 +81,7 @@
 			</table>
 
    		 <br/>
-     	[absenceCourante.titreJourRestant;strconv=no;protect=no] 
-							
+     	[absenceCourante.titreJourRestant;strconv=no;protect=no] 			
             <table class="border" style="width:40%">
 				<tr>
 					<td>Congés payés</td>
@@ -96,15 +95,13 @@
 					<td>RTT non cumulés</td>
 					<td id='noncumule'>[rttCourant.nonCumuleReste;strconv=no;protect=no]</td>
 				</tr>
-
 			</table>
-
-			
-		<div class="tabsAction" >	
+	
 		[onshow;block=begin;when [absenceCourante.etat]!='Refusee']
 		[onshow;block=begin;when [absenceCourante.etat]!='Validee']
 			
 				[onshow;block=begin;when [view.mode]=='edit']
+					<br>
 					<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
 				[onshow;block=end]
 				
@@ -125,12 +122,11 @@
 		[onshow;block=begin;when [view.mode]!='edit']
 				[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
 						<span class="butActionDelete" id="action-delete"  onclick="if (confirm('Voulez-vous vraiment supprimer la demande d\'absence ?')){document.location.href='?action=delete&id=[absenceCourante.id]'};">Supprimer</span>
-						
 				[onshow;block=end]			
 		[onshow;block=end]
 		[onshow;block=end]
 		<div style="clear:both;"></div>
-	</div></div>
+	</div>
 	
 
 		
