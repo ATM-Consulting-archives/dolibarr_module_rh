@@ -69,7 +69,7 @@
 		$sql="SELECT rowid,name, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$user->id;
 		$ATMdb->Execute($sql);
 		if($ATMdb->Get_line()) {
-			$TabUser[$ATMdb->Get_field('rowid')]=strtoupper(html_entity_decode(htmlentities($ATMdb->Get_field('name')), ENT_COMPAT , 'ISO8859-1')).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
+			$TabUser[$ATMdb->Get_field('rowid')]=html_entity_decode(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
 		}
 		$sql="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u";
 	}else{
@@ -83,7 +83,7 @@
 	
 	
 	while($ATMdb->Get_line()) {
-		$TabUser[$ATMdb->Get_field('rowid')]=strtoupper(html_entity_decode(htmlentities($ATMdb->Get_field('name')), ENT_COMPAT , 'ISO8859-1')).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
+		$TabUser[$ATMdb->Get_field('rowid')]=html_entity_decode(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
 	}
 
 

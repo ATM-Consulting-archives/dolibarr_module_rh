@@ -216,7 +216,7 @@ class TRH_Absence extends TObjetStd {
 		$ATMdb->Execute($sqlReqUser);
 
 		while($ATMdb->Get_line()) {
-			$TUser[$ATMdb->Get_field('rowid')]=strtoupper(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1'))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 		return $TUser;
 	}
