@@ -7,15 +7,14 @@ $ATMdb=new TPDOdb;
 $method = $_GET["method"];
 switch ($method) {
     case "list":
-
-	       	$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser'], $_GET['idGroupe']);
+	       	$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser'], $_GET['idGroupe'], $_GET['typeAbsence']);
 
         break; 
 
 }
 echo json_encode($ret); 
 
-function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
+function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbsence='Tous'){
 
   global $conf,$user;
   $ret = array();
@@ -27,11 +26,16 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
 
   
   try{
+
 	if($user->rights->absence->myactions->voirToutesAbsences){		//si on a le droit de voir toutes les absences
+		
 		if($idUser==0&&$idGroupe==0){	//on affiche toutes les absences 
 	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u 
 	  		WHERE r.fk_user=u.rowid";
+	  		if($typeAbsence!='Tous'){
+	  			$sql1.=" AND r.type LIKE '".$typeAbsence."' ";
+	  		}
 	  		//" AND (r.date_debut <= '".php2MySqlTime($ed)."' AND r.date_fin >='". php2MySqlTime($sd)."') ";  
 	      
 	  	}
@@ -39,13 +43,18 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
 	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
 	  		WHERE r.fk_user=u.rowid AND u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupe; 
+			if($typeAbsence!='Tous'){
+	  			$sql1.=" AND r.type LIKE '".$typeAbsence."' ";
+	  		}
 	 		//" AND (r.date_debut <= '".php2MySqlTime($ed)."' AND r.date_fin >='". php2MySqlTime($sd)."')";
-	       
 	  	}
 	  	else if($idGroupe==0){		//on recherche un utilisateur
 	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
 	  		WHERE r.fk_user=u.rowid AND u.rowid=g.fk_user AND u.rowid=".$idUser;
+			if($typeAbsence!='Tous'){
+	  			$sql1.=" AND r.type LIKE '".$typeAbsence."' ";
+	  		}
 			//" AND (date_debut <= '".php2MySqlTime($ed)."' AND date_fin >='". php2MySqlTime($sd)."' ) "
 	      
 	  	}
@@ -53,6 +62,9 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
 	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u
 	  		WHERE r.fk_user=u.rowid AND u.rowid=".$idUser;
+			if($typeAbsence!='Tous'){
+	  			$sql1.=" AND r.type LIKE '".$typeAbsence."' ";
+	  		}
 	  		//" AND (date_debut <= '".php2MySqlTime($ed)."' AND date_fin >='". php2MySqlTime($sd)."' )";
 	     
 	  	}
@@ -62,6 +74,9 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
 		$sql1="SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u
 	  		WHERE r.fk_user=u.rowid AND u.rowid=".$user->id;
+			if($typeAbsence!='Tous'){
+	  			$sql1.=" AND r.type LIKE '".$typeAbsence."' ";
+	  		}
 			//" AND (date_debut <= '".php2MySqlTime($ed)."' AND date_fin >='". php2MySqlTime($sd)."' )";
 	      
 	}
@@ -189,7 +204,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0){
   return $ret;
 }
 
-function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idGroupe){
+function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idGroupe, $typeAbsence){
   	
   $phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
@@ -213,6 +228,6 @@ function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idGroupe){
   //echo $st . "--" . $et;
   /*$ret=array();
   $ret=listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idGroupe);*/
-  return listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idGroupe);
+  return listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idGroupe, $typeAbsence);
 }
 

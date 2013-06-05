@@ -51,6 +51,7 @@ function _liste(&$ATMdb,  $tagCompetence, $recherche ) {
 	
 	$sql=$tagCompetence->requeteRecherche($ATMdb, $recherche);
 
+
 	$TOrder = array('Niveau'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -65,12 +66,11 @@ function _liste(&$ATMdb,  $tagCompetence, $recherche ) {
 		)
 		,'link'=>array(
 			'name'=>'<a href=./experience.php?fk_user=@fkuser@>@val@</a>'
-			,'firstname'=>'<a href="?id=@ID@&action=view">@val@</a>'
-			,'libelleCompetence'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			,'firstname'=>'<a href=./experience.php?fk_user=@fkuser@>@val@</a>'
 		)
 		,'translate'=>array(
 		)
-		,'hide'=>array('DateCre', 'fk_user', 'rowid', 'fkuser')
+		,'hide'=>array('DateCre', 'fk_user', 'rowid', 'fkuser', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
 			'titre'=>'RESULTAT DE VOTRE RECHERCHE'
@@ -164,7 +164,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 	$fuser->getrights();
 	
 	$sql="SELECT c.rowid, c.libelleCompetence, c.niveauCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."rh_formation_cv as f 
-	WHERE c.fk_user_formation=".$formation->getID(). " AND c.fk_user_formation=f.rowid AND c.fk_user=".$formation->fk_user." AND c.entity=".$conf->entity;
+	WHERE c.fk_user_formation=".$formation->getID(). " AND c.fk_user_formation=f.rowid AND c.fk_user=".$formation->fk_user;
 
 	$k=0;
 	$ATMdb->Execute($sql);

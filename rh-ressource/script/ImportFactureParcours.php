@@ -2,10 +2,10 @@
 
 /**
  * Importation de la facture Total
- * On créé un évenement par ligne de ce fichier
- * et une évenement de type facture
+ * On créé deux évenements par ligne de ce fichier : un loyer et un gestion+entretien
+ * 
  */
-/*
+
 require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');
@@ -14,10 +14,14 @@ require('../class/contrat.class.php');
 
 global $conf;
 
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 
 // relever le point de départ
 $timestart=microtime(true);
+
+$idVoiture = getIdType('voiture');
+$idParcours = getIdParcours($ATMdb);
+if ($idParcours == 0){echo 'Aucun fournisseur du nom de "Parcours" ! ';exit;}
 
 $TUser = array();
 $sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
@@ -34,12 +38,19 @@ while($ATMdb->Get_line()) {
 }
 
 
-		
-$idVoiture = getIdTypeVoiture($ATMdb);
-$idParcours = getIdParcours($ATMdb);
-if ($idParcours == 0){echo 'Aucun fournisseur du nom de "Parcours" ! ';exit;}
+//chargement d'une liste :  plaque => typeVehicule (vu ou vp) 
+$TVuVp = array();
+$sql="SELECT rowid,  numId, typeVehicule FROM ".MAIN_DB_PREFIX."rh_ressource 
+		WHERE entity=".$conf->entity." 
+		AND fk_rh_ressource_type=".$idVoiture;
+$ATMdb->Execute($sql);
+while($row = $ATMdb->Get_line()) {
+	$TVuVp[strtolower($row->numId)] = $row->typeVehicule;
+}
 
-if (empty($nomFichier)){$nomFichier = "./fichierImports/CPRO INFORMATIQUE PREL 05 04 13.csv";}
+
+
+if (empty($nomFichier)){$nomFichier = "./fichierImports/CPRO - PRELVT DU 05 04 13.csv";}
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 $cptContrat = 0;
 $cptFacture = 0;
@@ -53,29 +64,30 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		//echo 'Traitement de la ligne '.$numLigne.'...';
 		$infos = explode(';', $data[0]);
 		if ($numLigne >=1 ){
-			
-			
 			//print_r($infos);
 			
-			
-			
 			$plaque = str_replace('-','',$infos[8]);
-			if (! array_key_exists ( $plaque , $TRessource )){
-				if ($plaque != '')
-					{//echo 'Pas de voiture correspondante : '.$plaque.'<br>';
-					$cptNoVoiture ++;
-					}
+			$plaque = str_replace(' ','',$plaque);
+			$date = $infos[3];
+			if (empty($plaque)){
+				null;
+			}
+			else if (empty ($TRessource[$plaque]) ){
+				//echo 'Pas de voiture correspondante : '.$plaque.'<br>';
+				$cptNoVoiture ++;
+			}
+			else if (ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], $date) != 0){
+				
 			}
 			else {
 				$numFacture = $infos[2];
-				$numContrat = $infos[4];
-				if ( !empty($numContrat) && !empty($numFacture)){
-					//FACTURE
+				if ( !empty($numFacture) ){
+					//FACTURE SUR LE LOYER
 					$fact = new TRH_Evenement;
 					$fact->type = 'facture';
 					$fact->numFacture = $numFacture;
 					$fact->fk_rh_ressource = $TRessource[$plaque];
-					$fact->motif = 'Facture mensuelle Parcours';
+					$fact->motif = 'Facture mensuelle Parcours : Loyer';
 					$TExtrasFieldValues = array();
 					$c = '';
 					for ($i = 30; $i <= 38; $i++) {
@@ -90,9 +102,11 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$t = explode(' ',$infos[7]);
 					$fact->fk_user = (array_key_exists(strtolower($t[0]) , $TUser)) ? $TUser[strtolower($t[0])] : 0 ;
 					
+					$fact->save($ATMdb);
+					$cptFacture++;
 					
 					//CONTRAT
-					if (! array_key_exists ( strtolower($numContrat) , $TContrat )){
+					/*if (! array_key_exists ( strtolower($numContrat) , $TContrat )){
 						//print_r($infos);echo '<br><br>';
 						$contrat = new TRH_Contrat;
 						$contrat->libelle = 'Contrat n°'.$numContrat;
@@ -107,7 +121,6 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 						
 						$contrat->fk_tier_fournisseur = $idParcours;
 						$contrat->fk_rh_ressource_type = $idVoiture;
-						
 						$contrat->loyer_TTC = floatval(strtr($infos[30],',','.'));
 						$contrat->assurance = floatval(strtr($infos[34],',','.')); 
 						$contrat->entretien = floatval(strtr($infos[32],',','.'));  
@@ -123,9 +136,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					}
 					
 					$fact->numContrat = $numContrat;
-					$fact->fk_contrat = $TContrat[strtolower($numContrat)];
-					$fact->save($ATMdb);
-					$cptFacture++;
+					$fact->fk_contrat = $TContrat[strtolower($numContrat)];*/
+					
+					
 				
 				}
 				
@@ -167,19 +180,6 @@ function chargeVoiture(&$ATMdb){
 	return $TRessource;
 }
 
-
-function getIdTypeVoiture(&$ATMdb){
-	global $conf;
-	
-	$sql="SELECT rowid as 'IdType' FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-	WHERE entity=".$conf->entity."
-	 AND code='voiture' ";
-	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		$idVoiture = $ATMdb->Get_field('IdType');
-		}
-	return $idVoiture;
-}
 
 function getIdParcours(&$ATMdb){
 	global $conf;

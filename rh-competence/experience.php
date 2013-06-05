@@ -263,7 +263,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 		)
 		,'translate'=>array(
 		)
-		,'hide'=>array('DateCre', 'fk_user')
+		,'hide'=>array('DateCre', 'fk_user', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
 			'titre'=>'Visualisation de votre CV'
@@ -330,7 +330,7 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 		)
 		,'translate'=>array(
 		)
-		,'hide'=>array('DateCre','fk_user', 'commentaireFormation')
+		,'hide'=>array('DateCre','fk_user', 'commentaireFormation', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date', 'date_formationEcheance'=>'date')
 		,'liste'=>array(
 			'titre'=>'Liste de vos formations effectuées'
@@ -421,9 +421,9 @@ function _ficheCV(&$ATMdb, $lignecv, $tagCompetence, $mode) {
 				'id'=>$lignecv->getId()
 				,'date_debut'=>$form->calendrier('', 'date_debut', $lignecv->date_debut, 12)
 				,'date_fin'=>$form->calendrier('', 'date_fin', $lignecv->date_fin, 12)
-				,'libelleExperience'=>$form->texte('','libelleExperience',$lignecv->libelleExperience, 30,100,'','','-')
-				,'descriptionExperience'=>$form->zonetexte('','descriptionExperience',$lignecv->descriptionExperience, 40,3,'','','-')
-				,'lieuExperience'=>$form->texte('','lieuExperience',$lignecv->lieuExperience, 30,100,'','','-')
+				,'libelleExperience'=>$form->texte('','libelleExperience',$lignecv->libelleExperience, 50,100,'','','-')
+				,'descriptionExperience'=>$form->zonetexte('','descriptionExperience',$lignecv->descriptionExperience, 44,3,'','','-')
+				,'lieuExperience'=>$form->texte('','lieuExperience',$lignecv->lieuExperience, 50,100,'','','-')
 				,'titre'=>load_fiche_titre("Expérience professionnelle",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
@@ -440,7 +440,7 @@ function _ficheCV(&$ATMdb, $lignecv, $tagCompetence, $mode) {
 			,'newCompetence'=>array(
 				'hidden'=>$form->hidden('action', 'newCompetenceCV')
 				,'id'=>$k
-				,'libelleCompetence'=>$form->texte('Libellé','TNComp[libelle]','', 30,100,'','','-')
+				,'libelleCompetence'=>$form->texte('Libellé','TNComp[libelle]','', 40,100,'','','-')
 				,'fk_user_lignecv'=>$form->hidden('TNComp[fk_user_lignecv]', $lignecv->getId())
 				,'niveauCompetence'=>$form->combo(' Niveau ','niveauCompetence',$tagCompetence->TNiveauCompetence,'')
 			)
@@ -503,12 +503,12 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				'id'=>$formation->getId()
 				,'date_debut'=>$form->calendrier('', 'date_debut', $formation->date_debut, 12)
 				,'date_fin'=>$form->calendrier('', 'date_fin', $formation->date_fin, 12)
-				,'libelleFormation'=>$form->texte('','libelleFormation',$formation->libelleFormation, 30,100,'','','-')
+				,'libelleFormation'=>$form->texte('','libelleFormation',$formation->libelleFormation, 50,100,'','','-')
 				,'coutFormation'=>$form->texte('','coutFormation',$formation->coutFormation, 10,50,'','','-')
 				,'montantOrganisme'=>$form->texte('','montantOrganisme',$formation->montantOrganisme, 10,50,'','','-')
 				,'montantEntreprise'=>$form->texte('','montantEntreprise',$formation->montantEntreprise, 10,50,'','','-')
-				,'commentaireFormation'=>$form->zonetexte('','commentaireFormation',$lignecv->commentaireFormation, 40,3,'','','-')
-				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 30,100,'','','-')
+				,'commentaireFormation'=>$form->zonetexte('','commentaireFormation',$lignecv->commentaireFormation, 45,3,'','','-')
+				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 50,100,'','','-')
 				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->date_formationEcheance, 12)
 				,'titre'=>load_fiche_titre("Description de la formation",'', 'title.png', 0, '')
 			)
@@ -528,7 +528,7 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 			,'newCompetence'=>array(
 				'hidden'=>$form->hidden('action', 'newCompetence')
 				,'id'=>$k
-				,'libelleCompetence'=>$form->texte('Libellé','TNComp[libelle]','', 30,100,'','','-')
+				,'libelleCompetence'=>$form->texte('Libellé','TNComp[libelle]','', 40,100,'','','-')
 				,'fk_user_formation'=>$form->hidden('TNComp[fk_user_formation]', $formation->getId())
 				,'niveauCompetence'=>$form->combo(' Niveau ','niveauCompetence',$tagCompetence->TNiveauCompetence,'')
 			)

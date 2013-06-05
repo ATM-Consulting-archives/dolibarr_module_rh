@@ -83,12 +83,12 @@
 	 <br/>                              
 		<table class="border" style="width:200%">
 				<tr>
-					 <td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" >
+					 <td  colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" >
 					 	Compteur de RTT cumulés </td>
 				</tr>
 
 				<tr>
-					<td>Jours RTT cumulés acquis</td>
+					<td style="width:65%;">Jours RTT cumulés acquis</td>
 					<td>[rttCourant.cumuleAcquis;strconv=no;protect=no]</td>
 				</tr>
 				<tr>

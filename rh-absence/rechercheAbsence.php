@@ -210,7 +210,7 @@ function _listeResult(&$ATMdb, &$absence) {
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
-			,'nbLine'=>'30'
+			,'nbLine'=>'10000'
 		)
 		,'link'=>array(
 			'libelle'=>'<a href="absence.php?id=@ID@&action=view">@val@</a>'
@@ -246,6 +246,8 @@ function _listeResult(&$ATMdb, &$absence) {
 		)
 		,'search'=>array(
 			'login'=>true
+			,'name'=>true
+			,'firstname'=>true
 		)
 		,'eval'=>array(
 				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'

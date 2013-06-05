@@ -124,6 +124,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 						elseif(stristr($infos[0],'impression')!=false){	//on est chez global impression
 							$entreprise='%impression%';
 						}
+						elseif(stristr($infos[0],'informatique')!=false){	//on est chez global impression
+							$entreprise='%informatique%';
+						}
 						else{//on est chez 
 							$entreprise='%cpro%';
 						}

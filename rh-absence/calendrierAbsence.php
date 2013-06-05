@@ -34,26 +34,63 @@
 	
 	$idCalendar= isset($_REQUEST['rowid']) ? $_REQUEST['rowid'] : '';
 	
+	$typeAbsence= isset($_REQUEST['typeAbsence']) ? $_REQUEST['typeAbsence'] : 'Tous';
+	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
 	echo $form->hidden('action', 'afficher');
 	echo $form->hidden('id',$absence->getId());
 	
 	
-	$TabUser=array();
-	$TabUser=$absence->recupererTUser($ATMdb);
+	
 	
 	$TabGroupe=array();
 	$TabGroupe[0] = 'Tous';
 	//récupération du tableau groupe
 	//LISTE DE GROUPES
-	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.") ORDER BY nom";
+	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup ORDER BY nom";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 		$TabGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 	}
 		
+	//on récupère tous les types d'absences existants
+	$TTypeAbsence=array();
+	$TTypeAbsence['Tous']='Tous';
+	$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` ";
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$TTypeAbsence[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+	}
+	
+	//on récupère le tableau des users suivant le groupe
+	$TabUser=array();
+	$TabUser[0]='Tous';
+	if($idGroupe==0){
+		$sql="SELECT rowid,name, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$user->id;
+		$ATMdb->Execute($sql);
+		if($ATMdb->Get_line()) {
+			$TabUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(html_entity_decode(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
+		}
+		$sql="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u";
+	}else{
+		$sql="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u,
+		".MAIN_DB_PREFIX."usergroup_user as g 
+		WHERE g.fk_user=u.rowid AND g.fk_usergroup=".$idGroupe;
+	}
+	$sql.=" ORDER BY name";
+	
+	$ATMdb->Execute($sql);
+	
+	
+	while($ATMdb->Get_line()) {
+		$TabUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(html_entity_decode(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
+	}
+
 
 	$idUser=$_REQUEST['idUtilisateur']? $_REQUEST['idUtilisateur']:0;
+	
+	
+	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'
 		,array()
@@ -61,9 +98,11 @@
 			'absence'=>array(
 				'idUser' =>$idUser
 				,'idGroupe'=>$idGroupe
+				,'typeAbsence'=>$typeAbsence
 				,'TGroupe'=>$form->combo('', 'groupe', $TabGroupe,  $idGroupe)
 				//,'TUser'=>$user->rights->absence->myactions->voirToutesAbsences?$form->combo('', 'rowid', $absence->TUser,  $absence->TUser):$form->combo('', 'rowid',$TabUser,  $TabUser)
 				,'TUser'=>$form->combo('', 'idUtilisateur', $TabUser,  $idUser)
+				,'TTypeAbsence'=>$form->combo('', 'typeAbsence', $TTypeAbsence,  $typeAbsence)
 				,'droits'=>$user->rights->absence->myactions->voirToutesAbsences?1:0
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 				//,'idAfficher'=>$_REQUEST['rowid']? $_REQUEST['rowid']:0

@@ -123,7 +123,7 @@ function _liste(&$ATMdb, &$compteur) {
 		)
 		,'orderBy'=>$TOrder
 		,'eval'=>array(
-			'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		
@@ -195,7 +195,7 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 			,'login'=>true
 		)
 		,'eval'=>array(
-			'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		,'orderBy'=>$TOrder

@@ -65,7 +65,7 @@
 		</thead>
 		<tbody>
 			<tr>
-				<td style="width:30%"><b>Niveau faible</b></td>
+				<td style="width:30%"><b>Niveau Faible</b></td>
 				<td > [resultat.faible;block=tr;strconv=no;protect=no;frm=0,00]% ([resultat.nb_faible;strconv=no;protect=no] utilisateur(s))</td>
 			</tr>
 			<tr>
