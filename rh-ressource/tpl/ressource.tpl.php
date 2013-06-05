@@ -29,7 +29,7 @@
 		</tr>
 	[onshow;block=end]
 	[onshow;block=begin;when [view.mode]!='new']
-	<tr>
+	<tr >
 		<td style="width:20%">Type</td>
 		<td>[ressource.type;strconv=no;protect=no]</td>[ressource.typehidden;strconv=no;protect=no]
 	</tr>
@@ -54,10 +54,21 @@
 	<tr>
 		<td>Agence Propriétaire</td>
 		<td>[ressource.fk_proprietaire;strconv=no;protect=no]</td>
+		
 	</tr>
+	<tr id="loueur" >
+		<td>Agence Locatrice</td>
+		<td>[ressource.fk_loueur;strconv=no;protect=no]</td>
+	</tr>
+	<script>
+		if ('[ressource.type;strconv=no;protect=no]' != 'Voiture'){
+			$('#loueur').hide();
+		}
+	 		
+	</script>
 	<tr>
 		<td>Agence Utilisatrice</td>
-		<td>[ressource.fk_utilisatrice;strconv=no;protect=no]</td>
+		<td colspan=3>[ressource.fk_utilisatrice;strconv=no;protect=no]</td>
 	</tr>		
 	
 </table>

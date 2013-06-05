@@ -51,6 +51,7 @@ function _liste(&$ATMdb,  $tagCompetence, $recherche ) {
 	
 	$sql=$tagCompetence->requeteRecherche($ATMdb, $recherche);
 
+
 	$TOrder = array('Niveau'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');

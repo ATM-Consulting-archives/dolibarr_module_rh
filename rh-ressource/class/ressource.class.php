@@ -12,9 +12,11 @@ class TRH_Ressource extends TObjetStd {
 		parent::add_champs('statut','type=chaine;');
 		
 		//clé étrangere : groupes propriétaire et utilisatrice
-		parent::add_champs('fk_utilisatrice','type=entier;index;');	//groupe
-		//clé étrangère : société
-		parent::add_champs('fk_proprietaire,entity','type=entier;index;');
+		parent::add_champs('fk_utilisatrice','type=entier;index;');	//groupe : pointe sur llx_usergroup
+
+		parent::add_champs('fk_proprietaire,entity','type=entier;index;');//fk_propriétaire pointe sur llx_entity
+		parent::add_champs('fk_loueur','type=entier;index;');//fk_loueur pointe sur llx_societe
+		
 		//clé étrangère : type de la ressource
 		parent::add_champs('fk_rh_ressource_type','type=entier;index;');
 		//clé étrangère : ressource associé
@@ -33,7 +35,7 @@ class TRH_Ressource extends TObjetStd {
 		$this->TEvenement = array();
 		
 		$this->TAgence = array('');
-		
+		$this->TFournisseur = array('');
 		$this->TTVA = array();
 		$this->TContratAssocies = array(); 	//tout les objets rh_contrat_ressource liés à la ressource
 		$this->TContratExaustif = array(); 	//tout les objets contrats
@@ -61,6 +63,15 @@ class TRH_Ressource extends TObjetStd {
 		while($ATMdb->Get_line()) {
 			$this->TAgence[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 			}
+		
+		$this->TFournisseur = array('');
+		$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe";
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$this->TFournisseur[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
+			}
+
+		
 	}
 	
 	function load_liste_entity(&$ATMdb){

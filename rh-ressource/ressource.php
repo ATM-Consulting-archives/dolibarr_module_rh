@@ -310,8 +310,7 @@ function _liste(&$ATMdb, &$ressource) {
 
 function TousOuPas($choix, $val){
 	if ($choix=='all'){
-		return 'Tous';
-	}
+		return 'Tous';}
 	return htmlentities($val, ENT_COMPAT , "ISO8859-1");
 }
 
@@ -406,6 +405,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 				//,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->date_garantie, 12)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TEntity,$ressource->fk_proprietaire)
 				,'fk_utilisatrice'=>$form->combo('','fk_utilisatrice',$ressource->TAgence,$ressource->fk_utilisatrice)
+				,'fk_loueur'=>$form->combo('','fk_loueur',$ressource->TFournisseur,$ressource->fk_loueur)
 			)
 			,'ressourceNew' =>array(
 				'typeCombo'=> count($ressource->TType) ? $form->combo('','fk_rh_ressource_type',$ressource->TType,$ressource->fk_rh_ressource_type): "Aucun type"
