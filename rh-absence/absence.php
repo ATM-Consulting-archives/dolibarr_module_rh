@@ -27,7 +27,9 @@
 				if($demandeRecevable==1){
 					$absence->save($ATMdb);
 					$absence->load($ATMdb, $_REQUEST['id']);
-					mailConges($absence);
+					if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
+						mailConges($absence);
+					}
 					$mesg = '<div class="error">Demande enregistrée</div>';
 					_fiche($ATMdb, $absence,'view');
 				}else{
@@ -38,7 +40,9 @@
 						$absence->avertissement=1;
 						$absence->save($ATMdb);
 						$absence->load($ATMdb, $_REQUEST['id']);
-						mailConges($absence);
+						if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
+							mailConges($absence);
+						}
 						$mesg = '<div class="error">Attention : La durée de l\'absence dépasse la règle en vigueur</div>';
 						_fiche($ATMdb, $absence,'view');
 					}
@@ -118,6 +122,9 @@
 			case 'listeValidation' : 
 				_listeValidation($ATMdb, $absence);
 				break;
+			case 'listeAdmin' : 
+				_listeAdmin($ATMdb, $absence);
+				break;
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {
@@ -142,26 +149,16 @@ function _liste(&$ATMdb, &$absence) {
 	//getStandartJS();
 	
 	$r = new TSSRenderControler($absence);
-	
-	//droits d'admin : accès à toutes les absences sur la liste
-	if($user->rights->absence->myactions->voirToutesAbsencesListe){
-		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-			 	a.libelle,a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
-			  	a.libelleEtat as 'Statut demande', a.avertissement
-				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-				WHERE u.rowid=a.fk_user";
-	}else{
-		//LISTE D'ABSENCES DU COLLABORATEUR
-		$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-				a.libelle,a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
-				a.libelleEtat as 'Statut demande', a.avertissement
-				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-				WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user";
-	}
 
+	//LISTE D'ABSENCES DU COLLABORATEUR
+	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
+			a.libelle,a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
+			a.libelleEtat as 'Statut demande', a.avertissement
+			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
+			WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user";
 	
 	
-	$TOrder = array('date_fin'=>'ASC');
+	$TOrder = array('DateCre'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -213,7 +210,90 @@ function _liste(&$ATMdb, &$absence) {
 			,"login"=>true
 		)
 		,'eval'=>array(
-			'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+		)
+		,'orderBy'=>$TOrder
+		
+	));
+	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new">Nouvelle demande</a><div style="clear:both"></div><?
+	$form->end();
+	
+	
+	llxFooter();
+}	
+
+function _listeAdmin(&$ATMdb, &$absence) {
+	global $langs, $conf, $db, $user;	
+	llxHeader('','Liste de vos absences');
+	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
+
+	//getStandartJS();
+	
+	$r = new TSSRenderControler($absence);
+	
+	//droits d'admin : accès à toutes les absences sur la liste
+
+	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
+		 	a.libelle,a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
+		  	a.libelleEtat as 'Statut demande', a.avertissement
+			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
+			WHERE u.rowid=a.fk_user";
+	
+	
+	$TOrder = array('DateCre'=>'DESC');
+	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+				
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');		
+	//print $page;
+	$r->liste($ATMdb, $sql, array(
+		'limit'=>array(
+			'page'=>$page
+			,'nbLine'=>'30'
+		)
+		,'link'=>array(
+			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
+		)
+		,'translate'=>array('Statut demande'=>array(
+			'Refusée'=>'<b style="color:#A72947">Refusée</b>',
+			'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
+			'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
+			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
+		)
+		,'hide'=>array('DateCre', 'fk_user', 'ID')
+		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
+		,'liste'=>array(
+			'titre'=>'Liste de vos absences'
+			,'image'=>img_picto('','title.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
+			,'picto_suivant'=>img_picto('','next.png', '', 0)
+			,'noheader'=> (int)isset($_REQUEST['socid'])
+			,'messageNothing'=>"Il n'y a aucune absence à afficher"
+			,'order_down'=>img_picto('','1downarrow.png', '', 0)
+			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			
+		)
+		,'title'=>array(
+			'date_debut'=>'Date début'
+			,'date_fin'=>'Date fin'
+			,'avertissement'=>'Règle'
+			,'libelle'=>'Type d\'absence'
+			,'firstname'=>'Prénom'
+			,'name'=>'Nom'
+			,'login'=>'Login'
+		)
+		,'search'=>array(
+			'date_debut'=>array('recherche'=>'calendar')
+			,'libelle'=>true
+			,"firstname"=>true
+			,"name"=>true
+			,"login"=>true
+		)
+		,'eval'=>array(
+			'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		,'orderBy'=>$TOrder
@@ -255,7 +335,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 	//LISTE USERS À VALIDER
 	if($k==1){		//on n'a qu'un groupe de validation
 		$sql=" SELECT DISTINCT u.fk_user, 
-				a.rowid as 'ID', a.date_cre ,a.date_debut, a.date_fin, 
+				a.rowid as 'ID', a.date_cre  as 'DateCre',a.date_debut, a.date_fin, 
 			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.name,
 			 	a.libelleEtat as 'Statut demande', a.avertissement
 				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
@@ -284,7 +364,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 		
 	}else if($k>1){		//on a plusieurs groupes de validation
 		$sql=" SELECT DISTINCT u.fk_user, 
-				a.rowid as 'ID', a.date_cre,a.date_debut, a.date_fin, 
+				a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
 			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.name,
 			 	a.libelleEtat as 'Statut demande', a.avertissement
 				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
@@ -347,7 +427,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 		//LISTE DES ABSENCES À VALIDER
 		$r = new TSSRenderControler($absence);
 		
-		$TOrder = array('date_fin'=>'ASC');
+		$TOrder = array('DateCre'=>'DESC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 					
@@ -368,7 +448,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
 				,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
 			)			
-			,'hide'=>array('date_cre','fk_user','ID')
+			,'hide'=>array('date_cre','fk_user','ID', 'DateCre')
 			,'type'=>array('date_debut'=>'date','date_fin'=>'date')
 			,'liste'=>array(
 				'titre'=>'Liste des absences à valider'
@@ -397,7 +477,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				,"name"=>true
 			)
 			,'eval'=>array(
-				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+				'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 			)
 			
@@ -494,8 +574,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	
 	//récupération des règles liées à l'utilisateur 
-	$TRegle=array();
-	$TRegle=$absence->recuperationRegleUser($ATMdb, $regleId);
+	//$TRegle=array();
+	//$TRegle=$absence->recuperationRegleUser($ATMdb, $regleId);
 
 
 	//création du tableau des utilisateurs liés au groupe du valideur, pour créer une absence, pointage...
@@ -518,7 +598,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$sqlReqUser.=" ORDER BY name";
 		$ATMdb->Execute($sqlReqUser);
 		while($ATMdb->Get_line()) {
-			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 	}
 	
@@ -528,12 +608,23 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$TRecap=$absence->recuperationDerAbsUser($ATMdb, $regleId);
 	
 	
+	//on peut supprimer la demande d'absence lorsque temps que la date du jour n'est pas supérieure à datedébut-1
+	
+	$diff=strtotime('-1day',$absence->date_debut)-time();
+	$duree=intval($diff/3600/24);
+	if($duree>=0&&$absence->fk_user==$user->id){
+		$droitSupprimer=1;
+	}
+	elseif($user->rights->absence->myactions->creerAbsenceCollaborateur){
+		$droitSupprimer=1;
+	}
+	
 		
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/absence.tpl.php'
 		,array(
-			'TRegle' =>$TRegle
-			,'TRecap'=>$TRecap
+			//'TRegle' =>$TRegle
+			'TRecap'=>$TRecap
 		)
 		,array(
 			'congesPrec'=>array(
@@ -593,6 +684,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'titreDerAbsence'=>load_fiche_titre("Vos dernières absences",'', 'title.png', 0, '')
 				,'titreRegle'=>load_fiche_titre("Règles vous concernant",'', 'title.png', 0, '')
 				
+				,'droitSupprimer'=>$droitSupprimer
+				
 				
 				
 				
@@ -601,7 +694,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'id'=>$userCourant->id
 				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
 				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
-				,'valideurConges'=>$user->rights->absence->myactions->valideurConges&&$estValideur
+				,'valideurConges'=>$user->rights->absence->myactions->creerAbsenceCollaborateur==1?1:$user->rights->absence->myactions->valideurConges&&$estValideur
 				//,'valideurConges'=>$user->rights->absence->myactions->valideurConges
 				,'droitCreationAbsenceCollaborateur'=>$droitsCreation==1?'1':'0'
 				//,'enregistrerPaieAbsences'=>$user->rights->absence->myactions->enregistrerPaieAbsences&&$estValideur

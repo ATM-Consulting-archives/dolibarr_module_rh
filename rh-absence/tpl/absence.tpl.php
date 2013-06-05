@@ -118,12 +118,11 @@
 		[onshow;block=end]
 		[onshow;block=end]	
 
-		[onshow;block=begin;when [absenceCourante.etat]!='Validee']
+
 		[onshow;block=begin;when [view.mode]!='edit']
-				[onshow;block=begin;when [absenceCourante.fk_user]==[absenceCourante.idUser]]
+				[onshow;block=begin;when [absenceCourante.droitSupprimer]==1]
 						<span class="butActionDelete" id="action-delete"  onclick="if (confirm('Voulez-vous vraiment supprimer la demande d\'absence ?')){document.location.href='?action=delete&id=[absenceCourante.id]'};">Supprimer</span>
 				[onshow;block=end]			
-		[onshow;block=end]
 		[onshow;block=end]
 		<div style="clear:both;"></div>
 	</div>
@@ -152,29 +151,14 @@
 		<br>
 		
 		
-		<div>
-		[absenceCourante.titreRegle;strconv=no;protect=no] 
-		<table  class="liste formdoc noborder" style="width:100%">
-				<tr class="liste_titre">
-					<td><b>Type d'absence concerné</b></td>
-					<td><b>Nombre de jours cumulables possible</b></td>
-					<td><b>Restrictif</b></td>
-				</tr>
-				<tbody  id="TRecapRegle">
-					<tr class="pair">
-						<td>[TRegle.libelle;block=tr;strconv=no;protect=no]</td>
-						<td>[TRegle.nbJourCumulable;block=tr;strconv=no;protect=no]</td>
-						<td>[TRegle.restrictif;block=tr;strconv=no;protect=no]</td>
-					</tr>
-				</tbody>	
-		</table>
-		</div>
+		
 
 		
 
 		<script>
 			//	script vérifiant que la date de début ne dépasse pas celle de fin
 			$(document).ready( function(){
+				$("#dfMoment").val('apresmidi');
 				//on empêche que la date de début dépasse pas celle de fin
 				function comparerDates(){
 					jd = parseInt($("#date_debut").val().substr(0,2));
@@ -382,6 +366,24 @@
 		
 		
 		<script>
+		/*<div>
+		[absenceCourante.titreRegle;strconv=no;protect=no] 
+		<table  class="liste formdoc noborder" style="width:100%">
+				<tr class="liste_titre">
+					<td><b>Type d'absence concerné</b></td>
+					<td><b>Nombre de jours cumulables possible</b></td>
+					<td><b>Restrictif</b></td>
+				</tr>
+				<tbody  id="TRecapRegle">
+					<tr class="pair">
+						<td>[TRegle.libelle;block=tr;strconv=no;protect=no]</td>
+						<td>[TRegle.nbJourCumulable;block=tr;strconv=no;protect=no]</td>
+						<td>[TRegle.restrictif;block=tr;strconv=no;protect=no]</td>
+					</tr>
+				</tbody>	
+		</table>
+		</div>
+		
 		// 	script qui charge les règles de l'utilisateur courant
 		$(document).ready( function(){
 			if($('#userRecapCompteur').val()==0){
@@ -445,7 +447,7 @@
 						$('#TRecapRegle').html($('#TRecapRegle').html()+texte);
 					}
 				});
-		});
+		});*/
 		</script>
 
 

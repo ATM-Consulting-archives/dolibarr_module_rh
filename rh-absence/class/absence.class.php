@@ -323,7 +323,7 @@ class TRH_Absence extends TObjetStd {
 		
 		//on récupère la méthode d'acquisition des jours de l'utilisateur en cours : si par mois ou annuel
 		$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` 
-		WHERE fk_user=".$userConcerne. " AND entity IN (0,".$conf->entity.")";
+		WHERE fk_user=".$userConcerne;
 		$ATMdb->Execute($sqlMethode);
 		while($ATMdb->Get_line()) {
 			$methode= $ATMdb->Get_field('rttTypeAcquisition');
@@ -334,7 +334,7 @@ class TRH_Absence extends TObjetStd {
 			
 			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
 				SET rttCumulePris=0+rttCumulePris+".$dureeAbsenceCourante.", rttCumuleTotal=rttCumuleTotal-".$dureeAbsenceCourante." 
-				WHERE fk_user=".$userConcerne." AND entity IN (0,".$conf->entity.")";
+				WHERE fk_user=".$userConcerne;
 			
 			$db->Execute($sqlDecompte);
 			//$this->rttCumulePris=$this->rttCumulePris+$dureeAbsenceCourante;
@@ -343,14 +343,14 @@ class TRH_Absence extends TObjetStd {
 		else if($this->type=="rttnoncumule"){//&&$methode=="Annuel"){
 			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
 				SET rttNonCumulePris=rttNonCumulePris+".$dureeAbsenceCourante.", rttNonCumuleTotal=rttNonCumuleTotal-".$dureeAbsenceCourante." 
-				WHERE fk_user=".$userConcerne." AND entity IN (0,".$conf->entity.")";
+				WHERE fk_user=".$userConcerne;
 			$db->Execute($sqlDecompte);
 			//$this->rttNonCumulePris=$this->rttNonCumulePris-$dureeAbsenceCourante;
 		}
 		else if($this->type=="conges"){	//autre que RTT : décompte les congés
 			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
 				SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." 
-				WHERE fk_user=".$userConcerne." AND entity IN (0,".$conf->entity.")";;
+				WHERE fk_user=".$userConcerne;
 			$db->Execute($sqlDecompte);
 			$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 		}
@@ -937,23 +937,24 @@ class TRH_Absence extends TObjetStd {
 		$this->entity = $conf->entity;
 		
 		if($this->etat!='Refusee'){
+			
 			switch($this->type){
 				case "rttcumule" : 
 						$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
 						SET rttCumulePris=rttCumulePris-".$this->duree.", rttCumuleTotal=rttCumuleTotal+".$this->duree." 
-						where fk_user=".$user->id;
+						where fk_user=".$this->fk_user;
 						$ATMdb->Execute($sqlRecredit);	
 				break;
 				case "rttnoncumule" : 
 						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
 						SET rttNonCumulePris=rttNonCumulePris-".$this->duree.", rttNonCumuleTotal=rttNonCumuleTotal+".$this->duree."  
-						where fk_user=".$user->id;
+						where fk_user=".$this->fk_user;
 						$ATMdb->Execute($sqlRecredit);
 				break;
 				case 'conges':
 					$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
 					SET congesPrisNM1=congesPrisNM1-".$this->duree."  
-					where fk_user=".$user->id;
+					where fk_user=".$this->fk_user;
 					$ATMdb->Execute($sqlRecredit);
 				break;
 			}
@@ -1067,22 +1068,22 @@ class TRH_Absence extends TObjetStd {
 	///////////////FONCTIONS pour le fichier rechercheAbsence\\\\\\\\\\\\\\\\\\\\\\\\\\\
 	
 	//va permettre la création de la requête pour les recherches d'absence pour les collaborateurs
-	function requeteRechercheAbsence(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $horsConges, $date_debut, $date_fin){
+	function requeteRechercheAbsence(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $horsConges, $date_debut, $date_fin, $typeAbsence){
 			
 			if($horsConges==1){ //on recherche uniquement une compétence
-				$sql=$this->rechercheAucunConges($ATMdb,$idGroupeRecherche, $idUserRecherche,$date_debut, $date_fin);
+				$sql=$this->rechercheAucunConges($ATMdb,$idGroupeRecherche, $idUserRecherche,$date_debut, $date_fin, $typeAbsence);
 			}
 			else if($idGroupeRecherche!=0&&$idUserRecherche==0){ //on recherche les absences d'un groupe
-				$sql=$this->rechercheAbsenceGroupe($ATMdb, $idGroupeRecherche, $date_debut, $date_fin);
+				$sql=$this->rechercheAbsenceGroupe($ATMdb, $idGroupeRecherche, $date_debut, $date_fin, $typeAbsence);
 			}
 			else{ //if($idUserRecherche!=0){ //on recherche les absences d'un utilisateur
-				$sql=$this->rechercheAbsenceUser($ATMdb,$idUserRecherche, $date_debut, $date_fin);
+				$sql=$this->rechercheAbsenceUser($ATMdb,$idUserRecherche, $date_debut, $date_fin, $typeAbsence);
 			}
 			return $sql;
 	}
 	
 	//requete avec groupe de collaborateurs précis
-	function rechercheAbsenceGroupe(&$ATMdb, $idGroupeRecherche, $date_debut, $date_fin){ 
+	function rechercheAbsenceGroupe(&$ATMdb, $idGroupeRecherche, $date_debut, $date_fin, $typeAbsence){ 
 			global $conf;
 			
 			//on recherche les absences d'un groupe pendant la période
@@ -1097,16 +1098,19 @@ class TRH_Absence extends TObjetStd {
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)";
 			
-
+			if($typeAbsence!='Tous'){
+				$sql.=" AND a.type LIKE '".$typeAbsence."'";
+			}
 			
 			return $sql;
 	}
 	
 	//requete renvoyant les utilisateurs n'ayant pas pris de congés pendant une période
-	function rechercheAucunConges(&$ATMdb, $idGroupeRecherche,$idUserRecherche, $date_debut, $date_fin){ 
+	function rechercheAucunConges(&$ATMdb, $idGroupeRecherche,$idUserRecherche, $date_debut, $date_fin, $typeAbsence){ 
 			global $conf;
 
 			if($idUserRecherche!=0){
+				
 				$sql="SELECT DISTINCT u.login, u.name, u.firstname
 				FROM ".MAIN_DB_PREFIX."user as u 
 				WHERE u.rowid =".$idUserRecherche." AND u.rowid NOT IN (
@@ -1116,8 +1120,12 @@ class TRH_Absence extends TObjetStd {
 							(a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
-							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin))
+							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)
 							";
+				if($typeAbsence!='Tous'){
+					$sql.=" AND a.type LIKE '".$typeAbsence."' ";
+				}
+				$sql.=")";
 			}
 			//	on recherche les utilisateurs n'ayant pas eu d'absences pendant la période désirée
 			else if($idGroupeRecherche==0){ 
@@ -1130,8 +1138,12 @@ class TRH_Absence extends TObjetStd {
 							(a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
-							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin))
+							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)
 							";
+				if($typeAbsence!='Tous'){
+					$sql.=" AND a.type LIKE '".$typeAbsence."' ";
+				}
+				$sql.=")";
 			}
 			else
 			{	//	on recherche les utilisateurs d'un groupe n'ayant pas eu d'absences pendant la période désirée
@@ -1151,16 +1163,21 @@ class TRH_Absence extends TObjetStd {
 							AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
-							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin))";
+							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)";
+				if($typeAbsence!='Tous'){
+					$sql.=" AND a.type LIKE '".$typeAbsence."' ";
+				}
+				$sql.=")";
 			}
 			    
 			return $sql;
 	}
 
 	//requete avec un collaborateur précis
-	function rechercheAbsenceUser(&$ATMdb,$idUserRecherche, $date_debut, $date_fin){
+	function rechercheAbsenceUser(&$ATMdb,$idUserRecherche, $date_debut, $date_fin, $typeAbsence){
 			global $conf;
-			
+
+
 			//on recherche les absences d'un utilisateur pendant la période
 			$sql="SELECT a.rowid as 'ID',  u.login, u.name, u.firstname, 
 				DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, 
@@ -1175,6 +1192,9 @@ class TRH_Absence extends TObjetStd {
 				)";
 			if($idUserRecherche!=0){
 				$sql.=" AND a.fk_user=".$idUserRecherche;
+			}
+			if($typeAbsence!='Tous'){
+				$sql.=" AND a.type LIKE '".$typeAbsence."'";
 			}
 			
 			return $sql;
