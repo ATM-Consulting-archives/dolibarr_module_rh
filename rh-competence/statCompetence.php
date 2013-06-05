@@ -1,7 +1,7 @@
 <?php
 	require('config.php');
 	require('./class/competence.class.php');
-		require('./lib/competence.lib.php');
+	require('./lib/competence.lib.php');
 	
 	$langs->load('competence@competence');
 	$langs->load("users");
