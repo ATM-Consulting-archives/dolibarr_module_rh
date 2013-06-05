@@ -20,6 +20,9 @@
 				<td> 	Utilisateur </td><td> [recherche.TUser;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
+				<td> 	Type </td><td> [recherche.TTypeAbsence;block=tr;strconv=no;protect=no]</td>
+			</tr>
+			<tr >
 				<td> Aucun congés</td> <td> [recherche.horsConges;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >

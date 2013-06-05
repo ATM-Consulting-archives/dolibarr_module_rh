@@ -37,7 +37,7 @@
 		if($juin==$dateMD){
 			//on transfère les jours N-1 non pris vers jours report
 			$sqlTransfert="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-				SET reportCongesNM1=acquisExerciceNM1+acquisAncienneteNM1+acquisHorsPeriodeNM1 
+				SET reportCongesNM1=CEILING(acquisExerciceNM1)+acquisAncienneteNM1+acquisHorsPeriodeNM1 
 				WHERE fk_user =".$idUser;
 			$ATMdb->Execute($sqlTransfert);
 			
