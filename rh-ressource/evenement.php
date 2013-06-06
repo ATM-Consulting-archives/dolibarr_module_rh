@@ -224,7 +224,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	echo $form->hidden('idEven',$evenement->getId());
 
 	$evenement->load_liste($ATMdb);
-	$evenement->load_liste_type($ATMdb, $ressource->fk_rh_ressource_type);
+	$evenement->load_liste_type($ressource->fk_rh_ressource_type);
 	$idUserCourant =  $ressource->isEmpruntee($ATMdb, date("Y-m-d", time()));
 	$tab = array_splice ( $evenement->TType , 1); //on enlève le champs 'all'
 	

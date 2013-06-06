@@ -40,8 +40,6 @@ class TRH_Evenement  extends TObjetStd {
 		//pour une facture
 		parent::add_champs('numFacture','type=chaine;');
 		parent::add_champs('compteFacture','type=chaine;');
-		parent::add_champs('numContrat','type=chaine;');
-		parent::add_champs('fk_contrat','type=entier;index');
 		
 		parent::_init_vars();
 		parent::start();
@@ -159,10 +157,11 @@ class TRH_Type_Evenement  extends TObjetStd {
 	/**
 	 * Attribut les champs directement, pour créer les types par défauts par exemple. 
 	 */
-	function chargement(&$db, $libelle, $codecomptable, $supprimable, $fk_rh_ressource_type){
-		$this->load_by_code($db, $code);
+	function chargement(&$db, $libelle, $code, $codecomptable, $supprimable, $fk_rh_ressource_type){
+		if (empty($code)){$this->code = TRH_Ressource_type::code_format($libelle);}
+		else $this->code = $code;
+		$this->load_by_code($db, $this->code);
 		$this->libelle = $libelle;
-		$this->code = TRH_Ressource_type::code_format($libelle);
 		$this->codecomptable = $codecomptable;
 		$this->supprimable = $supprimable;
 		$this->fk_rh_ressource_type = $fk_rh_ressource_type;

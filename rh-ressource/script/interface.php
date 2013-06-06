@@ -33,33 +33,47 @@ function _exportParcours(&$ATMdb, $date_debut, $date_fin, $entity){
 	$TLignes = array();
 	
 	//chargement des comptes liés aux type d'évenements
+	$TNomsEvenements = array();
 	$TComptes = array();
-	$sql="SELECT code, codecomptable FROM ".MAIN_DB_PREFIX."rh_type_evenement";
+	$sql="SELECT code, codecomptable, libelle FROM ".MAIN_DB_PREFIX."rh_type_evenement";
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
-		$TComptes[$row->code] = $row->codecomptable;	
+		$TComptes[$row->code] = $row->codecomptable;
+		$TNomsEvenements[$row->code] = $row->libelle;	
 	}
+	
+	//on transforme la date de 20/01/2013 en 2013-01-20
+	$timestamp = mktime(0,0,0,substr($date_debut, 3,2),substr($date_debut, 0,2), substr($date_debut, 6,4));
+	$date_debut = date("Y-m-d", $timestamp);
+	$timestamp = mktime(0,0,0,substr($date_fin, 3,2),substr($date_fin, 0,2), substr($date_fin, 6,4));
+	$date_fin = date("Y-m-d", $timestamp);
+			
 		
-	$sql="SELECT coutEntrepriseTTC, coutEntrepriseHT, type, date_debut, typeVehicule, name, firstname, a.code
+	$sql="SELECT coutEntrepriseTTC, coutEntrepriseHT, type, DATE_FORMAT(date_debut, '%d/%m/%Y') as date_debut, typeVehicule, name, firstname, a.code
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
 	WHERE e.entity=".$entity."
-	AND e.type='factTel' 
+	AND e.type='factureloyer' 
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')";
 	//echo $sql.'<br>';
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
+			
+		//un VU : on prend le HT
+		//un VP on prend le TTC
+		$total = (strtolower($row->typeVehicule)=='vu') ? $row->coutEntrepriseHT : $row->coutEntrepriseTTC;
 	
 	$TLignes[] = array(
-		'date'=>$row->date_debut
-		,'type'=>'ok ? Péage ?'
-		,'user'=>$row->name.' '.$row->firstname
+		'date'=>$row->date_debut				
+		,'type'=>$TNomsEvenements[$row->type]		
+		,'user'=>htmlentities($row->firstname.' '.$row->name, ENT_COMPAT , 'ISO8859-1')
 		,'compte'=>$TComptes[$row->type]
 		,'codeanalytique'=>$row->code
-		,'sens'=>'C'
-		,'total'=>$row->typeVehicule
+		,'sens'=>'C'.$entity
+		,'typeVehicule'=>$row->typeVehicule
+		,'total'=>number_format($total, 2).'€'
 		);
 		
 	}
@@ -74,13 +88,18 @@ function _exportParcours(&$ATMdb, $date_debut, $date_fin, $entity){
 function _exportOrange(&$ATMdb, $date_debut, $date_fin, $entity){
 	$TabLigne = array();
 	
+	$timestamp = mktime(0,0,0,substr($date_debut, 3,2),substr($date_debut, 0,2), substr($date_debut, 6,4));
+	$date_debut = date("Y-m-d", $timestamp);
+	$timestamp = mktime(0,0,0,substr($date_fin, 3,2),substr($date_fin, 0,2), substr($date_fin, 6,4));
+	$date_fin = date("Y-m-d", $timestamp);
+	
 	$sql="SELECT totalIFact, totalEFact, totalFact, natureRefac, montantRefac, name, firstname, COMPTE_TIERS
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 	LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as c ON (c.fk_object = e.fk_user)
 	WHERE e.entity=".$entity."
 	AND e.type='factTel' 
-	AND (e.date_debut<='".$date_fin."' OR e.date_debut>='".$date_debut."')";
+	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')";
 	//echo $sql.'<br>';
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
