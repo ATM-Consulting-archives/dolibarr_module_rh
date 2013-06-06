@@ -45,9 +45,6 @@ function send_mail_formulaire($object)
 			)
 		);
 		
-		print $message;
-		print "<br>";
-		
 		// Send mail
 		$mail = new TReponseMail($from,$sendto,$subject,$message);
 		
