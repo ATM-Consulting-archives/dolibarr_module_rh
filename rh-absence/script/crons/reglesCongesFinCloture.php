@@ -43,7 +43,7 @@
 			
 			//on transfère les jours acquis N vers N-1
 			$sqlTransfert2="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-			SET acquisExerciceNM1=acquisExerciceN, acquisAncienneteNM1=acquisAncienneteN,
+			SET acquisExerciceNM1=CEILING(acquisExerciceN), acquisAncienneteNM1=acquisAncienneteN,
 			acquisHorsPeriodeNM1=acquisHorsPeriodeN 
 			WHERE fk_user =".$idUser;
 			$ATMdb->Execute($sqlTransfert2);
@@ -66,3 +66,5 @@
 		$sqlAnnee="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET anneeN=anneN+1, anneeNM1=anneNM1+1";
 		$ATMdb->Execute($sqlAnnee);	
 	}
+
+$ATMdb->close();

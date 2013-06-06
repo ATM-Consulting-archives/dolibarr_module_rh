@@ -51,6 +51,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 	$idTagRecherche=isset($_REQUEST['libelle']) ? $_REQUEST['libelle'] : 0;
 	$idGroupeRecherche=isset($_REQUEST['groupe']) ? $_REQUEST['groupe'] : 0;
 	$idUserRecherche=isset($_REQUEST['user']) ? $_REQUEST['user'] : 0;
+	$typeRecherche=isset($_REQUEST['typeAbsence']) ? $_REQUEST['typeAbsence'] :'Tous';
 
 	
 	//tableau pour la combobox des groupes
@@ -65,13 +66,22 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 	//tableau pour la combobox des utilisateurs
 	$TUser=array();
 	$TUser[0]='Tous';
-	$sqlReqUser="SELECT u.rowid, u.name,  u.firstname FROM `".MAIN_DB_PREFIX."user` as u
-	 WHERE u.entity IN (0,".$conf->entity.")";
+	$sqlReqUser="SELECT u.rowid, u.name,  u.firstname FROM `".MAIN_DB_PREFIX."user` as u";
 
 	$ATMdb->Execute($sqlReqUser);
 	while($ATMdb->Get_line()) {
 		$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
 	}
+	
+	//on récupère tous les types d'absences existants
+	$TTypeAbsence=array();
+	$TTypeAbsence['Tous']='Tous';
+	$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` ";
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$TTypeAbsence[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+	}
+	
 		
 	
 	$TBS=new TTemplateTBS();
@@ -83,6 +93,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 			'recherche'=>array(
 				'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche)
 				,'TUser'=>$form->combo('','user',$TUser,$idUserRecherche)
+				,'TTypeAbsence'=>$form->combo('','typeAbsence',$TTypeAbsence,$typeRecherche)
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->date_debut, 12)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
@@ -127,10 +138,12 @@ function _listeResult(&$ATMdb, &$absence) {
 
 	$idGroupeRecherche=$_REQUEST['groupe'];
 	$idUserRecherche=$_REQUEST['user'];
+	$typeAbsence=$_REQUEST['typeAbsence'];
 	
-	if($idGroupeRecherche!=0){	//on recherche le nom du groupe
+	
+	if($idGroupeRecherche!=0){	//	on recherche le nom du groupe
 		$sql="SELECT nom FROM ".MAIN_DB_PREFIX."usergroup
-		WHERE rowid =".$idGroupeRecherche." AND entity IN (0,".$conf->entity.")";
+		WHERE rowid =".$idGroupeRecherche;
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
 			$nomGroupeRecherche=$ATMdb->Get_field('nom');
@@ -140,9 +153,9 @@ function _listeResult(&$ATMdb, &$absence) {
 	}
 
 	
-	if($idUserRecherche!=0){	//on recherche le nom de l'utilisateur
+	if($idUserRecherche!=0){	//	on recherche le nom de l'utilisateur
 		$sql="SELECT name,  firstname FROM ".MAIN_DB_PREFIX."user
-		WHERE rowid =".$idUserRecherche." AND entity IN (0,".$conf->entity.")";
+		WHERE rowid =".$idUserRecherche;
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
 			$nomUserRecherche=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
@@ -150,6 +163,19 @@ function _listeResult(&$ATMdb, &$absence) {
 	}else{
 		$nomUserRecherche='Tous';
 	}
+	
+	if($typeAbsence!='Tous'){	//	on recherche le type d'absence
+		$sql="SELECT libelleAbsence FROM ".MAIN_DB_PREFIX."rh_type_absence
+		WHERE typeAbsence LIKE '".$typeAbsence."'";
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$typeAbsenceVisu=$ATMdb->Get_field('libelleAbsence');
+		}
+	}else{
+		$typeAbsenceVisu='Tous';
+	}
+	
+	
 	$horsConges=$_REQUEST['horsConges']==1?'1':'0';
 	if($horsConges==1){
 		$typeRecherche='Ceux qui n\'ont pas pris de congés pendant cette période';
@@ -181,16 +207,21 @@ function _listeResult(&$ATMdb, &$absence) {
 				<td><?echo $nomUserRecherche;?></td>
 			</tr> 
 			<tr>
+				<td style="width:30%"> Type d'absence</td>
+				<td><?echo $typeAbsenceVisu;?></td>
+			</tr> 
+			<tr>
 				<td style="width:30%"> Type de recherche</td>
 				<td><?echo $typeRecherche;?></td>
 			</tr> 
+			
 		</table>	
 	</div><br/><br/>
 	<?
 
 	
 	//on va obtenir la requête correspondant à la recherche désirée
-	$sql=$absence->requeteRechercheAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, $horsConges, $_REQUEST['date_debut'], $_REQUEST['date_fin']);
+	$sql=$absence->requeteRechercheAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, $horsConges, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $typeAbsence);
 	
 	
 	$TOrder = array('name'=>'ASC');

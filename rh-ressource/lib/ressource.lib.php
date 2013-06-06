@@ -255,6 +255,7 @@ function send_mail_resources($subject, $message){
 
 /**
  * La fonction renvoie le rowid de l'user qui a la ressource $idRessource à la date $jour, 0 sinon.
+ * $jour a la forme
  */
 function ressourceIsEmpruntee(&$ATMdb, $idRessource, $jour){
 		global $conf;
@@ -266,6 +267,7 @@ function ressourceIsEmpruntee(&$ATMdb, $idRessource, $jour){
 				AND e.entity IN (0, ".$conf->entity.") 
 				AND e.date_debut<='".$jour."' AND e.date_fin >= '".$jour."' 
 				";
+				
 		$ATMdb->Execute($sql);
 		if ($ATMdb->Get_line()){
 			return $ATMdb->Get_field('fk_user');

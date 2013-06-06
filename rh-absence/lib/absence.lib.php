@@ -135,7 +135,7 @@ function saveLibelle($type){
 			return "Absence Chômage partiel";
 		break;
 		case 'nonremuneree':
-			return "Absence non rémunérée";
+			return "Absence congés sans solde";
 		break;
 		case 'accidentdetravail':
 			return "Absence accident du travail";

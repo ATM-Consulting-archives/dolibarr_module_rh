@@ -40,7 +40,7 @@
 	,(2,'rttnoncumule','RTT non cumulé','940','0','".$conf->entity."', 'jour')
 	,(3,'conges','Absence congés','950','0','".$conf->entity."', 'jour')
 	,(4,'paternite','Absence paternité','963','0','".$conf->entity."', 'heure')
-	,(5,'nonremuneree','Absence non rémunérée','980','0','".$conf->entity."', 'heure')
+	,(5,'nonremuneree','Absence congés sans solde','980','0','".$conf->entity."', 'heure')
 	,(6,'mariage','Mariage','2000','0','".$conf->entity."', 'jour')
 	,(7,'deuil','Deuil','2010','0','".$conf->entity."', 'jour')
 	,(8,'naissanceadoption','Naissance ou adoption','2020','0','".$conf->entity."', 'jour')
@@ -66,6 +66,9 @@
 	
 	";
 
+	$ATMdb->Execute($sql);
+	
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET libelleAbsence='Absence congés sans solde' WHERE typeAbsence='nonremuneree'";
 	$ATMdb->Execute($sql);
 
 	

@@ -10,6 +10,8 @@
 	require_once(DOL_DOCUMENT_ROOT."/core/class/fileupload.class.php");
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 	
+	global $conf;
+	
 	$langs->load('ressource@ressource');
 	$langs->load('main');
 	$langs->load('other');
@@ -128,6 +130,13 @@
 		
 		$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 		
+		//listes des entités
+		$liste_entities = array();
+		$sql="SELECT rowid,label FROM ".MAIN_DB_PREFIX."entity WHERE 1";
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$liste_entities[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('label'), ENT_COMPAT , 'ISO8859-1');}
+		
 		$liste_types_imports=array('ImportFactureTotal.php' => 'Total'
 									,'ImportFactureArea.php' => 'Area'
 									,'ImportFactureEuromaster.php' => 'Euromaster'
@@ -140,6 +149,7 @@
 			,array(
 				'import'=>array(
 					'typeImport'=>$form->combo('','typeImport',$liste_types_imports,'')
+					,'entity'=>$form->combo('','entity',$liste_entities,$conf->entity)
 				)
 			)	
 			

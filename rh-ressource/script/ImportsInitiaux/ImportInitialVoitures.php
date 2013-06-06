@@ -46,8 +46,7 @@ while($ATMdb->Get_line()) {
 	$nom = str_replace("'", "",strtolower($ATMdb->Get_field('nom')));
 	$TGroups[$nom] = $ATMdb->Get_field('rowid');
 	}
-print_r($TGroups);
-//exit();
+
 
 $TTVA = array();
 $sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
@@ -91,7 +90,7 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 			$plaque = strtoupper(str_replace('-','',$infos[18])); //immatriculation : on enlève les espaces et on met les lettres en majuscules
 			//on regarde si la plaque d'immatriculation est dans la base
 			if (empty($plaque)){
-				echo 'plaque vide.<br>';null;
+				echo 'Plaque vide.<br>';null;
 			}
 			else if (!empty($TIdRessource[$plaque])){
 				echo $plaque.' existe déjà<br>';
@@ -108,12 +107,12 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 				$TRessource[$plaque]->set_date('date_vente', $infos[14]);
 				$TRessource[$plaque]->set_date('date_garantie', '');
 				if (empty($TGroups[str_replace("'", "", strtolower($infos[1]))]))
-					{echo 'Pas de groupe du nom '.$infos[1].'. C\'PRO GROUPE mis.<br>';
+					{echo $plaque.' : pas de groupe du nom '.$infos[1].'. C\'PRO GROUPE mis.<br>';
 					$TRessource[$plaque]->fk_utilisatrice = $TGroups['cpro groupe'];
 					}
 				else {$TRessource[$plaque]->fk_utilisatrice = $TGroups[str_replace("'", "",strtolower($infos[1]))];}
 				
-				if (empty($TFournisseur['parcours'])){echo 'Pas de fournisseur du nom de \'Parcours\' dans la BD<br>';}
+				if (empty($TFournisseur['parcours'])){echo $plaque.' : pas de fournisseur du nom de \'Parcours\' dans la BD<br>';}
 				else {$TRessource[$plaque]->fk_loueur = $TFournisseur['parcours'];}
 				
 				$TRessource[$plaque]->immatriculation = (string)$plaque; //plaque;
@@ -152,7 +151,7 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 				$TContrat[$numContrat]->kilometre = $infos[3]*1000;
 				$TContrat[$numContrat]->TVA = $TTVA['19.6'];
 				$TContrat[$numContrat]->fk_rh_ressource_type = $idVoiture;
-				if (empty($TFournisseur['parcours'])){echo 'Pas de fournisseur du nom de \'Parcours\' dans la BD<br>';}
+				if (empty($TFournisseur['parcours'])){echo $plaque.' : pas de fournisseur du nom de \'Parcours\' dans la BD<br>';}
 				else {$TContrat[$numContrat]->fk_tier_fournisseur = $TFournisseur['parcours'];}
 				$cptContrat++;
 				$TContrat[$numContrat]->save($ATMdb);
@@ -297,7 +296,7 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 				if (strtolower($infos[12])=='immo'){
 					//echo ' ok';
 					if (empty($TEntity[str_replace("'","",strtolower($infos[11]))])){
-						echo 'Pas d\'entité du nom '.$infos[11].'<br>';
+						echo $plaque.' : Pas d\'entité du nom '.$infos[11].'<br>';
 					}
 					else{
 						$TRessource[$plaque]->fk_proprietaire = $TEntity[str_replace("'","",strtolower($infos[11]))];}
@@ -307,7 +306,7 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 				//société locatrice si c'est une location
 				else {
 					if (empty($TFournisseur[str_replace("'","",strtolower($infos[11]))])){
-						echo 'Pas de loueur du nom '.$infos[11].'<br>';
+						echo $plaque.' : Pas de loueur du nom '.$infos[11].'<br>';
 					}
 					else{
 						$TRessource[$plaque]->fk_proprietaire = $TFournisseur[strtolower($infos[11])];}
@@ -339,13 +338,13 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 				}
 				else {
 					if (!empty($infos[2])){
-						echo 'Trigramme inexistant : '.$infos[2].'<br>';}
+						echo $plaque.' : Trigramme inexistant : '.$infos[2].'<br>';}
 					null;
 				}
 			
 
 				//si le type est Immo, on créé un contrat associé au véhicule
-				if (strtolower($infos[12])=='immo'){
+				if (strtolower($infos[12])!='immo'){
 					//le num du contrat est une produit des km, de la durée et du loyer.
 					$numContrat = $infos[15]*5+$infos[16]+intval(str_replace(',', '.', $infos[17]));
 					$TContrat[$numContrat] = new TRH_Contrat;

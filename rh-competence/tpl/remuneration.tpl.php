@@ -58,22 +58,26 @@
 					<td>[remuneration.prevoyancePartSalariale;block=tr;strconv=no;protect=no]€</td>
 					<td>[remuneration.prevoyancePartPatronale;strconv=no;protect=no]€</td>
 				</tr>
-		
-
 				<tr>
 					<td><b>URSSAF</b></td>
 					<td>[remuneration.urssafPartSalariale;strconv=no;protect=no]€</td>
 					<td>[remuneration.urssafPartPatronale;strconv=no;protect=no]€</td>
 				</tr>
-
-
 				<tr>
 					<td><b>RETRAITE</b></td>
 					<td>[remuneration.retraitePartSalariale;strconv=no;protect=no]€</td>
 					<td>[remuneration.retraitePartPatronale;strconv=no;protect=no]€</td>
 				</tr>
-
-				
+				<tr>
+					<td><b>MUTUELLE</b></td>
+					<td>[remuneration.mutuellePartSalariale;strconv=no;protect=no]€</td>
+					<td>[remuneration.mutuellePartPatronale;strconv=no;protect=no]€</td>
+				</tr>
+				<tr>
+					<td><b>DIVERS</b></td>
+					<td>[remuneration.diversPartSalariale;strconv=no;protect=no]€</td>
+					<td>[remuneration.diversPartPatronale;strconv=no;protect=no]€</td>
+				</tr>
 				<tr>
 					<td><b>TOTAL</b></td>
 					<td>[remuneration.totalRemSalariale;strconv=no;protect=no]€</td>

@@ -2,6 +2,7 @@
 require('config.php');
 require(DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php');
 require('class/groupeformulaire.class.php');
+require('lib/formulaire.lib.php');
 require(DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php');
 //require(DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php');
 
@@ -41,6 +42,8 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'add'){
 		$TGroupeForm->date_fin = strtotime($datefin);
 		
 		$TGroupeForm->save($ATMdb);
+		
+		send_mail_formulaire($TGroupeForm);
 		
 		echo dol_htmloutput_mesg('Les droits ont été enregistrés.', '', 'ok', 0);
 	}
