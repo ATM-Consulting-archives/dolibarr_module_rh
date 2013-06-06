@@ -364,25 +364,25 @@ class TRH_remuneration extends TObjetStd {
 		parent::add_champs('date_debutRemuneration','type=date;');
 		parent::add_champs('date_finRemuneration','type=date;');
 		
-		parent::add_champs('bruteAnnuelle','type=float;');		
-		parent::add_champs('salaireMensuel','type=float;');		
-		parent::add_champs('primeAnciennete','type=float;');	
-		parent::add_champs('primeSemestrielle','type=float;');			
-		parent::add_champs('primeExceptionnelle','type=float;');
+		parent::add_champs('bruteAnnuelle','type=float;');
+		parent::add_champs('salaireMensuel','type=float;');
+		parent::add_champs('primeAnciennete','type=float;');
+		parent::add_champs('participation','type=float;');
+		parent::add_champs('autre','type=float;');
 		
-		parent::add_champs('prevoyancePartSalariale','type=chaine;');	
-		parent::add_champs('prevoyancePartPatronale','type=chaine;');	
-		parent::add_champs('urssafPartSalariale','type=chaine;');	
+		parent::add_champs('prevoyancePartSalariale','type=chaine;');
+		parent::add_champs('prevoyancePartPatronale','type=chaine;');
+		parent::add_champs('urssafPartSalariale','type=chaine;');
 		parent::add_champs('urssafPartPatronale','type=chaine;');
-		parent::add_champs('retraitePartSalariale','type=chaine;');	
+		parent::add_champs('retraitePartSalariale','type=chaine;');
 		parent::add_champs('retraitePartPatronale','type=chaine;');
-		parent::add_champs('mutuellePartSalariale','type=chaine;');	
+		parent::add_champs('mutuellePartSalariale','type=chaine;');
 		parent::add_champs('mutuellePartPatronale','type=chaine;');
-		parent::add_champs('diversPartSalariale','type=chaine;');	
+		parent::add_champs('diversPartSalariale','type=chaine;');
 		parent::add_champs('diversPartPatronale','type=chaine;');
 		
-		parent::add_champs('commentaire','type=chaine;');		
-		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
+		parent::add_champs('commentaire','type=chaine;');
+		parent::add_champs('fk_user','type=entier;');
 		parent::add_champs('entity','type=entier;');
 		
 		parent::_init_vars();

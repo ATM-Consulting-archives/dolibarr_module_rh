@@ -65,8 +65,8 @@ function _remuneration(&$ATMdb, $userId, $date_debut, $date_fin){
 		$TabRecapRem['bruteAnnuelle']=round($ATMdb->Get_field('bruteAnnuelle'),2);
 		$TabRecapRem['salaireMensuel']=round($ATMdb->Get_field('salaireMensuel'),2);
 		$TabRecapRem['primeAnciennete']=round($ATMdb->Get_field('primeAnciennete'),2);
-		$TabRecapRem['primeSemestrielle']=round($ATMdb->Get_field('primeSemestrielle'),2);
-		$TabRecapRem['primeExceptionnelle']=round($ATMdb->Get_field('primeExceptionnelle'),2);
+		$TabRecapRem['participation']=round($ATMdb->Get_field('participation'),2);
+		$TabRecapRem['autre']=round($ATMdb->Get_field('autre'),2);
 		$TabRecapRem['prevoyancePartSalariale']=round($ATMdb->Get_field('prevoyancePartSalariale'),2);
 		$TabRecapRem['prevoyancePartPatronale']=round($ATMdb->Get_field('prevoyancePartPatronale'),2);
 		$TabRecapRem['urssafPartSalariale']=round($ATMdb->Get_field('urssafPartSalariale'),2);
@@ -80,7 +80,8 @@ function _remuneration(&$ATMdb, $userId, $date_debut, $date_fin){
 		$TabRecapRem['totalPartSalariale']=round($ATMdb->Get_field('prevoyancePartSalariale')+$ATMdb->Get_field('urssafPartSalariale')+$ATMdb->Get_field('retraitePartSalariale')+$ATMdb->Get_field('mutuellePartSalariale')+$ATMdb->Get_field('diversPartSalariale'),2);
 		$TabRecapRem['totalPartPatronale']=round($ATMdb->Get_field('prevoyancePartPatronale')+$ATMdb->Get_field('urssafPartPatronale')+$ATMdb->Get_field('retraitePartPatronale')+$ATMdb->Get_field('mutuellePartPatronale')+$ATMdb->Get_field('diversPartPatronale'),2);
 		$TabRecapRem['pourcentagePartSalariale']=round(($TabRecapRem['totalPartSalariale']*100)/($TabRecapRem['totalPartSalariale']+$TabRecapRem['totalPartPatronale']),2);
-		
+		$TabRecapRem['totalPartFixe']=$TabRecapRem['bruteAnnuelle']+$TabRecapRem['primeAnciennete'];
+		$TabRecapRem['totalPartVariable']=$TabRecapRem['participation']+$TabRecapRem['autre'];
 	}
 	
 	return $TabRecapRem;
