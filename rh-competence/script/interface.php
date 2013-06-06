@@ -15,10 +15,10 @@ _get($ATMdb, $get);
 function _get(&$ATMdb, $case) {
 	switch ($case) {
 		case 'formation':
-			__out($ATMdb, _formation($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
+			__out(_formation($ATMdb, $_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
 			break;
 		case 'remuneration':
-			__out($ATMdb, _remuneration($_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
+			__out(_remuneration($ATMdb, $_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
 			break;
 	}
 }
@@ -32,16 +32,18 @@ function _formation(&$ATMdb, $userId, $date_debut, $date_fin){
 	$sql="SELECT f.rowid, f.libelleFormation, f.coutFormation, f.montantOrganisme, f.montantEntreprise
 	FROM ".MAIN_DB_PREFIX."rh_formation_cv as f
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (f.fk_user = u.rowid)
-	WHERE f.entity=".$conf->entity."
-	AND u.rowid=".$userId."
-	AND (f.date_debut>'".$date_debut."' AND f.date_fin<'".$date_fin."')";
+	WHERE u.rowid=".$userId."
+	AND (f.date_debut>'".$date_debut."' AND f.date_fin<'".$date_fin."')
+	ORDER BY f.date_fin DESC";
 	
+	$k=1;
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
-		$TabRecapFormation[$ATMdb->Get_field('rowid')]['libelleFormation']=$ATMdb->Get_field('libelleFormation');
-		$TabRecapFormation[$ATMdb->Get_field('rowid')]['coutFormation']=round($ATMdb->Get_field('coutFormation'),2);
-		$TabRecapFormation[$ATMdb->Get_field('rowid')]['montantOrganisme']=round($ATMdb->Get_field('montantOrganisme'),2);
-		$TabRecapFormation[$ATMdb->Get_field('rowid')]['montantEntreprise']=round($ATMdb->Get_field('montantEntreprise'),2);
+		$TabRecapFormation[$k]['libelleFormation']=$ATMdb->Get_field('libelleFormation');
+		$TabRecapFormation[$k]['coutFormation']=round($ATMdb->Get_field('coutFormation'),2);
+		$TabRecapFormation[$k]['montantOrganisme']=round($ATMdb->Get_field('montantOrganisme'),2);
+		$TabRecapFormation[$k]['montantEntreprise']=round($ATMdb->Get_field('montantEntreprise'),2);
+		$k++;
 	}
 	
 	return $TabRecapFormation;
@@ -54,9 +56,8 @@ function _remuneration(&$ATMdb, $userId, $date_debut, $date_fin){
 	
 	$sql="SELECT *
 	FROM ".MAIN_DB_PREFIX."rh_remuneration as a 
-	WHERE a.entity=".$conf->entity."
-	AND a.fk_user=".$userId."
-	AND (a.date_debutRemuneration<'".$date_debut."' AND a.date_finRemuneration>'".$date_fin."')";
+	WHERE a.fk_user=".$userId."
+	AND (a.date_debutRemuneration<='".$date_debut."' AND a.date_finRemuneration>='".$date_fin."')";
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
@@ -73,6 +74,14 @@ function _remuneration(&$ATMdb, $userId, $date_debut, $date_fin){
 		$TabRecapRem['urssafPartPatronale']=round($ATMdb->Get_field('urssafPartPatronale'),2);
 		$TabRecapRem['retraitePartSalariale']=round($ATMdb->Get_field('retraitePartSalariale'),2);
 		$TabRecapRem['retraitePartPatronale']=round($ATMdb->Get_field('retraitePartPatronale'),2);
+		$TabRecapRem['mutuellePartSalariale']=round($ATMdb->Get_field('mutuellePartSalariale'),2);
+		$TabRecapRem['mutuellePartPatronale']=round($ATMdb->Get_field('mutuellePartPatronale'),2);
+		$TabRecapRem['diversPartSalariale']=round($ATMdb->Get_field('diversPartSalariale'),2);
+		$TabRecapRem['diversPartPatronale']=round($ATMdb->Get_field('diversPartPatronale'),2);
+		$TabRecapRem['totalPartSalariale']=round($ATMdb->Get_field('prevoyancePartSalariale')+$ATMdb->Get_field('urssafPartSalariale')+$ATMdb->Get_field('retraitePartSalariale')+$ATMdb->Get_field('mutuellePartSalariale')+$ATMdb->Get_field('diversPartSalariale'),2);
+		$TabRecapRem['totalPartPatronale']=round($ATMdb->Get_field('prevoyancePartPatronale')+$ATMdb->Get_field('urssafPartPatronale')+$ATMdb->Get_field('retraitePartPatronale')+$ATMdb->Get_field('mutuellePartPatronale')+$ATMdb->Get_field('diversPartPatronale'),2);
+		$TabRecapRem['pourcentagePartSalariale']=round(($TabRecapRem['totalPartSalariale']*100)/($TabRecapRem['totalPartSalariale']+$TabRecapRem['totalPartPatronale']),2);
+		$TabRecapRem['pourcentagePartPatronale']=100-$TabRecapRem['pourcentagePartSalariale'];
 	}
 	
 	return $TabRecapRem;
