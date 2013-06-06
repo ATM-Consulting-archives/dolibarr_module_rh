@@ -177,8 +177,6 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('idEven',$emprunt->getId());
 	
-	printLibelle($ressource);
-	
 	$emprunt->load_liste($ATMdb);
 	
 	$TBS=new TTemplateTBS();
@@ -187,6 +185,7 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 		,array(
 			'ressource'=>array(
 				'id'=>$ressource->getId()
+				,'entete'=>getLibelle($ressource)
 				,'titreNouvelleAttribution'=>load_fiche_titre("Nouvelle attribution",'', 'title.png', 0, '')
 				,'titreModificationAttribution'=>load_fiche_titre("Modification d'une attribution",'', 'title.png', 0, '')
 			)

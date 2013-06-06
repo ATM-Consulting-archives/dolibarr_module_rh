@@ -15,6 +15,8 @@
     
 [onshow;block=end] 
 
+[ressource.entete;strconv=no;protect=no]
+
 	<table class="border" style="width:100%">
 		[NEmprunt.fk_rh_ressource;strconv=no;protect=no]
 		[NEmprunt.type;strconv=no;protect=no]
