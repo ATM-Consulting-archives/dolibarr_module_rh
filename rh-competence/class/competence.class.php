@@ -376,6 +376,10 @@ class TRH_remuneration extends TObjetStd {
 		parent::add_champs('urssafPartPatronale','type=chaine;');
 		parent::add_champs('retraitePartSalariale','type=chaine;');	
 		parent::add_champs('retraitePartPatronale','type=chaine;');
+		parent::add_champs('mutuellePartSalariale','type=chaine;');	
+		parent::add_champs('mutuellePartPatronale','type=chaine;');
+		parent::add_champs('diversPartSalariale','type=chaine;');	
+		parent::add_champs('diversPartPatronale','type=chaine;');
 		
 		parent::add_champs('commentaire','type=chaine;');		
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
