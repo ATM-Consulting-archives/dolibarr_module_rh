@@ -345,7 +345,7 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 			
 
 				//si le type est Immo, on créé un contrat associé au véhicule
-				if (strtolower($infos[12])=='immo'){
+				if (strtolower($infos[12])!='immo'){
 					//le num du contrat est une produit des km, de la durée et du loyer.
 					$numContrat = $infos[15]*5+$infos[16]+intval(str_replace(',', '.', $infos[17]));
 					$TContrat[$numContrat] = new TRH_Contrat;
