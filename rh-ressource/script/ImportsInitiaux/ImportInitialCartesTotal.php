@@ -98,7 +98,7 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 					{
 					//echo $plaque.' : pas de groupe du nom '.$gp.'. C\'PRO GROUPE mis.<br>';
 					$carteTotal->fk_utilisatrice = $TGroups['cpro groupe'];
-					$cptNoGroup ++;
+					$jointureGroupe = false;
 					}
 					
 				else {$carteTotal->fk_utilisatrice = $TGroups[$gp];}
@@ -142,9 +142,8 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 }
 
 echo $cptCarteTotal.' cartes Total importes.<br><br><br>';
-echo $cptOkPlaque.' jointures plaque ok.<br>';
-echo $cptNoGroup.' carte dont le groupe n\'a pas été trouvé,  C\'PRO GROUPE mis comme utilisateur.<br>';
-echo $cptOkGroupe.' jointures groupe ok.<br>';
+echo 'dont '.$cptOkPlaque.' cartes liés à des voitures.<br>';
+echo $cptOkGroupe.' cartes dont le groupe n\'a pas été trouvé,  C\'PRO GROUPE mis comme utilisateur.<br>';
 
 //Fin du code PHP : Afficher le temps d'éxecution
 $timeend=microtime(true);

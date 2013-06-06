@@ -46,8 +46,7 @@ while($ATMdb->Get_line()) {
 	$nom = str_replace("'", "",strtolower($ATMdb->Get_field('nom')));
 	$TGroups[$nom] = $ATMdb->Get_field('rowid');
 	}
-print_r($TGroups);
-//exit();
+
 
 $TTVA = array();
 $sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
