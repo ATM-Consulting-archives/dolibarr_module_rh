@@ -4,42 +4,39 @@
 
     [compteurGlobal.titreConges;strconv=no;protect=no]
 	                             
-	<div style="display:inline-block; margin-top:-20px;">
-		<div style="display:inline-block;">
-		
-       
-		
-		<div style="float:right; display:inline-block; margin-left: 100px;">                  
-		<table class="border" style="width:150%;" >	
-				<br/><br/>
-				<tr>
-					<td>Nombre de jours acquis par mois</td>
-					<td> [compteurGlobal.congesAcquisMensuelInit;strconv=no;protect=no]</td>
-				</tr>
-				<tr>
-					<td>Date clôture congés</td>
-					<td>[compteurGlobal.date_congesClotureInit;strconv=no;protect=no]</td>
-				</tr>
-		</table>
-		</div>
-	</div>
+                 
+			<table class="border" style="width:100%;" >	
+
+					<tr>
+						<td style="width:30%;">Nombre de jours acquis par mois</td>
+						<td> [compteurGlobal.congesAcquisMensuelInit;strconv=no;protect=no]</td>
+					</tr>
+					<tr>
+						<td>Date clôture congés</td>
+						<td>[compteurGlobal.date_congesClotureInit;strconv=no;protect=no]</td>
+					</tr>
+			</table>
+
+
 	
 	<br/><br/>
 	
 	 [compteurGlobal.titreRtt;strconv=no;protect=no]     
-	 <br/>                     
-	<div style="display:inline-block; margin-top:-50px;">
-	    
-		
-		<div style="float:right; display:inline-block; margin-left: 100px;">                        
-		<table class="border" style="width:225%">
+	 <br/>                                         
+		<table class="border" style="width:100%">
+				<tr>
+					<td style="width:30%;">Nombre de RTT acquis pour les cadres de C'PRO Groupe</td>
+					<td>[compteurGlobal.rttCumuleInitCadreCpro;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Nombre de RTT acquis pour les cadres de C'PRO Informatique</td>
+					<td>[compteurGlobal.rttCumuleInitCadreCproInfo;strconv=no;protect=no]</td>
+				</tr>
 				<tr>
 					<td>Date clôture RTT</td>
 					<td>[compteurGlobal.date_rttClotureInit;strconv=no;protect=no]</td>
 				</tr>
-		</table>
-	    </div>  
-	</div>            
+		</table>     
 	<br/><br/><br/>
 
 

@@ -46,6 +46,7 @@ $idCarteTotal = getIdType('cartetotal');
 $cptCarteTotal = 0;
 $cptOkPlaque = 0;
 $cptOkGroupe = 0;
+$cptNoGroup = 0;
 $nomFichier = "exportEtatDeParcTotal.csv";
 echo 'Traitement du fichier '.$nomFichier.' : <br>';
 $TRessource = getIDRessource($ATMdb, $idCarteTotal);
@@ -60,18 +61,18 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 			//print_r($infos);
 			
 			$plaque = strtoupper(str_replace('-','',$infos[7])); // on enlève les - et les espaces dans la plaque.
+			$plaque = str_replace('VU','',$plaque); // on enlève VU ou VP qui peut se trouver en fin de chaine.
+			$plaque = str_replace('VP','',$plaque); // on enlève VU ou VP qui peut se trouver en fin de chaine.
+			
 			$plaque = strtoupper(str_replace(' ','',$plaque));
 			$numId = strtoupper($infos[6]);
-			if ($numId[0]==7){$numId = substr($numId, 7);} //on enlève la partie "7010010" si elle existe au début du numId
-			
-			//TODO : numId (colonne 6 du fichier) pas unique ?!?
-			$numId = $numId + $infos[4];
+			if (stripos($numId, '7010010')!==false){$numId = substr($numId, 7);} //on enlève la partie "7010010" si elle existe au début du numId
 			
 			if (empty($numId)){
 				null;
 			}
 			else if (!empty($TRessource[$numId])){
-				//echo $numId.' existe déjà<br>';
+				echo $numId.' existe déjà<br>';
 				null;
 			}
 			else {
@@ -93,7 +94,13 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 				$gp = str_replace(' ','',$infos[12]);
 				$gp = str_replace("'",'',$gp);
 				$gp = strtolower($gp);
-				if (empty($TGroups[$gp])){echo 'Groupe non trouve : '.$gp.'<br>';$jointureGroupe = false;}
+				if (empty($TGroups[$gp]))
+					{
+					//echo $plaque.' : pas de groupe du nom '.$gp.'. C\'PRO GROUPE mis.<br>';
+					$carteTotal->fk_utilisatrice = $TGroups['cpro groupe'];
+					$jointureGroupe = false;
+					}
+					
 				else {$carteTotal->fk_utilisatrice = $TGroups[$gp];}
 				
 				//champs propres aux cartes total
@@ -135,8 +142,8 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 }
 
 echo $cptCarteTotal.' cartes Total importes.<br><br><br>';
-echo $cptOkPlaque.' jointures plaque ok.<br>';
-echo $cptOkGroupe.' jointures groupe ok.<br>';
+echo 'dont '.$cptOkPlaque.' cartes liés à des voitures.<br>';
+echo $cptOkGroupe.' cartes dont le groupe n\'a pas été trouvé,  C\'PRO GROUPE mis comme groupe utilisateur.<br>';
 
 //Fin du code PHP : Afficher le temps d'éxecution
 $timeend=microtime(true);

@@ -42,21 +42,17 @@
 	$p->init_db_by_vars($ATMdb);
 	
 
-	$sqlReq="SELECT * FROM ".MAIN_DB_PREFIX."rh_admin_compteur";
+	$sqlReq="DELETE FROM ".MAIN_DB_PREFIX."rh_admin_compteur WHERE 1";
 	$ATMdb->Execute($sqlReq);
-	$Tab=array();
-	$j=0;
-	while($ATMdb->Get_line()) {
-				$j++;		
-	}
-	if($j==0){
-		$q=new TRH_AdminCompteur;
-		$q->init_db_by_vars($ATMdb);
-		$q->congesAcquisMensuelInit='2.08';
-		$q->date_rttClotureInit=strtotime(DATE_RTT_CLOTURE);
-		$q->date_congesClotureInit=strtotime(DATE_CONGES_CLOTURE);
-		$q->save($ATMdb);
-	}
+	
+	$q=new TRH_AdminCompteur;
+	$q->init_db_by_vars($ATMdb);
+	$q->congesAcquisMensuelInit=2.08;
+	$q->rttCumuleInitCadreCpro=8;
+	$q->rttCumuleInitCadreCproInfo=9;
+	$q->date_rttClotureInit=strtotime(DATE_RTT_CLOTURE);
+	$q->date_congesClotureInit=strtotime(DATE_CONGES_CLOTURE);
+	$q->save($ATMdb);
 	
 	
 

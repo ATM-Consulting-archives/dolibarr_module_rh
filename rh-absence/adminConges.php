@@ -29,6 +29,38 @@
 				
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				
+				//on sélectionne tous les users qui sont des cadres de C'PRO ou C'PRO Groupe, 
+				//puis ceux qui sont des cadres de C'PRO info
+				$sql="SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."entity as t
+				WHERE e.societeRtt=t.rowid AND t.label LIKE '%info%'";
+				$ATMdb->Execute($sql);
+				$TUserCproInfo=array();
+				While($ATMdb->Get_line()) {
+							$TUserCproInfo[]=$ATMdb->Get_field('fk_user');
+				}
+				
+				$sql="SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."entity as t
+				WHERE e.societeRtt=t.rowid AND t.label LIKE '%groupe%'";
+				$ATMdb->Execute($sql);
+				$TUserCproGroupe=array();
+				While($ATMdb->Get_line()) {
+							$TUserCproGroupe[]=$ATMdb->Get_field('fk_user');
+				}
+				
+				// on met à jour les compteurs des cpro info
+				$sql="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
+					SET rttAcquisAnnuelCumuleInit=".$compteur->rttCumuleInitCadreCpro." 
+					WHERE rttMetier LIKE 'cadre'
+					 AND fk_user IN(".implode(',', $TUserCproInfo).")";
+					
+				$ATMdb->Execute($sql);
+
+				//on mets à jour les compteurs des cpro groupe
+				$sql="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
+					SET rttAcquisAnnuelCumuleInit=".$compteur->rttCumuleInitCadreCpro." 
+					WHERE rttMetier LIKE 'cadre'
+					 AND fk_user IN(".implode(',', $TUserCproGroupe).")";
+				$ATMdb->Execute($sql);
 				
 				//on récupère la liste des utilisateurs 
 				$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user";
@@ -107,10 +139,13 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'date_rttClotureInit'=>$form->calendrier('', 'date_rttClotureInit', $compteur->date_rttClotureInit, 12)
 				,'date_congesClotureInit'=>$form->calendrier('', 'date_congesClotureInit', $compteur->date_congesClotureInit, 12)
 				,'congesAcquisMensuelInit'=>$form->texte('','congesAcquisMensuelInit',round2Virgule($compteur->congesAcquisMensuelInit),10,50,'',$class="text", $default='')
+				,'rttCumuleInitCadreCpro'=>$form->texte('','rttCumuleInitCadreCpro',round2Virgule($compteur->rttCumuleInitCadreCpro),10,50,'',$class="text", $default='')	
+				,'rttCumuleInitCadreCproInfo'=>$form->texte('','rttCumuleInitCadreCproInfo',round2Virgule($compteur->rttCumuleInitCadreCproInfo),10,50,'',$class="text", $default='')	
+				
 				,'titreConges'=>load_fiche_titre("Congés payés",'', 'title.png', 0, '')
-				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')
+				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')	
 			)
-		
+			
 			,'userCourant'=>array(
 				'id'=>$user->id
 				,'lastname'=>$user->lastname
