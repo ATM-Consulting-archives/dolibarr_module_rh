@@ -172,9 +172,12 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
+	
 	echo $form->hidden('id', $ressource->getId());
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('idEven',$emprunt->getId());
+	
+	printLibelle($ressource);
 	
 	$emprunt->load_liste($ATMdb);
 	
@@ -192,9 +195,9 @@ function _fiche(&$ATMdb, &$emprunt,&$ressource,  $mode) {
 				,'type'=>$form->hidden('type', 'emprunt')
 				,'fk_user'=>$form->combo('','fk_user',$emprunt->TUser,$emprunt->fk_user)
 				,'fk_rh_ressource'=> $form->hidden('fk_rh_ressource', $ressource->getId())
-				,'commentaire'=>$form->texte('','commentaire',$emprunt->commentaire, 30,100,'','','-')
-				,'date_debut'=> $form->calendrier('', 'date_debut', $emprunt->date_debut, 12)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $emprunt->date_fin, 12)
+				,'commentaire'=>$form->zonetexte('','commentaire',$emprunt->commentaire, 80,3)
+				,'date_debut'=> $form->calendrier('', 'date_debut', $emprunt->date_debut, 12, 10)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $emprunt->date_fin, 12, 10)
 			)
 			,'view'=>array(
 				'mode'=>$mode
