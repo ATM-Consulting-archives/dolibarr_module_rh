@@ -36,13 +36,13 @@
 			<table class="border" style="width:100%">		
 				<tr>
 					<td><b>Prime d'ancienneté</b></td>
-					<td><b>Prime semestrielle</b></td>
-					<td><b>Prime exceptionnelle</b></td>
+					<td><b>Participation</b></td>
+					<td><b>Autre</b></td>
 				</tr>
 				<tr>
 					<td>[remuneration.primeAnciennete;strconv=no;protect=no]€</td>
-					<td>[remuneration.primeSemestrielle;strconv=no;protect=no]€</td>
-					<td>[remuneration.primeExceptionnelle;strconv=no;protect=no]€</td>
+					<td>[remuneration.participation;strconv=no;protect=no]€</td>
+					<td>[remuneration.autre;strconv=no;protect=no]€</td>
 				</tr>
 			</table>
 			<br/><br/>

@@ -180,8 +180,8 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 				,'bruteAnnuelle'=>$form->texte('','bruteAnnuelle',$remuneration->bruteAnnuelle, 30,100,'','','-')
 				,'salaireMensuel'=>$form->texte('','salaireMensuel',$remuneration->salaireMensuel, 30,100,'','','-')
 				,'primeAnciennete'=>$form->texte('','primeAnciennete',$remuneration->primeAnciennete, 30,100,'','','-')
-				,'primeSemestrielle'=>$form->texte('','primeSemestrielle',$remuneration->primeSemestrielle, 30,100,'','','-')
-				,'primeExceptionnelle'=>$form->texte('','primeExceptionnelle',$remuneration->primeExceptionnelle, 30,100,'','','-')
+				,'participation'=>$form->texte('','participation',$remuneration->participation, 30,100,'','','-')
+				,'autre'=>$form->texte('','autre',$remuneration->autre, 30,100,'','','-')
 				,'prevoyancePartSalariale'=>$form->texte('','prevoyancePartSalariale',$remuneration->prevoyancePartSalariale, 30,100,'','','-')
 				,'prevoyancePartPatronale'=>$form->texte('','prevoyancePartPatronale',$remuneration->prevoyancePartPatronale, 30,100,'','','-')
 				,'urssafPartSalariale'=>$form->texte('','urssafPartSalariale',$remuneration->urssafPartSalariale, 30,100,'','','-')
@@ -192,8 +192,8 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 				,'mutuellePartPatronale'=>$form->texte('','mutuellePartPatronale',$remuneration->mutuellePartPatronale, 30,100,'','','-')
 				,'diversPartSalariale'=>$form->texte('','diversPartSalariale',$remuneration->diversPartSalariale, 30,100,'','','-')
 				,'diversPartPatronale'=>$form->texte('','diversPartPatronale',$remuneration->diversPartPatronale, 30,100,'','','-')
-				,'totalRemPatronale'=>$remuneration->retraitePartPatronale+$remuneration->urssafPartPatronale+$remuneration->prevoyancePartPatronale
-				,'totalRemSalariale'=>$remuneration->retraitePartSalariale+$remuneration->urssafPartSalariale+$remuneration->prevoyancePartSalariale
+				,'totalRemPatronale'=>$remuneration->diversPartPatronale+$remuneration->mutuellePartPatronale+$remuneration->retraitePartPatronale+$remuneration->urssafPartPatronale+$remuneration->prevoyancePartPatronale
+				,'totalRemSalariale'=>$remuneration->diversPartSalariale+$remuneration->mutuellePartSalariale+$remuneration->retraitePartSalariale+$remuneration->urssafPartSalariale+$remuneration->prevoyancePartSalariale
 				,'commentaire'=>$form->texte('','commentaire',$remuneration->commentaire, 30,100,'','','-')
 				,'fk_user'=>$remuneration->fk_user
 				,'lieuExperience'=>$form->texte('','lieuExperience',$remuneration->lieuExperience, 30,100,'','','-')
