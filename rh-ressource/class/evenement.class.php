@@ -40,8 +40,6 @@ class TRH_Evenement  extends TObjetStd {
 		//pour une facture
 		parent::add_champs('numFacture','type=chaine;');
 		parent::add_champs('compteFacture','type=chaine;');
-		parent::add_champs('numContrat','type=chaine;');
-		parent::add_champs('fk_contrat','type=entier;index');
 		
 		parent::_init_vars();
 		parent::start();
@@ -80,7 +78,8 @@ class TRH_Evenement  extends TObjetStd {
 	
 	function save(&$db) {
 		global $conf;
-		$this->entity = $conf->entity;
+		//si l'entité n'est pas encore renseigné, on met celle de l'entité courante.
+		$this->entity = (empty($this->entity)) ? $conf->entity : $this->entity ;
 		
 		if ($this->date_fin < $this->date_debut) {
 			$this->date_fin = $this->date_debut;
@@ -159,10 +158,11 @@ class TRH_Type_Evenement  extends TObjetStd {
 	/**
 	 * Attribut les champs directement, pour créer les types par défauts par exemple. 
 	 */
-	function chargement(&$db, $libelle, $codecomptable, $supprimable, $fk_rh_ressource_type){
-		$this->load_by_code($db, $code);
+	function chargement(&$db, $libelle, $code, $codecomptable, $supprimable, $fk_rh_ressource_type){
+		if (empty($code)){$this->code = TRH_Ressource_type::code_format($libelle);}
+		else $this->code = $code;
+		$this->load_by_code($db, $this->code);
 		$this->libelle = $libelle;
-		$this->code = TRH_Ressource_type::code_format($libelle);
 		$this->codecomptable = $codecomptable;
 		$this->supprimable = $supprimable;
 		$this->fk_rh_ressource_type = $fk_rh_ressource_type;
