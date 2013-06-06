@@ -389,3 +389,21 @@ class TRH_remuneration extends TObjetStd {
 		parent::start();
 	}
 }
+
+//TRH_DIF
+//définition de la classe décrivant les lignes de CV d'un utilisateur
+class TRH_dif extends TObjetStd {
+	function __construct() {
+		
+		parent::set_table(MAIN_DB_PREFIX.'rh_dif');
+		parent::add_champs('annee','type=entier;');
+		parent::add_champs('nb_heures_acquises','type=entier;');
+		parent::add_champs('nb_heures_prises','type=entier;');
+		parent::add_champs('nb_heures_restantes','type=entier;');
+		parent::add_champs('fk_user','type=entier;');
+		parent::add_champs('entity','type=entier;');
+		
+		parent::_init_vars();
+		parent::start();
+	}
+}
