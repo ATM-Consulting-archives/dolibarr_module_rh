@@ -287,11 +287,13 @@ class TRH_Absence extends TObjetStd {
 		$this->entity = $conf->entity;
 		
 		
+		
 		//on calcule la duree de l'absence, en décomptant jours fériés et jours non travaillés par le collaborateur
 		$dureeAbsenceCourante=$this->calculDureeAbsence($db, $this->date_debut, $this->date_fin, $absence);
 		$dureeAbsenceCourante=$this->calculJoursFeries($db, $dureeAbsenceCourante, $this->date_debut, $this->date_fin, $absence);
 		$dureeAbsenceCourante=$this->calculJoursTravailles($db, $dureeAbsenceCourante, $this->date_debut, $this->date_fin, $absence); 
 		
+
 		
 		//autres paramètes à sauvegarder
 		$this->libelle=saveLibelle($this->type);
@@ -1177,7 +1179,6 @@ class TRH_Absence extends TObjetStd {
 	function rechercheAbsenceUser(&$ATMdb,$idUserRecherche, $date_debut, $date_fin, $typeAbsence){
 			global $conf;
 
-
 			//on recherche les absences d'un utilisateur pendant la période
 			$sql="SELECT a.rowid as 'ID',  u.login, u.name, u.firstname, 
 				DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, 
@@ -1204,7 +1205,7 @@ class TRH_Absence extends TObjetStd {
 	function load_by_idImport(&$ATMdb, $idImport){
 		global $conf;
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence 
-		WHERE idAbsImport='".$idImport."' AND entity IN (0,".$conf->entity.")";
+		WHERE idAbsImport='".$idImport;
 
 		$ATMdb->Execute($sql);
 		
@@ -1212,6 +1213,28 @@ class TRH_Absence extends TObjetStd {
 			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
 		}
 		return false;
+	}
+	
+	
+	//fonction qui renvoie 1 si une absence existe déjà pendant la date que l'on veut ajouter, 0 sinon
+	function testExisteDeja($ATMdb, $absence){
+		//on récupère toutes les date d'absences du collaborateur
+		$sql="SELECT date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_absence WHERE (etat LIKE 'Validee' OR etat LIKE 'Avalider') AND fk_user=".$absence->fk_user;
+		$ATMdb->Execute($sql);
+		$k=0;
+		while($ATMdb->Get_line()) {
+			$TAbs[$k]['date_debut']=strtotime($ATMdb->Get_field('date_debut'));
+			$TAbs[$k]['date_fin']=strtotime($ATMdb->Get_field('date_fin'));
+			$k++;
+		}
+		foreach($TAbs as $dateAbs){
+			//on traite le début de l'absence	
+			if($absence->date_debut<$dateAbs['date_debut']&&$absence->date_fin>$dateAbs['date_fin']) return 1;
+			
+			//on traite la fin de l'absence	
+			if($absence->date_debut>$dateAbs['date_debut']&&$absence->date_fin<$dateAbs['date_fin']) return 1;
+		}
+		return 0;
 	}
 			
 }
@@ -1419,6 +1442,25 @@ class TRH_JoursFeries extends TObjetStd {
 	function razCheckbox(&$ATMdb, $absence){
 			$this->matin=0;
 			$this->apresmidi=0;
+	}
+	
+	//fonction qui renvoie 1 si le jour férié que l'on veut créer existe déjà à la date souhaitée, sinon 0
+	function testExisteDeja($ATMdb, $feries){
+		global $conf;
+		//on récupère toutes les dates de jours fériés existant
+		$sql="SELECT date_jourOff  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries
+		WHERE entity IN (0,".$conf->entity.")";
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$TJFeries[]=strtotime($ATMdb->Get_field('date_jourOff'));
+		}
+		
+		
+		//on teste si l'un d'eux est égal à celui que l'on veut créer
+		foreach($TJFeries as $jour){
+			if($jour==$feries->date_jourOff) return 1;
+		}
+		return 0;
 	}
 	
 }

@@ -145,9 +145,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 						$societe=strtolower($ATMdb->Get_field('label'));
 					}
 					
-					switch($societe){
-						case "cpro":
-						case "c'pro groupe":	
+					if(stristr($societe,'groupe')!=false){	
 							if($tpsHebdoUser==37){
 								$compteur->rttMetier='noncadre37cpro';
 								$compteur->rttAcquisAnnuelCumuleInit=5;
@@ -162,9 +160,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 								$compteur->rttAcquisAnnuelNonCumuleInit=0;
 							}
 							$compteur->rttTypeAcquisition='Annuel';
-							break;
-
-						case "c'pro informatique":
+					}elseif(stristr($societe,'info')!=false){
 							if($tpsHebdoUser==37){
 								$compteur->rttMetier='noncadre37cproinfo';
 								$compteur->rttAcquisMensuelInit=1;
@@ -182,18 +178,16 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 								$compteur->rttAcquisMensuelInit=0;
 								$compteur->rttTypeAcquisition='Annuel';
 							}
-							break;
-							
-						case "global impression":
+					}
+					elseif(stristr($societe,'impression')!=false){
 							$compteur->rttTypeAcquisition='Annuel';
 							$compteur->rttMetier='aucunrtt';
-							break;
-						case "agt":	//aucun RTT
+					}
+					elseif(stristr($societe,'agt')!=false){
 						$compteur->rttTypeAcquisition='Annuel';
 							$compteur->rttMetier='aucunrtt';
-							break;
-						
 					}
+
 				}
 				
 				$compteur->rttannee=$annee;
