@@ -6,7 +6,7 @@
  * 
  */
  
- 
+/* 
 require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');

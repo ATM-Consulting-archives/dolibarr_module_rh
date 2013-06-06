@@ -143,7 +143,7 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 
 echo $cptCarteTotal.' cartes Total importes.<br><br><br>';
 echo 'dont '.$cptOkPlaque.' cartes liés à des voitures.<br>';
-echo $cptOkGroupe.' cartes dont le groupe n\'a pas été trouvé,  C\'PRO GROUPE mis comme utilisateur.<br>';
+echo $cptOkGroupe.' cartes dont le groupe n\'a pas été trouvé,  C\'PRO GROUPE mis comme groupe utilisateur.<br>';
 
 //Fin du code PHP : Afficher le temps d'éxecution
 $timeend=microtime(true);
