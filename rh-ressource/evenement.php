@@ -154,8 +154,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 			LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
 			LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 			LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
-			WHERE e.entity IN (0,".$conf->entity.")
-			AND e.fk_rh_ressource=".$ressource->getId().$jointureType;
+			WHERE e.fk_rh_ressource=".$ressource->getId().$jointureType;
 	if(!$user->rights->ressource->ressource->manageEvents){
 		$sql.=" AND e.fk_user=".$user->id;
 	}

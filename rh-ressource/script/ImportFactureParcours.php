@@ -16,7 +16,7 @@ require('../class/contrat.class.php');
 
 global $conf;
 $entity = (isset($_REQUEST['entity'])) ? $_REQUEST['entity'] : $conf->entity;
-echo 'entité : '.$entity;
+echo 'Entité : '.$entity.'<br>';
 
 $ATMdb=new TPDOdb;
 
@@ -96,7 +96,6 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				//echo $idUser.'<br>';
 				if ($idUser != 0) {
 					$numFacture = $infos[2];
-					//if ( !empty($numFacture) ){
 						//FACTURE SUR LE LOYER
 						$fact = new TRH_Evenement;
 						$fact->type = 'factureloyer';
@@ -108,12 +107,34 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 						$fact->commentaire = 'Facture lié au contrat '.$infos[4];
 						$fact->set_date('date_debut', $infos[10]);
 						$fact->set_date('date_fin', $infos[1]);
-						$fact->coutTTC += floatval(strtr($infos[38], ',','.'));
-						$fact->coutEntrepriseTTC += floatval(strtr($infos[38], ',','.'));
-						$fact->TVA= $TTVA['19.6'];;
-						$fact->coutEntrepriseHT += floatval(strtr($infos[12], ',','.'));
+						$fact->coutTTC = floatval(strtr($infos[38], ',','.'));
+						$fact->coutEntrepriseTTC = floatval(strtr($infos[38], ',','.'));
+						$fact->TVA= $TTVA['19.6'];
+						$fact->coutEntrepriseHT = floatval(strtr($infos[12], ',','.'));
+						$fact->entity =$entity;
 						$fact->save($ATMdb);
 						$cptFactureLoyer++;
+						
+						//FACTURE SUR L'ENTRETIEN ET LA GESTION
+						$fact = new TRH_Evenement;
+						$fact->type = 'facturegestionetentretien';
+						$fact->numFacture = $numFacture;
+						$fact->fk_rh_ressource = $TRessource[$plaque];
+						$fact->fk_user = $idUser;
+						$fact->fk_rh_ressource_type = $idVoiture;
+						$fact->motif = 'Facture mensuelle Parcours : Gestion et Entretien';
+						$fact->commentaire = 'Facture lié au contrat '.$infos[4].',<br>
+												Entretien TTC :'.floatval(strtr($infos[32], ',','.')).'€,<br>
+												Gestion TTC :'.floatval(strtr($infos[31], ',','.')).'€';
+						$fact->set_date('date_debut', $infos[10]);
+						$fact->set_date('date_fin', $infos[1]);
+						$fact->coutTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
+						$fact->coutEntrepriseTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
+						$fact->TVA= $TTVA['19.6'];
+						$fact->coutEntrepriseHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
+						$fact->entity =$entity;
+						$fact->save($ATMdb);
+						$cptFactureGestEntre++;
 						
 						/*$TExtrasFieldValues = array();
 						$c = '';
@@ -175,7 +196,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	//$message .= $cptContrat.' contrats importés.<br>';
 	$message .= $cptNoVoiture.' plaques sans correspondance.<br>';
 	$message .= $cptNoAttribution.' voitures non attribués<br>';
-	$message .= $cptFactureLoyer.' factures importés.<br>';
+	$message .= $cptFactureLoyer.' factures loyer importés.<br>';
+	$message .= $cptFactureGestEntre.' factures gestion+entretien importés.<br>';
 	$timeend=microtime(true);
 	$page_load_time = number_format($timeend-$timestart, 3);
 	$message .= '<br>Fin du traitement. Durée : '.$page_load_time . " sec.<br><br>";
