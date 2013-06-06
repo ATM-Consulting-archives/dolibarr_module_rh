@@ -117,18 +117,16 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 						
 						if(stristr($infos[0],'agt')!=false){	//on est chez AGT
 							 $entreprise='%agt%';
-						}
-						elseif(stristr($infos[0],'groupe')!=false){	//on est chez cpro groupe
-							$entreprise='%groupe%';
+
 						}
 						elseif(stristr($infos[0],'impression')!=false){	//on est chez global impression
 							$entreprise='%impression%';
 						}
 						elseif(stristr($infos[0],'informatique')!=false){	//on est chez global impression
-							$entreprise='%informatique%';
+							$entreprise='%info%';
 						}
 						else{//on est chez 
-							$entreprise='%cpro%';
+							$entreprise='%groupe%';
 						}
 						$sql='SELECT label, rowid FROM '.MAIN_DB_PREFIX.'entity WHERE label LIKE "'.$entreprise.'"';
 

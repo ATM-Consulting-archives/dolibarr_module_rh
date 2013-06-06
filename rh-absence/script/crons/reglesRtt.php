@@ -120,3 +120,4 @@
 		$ATMdb->Execute($sqlAnnee);
 	}
 	
+	$ATMdb->close();
