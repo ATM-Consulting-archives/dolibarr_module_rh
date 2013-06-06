@@ -47,7 +47,7 @@ class TRH_Ressource extends TObjetStd {
 		//chargement d'une liste de tout les types de ressources
 		$temp = new TRH_Ressource_type;
 		$Tab = TRequeteCore::get_id_from_what_you_want($ATMdb, MAIN_DB_PREFIX.'rh_ressource_type', array());
-		$this->TType = array();
+		$this->TType = array('');
 		foreach($Tab as $k=>$id){
 			$temp->load($ATMdb, $id);
 			$this->TType[$temp->getId()] = $temp->libelle;
