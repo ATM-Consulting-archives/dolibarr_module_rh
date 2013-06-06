@@ -6,7 +6,7 @@
  * 
  */
  
-/* 
+
 require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');
@@ -61,9 +61,9 @@ $TTVA = array();
 $sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
 $ATMdb->Execute($sqlReq);
 while($ATMdb->Get_line()) {
-	$TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
+	$TTVA[$ATMdb->Get_field('taux')] = $ATMdb->Get_field('rowid');
 	}
-		
+
 
 //donne l'user qui utilise la carte
 $TAttribution = array();
@@ -128,14 +128,20 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				$temp->motif = htmlentities($infos[17], ENT_COMPAT , 'ISO8859-1');
 				$temp->commentaire = htmlentities($infos[30], ENT_COMPAT , 'ISO8859-1');
+				if (!empty($infos[31])){
+					$temp->commentaire .= '<br>Kilometrage saisi: '.intval($infos[31]).'<br>
+									'.$infos[18].' Litres d\'essence.';
+									
+				}
 				$temp->entity = $entity;
 				$temp->fk_user = $TAttribution[$plaque];
 				$temp->set_date('date_debut', $infos[15]);
 				$temp->set_date('date_fin', $infos[15]);
 				$temp->coutTTC = strtr($infos[19], ',','.');
 				$temp->coutEntrepriseTTC = strtr($infos[19], ',','.');
-				//$ttva = array_keys($TTVA,floatval(strtr($infos[25], ',','.')));
-				$temp->TVA = $TTVA[floatval(strtr($infos[25], ',','.'))];
+				
+				$taux = number_format(floatval(str_replace(',', '.', $infos[25])),1);
+				$temp->TVA = $TTVA[$taux];
 				$temp->coutEntrepriseHT = strtr($infos[20], ',','.');
 				$temp->numFacture = $infos[1];
 				$temp->compteFacture = $infos[13];
