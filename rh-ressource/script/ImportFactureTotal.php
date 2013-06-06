@@ -13,7 +13,7 @@ require('../class/ressource.class.php');
 require('../lib/ressource.lib.php');
 //*/
 global $conf;
-
+$entity = (isset($_REQUEST['entity'])) ? $_REQUEST['entity'] : $conf->entity;
 $ATMdb=new TPDOdb;
 
 $TUser = array();
@@ -56,9 +56,14 @@ while($row = $ATMdb->Get_line()) {
 		$TCarte[$TPlaque[$row->fk_rh_ressource]] = $row->rowid;
 	}
 }
-print_r($TCarte);
-echo count($TCarte);
-echo '<br><br>';
+//Tableau des TVAs
+$TTVA = array();
+$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
+$ATMdb->Execute($sqlReq);
+while($ATMdb->Get_line()) {
+	$TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
+	}
+		
 
 //donne l'user qui utilise la carte
 $TAttribution = array();
@@ -67,15 +72,15 @@ foreach ($TCarte as $numId => $rowid) {
 	if ($idUser!=0){$TAttribution[$numId] = $idUser;} 
 }
 
-print_r($TAttribution);
-echo count($TAttribution);
 
 
 if (empty($nomFichier)){$nomFichier = "./fichierImports/Facture TOTAL.csv";}
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
-echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 $TCarteInexistantes = array();
+$TCarteNonLie = array();
+$TCarteVoitureNonAttribue = array();
+
 //print_r($TRessource);
 $cpt = 0;
 //début du parsing
@@ -83,7 +88,7 @@ $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle, 0,'\r')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=1 ){
+		if ($numLigne >=2 ){
 			$infos = explode(';', $data[0]);
 			
 			//print_r($infos);
@@ -95,27 +100,27 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$plaque = str_replace(' ', '', $plaque);
 			
 			if (empty ($TCarte[$plaque])){
-				//echo $plaque.' : carte pas lié à une voiture.<br>';
+				$TCarteNonLie[$plaque] = 1;
+				//echo $plaque.' : carte pas liée à une voiture.<br>';
 				null;
 			}
 			else if (empty ($TAttribution[$plaque])){
-				//echo $plaque.' : carte liée à une voiture, mais non attribué.<br>';
+				$TCarteVoitureNonAttribue[$plaque] = 1;
+				//echo $plaque.' : carte liée à une voiture, mais non attribuée.<br>';
 				null;
 			}
 			else {
 				//print_r($infos);echo '<br>';
 				$temp = new TRH_Evenement;
-				$temp->load_liste($ATMdb);
-				$temp->load_liste_type($ATMdb, $idVoiture);
-				$temp->fk_rh_ressource = $TCarte[$plaque];
+				//$temp->load_liste($ATMdb);
 				$temp->fk_rh_ressource_type = $idCarteTotal;
+				$temp->fk_rh_ressource = $TCarte[$plaque];
 				$t = explode(' ',$infos[30]);
 				array_shift($t); 
 				$nomPeage = htmlentities(implode(' ', $t), ENT_COMPAT , 'ISO8859-1'); 
 				
 				if ( !empty($TEvents[strtolower($infos[17])]) ){
 					$temp->type = $TEvents[strtolower($infos[17])];
-					
 				}
 				else {
 					$temp->type = 'divers';
@@ -123,24 +128,23 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				$temp->motif = htmlentities($infos[17], ENT_COMPAT , 'ISO8859-1');
 				$temp->commentaire = htmlentities($infos[30], ENT_COMPAT , 'ISO8859-1');
-				
+				$temp->entity = $entity;
 				$temp->fk_user = $TAttribution[$plaque];
-				
 				$temp->set_date('date_debut', $infos[15]);
 				$temp->set_date('date_fin', $infos[15]);
 				$temp->coutTTC = strtr($infos[19], ',','.');
 				$temp->coutEntrepriseTTC = strtr($infos[19], ',','.');
-				$ttva = array_keys($temp->TTVA,floatval(strtr($infos[25], ',','.')));
-				$temp->TVA = $ttva[0];
+				//$ttva = array_keys($TTVA,floatval(strtr($infos[25], ',','.')));
+				$temp->TVA = $TTVA[floatval(strtr($infos[25], ',','.'))];
 				$temp->coutEntrepriseHT = strtr($infos[20], ',','.');
 				$temp->numFacture = $infos[1];
 				$temp->compteFacture = $infos[13];
 				$temp->litreEssence = floatval(strtr($infos[18],',','.'));
 				$temp->kilometrage = intval($infos[31]);
 				
-				echo 'lol';
+				
 				$temp->save($ATMdb);
-				echo 'lol2<br>';
+				
 				$cpt++;
 			}
 			
@@ -150,11 +154,22 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		//print_r(explode('\n', $data));
 	}	
 }
-
+$message .= 'Erreurs : Pas de carte correspondante : <br>';
 foreach ($TCarteInexistantes as $key => $value) {
-	$message .= 'Erreur : Pas de carte correspondante : '.$key.'<br>';
+	$message .= '     '.$key.'<br>';
 }
-$message .= 'Fin du traitement. '.$cpt.' événements rajoutés créés.<br><br>';
+$message .=  '<br>Erreurs : Carte non lié : <br>';
+foreach ($TCarteNonLie as $key => $value) {
+	$message .= '     '.$key.'<br>';
+}
+$message .=  '<br>Erreurs : Carte lié à une voiture mais non attribué : <br>';
+foreach ($TCarteVoitureNonAttribue as $key => $value) {
+	$message .= '     '.$key.'<br>';
+}
+
+
+
+$message .= 'Fin du traitement. '.$cpt.' événements créés.<br><br>';
 send_mail_resources('Import - Factures TOTAL',$message);
 echo $message;
 	

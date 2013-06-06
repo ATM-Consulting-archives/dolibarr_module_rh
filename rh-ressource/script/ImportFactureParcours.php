@@ -16,7 +16,6 @@ require('../class/contrat.class.php');
 
 global $conf;
 $entity = (isset($_REQUEST['entity'])) ? $_REQUEST['entity'] : $conf->entity;
-echo 'Entité : '.$entity.'<br>';
 
 $ATMdb=new TPDOdb;
 
