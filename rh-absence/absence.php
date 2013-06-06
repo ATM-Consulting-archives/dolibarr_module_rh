@@ -31,7 +31,9 @@
 						$absence->load($ATMdb, $_REQUEST['id']);
 						if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
 							mailConges($absence);
+							//mailCongesValideur($absence);
 						}
+						
 						$mesg = '<div class="error">Demande enregistrée</div>';
 						_fiche($ATMdb, $absence,'view');
 					}else{
