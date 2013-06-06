@@ -128,8 +128,8 @@ class modCompetence extends DolibarrModules
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
         $this->tabs = array(
-        	'user:+competence:Expérience:competence@competence:/competence/experience.php?fk_user=__ID__'  // To add a new tab identified by code tabname1
-            ,'user:+remuneration:Rémunération:competence@competence:/competence/remuneration.php?fk_user=__ID__'
+        	'user:+competence:Formations et expériences:competence@competence:/competence/experience.php?fk_user=__ID__'  // To add a new tab identified by code tabname1
+            ,'user:+remuneration:Rémunérations:competence@competence:/competence/remuneration.php?fk_user=__ID__'
        	);
 
         // Dictionnaries

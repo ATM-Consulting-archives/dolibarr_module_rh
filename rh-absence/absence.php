@@ -21,35 +21,41 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->set_values($_REQUEST);
 				$absence->niveauValidation=1;
-				$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
-				$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
+				$existeDeja=$absence->testExisteDeja($ATMdb, $absence);
+				if(!$existeDeja){
+					$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
+					$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
 				
-				if($demandeRecevable==1){
-					$absence->save($ATMdb);
-					$absence->load($ATMdb, $_REQUEST['id']);
-					if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
-						mailConges($absence);
-					}
-					$mesg = '<div class="error">Demande enregistrée</div>';
-					_fiche($ATMdb, $absence,'view');
-				}else{
-					if($demandeRecevable==0){
-						$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur</div>';
-						_fiche($ATMdb, $absence,'edit');
-					}else if($demandeRecevable==2){
-						$absence->avertissement=1;
+					if($demandeRecevable==1){
 						$absence->save($ATMdb);
 						$absence->load($ATMdb, $_REQUEST['id']);
 						if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
 							mailConges($absence);
 						}
-						$mesg = '<div class="error">Attention : La durée de l\'absence dépasse la règle en vigueur</div>';
+						$mesg = '<div class="error">Demande enregistrée</div>';
 						_fiche($ATMdb, $absence,'view');
+					}else{
+						if($demandeRecevable==0){
+							$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur</div>';
+							_fiche($ATMdb, $absence,'edit');
+						}else if($demandeRecevable==2){
+							$absence->avertissement=1;
+							$absence->save($ATMdb);
+							$absence->load($ATMdb, $_REQUEST['id']);
+							if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
+								mailConges($absence);
+							}
+							$mesg = '<div class="error">Attention : La durée de l\'absence dépasse la règle en vigueur</div>';
+							_fiche($ATMdb, $absence,'view');
+						}
+						else if($demandeRecevable==3){		// demande rtt non cumulés acollée à un congé, ou rtt ou jour férié
+							$mesg = '<div class="error">Demande refusée à cause des règles sur les RTT non cumulés</div>';
+							_fiche($ATMdb, $absence,'edit');
+						}
 					}
-					else if($demandeRecevable==3){		// demande rtt non cumulés acollée à un congé, ou rtt ou jour férié
-						$mesg = '<div class="error">Demande refusée à cause des règles sur les RTT non cumulés</div>';
-						_fiche($ATMdb, $absence,'edit');
-					}
+				}else{
+					$mesg = '<div class="error">Création impossible : il existe déjà une autre demande d\'absence pendant cette période</div>';
+					_fiche($ATMdb, $absence,'edit');
 				}
 				break;
 			
@@ -225,7 +231,7 @@ function _liste(&$ATMdb, &$absence) {
 
 function _listeAdmin(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
-	llxHeader('','Liste de vos absences');
+	llxHeader('','Liste de toutes les absences');
 	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
 
 	//getStandartJS();
@@ -265,7 +271,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 		,'hide'=>array('DateCre', 'fk_user', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
-			'titre'=>'Liste de vos absences'
+			'titre'=>'Liste de toutes les absences des collaborateurs'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
