@@ -78,7 +78,8 @@ class TRH_Evenement  extends TObjetStd {
 	
 	function save(&$db) {
 		global $conf;
-		$this->entity = $conf->entity;
+		//si l'entité n'est pas encore renseigné, on met celle de l'entité courante.
+		$this->entity = (empty($this->entity)) ? $conf->entity : $this->entity ;
 		
 		if ($this->date_fin < $this->date_debut) {
 			$this->date_fin = $this->date_debut;
