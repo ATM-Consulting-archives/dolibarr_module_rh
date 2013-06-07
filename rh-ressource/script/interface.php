@@ -21,11 +21,11 @@ function _get(&$ATMdb, $case) {
 			__out( _emprunt($ATMdb, $_REQUEST['fk_user'], $date_debut, $date_fin));
 			break;
 		case 'orange':
-			__out(_exportOrange($ATMdb, $_REQUEST['date_debut'], $date_debut, $date_fin));
+			__out(_exportOrange($ATMdb, $date_debut, $date_fin, $_REQUEST['entity']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
-		case 'parcours':
-			__out(_exportParcours($ATMdb, $date_debut, $date_fin, $_REQUEST['entity']));
+		case 'voiture':
+			__out(_exportVoiture($ATMdb, $date_debut, $date_fin, $_REQUEST['entity']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
 		
@@ -34,7 +34,7 @@ function _get(&$ATMdb, $case) {
 	}
 }
 
-function _exportParcours(&$ATMdb, $date_debut, $date_fin, $entity){
+function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	$TLignes = array();
 	
 	//chargement des comptes liés aux type d'évenements
@@ -80,8 +80,6 @@ function _exportParcours(&$ATMdb, $date_debut, $date_fin, $entity){
 }
 
 
-
-
 function _exportOrange(&$ATMdb, $date_debut, $date_fin, $entity){
 	$TabLigne = array();
 	
@@ -113,6 +111,7 @@ function _exportOrange(&$ATMdb, $date_debut, $date_fin, $entity){
 	$ATMdb->close();
 	return $TabLigne;
 }
+
 
 function _emprunt(&$ATMdb, $userId, $date_debut, $date_fin){
 	global $user, $conf;

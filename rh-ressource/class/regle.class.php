@@ -56,6 +56,16 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		
 	}
 	
+	function load_by_fk_user(&$ATMdb, $fk_user){
+		$sqlReq="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_regle WHERE fk_user='".$fk_user."'";
+		$ATMdb->Execute($sqlReq);
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+	}
+		
+		
 	function load(&$ATMdb, $id) {
 		//global $conf;
 		parent::load($ATMdb, $id);
@@ -69,7 +79,10 @@ class TRH_Ressource_Regle  extends TObjetStd {
 		
 		switch ($this->choixApplication){
 			case 'all':$this->fk_user = 0;$this->fk_usergroup=0;break;
-			case 'user':$this->fk_usergroup = NULL;break;
+			case 'user':
+				$this->load_by_fk_user($ATMdb, $this->fk_user);
+				$this->fk_usergroup = NULL;
+				break;
 			case 'group':$this->fk_user = NULL;break;
 		}
 		
