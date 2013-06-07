@@ -14,6 +14,7 @@
 	$formation=new TRH_formation_cv;
 	$tagCompetence=new TRH_competence_cv;
 	$tagCompetenceCV=new TRH_competence_cv;
+	$dif=new TRH_dif;
 
 	if(isset($_REQUEST['action'])) {
 
@@ -30,18 +31,28 @@
 				$formation->load($ATMdb, $_REQUEST['id']);
 				$formation->set_values($_REQUEST);
 				_ficheFormation($ATMdb, $formation, $tagCompetence, 'edit');
-				break;		
+				break;
+			case 'newDIF':
+				//$ATMdb->db->debug=true;
+				$dif->load($ATMdb, $_REQUEST['id']);
+				$dif->set_values($_REQUEST);
+				_ficheDIF($ATMdb, $dif, 'edit');
+				break;
 				
-			case 'editFormation'	:
+			case 'editFormation':
 				//$ATMdb->db->debug=true;
 				$formation->load($ATMdb, $_REQUEST['id']);
 				_ficheFormation($ATMdb, $formation,$tagCompetence,'edit');
 				break;
-				
-			case 'editCv'	:
+			case 'editCv':
 				//$ATMdb->db->debug=true;
 				$lignecv->load($ATMdb, $_REQUEST['id']);
 				_ficheCV($ATMdb, $lignecv, $tagCompetenceCV,'edit');
+				break;
+			case 'editDIF':
+				//$ATMdb->db->debug=true;
+				$dif->load($ATMdb, $_REQUEST['id']);
+				_ficheDIF($ATMdb, $dif,'edit');
 				break;
 				
 			case 'savecv':
@@ -49,19 +60,17 @@
 				$lignecv->set_values($_REQUEST);
 				$mesg = '<div class="ok">Ligne de CV ajoutée</div>';
 				$lignecv->save($ATMdb);
-				_liste($ATMdb, $lignecv , $formation);
+				_liste($ATMdb, $lignecv, $formation, $dif);
 				//_ficheCV($ATMdb, $lignecv,$mode);
 				break;
-				
 			case 'saveformation':
 				$formation->load($ATMdb, $_REQUEST['id']);
 				$formation->set_values($_REQUEST);
 				$mesg = '<div class="ok">Nouvelle formation ajoutée</div>';
 				$mode = 'view';
 				$formation->save($ATMdb);
-				_liste($ATMdb, $lignecv , $formation);
+				_liste($ATMdb, $lignecv, $formation, $dif);
 				break;
-				
 			case 'savecompetence':
 				$formation->load($ATMdb, $_REQUEST['idForm']);
 				$formation->set_values($_REQUEST);
@@ -76,6 +85,14 @@
 
 				_ficheFormation($ATMdb, $formation , $tagCompetence, 'edit');
 				//_ficheCV($ATMdb, $competence,$mode);
+				break;
+			case 'saveDIF':
+				$dif->load($ATMdb, $_REQUEST['id']);
+				$dif->set_values($_REQUEST);
+				$mesg = '<div class="ok">Nouvelle fiche de DIF ajoutée</div>';
+				$mode = 'view';
+				$dif->save($ATMdb);
+				_liste($ATMdb, $lignecv, $formation, $dif);
 				break;
 				
 			case 'newCompetence':
@@ -109,7 +126,7 @@
 					$mode = 'view';
 	
 					$formation->save($ATMdb);
-					_liste($ATMdb, $lignecv , $formation);
+					_liste($ATMdb, $lignecv, $formation, $dif);
 				}
 				break;
 				
@@ -144,7 +161,7 @@
 					$mesg = '<div class="ok">Nouvelle expérience ajoutée</div>';
 					$mode = 'view';
 					$lignecv->save($ATMdb);
-					_liste($ATMdb, $lignecv , $formation);
+					_liste($ATMdb, $lignecv, $formation, $dif);
 				}
 				break;
 				
@@ -152,10 +169,13 @@
 				$lignecv->load($ATMdb, $_REQUEST['id']);
 				_ficheCV($ATMdb, $lignecv, $tagCompetence,'view');
 				break;
-				
 			case 'viewFormation':
 				$formation->load($ATMdb, $_REQUEST['id']);
 				_ficheFormation($ATMdb, $formation, $tagCompetence,'view');
+				break;
+			case 'viewDIF':
+				$dif->load($ATMdb, $_REQUEST['id']);
+				_ficheDIF($ATMdb, $dif, 'view');
 				break;
 				
 			case 'deleteCV':
@@ -165,9 +185,8 @@
 				$lignecv->load($ATMdb, $_REQUEST['id']);
 				$lignecv->delete($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">La ligne de CV a bien été supprimée</div>';
-				_liste($ATMdb, $lignecv , $formation);
+				_liste($ATMdb, $lignecv, $formation, $dif);
 				break;
-				
 			case 'deleteFormation':
 				//$ATMdb->db->debug=true;
 				//on supprime tous les tags de compétences associés à cette formation
@@ -177,7 +196,14 @@
 				$formation->load($ATMdb, $_REQUEST['id']);
 				$formation->delete($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">La ligne de compétence a bien été supprimée</div>';
-				_liste($ATMdb, $lignecv , $formation);
+				_liste($ATMdb, $lignecv, $formation, $dif);
+				break;
+			case 'deleteDIF':
+				//$ATMdb->db->debug=true;
+				$dif->load($ATMdb, $_REQUEST['id']);
+				$dif->delete($ATMdb, $_REQUEST['id']);
+				$mesg = '<div class="ok">La ligne de DIF a bien été supprimée</div>';
+				_liste($ATMdb, $lignecv, $formation, $dif);
 				break;
 				
 			case 'deleteCompetence':
@@ -205,13 +231,13 @@
 	elseif(isset($_REQUEST['id'])) {
 		$lignecv->load($ATMdb, $_REQUEST['id']);
 		$formation->load($ATMdb, $_REQUEST['id']);
-		_liste($ATMdb, $lignecv, $formation);	
+		_liste($ATMdb, $lignecv, $formation, $dif);	
 	}
 	else {
 		//$ATMdb->db->debug=true;
 		$lignecv->load($ATMdb, $_REQUEST['id']);
 		$formation->load($ATMdb, $_REQUEST['id']);
-		_liste($ATMdb, $lignecv, $formation);
+		_liste($ATMdb, $lignecv, $formation, $dif);
 	}
 	
 	$ATMdb->close();
@@ -219,7 +245,7 @@
 	llxFooter();
 	
 	
-function _liste(&$ATMdb, $lignecv, $formation ) {
+function _liste(&$ATMdb, $lignecv, $formation, $dif) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de vos expériences');
 	
@@ -362,7 +388,78 @@ function _liste(&$ATMdb, $lignecv, $formation ) {
 	));
 	?>
 		<a class="butAction" href="?id=0&action=newformationcv&fk_user=<?=$fuser->id?>">Ajouter une formation</a><div style="clear:both"></div>
+		<br/>
 	<?
+	
+	////////////AFFICHAGE DES DIF
+	if((($user->rights->curriculumvitae->myactions->consulterOwnDif=="1")&&($user->id==$fuser->id))||($user->rights->curriculumvitae->myactions->consulterAllDif=="1")){
+		$r = new TSSRenderControler($dif);
+		$sql="SELECT rowid as 'ID'
+				,annee
+				,nb_heures_acquises
+				,nb_heures_prises
+				,nb_heures_restantes
+				,fk_user";
+		if($user->rights->curriculumvitae->myactions->gererDif=="1"){
+			$sql.=",'' as 'Supprimer'";
+		}
+		$sql.=" FROM ".MAIN_DB_PREFIX."rh_dif
+				WHERE fk_user=".$_REQUEST['fk_user']." AND entity=".$conf->entity;
+	
+		$TOrder = array('ID'=>'DESC');
+		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+					
+		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
+		$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
+		
+		$r->liste($ATMdb, $sql, array(
+			'limit'=>array(
+				'page'=>$page
+				,'nbLine'=>'30'
+			)
+			,'link'=>array(
+				'annee'=>'<a href="?id=@ID@&action=viewDIF&fk_user='.$fuser->id.'">@val@</a>'
+				,'nb_heures_acquises'=>'@val@h'
+				,'nb_heures_prises'=>'@val@h'
+				,'nb_heures_restantes'=>'@val@h'
+				,'ID'=>'<a href="?id=@ID@&action=viewDIF&fk_user='.$fuser->id.'">@val@</a>'
+				,'Supprimer'=>'<a href="?id=@ID@&action=deleteDIF&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>'
+			)
+			,'translate'=>array(
+			)
+			,'hide'=>array('fk_user', 'ID')
+			,'type'=>array()
+			,'liste'=>array(
+				'titre'=>'Liste de vos fiches de DIF'
+				,'image'=>img_picto('','title.png', '', 0)
+				,'picto_precedent'=>img_picto('','back.png', '', 0)
+				,'picto_suivant'=>img_picto('','next.png', '', 0)
+				,'noheader'=> (int)isset($_REQUEST['socid'])
+				,'messageNothing'=>"Aucune fiche de DIF disponible"
+				,'order_down'=>img_picto('','1downarrow.png', '', 0)
+				,'order_up'=>img_picto('','1uparrow.png', '', 0)
+				,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+				
+			)
+			,'title'=>array(
+				'annee'=>'Année'
+				,'nb_heures_acquises'=>'Nombre d\'heures acquises'
+				,'nb_heures_prises'=>'Nombre d\'heures prises'
+				,'nb_heures_restantes'=>'Nombre d\'heures restantes'
+			)
+			,'search'=>array()
+			,'orderBy'=>$TOrder
+			
+		));
+		
+		if($user->rights->curriculumvitae->myactions->gererDif=="1"){
+			?><a class="butAction" href="?id=0&action=newDIF&fk_user=<?=$fuser->id?>">Ajouter une fiche de DIF</a><div style="clear:both"></div><?
+		}else{
+			?><br><br><?
+		}
+	}
+		
 	llxFooter();
 }	
 
@@ -531,6 +628,64 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				,'libelleCompetence'=>$form->texte('Libellé','TNComp[libelle]','', 40,100,'','','-')
 				,'fk_user_formation'=>$form->hidden('TNComp[fk_user_formation]', $formation->getId())
 				,'niveauCompetence'=>$form->combo(' Niveau ','niveauCompetence',$tagCompetence->TNiveauCompetence,'')
+			)
+		)	
+	);
+	
+	echo $form->end_form();
+	
+	global $mesg, $error;
+	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	llxFooter();
+}
+
+
+
+function _ficheDIF(&$ATMdb, $dif, $mode) {
+	global $db,$user, $langs, $conf;
+	llxHeader('','DIF');
+
+	$fuser = new User($db);
+	$fuser->fetch(isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : $dif->fk_user);
+	$fuser->getrights();
+	
+	$head = user_prepare_head($fuser);
+	$current_head = 'competence';
+	dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
+	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
+	$form->Set_typeaff($mode);
+	echo $form->hidden('id', $dif->getId());
+	echo $form->hidden('action', 'saveDIF');
+	echo $form->hidden('fk_user',$_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id);
+	echo $form->hidden('entity', $conf->entity);
+	
+	$TBS=new TTemplateTBS();
+	print $TBS->render('./tpl/dif.tpl.php'
+		,array(
+		)
+		,array(
+			'dif'=>array(
+				'id'=>$dif->getId()
+				,'annee'=>$form->texte('','annee',$dif->annee, 10,50,'','','-')
+				,'nb_heures_acquises'=>$form->texte('','nb_heures_acquises',$dif->nb_heures_acquises, 10,50,'','','-')
+				,'nb_heures_prises'=>$form->texte('','nb_heures_prises',$dif->nb_heures_prises, 10,50,'','','-')
+				,'nb_heures_restantes'=>$form->texte('','nb_heures_restantes',$dif->nb_heures_restantes, 10,50,'','','-')
+				,'titre'=>load_fiche_titre("Fiche de DIF",'', 'title.png', 0, '')
+			)
+			,'userCourant'=>array(
+				'id'=>$fuser->id
+				,'nom'=>$fuser->lastname
+				,'prenom'=>$fuser->firstname
+			)
+			,'user'=>array(
+				'id'=>$fuser->id
+				,'lastname'=>$fuser->lastname
+				,'firstname'=>$fuser->firstname
+			)
+			,'view'=>array(
+				'mode'=>$mode
+				,'userRight'=>((int)$user->rights->curriculumvitae->myactions->gererDif)
 			)
 		)	
 	);
