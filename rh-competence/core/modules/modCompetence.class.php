@@ -179,6 +179,27 @@ class modCompetence extends DolibarrModules
         $this->rights[$r][5] = 'ajoutRemuneration';
 		$r++;
 		
+		$this->rights[$r][0] = 7953;
+		$this->rights[$r][1] = 'Consulter toutes les fiches de DIF';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'consulterAllDif';
+		$r++;
+		
+		$this->rights[$r][0] = 7954;
+		$this->rights[$r][1] = 'Consulter ses propres fiches de DIF';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'consulterOwnDif';
+		$r++;
+		
+		$this->rights[$r][0] = 7955;
+		$this->rights[$r][1] = 'Gérer les DIF';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'gererDif';
+		$r++;
+		
 		// Permissions
 		/*$this->rights = array();		// Permission array used by this module
 		$r=0;

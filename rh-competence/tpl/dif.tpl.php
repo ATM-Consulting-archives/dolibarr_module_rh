@@ -23,10 +23,13 @@
 
 <table class="border" style="width:100%;">
 	[onshow;block=begin;when [view.mode]=='view']
-	<span  style="float:right;" class="butActionDelete" id="action-delete" onclick="document.location.href='?fk_user=[userCourant.id]&id=[dif.id]&action=deleteDIF'">Supprimer</span>
-	<a style="float:right;" class="butAction" href="?fk_user=[userCourant.id]">Annuler</a>
-	<a style="float:right;" href="?id=[dif.id]&action=editDIF&fk_user=[userCourant.id]" class="butAction">Modifier</a>
-	
+		[onshow;block=begin;when [view.userRight]==1]
+			<span  style="float:right;" class="butActionDelete" id="action-delete" onclick="document.location.href='?fk_user=[userCourant.id]&id=[dif.id]&action=deleteDIF'">Supprimer</span>
+		[onshow;block=end]
+		<a style="float:right;" class="butAction" href="?fk_user=[userCourant.id]">Annuler</a>
+		[onshow;block=begin;when [view.userRight]==1]
+			<a style="float:right;" href="?id=[dif.id]&action=editDIF&fk_user=[userCourant.id]" class="butAction">Modifier</a>
+		[onshow;block=end]
 	[onshow;block=end]	
 </table>
 	

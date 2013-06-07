@@ -392,66 +392,74 @@ function _liste(&$ATMdb, $lignecv, $formation, $dif) {
 	<?
 	
 	////////////AFFICHAGE DES DIF
-	$r = new TSSRenderControler($dif);
-	$sql="SELECT rowid as 'ID'
-			,annee
-			,nb_heures_acquises
-			,nb_heures_prises
-			,nb_heures_restantes
-			,fk_user, '' as 'Supprimer'
-		FROM   ".MAIN_DB_PREFIX."rh_dif
-		WHERE fk_user=".$_REQUEST['fk_user']." AND entity=".$conf->entity;
-
-	$TOrder = array('ID'=>'DESC');
-	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
-	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
-				
-	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
-	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
+	if((($user->rights->curriculumvitae->myactions->consulterOwnDif=="1")&&($user->id==$fuser->id))||($user->rights->curriculumvitae->myactions->consulterAllDif=="1")){
+		$r = new TSSRenderControler($dif);
+		$sql="SELECT rowid as 'ID'
+				,annee
+				,nb_heures_acquises
+				,nb_heures_prises
+				,nb_heures_restantes
+				,fk_user";
+		if($user->rights->curriculumvitae->myactions->gererDif=="1"){
+			$sql.=",'' as 'Supprimer'";
+		}
+		$sql.=" FROM ".MAIN_DB_PREFIX."rh_dif
+				WHERE fk_user=".$_REQUEST['fk_user']." AND entity=".$conf->entity;
 	
-	$r->liste($ATMdb, $sql, array(
-		'limit'=>array(
-			'page'=>$page
-			,'nbLine'=>'30'
-		)
-		,'link'=>array(
-			'annee'=>'<a href="?id=@ID@&action=viewDIF&fk_user='.$fuser->id.'">@val@</a>'
-			,'nb_heures_acquises'=>'@val@h'
-			,'nb_heures_prises'=>'@val@h'
-			,'nb_heures_restantes'=>'@val@h'
-			,'ID'=>'<a href="?id=@ID@&action=viewDIF&fk_user='.$fuser->id.'">@val@</a>'
-			,'Supprimer'=>'<a href="?id=@ID@&action=deleteDIF&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>'
-		)
-		,'translate'=>array(
-		)
-		,'hide'=>array('fk_user', 'ID')
-		,'type'=>array()
-		,'liste'=>array(
-			'titre'=>'Liste de vos fiches de DIF'
-			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
-			,'picto_suivant'=>img_picto('','next.png', '', 0)
-			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Aucune fiche de DIF disponible"
-			,'order_down'=>img_picto('','1downarrow.png', '', 0)
-			,'order_up'=>img_picto('','1uparrow.png', '', 0)
-			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
-			
-		)
-		,'title'=>array(
-			'annee'=>'Année'
-			,'nb_heures_acquises'=>'Nombre d\'heures acquises'
-			,'nb_heures_prises'=>'Nombre d\'heures prises'
-			,'nb_heures_restantes'=>'Nombre d\'heures restantes'
-		)
-		,'search'=>array()
-		,'orderBy'=>$TOrder
+		$TOrder = array('ID'=>'DESC');
+		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+					
+		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
+		$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
 		
-	));
-	
-	?>
-		<a class="butAction" href="?id=0&action=newDIF&fk_user=<?=$fuser->id?>">Ajouter une fiche de DIF</a><div style="clear:both"></div>
-	<?
+		$r->liste($ATMdb, $sql, array(
+			'limit'=>array(
+				'page'=>$page
+				,'nbLine'=>'30'
+			)
+			,'link'=>array(
+				'annee'=>'<a href="?id=@ID@&action=viewDIF&fk_user='.$fuser->id.'">@val@</a>'
+				,'nb_heures_acquises'=>'@val@h'
+				,'nb_heures_prises'=>'@val@h'
+				,'nb_heures_restantes'=>'@val@h'
+				,'ID'=>'<a href="?id=@ID@&action=viewDIF&fk_user='.$fuser->id.'">@val@</a>'
+				,'Supprimer'=>'<a href="?id=@ID@&action=deleteDIF&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>'
+			)
+			,'translate'=>array(
+			)
+			,'hide'=>array('fk_user', 'ID')
+			,'type'=>array()
+			,'liste'=>array(
+				'titre'=>'Liste de vos fiches de DIF'
+				,'image'=>img_picto('','title.png', '', 0)
+				,'picto_precedent'=>img_picto('','back.png', '', 0)
+				,'picto_suivant'=>img_picto('','next.png', '', 0)
+				,'noheader'=> (int)isset($_REQUEST['socid'])
+				,'messageNothing'=>"Aucune fiche de DIF disponible"
+				,'order_down'=>img_picto('','1downarrow.png', '', 0)
+				,'order_up'=>img_picto('','1uparrow.png', '', 0)
+				,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+				
+			)
+			,'title'=>array(
+				'annee'=>'Année'
+				,'nb_heures_acquises'=>'Nombre d\'heures acquises'
+				,'nb_heures_prises'=>'Nombre d\'heures prises'
+				,'nb_heures_restantes'=>'Nombre d\'heures restantes'
+			)
+			,'search'=>array()
+			,'orderBy'=>$TOrder
+			
+		));
+		
+		if($user->rights->curriculumvitae->myactions->gererDif=="1"){
+			?><a class="butAction" href="?id=0&action=newDIF&fk_user=<?=$fuser->id?>">Ajouter une fiche de DIF</a><div style="clear:both"></div><?
+		}else{
+			?><br><br><?
+		}
+	}
+		
 	llxFooter();
 }	
 
@@ -677,6 +685,7 @@ function _ficheDIF(&$ATMdb, $dif, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
+				,'userRight'=>((int)$user->rights->curriculumvitae->myactions->gererDif)
 			)
 		)	
 	);
