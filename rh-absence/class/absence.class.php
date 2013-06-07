@@ -1227,13 +1227,16 @@ class TRH_Absence extends TObjetStd {
 			$TAbs[$k]['date_fin']=strtotime($ATMdb->Get_field('date_fin'));
 			$k++;
 		}
-		foreach($TAbs as $dateAbs){
-			//on traite le début de l'absence	
-			if($absence->date_debut<$dateAbs['date_debut']&&$absence->date_fin>$dateAbs['date_fin']) return 1;
-			
-			//on traite la fin de l'absence	
-			if($absence->date_debut>$dateAbs['date_debut']&&$absence->date_fin<$dateAbs['date_fin']) return 1;
+		if($k>0){
+			foreach($TAbs as $dateAbs){
+				//on traite le début de l'absence	
+				if($absence->date_debut<$dateAbs['date_debut']&&$absence->date_fin>$dateAbs['date_fin']) return 1;
+				
+				//on traite la fin de l'absence	
+				if($absence->date_debut>$dateAbs['date_debut']&&$absence->date_fin<$dateAbs['date_fin']) return 1;
+			}
 		}
+		
 		return 0;
 	}
 			
@@ -1451,15 +1454,20 @@ class TRH_JoursFeries extends TObjetStd {
 		$sql="SELECT date_jourOff  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries
 		WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
+		$k=0;
 		while($ATMdb->Get_line()) {
 			$TJFeries[]=strtotime($ATMdb->Get_field('date_jourOff'));
+			$k++;
 		}
 		
 		
 		//on teste si l'un d'eux est égal à celui que l'on veut créer
-		foreach($TJFeries as $jour){
-			if($jour==$feries->date_jourOff) return 1;
+		if($k>0){
+			foreach($TJFeries as $jour){
+				if($jour==$feries->date_jourOff) return 1;
+			}	
 		}
+		
 		return 0;
 	}
 	
