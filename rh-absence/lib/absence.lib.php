@@ -309,36 +309,39 @@ function mailConges(&$absence){
 }
 
 //fonction permettant la récupération
-function mailCongesValideur(&$absence){
+function mailCongesValideur(&$ATMdb, &$absence){
 	//on récupèreles ids des groupes auxquels appartient l'utilisateur
-	$sql="SELECT fk_usergroup FROM `".MAIN_DB_PREFIX."usergroup_user 
+	$sql="SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."usergroup_user 
 	WHERE fk_user= ".$absence->fk_user;
+
 	$ATMdb->Execute($sql);
 	$TGValideur=array();
 	while($ATMdb->Get_line()){
-		$TGValideur[]=$ATMdb->Get_field('name');
+		$TGValideur[]=$ATMdb->Get_field('fk_usergroup');
 	}
 	
 	//on récupère tous les ids des collaborateurs à qui on devra envoyer un mail lors de la création d'une absence (valideurs des groupes précédents)
-	$sql="SELECT fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe 
+	$sql="SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
 	WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).")";
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()){
 		$TValideur[]=$ATMdb->Get_field('fk_user');
 	}
-	foreach($TValideur as $idVal){
-		envoieMailValideur($absence, $idVal);
+	
+	if(!empty($TValideur)){
+		foreach($TValideur as $idVal){
+			envoieMailValideur($ATMdb, $absence, $idVal);
+		}
 	}
+	
 }
 
 
 //fonction permettant l'envoi de mail aux valideurs de la demande d'absence
-function envoieMailValideur(&$absence, $idValideur){
+function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 		
 	$from = USER_MAIL_SENDER;
-	$ATMdb=new Tdb;
-	
 
 	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$absence->fk_user;
 	$ATMdb->Execute($sql);
@@ -368,8 +371,8 @@ function envoieMailValideur(&$absence, $idValideur){
 			'absence'=>array(
 				'nom'=>$name
 				,'prenom'=>$firstname
-				,'nomValideur'=>$nameValideur
-				,'prenomValideur'=>$firstnameValideur
+				,'valideurNom'=>$nameValideur
+				,'valideurPrenom'=>$firstnameValideur
 				,'date_debut'=>php2dmy($absence->date_debut)
 				,'date_fin'=>php2dmy($absence->date_fin)
 				,'libelle'=>$absence->libelle
