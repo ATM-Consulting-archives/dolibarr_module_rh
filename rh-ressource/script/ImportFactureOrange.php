@@ -1,6 +1,6 @@
 <?php
 
-
+/*
 require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');
@@ -194,16 +194,14 @@ foreach ($TUser as $nom => $id) {
 		$fact->fk_rh_ressource = $TNumero[$TCompteurs[$id]['num']];
 		$fact->fk_user = $id;
 		$fact->motif = 'Facture téléphonique '.$mois;
-		$fact->dureeI = intval($TCompteurs[$id]['consoInterne']/60);
-		$fact->dureeE = intval($TCompteurs[$id]['consoExterne']/60);
-		$fact->duree = $temp->dureeI + $temp->dureeE;
 		$fact->appels = $TCompteurs[$id]['appels'];
-		
-		
 		
 		$dureeInt = intval($TCompteurs[$id]['consoInterne']/60);
 		$dureeExt = intval($TCompteurs[$id]['consoExterne']/60);
 		
+		$fact->dureeI = $dureeInt;
+		$fact->dureeE = $dureeExt;
+		$fact->duree = $dureeInt + $dureeExt;
 		//cout minute selon la carte sim
 		$coutMinuteInt = $TCoutMinuteInt[$TCompteurs[$id]['num']];
 		$coutMinuteExt = $TCoutMinuteExt[$TCompteurs[$id]['num']];
@@ -252,9 +250,9 @@ foreach ($TUser as $nom => $id) {
 		$fact->coutTTC = $dureeFactInt*$coutMinuteInt+$dureeFactExt*$coutMinuteExt;
 		$fact->coutEntrepriseTTC = 0;//(($TCompteurs[$id]['consoExterne']+$TCompteurs[$id]['consoInterne'])/60)*$coutMinute;  
 		$fact->TVA = $tva;
-		$fact->dureeE = $TCompteurs[$id]['consoExterne'];
+		/*$fact->dureeE = $TCompteurs[$id]['consoExterne'];
 		$fact->dureeI = $TCompteurs[$id]['consoInterne'];
-		$fact->duree = $TCompteurs[$idUser]['conso']; 
+		$fact->duree = $TCompteurs[$idUser]['conso'];*/ 
 		
 		
 		$fact->save($ATMdb);		

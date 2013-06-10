@@ -98,6 +98,25 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $mode) {
 		$TGroups[$ATMdb->Get_field('fk_usergroup')][] = $ATMdb->Get_field('fk_user');
 	}
 	
+	$TSim= array();
+	$idSim = getIdType('cartesim');
+	$idTel = getIdType('telephone');
+	$sql="SELECT rowid, fk_rh_ressource, numId FROM ".MAIN_DB_PREFIX."rh_ressource 
+	WHERE fk_rh_ressource_type=".$idSim;
+	$ATMdb->Execute($sql);
+	while($row = $ATMdb->Get_line()) {
+		$TSim[$row->rowid] = array('tel'=>$row->fk_rh_ressource
+										,'numId'=>$row->numId);}
+	
+	$TTel = array();
+	$sql="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource 
+	WHERE fk_rh_ressource_type=".$idTel;
+	$ATMdb->Execute($sql);
+	while($row = $ATMdb->Get_line()) {
+		$TTel[$row->rowid] = $row->libelle;}
+	
+	//print_r($TRessource);exit();
+	
 	$TLimites = load_limites_telephone($ATMdb, $TGroups, $TRowidUser);
 	
 	//echo '<br><br><br>';
@@ -109,7 +128,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $mode) {
 	
 	
 	
-	$sql="SELECT dureeI, dureeE, duree, u.rowid as 'idUser', name, firstname
+	$sql="SELECT dureeI, dureeE, duree, u.rowid as 'idUser', name, firstname, fk_rh_ressource
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 	LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as c ON (c.fk_object = e.fk_user)
@@ -125,24 +144,31 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $mode) {
 	
 	while($row = $ATMdb->Get_line()) {
 		$lim = $TLimites[$row->idUser]['lim']/60;
-		$dep = intToString($row->duree/60);
+		$dep = $row->duree;
+		$choix = ($lim != 0) ? 'gen' : 'extint';
 		$limI = $TLimites[$row->idUser]['limInterne']/60;
-		$depI = intToString($row->dureeI/60);
+		$depI = $row->dureeI;
 		$limE = $TLimites[$row->idUser]['limExterne']/60;
-		$depE = intToString($row->dureeE/60);
+		$depE = $row->dureeE;
+		
+		if ( ($choix=='gen' && $dep>$lim) || ($choix=='extint' && ($depI>$limI || $depE>$limE))  ){ 
+		
 	
-		$TTelephone[$k][0] = 'Orange';
-		$TTelephone[$k][1] = htmlentities($row->firstname.' '.$row->name, ENT_COMPAT , 'ISO8859-1');
-		$TTelephone[$k][2] = 'tel';//$ATMdb->Get_field('Type');
-		$TTelephone[$k][3] = ($lim != 0) ? 'extint' : 'gen';//$ATMdb->Get_field('ChoixForfait');
-		$TTelephone[$k][4] = intToString($lim);
-		$TTelephone[$k][5] = intToString($limI);
-		$TTelephone[$k][6] = intToString($limE);
-		$TTelephone[$k][7] = ($dep<0) ? '00:00' : $dep;
-		$TTelephone[$k][8] = ($depI<0) ? '00:00' : $depI;
-		$TTelephone[$k][9] = ($depE<0) ? '00:00' : $depE;
-		$TTelephone[$k][10] = 'lol';//$ATMdb->Get_field('Option');
-		$k++;
+			$TTelephone[$k][0] = 'Orange';
+			$TTelephone[$k][1] = htmlentities($row->firstname.' '.$row->name, ENT_COMPAT , 'ISO8859-1');
+			$TTelephone[$k][2] = $TSim[$row->fk_rh_ressource]['numId'];//numéro de téléphone
+			$TTelephone[$k][3] = $TTel[$TSim[$row->fk_rh_ressource]['tel']]; //type de téléphone
+			$TTelephone[$k][4] = $choix;
+			$TTelephone[$k][5] = intToString($lim);
+			$TTelephone[$k][6] = intToString($limI);
+			$TTelephone[$k][7] = intToString($limE);
+			$TTelephone[$k][8] = intToString($dep);
+			$TTelephone[$k][9] = intToString($depI);
+			$TTelephone[$k][10] = intToString($depE);
+			$TTelephone[$k][11] = ($k%2==0) ? 'pair' : 'impair' ; //type de téléphone
+			$k++;
+		
+		}
 	}
 	
 	$TBS=new TTemplateTBS();
