@@ -139,12 +139,13 @@
 					<td><b>Etat</b></td>
 				</tr>
 				<tbody  id="TRecapAbs">
-					<tr class="pair">
+					<tr>
 						<td>[TRecap.date_debut;block=tr;strconv=no;protect=no]</td>
 						<td>[TRecap.date_fin;block=tr;strconv=no;protect=no]</td>
 						<td>[TRecap.libelle;block=tr;strconv=no;protect=no]</td>
 						<td>[TRecap.libelleEtat;block=tr;strconv=no;protect=no]</td>
-					</tr>	
+					</tr>
+
 				</tbody>
 		</table>
 		</div>

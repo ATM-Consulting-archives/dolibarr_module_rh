@@ -7,7 +7,7 @@
 	
 	$ATMdb=new Tdb;
 	$absence=new TRH_Absence;
-	
+
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
 			case 'add':
@@ -236,8 +236,8 @@ function _listeAdmin(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de toutes les absences');
 	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
-
 	//getStandartJS();
+
 	
 	$r = new TSSRenderControler($absence);
 	
@@ -255,7 +255,8 @@ function _listeAdmin(&$ATMdb, &$absence) {
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');		
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','POST');		
+	$form->hidden('action', 'listeAdmin');
 	//print $page;
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
@@ -283,6 +284,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			
 			
 		)
 		,'title'=>array(
@@ -589,11 +591,17 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 
 	//création du tableau des utilisateurs liés au groupe du valideur, pour créer une absence, pointage...
 	$TUser = array();
+	$sql="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id;
+	$ATMdb->Execute($sql);
+	if($ATMdb->Get_line()){
+		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+	}
+
 	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
-		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user`";
+		$sql="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 	}else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
-		$sqlReqUser=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
+		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s  
 			WHERE v.fk_user=".$user->id." 
 			AND v.type='Conges'
@@ -604,8 +612,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$droitsCreation=1;
 	}else $droitsCreation=2; //on n'a pas les droits de création
 	if($droitsCreation==1){
-		$sqlReqUser.=" ORDER BY name";
-		$ATMdb->Execute($sqlReqUser);
+		$sql.=" ORDER BY name";
+		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
 			$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
@@ -619,9 +627,10 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	//on peut supprimer la demande d'absence lorsque temps que la date du jour n'est pas supérieure à datedébut-1
 	
-	$diff=strtotime('-1day',$absence->date_debut)-time();
+	$diff=strtotime('+0day',$absence->date_debut)-time();
 	$duree=intval($diff/3600/24);
-	if($duree>=0&&$absence->fk_user==$user->id){
+
+	if($duree<0&&$absence->fk_user==$user->id){
 		$droitSupprimer=1;
 	}
 	elseif($user->rights->absence->myactions->creerAbsenceCollaborateur){
