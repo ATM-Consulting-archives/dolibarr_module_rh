@@ -7,7 +7,7 @@
 	
 	$ATMdb=new Tdb;
 	$absence=new TRH_Absence;
-	
+
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
 			case 'add':
@@ -31,7 +31,9 @@
 						$absence->load($ATMdb, $_REQUEST['id']);
 						if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
 							mailConges($absence);
+							mailCongesValideur($ATMdb,$absence);
 						}
+						
 						$mesg = '<div class="error">Demande enregistrée</div>';
 						_fiche($ATMdb, $absence,'view');
 					}else{
@@ -44,6 +46,7 @@
 							$absence->load($ATMdb, $_REQUEST['id']);
 							if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
 								mailConges($absence);
+								mailCongesValideur($ATMdb,$absence);
 							}
 							$mesg = '<div class="error">Attention : La durée de l\'absence dépasse la règle en vigueur</div>';
 							_fiche($ATMdb, $absence,'view');
@@ -233,8 +236,8 @@ function _listeAdmin(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de toutes les absences');
 	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
-
 	//getStandartJS();
+
 	
 	$r = new TSSRenderControler($absence);
 	
@@ -252,7 +255,8 @@ function _listeAdmin(&$ATMdb, &$absence) {
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');		
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','POST');		
+	$form->hidden('action', 'listeAdmin');
 	//print $page;
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
@@ -280,6 +284,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			
 			
 		)
 		,'title'=>array(

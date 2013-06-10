@@ -9,7 +9,7 @@ class TRH_Evenement  extends TObjetStd {
 		parent::add_champs('motif','type=chaine;');
 		parent::add_champs('commentaire, refexterne','type=chaine;');
 		
-		//type : accident, répération, emprunt, appel ou facture
+		//type : accident, répération, emprunt, appel,  facture, ...
 		parent::add_champs('type','type=chaine;');
 
 		//pour le wdCalendar

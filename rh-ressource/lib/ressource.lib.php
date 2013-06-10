@@ -235,6 +235,127 @@ function timeToInt($h, $m){
 	return intval($h)*60+intval($m);
 }
 
+
+/**
+ * Charge les règles pour chacun des utilisateurs
+ */
+function load_limites_telephone(&$ATMdb, $TGroups, $TRowidUser){
+	$default = 359940; //consideration conso infinie : 99H
+	$TLimites = array();
+	foreach ($TRowidUser as $id) {		
+		$TLimites[$id] = array(
+			'lim'=>$default
+			,'limInterne' => $default	//en sec
+			,'limExterne' => $default	//en sec
+			,'dataIllimite' => false
+			,'dataIphone' => false
+			,'mailforfait'=> false
+			,'smsIllimite'=> false
+			,'data15Mo'=> false
+			,'natureRefac'=>''
+			,'montantRefac'=>0
+			);
+	}
+	
+
+	/*echo '<br><br><br>';
+foreach ($TLimites as $key => $value) {
+	echo $key.' ';	
+	print_r($value);
+	echo '<br>';*/
+
+
+	$sql="SELECT fk_user, fk_usergroup, choixApplication, dureeInt, dureeExt,duree,
+		dataIllimite, dataIphone, smsIllimite, mailforfait, data15Mo, natureRefac, montantRefac 
+		FROM ".MAIN_DB_PREFIX."rh_ressource_regle
+		";
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		if ($ATMdb->Get_field('choixApplication')=='user'){
+			modifierLimites($TLimites, $ATMdb->Get_field('fk_user')
+				, $ATMdb->Get_field('duree')
+				, $ATMdb->Get_field('dureeInt')
+				, $ATMdb->Get_field('dureeExt')
+				, $ATMdb->Get_field('dataIllimite')
+				, $ATMdb->Get_field('dataIphone')
+				, $ATMdb->Get_field('mailforfait')
+				, $ATMdb->Get_field('smsIllimite')
+				, $ATMdb->Get_field('data15Mo')
+				, $ATMdb->Get_field('natureRefac')
+				, $ATMdb->Get_field('montantRefac')
+				);
+			}
+		else if ($ATMdb->Get_field('choixApplication')=='group'){
+			if (empty($TGroups[$ATMdb->Get_field('fk_usergroup')]))
+				{$message .= 'Groupe n°'.$ATMdb->Get_field('fk_usergroup').' inexistant.<br>';}
+			else{
+				foreach ($TGroups[$ATMdb->Get_field('fk_usergroup')] as $members) {
+					modifierLimites($TLimites, $members
+						, $ATMdb->Get_field('duree')
+						, $ATMdb->Get_field('dureeInt')
+						, $ATMdb->Get_field('dureeExt')
+						, $ATMdb->Get_field('dataIllimite')
+						, $ATMdb->Get_field('dataIphone')
+						, $ATMdb->Get_field('mailforfait')
+						, $ATMdb->Get_field('smsIllimite')
+						, $ATMdb->Get_field('data15Mo')
+						, $ATMdb->Get_field('natureRefac')
+						, $ATMdb->Get_field('montantRefac')
+						
+						);
+					}
+				}
+			}
+		else if ($ATMdb->Get_field('choixApplication')=='all'){
+			foreach ($TRowidUser as $idUser) {
+				modifierLimites($TLimites, $idUser
+					, $ATMdb->Get_field('duree')
+					, $ATMdb->Get_field('dureeInt')
+					, $ATMdb->Get_field('dureeExt')
+					, $ATMdb->Get_field('dataIllimite')
+					, $ATMdb->Get_field('dataIphone')
+					, $ATMdb->Get_field('mailforfait')
+					, $ATMdb->Get_field('smsIllimite')
+					, $ATMdb->Get_field('data15Mo')
+					, $ATMdb->Get_field('natureRefac')
+					, $ATMdb->Get_field('montantRefac')
+					);
+				}
+			}
+		}
+	return $TLimites;
+}
+
+
+function modifierLimites(&$TLimites, $fk_user, $gen,  $int, $ext, $dataIll = false, $dataIphone = false, $mail = false, $smsIll = false, $data15Mo= false, $natureRefac = false, $montantRefac = 0){
+	if (($TLimites[$fk_user]['limInterne'] > $int*60)){
+		$TLimites[$fk_user]['limInterne'] = $int*60;
+	}
+	if (($TLimites[$fk_user]['limExterne'] > $ext*60)) {
+		$TLimites[$fk_user]['limExterne'] = $ext*60;
+	}
+	
+	if ($TLimites[$fk_user]['lim'] > ($gen*60)){
+		$TLimites[$fk_user]['lim'] = $gen*60;
+	}
+	
+	$TLimites[$fk_user]['dataIllimite'] =$dataIll;
+	$TLimites[$fk_user]['dataIphone'] =$dataIphone;
+	$TLimites[$fk_user]['mailforfait']=$mail;
+	$TLimites[$fk_user]['smsIllimite']=$smsIll;
+	$TLimites[$fk_user]['data15Mo']=$data15Mo;
+	if ($natureRefac){
+		if (!empty($TLimites[$fk_user]['natureRefac'])){$TLimites[$fk_user]['natureRefac'] .= " ; ";}	
+		$TLimites[$fk_user]['natureRefac'] .= $natureRefac;
+		$TLimites[$fk_user]['montantRefac'] += $montantRefac;
+		}
+		
+	return;
+}
+
+
+
+
 function send_mail_resources($subject, $message){
 	global $langs;
 	

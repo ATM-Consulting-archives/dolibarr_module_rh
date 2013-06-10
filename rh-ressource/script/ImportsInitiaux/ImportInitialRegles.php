@@ -52,8 +52,8 @@ if (($handle = fopen("../fichierImports/".$nomFichier, "r")) !== FALSE) {
 					$temp->duree = clockToInt($infos[5]);
 					$temp->dureeInt = clockToInt($infos[6]);
 					$temp->dureeExt = clockToInt($infos[7]);
-					$temp->natureDeduire = $infos[12];
-					$temp->montantDeduire = strtolower($infos[13]);
+					$temp->natureRefac = $infos[12];
+					$temp->montantRefac = strtolower($infos[13]);
 					$temp->dataIllimite = strtolower($infos[14]);
 					$temp->dataIphone = strtolower($infos[15]);
 					$temp->mailforfait = strtolower($infos[16]);

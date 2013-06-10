@@ -190,7 +190,7 @@ class TRH_Absence extends TObjetStd {
 		//combo box pour le type d'absence utilisateur
 		$this->TTypeAbsenceUser=array();
 		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-				WHERE entity IN (0,".$conf->entity.") AND admin=0";
+				WHERE admin=0";
 		$ATMdb->Execute($sql);
 
 		while($ATMdb->Get_line()) {
@@ -234,7 +234,6 @@ class TRH_Absence extends TObjetStd {
 		WHERE r.choixApplication Like 'user' AND r.fk_user=".$fk_user."
 		OR (r.choixApplication Like 'all')
 		OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND g.fk_user=".$fk_user.") 
-		AND r.entity IN (0,".$conf->entity.")
 		ORDER BY r.nbJourCumulable";
 
 		$ATMdb->Execute($sql);
@@ -265,7 +264,7 @@ class TRH_Absence extends TObjetStd {
 		$sql="SELECT DATE_FORMAT(date_debut, '%d/%m/%Y') as 'dateD', 
 		DATE_FORMAT(date_fin, '%d/%m/%Y')  as 'dateF', libelle, libelleEtat 
 		FROM `".MAIN_DB_PREFIX."rh_absence` WHERE fk_user=".$fk_user." 
-		AND entity IN (0,".$conf->entity.") GROUP BY date_cre LIMIT 0,10";
+		GROUP BY date_cre LIMIT 0,10";
 
 		$ATMdb->Execute($sql);
 		$TRecap=array();
@@ -501,7 +500,7 @@ class TRH_Absence extends TObjetStd {
 		
 		//on récupère les jours fériés compris dans la demande d'absence
 		$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
-		.$dateDebutAbs."' and '". $dateFinAbs."' AND entity IN (0,".$conf->entity.")"; 
+		.$dateDebutAbs."' and '". $dateFinAbs; 
 		//echo $sql;
 		$ATMdb->Execute($sql);
 		$TabFerie = array();
@@ -1219,7 +1218,8 @@ class TRH_Absence extends TObjetStd {
 	//fonction qui renvoie 1 si une absence existe déjà pendant la date que l'on veut ajouter, 0 sinon
 	function testExisteDeja($ATMdb, $absence){
 		//on récupère toutes les date d'absences du collaborateur
-		$sql="SELECT date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_absence WHERE (etat LIKE 'Validee' OR etat LIKE 'Avalider') AND fk_user=".$absence->fk_user;
+		$sql="SELECT date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_absence WHERE (etat LIKE 'Validee' OR etat LIKE 'Avalider') 
+		AND fk_user=".$absence->fk_user;
 		$ATMdb->Execute($sql);
 		$k=0;
 		while($ATMdb->Get_line()) {
@@ -1227,13 +1227,16 @@ class TRH_Absence extends TObjetStd {
 			$TAbs[$k]['date_fin']=strtotime($ATMdb->Get_field('date_fin'));
 			$k++;
 		}
-		foreach($TAbs as $dateAbs){
-			//on traite le début de l'absence	
-			if($absence->date_debut<$dateAbs['date_debut']&&$absence->date_fin>$dateAbs['date_fin']) return 1;
-			
-			//on traite la fin de l'absence	
-			if($absence->date_debut>$dateAbs['date_debut']&&$absence->date_fin<$dateAbs['date_fin']) return 1;
+		if($k>0){
+			foreach($TAbs as $dateAbs){
+				//on traite le début de l'absence	
+				if($absence->date_debut<$dateAbs['date_debut']&&$absence->date_fin>$dateAbs['date_fin']) return 1;
+				
+				//on traite la fin de l'absence	
+				if($absence->date_debut>$dateAbs['date_debut']&&$absence->date_fin<$dateAbs['date_fin']) return 1;
+			}
 		}
+		
 		return 0;
 	}
 			
@@ -1397,8 +1400,7 @@ class TRH_EmploiTemps extends TObjetStd {
 	function load_by_fkuser(&$ATMdb, $fk_user){
 		global $conf;
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
-		WHERE fk_user='".$fk_user."' AND entity IN (0,".$conf->entity.")";
-
+		WHERE fk_user='".$fk_user;
 		$ATMdb->Execute($sql);
 		
 		if($ATMdb->Get_line()) {
@@ -1448,18 +1450,22 @@ class TRH_JoursFeries extends TObjetStd {
 	function testExisteDeja($ATMdb, $feries){
 		global $conf;
 		//on récupère toutes les dates de jours fériés existant
-		$sql="SELECT date_jourOff  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries
-		WHERE entity IN (0,".$conf->entity.")";
+		$sql="SELECT date_jourOff  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries";
 		$ATMdb->Execute($sql);
+		$k=0;
 		while($ATMdb->Get_line()) {
 			$TJFeries[]=strtotime($ATMdb->Get_field('date_jourOff'));
+			$k++;
 		}
 		
 		
 		//on teste si l'un d'eux est égal à celui que l'on veut créer
-		foreach($TJFeries as $jour){
-			if($jour==$feries->date_jourOff) return 1;
+		if($k>0){
+			foreach($TJFeries as $jour){
+				if($jour==$feries->date_jourOff) return 1;
+			}	
 		}
+		
 		return 0;
 	}
 	
@@ -1486,8 +1492,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		$ATMdb=new Tdb;
 		//combo box pour le type d'absence admin
 		$this->TTypeAbsenceAdmin=array();
-		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-		WHERE entity IN (0,".$conf->entity.")";
+		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` ";
 		$ATMdb->Execute($sql);
 
 		while($ATMdb->Get_line()) {
@@ -1524,7 +1529,7 @@ class TRH_RegleAbsence extends TObjetStd {
 
 		//LISTE DE GROUPES
 		$this->TGroup  = array();
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TGroup[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
@@ -1532,7 +1537,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		
 		//LISTE DE USERS
 		$this->TUser = array();
-		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
+		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');

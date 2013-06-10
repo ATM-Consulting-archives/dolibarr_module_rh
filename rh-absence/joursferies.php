@@ -7,10 +7,7 @@
 	
 	$ATMdb=new Tdb;
 	$feries=new TRH_JoursFeries;
-	
 	$emploiTemps=new TRH_EmploiTemps;
-	
-	//global $idUserCompt, $idComptEnCours;
 	
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
@@ -187,10 +184,7 @@ function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'joursferies', 'Absence')
 			)
-			
-			
 		)	
-		
 	);
 	
 	echo $form->end_form();

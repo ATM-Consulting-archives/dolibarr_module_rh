@@ -14,7 +14,7 @@ $ATMdb=new TPDOdb;
 // relever le point de départ
 $timestart=microtime(true);
 
-$default = 359940; //consideration conso infinie : 99H
+//$default = 359940; //consideration conso infinie : 99H
 $message = '';
 
 //on charge quelques listes pour avoir les clés externes.
@@ -49,18 +49,7 @@ $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
 	$TRowidUser[] = $ATMdb->Get_field('rowid');
-	$TLimites[$ATMdb->Get_field('rowid')] = array(
-		'lim'=>$default
-		,'limInterne' => $default	//en sec
-		,'limExterne' => $default	//en sec
-		,'dataIllimite' => false
-		,'dataIphone' => false
-		,'mailforfait'=> false
-		,'smsIllimite'=> false
-		,'data15Mo'=> false
-		,'natureRefac'=>''
-		,'montantRefac'=>0
-		);
+	
 }
 
 $TGroups= array();
@@ -88,100 +77,19 @@ $tva = $ttva[0];
 
 //------------------CHARGEMENT DES REGLES ---------------------
 //chargement des limites de conso pour chaque user, selon les règles
-//$TLimites = array();
+$TLimites = array();
 
-$sql="SELECT fk_user, fk_usergroup, choixApplication, dureeInt, dureeExt,duree,
-	dataIllimite, dataIphone, smsIllimite, mailforfait, data15Mo, natureRefac, montantRefac 
-	FROM ".MAIN_DB_PREFIX."rh_ressource_regle
-	";
-$ATMdb->Execute($sql);
-while($ATMdb->Get_line()) {
-	if ($ATMdb->Get_field('choixApplication')=='user'){
-		modifierLimites($TLimites, $ATMdb->Get_field('fk_user')
-			, $ATMdb->Get_field('duree')
-			, $ATMdb->Get_field('dureeInt')
-			, $ATMdb->Get_field('dureeExt')
-			, $ATMdb->Get_field('dataIllimite')
-			, $ATMdb->Get_field('dataIphone')
-			, $ATMdb->Get_field('mailforfait')
-			, $ATMdb->Get_field('smsIllimite')
-			, $ATMdb->Get_field('data15Mo')
-			, $ATMdb->Get_field('natureRefac')
-			, $ATMdb->Get_field('montantRefac')
-			);
-		}
-	else if ($ATMdb->Get_field('choixApplication')=='group'){
-		if (empty($TGroups[$ATMdb->Get_field('fk_usergroup')]))
-			{$message .= 'Groupe n°'.$ATMdb->Get_field('fk_usergroup').' inexistant.<br>';}
-		else{
-			foreach ($TGroups[$ATMdb->Get_field('fk_usergroup')] as $members) {
-				modifierLimites($TLimites, $members
-					, $ATMdb->Get_field('duree')
-					, $ATMdb->Get_field('dureeInt')
-					, $ATMdb->Get_field('dureeExt')
-					, $ATMdb->Get_field('dataIllimite')
-					, $ATMdb->Get_field('dataIphone')
-					, $ATMdb->Get_field('mailforfait')
-					, $ATMdb->Get_field('smsIllimite')
-					, $ATMdb->Get_field('data15Mo')
-					, $ATMdb->Get_field('natureRefac')
-					, $ATMdb->Get_field('montantRefac')
-					
-					);
-				}
-			}
-		}
-	else if ($ATMdb->Get_field('choixApplication')=='all'){
-		foreach ($TRowidUser as $idUser) {
-			modifierLimites($TLimites, $idUser
-				, $ATMdb->Get_field('duree')
-				, $ATMdb->Get_field('dureeInt')
-				, $ATMdb->Get_field('dureeExt')
-				, $ATMdb->Get_field('dataIllimite')
-				, $ATMdb->Get_field('dataIphone')
-				, $ATMdb->Get_field('mailforfait')
-				, $ATMdb->Get_field('smsIllimite')
-				, $ATMdb->Get_field('data15Mo')
-				, $ATMdb->Get_field('natureRefac')
-				, $ATMdb->Get_field('montantRefac')
-				);
-			}
-		}
-	}
+$TLimites = load_limites_telephone($ATMdb, $TGroups, $TRowidUser);
 
-function modifierLimites(&$TLimites, $fk_user, $gen,  $int, $ext, $dataIll = false, $dataIphone = false, $mail = false, $smsIll = false, $data15Mo= false, $natureRefac = false, $montantRefac = 0){
-	if (($TLimites[$fk_user]['limInterne'] > $int*60)){
-		$TLimites[$fk_user]['limInterne'] = $int*60;
-	}
-	if (($TLimites[$fk_user]['limExterne'] > $ext*60)) {
-		$TLimites[$fk_user]['limExterne'] = $ext*60;
-	}
-	
-	if ($TLimites[$fk_user]['lim'] > ($gen*60)){
-		$TLimites[$fk_user]['lim'] = $gen*60;
-	}
-	
-	$TLimites[$fk_user]['dataIllimite'] =$dataIll;
-	$TLimites[$fk_user]['dataIphone'] =$dataIphone;
-	$TLimites[$fk_user]['mailforfait']=$mail;
-	$TLimites[$fk_user]['smsIllimite']=$smsIll;
-	$TLimites[$fk_user]['data15Mo']=$data15Mo;
-	if ($natureRefac){
-		if (!empty($TLimites[$fk_user]['natureRefac'])){$TLimites[$fk_user]['natureRefac'] .= " ; ";}	
-		$TLimites[$fk_user]['natureRefac'].=$natureRefac;
-		$TLimites[$fk_user]['montantRefac'] += $montantRefac;
-		}
-		
-	return;
-}
-/*
-echo '<br><br><br>';
+/*echo '<br><br><br>';
 foreach ($TLimites as $key => $value) {
 	echo $key.' ';	
 	print_r($value);
 	echo '<br>';
 }
 exit();*/
+
+
 
 //----------------TRAITEMENT DU FICHIER DES LIGNES D'APPELS----------------------------------------------------------
 if (empty($nomFichier)){$nomFichier = "./fichierImports/detail_appels10.csv";}
@@ -324,7 +232,8 @@ foreach ($TUser as $nom => $id) {
 		$fact->montantRefac = $TLimites[$id]['montantRefac'];
 		
 		if (($dureeFactInt*$coutMinuteInt>0) || ($dureeFactExt*$coutMinuteExt>0) || (($dureeFactInt*$coutMinuteInt+$dureeFactExt*$coutMinuteExt)>0) ){
-			echo 'Dépassement : '.$TCompteurs[$id]['num'].'<br>';
+			//echo 'Dépassement : '.$TCompteurs[$id]['num'].'<br>';
+			null;
 		}
 		
 		
@@ -358,11 +267,11 @@ foreach ($TUser as $nom => $id) {
 
 //----------------------------BILAN DES NUMEROS INEXISTANTS-----------------------
 
-echo 'Téléphones non attribués : <br>';
+$message .=  '<br>'.count($TNonAttribuee).' téléphones non attribués : <br><br>';
 foreach ($TNonAttribuee as $key => $value) {
-	echo $key.', ';
+	$message .=  $key.', ';
 }
-echo '<br><br>';
+$message .=  '<br><br>'.count($TNumeroInexistants).' téléphones non trouvés<br><br>';
 foreach ($TNumeroInexistants as $num => $rien) {
 	$message .= 'Erreur : Numéro '.$num.' inexistant dans la base.<br>';
 }
@@ -377,8 +286,6 @@ $timeend=microtime(true);
 $page_load_time = number_format($timeend-$timestart, 3);
 $message .= $cptFacture." factures crees.<br><br>";
 $message .= $numLigne." lignes traitées<br><br>";
-$message .= count($TNumeroInexistants)." téléphones non trouvés<br><br>";
-$message .= count($TNonAttribuee)." téléphones non attribués<br><br>";
 $message .= "Fin du traitement. ".'Durée : '.$page_load_time . " sec.<br><br>";
 echo $message;
 //echo $message;

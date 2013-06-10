@@ -7,10 +7,12 @@
 	
 	$ATMdb=new Tdb;
 	$compteur=new TRH_Compteur;
-	
-	
+
+
 	if(isset($_REQUEST['action'])) {
+		
 		switch($_REQUEST['action']) {
+			
 			case 'add':
 			case 'new':
 				_fiche($ATMdb, $compteur,'edit');
@@ -73,7 +75,8 @@
 	
 	
 function _liste(&$ATMdb, &$compteur) {
-	global $langs, $conf, $db, $user;	
+	global $langs, $conf, $db, $user, $listeGlobale;	
+	$listeGlobale='normale';
 	llxHeader('','Liste des compteurs de congés des collaborateurs');
 	getStandartJS();
 	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Administration des congés');
@@ -136,7 +139,8 @@ function _liste(&$ATMdb, &$compteur) {
 	
 	
 function _listeAdmin(&$ATMdb, &$compteur) {
-	global $langs, $conf, $db, $user;	
+	global $langs, $conf, $db, $user,$listeGlobale;	
+	$listeGlobale='admin';
 	llxHeader('','Liste des compteurs de congés des collaborateurs');
 	getStandartJS();
 	print dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Administration des congés');

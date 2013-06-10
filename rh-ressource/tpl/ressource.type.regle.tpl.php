@@ -118,11 +118,11 @@
 	</tr>
 	<tr>
 		<td>Nature prise en charge par l'utilisateur</td>
-		<td>[newRule.natureDeduire;strconv=no]</td>
+		<td>[newRule.natureRefac;strconv=no]</td>
 	</tr>
 	<tr>
 		<td>Montant pris en charge par l'utilisateur</td>
-		<td>[newRule.montantDeduire;strconv=no] €</td>
+		<td>[newRule.montantRefac;strconv=no] €</td>
 	</tr>
 	<tr>
 		<td>Données illimitées</td>
