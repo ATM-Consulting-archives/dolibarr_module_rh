@@ -23,8 +23,6 @@ while($row = $ATMdb->Get_line()) {
 //print_r($TTrigramme);exit();
 
 
-//----------------------Import des cartes total---------------
-
 
 $nomFichier = "Sal_form_130606";
 echo 'Traitement du fichier '.$nomFichier.' : <br>';

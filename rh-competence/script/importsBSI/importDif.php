@@ -12,7 +12,7 @@ $ATMdb=new TPDOdb;
 // relever le point de départ
 $timestart=microtime(true);
 
-echo 'Import initial des formations.<br><br>';
+echo 'Import initial des DIF.<br><br>';
 
 $TTrigramme = array();
 $sql="SELECT rowid, login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
@@ -22,7 +22,6 @@ while($row = $ATMdb->Get_line()) {
 }
 //print_r($TTrigramme);exit();
 
-//----------------------Import des cartes total---------------
 
 
 $nomFichier = "Sal_dif_130606";
