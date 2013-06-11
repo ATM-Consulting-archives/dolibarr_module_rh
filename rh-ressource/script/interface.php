@@ -2,6 +2,7 @@
 
 define('INC_FROM_CRON_SCRIPT', true);
 require('../config.php');
+require('../lib/ressource.lib.php');
 
 //Interface qui renvoie les emprunts de ressources d'un utilisateur
 $ATMdb=new TPDOdb;
@@ -36,6 +37,8 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	$date_debut=date('Y-m-d',mktime(0, 0, 0, $date_debut[1], $date_debut[0], $date_debut[2]));
 	$date_fin=explode("/", $date_fin);
 	$date_fin=date('Y-m-d',mktime(0, 0, 0, $date_fin[1], $date_fin[0], $date_fin[2]));
+	
+	$idVoiture = getIdType('voiture');
 	
 	/**----***********************----**/
 	/**----** Ligne de l'entité **----**/
@@ -72,7 +75,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 		LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ue ON (u.rowid = ue.fk_object)
-	WHERE (e.type <> 'emprunt')
+	WHERE t.fk_rh_ressource_type = ".$idVoiture."
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 	AND e.entity = ".$entity."
 	GROUP BY t.codecomptable";
@@ -122,7 +125,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
-		WHERE (e.type <> 'emprunt')
+		WHERE t.fk_rh_ressource_type = ".$idVoiture."
 		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 		AND e.entity = ".$entity."
 		AND t.codecomptable = ".$code_compta;
@@ -178,7 +181,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 		LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ue ON (u.rowid = ue.fk_object)
-	WHERE (e.type <> 'emprunt')
+	WHERE t.fk_rh_ressource_type = ".$idVoiture."
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 	AND e.entity <> ".$entity;
 	
