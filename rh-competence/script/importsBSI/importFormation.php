@@ -46,9 +46,8 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 			
 			$forma->fk_user = $TTrigramme[$trigramme];
 			$forma->libelleFormation = $libelleFormation;
-			$forma->date_debut = $infos[2];
-			$forma->date_debut = $infos[3];
-			$forma->date_fin;
+			$forma->set_date('date_debut', $infos[2]);//$forma->date_debut = $infos[2];
+			$forma->set_date('date_fin', $infos[3]);
 			$forma->coutFormation = floatval(str_replace(',','.',$infos[4]));
 			$forma->montantOrganisme = floatval(str_replace(',','.',$infos[5]));
 			$forma->montantEntreprise = floatval(str_replace(',','.',$infos[6]));
