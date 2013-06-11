@@ -37,11 +37,144 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	$date_fin=explode("/", $date_fin);
 	$date_fin=date('Y-m-d',mktime(0, 0, 0, $date_fin[1], $date_fin[0], $date_fin[2]));
 	
-	$sql="SELECT coutEntrepriseTTC, coutEntrepriseHT, type, 
-				DATE_FORMAT(date_debut, '%d%m%y') as date_debut, 
-				DATE_FORMAT(date_debut, '%m') as mois_date_debut, 
-				DATE_FORMAT(date_debut, '%Y') as annee_date_debut, 
-				typeVehicule, u.name, u.firstname, a.code, e.entity, t.codecomptable, 
+	/**----***********************----**/
+	/**----** Ligne de l'entité **----**/
+	/**----***********************----**/
+	
+	$sql = "SELECT
+			e.label as 'label'
+			FROM ".MAIN_DB_PREFIX."entity as e
+			WHERE e.rowid IN (0,".$entity.")";
+			
+	if(isset($_REQUEST['DEBUG'])) {
+		print $sql;
+	}
+	
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$TLignes[]=$ATMdb->Get_field('label');
+	}
+	
+	/**----***********************----**/
+	/**----** Lignes de débit **----**/
+	/**----***********************----**/
+	
+	$sql="SELECT CAST(e.coutEntrepriseTTC as DECIMAL(16,2)) as coutEntrepriseTTC, 
+				CAST(e.coutEntrepriseHT as DECIMAL(16,2)) as coutEntrepriseHT, 
+				e.type, 
+				DATE_FORMAT(e.date_debut, '%d%m%y') as date_debut, 
+				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
+				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
+				typeVehicule, u.name, u.firstname, e.entity, t.codecomptable, 
+				ue.COMPTE_TIERS
+	FROM ".MAIN_DB_PREFIX."rh_evenement as e
+	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
+	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
+	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
+		LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ue ON (u.rowid = ue.fk_object)
+	WHERE (e.type='factureloyer' OR  e.type='facturegestionetentretien')
+	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+	AND e.entity = ".$entity."
+	GROUP BY t.codecomptable";
+	
+	if(isset($_REQUEST['DEBUG'])) {
+		print $sql;
+	}
+	
+	$ATMdb2=new Tdb;
+			
+	$ATMdb->Execute($sql);
+	while($row = $ATMdb->Get_line()) {
+		$date = $row->date_debut;
+		$date_mois = $row->mois_date_debut;
+		$date_annee = $row->annee_date_debut;
+		//un VU : on prend le HT
+		//un VP on prend le TTC
+		$montant = (strtolower($row->typeVehicule)=='vu') ? $row->coutEntrepriseHT : $row->coutEntrepriseTTC;
+		$sens = 'D';
+		$code_compta = $row->codecomptable;
+		$type_compte = 'G';
+		
+		$TLignes[] = array(
+			'RES'
+			,$date
+			,'FF'
+			,$code_compta
+			,$type_compte
+			,''
+			,''
+			,'RESSOURCE '.$date_mois.'/'.$date_annee
+			,'V'
+			,date('dmy')
+			,$sens
+			,$montant
+			,'N'
+			,''
+			,''
+			,''
+			,'EUR'
+			,''
+		);
+		
+		$sql_anal="SELECT CAST(e.coutEntrepriseTTC as DECIMAL(16,2)) as coutEntrepriseTTC, 
+				CAST(e.coutEntrepriseHT as DECIMAL(16,2)) as coutEntrepriseHT
+				, a.code as 'code_analytique'
+				, a.pourcentage as 'pourcentage'
+		FROM ".MAIN_DB_PREFIX."rh_evenement as e
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
+		WHERE (e.type='factureloyer' OR  e.type='facturegestionetentretien')
+		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+		AND e.entity = ".$entity."
+		AND t.codecomptable = ".$code_compta;
+		
+		if(isset($_REQUEST['DEBUG'])) {
+			print $sql_anal;
+		}
+		
+		$ATMdb2->Execute($sql_anal);
+		while($row2 = $ATMdb2->Get_line()) {
+			$type_compte 		= 	'A';
+			$code_analytique	=	$row2->code_analytique;
+			$pourcentage		=	$row2->pourcentage;
+			$montant			=	$montant*($pourcentage/100);
+			
+			if(!empty($code_analytique)) {
+				$TLignes[] = array(
+					'RES'
+					,$date
+					,'FF'
+					,$code_compta
+					,$type_compte
+					,$code_analytique
+					,''
+					,'RESSOURCE '.$date_mois.'/'.$date_annee
+					,'V'
+					,date('dmy')
+					,$sens
+					,$montant
+					,'N'
+					,''
+					,''
+					,''
+					,'EUR'
+					,''
+				);
+			}
+		}
+	}
+	
+	/**----***********************----**/
+	/**----** Lignes de crédit **----**/
+	/**----***********************----**/
+	
+	$sql="SELECT CAST(e.coutEntrepriseTTC as DECIMAL(16,2)) as coutEntrepriseTTC, 
+				CAST(e.coutEntrepriseHT as DECIMAL(16,2)) as coutEntrepriseHT, type, 
+				DATE_FORMAT(e.date_debut, '%d%m%y') as date_debut, 
+				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
+				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
+				typeVehicule, u.name, u.firstname, a.code, t.codecomptable, 
 				ue.COMPTE_TIERS
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
@@ -50,33 +183,25 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 		LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ue ON (u.rowid = ue.fk_object)
 	WHERE (e.type='factureloyer' OR  e.type='facturegestionetentretien')
-	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')";
+	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+	AND e.entity <> ".$entity;
+	
+	if(isset($_REQUEST['DEBUG'])) {
+		print $sql;
+	}
 	
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
 		$date = $row->date_debut;
 		$date_mois = $row->mois_date_debut;
-		$date_fin = $row->annee_date_debut;
+		$date_annee = $row->annee_date_debut;
 		//un VU : on prend le HT
 		//un VP on prend le TTC
-		$total = (strtolower($row->typeVehicule)=='vu') ? $row->coutEntrepriseHT : $row->coutEntrepriseTTC;
-		$montant = round($total, 2);
-		
-		if($entity == $row->entity){
-			$sens = 'D';
-		}else{
-			$sens = 'C';
-		}
-		
-		if($sens='C'){
-			$code_compta = '425902';
-			$type_compte = 'X';
-			$compte_tiers = '';
-		}else{
-			$code_compta = $codecomptable;
-			$type_compte = 'G';
-			$compte_tiers = '';
-		}
+		$montant = (strtolower($row->typeVehicule)=='vu') ? $row->coutEntrepriseHT : $row->coutEntrepriseTTC;
+		$sens = 'C';
+		$code_compta = '425902';
+		$type_compte = 'X';
+		$compte_tiers = $row->COMPTE_TIERS;
 	
 		$TLignes[] = array(
 			'RES'
@@ -84,12 +209,8 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			,'FF'
 			,$code_compta
 			,$type_compte
-			,$compte_tiers		
-			//,'type'=>$TNomsEvenements[$row->type]		
-			//,'user'=>htmlentities($row->firstname.' '.$row->name, ENT_COMPAT , 'ISO8859-1')
-			//,'compte'=>$TComptes[$row->type]
-			//,'codeanalytique'=>$row->code
-			//,'typeVehicule'=>$row->typeVehicule
+			,$compte_tiers
+			,''
 			,'RESSOURCE '.$date_mois.'/'.$date_annee
 			,'V'
 			,date('dmy')
@@ -97,9 +218,11 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			,$montant
 			,'N'
 			,''
+			,''
+			,''
 			,'EUR'
+			,''
 			);
-		
 	}
 	
 	return $TLignes;
