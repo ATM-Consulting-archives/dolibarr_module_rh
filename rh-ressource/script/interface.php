@@ -24,7 +24,7 @@ function _get(&$ATMdb, $case) {
 			__out(_exportOrange($ATMdb, $date_debut, $date_fin, $_REQUEST['entity']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
-		case 'voiture':
+		case 'parcours':
 			__out(_exportVoiture($ATMdb, $date_debut, $date_fin, $_REQUEST['entity']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
