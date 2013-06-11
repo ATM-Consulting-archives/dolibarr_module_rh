@@ -52,8 +52,6 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	WHERE (e.type='factureloyer' OR  e.type='facturegestionetentretien')
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')";
 	
-	print $sql;
-	
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
 		$date = $row->date_debut;
