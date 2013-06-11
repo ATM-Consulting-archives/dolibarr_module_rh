@@ -11,21 +11,16 @@ $get = isset($_REQUEST['get'])?$_REQUEST['get']:'emprunt';
 _get($ATMdb, $get);
 
 function _get(&$ATMdb, $case) {
-	//on transforme la date du format timestamp en 2013-01-20
-	//$timestamp = mktime(0,0,0,substr($date_debut, 3,2),substr($date_debut, 0,2), substr($date_debut, 6,4));
-	$date_debut = date("Y-m-d", $_REQUEST['date_debut']);
-	//$timestamp = mktime(0,0,0,substr($date_fin, 3,2),substr($date_fin, 0,2), substr($date_fin, 6,4));
-	$date_fin = date("Y-m-d", $_REQUEST['date_fin']);
 	switch ($case) {
 		case 'emprunt':
-			__out( _emprunt($ATMdb, $_REQUEST['fk_user'], $date_debut, $date_fin));
+			__out( _emprunt($ATMdb, $_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
 			break;
 		case 'orange':
-			__out(_exportOrange($ATMdb, $date_debut, $date_fin, $_REQUEST['entity']));
+			__out(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
 		case 'parcours':
-			__out(_exportVoiture($ATMdb, $date_debut, $date_fin, $_REQUEST['entity']));
+			__out(_exportVoiture($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
 		
@@ -37,20 +32,27 @@ function _get(&$ATMdb, $case) {
 function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	$TLignes = array();
 	
+	$date_debut=explode("/", $date_debut);
+	$date_debut=date('Y-m-d',mktime(0, 0, 0, $date_debut[1], $date_debut[0], $date_debut[2]));
+	$date_fin=explode("/", $date_fin);
+	$date_fin=date('Y-m-d',mktime(0, 0, 0, $date_fin[1], $date_fin[0], $date_fin[2]));
+	
 	$sql="SELECT coutEntrepriseTTC, coutEntrepriseHT, type, 
 				DATE_FORMAT(date_debut, '%d%m%y') as date_debut, 
 				DATE_FORMAT(date_debut, '%m') as mois_date_debut, 
 				DATE_FORMAT(date_debut, '%Y') as annee_date_debut, 
-				typeVehicule, name, firstname, a.code, e.entity, t.codecomptable, 
+				typeVehicule, u.name, u.firstname, a.code, e.entity, t.codecomptable, 
 				ue.COMPTE_TIERS
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
-	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t (e.type=t.code)
+	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 		LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ue ON (u.rowid = ue.fk_object)
 	WHERE (e.type='factureloyer' OR  e.type='facturegestionetentretien')
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')";
+	
+	print $sql;
 	
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
@@ -110,6 +112,12 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 function _exportOrange(&$ATMdb, $date_debut, $date_fin, $entity){
 	$TabLigne = array();
 	
+	//on transforme la date du format timestamp en 2013-01-20
+	//$timestamp = mktime(0,0,0,substr($date_debut, 3,2),substr($date_debut, 0,2), substr($date_debut, 6,4));
+	$date_debut = date("Y-m-d", $date_debut);
+	//$timestamp = mktime(0,0,0,substr($date_fin, 3,2),substr($date_fin, 0,2), substr($date_fin, 6,4));
+	$date_fin = date("Y-m-d", $date_fin);
+	
 	$sql="SELECT totalIFact, totalEFact, totalFact, natureRefac, montantRefac, name, firstname, COMPTE_TIERS
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
@@ -144,6 +152,12 @@ function _emprunt(&$ATMdb, $userId, $date_debut, $date_fin){
 	global $user, $conf;
 	
 	$TabEmprunt=array();
+	
+	//on transforme la date du format timestamp en 2013-01-20
+	//$timestamp = mktime(0,0,0,substr($date_debut, 3,2),substr($date_debut, 0,2), substr($date_debut, 6,4));
+	$date_debut = date("Y-m-d", $date_debut);
+	//$timestamp = mktime(0,0,0,substr($date_fin, 3,2),substr($date_fin, 0,2), substr($date_fin, 6,4));
+	$date_fin = date("Y-m-d", $date_fin);
 	
 	$sql="SELECT libelle, numId	
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
