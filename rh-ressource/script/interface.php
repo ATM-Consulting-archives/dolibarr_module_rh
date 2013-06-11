@@ -116,13 +116,10 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			,''
 		);
 		
-		$sql_anal="SELECT CAST(e.coutEntrepriseTTC as DECIMAL(16,2)) as coutEntrepriseTTC, 
-				CAST(e.coutEntrepriseHT as DECIMAL(16,2)) as coutEntrepriseHT
+		$sql_anal="SELECT e.rowid
 				, a.code as 'code_analytique'
 				, a.pourcentage as 'pourcentage'
-				, r.typeVehicule
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
-		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
 		WHERE (e.type <> 'emprunt')
@@ -139,7 +136,6 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			$type_compte 		= 	'A';
 			$code_analytique	=	$row2->code_analytique;
 			$pourcentage		=	$row2->pourcentage;
-			$montant 			=	(strtolower($row->typeVehicule)=='vu') ? $row->coutEntrepriseHT : $row->coutEntrepriseTTC;
 			$montant			=	$montant*($pourcentage/100);
 			
 			$TLignes[] = array(
