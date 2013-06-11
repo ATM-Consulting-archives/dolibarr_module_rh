@@ -256,7 +256,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','POST');		
-	$form->hidden('action', 'listeAdmin');
+	//$form->hidden('actionAdmin', 'listeAdmin');
 	//print $page;
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
