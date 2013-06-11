@@ -192,7 +192,7 @@ function saveLibelle($type){
 //fonction qui permet de renvoyer le code de l'absence
 function saveCodeTypeAbsence(&$ATMdb, $type){
 	global $conf;
-	$sql="SELECT codeAbsence FROM `".MAIN_DB_PREFIX."rh_type_absence` WHERE typeAbsence LIKE '".$type;
+	$sql="SELECT codeAbsence FROM `".MAIN_DB_PREFIX."rh_type_absence` WHERE typeAbsence LIKE '".$type."'";
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		return $ATMdb->Get_field('codeAbsence');
