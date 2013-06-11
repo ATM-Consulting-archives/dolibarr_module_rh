@@ -57,7 +57,7 @@
 			}
 
 	$ressource->load_liste_type_ressource($ATMdb);
-	$TType = array_merge(array(''), $ressource->TType);
+	$TType = array_merge($ressource->TType);
 	$TTypeEvent = getTypeEvent($type);
 	if ($fiche) {$TTypeEvent = getTypeEvent($ressource->fk_rh_ressource_type);}
 
