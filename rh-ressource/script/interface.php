@@ -72,7 +72,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 		LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ue ON (u.rowid = ue.fk_object)
-	WHERE (e.type='factureloyer' OR  e.type='facturegestionetentretien')
+	WHERE (e.type <> 'emprunt')
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 	AND e.entity = ".$entity."
 	GROUP BY t.codecomptable";
@@ -124,7 +124,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
-		WHERE (e.type='factureloyer' OR  e.type='facturegestionetentretien')
+		WHERE (e.type <> 'emprunt')
 		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 		AND e.entity = ".$entity."
 		AND t.codecomptable = ".$code_compta;
@@ -140,28 +140,26 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			$pourcentage		=	$row2->pourcentage;
 			$montant			=	$montant*($pourcentage/100);
 			
-			if(!empty($code_analytique)) {
-				$TLignes[] = array(
-					'RES'
-					,$date
-					,'FF'
-					,$code_compta
-					,$type_compte
-					,$code_analytique
-					,''
-					,'RESSOURCE '.$date_mois.'/'.$date_annee
-					,'V'
-					,date('dmy')
-					,$sens
-					,$montant
-					,'N'
-					,''
-					,''
-					,''
-					,'EUR'
-					,''
-				);
-			}
+			$TLignes[] = array(
+				'RES'
+				,$date
+				,'FF'
+				,$code_compta
+				,$type_compte
+				,$code_analytique
+				,''
+				,'RESSOURCE '.$date_mois.'/'.$date_annee
+				,'V'
+				,date('dmy')
+				,$sens
+				,$montant
+				,'N'
+				,''
+				,''
+				,''
+				,'EUR'
+				,''
+			);
 		}
 	}
 	
@@ -182,7 +180,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 		LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ue ON (u.rowid = ue.fk_object)
-	WHERE (e.type='factureloyer' OR  e.type='facturegestionetentretien')
+	WHERE (e.type <> 'emprunt')
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 	AND e.entity <> ".$entity;
 	
