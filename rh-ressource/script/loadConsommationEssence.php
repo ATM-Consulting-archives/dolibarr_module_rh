@@ -17,8 +17,9 @@ $fk_user = !empty($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : 0 ;
 $TPleins = array();
 $sql="SELECT e.rowid, DATE_FORMAT(date_debut,'%d/%m/%Y') as point,  date_debut , e.fk_rh_ressource, e.motif, e.commentaire, e.litreEssence, e.kilometrage, e.fk_user 
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
-	WHERE e.entity=".$conf->entity." 
-	AND type='pleindessence' 
+	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
+	WHERE e.entity=".$conf->entity."
+	AND t.fk_rh_ressource_type = ".$idTotal."
 	ORDER BY date_debut";
 
 $TUser = getUsers();

@@ -402,6 +402,10 @@ class TRH_remuneration extends TObjetStd {
 		parent::add_champs('participation','type=float;');
 		parent::add_champs('autre','type=float;');
 		
+		parent::add_champs('primeNoel','type=float;');
+		parent::add_champs('commission','type=float;');
+		
+		
 		parent::add_champs('prevoyancePartSalariale','type=chaine;');
 		parent::add_champs('prevoyancePartPatronale','type=chaine;');
 		parent::add_champs('urssafPartSalariale','type=chaine;');
@@ -420,6 +424,21 @@ class TRH_remuneration extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 	}
+
+
+	function load_by_user_and_dates(&$ATMdb, $fk_user, $debut, $fin){
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_remuneration 
+		WHERE date_debutRemuneration = '".date("Y-m-d",$debut)."'
+		AND date_finRemuneration = '".date("Y-m-d",$fin)."'
+		AND fk_user=".$fk_user;
+		$ATMdb->Execute($sql);
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+		
+	}
+
 }
 
 //TRH_DIF

@@ -23,8 +23,6 @@ while($row = $ATMdb->Get_line()) {
 //print_r($TTrigramme);exit();
 
 
-//----------------------Import des cartes total---------------
-
 
 $nomFichier = "Sal_form_130606";
 echo 'Traitement du fichier '.$nomFichier.' : <br>';
@@ -48,9 +46,8 @@ if (($handle = fopen("./".$nomFichier, "r")) !== FALSE) {
 			
 			$forma->fk_user = $TTrigramme[$trigramme];
 			$forma->libelleFormation = $libelleFormation;
-			$forma->date_debut = $infos[2];
-			$forma->date_debut = $infos[3];
-			$forma->date_fin;
+			$forma->set_date('date_debut', $infos[2]);//$forma->date_debut = $infos[2];
+			$forma->set_date('date_fin', $infos[3]);
 			$forma->coutFormation = floatval(str_replace(',','.',$infos[4]));
 			$forma->montantOrganisme = floatval(str_replace(',','.',$infos[5]));
 			$forma->montantEntreprise = floatval(str_replace(',','.',$infos[6]));
