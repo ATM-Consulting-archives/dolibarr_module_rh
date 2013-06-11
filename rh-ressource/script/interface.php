@@ -59,13 +59,13 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	/**----** Lignes de débit **----**/
 	/**----***********************----**/
 	
-	$sql="SELECT CAST(e.coutEntrepriseTTC as DECIMAL(16,2)) as coutEntrepriseTTC, 
-				CAST(e.coutEntrepriseHT as DECIMAL(16,2)) as coutEntrepriseHT, 
+	$sql="SELECT CAST(SUM(e.coutEntrepriseTTC) as DECIMAL(16,2)) as coutEntrepriseTTC, 
+				CAST(SUM(e.coutEntrepriseHT) as DECIMAL(16,2)) as coutEntrepriseHT, 
 				e.type, 
 				DATE_FORMAT(e.date_debut, '%d%m%y') as date_debut, 
 				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
 				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
-				typeVehicule, u.name, u.firstname, e.entity, t.codecomptable, 
+				r.typeVehicule, u.name, u.firstname, e.entity, t.codecomptable, 
 				ue.COMPTE_TIERS
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
@@ -120,6 +120,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 				CAST(e.coutEntrepriseHT as DECIMAL(16,2)) as coutEntrepriseHT
 				, a.code as 'code_analytique'
 				, a.pourcentage as 'pourcentage'
+				, r.typeVehicule
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
@@ -138,6 +139,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			$type_compte 		= 	'A';
 			$code_analytique	=	$row2->code_analytique;
 			$pourcentage		=	$row2->pourcentage;
+			$montant 			=	(strtolower($row->typeVehicule)=='vu') ? $row->coutEntrepriseHT : $row->coutEntrepriseTTC;
 			$montant			=	$montant*($pourcentage/100);
 			
 			$TLignes[] = array(
@@ -172,7 +174,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 				DATE_FORMAT(e.date_debut, '%d%m%y') as date_debut, 
 				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
 				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
-				typeVehicule, u.name, u.firstname, a.code, t.codecomptable, 
+				r.typeVehicule, u.name, u.firstname, a.code, t.codecomptable, 
 				ue.COMPTE_TIERS
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
