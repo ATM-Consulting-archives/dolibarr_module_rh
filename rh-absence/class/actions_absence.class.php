@@ -33,15 +33,16 @@ class ActionsAbsence
 		
 		$sqlcompteur="INSERT INTO ".MAIN_DB_PREFIX."rh_compteur (rowid, date_cre, entity, fk_user, acquisExerciceN, 
 		acquisAncienneteN, acquisHorsPeriodeN, anneeN, acquisExerciceNM1, acquisAncienneteNM1, acquisHorsPeriodeNM1, reportCongesNM1, congesPrisNM1
-		,anneeNM1, rttPris, rttTypeAcquisition, rttAcquisMensuelInit, rttAcquisAnnuelCumuleInit, rttAcquisAnnuelNonCumuleInit
+		,anneeNM1, rttTypeAcquisition, rttAcquisMensuelInit, rttAcquisAnnuelCumuleInit, rttAcquisAnnuelNonCumuleInit
 		, rttannee, nombreCongesAcquisMensuel, date_congesCloture, date_rttCloture
 		,rttAcquisMensuelTotal, dureeN, congesResteNM1, dureeNM1, rttMetier, rttCumulePris, 
 		rttNonCumulePris, rttCumuleReportNM1, rttNonCumuleReportNM1, rttCumuleTotal, 
 		rttNonCumuleTotal, rttCumuleAcquis, rttNonCumuleAcquis) 
-		VALUES('".$parameters['idUser']."', '" .$parameters['dateC']."','".$parameters['conf']."','".$parameters['idUser']."','6', '0',
-		 '0', '".$annee."', '25', '0', '0', '0', '0','".$anneePrec."', '0', 'Annuel', '0', '5', '7', '".$annee."', ".$congesAcquisMensuelInit.", 
+		VALUES('".$parameters['idUser']."', '" .$parameters['dateC']."','".$parameters['conf']."','".$parameters['idUser']."','0', '0',
+		 '0', '".$annee."', '25', '0', '0', '0', '0','".$anneePrec."', 'Annuel', '0', '5', '7', '".$annee."', ".$congesAcquisMensuelInit.", 
 		 '".$date_congesClotureInit."', '".$date_rttClotureInit."' 
-		 ,'0', '0', '0', '0', 'noncadre37cpro', '0', '0', '0', '0', '5', '7', '5', '7'";
+		 ,'0', '0', '0', '0', 'noncadre37cpro', '0', '0', '0', '0', '5', '7', '5', '7')";
+		 
 		
 		$db->query($sqlcompteur);
 		
@@ -53,7 +54,7 @@ class ActionsAbsence
 		date_jeudi_heuredam, date_jeudi_heurefam, date_jeudi_heuredpm, date_jeudi_heurefpm, 
 		date_vendredi_heuredam, date_vendredi_heurefam, date_vendredi_heuredpm, date_vendredi_heurefpm, 
 		date_samedi_heuredam, date_samedi_heurefam, date_samedi_heuredpm, date_samedi_heurefpm, 
-		date_dimanche_heuredam, date_dimanche_heurefam, date_dimanche_heuredpm, date_dimanche_heurefpm) 
+		date_dimanche_heuredam, date_dimanche_heurefam, date_dimanche_heuredpm, date_dimanche_heurefpm, tempsHebdo, societeRtt) 
 		
 		VALUES('".$parameters['idUser']."', '" .$parameters['dateC']."','".$parameters['conf']."','".$parameters['idUser']."',
 		'1','1',	'1','1',	'1','1',	'1','1', 	'1','1',	'0','0',	'0','0',
@@ -63,9 +64,7 @@ class ActionsAbsence
 		'2013-06-01 8:15:00','2013-06-01 12:00:00','2013-06-01 14:00:00','2013-06-01 17:45:00', 
 		'2013-06-01 8:15:00','2013-06-01 12:00:00','2013-06-01 14:00:00','2013-06-01 17:15:00', 
 		'2013-06-01 0:00:00','2013-06-01 0:00:00','2013-06-01 0:00:00','2013-06-01 0:00:00',
-		'2013-06-01 0:00:00','2013-06-01 0:00:00','2013-06-01 0:00:00','2013-06-01 0:00:00')";
-		
-		echo $sqledt;
+		'2013-06-01 0:00:00','2013-06-01 0:00:00','2013-06-01 0:00:00','2013-06-01 0:00:00', 37, ".$conf->entity.")";
 		
 		$db->query($sqledt);
 		

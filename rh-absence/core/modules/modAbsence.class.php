@@ -223,7 +223,7 @@ class modAbsence extends DolibarrModules
 		
 		$this->rights[$r][0] = 7109;
 		$this->rights[$r][1] = 'Voir toutes les absences des collaborateurs sur le calendrier';
-		$this->rights[$r][3] = 0;
+		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirToutesAbsences';
 		$r++;

@@ -328,7 +328,7 @@ function _liste(&$ATMdb, $lignecv, $formation, $dif) {
 	////////////AFFICHAGE DES  FORMATIONS
 	$r = new TSSRenderControler($formation);
 	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
-			  date_debut, date_fin, libelleFormation,  commentaireFormation,lieuFormation, date_formationEcheance
+			  date_debut, date_fin, libelleFormation,  commentaireFormation,lieuFormation
 			  , CONCAT(CAST(coutFormation as DECIMAL(16,2)),' €') as 'Coût total'
 			  , CONCAT(CAST(montantOrganisme as DECIMAL(16,2)),' €') as 'Pris en charge par l\'organisme'
 			  , CONCAT(CAST(montantEntreprise as DECIMAL(16,2)),' €') as 'Pris pris en charge par l\'entreprise'
@@ -600,12 +600,12 @@ function _ficheFormation(&$ATMdb, $formation, $tagCompetence,  $mode) {
 				'id'=>$formation->getId()
 				,'date_debut'=>$form->calendrier('', 'date_debut', $formation->date_debut, 12)
 				,'date_fin'=>$form->calendrier('', 'date_fin', $formation->date_fin, 12)
-				,'libelleFormation'=>$form->texte('','libelleFormation',$formation->libelleFormation, 50,100,'','','-')
-				,'coutFormation'=>$form->texte('','coutFormation',$formation->coutFormation, 10,50,'','','-')
-				,'montantOrganisme'=>$form->texte('','montantOrganisme',$formation->montantOrganisme, 10,50,'','','-')
-				,'montantEntreprise'=>$form->texte('','montantEntreprise',$formation->montantEntreprise, 10,50,'','','-')
-				,'commentaireFormation'=>$form->zonetexte('','commentaireFormation',$lignecv->commentaireFormation, 45,3,'','','-')
-				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 50,100,'','','-')
+				,'libelleFormation'=>$form->texte('','libelleFormation',$formation->libelleFormation, 50,100,'','','')
+				,'coutFormation'=>$form->texte('','coutFormation',$formation->coutFormation, 10,50,'','','0')
+				,'montantOrganisme'=>$form->texte('','montantOrganisme',$formation->montantOrganisme, 10,50,'','','0')
+				,'montantEntreprise'=>$form->texte('','montantEntreprise',$formation->montantEntreprise, 10,50,'','','0')
+				,'commentaireFormation'=>$form->zonetexte('','commentaireFormation',$lignecv->commentaireFormation, 45,3,'','','')
+				,'lieuFormation'=>$form->texte('','lieuFormation',$formation->lieuFormation, 50,100,'','','')
 				,'date_formationEcheance'=>$form->calendrier('', 'date_formationEcheance', $formation->date_formationEcheance, 12)
 				,'titre'=>load_fiche_titre("Description de la formation",'', 'title.png', 0, '')
 			)

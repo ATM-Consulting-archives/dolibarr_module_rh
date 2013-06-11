@@ -16,6 +16,17 @@ class TRH_ligne_cv extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 	}
+	
+	function load_by_user_and_libelle(&$ATMdb, $fk_user, $libelleExperience){
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ligne_cv 
+		WHERE libelleExperience='".$libelleExperience."' AND fk_user=".$fk_user;
+		$ATMdb->Execute($sql);
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+		
+	}
 }
 
 //TRH_FORMATION
@@ -32,11 +43,21 @@ class TRH_formation_cv extends TObjetStd {
 		parent::add_champs('coutFormation','type=float;');
 		parent::add_champs('montantOrganisme','type=float;');
 		parent::add_champs('montantEntreprise','type=float;');
-		parent::add_champs('date_formationEcheance','type=date;');	
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=entier;');
 		parent::_init_vars();
 		parent::start();
+	}
+	
+	function load_by_user_and_libelle(&$ATMdb, $fk_user, $libelleFormation){
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_formation_cv 
+		WHERE libelleFormation='".$libelleFormation."' AND fk_user=".$fk_user;
+		$ATMdb->Execute($sql);
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+		
 	}
 }
 
@@ -57,6 +78,17 @@ class TRH_competence_cv extends TObjetStd {
 		parent::start();
 		
 		$this->TNiveauCompetence = array('faible'=>'Faible','moyen'=>'Moyen','bon'=>'Bon','excellent'=>'Excellent');
+	}
+	
+	function load_by_user_and_libelle(&$ATMdb, $fk_user, $libelleCompetence){
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_competence_cv 
+		WHERE libelleCompetence='".$libelleCompetence."' AND fk_user=".$fk_user;
+		$ATMdb->Execute($sql);
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+		
 	}
 	
 	function replaceEspaceEnPourcentage($competence){ // AA nom de fonction très mal choisie, elle ne fait pas du tout ce qu'elle inspire
@@ -370,6 +402,10 @@ class TRH_remuneration extends TObjetStd {
 		parent::add_champs('participation','type=float;');
 		parent::add_champs('autre','type=float;');
 		
+		parent::add_champs('primeNoel','type=float;');
+		parent::add_champs('commission','type=float;');
+		
+		
 		parent::add_champs('prevoyancePartSalariale','type=chaine;');
 		parent::add_champs('prevoyancePartPatronale','type=chaine;');
 		parent::add_champs('urssafPartSalariale','type=chaine;');
@@ -388,6 +424,21 @@ class TRH_remuneration extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 	}
+
+
+	function load_by_user_and_dates(&$ATMdb, $fk_user, $debut, $fin){
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_remuneration 
+		WHERE date_debutRemuneration = '".date("Y-m-d",$debut)."'
+		AND date_finRemuneration = '".date("Y-m-d",$fin)."'
+		AND fk_user=".$fk_user;
+		$ATMdb->Execute($sql);
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+		
+	}
+
 }
 
 //TRH_DIF
@@ -405,5 +456,16 @@ class TRH_dif extends TObjetStd {
 		
 		parent::_init_vars();
 		parent::start();
+	}
+	
+	function load_by_user_and_annee(&$ATMdb, $fk_user, $annee){
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_dif 
+		WHERE annee='".$annee."' AND fk_user=".$fk_user;
+		$ATMdb->Execute($sql);
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+		
 	}
 }
