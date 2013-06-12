@@ -21,8 +21,8 @@ $url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/ressource/script/loa
 $result = file_get_contents($url);
 $TRessource = unserialize($result);
 
-$TUser = array_merge(array('0'=>'Tous'), getUsers());
-//print_r($TUser);
+$TUser = getUsers(true, false);
+
 
 $form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 $form->Set_typeaff('edit');

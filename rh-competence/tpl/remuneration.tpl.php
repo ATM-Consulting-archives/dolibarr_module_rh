@@ -36,11 +36,15 @@
 			<table class="border" style="width:100%">		
 				<tr>
 					<td><b>Prime d'ancienneté</b></td>
+					<td><b>Prime de Noël</b></td>
+					<td><b>Commission</b></td>
 					<td><b>Participation</b></td>
 					<td><b>Autre</b></td>
 				</tr>
 				<tr>
 					<td>[remuneration.primeAnciennete;strconv=no;protect=no]€</td>
+					<td>[remuneration.primeNoel;strconv=no;protect=no]€</td>
+					<td>[remuneration.commission;strconv=no;protect=no]€</td>
 					<td>[remuneration.participation;strconv=no;protect=no]€</td>
 					<td>[remuneration.autre;strconv=no;protect=no]€</td>
 				</tr>
