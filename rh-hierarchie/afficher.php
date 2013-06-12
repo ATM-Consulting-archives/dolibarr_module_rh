@@ -224,7 +224,7 @@ function findFkUserGroup(&$ATMdb, $nomGroupe){
 }
 
 function findIdValideur(&$ATMdb, $fkusergroup){
-	$sqlidValideur='SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe WHERE fk_usergroup='.$fkusergroup;
+	$sqlidValideur="SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe WHERE fk_usergroup=".$fkusergroup;
 	$ATMdb->Execute($sqlidValideur);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
