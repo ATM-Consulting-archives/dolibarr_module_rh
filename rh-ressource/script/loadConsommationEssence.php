@@ -6,7 +6,9 @@ global $conf;
 $ATMdb=new TPDOdb;
 
 $idTotal = getIdType('cartetotal');
+$idVoiture = getIdType('voiture');
 $TCartes = getRessource($idTotal);
+$TVoiture = getRessource($idVoiture);
 
 $plagedeb = !empty($_REQUEST['plagedebut']) ? dateToInt($_REQUEST['plagedebut']) : (time()-31532400);
 $plagefin = !empty($_REQUEST['plagefin']) ? dateToInt($_REQUEST['plagefin']) : (time()+31532400);
@@ -15,12 +17,14 @@ $fk_user = !empty($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : 0 ;
 //$plagefin = !empty($_REQUEST['plagefin']) ? date("Y-m-d 00:00:00", dateToInt($_REQUEST['plagefin'])) : date("Y-m-d  00:00:00", time()+31532400);
 
 $TPleins = array();
-$sql="SELECT e.rowid, DATE_FORMAT(date_debut,'%d/%m/%Y') as point,  date_debut , e.fk_rh_ressource, e.motif, e.commentaire, e.litreEssence, e.kilometrage, e.fk_user 
+$sql="SELECT e.rowid, DATE_FORMAT(date_debut,'%d/%m/%Y') as point,  date_debut , 
+	e.fk_rh_ressource, e.motif, e.commentaire, e.litreEssence, e.kilometrage, e.fk_user 
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
-	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
-	WHERE e.entity=".$conf->entity."
-	AND t.fk_rh_ressource_type = ".$idTotal."
-	ORDER BY date_debut";
+	WHERE (e.type='gazolepremier' OR e.type='gazoleexcellium') ";
+if ($fk_user!= 0){ $sql .= "AND e.fk_user=".$fk_user;}	
+$sql .=	" ORDER BY date_debut, kilometrage";
+
+//echo $sql;
 
 $TUser = getUsers();
 
@@ -36,24 +40,31 @@ while($row = $ATMdb->Get_line()) {
 	);
 }	
 
+
 $TRessource = array();
+$cpt = 0;
 
 foreach ($TPleins as $idcarte => $value) {
+	
 	$memKm = 0;
 	$memLitre = 0;
 	$texte = '';
 	foreach ($value as $km => $tab) {
+		
+		
 		if ($memKm!=0){
 			$conso = number_format((100*$memLitre)/($km-$memKm),2);
 			if(isset($_REQUEST['limite'])) {
 				if ($conso>=$_REQUEST['limite']){
-					$texte = ($km-$memKm).'km fait avec '.number_format($memLitre,2).' litres. Conso : '. $conso.'L/100km';
+					$texte = ($km-$memKm).'km fait avec '.number_format($memLitre,2).' litres.';
+					$consotexte = $conso.'L/100km';
 					//$texte .= "<span style=\"margin-left: 3em;\">".($km-$memKm).'km fait avec '.number_format($memLitre,2).' litres. Conso : '. $conso.'L/100km<br></span>';
 				}
 			}
 			else{
 				//$texte .= "<span style=\"margin-left: 3em;\">".($km-$memKm).'km fait avec '.number_format($memLitre,2).' litres. Conso : '. $conso.'L/100km<br></span>';
-				$texte = ($km-$memKm).'km fait avec '.number_format($memLitre,2).' litres. Conso : '. $conso.'L/100km';
+				$texte = ($km-$memKm).'km fait avec '.number_format($memLitre,2).' litres';
+				$consotexte = $conso.'L/100km';
 			}
 		}
 		$memKm = $km;
@@ -62,14 +73,18 @@ foreach ($TPleins as $idcarte => $value) {
 		if ((!empty($texte)) && ($tab['date_debut']<= $plagefin) && ($tab['date_debut']>= $plagedeb)){
 			$TRessource[] = array(
 				'nom'=>$TCartes[$idcarte]
+				,'vehicule'=>$TVoiture[1]
 				,'info'=> $texte
-				,'user'=> htmlentities($TUser($tab['fk_user']), ENT_COMPAT , 'ISO8859-1')
+				,'conso'=>$consotexte
+				,'user'=>htmlentities($TUser[$tab['fk_user']], ENT_COMPAT , 'ISO8859-1')
 				,'date'=> $tab['date']
 				,'ok'=>$tab['date_debut']
+				,'parite'=>($cpt%2==0) ? 'pair' : 'impair'
 			);
 		}
 	
 	}
+	$cpt++;
 }
 
 /*foreach ($TRessource as $key => $value) {
