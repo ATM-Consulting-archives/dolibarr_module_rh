@@ -142,13 +142,17 @@ function getIDRessource(&$ATMdb, $idType){
 
 /**
  * Renvoie un tableau $id=> nom des users
+ * $inEntity à vrai ne renvoie que les User de l'entité courante
+ * $avecAll à vrai rajoute une ligne Tous
  */
-function getUsers(){
+function getUsers($avecAll = false, $inEntity = true){
 	global $conf;
-	$TUser = array();
+	$TUser = $avecAll ? array(0=>'Tous') : array() ;
 	$ATMdb =new TPDOdb;
 	
-	$sqlReq="SELECT rowid,name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
+	$sqlReq = "SELECT rowid,name, firstname FROM ".MAIN_DB_PREFIX."user";
+	if ($inEntity){$sqlReq .= " WHERE entity IN (0,".$conf->entity.") ";} 
+	$sqlReq.= " ORDER BY name, firstname ";
 	
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {

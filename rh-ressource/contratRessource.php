@@ -90,7 +90,7 @@ function _liste(&$ATMdb, &$association, &$ressource,  $mode) {
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_contrat_ressource as a
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_contrat as c ON (a.fk_rh_contrat = c.rowid)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (a.fk_rh_ressource = r.rowid)";
-	$sql.=" WHERE a.entity IN (0,".$conf->entity.")
+	$sql.=" WHERE 1 
 		AND a.fk_rh_ressource=".$ressource->getId();
 	
 	$TOrder = array('Date début'=>'ASC');
