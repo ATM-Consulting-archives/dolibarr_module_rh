@@ -86,7 +86,7 @@ class TRH_Evenement  extends TObjetStd {
 		}
 		
 		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource 
-		WHERE rowid=".$this->fk_rh_ressource." AND entity IN(0".$conf->entity.")";
+		WHERE rowid=".$this->fk_rh_ressource;
 		$db->Execute($sqlReq);
 		while($db->Get_line()) {
 			$nom = $db->Get_field('libelle');

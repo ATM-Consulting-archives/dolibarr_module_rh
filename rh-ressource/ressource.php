@@ -178,7 +178,7 @@ function _liste(&$ATMdb, &$ressource) {
 		AND e.entity IN (0, ".$conf->entity.")
 		AND e.date_debut<='".date("Y-m-d")."' AND e.date_fin >= '". date("Y-m-d")."' 
 	 LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid )";	
-	$sql.=" WHERE  r.entity IN (0,".$conf->entity.")";
+	$sql.=" WHERE 1 ";
 	
 	
 	if(!$user->rights->ressource->ressource->viewRessource){
@@ -254,7 +254,7 @@ function _liste(&$ATMdb, &$ressource) {
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup as g ON (r.fk_usergroup = g.rowid)
-		WHERE r.entity IN (0,".$conf->entity.")
+		WHERE 1 
 		AND (r.fk_user=".$user->id." 
 			OR r.choixApplication = 'all' 
 			OR g.rowid IS NOT NULL)";

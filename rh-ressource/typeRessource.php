@@ -115,8 +115,8 @@ function _liste(&$ATMdb, &$ressource) {
 	
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT rowid as 'ID', libelle as 'Libellé', code as 'Code', '' as 'Supprimer'
-		FROM @table@
-		WHERE entity IN(0,".$conf->entity.")";
+		FROM ".MAIN_DB_PREFIX."rh_ressource_type
+		WHERE 1 ";
 	
 	$TOrder = array('Code'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');

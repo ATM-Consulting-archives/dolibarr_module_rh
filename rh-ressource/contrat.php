@@ -99,7 +99,7 @@ function _liste(&$ATMdb, &$contrat) {
 		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_contrat_ressource as cr ON cr.fk_rh_contrat = c.rowid";
 		$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON e.fk_rh_ressource=cr.fk_rh_ressource";
 	}
-	$sql.=" WHERE c.entity IN (0,".$conf->entity.")";
+	$sql.=" WHERE 1 ";
 	if(!$user->rights->ressource->contrat->viewContract){
 		$sql.=" AND e.type ='emprunt'";
 		$sql.=" AND e.fk_user=".$user->id;
