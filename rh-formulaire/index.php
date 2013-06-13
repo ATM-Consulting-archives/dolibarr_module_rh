@@ -32,7 +32,7 @@ while($ATMdb->Get_line()){
 
 		$ATMdb2->Execute($sql);
 		if($ATMdb2->Get_line()){
-			$statut = '<span style="color:green">Formulaire répondu ou en cours de réponse</span>';
+			$statut = '<span style="color:green">Enquête répondue ou en cours de réponse</span>';
 			$Tligne['un_lien'] = './limesurvey/index.php/'.$ATMdb->Get_field('survey').'?lang=fr&amp;token='.$ATMdb2->Get_field('token');
 		}
 		else{
@@ -50,9 +50,9 @@ while($ATMdb->Get_line()){
 	$TSurvey[] = $Tligne;
 }
 
-print dol_get_fiche_head(array()  , '', 'Questionnaire');
+print dol_get_fiche_head(array()  , '', 'Enquêtes');
 
-$title = 'Liste des formulaires';
+$title = 'Liste des enquêtes';
 print_fiche_titre($title, '', 'form32.png@formulaire');
 
 ?>

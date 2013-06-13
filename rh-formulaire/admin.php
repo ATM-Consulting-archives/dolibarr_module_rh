@@ -55,7 +55,7 @@ elseif(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'
 	$TGroupeForm->delete($ATMdb);
 }
 
-print dol_get_fiche_head(array()  , '', 'Administration des formulaires');
+print dol_get_fiche_head(array()  , '', 'Administration des enquêtes');
 
 $title = 'Gestion des droits';
 print_fiche_titre($title, '', 'form32.png@formulaire');
@@ -177,7 +177,7 @@ $form->end();
 <br>
 <?
 
-	print_fiche_titre("Créer un nouveau formulaire", '', 'form32.png@formulaire');
+	print_fiche_titre("Créer une nouvelle enquête", '', 'form32.png@formulaire');
 	
-?><a href="./limesurvey/admin/" class="butAction" target="_blank">Gestionnaire formulaires</a>
+?><a href="./limesurvey/admin/" class="butAction" target="_blank">Gestionnaire enquêtes</a>
 <div style="clear:both;"></div>
