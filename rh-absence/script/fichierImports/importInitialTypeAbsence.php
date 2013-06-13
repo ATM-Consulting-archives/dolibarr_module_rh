@@ -70,5 +70,34 @@
 	
 	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET libelleAbsence='Absence congés sans solde' WHERE typeAbsence='nonremuneree'";
 	$ATMdb->Execute($sql);
+	
+	$sql="ALTER TABLE ".MAIN_DB_PREFIX."rh_type_absence ADD  codeMotif VARCHAR(20)";
+	$ATMdb->Execute($sql);
+	
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='MA' WHERE codeAbsence='960'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='MA' WHERE codeAbsence='961'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='MT' WHERE codeAbsence='962'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='MP' WHERE codeAbsence='963'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='CHP' WHERE codeAbsence='970'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='CS' WHERE codeAbsence='980'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='AT' WHERE codeAbsence='990'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='ATR' WHERE codeAbsence='1040'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='MAP' WHERE codeAbsence='1000'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='MAP' WHERE codeAbsence='1000'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='MAP' WHERE codeAbsence='1000'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='MTT' WHERE codeAbsence='1070'";
+	$ATMdb->Execute($sql);
+	
 
 	
