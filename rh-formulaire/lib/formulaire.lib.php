@@ -25,7 +25,7 @@ function send_mail_formulaire($object)
 		FROM ".MAIN_DB_PREFIX."user as u
 		LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (u.rowid=g.fk_user)
 		WHERE g.fk_usergroup = ".$object->fk_usergroup;
-	print $sql;
+	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()){
 		$sendto = $ATMdb->Get_field('email');
