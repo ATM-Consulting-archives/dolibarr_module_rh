@@ -132,34 +132,19 @@ function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
 
 //Fonction qui permet d'afficher un salarié
 function afficherSalarie(&$ATMdb, $idUser){
-		
+				
 				global $user, $db, $idUserCourant, $userCourant;
-/*
-				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where rowid=".$idUser;
-				
-				$ATMdb->Execute($sqlReq);
-				
-				$Tab=array();
-				while($ATMdb->Get_line()) {
-					$user=new User($db);
-					$user->fetch($ATMdb->Get_field('rowid'));
-					
-					$Tab[]=$user;
-				}
-				
-				foreach($Tab as &$user) {
- * */
- 					$user=new User($db);
-					$user->fetch($idUser);
+
+				$user=new User($db);
+				$user->fetch($idUser);
  
 					?>
-						<a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
-						<? if(!empty($user->office_phone) || !empty($user->user_mobile)) { ?><div class="tel">Tél. : <?=$user->office_phone.' '.$user->user_mobile ?></div><? }
-						if(!empty($user->email) ) { ?><div class="mail">Email : <a href="mailto:<?=$user->email ?>"><?=$user->email ?></a></div><? }
-						if(!empty($user->job) ) { ?><div><?=$user->job ?></div><? }
-					
-					?><?
-				/*}*/
+				<a href="<?=DOL_URL_ROOT ?>/user/fiche.php?id=<?=$user->id ?>"><?=$user->firstname." ".$user->lastname ?></a>
+				<? if(!empty($user->office_phone) || !empty($user->user_mobile)) { ?><div class="tel">Tél. : <?=$user->office_phone.' '.$user->user_mobile ?></div><? }
+				if(!empty($user->email) ) { ?><div class="mail">Email : <a href="mailto:<?=$user->email ?>"><?=$user->email ?></a></div><? }
+				if(!empty($user->job) ) { ?><div><?=$user->job ?></div><? }
+			
+				?><?
 		
 }
 
@@ -214,28 +199,34 @@ function afficherGroupes(&$ATMdb){
 }
 
 function findFkUserGroup(&$ATMdb, $nomGroupe){
-	$sqlFkGroupe="SELECT fk_usergroup 
-	FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as v, ".MAIN_DB_PREFIX."usergroup as u 
-	WHERE u.nom='".addslashes($nomGroupe)."' AND v.fk_usergroup=u.rowid LIMIT 1";
+	$sqlFkGroupe="SELECT rowid 
+	FROM ".MAIN_DB_PREFIX."usergroup
+	WHERE nom='".addslashes($nomGroupe)."'";
+	
 	$ATMdb->Execute($sqlFkGroupe);
 	$ATMdb->Get_line();
-	return $ATMdb->Get_field('fk_usergroup');
+	return $ATMdb->Get_field('rowid');
 	
 }
 
 function findIdValideur(&$ATMdb, $fkusergroup){
-	$sqlidValideur='SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe WHERE fk_usergroup='.$fkusergroup;
+
+	$sqlidValideur="SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe WHERE fk_usergroup=".$fkusergroup;
 	$ATMdb->Execute($sqlidValideur);
 	$Tab=array();
+	$nbValideur=0;
 	while($ATMdb->Get_line()) {
 			//return $ATMdb->Get_field('fk_user');
 			//$idValideurGroupe=findIdValideur($ATMdb,$fkusergroup);
 			$Tab[]=$ATMdb->Get_field('fk_user');
+			$nbValideur++;
 	}
-	?>
-				<ul id="ul-niveau-1">
-	<?
-	foreach($Tab as $fkuser){
+
+	print '<ul id="ul-niveau-1">';
+	
+	
+	if($nbValideur>0){
+		foreach($Tab as $fkuser){
 		print '<li class="utilisateur" rel="'.$fkuser.'">';
 		
 		afficherSalarie($ATMdb,$fkuser);
@@ -243,8 +234,25 @@ function findIdValideur(&$ATMdb, $fkusergroup){
 		afficherGroupeSousValideur($ATMdb,$fkuser,$fkusergroup,1);
 		// SELECT  u.rowid FROM ".MAIN_DB_PREFIX."user as u WHERE u.rowid NOT IN (SELECT g.fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe as g WHERE g.fk_usergroup=2)
 		print '</li>';
+		}
+		print '</ul>';
 	}
-	print '</ul>';
+	else{
+		
+		$sql="SELECT fk_user  FROM ".MAIN_DB_PREFIX."usergroup_user WHERE fk_usergroup=".$fkusergroup;
+		$ATMdb->Execute($sql);
+		
+		while($ATMdb->Get_line()){
+			$TUserG[]=$ATMdb->Get_field('fk_user');
+		}
+		foreach($TUserG as $id){
+			print '<li class="utilisateur" rel="'.$id.'">';
+			afficherSalarie($ATMdb,$id);
+			print '</li>';
+		}
+		print '</ul>';
+	}
+	
 }
 
 function afficherUtilisateurGroupe(&$ATMdb, $nomGroupe){

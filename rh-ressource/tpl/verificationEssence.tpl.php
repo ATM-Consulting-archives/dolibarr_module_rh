@@ -13,15 +13,22 @@ Utilisateur : [infos.fk_user;strconv=no;protect=no] <br><br>
 	<thead >
 		<tr class="liste_titre">
 			<td>Carte Total</td>
+			<td>Véhicule</td>
 			<td>Plein d'essence</td>
+			<td>Consommation</td>
 			<td>Date</td>
 			<td>Utilisateur</td>
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
+		<tr
+		[onshow;block=begin;when [ressource.parite]=='pair'] class="pair" [onshow;block=end]
+		[onshow;block=begin;when [ressource.parite]=='impair'] class="impair" [onshow;block=end]
+		>
 			<td>[ressource.nom;block=tr;strconv=no;protect=no]</td>
+			<td>[ressource.vehicule;strconv=no;protect=no]</td>
 			<td>[ressource.info;strconv=no;protect=no]</td>
+			<td>[ressource.conso;strconv=no;protect=no]</td>
 			<td>[ressource.date;strconv=no;protect=no]</td>
 			<td>[ressource.user;strconv=no;protect=no]</td>
 		</tr>

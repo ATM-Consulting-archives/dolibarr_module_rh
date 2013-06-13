@@ -156,6 +156,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					}
 					else $absence->dureeHeurePaie = $absence->dureeHeure;
 					
+					$absence->niveauValidation=1;
+					
 					$absence->save($ATMdb);
 					$cpt++;
 			}

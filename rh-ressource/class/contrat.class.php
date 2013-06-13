@@ -30,7 +30,7 @@ class TRH_Contrat  extends TObjetStd {
 		//chargement des listes pour les combos
 		
 		$this->TTypeRessource = array();
-		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource_type WHERE entity IN (0,".$conf->entity.")";
+		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource_type ";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TTypeRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle');
@@ -77,8 +77,7 @@ class TRH_Contrat  extends TObjetStd {
 	function delete(&$ATMdb){
 		global $conf;
 		//avant de supprimer le contrat, on supprime les liaisons contrat-ressource associés.
-		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE entity IN (0,".$conf->entity.") 
-		AND fk_rh_contrat=".$this->getId();
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_contrat_ressource WHERE fk_rh_contrat=".$this->getId();
 		$ATMdb->Execute($sql);
 		
 		//puis on supprime le contrat.

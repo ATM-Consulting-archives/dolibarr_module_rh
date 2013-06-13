@@ -180,6 +180,8 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 				,'bruteAnnuelle'=>$form->texte('','bruteAnnuelle',$remuneration->bruteAnnuelle, 30,100,'','','-')
 				,'salaireMensuel'=>$form->texte('','salaireMensuel',$remuneration->salaireMensuel, 30,100,'','','-')
 				,'primeAnciennete'=>$form->texte('','primeAnciennete',$remuneration->primeAnciennete, 30,100,'','','-')
+				,'primeNoel'=>$form->texte('','primeNoel',$remuneration->primeNoel, 30,100,'','','-')
+				,'commission'=>$form->texte('','commission',$remuneration->commission, 30,100,'','','-')
 				,'participation'=>$form->texte('','participation',$remuneration->participation, 30,100,'','','-')
 				,'autre'=>$form->texte('','autre',$remuneration->autre, 30,100,'','','-')
 				,'prevoyancePartSalariale'=>$form->texte('','prevoyancePartSalariale',$remuneration->prevoyancePartSalariale, 30,100,'','','-')
@@ -194,9 +196,9 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 				,'diversPartPatronale'=>$form->texte('','diversPartPatronale',$remuneration->diversPartPatronale, 30,100,'','','-')
 				,'totalRemPatronale'=>$remuneration->diversPartPatronale+$remuneration->mutuellePartPatronale+$remuneration->retraitePartPatronale+$remuneration->urssafPartPatronale+$remuneration->prevoyancePartPatronale
 				,'totalRemSalariale'=>$remuneration->diversPartSalariale+$remuneration->mutuellePartSalariale+$remuneration->retraitePartSalariale+$remuneration->urssafPartSalariale+$remuneration->prevoyancePartSalariale
-				,'commentaire'=>$form->texte('','commentaire',$remuneration->commentaire, 30,100,'','','-')
+				,'commentaire'=>$form->texte('','commentaire',$remuneration->commentaire, 30,100,'','','')
 				,'fk_user'=>$remuneration->fk_user
-				,'lieuExperience'=>$form->texte('','lieuExperience',$remuneration->lieuExperience, 30,100,'','','-')
+				,'lieuExperience'=>$form->texte('','lieuExperience',$remuneration->lieuExperience, 30,100,'','','')
 			)
 			,'userCourant'=>array(
 				'id'=>$_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id

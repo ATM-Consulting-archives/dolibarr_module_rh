@@ -103,8 +103,8 @@ function _liste(&$ATMdb, &$ressource) {
 	
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT rowid as 'ID', code as 'Code', libelle as 'Libellé'
-		FROM @table@
-		WHERE entity IN (0,".$conf->entity.")";
+		FROM ".MAIN_DB_PREFIX."rh_ressource_field
+		WHERE fk_rh_ressource_type=".$ressource->getId();
 	
 	$TOrder = array('Code'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');

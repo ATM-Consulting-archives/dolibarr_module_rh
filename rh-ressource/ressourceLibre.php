@@ -45,7 +45,7 @@ function _liste(&$ATMdb, &$ressource) {
 		AND e.entity IN (0, ".$conf->entity.")
 		AND e.date_debut<='".date("Y-m-d")."' AND e.date_fin >= '". date("Y-m-d")."' 
 	 LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid )";	
-	$sql.=" WHERE  r.entity IN (0,".$conf->entity.") AND (e.fk_rh_ressource IS NULL) ";
+	$sql.=" WHERE  (e.fk_rh_ressource IS NULL) ";
 	
 	
 	if(!$user->rights->ressource->ressource->viewRessource){

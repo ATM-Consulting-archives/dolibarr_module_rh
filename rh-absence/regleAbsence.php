@@ -117,6 +117,9 @@ function _liste(&$ATMdb, $regle) {
 			'typeAbsence'=>'Type d\'absence concerné'
 			,'nbJourCumulable'=>'Nombre de jours contigus possible'
 		)
+		,'eval'=>array('Utilisateur'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+		,'Groupe'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+		)
 		,'orderBy'=>$TOrder
 		
 	));
