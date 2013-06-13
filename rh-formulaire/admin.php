@@ -161,7 +161,7 @@ $r->liste($ATMdb, $sql, array(
 	,'title'=>array(
 		'datedeb'=>'Date début'
 		,'datefin' => 'Date fin'
-		,'title' => 'Formulaire'
+		,'title' => 'Enquête'
 		,'groupe' => 'Groupe'
 	)
 	,'search'=>array(
