@@ -159,8 +159,7 @@ class TRH_Ressource extends TObjetStd {
 		}
 		// AA c'est un contrat ça ? (outre le fait que je ne comprends pas toutes ces notions de contrats)
 		$this->TTVA = array();
-		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0]."
-		AND entity IN (0,".$conf->entity.")";
+		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
@@ -257,7 +256,8 @@ class TRH_Ressource extends TObjetStd {
 	 */
 	function strToTimestamp($chaine){
 		$a = strptime ($chaine, "%d/%m/%Y"); // AA snif je viens d'apprendre une fonction et c'est pas tout les jours ;)
-		$timestamp = mktime(0, 0, 0, $a['tm_mon']+1, $a['tm_mday'], $a['tm_year']+1900);
+		$timestamp = mktime(0,0,0,substr($chaine, 3,2),substr($chaine,0,2), substr($chaine, 6,4));
+		//$timestamp = mktime(0, 0, 0, $a['tm_mon']+1, $a['tm_mday'], $a['tm_year']+1900);
 		return $timestamp;
 	}
 	
@@ -282,7 +282,10 @@ class TRH_Ressource extends TObjetStd {
 		return false;
 	}
 	
-	
+	/**
+	 * les dates demandés sont au format timeStamp
+	 * @return true si chevauchement; false sinon.
+	 */
 	function dateSeChevauchent($d1d, $d1f, $d2d, $d2f){
 		if (  ( ($d1d>=$d2d) && ($d1d<=$d2f) ) || ( ($d1f>=$d2d)  && ($d1f<=$d2f) )  ) 
 			{return true;}
