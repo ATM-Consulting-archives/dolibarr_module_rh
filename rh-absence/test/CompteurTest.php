@@ -48,12 +48,20 @@ class CompteurTest extends PHPUnit_Framework_TestCase
 	
     {
     	$compteur=new TRH_Compteur;
+		$this->assertNotNull($compteur);
+		
+		$compteur->initCompteur($ATMdb, $idUser);
+		$this->assertNotNull($compteur);
+		
+		
+		
 		$ATMdb=new Tdb;
 		$id = $compteur->load_by_fkuser($ATMdb, $user->id);
 		$this->assertNotNull($id);
 		
 		$id = $compteur->load_by_fkuser($ATMdb, 'testFaux');
 		$this->assertEquals(0,$id);
+
 		
 		print __METHOD__."\n";
 	}

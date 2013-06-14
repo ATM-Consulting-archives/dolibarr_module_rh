@@ -1203,10 +1203,9 @@ class TRH_Absence extends TObjetStd {
 	function load_by_idImport(&$ATMdb, $idImport){
 		global $conf;
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence 
-		WHERE idAbsImport='".$idImport;
+		WHERE idAbsImport=".$idImport;
 
 		$ATMdb->Execute($sql);
-		
 		if ($ATMdb->Get_line()) {
 			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
 		}
@@ -1219,6 +1218,7 @@ class TRH_Absence extends TObjetStd {
 		//on récupère toutes les date d'absences du collaborateur
 		$sql="SELECT date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_absence WHERE (etat LIKE 'Validee' OR etat LIKE 'Avalider') 
 		AND fk_user=".$absence->fk_user;
+
 		$ATMdb->Execute($sql);
 		$k=0;
 		while($ATMdb->Get_line()) {
@@ -1227,13 +1227,16 @@ class TRH_Absence extends TObjetStd {
 			$k++;
 		}
 		if($k>0){
-			foreach($TAbs as $dateAbs){
+			if(!empty($TAbs)){
+				foreach($TAbs as $dateAbs){
 				//on traite le début de l'absence	
 				if($absence->date_debut<$dateAbs['date_debut']&&$absence->date_fin>$dateAbs['date_fin']) return 1;
 				
 				//on traite la fin de l'absence	
 				if($absence->date_debut>$dateAbs['date_debut']&&$absence->date_fin<$dateAbs['date_fin']) return 1;
 			}
+		 }
+			
 		}
 		
 		return 0;
@@ -1439,12 +1442,7 @@ class TRH_JoursFeries extends TObjetStd {
 		
 		parent::save($db);
 	}
-	
-	//remet à 0 les checkbox avant la sauvegarde
-	function razCheckbox(&$ATMdb, $absence){
-			$this->matin=0;
-			$this->apresmidi=0;
-	}
+
 	
 	//fonction qui renvoie 1 si le jour férié que l'on veut créer existe déjà à la date souhaitée, sinon 0
 	function testExisteDeja($ATMdb, $feries){
