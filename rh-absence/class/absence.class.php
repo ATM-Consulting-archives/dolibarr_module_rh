@@ -1400,7 +1400,8 @@ class TRH_EmploiTemps extends TObjetStd {
 	function load_by_fkuser(&$ATMdb, $fk_user){
 		global $conf;
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
-		WHERE fk_user='".$fk_user;
+		WHERE fk_user=".$fk_user;
+		
 		$ATMdb->Execute($sql);
 		
 		if($ATMdb->Get_line()) {
