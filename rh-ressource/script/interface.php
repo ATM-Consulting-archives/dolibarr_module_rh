@@ -84,7 +84,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		print $sql;
 	}
 	
-	$ATMdb2=new Tdb;
+	$ATMdb2=new TPDOdb;
 			
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
@@ -114,9 +114,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			,'N'
 			,''
 			,''
-			,''
 			,'EUR'
-			,''
 		);
 		
 		$sql_anal="SELECT e.rowid
@@ -157,9 +155,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 				,'N'
 				,''
 				,''
-				,''
 				,'EUR'
-				,''
 			);
 		}
 	}
@@ -218,9 +214,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			,'N'
 			,''
 			,''
-			,''
 			,'EUR'
-			,''
 			);
 	}
 	

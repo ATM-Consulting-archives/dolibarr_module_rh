@@ -36,11 +36,11 @@
  	$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_type_absence (rowid,typeAbsence, libelleAbsence, codeAbsence, admin, entity, unite)
 	VALUES 
 	
-	(1,'rttcumule','RTT cumulé','930','0','".$conf->entity."', 'jour')
-	,(2,'rttnoncumule','RTT non cumulé','940','0','".$conf->entity."', 'jour')
-	,(3,'conges','Absence congés','950','0','".$conf->entity."', 'jour')
-	,(4,'paternite','Absence paternité','963','0','".$conf->entity."', 'heure')
-	,(5,'nonremuneree','Absence congés sans solde','980','0','".$conf->entity."', 'heure')
+	(1,'rttcumule','RTT cumulé','0930','0','".$conf->entity."', 'jour')
+	,(2,'rttnoncumule','RTT non cumulé','0940','0','".$conf->entity."', 'jour')
+	,(3,'conges','Absence congés','0950','0','".$conf->entity."', 'jour')
+	,(4,'paternite','Absence paternité','0963','0','".$conf->entity."', 'heure')
+	,(5,'nonremuneree','Absence congés sans solde','0980','0','".$conf->entity."', 'heure')
 	,(6,'mariage','Mariage','2000','0','".$conf->entity."', 'jour')
 	,(7,'deuil','Deuil','2010','0','".$conf->entity."', 'jour')
 	,(8,'naissanceadoption','Naissance ou adoption','2020','0','".$conf->entity."', 'jour')
@@ -48,16 +48,16 @@
 	,(10,'demenagement','Déménagement','2040','0','".$conf->entity."', 'jour')
 	
 	
-	,(11,'maladiemaintenue','Absence maladie maintenue','960','1','".$conf->entity."', 'heure')
-	,(12,'maladienonmaintenue','Absence maladie non maintenue','961','1','".$conf->entity."', 'heure')
-	,(13,'maternite','Absence maternité','962','1','".$conf->entity."', 'heure')
-	,(14,'chomagepartiel','Absence Chômage partiel','970','1','".$conf->entity."', 'heure')
-	,(15,'accidentdetravail','Absence accident du travail','990','1','".$conf->entity."', 'heure')
+	,(11,'maladiemaintenue','Absence maladie maintenue','0960','1','".$conf->entity."', 'heure')
+	,(12,'maladienonmaintenue','Absence maladie non maintenue','0961','1','".$conf->entity."', 'heure')
+	,(13,'maternite','Absence maternité','0962','1','".$conf->entity."', 'heure')
+	,(14,'chomagepartiel','Absence Chômage partiel','0970','1','".$conf->entity."', 'heure')
+	,(15,'accidentdetravail','Absence accident du travail','0990','1','".$conf->entity."', 'heure')
 	,(16,'maladieprofessionnelle','Absence maladie professionnelle','1000','1','".$conf->entity."', 'heure')
 	,(17,'congeparental','Absence Congés parental','1010','1','".$conf->entity."', 'heure')
 	,(18,'accidentdetrajet','Absence Accident trajet','1040','1','".$conf->entity."', 'heure')
 	,(19,'mitempstherapeutique','Absence Mi-temps thérapeutique','1070','1','".$conf->entity."', 'heure')
-	,(20,'pathologie','Absence pathologie','964','1','".$conf->entity."', 'heure')
+	,(20,'pathologie','Absence pathologie','0964','1','".$conf->entity."', 'heure')
 	,(21,'cours','Cours','','1','".$conf->entity."', '')
 	,(22,'preavis','Absence préavis','1020','1','".$conf->entity."', 'heure')
 	,(23,'rechercheemploi','Absence recherche emploi','1030','1','".$conf->entity."', 'heure')
@@ -98,6 +98,33 @@
 	$ATMdb->Execute($sql);
 	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeMotif='MTT' WHERE codeAbsence='1070'";
 	$ATMdb->Execute($sql);
+	
+	
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeAbsence='0930' WHERE codeAbsence='930'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeAbsence='0940' WHERE codeAbsence='940'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeAbsence='0950' WHERE codeAbsence='950'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeAbsence='0960' WHERE codeAbsence='960'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeAbsence='0961' WHERE codeAbsence='961'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeAbsence='0962' WHERE codeAbsence='962'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeAbsence='0963' WHERE codeAbsence='963'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeAbsence='0964' WHERE codeAbsence='964'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeAbsence='0970' WHERE codeAbsence='970'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeAbsence='0980' WHERE codeAbsence='980'";
+	$ATMdb->Execute($sql);
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET codeAbsence='0990' WHERE codeAbsence='990'";
+	$ATMdb->Execute($sql);
+	
+	
+	
 	
 
 	

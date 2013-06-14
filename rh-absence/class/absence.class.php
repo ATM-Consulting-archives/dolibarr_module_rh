@@ -249,10 +249,9 @@ class TRH_Absence extends TObjetStd {
 			$TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
 			$k++;
 		}
-		
 
-		
 		return $TRegle;
+
 	}
 	
 	
@@ -395,10 +394,7 @@ class TRH_Absence extends TObjetStd {
 		$dateFinAbs=$absence->php2Date($date_fin);
 		
 		//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
-		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` 
-		WHERE date_jourOff between '"
-		.$dateDebutAbs."' and '". $dateFinAbs."'"; 
-		//echo $sql;
+		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries`";
 		$ATMdb->Execute($sql);
 		$Tab = array();
 		while($ATMdb->Get_line()) {
@@ -409,7 +405,8 @@ class TRH_Absence extends TObjetStd {
 		}
 		//print "ddmoment =".$this->ddMoment. "   debutAbs".$dateDebutAbs."   fin abs".$dateFinAbs;
 		//traitement pour chaque jour férié
-		foreach ($Tab as $key=>$jour) {
+		if(!empty($Tab)){
+			foreach ($Tab as $key=>$jour) {
 			//on teste si le jour est égal à l'une des extrémités de la demande d'absence, sinon il n'y a pas de test spécial à faire
 			if($dateDebutAbs==$jour['date_jourOff']&&$dateFinAbs==$jour['date_jourOff']){ //date début absence == jour férié et date fin absence == même jour férié
 				//echo "boucle1";
@@ -479,6 +476,8 @@ class TRH_Absence extends TObjetStd {
 				}
 			}
 		}
+		}
+		
 		return $duree;
 	}
 
@@ -499,8 +498,7 @@ class TRH_Absence extends TObjetStd {
 		
 		
 		//on récupère les jours fériés compris dans la demande d'absence
-		$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
-		.$dateDebutAbs."' and '". $dateFinAbs; 
+		$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries`";
 		//echo $sql;
 		$ATMdb->Execute($sql);
 		$TabFerie = array();
@@ -511,7 +509,7 @@ class TRH_Absence extends TObjetStd {
 				,'moment'=>$ATMdb->Get_field('moment')
 				);
 			
-		}				
+		}			
 		
 		//on cherche le temps total de travail d'un employé par semaine : 
 		//cela va permettre de savoir si la durée d'une absence doit être limité à 7h par jour et 35h par semaine ou non
@@ -583,6 +581,7 @@ class TRH_Absence extends TObjetStd {
 		if($date_debut==$date_fin){	//si les jours de début et de fin sont les mêmes
 
 			$ferie=0;
+
 			foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite paspour les jours, car déjà traité avant pour les jours 
 												//on le traite pour les heures
 	 			if(strtotime($jourFerie['date_jourOff'])==$date_debut){
@@ -595,6 +594,7 @@ class TRH_Absence extends TObjetStd {
 	 						if($absence->dfMoment=='apresmidi'){
  								$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourSemaineFerie."_heuredpm"], $TTravailHeure["date_".$jourSemaineFerie."_heurefpm"]));
 								$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
+								
 	 						}
 	 						
 	 					}
@@ -609,6 +609,7 @@ class TRH_Absence extends TObjetStd {
 	 				}
 	 				
 	 			}
+
 	 		}
 			if(!$ferie){
 				
@@ -648,7 +649,7 @@ class TRH_Absence extends TObjetStd {
 				if($tpsHebdoUser>=35){
 					$absence->dureeHeurePaie=7*$duree;
 				}
-				else$absence->dureeHeurePaie=$absence->dureeHeure;
+				else $absence->dureeHeurePaie=$absence->dureeHeure;
 				return $duree;
 			}
 			
@@ -981,16 +982,19 @@ class TRH_Absence extends TObjetStd {
 	function dureeAbsenceRecevable(&$ATMdb){
 		$avertissement=0;
 		$TRegle=$this->recuperationRegleUser($ATMdb,$this->fk_user);
-		foreach($TRegle as $TR){
-			if($TR['typeAbsence']==$this->type){
-				if($this->duree>$TR['nbJourCumulable']){
-					if($TR['restrictif']==1){
-							 return 0;
+		if(!empty($TRegle)){
+			foreach($TRegle as $TR){
+				if($TR['typeAbsence']==$this->type){
+					if($this->duree>$TR['nbJourCumulable']){
+						if($TR['restrictif']==1){
+								 return 0;
+						}
+						else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
 					}
-					else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
 				}
 			}
 		}
+		
 		if($avertissement==0){
 			return 1;
 		}
@@ -1003,8 +1007,7 @@ class TRH_Absence extends TObjetStd {
 		//$jourNext=$this->jourSemaine($dateNext);
 		
 		//on teste si c'est un jour férié
-		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
-		.$this->php2Date($this->date_debut)."' and '".$dateNext."'"; 
+		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries`";
 		
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
@@ -1061,10 +1064,6 @@ class TRH_Absence extends TObjetStd {
 		return 1;
 	}
 
-
-		
-		
-		
 
 	///////////////FONCTIONS pour le fichier rechercheAbsence\\\\\\\\\\\\\\\\\\\\\\\\\\\
 	
