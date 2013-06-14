@@ -81,7 +81,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		$code_compta		=	$ATMdb->Get_field('accountancy_code');
 		$total_ht			=	$ATMdb->Get_field('total_ht');
 		
-		$line = array('NDF', date('dmy'), 'OD', $code_compta, 'G', '', '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', '', 'EUR', '');
+		$line = array('NDF', date('dmy'), 'OD', $code_compta, 'G', '', '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', 'EUR', '', '');
 		$TabNdf[]=$line;
 		
 		$sql_anal = "SELECT
@@ -115,7 +115,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 			$total_ht			=	$total_ht*($pourcentage/100);
 			
 			if(!empty($code_analytique)) {
-				$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', '', 'EUR', '');
+				$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', 'EUR', '', '');
 				$TabNdf[]=$line;
 				
 			}
@@ -145,7 +145,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		while($ATMdb->Get_line()) {
 			$total_tva_ndf	=	$ATMdb->Get_field('total_tva');
 			
-			$line = array('NDF', date('dmy'), 'OD', '445660', 'G', '', '', 'NOTE DE FRAIS '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva_ndf, 'N', '', '', '', 'EUR', '');
+			$line = array('NDF', date('dmy'), 'OD', '445660', 'G', '', '', 'NOTE DE FRAIS '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva_ndf, 'N', '', '', 'EUR', '', '');
 			$TabNdf[]=$line;
 		}
 	}
@@ -189,7 +189,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
     	$datef_ndf		=	substr($ATMdb->Get_field('datef'), 8, 2).substr($ATMdb->Get_field('datef'), 5, 2).substr($ATMdb->Get_field('datef'), 2, 2);
     	$total_ttc_ndf	=	$ATMdb->Get_field('total_ttc');
 		
-		$line = array('NDF', $datef_ndf, 'OD', '425902', 'X', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', '', '', '', 'EUR', '');
+		$line = array('NDF', $datef_ndf, 'OD', '425902', 'X', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', '', '', 'EUR', '', '');
 		$TabNdf[]=$line;
 	}
 	
