@@ -80,29 +80,31 @@ class InterfaceValideurWorkflow
 		dol_include_once('/valideur/config.php');
 		dol_include_once('/valideur/lib/valideur.lib.php');
 		
+		$ATMdb=new TPDOdb;
+		
 		if($object->statut==1){			// Statut 1 : note de frais acceptée
 			if ($action == 'NDFP_VALIDATE'){
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
 				
-				return send_mail($db, $object, $user, $langs,1);
+				return send_mail($ATMdb, $object, $user, $langs,1);
 			}
 		}elseif($object->statut==2){	// Statut 2 : note de frais remboursée
 			if ($action == 'NDFP_PAID'){
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
 				
-				return send_mail($db, $object, $user, $langs,2);
+				return send_mail($ATMdb, $object, $user, $langs,2);
 			}
 		}elseif($object->statut==3){	// Statut 3 : note de frais refusée
 			if ($action == 'NDFP_CANCEL'){
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
 				
-				return send_mail($db, $object, $user, $langs,3);
+				return send_mail($ATMdb, $object, $user, $langs,3);
 			}
 		}elseif($object->statut==4){	// Statut 4 : note de frais envoyé en soumission de validation
 			if ($action == 'NDFP_VALIDATE'){
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
 				
-				return send_mail($db, $object, $user, $langs,4);
+				return send_mail($ATMdb, $object, $user, $langs,4);
 			}
 		}
 
