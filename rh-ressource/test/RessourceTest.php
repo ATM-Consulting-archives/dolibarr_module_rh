@@ -23,16 +23,14 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf;
 
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require('../config.php');
-/*$url = '/var/www/rhcpro/rh-library/PHPUnit/PHPUnit/Autoload.php';echo $url;
-require_once $url;*/
-//require('../class/ressource.class.php');
-//require('../lib/ressource.lib.php');
 
-//$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+
+global $conf,$user,$langs,$db;
+//inclusion de config des tests.
+require('./config.php');
+require('../lib/ressource.lib.php');
+require('../class/ressource.class.php');
 
 
 /**
@@ -44,99 +42,37 @@ require_once $url;*/
  */
 class RessourceTest extends PHPUnit_Framework_TestCase
 {
-	/*protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;*/
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return RessourceTest
-	 */
-	function __construct()
-	{
-		//$this->sharedFixture
-		global $conf;//f,$user,$langs,$db;
-		$this->conf=$conf;
-		/*$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;*/
-		print 'construct';
-		print __METHOD__."\n";// db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
+	protected $id;
+	
+	public function testgetIdType()
+    {
+		$id = getIdType('voiture');
+		$this->assertGreaterThanOrEqual(0 , $id);
+		
+		$id = getIdType('inexistant');
+		$this->assertFalse($id);
+		print __METHOD__."\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+
+	public function testgetTypeEvent()
     {
-    	//global $conf,$user,$langs,$db;
-		//$this->db = new TPDOdb;
-		print 'ca commence !\n';
+    	$events = array();
+		
+    	$events = getTypeEvent(3);
+        $this->assertNotEmpty($events);
 		print __METHOD__."\n";
     }
-    public static function tearDownAfterClass()
+	
+	public function testcreateRessource()
     {
-    	//global $conf,$user,$langs,$db;
-		//$this->db->close();
-		print "cest fini";
+    	$ress = new TRH_Ressource;
+		$this->assertNotNull($ress);
 		print __METHOD__."\n";
     }
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-    protected function setUp()
-    {
-    	/*global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;*/
-
-		print __METHOD__."\n";
-    }
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-    protected function tearDown()
-    {
-    	print __METHOD__."\n";
-    }
-
-    /**
-     * testRessourceCreate
-     *
-     * @return	void
-     */
-    public function testRessourceCreate()
-    {
-    	/*global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new User($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
-
-    	$this->assertLessThan($result, 0);*/
-    	$result = 'lol';
-    	print 'Test Création de Ressource\n';
-    	print __METHOD__."\n";
-    	
-    }
+	
 
     
    
 
 }
-?>
