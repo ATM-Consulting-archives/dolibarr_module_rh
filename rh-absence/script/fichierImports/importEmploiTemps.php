@@ -59,13 +59,14 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				echo 'Erreur : Utilisateur '.strtolower($infos[3]).' inexistant ';
 			}
 			else{
-					
 					$edt=new TRH_EmploiTemps;
+					$entreprise='';
 					
 					//traitement des lignes et insertion en base
 					//on récupère le compteur de l'utilisateur si celui-ci existe sinon il sera créé
+					//echo $TUser[strtolower($infos[3])];exit;
 					$edt->load_by_fkuser($ATMdb, $TUser[strtolower($infos[3])]);
-					
+					$edt->fk_user=$TUser[strtolower($infos[3])];
 					//echo $edt->rowid;exit;
 					$cpt=4;
 					foreach ($edt->TJour as $jour) {
@@ -117,25 +118,32 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 						
 						if(stristr($infos[0],'agt')!=false){	//on est chez AGT
 							 $entreprise='%agt%';
+							$sql='SELECT label, rowid FROM '.MAIN_DB_PREFIX.'entity WHERE label LIKE "'.$entreprise.'"';
 
 						}
 						elseif(stristr($infos[0],'impression')!=false){	//on est chez global impression
 							$entreprise='%impression%';
+							$sql='SELECT label, rowid FROM '.MAIN_DB_PREFIX.'entity WHERE label LIKE "'.$entreprise.'"';
 						}
 						elseif(stristr($infos[0],'informatique')!=false){	//on est chez global impression
 							$entreprise='%info%';
+							$sql='SELECT label, rowid FROM '.MAIN_DB_PREFIX.'entity WHERE label LIKE "'.$entreprise.'"';
 						}
-						else{//on est chez 
+						elseif(stristr($infos[0],'groupe')!=false){//on est chez  cpro groupe
 							$entreprise='%groupe%';
+							$sql='SELECT label, rowid FROM '.MAIN_DB_PREFIX.'entity WHERE label LIKE "'.$entreprise.'"';
+						}else{	//on est chez cpro
+							$entreprise='cpro';
+							$entreprise1="c'pro";
+							$sql='SELECT label, rowid FROM '.MAIN_DB_PREFIX.'entity WHERE label LIKE "'.$entreprise.'" OR label LIKE "'.$entreprise1.'"';
 						}
-						$sql='SELECT label, rowid FROM '.MAIN_DB_PREFIX.'entity WHERE label LIKE "'.$entreprise.'"';
-
+						
 						$ATMdb->Execute($sql);
 						
-						if($ATMdb->Get_line()) {
+						while($ATMdb->Get_line()) {
 							$edt->societeRtt=$ATMdb->Get_field('rowid');
 						}					
-						
+
 						$edt->save($ATMdb);
 						$ligneok++;
 						

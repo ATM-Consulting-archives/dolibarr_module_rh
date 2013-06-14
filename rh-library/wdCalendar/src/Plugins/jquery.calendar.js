@@ -1561,7 +1561,7 @@
                         });
                         $("#bbit-cs-what").click(function(e) {
                             /*if (!option.ViewCmdhandler) {
-                                alert("ViewCmdhandler" + i18n.xgcalendar.i_undefined);
+                                //alert("ViewCmdhandler" + i18n.xgcalendar.i_undefined);
                             }
                             else {
                                 if (option.ViewCmdhandler && $.isFunction(option.ViewCmdhandler)) {
@@ -1569,11 +1569,9 @@
                                 }
                             }
                             $("#bbit-cs-buddle").css("visibility", "hidden");
-                            
-                            return false;*/
+                            //return false;*/
 							//data[6] contient  la fk_user lié à l'évenement.
-                            window.location = data[9];
-                            //user.php&
+							window.location = data[9];
                         });
                         lbtn.click(function(e) {
                             if (!option.EditCmdhandler) {

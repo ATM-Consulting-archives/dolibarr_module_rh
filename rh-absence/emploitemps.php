@@ -179,6 +179,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 
 	$TEntity=array();
 	$TEntity=$emploiTemps->load_entities($ATMdb);
+	//print_r($TEntity);exit;
 	
 	//echo "salut".$user->rights->absence->myactions->modifierSonEdt;
 	$TBS=new TTemplateTBS();

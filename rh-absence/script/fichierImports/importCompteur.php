@@ -185,7 +185,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					}
 					elseif(stristr($societe,'agt')!=false){
 						$compteur->rttTypeAcquisition='Annuel';
-							$compteur->rttMetier='aucunrtt';
+						$compteur->rttMetier='aucunrtt';
 					}
 
 				}
