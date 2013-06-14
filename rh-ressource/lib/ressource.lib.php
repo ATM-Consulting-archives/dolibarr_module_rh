@@ -45,6 +45,9 @@ function ressourcePrepareHead(&$obj, $type='type-ressource',&$param=null) {
 				);
 			
 			break;
+		default :
+				return array();
+			break;
 	}
 }
 
@@ -125,7 +128,7 @@ function getIdType($code){
 /**
  * Renvoie un tableau $numId=>$rowid des ressources du type spécifié.
  */
-function getIDRessource(&$ATMdb, $idType){
+function getIDRessource(&$ATMdb, $idType=0){
 	global $conf;
 	$TRessource = array();
 	
@@ -195,7 +198,6 @@ function afficheOuPas($val, $choixLimite,$colonne){
  * renvoie 'Tous' si choixApplication='all', renvoie val sinon. 
  */
 function stringTous($val, $choixApplication){
-	echo $choixApplication;
 	if ($choixApplication == 'all') return 'Tous';
 	else return $val;
 }
@@ -338,7 +340,6 @@ function modifierLimites(&$TLimites, $fk_user, $gen,  $int, $ext, $dataIll = fal
 	if (($TLimites[$fk_user]['limExterne'] > $ext*60)) {
 		$TLimites[$fk_user]['limExterne'] = $ext*60;
 	}
-	
 	if ($TLimites[$fk_user]['lim'] > ($gen*60)){
 		$TLimites[$fk_user]['lim'] = $gen*60;
 	}
