@@ -5,7 +5,7 @@
  * 
  */
  	define('INC_FROM_CRON_SCRIPT', true);
-	require('../../config.php');
+	require('/var/www/dolibarr-rh/htdocs/custom/valideur/config.php');
 	
 	
 	$ATMdb=new TPDOdb;
