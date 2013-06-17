@@ -2,7 +2,7 @@
 	require('config.php');
 	require('./class/absence.class.php');
 	require('./lib/absence.lib.php');
-	
+//print_r(get_defined_vars());	
 	llxHeader('','Calendrier des absences', '', '', 0,0,
 		array(//"/library/wdCalendar/src/jquery.js"   
 			"/library/wdCalendar/src/Plugins/Common.js"    
