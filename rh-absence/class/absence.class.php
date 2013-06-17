@@ -467,7 +467,7 @@ class TRH_Absence extends TObjetStd {
 					$duree-=1;
 				}
 			}
-			else{
+			else if($dateDebutAbs<=$jour['date_jourOff']&&$dateFinAbs>=$jour['date_jourOff']){
 				//echo "boucle4";
 				if($jour['moment']=='allday'){
 					$duree-=1;
