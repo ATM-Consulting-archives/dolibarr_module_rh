@@ -1,5 +1,11 @@
 <?php
 
+define('INC_FROM_DOLIBARR', true);
+define('TRIGGER', true);
+		
+require('../valideur/config.php');
+require('../valideur/lib/valideur.lib.php');
+
 /**
  *	\file       htdocs/core/triggers/interface_modValideur_ValideurWorkflow.class.php
  *	\class      InterfaceValideurWorkflow
@@ -75,10 +81,6 @@ class InterfaceValideurWorkflow
 			
         $langs->load("other");
         $langs->load('ndfp@ndfp');
-		
-		define('INC_FROM_DOLIBARR', true);
-		dol_include_once('/valideur/config.php');
-		dol_include_once('/valideur/lib/valideur.lib.php');
 		
 		$ATMdb=new TPDOdb;
 		

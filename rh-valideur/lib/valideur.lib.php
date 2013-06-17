@@ -85,7 +85,7 @@ function send_mail(&$ATMdb, $object, $user, $langs, $statut)
 	// Send mail
 	$mail = new TReponseMail($from,$sendto,$subject,$message);
 	
-	 dol_syslog("Valideur::sendmail content=$from,$sendto,$subject,$message", LOG_DEBUG);
+	dol_syslog("Valideur::sendmail content=$from,$sendto,$subject,$message", LOG_DEBUG);
 	
     (int)$result = $mail->send(true, 'utf-8');
 	//exit("SENDF MAIL $from,$sendto,$subject,$message");
