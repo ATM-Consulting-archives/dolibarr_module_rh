@@ -11,18 +11,25 @@
  * 		@param      statut      Expense status
  *      @return     int         <0 if KO, 0 if no action are done, >0 if OK
  */
-function send_mail(&$ATMdb, $object, $user, $langs, $statut)
+function send_mail(&$db, $object, $user, $langs, $statut)
 {
 	// On récupère les informations de l'utilisateur
 	
 	$sql = "SELECT name,firstname,email FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$object->fk_user;
+	$resql_user=$db->query($sql);
 	
+	$obj_user = $db->fetch_object($resql_user);
+    $name=$obj_user->name;
+    $firstname=$obj_user->firstname;
+    $email=$obj_user->email;
+
+	/*
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		$name=$ATMdb->Get_field('name');
 		$firstname=$ATMdb->Get_field('firstname');
 		$email=$ATMdb->Get_field('email');
-	}
+	}*/
 	
 	$from = USER_MAIL_SENDER;
 	$sendto = $email;
