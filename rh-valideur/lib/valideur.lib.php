@@ -11,35 +11,24 @@
  * 		@param      statut      Expense status
  *      @return     int         <0 if KO, 0 if no action are done, >0 if OK
  */
-function send_mail($db, $object, $user, $langs, $statut)
+function send_mail(&$ATMdb, $object, $user, $langs, $statut)
 {
 	// On récupère les informations de l'utilisateur
 	
 	$sql = "SELECT name,firstname,email FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$object->fk_user;
-	//print $sql;
-	$resql_user=$db->query($sql);
-	if ($resql_user){
-        $obj_user = $db->fetch_object($resql_user);
-		$name=$obj_user->name;
-		$firstname=$obj_user->firstname;
-		$email=$obj_user->email;
-    }
-    else{
-    	print "Envois email impossible -- user not found";
-        return 0;
-    }
 	
-	$langs->load('mails');
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$name=$ATMdb->Get_field('name');
+		$firstname=$ATMdb->Get_field('firstname');
+		$email=$ATMdb->Get_field('email');
+	}
 	
 	$from = USER_MAIL_SENDER;
 	$sendto = $email;
 	
 	$TBS=new TTemplateTBS();
-	/*	print $statut.'<hr>';
-		print_r($object);
-	*/
 	if($object->statut==1){
-	
 		$subject = $object->ref." - Acceptée";
 		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.acceptation.tpl.php'
 			,array()
@@ -100,5 +89,5 @@ function send_mail($db, $object, $user, $langs, $statut)
 	
     (int)$result = $mail->send(true, 'utf-8');
 	//exit("SENDF MAIL $from,$sendto,$subject,$message");
-	return 1;
+	return (int)$result;
 }
