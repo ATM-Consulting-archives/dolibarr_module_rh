@@ -1,7 +1,7 @@
 <?php
 
 define('INC_FROM_DOLIBARR', true);
-define('TRIGGER', true);
+//define('TRIGGER', true);
 		
 require('../valideur/config.php');
 require('../valideur/lib/valideur.lib.php');
