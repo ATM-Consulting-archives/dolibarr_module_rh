@@ -223,6 +223,7 @@ class RessourceTest extends PHPUnit_Framework_TestCase
 	public function testSave(){
 		global $ress, $ATMdb;
 		$ress->save($ATMdb);
+		$ress->delete($ATMdb);
 	}
 	
 	
