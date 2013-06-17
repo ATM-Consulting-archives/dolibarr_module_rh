@@ -385,7 +385,8 @@ class TRH_Ressource_type extends TObjetStd {
 		$ATMdb->Execute($sqlReq);
 		
 		if ($ATMdb->Get_line()) {
-			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+			$this->load($ATMdb, $ATMdb->Get_field('rowid'));
+			return true;
 		}
 		return false;
 	}
@@ -525,7 +526,8 @@ class TRH_Ressource_field extends TObjetStd {
 		$db->Execute($sqlReq);
 		
 		if ($db->Get_line()) {
-			return $this->load($db, $db->Get_field('rowid'));
+			$this->load($db, $db->Get_field('rowid'));
+			return true;
 		}
 		return false;
 	}
@@ -560,7 +562,7 @@ class TRH_Ressource_field extends TObjetStd {
 		$this->code = TRH_Ressource_type::code_format(empty($this->code) ? $this->libelle : $this->code);
 		
 		$this->entity = $conf->entity;
-		$this->supprimable = 1;
+		if (empty($this->supprimable)){$this->supprimable = 0;}
 		parent::save($db);
 	}
 
@@ -568,7 +570,7 @@ class TRH_Ressource_field extends TObjetStd {
 		global $conf;
 		
 		//on supprime le champs que si il est par défault.
-		if ($this->supprimable){
+		if (! $this->supprimable){
 			parent::delete($ATMdb);	
 			return true;
 		}

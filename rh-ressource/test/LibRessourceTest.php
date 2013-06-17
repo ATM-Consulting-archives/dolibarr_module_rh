@@ -26,13 +26,13 @@
 
 
 
-global $conf,$user,$langs,$db;
+/*global $conf,$user,$langs,$db;
 //inclusion de config des tests.
 require('./config.php');
 require('../lib/ressource.lib.php');
 require('../class/ressource.class.php');
 require('../class/evenement.class.php');
-require('../class/contrat.class.php');
+require('../class/contrat.class.php');*/
 
 
 $ress = new TRH_Ressource;
@@ -46,12 +46,13 @@ $ATMdb = new TPDOdb;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class RessourceTest extends PHPUnit_Framework_TestCase
+class LibRessourceTest extends PHPUnit_Framework_TestCase
 {
 		
 		
 	public static function setUpBeforeClass()
     {
+        global $ATMdb;	
         print "Début du test de Ressource.\n";
 		
     }
@@ -59,7 +60,6 @@ class RessourceTest extends PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
     	global $ATMdb;
-        $ATMdb->close();
 		print "\nFin du test de Ressource.\n";
     }
 	

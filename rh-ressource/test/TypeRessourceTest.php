@@ -28,14 +28,13 @@
 
 global $conf,$user,$langs,$db;
 //inclusion de config des tests.
-require('./config.php');
+/*require('./config.php');
 require('../lib/ressource.lib.php');
-require('../class/ressource.class.php');
-//require('../class/evenement.class.php');
-//require('../class/contrat.class.php');
+require('../class/ressource.class.php');*/
 
 
 $type = new TRH_Ressource_type;
+$field = new TRH_Ressource_field;
 $ATMdb = new TPDOdb;
 
 
@@ -59,7 +58,6 @@ class TypeRessourceTest extends PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
     	global $ATMdb;
-        $ATMdb->close();
 		print "\nFin du test de Type de Ressource.\n";
     }
 	
@@ -81,7 +79,7 @@ class TypeRessourceTest extends PHPUnit_Framework_TestCase
 	}
 	
 	public function testchargement(){
-		global $type, $ATMdb;
+		global $type, $field,  $ATMdb;
 		$type = new TRH_Ressource_type;
 		//test de chargement et save
 		$type->chargement($ATMdb, 'testlibelle', 'testcode', 1);
@@ -95,6 +93,9 @@ class TypeRessourceTest extends PHPUnit_Framework_TestCase
 		
 		//test de suppression d'un non supprimable
 		$type->chargement($ATMdb, 'testlibelle', 'testcode', 0);
+		$field->chargement($ATMdb, 'a','a','chaine',0,100,'',1,$type->getId());
+		$type->save($ATMdb);
+		$type->load($ATMdb, $type->getId());
 		$ret = $type->delete($ATMdb);
 		$this->assertFalse($ret);
 		print __METHOD__."\n";
@@ -155,8 +156,60 @@ class TypeRessourceTest extends PHPUnit_Framework_TestCase
 		print __METHOD__."\n";
 	}
 	
+	
+	/**
+	 * Tests Ressource Field
+	 load_by_code
+	 chargement
+	 load
+	 save
+	 delete
+	 * 
+	 */
+	 
+	public function testcreateFieldRessource()
+    {
+    	global $field;
+		$this->assertNotNull($field);
+		print __METHOD__."\n";
+    }
+	 
+	public function testFieldload_by_code()
+    {
+    	global $field, $ATMdb;
+		$ret = $field->load_by_code($ATMdb, 'kit');
+		$this->assertTrue($ret);
+		
+		$ret = $field->load_by_code($ATMdb, 'nimp');
+		$this->assertFalse($ret);
+		print __METHOD__."\n";
+    }
+	
+	public function testFieldchargement(){
+		global $type, $ATMdb;
+		$field = new TRH_Ressource_field;
+		
+		$field->chargement($ATMdb,'libField', 'codeField', 'chaine' , 1, 100, '', 1, $type->rowid);
+		$this->assertEquals('libField', $field->libelle);
+		$this->assertEquals('codefield', $field->code);
+		$this->assertEquals('chaine', $field->type);
+		$this->assertEquals(100, $field->ordre);
+		$this->assertEquals(1, $field->obligatoire);
+		$this->assertEquals('', $field->options);
+		$this->assertEquals(1, $field->supprimable);
+		$this->assertEquals($type->rowid, $field->fk_rh_ressource_type);
+		
+		//test de suppression d'un supprimable
+		$ret = $field->delete($ATMdb);
+		$this->assertFalse($ret);
+		
+		//test de suppression d'un non supprimable
+		$field->load_by_code($ATMdb, 'kit');
+		$ret = $field->delete($ATMdb);
+		$this->assertFalse($ret);
+		print __METHOD__."\n";
+	}
 
 	
-	
-	
+		
 }
