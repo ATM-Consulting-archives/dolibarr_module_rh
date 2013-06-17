@@ -47,6 +47,42 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 {
 	protected $id;
 	
+	
+	public function testCompteur()
+	
+    {
+    	global $ATMdb;
+    	//on récupère un utilisateur de la base : 
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user";
+		$ATMdb->Execute($sql);
+		if($ATMdb->Get_line()){
+			$idTestUser=$ATMdb->Get_field('rowid');	
+		}
+		
+		
+    	$compteur=new TRH_Compteur;
+		$this->assertNotNull($compteur);
+		
+		$compteur->initCompteur($ATMdb, $idUser);
+		$this->assertNotNull($compteur);
+		
+		
+		
+		$ATMdb=new Tdb;
+		$id = $compteur->load_by_fkuser($ATMdb, $idTestUser);
+		$this->assertNotNull($id);
+		
+		$id = $compteur->load_by_fkuser($ATMdb, 'testFaux');
+		$this->assertEquals(0,$id);
+
+		$compteur=new TRH_Compteur;
+		$compteur->save($ATMdb);
+		$compteur->load($ATMdb,$compteur->getId());
+		$compteur->delete($ATMdb);
+		
+		print __METHOD__."\n";
+	}
+	
 	public function testAbsence()
 	
     {
@@ -62,11 +98,34 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 		$TUser = $absence->recupererTUser($ATMdb);
 		$this->assertNotEmpty($TUser);
 
+		//on crée une règle pour l'utilisateur
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_regle (`rowid` ,`date_cre` ,`date_maj` ,`typeAbsence` ,
+		`nbJourCumulable` ,`fk_user` ,`fk_usergroup` ,`entity` ,`choixApplication` ,`restrictif`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'rttcumule', '10', NULL , NULL , '0', 'all', NULL
+		)";
+		$ATMdb->Execute($sql);
+		
+		
 		$TRegle = $absence->recuperationRegleUser($ATMdb, $idTestUser);
 		$this->assertNotNull($TRegle);
 		
 		$TRegle = $absence->recuperationRegleUser($ATMdb, 10000000);
 		$this->assertNotNull($TRegle);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_regle WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."llx_rh_absence (`rowid` ,`date_cre` ,`date_maj` ,`code` ,`type` ,`libelle` ,
+		`date_debut` ,`date_fin` ,`ddMoment` ,`dfMoment` ,`duree` ,`commentaire` ,`etat` ,`libelleEtat` ,`fk_user` ,`entity` ,`dureeHeure` ,`avertissement` ,
+		`niveauValidation` ,`dureeHeurePaie` ,`commentaireValideur` ,`idAbsImport`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '950', 'rttcumule', NULL , '0000-00-00 00:00:00', 
+		'0000-00-00 00:00:00', NULL , NULL , NULL , NULL , NULL , NULL ,".$idTestUser.", '1', NULL , NULL , NULL , NULL , NULL , NULL
+		)";
+		$ATMdb->Execute($sql);
 		
 		$Tabs = $absence->recuperationDerAbsUser($ATMdb, 10000000);
 		$this->assertNotNull($Tabs);
@@ -74,6 +133,21 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 		$Tabs = $absence->recuperationDerAbsUser($ATMdb, $idTestUser);
 		$this->assertNotNull($Tabs);
 		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		$testDemande = $absence->testDemande($ATMdb, $idTestUser, $absence);
+		$this->assertNotNull($testDemande);
+		
+		$absence->type="rttcumule";
+		$testDemande = $absence->testDemande($ATMdb, $idTestUser, $absence);
+		$this->assertNotNull($testDemande);
+		
+		$absence->type="rttnoncumule";
+		$testDemande = $absence->testDemande($ATMdb, $idTestUser, $absence);
+		$this->assertNotNull($testDemande);
+		
+		$absence->type="conges";
 		$testDemande = $absence->testDemande($ATMdb, $idTestUser, $absence);
 		$this->assertNotNull($testDemande);
 		
@@ -96,13 +170,16 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 		}
 		
 		$testDemande = $absence->load_by_idImport($ATMdb, 'idAbsImport');
-		$this->assertNotNull($idAbsenceTest,$testDemande);
+		$this->assertNotNull($testDemande);
 		
 		$testDemande = $absence->testExisteDeja($ATMdb, $absence);
 		$this->assertEquals(0,$testDemande);
 
 
-
+		$absence=new TRH_Absence;
+		$absence->save($ATMdb);
+		$absence->load($ATMdb,$absence->getId());
+		$absence->delete($ATMdb);
 		
 		print __METHOD__."\n";
 	}
@@ -135,9 +212,12 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 		$duree = $absence->calculDureeAbsence($ATMdb, time(), time(), $absence);
 		$this->assertEquals(0,$duree);
 		
+		
+		/////////////////	TESTS CALCULJOURSTRAVAILLES
 		$duree=0;
-		$duree = $absence->calculJoursFeries($ATMdb, $duree, time(), time()+3600*24, $absence);
-		$this->assertEquals(0,$duree);
+		$absence->fk_user=3;
+		$duree= $absence->calculJoursTravailles($ATMdb, $duree, time(), time()+2*3600*24, $absence);
+		$this->assertNotNull($duree);
 		
 		
 		//on charge une absence pour faire les tests
@@ -150,11 +230,11 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 		$avertissement = $absence->dureeAbsenceRecevable($ATMdb);
 		$this->assertEquals(1,$avertissement);
 		
-		$avertissement = $absence->isWorkingDayNext($ATMdb, time());
+		/*$avertissement = $absence->isWorkingDayNext($ATMdb, time());
 		$this->assertEquals(1,$avertissement);
 		
 		$avertissement = $absence->isWorkingDayPrevious($ATMdb, time());
-		$this->assertEquals(1,$avertissement);
+		$this->assertEquals(1,$avertissement);*/
 		
 		
 		//test fonction RecreditHeure
@@ -174,10 +254,529 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 		$duree = $absence->recrediterHeure($ATMdb);
 
 		
-
+		// Duree absence recevable
+		//on crée une règle pour l'utilisateur
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_regle (`rowid` ,`date_cre` ,`date_maj` ,`typeAbsence` ,
+		`nbJourCumulable` ,`fk_user` ,`fk_usergroup` ,`entity` ,`choixApplication` ,`restrictif`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'rttcumule', '10', NULL , NULL , '0', 'all',NULL
+		)";
+		$ATMdb->Execute($sql);
+		
+		$absence->type='rttcumule';
+		$absence->duree=20;
+		$recevable=$absence->dureeAbsenceRecevable($ATMdb);
+		$this->assertEquals(2,$recevable);
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_regle WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		// Duree absence recevable
+		//on crée une règle pour l'utilisateur
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_regle (`rowid` ,`date_cre` ,`date_maj` ,`typeAbsence` ,
+		`nbJourCumulable` ,`fk_user` ,`fk_usergroup` ,`entity` ,`choixApplication` ,`restrictif`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'rttcumule', '10', NULL , NULL , '0', 'all',1
+		)";
+		$ATMdb->Execute($sql);
+		
+		$absence->type='rttcumule';
+		$absence->duree=20;
+		$recevable=$absence->dureeAbsenceRecevable($ATMdb);
+		$this->assertEquals(0,$recevable);
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_regle WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
 		
 		print __METHOD__."\n";
 	}
+	
+	public function testCalculJoursTravaillesAbsence()
+    {
+    	global $ATMdb, $absence;
+		
+		
+		//TEST 1
+		$absence->fk_user=3;
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'allday', NULL , '0'
+		)";
+		
+		$ATMdb->Execute($sql);
+		$duree=$absence->calculJoursTravailles($ATMdb, $duree, $date_debut, $date_fin, $absence);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		
+		//TEST 2
+		$absence->fk_user=3;
+		$absence->date_debut=strtotime(date('Y-m-d',time())." 00:00:00");
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'allday', NULL , '0'
+		)";
+		
+		$ATMdb->Execute($sql);
+		$duree=$absence->calculJoursTravailles($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		//TEST 3
+		$absence->fk_user=3;
+		$absence->dfMoment='apresmidi';
+		$absence->date_debut=strtotime(date('Y-m-d',time())." 00:00:00");
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'matin', NULL , '0'
+		)";
+		
+		$ATMdb->Execute($sql);
+		$duree=$absence->calculJoursTravailles($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		//TEST 4
+		$absence->fk_user=3;
+		$absence->ddMoment='matin';
+		$absence->date_debut=strtotime(date('Y-m-d',time())." 00:00:00");
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'apresmidi', NULL , '0'
+		)";
+		
+		$ATMdb->Execute($sql);
+		$duree=$absence->calculJoursTravailles($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		//TEST 4
+		$absence->fk_user=3;
+		$absence->dfMoment='matin';
+		$absence->date_debut=strtotime(date('Y-m-d',time())." 00:00:00");
+		$duree=$absence->calculJoursTravailles($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+	
+		//TEST 5
+		$absence->fk_user=3;
+		$absence->ddMoment='apresmidi';
+		$absence->date_debut=strtotime(date('Y-m-d',time())." 00:00:00");
+		$duree=$absence->calculJoursTravailles($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+
+		//TEST 5
+		$absence->fk_user=3;
+		$absence->ddMoment='matin';
+		$absence->dfMoment='apresmidi';
+		$absence->date_debut=strtotime(date('Y-m-d',time())." 00:00:00");
+		$duree=$absence->calculJoursTravailles($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time()+10*3600*24)." 00:00:00"), $absence);
+		
+}
+	
+	
+	
+	public function testFctJFeriesAbsence()
+    {
+    	global $ATMdb, $absence;
+		
+		//////////////////	CALCUL DES JOURS FERIES 
+		$duree=0;
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, time(), time()+3600*24, $absence);
+		$this->assertEquals(0,$duree);
+
+		/////////////////////TEST 1 
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'allday', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='matin';
+		$absence->dfMoment='apresmidi';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, time()-2*3600*24, time()+10*3600*24, $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 2 
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'matin', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='matin';
+		$absence->dfMoment='apresmidi';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, time()-2*3600*24, time()+10*3600*24, $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		
+		/////////////////////TEST 3
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'allday', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='matin';
+		$absence->dfMoment='apresmidi';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 4
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'allday', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='matin';
+		$absence->dfMoment='matin';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 5
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'matin', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='matin';
+		$absence->dfMoment='matin';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 6
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'apresmidi', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='apresmidi';
+		$absence->dfMoment='apresmidi';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 7
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'apresmidi', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='matin';
+		$absence->dfMoment='apresmidi';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 8
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'matin', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='matin';
+		$absence->dfMoment='apresmidi';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 9
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'allday', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='matin';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time()+3600*24)." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 10
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'matin', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='matin';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time()+3600*24)." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 11
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'apresmidi', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='apresmidi';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time()+3600*24)." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 12
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'allday', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='apresmidi';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time()+3600*24)." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 12 bis
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'apresmidi', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+		$absence->ddMoment='matin';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time())." 00:00:00"), strtotime(date('Y-m-d',time()+3600*24)." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 13
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'allday', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+
+		$absence->dfMoment='matin';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time()-3600*24)." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 14
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'matin', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+
+		$absence->dfMoment='matin';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time()-3600*24)." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 15
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'apresmidi', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+
+		$absence->dfMoment='matin';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time()-3600*24)." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 16
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'apresmidi', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+
+		$absence->dfMoment='apresmidi';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time()-3600*24)." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 17
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'matin', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+
+		$absence->dfMoment='apresmidi';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time()-3600*24)." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		/////////////////////TEST 18
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'allday', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+
+		$duree=0;
+
+		$absence->dfMoment='apresmidi';
+		$duree = $absence->calculJoursFeries($ATMdb, $duree, strtotime(date('Y-m-d',time()-3600*24)." 00:00:00"), strtotime(date('Y-m-d',time())." 00:00:00"), $absence);
+		$this->assertNotNull($duree);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		
+		
+		// TEST d'ajout de jours fériés
+		$feries=new TRH_JoursFeries;
+		$feries->date_jourOff=strtotime(date('Y-m-d',time())." 00:00:00");
+		$testAjout=$feries->testExisteDeja($ATMdb, $feries);
+		$this->assertEquals(0,$testAjout);
+		
+		// TEST d'ajout de jours fériés
+		$feries=new TRH_JoursFeries;
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time())." 00:00:00', 'allday', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+		$feries->date_jourOff=strtotime(date('Y-m-d',time())." 00:00:00");
+		
+		$testAjout=$feries->testExisteDeja($ATMdb, $feries);
+		$this->assertEquals(1,$testAjout);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+		
+		// TEST d'ajout de jours fériés
+		$feries=new TRH_JoursFeries;
+		$sql="INSERT INTO ".MAIN_DB_PREFIX."rh_absence_jours_feries (
+		`rowid` ,`date_cre` ,`date_maj` ,`date_jourOff` ,`moment` ,`commentaire` ,`entity`
+		)
+		VALUES (
+		'10000', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '".date('Y-m-d',time()+2*3600*24)." 00:00:00', 'allday', NULL , '0'
+		)";
+		$ATMdb->Execute($sql);
+		$feries->date_jourOff=strtotime(date('Y-m-d',time())." 00:00:00");
+		
+		$testAjout=$feries->testExisteDeja($ATMdb, $feries);
+		$this->assertEquals(0,$testAjout);
+		
+		$sql="DELETE FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE rowid=10000";
+		$ATMdb->Execute($sql);
+	}
+	
+	
 	
 	public function testFctUtilitaireAbsence()
     {
@@ -220,16 +819,43 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 
 		$heure = $absence->difheure('00:00:00','14:15:00');
 		$this->assertEquals('14:15:0',$heure);
+		
+		
 
 		
 	}
 
+	public function testFctRechercheAbsence()
+	{
+		global $ATMdb, $absence;
+		$recherche=$absence->requeteRechercheAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, 1, $date_debut, $date_fin, $typeAbsence);
+		$this->assertNotNull($recherche);
+		
+		$recherche=$absence->requeteRechercheAbsence($ATMdb, $idGroupeRecherche, 10000, 1, $date_debut, $date_fin, $typeAbsence);
+		$this->assertNotNull($recherche);
+		
+		$recherche=$absence->requeteRechercheAbsence($ATMdb, 10000, $idUserRecherche, 1, $date_debut, $date_fin, $typeAbsence);
+		$this->assertNotNull($recherche);
+		
+		$recherche=$absence->requeteRechercheAbsence($ATMdb, 10000, $idUserRecherche, 0, $date_debut, $date_fin, $typeAbsence);
+		$this->assertNotNull($recherche);
+		
+		$recherche=$absence->requeteRechercheAbsence($ATMdb, 0, 10000, 0, $date_debut, $date_fin, $typeAbsence);
+		$this->assertNotNull($recherche);
+	}
+
+	
+	
 	public function testEmploiTemps()
     {
     	global $ATMdb, $edt;
 		
 		$testEdt=new TRH_EmploiTemps;
 		$this->assertNotNull($testEdt);
+		
+		$test=$testEdt->initCompteurHoraire ($ATMdb, 10000);
+		
+		$test=$testEdt->razCheckbox($ATMdb, $testEdt);
 		
 		//on récupère un utilisateur de la base : 
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user";
@@ -257,7 +883,10 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 		$test = $edt->load_by_fkuser($ATMdb, 10000000);
 		$this->assertEquals(0,$test);
 		
-
+		$testEdt=new TRH_EmploiTemps;
+		$testEdt->save($ATMdb);
+		$testEdt->load($ATMdb,$testEdt->getId());
+		$testEdt->delete($ATMdb);
 		
 
 	}
@@ -268,6 +897,11 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 		
 		$testType=new TRH_TypeAbsence;
 		$this->assertNotNull($testType);
+		
+		$testType=new TRH_TypeAbsence;
+		$testType->save($ATMdb);
+		$testType->load($ATMdb,$testType->getId());
+		$testType->delete($ATMdb);
 		
 	}
 	
@@ -281,6 +915,29 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 		
 		$testRegle->load_liste($ATMdb);
 		$this->assertNotNull($testRegle);
+		
+		$testRegle=new TRH_RegleAbsence;
+		$testRegle->save($ATMdb);
+		$testRegle->load($ATMdb,$testRegle->getId());
+		$testRegle->delete($ATMdb);
+		
+		$testRegle=new TRH_RegleAbsence;
+		$testRegle->choixApplication='user';
+		$testRegle->save($ATMdb);
+		$testRegle->load($ATMdb,$testRegle->getId());
+		$testRegle->delete($ATMdb);
+		
+		$testRegle=new TRH_RegleAbsence;
+		$testRegle->choixApplication='group';
+		$testRegle->save($ATMdb);
+		$testRegle->load($ATMdb,$testRegle->getId());
+		$testRegle->delete($ATMdb);
+		
+		$testRegle=new TRH_RegleAbsence;
+		$testRegle->choixApplication='test';
+		$testRegle->save($ATMdb);
+		$testRegle->load($ATMdb,$testRegle->getId());
+		$testRegle->delete($ATMdb);
 	}
 	
 	public function testJFeries()
@@ -290,6 +947,10 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 		$testJF=new TRH_JoursFeries;
 		$this->assertNotNull($testJF);
 
+		$testJF=new TRH_JoursFeries;
+		$testJF->save($ATMdb);
+		$testJF->load($ATMdb,$testJF->getId());
+		$testJF->delete($ATMdb);
 		
 	}
 	
@@ -299,11 +960,12 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 		
 		$testAdmin=new TRH_AdminCompteur;
 		$this->assertNotNull($testAdmin);
-
 		
+		$testAdmin=new TRH_AdminCompteur;
+		$testAdmin->save($ATMdb);
+		$testAdmin->load($ATMdb,$testAdmin->getId());
+		$testAdmin->delete($ATMdb);
+
 	}
-	
-	
-	
 	
 }
