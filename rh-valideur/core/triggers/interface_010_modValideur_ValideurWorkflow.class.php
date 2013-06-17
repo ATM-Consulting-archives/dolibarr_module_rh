@@ -82,7 +82,7 @@ class InterfaceValideurWorkflow
         $langs->load("other");
         $langs->load('ndfp@ndfp');
 		
-		$ATMdb=new TPDOdb;
+		$ATMdb=new Tdb;
 		
 		if($object->statut==1){			// Statut 1 : note de frais acceptée
 			if ($action == 'NDFP_VALIDATE'){
