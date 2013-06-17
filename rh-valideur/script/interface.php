@@ -112,7 +112,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 			$code_analytique	=	$ATMdb2->Get_field('code_analytique');
 			$pourcentage		=	$ATMdb2->Get_field('pourcentage');
 			$total_ht			=	$ATMdb2->Get_field('total_ht');
-			$total_ht			=	$total_ht*($pourcentage/100);
+			$total_ht			=	round($total_ht*($pourcentage/100),2);
 			
 			if(!empty($code_analytique)) {
 				$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', 'EUR', '', '');

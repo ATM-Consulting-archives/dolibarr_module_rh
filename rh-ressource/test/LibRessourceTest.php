@@ -26,13 +26,13 @@
 
 
 
-global $conf,$user,$langs,$db;
+/*global $conf,$user,$langs,$db;
 //inclusion de config des tests.
 require('./config.php');
 require('../lib/ressource.lib.php');
 require('../class/ressource.class.php');
 require('../class/evenement.class.php');
-require('../class/contrat.class.php');
+require('../class/contrat.class.php');*/
 
 
 $ress = new TRH_Ressource;
@@ -46,12 +46,13 @@ $ATMdb = new TPDOdb;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class RessourceTest extends PHPUnit_Framework_TestCase
+class LibRessourceTest extends PHPUnit_Framework_TestCase
 {
 		
 		
 	public static function setUpBeforeClass()
     {
+        global $ATMdb;	
         print "Début du test de Ressource.\n";
 		
     }
@@ -59,7 +60,6 @@ class RessourceTest extends PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
     	global $ATMdb;
-        $ATMdb->close();
 		print "\nFin du test de Ressource.\n";
     }
 	
@@ -272,4 +272,39 @@ class RessourceTest extends PHPUnit_Framework_TestCase
 		
 		print __METHOD__."\n";
 	}
+	
+	public function testsend_mail_resources()
+    {
+    	global $ress, $ATMdb, $conf ;
+		
+		$ret = send_mail_resources('titre', 'message');
+		$this->assertEquals(1, $ret);
+		
+		print __METHOD__."\n";
+	}
+	
+	
+	public function testressourceIsEmpruntee()
+    {
+    	global $ress, $ATMdb, $conf ;
+		$jour = date("Y-m-d", time() );
+		$sql="SELECT rowid, fk_user, fk_rh_ressource FROM ".MAIN_DB_PREFIX."rh_evenement 
+		WHERE type='emprunt' 
+		AND date_debut<='".$jour."' AND date_fin >= '".$jour."' ";
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$idRessource = $ATMdb->Get_field('fk_rh_ressource');
+			$expectedUser = $ATMdb->Get_field('fk_user');
+		}
+		$ret = ressourceIsEmpruntee($ATMdb, $idRessource, $jour);
+		$this->assertEquals($expectedUser, $ret);
+		
+		$ret = ressourceIsEmpruntee($ATMdb, 0, 0);
+		$this->assertEquals(0, $ret);
+		
+		print __METHOD__."\n";
+	}
+	
+	
+	
 }
