@@ -91,7 +91,7 @@ class TRH_competence_cv extends TObjetStd {
 		
 	}
 	
-	function replaceEspaceEnPourcentage($competence){ // AA nom de fonction très mal choisie, elle ne fait pas du tout ce qu'elle inspire
+	function replaceEspaceEnPourcentage($competence){
 		$competence=strtolower($competence);
 		$compSansEspace=str_replace(' ','%',$competence);
 		return "%".$compSansEspace."%";

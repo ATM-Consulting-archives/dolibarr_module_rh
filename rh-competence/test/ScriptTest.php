@@ -25,12 +25,6 @@
 
 
 
-
-global $conf,$user,$langs,$db;
-
-$absence=new TRH_Absence;
-$ATMdb=new Tdb;
-
 /**
  * Class for PHPUnit tests
  *
@@ -40,6 +34,7 @@ $ATMdb=new Tdb;
  */
 class ScriptTest extends PHPUnit_Framework_TestCase
 {
+	
 	/*public function testInterface(){
 		global $ATMdb;
 		
@@ -47,78 +42,61 @@ class ScriptTest extends PHPUnit_Framework_TestCase
 		$date_debut=date('Y').'-01-02';
 		$date_fin=date('Y').'-12-30';
 		
-		// ---- Jours de congés
-		$url = DOLHTTP."/absence/script/interface.php?get=conges&fk_user=".$fk_user."&date_debut=".$date_debut."&date_fin=".$date_fin;
-		$resultConges = file_get_contents($url);
-		$TConges = unserialize($resultConges);
-		$this->assertNotEmpty($TConges);
+		// ---- Formations
+		$url = DOLHTTP."/competence/script/interface.php?get=formation&fk_user=".$fk_user."&date_debut=".$date_debut."&date_fin=".$date_fin;
+		$resultForm = file_get_contents($url);
+		$TForm = unserialize($resultForm);
+		$this->assertNotEmpty($TForm);
 		
-		// ---- Jours d'ancienneté
-		$url = DOLHTTP."/absence/script/interface.php?get=jour_anciennete&fk_user=".$fk_user;
-		$resultJourAnc = file_get_contents($url);
-		$TJourAnc = unserialize($resultJourAnc);
-		$this->assertNotEmpty($TJourAnc);
+		// ---- Rémunérations
+		$url = DOLHTTP."/competence/script/interface.php?get=remuneration&fk_user=".$fk_user."&date_debut=".$date_debut."&date_fin=".$date_fin;
+		$resultRem = file_get_contents($url);
+		$TRem = unserialize($resultRem);
+		$this->assertNotEmpty($TRem);
 		
-		// ---- Maladies maintenues
-		$url = DOLHTTP."/absence/script/interface.php?get=maladie_maintenue&fk_user=".$fk_user."&date_debut=".$date_debut."&date_fin=".$date_fin;
-		$resultMadMaint = file_get_contents($url);
-		$TMadMaint = unserialize($resultMadMaint);
-		$this->assertNotEmpty($TMadMaint);
-		
-		// ---- Maladies non maintenues
-		$url = DOLHTTP."/absence/script/interface.php?get=maladie_non_maintenue&fk_user=".$fk_user."&date_debut=".$date_debut."&date_fin=".$date_fin;
-		$resultMadNonMaint = file_get_contents($url);
-		$TMadNonMaint = unserialize($resultMadNonMaint);
-		$this->assertNotEmpty($TMadNonMaint);
+		// ---- DIF
+		$url = DOLHTTP."/competence/script/interface.php?get=dif&fk_user=".$fk_user."&date_debut=".$date_debut."&date_fin=".$date_fin;
+		$resultDif = file_get_contents($url);
+		$TDif = unserialize($resultDif);
+		$this->assertNotEmpty($TDif);
 		
 		print __METHOD__."\n";
 	}*/
 	
-	public function testJourAnciennete(){
-		global $ATMdb;
-		
-		$fk_user=3;
-		
-		$result = _jourAnciennete($ATMdb, $fk_user);
-		$this->assertNotNull($result);
-		
-		print __METHOD__."\n";
-	}
-	
-	public function testDureeMaladieMaintenue(){
+	public function testFormation(){
 		global $ATMdb;
 		
 		$fk_user=3;
 		$date_debut=date('Y').'-01-02';
 		$date_fin=date('Y').'-12-30';
 		
-		$result = _dureeMaladieMaintenue($ATMdb, $fk_user, $date_debut, $date_fin);
+		$result = _formation($ATMdb, $fk_user, $date_debut, $date_fin);
 		$this->assertNotNull($result);
 		
 		print __METHOD__."\n";
 	}
 	
-	public function testDureeMaladieNonMaintenue(){
+	public function testRemuneration(){
 		global $ATMdb;
 		
 		$fk_user=3;
 		$date_debut=date('Y').'-01-02';
 		$date_fin=date('Y').'-12-30';
 		
-		$result = _dureeMaladieNonMaintenue($ATMdb, $fk_user, $date_debut, $date_fin);
+		$result = _remuneration($ATMdb, $fk_user, $date_debut, $date_fin);
 		$this->assertNotNull($result);
 		
 		print __METHOD__."\n";
 	}
 	
-	public function testConges(){
+	public function testDif(){
 		global $ATMdb;
 		
 		$fk_user=3;
 		$date_debut=date('Y').'-01-02';
 		$date_fin=date('Y').'-12-30';
 		
-		$result = _conges($ATMdb, $fk_user, $date_debut, $date_fin);
+		$result = _dif($ATMdb, $fk_user, $date_debut, $date_fin);
 		$this->assertNotNull($result);
 		
 		print __METHOD__."\n";
