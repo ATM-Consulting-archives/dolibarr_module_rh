@@ -24,9 +24,6 @@ function _get(&$ATMdb, $case) {
 		case 'conges':
 			__out(_conges($ATMdb, $_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));	
 			break;
-		case 'recapAbsence':
-			__out(_recapAbsence($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['fk_user'], $_REQUEST['fk_usergroup']));	
-			break;
 	}
 }
 

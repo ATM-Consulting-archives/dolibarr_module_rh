@@ -40,13 +40,10 @@ $ATMdb=new Tdb;
  */
 class ScriptTest extends PHPUnit_Framework_TestCase
 {
-	protected $id;
-	
-	public function testInterface(){
+	/*public function testInterface(){
 		global $ATMdb;
 		
 		$fk_user=3;
-		$fk_usergroup=1472;
 		$date_debut=date('Y').'-01-02';
 		$date_fin=date('Y').'-12-30';
 		
@@ -74,11 +71,55 @@ class ScriptTest extends PHPUnit_Framework_TestCase
 		$TMadNonMaint = unserialize($resultMadNonMaint);
 		$this->assertNotEmpty($TMadNonMaint);
 		
-		// ---- Maladies non maintenues
-		$url = DOLHTTP."/absence/script/interface.php?get=recapAbsence&fk_user=".$fk_user."&fk_usergroup=".$fk_usergroup."&date_debut=".$date_debut."&date_fin=".$date_fin;
-		$resultRecap = file_get_contents($url);
-		$TRecap = unserialize($resultRecap);
-		$this->assertNotEmpty($TRecap);
+		print __METHOD__."\n";
+	}*/
+	
+	public function testJourAnciennete(){
+		global $ATMdb;
+		
+		$fk_user=3;
+		
+		$result = _jourAnciennete($ATMdb, $fk_user);
+		$this->assertNotNull($result);
+		
+		print __METHOD__."\n";
+	}
+	
+	public function testDureeMaladieMaintenue(){
+		global $ATMdb;
+		
+		$fk_user=3;
+		$date_debut=date('Y').'-01-02';
+		$date_fin=date('Y').'-12-30';
+		
+		$result = _dureeMaladieMaintenue($ATMdb, $fk_user, $date_debut, $date_fin);
+		$this->assertNotNull($result);
+		
+		print __METHOD__."\n";
+	}
+	
+	public function testDureeMaladieNonMaintenue(){
+		global $ATMdb;
+		
+		$fk_user=3;
+		$date_debut=date('Y').'-01-02';
+		$date_fin=date('Y').'-12-30';
+		
+		$result = _dureeMaladieNonMaintenue($ATMdb, $fk_user, $date_debut, $date_fin);
+		$this->assertNotNull($result);
+		
+		print __METHOD__."\n";
+	}
+	
+	public function testConges(){
+		global $ATMdb;
+		
+		$fk_user=3;
+		$date_debut=date('Y').'-01-02';
+		$date_fin=date('Y').'-12-30';
+		
+		$result = _conges($ATMdb, $fk_user, $date_debut, $date_fin);
+		$this->assertNotNull($result);
 		
 		print __METHOD__."\n";
 	}
