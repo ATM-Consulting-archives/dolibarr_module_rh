@@ -40,6 +40,10 @@
 			<td>Motif</td>
 			<td>[NEvent.motif;strconv=no;protect=no]</td>[NEvent.fk_rh_ressource;strconv=no;protect=no]
 		</tr>
+		<tr>
+			<td>Confidentiel</td>
+			<td>[NEvent.confidentiel;strconv=no;protect=no]</td>
+		</tr>
 		<tr id="user">
 			<td>Utilisateur</td>
 			<td>

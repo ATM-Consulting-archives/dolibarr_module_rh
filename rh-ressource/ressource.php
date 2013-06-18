@@ -175,7 +175,6 @@ function _liste(&$ATMdb, &$ressource) {
 	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON ( (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource) AND e.type='emprunt')
-		AND e.entity IN (0, ".$conf->entity.")
 		AND e.date_debut<='".date("Y-m-d")."' AND e.date_fin >= '". date("Y-m-d")."' 
 	 LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid )";	
 	$sql.=" WHERE 1 ";
@@ -388,7 +387,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 		,array(
 			'ressource'=>array(
 				'id'=>$ressource->getId()
-				,'numId'=>$form->texte('', 'numId', $ressource->numId, 00,20,'','','-')
+				,'numId'=>$form->texte('', 'numId', $ressource->numId, 50,255,'','','-')
 				,'libelle'=>$form->texte('', 'libelle', $ressource->libelle, 50,255,'','','-')
 
 				,'titreChamps'=>load_fiche_titre("Champs",'', 'title.png', 0, '')
@@ -405,6 +404,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 				//,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->date_garantie, 12)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TEntity,$ressource->fk_proprietaire)
 				,'fk_utilisatrice'=>$form->combo('','fk_utilisatrice',$ressource->TAgence,$ressource->fk_utilisatrice)
+				,'fk_entity_utilisatrice'=>$form->combo('','fk_entity_utilisatrice',$ressource->TEntity,$ressource->fk_entity_utilisatrice)
 				,'fk_loueur'=>$form->combo('','fk_loueur',$ressource->TFournisseur,$ressource->fk_loueur)
 			)
 			,'ressourceNew' =>array(

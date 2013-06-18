@@ -13,7 +13,7 @@ class TRH_Ressource extends TObjetStd {
 		
 		//clé étrangere : groupes propriétaire et utilisatrice
 		parent::add_champs('fk_utilisatrice','type=entier;index;');	//groupe : pointe sur llx_usergroup
-
+		parent::add_champs('fk_entity_utilisatrice','type=entier;index;');	//fk_entity_utilisatrice : pointe sur llx_entity
 		parent::add_champs('fk_proprietaire,entity','type=entier;index;');//fk_propriétaire pointe sur llx_entity
 		parent::add_champs('fk_loueur','type=entier;index;');//fk_loueur pointe sur llx_societe
 		

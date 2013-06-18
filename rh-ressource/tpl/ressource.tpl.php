@@ -52,12 +52,12 @@
 	</tr>	
 		
 	<tr>
-		<td>Agence Propriétaire</td>
+		<td>Entité Propriétaire</td>
 		<td>[ressource.fk_proprietaire;strconv=no;protect=no]</td>
 		
 	</tr>
 	<tr id="loueur" >
-		<td>Agence Locatrice</td>
+		<td>Fournisseur</td>
 		<td>[ressource.fk_loueur;strconv=no;protect=no]</td>
 	</tr>
 	<script>
@@ -66,6 +66,10 @@
 		}
 	 		
 	</script>
+	<tr>
+		<td>Entité Utilisatrice</td>
+		<td colspan=3>[ressource.fk_entity_utilisatrice;strconv=no;protect=no]</td>
+	</tr>	
 	<tr>
 		<td>Agence Utilisatrice</td>
 		<td colspan=3>[ressource.fk_utilisatrice;strconv=no;protect=no]</td>

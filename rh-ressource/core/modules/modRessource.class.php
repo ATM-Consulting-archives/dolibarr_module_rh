@@ -288,6 +288,12 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][1] = 'Visualiser les fichiers des ressources';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'read';
+		$r++;
+		$this->rights[$r][0] = 7022;
+		$this->rights[$r][1] = 'Accéder aux évènements confidentiels';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'readEvenementConfidentiel';
 		
 
 		// Main menu entries
