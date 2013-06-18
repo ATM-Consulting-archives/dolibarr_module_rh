@@ -8,6 +8,7 @@ class TRH_Evenement  extends TObjetStd {
 		parent::add_champs('fk_user,entity','type=entier;index;');
 		parent::add_champs('motif','type=chaine;');
 		parent::add_champs('commentaire, refexterne','type=chaine;');
+		parent::add_champs('confidentiel','type=chaine;'); // booleen varchar: oui/non
 		
 		//type : accident, répération, emprunt, appel,  facture, ...
 		parent::add_champs('type','type=chaine;');
@@ -84,6 +85,8 @@ class TRH_Evenement  extends TObjetStd {
 		if ($this->date_fin < $this->date_debut) {
 			$this->date_fin = $this->date_debut;
 		}
+		
+		if (empty($this->confidentiel)){$this->confidentiel = 'oui';}
 		
 		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource 
 		WHERE rowid=".$this->fk_rh_ressource;

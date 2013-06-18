@@ -158,6 +158,9 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	if(!$user->rights->ressource->ressource->manageEvents){
 		$sql.=" AND e.fk_user=".$user->id;
 	}
+	if(!$user->rights->ressource->ressource->readEvenementConfidentiel){
+		$sql.=" AND e.confidentiel='non' ";
+	}
 	
 	$TOrder = array('ID'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -248,6 +251,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				,'commentaire'=>$form->zonetexte('','commentaire',$evenement->commentaire,100,10,'','','')
 				,'numFacture'=>$form->texte('', 'numFacture', $evenement->numFacture, 10,10)
 				,'refexterne'=>$form->texte('', 'refexterne', $evenement->refexterne, 30,60)
+				,'confidentiel'=>$form->combo('', 'confidentiel', array("oui"=>"Oui", "non"=>"Non") ,$evenement->confidentiel)
 				,'idContrat'=>$evenement->fk_contrat
 				,'motif'=>$form->texte('','motif',$evenement->motif, 30,100,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->date_debut,12, 12)
