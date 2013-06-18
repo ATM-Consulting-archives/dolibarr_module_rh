@@ -9,6 +9,7 @@ $idTotal = getIdType('cartetotal');
 $idVoiture = getIdType('voiture');
 $TCartes = getRessource($idTotal);
 $TVoiture = getRessource($idVoiture);
+//print_r($TVoiture);exit();
 
 $plagedeb = !empty($_REQUEST['plagedebut']) ? dateToInt($_REQUEST['plagedebut']) : (time()-31532400);
 $plagefin = !empty($_REQUEST['plagefin']) ? dateToInt($_REQUEST['plagefin']) : (time()+31532400);
@@ -18,23 +19,24 @@ $fk_user = !empty($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : 0 ;
 
 $TPleins = array();
 $sql="SELECT e.rowid, DATE_FORMAT(date_debut,'%d/%m/%Y') as point,  date_debut , 
-	e.fk_rh_ressource, e.motif, e.commentaire, e.litreEssence, e.kilometrage, e.fk_user 
+	r.fk_rh_ressource as 'voiture', e.fk_rh_ressource as 'carte', e.motif, e.commentaire, e.litreEssence, e.kilometrage, e.fk_user 
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
+	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 	WHERE (e.type='gazolepremier' OR e.type='gazoleexcellium') ";
 if ($fk_user!= 0){ $sql .= "AND e.fk_user=".$fk_user;}	
 $sql .=	" ORDER BY date_debut, kilometrage";
-
 //echo $sql;
 
 $TUser = getUsers();
 
 $ATMdb->Execute($sql);
 while($row = $ATMdb->Get_line()) {	
-	$TPleins[$row->fk_rh_ressource][$row->kilometrage] = array(
+	$TPleins[$row->carte][$row->kilometrage] = array(
 		//'idcarte'=>$row->fk_rh_ressource
 		//,'km'=>$row->kilometrage
 		'litre'=>$row->litreEssence
 		,'fk_user'=>$row->fk_user //firstname.' '.$row->name
+		,'fk_rh_ressource'=>$row->voiture
 		,'date'=>$row->point
 		,'date_debut'=>date2ToInt($row->date_debut)
 	);
@@ -69,14 +71,15 @@ foreach ($TPleins as $idcarte => $value) {
 		}
 		$memKm = $km;
 		$memLitre = $tab['litre'];
+		//echo $tab['fk_rh_ressource'].'<br>';
 		//echo date("d/m/Y",$plagedeb).' '.date("d/m/Y",$tab['date_debut']).' '.date("d/m/Y",$plagefin).'<br>';
 		if ((!empty($texte)) && ($tab['date_debut']<= $plagefin) && ($tab['date_debut']>= $plagedeb)){
 			$TRessource[] = array(
 				'nom'=>$TCartes[$idcarte]
-				,'vehicule'=>$TVoiture[1]
+				,'vehicule'=>$TVoiture[$tab['fk_rh_ressource']]
 				,'info'=> $texte
 				,'conso'=>$consotexte
-				,'user'=>htmlentities($TUser[$tab['fk_user']], ENT_COMPAT , 'ISO8859-1')
+				,'user'=>$TUser[$tab['fk_user']]
 				,'date'=> $tab['date']
 				,'ok'=>$tab['date_debut']
 				,'parite'=>($cpt%2==0) ? 'pair' : 'impair'

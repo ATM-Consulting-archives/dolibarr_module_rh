@@ -226,12 +226,6 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 function _exportOrange(&$ATMdb, $date_debut, $date_fin, $entity){
 	$TabLigne = array();
 	
-	//on transforme la date du format timestamp en 2013-01-20
-	//$timestamp = mktime(0,0,0,substr($date_debut, 3,2),substr($date_debut, 0,2), substr($date_debut, 6,4));
-	$date_debut = date("Y-m-d", $date_debut);
-	//$timestamp = mktime(0,0,0,substr($date_fin, 3,2),substr($date_fin, 0,2), substr($date_fin, 6,4));
-	$date_fin = date("Y-m-d", $date_fin);
-	
 	$sql="SELECT totalIFact, totalEFact, totalFact, natureRefac, montantRefac, name, firstname, COMPTE_TIERS
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)

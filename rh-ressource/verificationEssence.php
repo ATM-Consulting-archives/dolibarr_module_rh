@@ -18,6 +18,7 @@ $tsfin = mktime(0,0,0,substr($plagefin, 3,2), substr($plagefin, 0,2), substr($pl
 $fk_user = !empty($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : 0 ;
 
 $url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/ressource/script/loadConsommationEssence.php?limite=".$limite."&plagedebut=".$plagedeb."&plagefin=".$plagefin."&fk_user=".$fk_user;
+if (isset($_REQUEST['DEBUG'])){echo $url;}
 $result = file_get_contents($url);
 $TRessource = unserialize($result);
 
