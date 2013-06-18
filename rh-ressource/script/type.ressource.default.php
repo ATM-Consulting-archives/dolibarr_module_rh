@@ -43,7 +43,7 @@ $cpt = 0;
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Modèle version commerciale', 'modleVoitversioncomm', 'chaine',0, $cpt, '', 1, $tempType->rowid);$cpt++;
 	$tempField = new TRH_Ressource_field;
-	$tempField->chargement($ATMdb,'Bail', 'bailVoit', 'liste',0, $cpt, 'IMMO;LOCATION;CREDIT BAIL;EN ATTENTE;', 1, $tempType->rowid);$cpt++;
+	$tempField->chargement($ATMdb,'Bail', 'bailVoit', 'liste',0, $cpt, 'IMMO;LOCATION;CREDIT BAIL;EN ATTENTE;', 1, $tempType->rowid, "oui");$cpt++;
 	$tempField = new TRH_Ressource_field;
 	$tempField->chargement($ATMdb,'Puissance Fiscale', 'pf', 'chaine',0, $cpt, '', 1, $tempType->rowid);$cpt++;
 	$tempField = new TRH_Ressource_field;

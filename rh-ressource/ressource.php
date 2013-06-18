@@ -165,11 +165,21 @@ function _liste(&$ATMdb, &$ressource) {
 	llxHeader('','Liste des ressources');
 	print dol_get_fiche_head(array()  , '', 'Liste ressources');
 	
-	//getStandartJS();
+	//récupération des champs spéciaux à afficher.
+	$sqlReq="SELECT code, libelle FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE inliste='oui' ";
+	$ATMdb->Execute($sqlReq);
+	$TSpeciaux = array();
+	while($ATMdb->Get_line()) {
+		$TSpeciaux[$ATMdb->Get_field('code')]= $ATMdb->Get_field('libelle');
+	}
 	
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.libelle, r.fk_rh_ressource_type,
 		r.numId , name as 'Statut', firstname, name ";
+	//rajout des champs spéciaux parametré par les types de ressources
+	foreach ($TSpeciaux as $key=>$value) {
+		$sql .= ','.$key.' ';
+	}
 	if($user->rights->ressource->ressource->createRessource){
 		$sql.=", '' as 'Supprimer'";
 	}
@@ -221,14 +231,12 @@ function _liste(&$ATMdb, &$ressource) {
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 		)
-		,'title'=>array(
+		,'title'=>array_merge(array(
 			'libelle'=>'Libellé'
 			,'numId'=>'Numéro Id'
 			,'fk_rh_ressource_type'=> 'Type'
 			,'name'=>'Nom'
-			,'firstname'=>'Prénom'
-			
-			
+			,'firstname'=>'Prénom'), $TSpeciaux
 		)
 		,'search'=>($user->rights->ressource->ressource->searchRessource) ? 		
 			array(
