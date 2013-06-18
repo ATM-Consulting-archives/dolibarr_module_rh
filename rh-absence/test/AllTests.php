@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,54 +18,49 @@
  */
 
 /**
- *      \file       test/phpunit/UserTest.php
+ *      \file       test/phpunit/AllTest.php
  *		\ingroup    test
- *      \brief      PHPUnit test
+ *      \brief      This file is a test suite to run all unit tests
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
-
-
-
-
-global $conf,$user,$langs,$db;
+ 
+ global $conf,$user,$langs,$db;
+//inclusion de config des tests.
 //inclusion de config des tests.
 require('./config.php');
 require('../lib/absence.lib.php');
 require('../class/absence.class.php');
 
+global $conf,$user,$langs,$db;
+
+$absence=new TRH_Absence;
+$edt=new TRH_EmploiTemps;
+$ATMdb=new Tdb;
 
 
 /**
- * Class for PHPUnit tests
- *
- * @backupGlobals disabled
- * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * Class for the All test suite
  */
-class CompteurTest extends PHPUnit_Framework_TestCase
+class AllTests
 {
-	protected $id;
-	public function testCompteur()
-	
+    /**
+     * Function suite to make all PHPUnit tests
+     *
+     * @return	void
+     */
+	public static function suite()
     {
-    	$compteur=new TRH_Compteur;
-		$this->assertNotNull($compteur);
+		$suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
 		
-		$compteur->initCompteur($ATMdb, $idUser);
-		$this->assertNotNull($compteur);
+		require_once './AbsenceTest.php';
+		$suite->addTestSuite('AbsenceTest');
+		
+		require_once './LibTest.php';
+		$suite->addTestSuite('LibTest');
 		
 		
-		
-		$ATMdb=new Tdb;
-		$id = $compteur->load_by_fkuser($ATMdb, $user->id);
-		$this->assertNotNull($id);
-		
-		$id = $compteur->load_by_fkuser($ATMdb, 'testFaux');
-		$this->assertEquals(0,$id);
-
-		
-		print __METHOD__."\n";
-	}
-
-
+        return $suite;
+    }
 }
+
+?>

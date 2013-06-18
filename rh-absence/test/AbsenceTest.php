@@ -26,16 +26,6 @@
 
 
 
-global $conf,$user,$langs,$db;
-//inclusion de config des tests.
-require('./config.php');
-require('../lib/absence.lib.php');
-require('../class/absence.class.php');
-
-$absence=new TRH_Absence;
-$edt=new TRH_EmploiTemps;
-$ATMdb=new Tdb;
-
 /**
  * Class for PHPUnit tests
  *
