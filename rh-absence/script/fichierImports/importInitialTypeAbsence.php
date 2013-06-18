@@ -62,9 +62,9 @@
 	,(22,'preavis','Absence préavis','1020','1','".$conf->entity."', 'heure')
 	,(23,'rechercheemploi','Absence recherche emploi','1030','1','".$conf->entity."', 'heure')
 	,(24,'miseapied','Absence mise à pied','1050','1','".$conf->entity."', 'heure')
-	,(55,'nonjustifiee','Absence non justifiée','1060','1','".$conf->entity."', 'heure')	
+	,(25,'nonjustifiee','Absence non justifiée','1060','1','".$conf->entity."', 'heure')	
 	
-	,(55,'cppartiel','CP à temps partiel','0951','0','".$conf->entity."', 'heure')		
+	,(26,'cppartiel','CP à temps partiel','0951','0','".$conf->entity."', 'heure')		
 	
 	";
 
@@ -131,11 +131,14 @@
 	
 	$sql="INSERT INTO `dolibarr`.`llx_rh_type_absence` 
 	(`rowid`, `date_cre`, `date_maj`, `typeAbsence`, `libelleAbsence`, `codeAbsence`, `admin`, `unite`, `entity`, 
-	`codeMotif`, `decompteNormal`) VALUES ('51', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 
+	`codeMotif`, `decompteNormal`) VALUES ('26', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 
 	'cppartiel', 'CP à temps partiel', '0951', '0', 'jour', '0', NULL, 'non')";
 	$ATMdb->Execute($sql);
 	
 	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET decompteNormal='oui' WHERE codeAbsence!='0951'";
+	$ATMdb->Execute($sql);
+	
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_type_absence SET decompteNormal='non' WHERE codeAbsence='0951'";
 	$ATMdb->Execute($sql);
 	
 	
