@@ -112,12 +112,11 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 			$code_analytique	=	$ATMdb2->Get_field('code_analytique');
 			$pourcentage		=	$ATMdb2->Get_field('pourcentage');
 			$total_ht			=	$ATMdb2->Get_field('total_ht');
-			$total_ht			=	round($total_ht*($pourcentage/100),2);
+			$total_ht			=	number_format($total_ht*($pourcentage/100),2);
 			
 			if(!empty($code_analytique)) {
 				$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', 'EUR', '', '');
 				$TabNdf[]=$line;
-				
 			}
 			
 		}
@@ -186,10 +185,10 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		
 		$mois_ndf		=	substr($ATMdb->Get_field('datef'), 5, 2);
 		$annee_ndf		=	substr($ATMdb->Get_field('datef'), 0, 4);
-    	$datef_ndf		=	substr($ATMdb->Get_field('datef'), 8, 2).substr($ATMdb->Get_field('datef'), 5, 2).substr($ATMdb->Get_field('datef'), 2, 2);
+    	//$datef_ndf		=	substr($ATMdb->Get_field('datef'), 8, 2).substr($ATMdb->Get_field('datef'), 5, 2).substr($ATMdb->Get_field('datef'), 2, 2);
     	$total_ttc_ndf	=	$ATMdb->Get_field('total_ttc');
 		
-		$line = array('NDF', $datef_ndf, 'OD', '425902', 'X', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', '', '', 'EUR', '', '');
+		$line = array('NDF', date('dmy'), 'OD', '425902', 'X', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', '', '', 'EUR', '', '');
 		$TabNdf[]=$line;
 	}
 	

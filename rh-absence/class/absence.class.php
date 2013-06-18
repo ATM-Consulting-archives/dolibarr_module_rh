@@ -486,6 +486,13 @@ class TRH_Absence extends TObjetStd {
 		
 		global $conf;
 		
+		//on récupère l'information permettant de savoir si l'on doit décompter les jours normalement ou non
+		$sql="SELECT decompteNormal FROM ".MAIN_DB_PREFIX."rh_type_absence WHERE typeAbsence LIKE '".$absence->type."'";
+		$ATMdb->Execute($sql);
+		if($ATMdb->Get_line()) {
+			$decompteNormal=$ATMdb->Get_field('decompteNormal');
+		}
+		
 		//echo $duree." ".$date_debut." ".$date_fin." <br>";
 
 		//traitement jour de début
@@ -616,7 +623,12 @@ class TRH_Absence extends TObjetStd {
 				//echo "boucle1";
 				if($absence->dfMoment=='matin'){		// si la date de fin est le matin, il n'y a donc que le cas matin à traiter
 					if($TTravail[$jourDebutSem.'am']==0){
-						$duree-=0.5;
+						if($decompteNormal=='oui'){
+							$duree-=0.5;
+						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+							$duree-=0.5;
+						}
+						
 					}else{
 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredam"], $TTravailHeure["date_".$jourDebutSem."_heurefam"]));
 						$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);	
@@ -624,7 +636,11 @@ class TRH_Absence extends TObjetStd {
 					}
 				}else if($absence->ddMoment=='apresmidi'){		// si la date de debut est lapres midi, il n'y a donc que le cas pm à traiter
 					if($TTravail[$jourDebutSem.'pm']==0){
-						$duree-=0.5;
+						if($decompteNormal=='oui'){
+							$duree-=0.5;
+						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+							$duree-=0.5;
+						}
 					}
 					else{
 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredpm"], $TTravailHeure["date_".$jourDebutSem."_heurefpm"]));
@@ -632,14 +648,22 @@ class TRH_Absence extends TObjetStd {
 					}
 				}else{	//sinon on traite les cas matin et apres midi
 					if($TTravail[$jourDebutSem.'am']==0){
-						$duree-=0.5;
+						if($decompteNormal=='oui'){
+							$duree-=0.5;
+						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+							$duree-=0.5;
+						}
 					}else{
 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredam"], $TTravailHeure["date_".$jourDebutSem."_heurefam"]));
 						$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
 					}
 					
 					if($TTravail[$jourDebutSem.'pm']==0){
-						$duree-=0.5;
+						if($decompteNormal=='oui'){
+							$duree-=0.5;
+						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+							$duree-=0.5;
+						}
 					}else{
 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredpm"], $TTravailHeure["date_".$jourDebutSem."_heurefpm"]));
 						$absence->dureeHeure=$absence->horaireMinuteEnCentieme($absence->dureeHeure);
@@ -690,14 +714,26 @@ class TRH_Absence extends TObjetStd {
 			if(!$ferie){
 				if($absence->ddMoment=='matin'){
 					if($TTravail[$jourDebutSem.'am']==0){
-						$duree-=0.5;
+						if($decompteNormal=='oui'){
+							$duree-=0.5;
+						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+							$duree-=0.5;
+						}	
 					}
 					if($TTravail[$jourDebutSem.'pm']==0){
-						$duree-=0.5;
+						if($decompteNormal=='oui'){
+							$duree-=0.5;
+						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+							$duree-=0.5;
+						}
 					}
 				}else if($absence->ddMoment=='apresmidi'){
 					if($TTravail[$jourDebutSem.'pm']==0){
-						$duree-=0.5;
+						if($decompteNormal=='oui'){
+							$duree-=0.5;
+						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+							$duree-=0.5;
+						}
 					}
 				}
 			}
@@ -729,14 +765,26 @@ class TRH_Absence extends TObjetStd {
 			if(!$ferie){
 				if($absence->dfMoment=='matin'){
 					if($TTravail[$jourFinSem.'am']==0){
-						$duree-=0.5;
+						if($decompteNormal=='oui'){
+							$duree-=0.5;
+						}else if($jourFinSem=="samedi"||$jourFinSem=="dimanche"){
+							$duree-=0.5;
+						}
 					}
 				}else if($absence->dfMoment=='apresmidi'){
 					if($TTravail[$jourFinSem.'am']==0){
-						$duree-=0.5;
+						if($decompteNormal=='oui'){
+							$duree-=0.5;
+						}else if($jourFinSem=="samedi"||$jourFinSem=="dimanche"){
+							$duree-=0.5;
+						}
 					}
 					if($TTravail[$jourFinSem.'pm']==0){
-						$duree-=0.5;
+						if($decompteNormal=='oui'){
+							$duree-=0.5;
+						}else if($jourFinSem=="samedi"||$jourFinSem=="dimanche"){
+							$duree-=0.5;
+						}
 					}
 				}
 			}
@@ -776,7 +824,11 @@ class TRH_Absence extends TObjetStd {
 					if($jour==$jourEnCoursSem){
 						foreach(array('am','pm') as $moment) {
 							if($TTravail[$jour.$moment]==0){
-								$duree-=0.5;
+								if($decompteNormal=='oui'){
+									$duree-=0.5;
+								}else if($jour=="samedi"||$jour=="dimanche"){
+									$duree-=0.5;
+								}
 							}
 						}
 					}
@@ -1001,7 +1053,7 @@ class TRH_Absence extends TObjetStd {
 		return $avertissement;
 	}
 	
-	function isWorkingDayNext(&$ATMdb, $dateTest){
+	/*function isWorkingDayNext(&$ATMdb, $dateTest){
 
 		$dateNext=strtotime('+1day',$dateTest); // +3600*24; // AA cf mon autre comm, quand l'horloge change d'heure ceci fonctionne mal
 		//$jourNext=$this->jourSemaine($dateNext);
@@ -1062,7 +1114,7 @@ class TRH_Absence extends TObjetStd {
 			}
 		}
 		return 1;
-	}
+	}*/
 
 
 	///////////////FONCTIONS pour le fichier rechercheAbsence\\\\\\\\\\\\\\\\\\\\\\\\\\\
