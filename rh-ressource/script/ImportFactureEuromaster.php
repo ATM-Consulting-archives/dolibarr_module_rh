@@ -6,13 +6,14 @@
  * et une évenement de type facture
  */
  
-//require('../config.php');
-//require('./class/evenement.class.php');
-//require('./class/ressource.class.php');
+/*require('../config.php');
+require('../class/evenement.class.php');
+require('../class/ressource.class.php');
+require('../lib/ressource.lib.php');*/
 
 global $conf;
 
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 
 // relever le point de départ
 $timestart=microtime(true);
@@ -23,9 +24,12 @@ $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
 }
-$idVoiture = getIdTypeVoiture($ATMdb);
+$idVoiture = getIdType('voiture');
 $TRessource = chargeVoiture($ATMdb);
-if (empty($nomFichier)){$nomFichier = "./fichierImports/fichier facture euromaster.csv";}
+$TNonAttribuee = array();
+$TNoPlaque = array();
+if (empty($nomFichier)){$nomFichier = "./fichierImports/B60465281_Masterplan-CPRO_M_20130430.csv";}
+$entity = (isset($_REQUEST['entity'])) ? $_REQUEST['entity'] : $conf->entity;
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 //début du parsing
@@ -33,51 +37,72 @@ $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle, 0,'\r')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
+		if ($numLigne >=1 ){
 		$infos = explode(';', $data[0]);
 		
-		$temp = new TRH_Evenement;
+		$plaque = str_replace('-','',$infos[0]);
+		$plaque = str_replace(' ','',$plaque);
 		
-		if (! array_key_exists ( $infos[0] , $TRessource )){
-			$message .= 'Pas de voiture correspondante : '.$infos[0].'<br>';
+		$timestamp = mktime(0,0,0,intval(substr($infos[4], 3,2)),intval(substr($infos[4], 0,2)), intval(substr($infos[4], 6,4)));
+		$date = date("Y-m-d", $timestamp);
+		
+		if (empty($TRessource[$plaque])){
+			$TNoPlaque[$plaque] = 1 ;
 		}
 		else {
-			//print_r($infos);
-			$temp->fk_rh_ressource = $TRessource[$infos[0]];
-			$temp->type = 'changementdepneus';
+			$temp = new TRH_Evenement;
+			$temp->fk_rh_ressource = $TRessource[$plaque];
+			$temp->type = 'facture';
 			
-			$temp->set_date('date_debut', $infos[4]);
-			$temp->set_date('date_fin', $infos[4]);
+			$temp->set_date('date_debut', $date);
+			$temp->set_date('date_fin', $date);
 			$temp->coutEntrepriseHT = strtr($infos[10], ',','.');
 			$temp->coutTTC = strtr($infos[25], ',','.');
 			$temp->coutEntrepriseTTC = strtr($infos[25], ',','.');
 			$temp->numFacture = $infos[22];
-			$temp->motif = strtolower($infos[8]);
-			$temp->commentaire = strtolower($infos[7]);
-			
+			$temp->motif = $infos[8];
+			$temp->commentaire = $infos[7];
+			$temp->entity =$entity;
 			//$ttva = array_keys($temp->TTVA , floatval(strtr($infos[21], ',','.')));
 			//$temp->TVA = $ttva[0];
 			//$temp->compteFacture = $infos[13];
 			
-			$temp->fk_user = $TUser[strtolower($infos[2])];
-			if ($temp->fk_user==0){
-				$message.= 'L\'utilisateur '.$infos[2].' n\'est pas dans la base  !<br>';
+			
+			$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], $date);
+			//echo $idUser.'<br>';
+			if ($idUser == 0) {
+				$TNonAttribuee[$date] = $plaque;
 			}
-			
-			
-				
-			
-			
+			else {
+				$temp->fk_user = $idUser;
+			}
 			$temp->save($ATMdb);
+		}
 		}
 		$numLigne++;
 		
 	}
-
-	//Fin du code PHP : Afficher le temps d'éxecution
+	
+	
+	//Fin du code PHP : Afficher le temps d'éxecution et les résultats.
+	if (!empty($TNoPlaque)){
+		$message .= 'Voitures non trouvées :<br>';}
+	foreach($TNoPlaque as $plaque=>$rien){
+		$message .= $plaque.'<br>';}
+	
+	if (!empty($TNonAttribuee)){
+		$message .= 'Voitures non attribué :<br>';}
+	foreach($TNonAttribuee as $date=>$plaque){
+		$message.= $plaque.' non attribuée le '.$date.'<br>';}
+	$message .= '<br>';
+	
 	$timeend=microtime(true);
 	$page_load_time = number_format($timeend-$timestart, 3);
 	$message .= 'Fin du traitement. Durée : '.$page_load_time . " sec.<br><br>";
 	send_mail_resources('Import - Factures Euromaster',$message);
+	echo $message;
+	
+	
 	
 }
 
@@ -143,16 +168,3 @@ function chargeVoiture(&$ATMdb){
 }
 
 
-function getIdTypeVoiture(&$ATMdb){
-	global $conf;
-	
-	$sql="SELECT rowid as 'IdType' FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-	WHERE entity=".$conf->entity."
-	 AND code='voiture' ";
-	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		$idVoiture = $ATMdb->Get_field('IdType');
-		}
-	return $idVoiture;
-}
-	
