@@ -4,6 +4,7 @@
 require_once dirname(__FILE__).'/../../../dolibarr-rh/htdocs/master.inc.php';
 define('COREROOT','/var/www/core/');
 define('COREHTTP','http://127.0.0.1/core/');
+define('DOLHTTP','http://127.0.0.1/dolibarr-rh/htdocs/custom');
 ini_set('display_errors', 'on');
 define('DB_HOST','localhost');
 define('DB_NAME','dolibarrdebian');

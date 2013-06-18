@@ -30,6 +30,7 @@
 require('./config.php');
 require('../lib/absence.lib.php');
 require('../class/absence.class.php');
+require('../script/interface.php');
 
 global $conf,$user,$langs,$db;
 
@@ -58,6 +59,8 @@ class AllTests
 		require_once './LibTest.php';
 		$suite->addTestSuite('LibTest');
 		
+		require_once './ScriptTest.php';
+		$suite->addTestSuite('ScriptTest');
 		
         return $suite;
     }
