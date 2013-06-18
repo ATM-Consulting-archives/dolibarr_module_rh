@@ -47,7 +47,7 @@ $cptCarteTotal = 0;
 $cptOkPlaque = 0;
 $cptOkGroupe = 0;
 $cptNoGroup = 0;
-$nomFichier = "exportEtatDeParcTotal.csv";
+$nomFichier = "Carte TOTAL.csv";
 echo 'Traitement du fichier '.$nomFichier.' : <br>';
 $TRessource = getIDRessource($ATMdb, $idCarteTotal);
 
