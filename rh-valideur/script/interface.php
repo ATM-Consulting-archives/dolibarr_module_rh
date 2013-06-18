@@ -107,19 +107,48 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 			print $sql_anal;
 		}
 		
+		$nb_parts=0;
+		$new_code_compta=0;
 		$ATMdb2->Execute($sql_anal);
 		while($ATMdb2->Get_line()) {
+			$ligne_id_new		=	$ATMdb2->Get_field('rowid');
+			
+			if($new_code_compta){
+				if($ligne_id_new!=$ligne_id_old){
+					array_pop($TabNdf);
+			
+					$total_ht_anal=number_format($total_ht-($total_ht_anal*($nb_parts-1)),2);
+					
+					$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht_anal, 'N', '', '', 'EUR', '', '');
+					$TabNdf[]=$line;
+					
+					$nb_parts=0;
+					$new_code_compta=0;
+				}
+			}
+			
+			$ligne_id_old		=	$ligne_id_new;
 			$code_analytique	=	$ATMdb2->Get_field('code_analytique');
 			$pourcentage		=	$ATMdb2->Get_field('pourcentage');
 			$total_ht			=	$ATMdb2->Get_field('total_ht');
-			$total_ht			=	number_format($total_ht*($pourcentage/100),2);
+			$total_ht_anal		=	number_format($total_ht*($pourcentage/100),2);
 			
 			if(!empty($code_analytique)) {
-				$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', 'EUR', '', '');
+				$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht_anal, 'N', '', '', 'EUR', '', '');
 				$TabNdf[]=$line;
+				
+				$nb_parts++;
 			}
 			
+			$new_code_compta=1;
 		}
+
+		array_pop($TabNdf);
+			
+		$total_ht_anal=number_format($total_ht-($total_ht_anal*($nb_parts-1)),2);
+		
+		$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht_anal, 'N', '', '', 'EUR', '', '');
+		$TabNdf[]=$line;
 		
 		$ndf_exist=1;
 	}
