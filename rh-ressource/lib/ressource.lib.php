@@ -96,7 +96,7 @@ function getTypeEvent($idTypeRessource = 0){
  */
 function getRessource($idTypeRessource = 0){
 	global $conf;
-	$TRessource = array('');
+	$TRessource = array(0=>'');
 	$ATMdb =new TPDOdb;
 	
 	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity IN (0,".$conf->entity.")";

@@ -15,8 +15,8 @@
 		<tr class="liste_titre">
 			<th>Société</th>
 			<th>Collaborateur</th>
-			<th>Type de Téléphone</th>
 			<th>Numéro de Téléphone</th>
+			<th>Type de Téléphone</th>
 			<th colspan=2 style="text-align:center;">Forfait</th>
 			<th colspan=2 style="text-align:center;">Consommation</th>
 			

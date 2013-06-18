@@ -135,7 +135,6 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $mode) {
 	WHERE e.type='factTel' 
 	AND (e.date_debut<='".date("Y-m-d", $date_fin)."' AND e.date_debut>='".date("Y-m-d", $date_debut)."')";
 	
-	echo $sql;
 	
 	$TTelephone = array();
 	$ATMdb->Execute($sql);
