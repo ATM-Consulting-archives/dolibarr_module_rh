@@ -347,7 +347,7 @@ class TRH_Absence extends TObjetStd {
 			$db->Execute($sqlDecompte);
 			//$this->rttNonCumulePris=$this->rttNonCumulePris-$dureeAbsenceCourante;
 		}
-		else if($this->type=="conges"){	//autre que RTT : décompte les congés
+		else if($this->type=="conges"||$this->type=="cppartiel"){	//autre que RTT : décompte les congés
 			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
 				SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." 
 				WHERE fk_user=".$userConcerne;
@@ -1006,6 +1006,7 @@ class TRH_Absence extends TObjetStd {
 						$ATMdb->Execute($sqlRecredit);
 				break;
 				case 'conges':
+				case 'cppartiel':
 					$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
 					SET congesPrisNM1=congesPrisNM1-".$this->duree."  
 					where fk_user=".$this->fk_user;
