@@ -58,6 +58,7 @@
 		<td id="textMontant">Montant avant alerte</td>
 		<td>Se valide lui-même ?</td>
 		<td>Niveau du valideur</td>
+		<td id="pointeur">Pointeur</td>
 	</tr>
 	<tr>
 		<td>[valideur.group;strconv=no;protect=no]</td>
@@ -66,6 +67,7 @@
 		<td id="textMontant2">[valideur.montant;strconv=no;protect=no]€</td>
 		<td>[valideur.validate_himself;strconv=no;protect=no]</td>
 		<td>[valideur.level;strconv=no]</td>
+		<td id="pointeur2">[valideur.pointeur;strconv=no]</td>
 	</tr>
 </table>
 
@@ -79,14 +81,23 @@
 <script>
 	$(document).ready( function(){
 
+		$('#pointeur').hide();
+      	$('#pointeur2').hide();
+      		  		
 		$('#type').change(function () {
       		  if($("#type option:selected").val()=="Conges"){
       		  		$('#textMontant').hide();
       		  		$('#textMontant2').hide();
+      		  		
+      		  		$('#pointeur').show();
+      		  		$('#pointeur2').show();
       		  }
       		  else{
       		  		$("#textMontant").show();
       		  		$('#textMontant2').show();
+      		  		
+      		  		$('#pointeur').hide();
+      		  		$('#pointeur2').hide();
       		  }
    		})
    		 

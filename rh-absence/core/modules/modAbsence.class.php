@@ -254,17 +254,35 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'uploadFilesRegle';
+		
 		$r++;
 		$this->rights[$r][0] = 7114;
 		$this->rights[$r][1] = 'Effectuer une recherche sur les absences des collaborateurs';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'rechercherAbsence';
+
 		$r++;
 		$this->rights[$r][0] = 7115;
+		$this->rights[$r][1] = 'Visualiser le planning par utilisateur';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+		$this->rights[$r][5] = 'voirPlanningUser';
+		
+		$r++;
+		$this->rights[$r][0] = 7116;
+		$this->rights[$r][1] = 'Créer une absence pour le pointage';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+		$this->rights[$r][5] = 'creerAbsencePointage';
+		
+		$r++;
+		$this->rights[$r][0] = 7117;
 		$this->rights[$r][1] = 'Visualiser les fichiers des absences';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'read';
+		
+		
 		
 
 		
@@ -313,6 +331,22 @@ class modAbsence extends DolibarrModules
 						'target'=> '',
 						'user'=> 2	// 0=Menu for internal users, 1=external users, 2=both
         );
+		/*$r++;
+		$this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('Planning par utilisateur'),
+		        	'mainmenu'=> '',
+		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/absence/planningUser.php',
+					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 102,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '$user->rights->absence->myactions->voirPlanningUser',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );*/
+		
 		$r++;
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
