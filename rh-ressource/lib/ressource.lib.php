@@ -132,8 +132,7 @@ function getIDRessource(&$ATMdb, $idType=0){
 	$TRessource = array();
 	
 	$sql="SELECT rowid, numId  FROM ".MAIN_DB_PREFIX."rh_ressource
-	 WHERE fk_rh_ressource_type=".$idType." 
-	 AND entity IN (0, ".$conf->entity.")";
+	 WHERE fk_rh_ressource_type=".$idType;
 	// echo $sql.'<br>';
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {

@@ -29,7 +29,7 @@ if ($fk_user!= 0){ $sql .= "AND e.fk_user=".$fk_user;}
 $sql .=	" ORDER BY kilometrage";
 //echo $sql;
 
-$TUser = getUsers();
+$TUser = getUsers(false, false);
 
 $ATMdb->Execute($sql);
 while($row = $ATMdb->Get_line()) {	
