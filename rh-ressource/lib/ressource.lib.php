@@ -116,8 +116,7 @@ function getIdType($code){
 	global $conf;
 	$ATMdb =new TPDOdb;
 	$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-		WHERE entity IN (0,".$conf->entity.")
-	 	AND code= '".$code."'";
+		WHERE code= '".$code."'";
 	$ATMdb->Execute($sql);
 	$id = false;
 	if ($ATMdb->Get_line()) {$id = $ATMdb->Get_field('rowid');}
