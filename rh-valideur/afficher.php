@@ -188,6 +188,7 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 						,'montant'=> $form->texte('', 'montant', $valideur->montant, 7,10,'','','-')
 						,'validate_himself'=>$form->combo('','validate_himself', $valideur->TValidate_himself, $valideur->validate_himself )
 						,'level'=>$form->combo('','level', array(1=>'Niveau 1',2=>'Niveau 2',3=>'Niveau 3'), $valideur->level )
+						,'pointeur'=>$form->combo('','pointeur',$valideur->TValidate_pointeur,$valideur->pointeur)
 					)
 					,'view'=>array(
 						'mode'=>$mode
