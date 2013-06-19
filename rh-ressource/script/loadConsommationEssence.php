@@ -56,34 +56,59 @@ foreach ($TPleins as $idcarte => $value) {
 	$texte = '';
 	$depassement = false;  //indique si il y a au moins un plein dépassement sur l'ensemble de la carte.
 	$TTempLigne = array();
+	
+	$sommeEssence = 0;
+	
 	//on lit une ligne de plein de la carte.
 	foreach ($value as $km => $tab) {
+		$sommeEssence += $tab['litre'];
+		$memLitre = $tab['litre'];
 		
+		//calcul de la consommation instantanée
 		if ($memKm!=0){
 			$conso = number_format((100*$memLitre)/($km-$memKm),2);
-			if ($conso>=$limite){ $depassement = true; }
-			$texte = ($km-$memKm).'km fait avec '.number_format($memLitre,2).' litres.';
 			$consotexte = $conso.'L/100km';
-			if (($conso>=$limite) && ($limite>0)){$consotexte = '<b style="color:red;">'.$consotexte.'</b>';}
 		}
-		$memKm = $km;
-		$memLitre = $tab['litre'];
+		//ajout de la conso instantanée
 		if (($tab['date_debut']<= $plagefin) && ($tab['date_debut']>= $plagedeb)){
 			$TTempLigne[] = array(
 				'nom'=>$TCartes[$idcarte]
 				,'vehicule'=>$TVoiture[$tab['fk_rh_ressource']]
-				,'info'=> $texte
-				,'conso'=>$consotexte
-				,'essence'=>number_format($tab['litre'],2).' L'
 				,'km'=>$tab['km'].' km'
+				,'diffkm' =>  ($memKm!=0) ? $km-$memKm.'km' : ''
+				,'essence'=>number_format($tab['litre'],2).' L'
+				,'conso'=> ($memKm!=0) ? $consotexte : ''
 				,'user'=>$TUser[$tab['fk_user']]
 				,'date'=> $tab['date']
 				,'ok'=>$tab['date_debut']
 				,'parite'=>($cpt%2==0) ? 'pair' : 'impair'
 			);
+		$memKm = $km;
+		
 		}
 	}
 	
+	//calcul et ajout de la consommation générale sur la carte Total
+	$kmdebut = min(array_keys($value));
+	$kmfin = max(array_keys($value));
+	$diffkm = $kmfin-$kmdebut;
+	if ($diffkm>0){
+		$Moyconso = number_format((100*$sommeEssence)/($diffkm),2);
+		if ($Moyconso>=$limite){ $depassement = true; }
+		$TTempLigne[] = array(
+				'nom'=>''
+				,'vehicule'=>''
+				,'km'=>''
+				,'diffkm' =>'Total: '.$diffkm.'km'
+				,'conso'=> ($limite>0) ? '<b style="color:red;">Moyenne : '.$Moyconso.'L/100km</b>' : 'Moyenne : '.$Moyconso.'L/100km'
+				,'essence'=>'Total: '.$sommeEssence.'L'
+				,'date'=> ''
+				,'user'=>''
+				,'ok'=>''
+				,'parite'=>($cpt%2==0) ? 'pair' : 'impair'
+			);
+		//echo $kmdebut.' km ->'.$kmfin.'km : '.$diffkm.'km.   '.$sommeEssence.' L Moyenne : '.$Moyconso.'L/100km <br>';
+	}
 	if ($depassement){//il y a eu dépasement, on ajoute les lignes de la carte au tableau final.
 		$cpt++;
 		foreach ($TTempLigne as $key => $value) {

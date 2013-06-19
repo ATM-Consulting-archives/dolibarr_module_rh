@@ -15,7 +15,7 @@ Utilisateur : [infos.fk_user;strconv=no;protect=no] <br><br>
 			<td>Carte Total</td>
 			<td>Véhicule</td>
 			<td>Relevé kilométrique</td>
-			<td>Essence</td>
+			<td>Différence kilométrique</td>
 			<td>Plein d'essence</td>
 			<td>Consommation</td>
 			<td>Date</td>
@@ -30,8 +30,8 @@ Utilisateur : [infos.fk_user;strconv=no;protect=no] <br><br>
 			<td>[ressource.nom;block=tr;strconv=no;protect=no]</td>
 			<td>[ressource.vehicule;strconv=no;protect=no]</td>
 			<td>[ressource.km;strconv=no;protect=no]</td>
+			<td>[ressource.diffkm;strconv=no;protect=no]</td>
 			<td>[ressource.essence;strconv=no;protect=no]</td>
-			<td>[ressource.info;strconv=no;protect=no]</td>
 			<td>[ressource.conso;strconv=no;protect=no]</td>
 			<td>[ressource.date;strconv=no;protect=no]</td>
 			<td>[ressource.user;strconv=no;protect=no]</td>
