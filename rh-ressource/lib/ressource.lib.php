@@ -99,7 +99,7 @@ function getRessource($idTypeRessource = 0){
 	$TRessource = array(0=>'');
 	$ATMdb =new TPDOdb;
 	
-	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity IN (0,".$conf->entity.")";
+	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE 1 ";
 	if ($idTypeRessource>0){$sqlReq.= " AND fk_rh_ressource_type=".$idTypeRessource;}
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
