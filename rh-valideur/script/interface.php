@@ -66,7 +66,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 			WHERE n.statut = 1
 			AND n.entity IN (".$entity.")
 			AND n.type LIKE '".$type."'
-			AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')
+			AND (n.tms>='".$date_debut."' AND n.tms<='".$date_fin."')
 			GROUP BY t.accountancy_code";
 	
 	if(isset($_REQUEST['DEBUG'])) {
@@ -98,7 +98,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					WHERE n.statut = 1
 					AND n.entity IN (".$entity.")
 					AND n.type LIKE '".$type."'
-					AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')
+					AND (n.tms>='".$date_debut."' AND n.tms<='".$date_fin."')
 					AND t.accountancy_code = ".$code_compta."
 					
 		";
@@ -163,7 +163,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					WHERE n.statut = 1
 					AND n.entity IN (".$entity.")
 					AND n.type LIKE '".$type."'
-					AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')";
+					AND (n.tms>='".$date_debut."' AND n.tms<='".$date_fin."')";
 		
 		if(isset($_REQUEST['DEBUG'])) {
 			print $sql;
@@ -196,7 +196,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 				WHERE n.statut = 1
 				AND n.entity IN (".$entity.")
 				AND n.type LIKE '".$type."'
-				AND (n.datef>='".$date_debut."' AND n.datef<='".$date_fin."')
+				AND (n.tms>='".$date_debut."' AND n.tms<='".$date_fin."')
 				GROUP BY n.rowid";
 	
 	if(isset($_REQUEST['DEBUG'])) {
