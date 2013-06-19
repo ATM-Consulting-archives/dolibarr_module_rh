@@ -166,11 +166,15 @@ function _liste(&$ATMdb, &$ressource) {
 	print dol_get_fiche_head(array()  , '', 'Liste ressources');
 	
 	//récupération des champs spéciaux à afficher.
-	$sqlReq="SELECT code, libelle FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE inliste='oui' ";
+	$sqlReq="SELECT code, libelle, type, options FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE inliste='oui' ";
 	$ATMdb->Execute($sqlReq);
 	$TSpeciaux = array();
 	while($ATMdb->Get_line()) {
 		$TSpeciaux[$ATMdb->Get_field('code')]= $ATMdb->Get_field('libelle');
+		if ($ATMdb->Get_field('type')=='liste'){
+			$TSearch[$ATMdb->Get_field('code')] = explode(';', $ATMdb->Get_field('options') );}
+		else {
+			$TSearch[$ATMdb->Get_field('code')] = true;}
 	}
 	
 	$r = new TSSRenderControler($ressource);
@@ -239,14 +243,13 @@ function _liste(&$ATMdb, &$ressource) {
 			,'firstname'=>'Prénom'), $TSpeciaux
 		)
 		,'search'=>($user->rights->ressource->ressource->searchRessource) ? 		
-			array(
+			array_merge(array(
 				'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
 				,'numId'=>true
 				,'libelle'=>true
 				,'name'=>true
-				,'firstname'=>true
-				//,'Statut'=>array('recherche'=>array('Libre'=>'Libre','Attribué'=>'Attribuée', 'Réservé'=>'Réservée'))	
-			)
+				,'firstname'=>true	
+			), $TSearch)
 			: array()
 		,'orderBy'=>$TOrder
 		

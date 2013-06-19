@@ -26,7 +26,7 @@ $sql="SELECT e.rowid, DATE_FORMAT(date_debut,'%d/%m/%Y') as point,  date_debut ,
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 	WHERE (e.type='gazolepremier' OR e.type='gazoleexcellium') ";
 if ($fk_user!= 0){ $sql .= "AND e.fk_user=".$fk_user;}	
-$sql .=	" ORDER BY date_debut, kilometrage";
+$sql .=	" ORDER BY kilometrage";
 //echo $sql;
 
 $TUser = getUsers();
@@ -48,23 +48,28 @@ while($row = $ATMdb->Get_line()) {
 $TRessource = array();
 $cpt = 0;
 
+//on lit une carte
 foreach ($TPleins as $idcarte => $value) {
-	$cpt++;
+	
 	$memKm = 0;
 	$memLitre = 0;
 	$texte = '';
+	$depassement = false;  //indique si il y a au moins un plein dépassement sur l'ensemble de la carte.
+	$TTempLigne = array();
+	//on lit une ligne de plein de la carte.
 	foreach ($value as $km => $tab) {
+		
 		if ($memKm!=0){
 			$conso = number_format((100*$memLitre)/($km-$memKm),2);
-			if ($conso>=$limite){
-				$texte = ($km-$memKm).'km fait avec '.number_format($memLitre,2).' litres.';
-				$consotexte = $conso.'L/100km';
-			}
+			if ($conso>=$limite){ $depassement = true; }
+			$texte = ($km-$memKm).'km fait avec '.number_format($memLitre,2).' litres.';
+			$consotexte = $conso.'L/100km';
+			if (($conso>=$limite) && ($limite>0)){$consotexte = '<b style="color:red;">'.$consotexte.'</b>';}
 		}
 		$memKm = $km;
 		$memLitre = $tab['litre'];
-		if ((!empty($texte)) && ($tab['date_debut']<= $plagefin) && ($tab['date_debut']>= $plagedeb)){
-			$TRessource[] = array(
+		if (($tab['date_debut']<= $plagefin) && ($tab['date_debut']>= $plagedeb)){
+			$TTempLigne[] = array(
 				'nom'=>$TCartes[$idcarte]
 				,'vehicule'=>$TVoiture[$tab['fk_rh_ressource']]
 				,'info'=> $texte
@@ -77,7 +82,12 @@ foreach ($TPleins as $idcarte => $value) {
 				,'parite'=>($cpt%2==0) ? 'pair' : 'impair'
 			);
 		}
+	}
 	
+	if ($depassement){//il y a eu dépasement, on ajoute les lignes de la carte au tableau final.
+		$cpt++;
+		foreach ($TTempLigne as $key => $value) {
+			$TRessource[] = $value;}
 	}
 	
 }
