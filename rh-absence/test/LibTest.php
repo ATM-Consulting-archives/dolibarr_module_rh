@@ -183,6 +183,9 @@ class LibTest extends PHPUnit_Framework_TestCase
 		$libelle = saveLibelle('nonjustifiee') ;
 		$this->assertEquals('Absence non justifiée',$libelle);
 		
+		$libelle = saveLibelle('cppartiel') ;
+		$this->assertEquals('CP à temps partiel',$libelle);
+		
 		$libelle = saveLibelle('test') ;
 		
 		print __METHOD__."\n";
