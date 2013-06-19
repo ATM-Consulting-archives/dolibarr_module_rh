@@ -126,7 +126,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$temp->type = 'divers';
 				}
 				
-				$temp->motif = htmlentities($infos[17], ENT_COMPAT , 'ISO8859-1');
+				$temp->motif = $infos[17]; //htmlentities($infos[17], ENT_COMPAT , 'ISO8859-1');
 				$temp->commentaire = htmlentities($infos[30], ENT_COMPAT , 'ISO8859-1');
 				if (!empty($infos[31])){
 					$temp->commentaire .= '<br>Kilometrage saisi: '.intval($infos[31]).'<br>

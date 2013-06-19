@@ -172,7 +172,12 @@ function _liste(&$ATMdb, &$ressource) {
 	while($ATMdb->Get_line()) {
 		$TSpeciaux[$ATMdb->Get_field('code')]= $ATMdb->Get_field('libelle');
 		if ($ATMdb->Get_field('type')=='liste'){
-			$TSearch[$ATMdb->Get_field('code')] = explode(';', $ATMdb->Get_field('options') );}
+			$T = array('');
+			foreach (explode(';', $ATMdb->Get_field('options')) as $value) {
+				$T[$value] = $value;
+			}
+			$TSearch[$ATMdb->Get_field('code')] = $T;
+		}
 		else {
 			$TSearch[$ATMdb->Get_field('code')] = true;}
 	}
