@@ -129,7 +129,7 @@
 	$sql="ALTER TABLE ".MAIN_DB_PREFIX."rh_type_absence ADD  decompteNormal VARCHAR(20)";
 	$ATMdb->Execute($sql);
 	
-	$sql="INSERT INTO `dolibarr`.`llx_rh_type_absence` 
+	$sql="INSERT INTO `llx_rh_type_absence` 
 	(`rowid`, `date_cre`, `date_maj`, `typeAbsence`, `libelleAbsence`, `codeAbsence`, `admin`, `unite`, `entity`, 
 	`codeMotif`, `decompteNormal`) VALUES ('26', '0000-00-00 00:00:00', '0000-00-00 00:00:00', 
 	'cppartiel', 'CP à temps partiel', '0951', '0', 'jour', '0', NULL, 'non')";
