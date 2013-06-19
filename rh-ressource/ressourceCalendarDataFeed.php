@@ -47,7 +47,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
   $TUser = getUsers();
  
   try{
-	$sql = "SELECT e.rowid,  date_debut, date_fin, isAllDayEvent, fk_user, color, type, subject, e.fk_rh_ressource 
+	$sql = "SELECT e.rowid,  date_debut, date_fin, isAllDayEvent, fk_user, color, type, e.fk_rh_ressource 
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 	WHERE ";

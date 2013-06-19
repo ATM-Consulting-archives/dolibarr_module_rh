@@ -35,6 +35,7 @@ require('../class/contrat.class.php');
 $ress = new TRH_Ressource;
 $type = new TRH_Ressource_type;
 $field = new TRH_Ressource_field;
+$typeEvent = new TRH_Type_Evenement;
 $event = new TRH_Evenement;
 $contrat = new TRH_Contrat;
 $ATMdb = new TPDOdb;

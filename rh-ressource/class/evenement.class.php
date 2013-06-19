@@ -16,8 +16,6 @@ class TRH_Evenement  extends TObjetStd {
 		//pour le wdCalendar
 		parent::add_champs('color','type=chaine;');
 		parent::add_champs('isAllDayEvent','type=entier;');
-		parent::add_champs('subject','type=chaine;');
-		
 		
 		//pour un accident, une réparation
 		parent::add_champs('responsabilite','type=entier;');
@@ -88,12 +86,12 @@ class TRH_Evenement  extends TObjetStd {
 		
 		if (empty($this->confidentiel)){$this->confidentiel = 'oui';}
 		
-		$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource 
+		/*$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource 
 		WHERE rowid=".$this->fk_rh_ressource;
 		$db->Execute($sqlReq);
 		while($db->Get_line()) {
 			$nom = $db->Get_field('libelle');
-		}
+		}*/
 			
 		$this->load_liste($db);
 		$this->load_liste_type($this->fk_rh_ressource_type);
@@ -104,9 +102,6 @@ class TRH_Evenement  extends TObjetStd {
 				break;
 			case 'reparation':
 				$this->color= 11;
-				break;
-			case 'appel' :
-				$this->color= 14;
 				break;
 			case 'facture':
 				$this->color= 17; 
@@ -119,12 +114,12 @@ class TRH_Evenement  extends TObjetStd {
 				break;
 		}
 		
-		if ($this->type=='emprunt'){
+		/*if ($this->type=='emprunt'){
 			$this->subject = "[ ".$nom." ] Utilisé par ".$this->TUser[$this->fk_user];
 		}
 		else {
 			$this->subject = "[ ".$nom." ] ".$this->TType[$this->type]." : ".$this->motif;
-		}
+		}*/
 		
 		$this->isAllDayEvent = 1;
 		if (empty($this->coutEntrepriseHT)) {$this->coutEntrepriseHT = ($this->coutEntrepriseTTC)*(1-(0.01*$this->TTVA[$this->TVA]));}
@@ -153,7 +148,8 @@ class TRH_Type_Evenement  extends TObjetStd {
 		$db->Execute($sqlReq);
 		
 		if ($db->Get_line()) {
-			return $this->load($db, $db->Get_field('rowid'));
+			$this->load($db, $db->Get_field('rowid'));
+			return true;
 		}
 		return false;
 	}

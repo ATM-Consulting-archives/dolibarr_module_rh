@@ -34,6 +34,7 @@ require('../class/evenement.class.php');*/
 
 
 $event = new TRH_Evenement;
+$typeEvent = new TRH_Type_Evenement;
 $ATMdb = new TPDOdb;
 
 
@@ -94,14 +95,74 @@ class EvenementTest extends PHPUnit_Framework_TestCase
 		$event->date_fin = 10;
 		$event->date_debut = 20;
 		$event->type = 'emprunt';
-		
 		$event->save($ATMdb);
+		$sqlReq="SELECT type FROM ".MAIN_DB_PREFIX."rh_evenement WHERE rowid= ".$event->getId();
+		$ATMdb->Execute($sqlReq);
+		if ($row = $ATMdb->Get_line()) {$this->assertEquals('emprunt', $row->type);}
+		
+		$event->type = 'accident';
+		$event->save($ATMdb);
+		$event->type = 'reparation';
+		$event->save($ATMdb);
+		$event->type = 'facture';
+		$event->save($ATMdb);
+		$event->type = 'divers';
+		$event->save($ATMdb);
+		
 		$event->delete($ATMdb);
 		
+		$sqlReq="SELECT COUNT(rowid) as 'nb' FROM ".MAIN_DB_PREFIX."rh_evenement WHERE rowid= ".$event->getId();
+		$ATMdb->Execute($sqlReq);
+		if ($row = $ATMdb->Get_line()) {$this->assertEquals(0, $row->nb);}
+				
 		print __METHOD__."\n";
     }
 	
 	
+	//TEST DE LA CLASSE TYPE D4EVENEMENT
+	public function testcreateTypeRessource()
+    {
+    	global $typeEvent;
+		$this->assertNotNull($typeEvent);
+		print __METHOD__."\n";
+    }
+	
+	public function testload_by_code(){
+		global $typeEvent, $ATMdb;
+		$ret = $typeEvent->load_by_code($ATMdb, 'accident');
+		$this->assertTrue($ret);
+		$ret = $typeEvent->load_by_code($ATMdb, 'innexistantnimpotequoi');
+		$this->assertFalse($ret);
+		print __METHOD__."\n";
+	}
+	
+	public function testchargement(){
+		global $typeEvent, $ATMdb;
+		$typeEvent = new TRH_Type_Evenement;
+		//test de chargement et save
+		$typeEvent->chargement($ATMdb, 'testlibelle', 'testcode', '1234', 0, 0);
+		$this->assertEquals('testlibelle', $typeEvent->libelle);
+		$this->assertEquals('testcode', $typeEvent->code);
+		$this->assertEquals('1234', $typeEvent->codecomptable);
+		$this->assertEquals('vrai', $typeEvent->supprimable);
+		$this->assertEquals(0, $typeEvent->fk_rh_ressource_type);
+		//suppression de l'élément de test qui est vide
+		$typeEvent->delete($ATMdb);
+	}
+	
+	public function testsave(){
+		global $typeEvent, $ATMdb;	
+		//save et suppression de l'élément de test qui est vide
+		$typeEvent = new TRH_Type_Evenement;
+		$typeEvent->save($ATMdb);
+		$this->assertEquals('vrai', $typeEvent->supprimable);
+		$this->assertEquals(0, $typeEvent->fk_rh_ressource_type);
+		
+		$typeEvent->delete($ATMdb);
+		
+		
+		print __METHOD__."\n";
+	}
 	
 	
 }
