@@ -254,24 +254,35 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'uploadFilesRegle';
+		
 		$r++;
 		$this->rights[$r][0] = 7114;
 		$this->rights[$r][1] = 'Effectuer une recherche sur les absences des collaborateurs';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'rechercherAbsence';
-		
+
 		$r++;
 		$this->rights[$r][0] = 7115;
+		$this->rights[$r][1] = 'Visualiser le planning par utilisateur';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+		$this->rights[$r][5] = 'voirPlanningUser';
+		
+		$r++;
+		$this->rights[$r][0] = 7116;
+		$this->rights[$r][1] = 'Créer une absence pour le pointage';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+		$this->rights[$r][5] = 'creerAbsencePointage';
+		
+		$r++;
+		$this->rights[$r][0] = 7117;
 		$this->rights[$r][1] = 'Visualiser les fichiers des absences';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'read';
 		
-		$r++;
-		$this->rights[$r][0] = 7116;
-		$this->rights[$r][1] = 'Visualiser le planning par utilisateur';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'voirPlanningUser';
+		
 		
 
 		

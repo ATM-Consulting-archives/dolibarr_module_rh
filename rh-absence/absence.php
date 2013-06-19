@@ -611,6 +611,18 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			";
 			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
+	}
+	else if($user->rights->absence->myactions->creerAbsencePointage){
+		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
+			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s  
+			WHERE v.fk_user=".$user->id." 
+			AND v.type='Conges'
+			AND s.rowid=u.fk_user
+			AND v.fk_usergroup=u.fk_usergroup
+			AND v.pointeur=1
+			";
+			//echo $sqlReqUser;exit;
+		$droitsCreation=1;
 	}else $droitsCreation=2; //on n'a pas les droits de création
 	if($droitsCreation==1){
 		$sql.=" ORDER BY name";
@@ -619,8 +631,6 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 	}
-	
-	
 	//Tableau affichant les 10 dernières absences du collaborateur
 	$TRecap=array();
 	$TRecap=$absence->recuperationDerAbsUser($ATMdb, $regleId);
