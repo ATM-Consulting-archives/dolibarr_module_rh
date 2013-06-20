@@ -169,6 +169,8 @@ function _liste(&$ATMdb, &$ressource) {
 	$sqlReq="SELECT code, libelle, type, options FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE inliste='oui' ";
 	$ATMdb->Execute($sqlReq);
 	$TSpeciaux = array();
+	
+	$TSearch=array();
 	while($ATMdb->Get_line()) {
 		$TSpeciaux[$ATMdb->Get_field('code')]= $ATMdb->Get_field('libelle');
 		if ($ATMdb->Get_field('type')=='liste'){
