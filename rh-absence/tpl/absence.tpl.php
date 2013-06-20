@@ -184,9 +184,7 @@
 								$("#date_fin").val($("#date_debut").val());
 								return;}
 							else if(jf=jd){
-								if($("#ddMoment").val()=='apresmidi'){
-									$("#dfMoment").val($("#ddMoment").val());
-								}
+								
 								return;
 							}
 							else{return;}
