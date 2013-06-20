@@ -56,16 +56,10 @@
 		<td>[ressource.fk_proprietaire;strconv=no;protect=no]</td>
 		
 	</tr>
-	<tr id="loueur" >
+	<tr>
 		<td>Fournisseur</td>
 		<td>[ressource.fk_loueur;strconv=no;protect=no]</td>
 	</tr>
-	<script>
-		if ('[ressource.type;strconv=no;protect=no]' != 'Voiture'){
-			$('#loueur').hide();
-		}
-	 		
-	</script>
 	<tr>
 		<td>Entité Utilisatrice</td>
 		<td colspan=3>[ressource.fk_entity_utilisatrice;strconv=no;protect=no]</td>

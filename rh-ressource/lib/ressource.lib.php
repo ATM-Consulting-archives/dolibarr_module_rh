@@ -99,7 +99,7 @@ function getRessource($idTypeRessource = 0){
 	$TRessource = array(0=>'');
 	$ATMdb =new TPDOdb;
 	
-	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE entity IN (0,".$conf->entity.")";
+	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE 1 ";
 	if ($idTypeRessource>0){$sqlReq.= " AND fk_rh_ressource_type=".$idTypeRessource;}
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
@@ -116,8 +116,7 @@ function getIdType($code){
 	global $conf;
 	$ATMdb =new TPDOdb;
 	$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_type 
-		WHERE entity IN (0,".$conf->entity.")
-	 	AND code= '".$code."'";
+		WHERE code= '".$code."'";
 	$ATMdb->Execute($sql);
 	$id = false;
 	if ($ATMdb->Get_line()) {$id = $ATMdb->Get_field('rowid');}
@@ -133,8 +132,7 @@ function getIDRessource(&$ATMdb, $idType=0){
 	$TRessource = array();
 	
 	$sql="SELECT rowid, numId  FROM ".MAIN_DB_PREFIX."rh_ressource
-	 WHERE fk_rh_ressource_type=".$idType." 
-	 AND entity IN (0, ".$conf->entity.")";
+	 WHERE fk_rh_ressource_type=".$idType;
 	// echo $sql.'<br>';
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
@@ -390,7 +388,6 @@ function ressourceIsEmpruntee(&$ATMdb, $idRessource, $jour){
 				LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource) 
 				WHERE e.type='emprunt'
 				AND r.rowid = ".$idRessource."
-				AND e.entity IN (0, ".$conf->entity.") 
 				AND e.date_debut<='".$jour."' AND e.date_fin >= '".$jour."' 
 				";
 				

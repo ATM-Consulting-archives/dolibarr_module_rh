@@ -142,7 +142,6 @@
 		};
 		
 		function effacerChamps(){
-			$('#user').hide();
 			$('#responsabilite').hide();
 			$('#tiersimpl').hide();
 			$('#numFacture').hide();
@@ -154,7 +153,6 @@
 			effacerChamps();
 			switch (type.toLowerCase()){
 				case 'accident':
-					$('#user').show();
 					$('#responsabilite').show();
 					$('#tiersimpl').show();
 					break;

@@ -327,11 +327,11 @@ function _listeValidation(&$ATMdb, &$absence) {
  
  
  	//LISTE DES GROUPES À VALIDER
- 	$sql=" SELECT DISTINCT fk_usergroup, nbjours, validate_himself, level 
+ 	$sql=" SELECT DISTINCT fk_usergroup, nbjours, validate_himself, level
  			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe`
 			WHERE fk_user=".$user->id." 
-			AND type='Conges'
-			AND entity IN (0,".$conf->entity.")";
+			AND type='Conges' ";
+			//AND entity IN (0,".$conf->entity.")";
 	//echo $sql;
 	$ATMdb->Execute($sql);
 	$TabGroupe=array();
