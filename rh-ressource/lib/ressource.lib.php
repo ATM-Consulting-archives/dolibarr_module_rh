@@ -388,7 +388,6 @@ function ressourceIsEmpruntee(&$ATMdb, $idRessource, $jour){
 				LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource) 
 				WHERE e.type='emprunt'
 				AND r.rowid = ".$idRessource."
-				AND e.entity IN (0, ".$conf->entity.") 
 				AND e.date_debut<='".$jour."' AND e.date_fin >= '".$jour."' 
 				";
 				

@@ -79,7 +79,7 @@ $TGroups = getGroups();
 
 //chargement des fournisseurs
 $TFournisseurs = array();
-$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity=".$conf->entity;
+$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe";
 $ATMdb->Execute($sqlReq);
 while($row = $ATMdb->Get_line()) {
 	$TFournisseurs[$row->rowid] = htmlentities($row->nom, ENT_COMPAT , 'ISO8859-1'); 
