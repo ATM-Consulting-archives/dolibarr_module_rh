@@ -66,6 +66,11 @@ function adminRecherchePrepareHead(&$obj, $type='recherche') {
 				array(DOL_URL_ROOT_ALT.'/absence/rechercheAbsence.php', 'Recherche Absence','recherche')
 			);
 			break;
+		case 'planning':
+			return array(
+				array(DOL_URL_ROOT_ALT.'/absence/rechercheAbsence.php', 'Recherche Absence','recherche')
+			);
+			break;
 	}
 }
 
