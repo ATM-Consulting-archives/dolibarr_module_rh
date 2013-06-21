@@ -54,7 +54,6 @@
 	<tr>
 		<td>Entité Propriétaire</td>
 		<td>[ressource.fk_proprietaire;strconv=no;protect=no]</td>
-		
 	</tr>
 	<tr>
 		<td>Fournisseur</td>
