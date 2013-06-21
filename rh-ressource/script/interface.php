@@ -88,25 +88,20 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
-		$date = $row->date_debut;
-		$date_mois = $row->mois_date_debut;
-		$date_annee = $row->annee_date_debut;
-		//un VU : on prend le HT
-		//un VP on prend le TTC
-		$montant = (strtolower($row->typeVehicule)=='vu') ? $row->coutEntrepriseHT : $row->coutEntrepriseTTC;
+		$montant = $row->coutEntrepriseHT;
 		$sens = 'D';
 		$code_compta = $row->codecomptable;
 		$type_compte = 'G';
 		
 		$TLignes[] = array(
 			'RES'
-			,$date
+			,date('dmy')
 			,'FF'
 			,$code_compta
 			,$type_compte
 			,''
 			,''
-			,'RESSOURCE '.$date_mois.'/'.$date_annee
+			,'RESSOURCE '.date('m/Y')
 			,'V'
 			,date('dmy')
 			,$sens
@@ -118,6 +113,8 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		);
 		
 		$sql_anal="SELECT e.rowid
+				, e.coutEntrepriseTTC as coutEntrepriseTTC
+				, e.coutEntrepriseHT as coutEntrepriseHT
 				, a.code as 'code_analytique'
 				, a.pourcentage as 'pourcentage'
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
@@ -132,32 +129,124 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			print $sql_anal;
 		}
 		
+		$nb_parts=0;
+		$new_code_compta=0;
 		$ATMdb2->Execute($sql_anal);
 		while($row2 = $ATMdb2->Get_line()) {
+			$ligne_id_new = $row2->rowid;
+			
+			if($new_code_compta){
+				if($ligne_id_new!=$ligne_id_old){
+					array_pop($TLignes);
+					
+					$type_compte 		= 	'A';
+					$montant_anal		=	number_format($montant-($montant_anal*($nb_parts-1)),2);
+					
+					$TLignes[] = array(
+						'RES'
+						,date('dmy')
+						,'FF'
+						,$code_compta
+						,$type_compte
+						,$code_analytique
+						,''
+						,'RESSOURCE '.date('m/Y')
+						,'V'
+						,date('dmy')
+						,$sens
+						,$montant_anal
+						,'N'
+						,''
+						,''
+						,'EUR'
+					);
+					
+					$nb_parts=0;
+					$new_code_compta=0;
+				}
+			}
+			
+			$ligne_id_old		=	$ligne_id_new;
 			$type_compte 		= 	'A';
 			$code_analytique	=	$row2->code_analytique;
 			$pourcentage		=	$row2->pourcentage;
-			$montant			=	$montant*($pourcentage/100);
+			$montant 			= 	$row2->coutEntrepriseHT;
+			$montant_anal		=	number_format($montant*($pourcentage/100),2);
 			
-			$TLignes[] = array(
-				'RES'
-				,$date
-				,'FF'
-				,$code_compta
-				,$type_compte
-				,$code_analytique
-				,''
-				,'RESSOURCE '.$date_mois.'/'.$date_annee
-				,'V'
-				,date('dmy')
-				,$sens
-				,$montant
-				,'N'
-				,''
-				,''
-				,'EUR'
-			);
+			if(!empty($code_analytique)) {
+				$TLignes[] = array(
+					'RES'
+					,date('dmy')
+					,'FF'
+					,$code_compta
+					,$type_compte
+					,$code_analytique
+					,''
+					,'RESSOURCE '.date('m/Y')
+					,'V'
+					,date('dmy')
+					,$sens
+					,$montant_anal
+					,'N'
+					,''
+					,''
+					,'EUR'
+				);
+				$nb_parts++;
+			}
+			
+			$new_code_compta=1;
 		}
+
+		array_pop($TLignes);
+		
+		$type_compte = 'A';
+		$montant_anal =	number_format($montant-($montant_anal*($nb_parts-1)),2);
+		
+		$TLignes[] = array(
+			'RES'
+			,date('dmy')
+			,'FF'
+			,$code_compta
+			,$type_compte
+			,$code_analytique
+			,''
+			,'RESSOURCE '.date('m/Y')
+			,'V'
+			,date('dmy')
+			,$sens
+			,$montant_anal
+			,'N'
+			,''
+			,''
+			,'EUR'
+		);
+	}
+
+	/**----**********************----**/
+	/**----**** Ligne de TVA ****----**/
+	/**----**********************----**/
+				
+	$sql="SELECT CAST(SUM(e.coutEntrepriseTTC) as DECIMAL(16,2)) as coutEntrepriseTTC, 
+				CAST(SUM(e.coutEntrepriseHT) as DECIMAL(16,2)) as coutEntrepriseHT 
+	FROM ".MAIN_DB_PREFIX."rh_evenement as e
+	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
+	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
+	WHERE t.fk_rh_ressource_type = ".$idVoiture."
+	AND r.typeVehicule = 'vp'
+	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+	AND e.entity = ".$entity;
+	
+	if(isset($_REQUEST['DEBUG'])) {
+		print $sql;
+	}
+	
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$total_tva	=	$ATMdb->Get_field('coutEntrepriseTTC') - $ATMdb->Get_field('coutEntrepriseHT');
+		
+		$line = array('RES', date('dmy'), 'FF', '445660', 'G', '', '', 'RESSOURCE '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva, 'N', '', '', 'EUR', '', '');
+		$TLignes[]=$line;
 	}
 	
 	/**----***********************----**/
@@ -200,13 +289,13 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	
 		$TLignes[] = array(
 			'RES'
-			,$date
+			,date('dmy')
 			,'FF'
 			,$code_compta
 			,$type_compte
 			,$compte_tiers
 			,''
-			,'RESSOURCE '.$date_mois.'/'.$date_annee
+			,'RESSOURCE '.date('m/Y')
 			,'V'
 			,date('dmy')
 			,$sens
