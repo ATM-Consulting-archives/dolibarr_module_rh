@@ -12,14 +12,15 @@ llxHeader('','Vérification des concordances entre contrats et factures des véh
 
 print dol_get_fiche_head(array()  , '', 'Vérification');
 
-$plagedeb = isset($_REQUEST['plagedebut']) ? $_REQUEST['plagedebut'] : date("d/m/Y",time()-3600*24*31*12);
-$date_debut = mktime(0,0,0,substr($plagedeb, 3,2),substr($plagedeb, 0,2), substr($plagedeb, 6,4));
-$plagefin = isset($_REQUEST['plagefin']) ? $_REQUEST['plagefin'] : date("d/m/Y", time()+3600*24*31*12);
-$date_fin = mktime(0,0,0,substr($plagefin, 3,2),substr($plagefin, 0,2), substr($plagefin, 6,4));
+$plagedeb = isset($_REQUEST['plagedebut']) ? $_REQUEST['plagedebut'] : date("d/m/Y",time()-3600*24*30*12);
+$date_debut = dateToInt($plagedeb);
+
+$plagefin = isset($_REQUEST['plagefin']) ? $_REQUEST['plagefin'] : date("d/m/Y", time()+3600*24*30*12);
+$date_fin = dateToInt($plagefin);
 
 $incoherance = isset($_REQUEST['incoherance']) ? $_REQUEST['incoherance'] : 1 ;
 
-$TRessource = getTab($ATMdb, $plagedeb, $plagefin,$incoherance);
+$TRessource = getTab($ATMdb, $date_debut, $date_fin,$incoherance);
 
 $form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 $form->Set_typeaff('edit');
@@ -44,10 +45,9 @@ $form->end();
 llxFooter();
 
 
-function getTab(&$ATMdb, $plagedeb, $plagefin,$incoherance){
+function getTab(&$ATMdb, $deb, $fin,$incoherance){
 	
-	$deb = dateToInt($plagedeb);
-	$fin = dateToInt($plagefin);
+
 	
 	$idVoiture = getIdType('voiture');
 	
@@ -70,18 +70,12 @@ function getTab(&$ATMdb, $plagedeb, $plagefin,$incoherance){
 	
 	//chargement des contrats
 	$TContrats = array();
-	$sql="SELECT rowid, loyer_TTC, assurance, entretien, date_debut, date_fin, fk_tier_fournisseur
-		FROM ".MAIN_DB_PREFIX."rh_contrat` 
-		WHERE entity=".$conf->entity."
-		";
+	$sql="SELECT rowid, loyer_TTC, fk_tier_fournisseur
+		FROM ".MAIN_DB_PREFIX."rh_contrat` ";
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
-		$date_debut = mktime(0,0,0,substr($row->date_debut,5,2),substr($row->date_debut,8,2),substr($row->date_debut,0,4));
-		$date_fin = mktime(0,0,0,substr($row->date_fin,5,2),substr($row->date_fin,8,2),substr($row->date_fin,0,4));
 		$TContrats[$row->rowid] = array(
-			'loyer'=>$row->loyer_TTC,2
-			,'date_debut'=>date("d/m/Y", $date_debut)
-			,'date_fin'=>date("d/m/Y", $date_fin)
+			'loyer'=>$row->loyer_TTC
 			,'fk_soc'=>$row->fk_tier_fournisseur
 			);
 	}
@@ -115,35 +109,24 @@ function getTab(&$ATMdb, $plagedeb, $plagefin,$incoherance){
 	$sql="SELECT rowid, fk_rh_ressource, date_debut , coutEntrepriseTTC 
 		FROM ".MAIN_DB_PREFIX."rh_evenement 
 		WHERE type='factureloyer'
-		AND date_debut>= '".date("Y-m-d",$deb)."' AND date_fin<='".date("Y-m-d",$fin)." ' ";
+		AND date_debut>= '".date("Y-m-d",$deb)." 00:00:00' AND date_debut<='".date("Y-m-d",$fin)." 00:00:00' ";
+	//ECHO $sql.'<br>';
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
-		$TFactures[$row->fk_rh_ressource] = array(
+		$TFactures[] = array(
 		'cout'=>$row->coutEntrepriseTTC
 		,'date'=>date("d/m/Y",date2ToInt($row->date_debut))
+		,'fk_rh_ressource'=>$row->fk_rh_ressource
+		,'id'=>$row->rowid
 		);
 	}
 	//print_r($TFactures);exit();
 	
-	
-	
-	
-	
 	$TRetour = array();
-	$texte = '';
 	$cpt = 0;
-	foreach ($TFactures as $fk_rh_ressource => $facture) {
-		
-		$voiture = $TVoitures[$fk_rh_ressource];
-		$contrat = $TContrats[$TAssociations[$fk_rh_ressource]];
-		
-		if (empty($voiture)){
-			echo 'pas de voiture n°'.$value['voiture'].'<br>';		
-		}
-		else if (empty($contrat)){
-			echo 'pas de contrat n°'.$value['contrat'].'<br>';		
-		}
-		else{
+	foreach ($TFactures as $facture) {
+		$voiture = $TVoitures[$facture['fk_rh_ressource']];
+		$contrat = $TContrats[$TAssociations[$facture['fk_rh_ressource']]];
 			if ($incoherance || ($facture['cout']!=$contrat['loyer']) ){
 				$cpt ++;
 				$TRetour[] = array(
@@ -158,8 +141,7 @@ function getTab(&$ATMdb, $plagedeb, $plagefin,$incoherance){
 					,'date'=>$facture['date']
 					,'montantfacture'=>($facture['cout']==$contrat['loyer']) ? number_format($facture['cout'],2).' €' : '<b>'.number_format($facture['cout'],2).' €</b>'
 				);
-			}
-		}		
+		}
 	}
 	
 	//print_r($TRetour);
@@ -168,15 +150,15 @@ function getTab(&$ATMdb, $plagedeb, $plagefin,$incoherance){
 
 
 /*
- * prend un format d/m/Y et renvoie un timestamp
+ * prend un format dd/mm/YYYY et renvoie un timestamp
  */
 function dateToInt($chaine){
 	return mktime(0,0,0,substr($chaine,3,2),substr($chaine,0,2),substr($chaine,6,4));
 }
 
 /*
- * prend un format Y-m-d et renvoie un timestamp
+ * prend un format YYYY-mm-dd et renvoie un timestamp
  */
 function date2ToInt($chaine){
-	return mktime(0,0,0,substr($chaine,6,2),substr($chaine,8,2),substr($chaine,0,4));
+	return mktime(0,0,0,substr($chaine,5,2),substr($chaine,8,2),substr($chaine,0,4));
 }
