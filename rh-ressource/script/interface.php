@@ -77,6 +77,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ue ON (u.rowid = ue.fk_object)
 	WHERE t.fk_rh_ressource_type = ".$idVoiture."
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+	AND r.fk_entity_utilisatrice = e.entity
 	AND e.entity = ".$entity."
 	GROUP BY t.codecomptable";
 	
@@ -118,10 +119,12 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 				, a.code as 'code_analytique'
 				, a.pourcentage as 'pourcentage'
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
 		WHERE t.fk_rh_ressource_type = ".$idVoiture."
 		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+		AND r.fk_entity_utilisatrice = e.entity
 		AND e.entity = ".$entity."
 		AND t.codecomptable = ".$code_compta;
 		
@@ -221,32 +224,37 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			,''
 			,'EUR'
 		);
+		
+		$ressource_exist=1;
 	}
 
 	/**----**********************----**/
 	/**----**** Ligne de TVA ****----**/
 	/**----**********************----**/
-				
-	$sql="SELECT CAST(SUM(e.coutEntrepriseTTC) as DECIMAL(16,2)) as coutEntrepriseTTC, 
-				CAST(SUM(e.coutEntrepriseHT) as DECIMAL(16,2)) as coutEntrepriseHT 
-	FROM ".MAIN_DB_PREFIX."rh_evenement as e
-	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
-	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
-	WHERE t.fk_rh_ressource_type = ".$idVoiture."
-	AND r.typeVehicule = 'vp'
-	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
-	AND e.entity = ".$entity;
 	
-	if(isset($_REQUEST['DEBUG'])) {
-		print $sql;
-	}
-	
-	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		$total_tva	=	$ATMdb->Get_field('coutEntrepriseTTC') - $ATMdb->Get_field('coutEntrepriseHT');
+	if($ressource_exist){
+		$sql="SELECT CAST(SUM(e.coutEntrepriseTTC) as DECIMAL(16,2)) as coutEntrepriseTTC, 
+					CAST(SUM(e.coutEntrepriseHT) as DECIMAL(16,2)) as coutEntrepriseHT 
+		FROM ".MAIN_DB_PREFIX."rh_evenement as e
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
+		WHERE t.fk_rh_ressource_type = ".$idVoiture."
+		AND r.typeVehicule = 'vp'
+		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+		AND r.fk_entity_utilisatrice = e.entity
+		AND e.entity = ".$entity;
 		
-		$line = array('RES', date('dmy'), 'FF', '445660', 'G', '', '', 'RESSOURCE '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva, 'N', '', '', 'EUR', '', '');
-		$TLignes[]=$line;
+		if(isset($_REQUEST['DEBUG'])) {
+			print $sql;
+		}
+		
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$total_tva	=	$ATMdb->Get_field('coutEntrepriseTTC') - $ATMdb->Get_field('coutEntrepriseHT');
+			
+			$line = array('RES', date('dmy'), 'FF', '445660', 'G', '', '', 'RESSOURCE '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva, 'N', '', '', 'EUR', '', '');
+			$TLignes[]=$line;
+		}
 	}
 	
 	/**----***********************----**/
@@ -268,7 +276,8 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ue ON (u.rowid = ue.fk_object)
 	WHERE t.fk_rh_ressource_type = ".$idVoiture."
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
-	AND e.entity <> ".$entity;
+	AND r.fk_entity_utilisatrice <> e.entity
+	AND e.entity = ".$entity;
 	
 	if(isset($_REQUEST['DEBUG'])) {
 		print $sql;
