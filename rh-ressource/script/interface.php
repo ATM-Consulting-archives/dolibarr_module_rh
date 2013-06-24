@@ -293,7 +293,6 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	}
 	
 	$ATMdb->Execute($sql);
-	$total = 0;
 	
 	while($row = $ATMdb->Get_line()) {
 		$date = $row->date_debut;
@@ -311,7 +310,6 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		}else{
 			$compte_tiers=$TEntity[$entity];
 		}
-		$total += $montant;
 	
 		$TLignes[] = array(
 			'RES'
@@ -332,7 +330,6 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			,'EUR'
 			);
 	}
-	//echo 'final : '.$total.'   ';
 	
 	return $TLignes;
 	
