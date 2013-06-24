@@ -64,6 +64,7 @@ class RessourceTest extends PHPUnit_Framework_TestCase
 	public function testcreateRessource()
     {
     	global $ress;
+		$ress = new TRH_Ressource;
 		$this->assertNotNull($ress);
 		print __METHOD__."\n";
     }
@@ -133,6 +134,7 @@ class RessourceTest extends PHPUnit_Framework_TestCase
 	public function testLoad_contrat(){
 		global $ress, $ATMdb;
 		
+		$ress->TListeContrat = array(0=>1);
 		$ress->load_contrat($ATMdb);
 		$this->assertNotEmpty($ress->TContratAssocies);
 		$this->assertNotEmpty($ress->TTVA);

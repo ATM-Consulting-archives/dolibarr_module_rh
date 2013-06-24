@@ -101,6 +101,17 @@ class TypeRessourceTest extends PHPUnit_Framework_TestCase
 		print __METHOD__."\n";
 	}
 	
+	public function testSaveType(){
+		global $type, $ATMdb;
+		$type->TField[]=new TRH_Ressource_field;
+		$type->libelle = 'un deux';
+		$type->code = '';
+		$type->save($ATMdb);
+		$this->assertEquals('undeux', $type->code);
+		$type->delete($ATMdb);
+				
+	}
+	
 	public function testcode_format(){
 		global $type, $ATMdb;
 		$ret = TRH_Ressource_type::code_format('Habééé o lo');

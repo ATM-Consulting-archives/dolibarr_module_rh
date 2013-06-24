@@ -12,6 +12,7 @@ class TRH_Evenement  extends TObjetStd {
 		
 		//type : accident, répération, emprunt, appel,  facture, ...
 		parent::add_champs('type','type=chaine;');
+		parent::add_champs('fk_fournisseur','type=chaine;');  //fournisseur : pointe sur llx_societe
 
 		//pour le wdCalendar
 		parent::add_champs('color','type=chaine;');

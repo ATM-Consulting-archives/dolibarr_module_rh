@@ -12,7 +12,7 @@ $get = isset($_REQUEST['get'])?$_REQUEST['get']:'emprunt';
 _get($ATMdb, $get);
 
 function _get(&$ATMdb, $case) {
-	switch ($case) {
+	switch (strtolower($case)) {
 		case 'emprunt':
 			__out( _emprunt($ATMdb, $_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
 			break;
@@ -20,17 +20,16 @@ function _get(&$ATMdb, $case) {
 			__out(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
-		case 'parcours':
-			__out(_exportVoiture($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
+		default:
+			__out(_exportVoiture($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity'],$_REQUEST['fk_fournisseur'] ));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
 		
-		default:
-			break;
+		
 	}
 }
 
-function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
+function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseur){
 	$TLignes = array();
 	
 	$date_debut=explode("/", $date_debut);
@@ -78,6 +77,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	WHERE t.fk_rh_ressource_type = ".$idVoiture."
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 	AND e.entity = ".$entity."
+	AND e.fk_fournisseur =".$fk_fournisseur."
 	GROUP BY t.codecomptable";
 	
 	if(isset($_REQUEST['DEBUG'])) {
@@ -124,6 +124,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		WHERE t.fk_rh_ressource_type = ".$idVoiture."
 		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 		AND e.entity = ".$entity."
+		AND e.fk_fournisseur =".$fk_fournisseur."
 		AND t.codecomptable = ".$code_compta;
 		
 		if(isset($_REQUEST['DEBUG'])) {
@@ -239,7 +240,8 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		WHERE t.fk_rh_ressource_type = ".$idVoiture."
 		AND r.typeVehicule = 'VP'
 		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
-		AND e.entity = ".$entity;
+		AND e.entity = ".$entity."
+		AND e.fk_fournisseur =".$fk_fournisseur;
 		
 		
 		if(isset($_REQUEST['DEBUG'])) {
@@ -286,6 +288,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 	WHERE t.fk_rh_ressource_type = ".$idVoiture."
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+	AND e.fk_fournisseur =".$fk_fournisseur."
 	AND e.entity = ".$entity;
 	
 	if(isset($_REQUEST['DEBUG'])) {
