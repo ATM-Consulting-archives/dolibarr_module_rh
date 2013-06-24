@@ -252,26 +252,9 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			background-color:#C03000;
 		}
 		.vert{
-			background-color:#6CEA9A;
+			background-color:#D8DFDE;
 		}
-		/*.matinR{
-			background-color:#C03000;
-			width:50%;
-		}
-		.apresmidiR{
-			background-color:#C03000;
-			width:50%;
-
-		}
-		.matinV{
-			background-color:#6CEA9A;
-			width:50%;
-		}
-		.apresmidiV{
-			background-color:#6CEA9A;
-			width:50%;
-
-		}*/
+		
 	</style><?
 	echo $form->end_form();
 	

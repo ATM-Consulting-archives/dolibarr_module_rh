@@ -330,9 +330,9 @@ function _listeValidation(&$ATMdb, &$absence) {
  	$sql=" SELECT DISTINCT fk_usergroup, nbjours, validate_himself, level
  			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe`
 			WHERE fk_user=".$user->id." 
-			AND type='Conges' ";
+			AND type='Conges' AND pointeur !=1 ";
 			//AND entity IN (0,".$conf->entity.")";
-	//echo $sql;
+
 	$ATMdb->Execute($sql);
 	$TabGroupe=array();
 	$k=0;
@@ -612,7 +612,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
 	}
-	else if($user->rights->absence->myactions->creerAbsencePointage){
+	/*else if($user->rights->absence->myactions->creerAbsencePointage){
 		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s  
 			WHERE v.fk_user=".$user->id." 
@@ -622,8 +622,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			AND v.pointeur=1
 			";
 			//echo $sqlReqUser;exit;
-		$droitsCreation=1;
-	}else $droitsCreation=2; //on n'a pas les droits de création
+		$droitsCreation=1;*/
+	else $droitsCreation=2; //on n'a pas les droits de création
 	if($droitsCreation==1){
 		$sql.=" ORDER BY name";
 		$ATMdb->Execute($sql);

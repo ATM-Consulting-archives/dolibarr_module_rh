@@ -80,9 +80,10 @@
 
 <script>
 	$(document).ready( function(){
-
-		$('#pointeur').hide();
-      	$('#pointeur2').hide();
+		if($("#type option:selected").val()!="Conges"){
+			$('#pointeur').hide();
+	      	$('#pointeur2').hide();
+	   }
       		  		
 		$('#type').change(function () {
       		  if($("#type option:selected").val()=="Conges"){
