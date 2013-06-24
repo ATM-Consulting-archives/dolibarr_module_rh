@@ -372,7 +372,6 @@ class TRH_Absence extends TObjetStd {
 		$diff=$date_fin-$date_debut;
 		$duree=intval($diff/3600/24);
 		//echo $duree;exit;
-
 		//prise en compte du matin et après midi
 		
 		if($absence->ddMoment=="matin"&&$absence->dfMoment=="apresmidi"){
@@ -380,6 +379,7 @@ class TRH_Absence extends TObjetStd {
 			$duree+=1;
 		}
 		else if($absence->ddMoment==$absence->dfMoment){
+			
 			$duree+=0.5;
 		}
 
