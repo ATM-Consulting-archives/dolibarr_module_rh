@@ -9,10 +9,10 @@ class ActionsAbsence
       *  @return       void 
       */ 
       
-    function formObjectOptions($parameters, &$object, &$action, $idUser, $conf, $dateC, $hookmanager) 
+    function formObjectOptions($parameters, &$object, &$action, $idUser) 
     {
     	 
-        global $db,$user;
+        global $db,$user, $conf;
 		$annee=date('Y');
 		$anneePrec=$annee-1;
 		
@@ -38,11 +38,10 @@ class ActionsAbsence
 		,rttAcquisMensuelTotal, dureeN, congesResteNM1, dureeNM1, rttMetier, rttCumulePris, 
 		rttNonCumulePris, rttCumuleReportNM1, rttNonCumuleReportNM1, rttCumuleTotal, 
 		rttNonCumuleTotal, rttCumuleAcquis, rttNonCumuleAcquis) 
-		VALUES('".$parameters['idUser']."', '" .$parameters['dateC']."','".$parameters['conf']."','".$parameters['idUser']."','0', '0',
+		VALUES('".$parameters['idUser']."', '" .$parameters['dateC']."','".$conf->entity."','".$parameters['idUser']."','0', '0',
 		 '0', '".$annee."', '25', '0', '0', '0', '0','".$anneePrec."', 'Annuel', '0', '5', '7', '".$annee."', ".$congesAcquisMensuelInit.", 
 		 '".$date_congesClotureInit."', '".$date_rttClotureInit."' 
 		 ,'0', '0', '0', '0', 'noncadre37cpro', '0', '0', '0', '0', '5', '7', '5', '7')";
-		 
 		
 		$db->query($sqlcompteur);
 		
@@ -66,6 +65,7 @@ class ActionsAbsence
 		'2013-06-01 0:00:00','2013-06-01 0:00:00','2013-06-01 0:00:00','2013-06-01 0:00:00',
 		'2013-06-01 0:00:00','2013-06-01 0:00:00','2013-06-01 0:00:00','2013-06-01 0:00:00', 37, ".$conf->entity.")";
 		
+
 		$db->query($sqledt);
 		
 		return 1;
