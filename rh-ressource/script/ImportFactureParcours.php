@@ -223,8 +223,7 @@ function chargeVoiture(&$ATMdb){
 function getIdParcours(&$ATMdb){
 	global $conf;
 	$idParcours = 0;
-	$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe 
-	WHERE entity=".$conf->entity;
+	$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe ";
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		if (strtolower($ATMdb->Get_field('nom')) == 'parcours'){ 
