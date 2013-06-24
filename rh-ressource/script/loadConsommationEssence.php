@@ -14,7 +14,7 @@ $TVoiture = getRessource($idVoiture);
 $plagedeb = !empty($_REQUEST['plagedebut']) ? dateToInt($_REQUEST['plagedebut']) : (time()-31532400);
 $plagefin = !empty($_REQUEST['plagefin']) ? dateToInt($_REQUEST['plagefin']) : (time()+31532400);
 $fk_user = !empty($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : 0 ;
-$limite = (isset($_REQUEST['limite'])) ? $_REQUEST['limite'] : 0;
+$limite = (isset($_REQUEST['limite'])) ? floatval($_REQUEST['limite']) : 0;
 //$plagedeb = !empty($_REQUEST['plagedebut']) ? date("Y-m-d 00:00:00", dateToInt($_REQUEST['plagedebut'])) : date("Y-m-d 00:00:00",time()-31532400);
 //$plagefin = !empty($_REQUEST['plagefin']) ? date("Y-m-d 00:00:00", dateToInt($_REQUEST['plagefin'])) : date("Y-m-d  00:00:00", time()+31532400);
 
@@ -68,6 +68,18 @@ foreach ($TPleins as $idcarte => $value) {
 		if ($memKm!=0){
 			$conso = number_format((100*$memLitre)/($km-$memKm),2);
 			$consotexte = $conso.'L/100km';
+			$diffkmtexte = ($km-$memKm).'km';
+			$essencetexte = number_format($tab['litre'],2).' L';
+			
+			if ($conso>=$limite){$depassement = true;}
+			
+			//on met en gras si il y a dépassement.
+			if ($depassement && $limite>0){
+				$consotexte = '<b>'.$consotexte.'</b>'; 
+				$diffkmtexte = '<b>'.$diffkmtexte.'</b>'; 
+				$essencetexte = '<b>'.$essencetexte.'</b>';
+			}
+			
 		}
 		//ajout de la conso instantanée
 		if (($tab['date_debut']<= $plagefin) && ($tab['date_debut']>= $plagedeb)){
@@ -75,8 +87,8 @@ foreach ($TPleins as $idcarte => $value) {
 				'nom'=>$TCartes[$idcarte]
 				,'vehicule'=>$TVoiture[$tab['fk_rh_ressource']]
 				,'km'=>$tab['km'].' km'
-				,'diffkm' =>  ($memKm!=0) ? $km-$memKm.'km' : ''
-				,'essence'=>number_format($tab['litre'],2).' L'
+				,'diffkm' =>  ($memKm!=0) ? $diffkmtexte : ''
+				,'essence'=>$essencetexte
 				,'conso'=> ($memKm!=0) ? $consotexte : ''
 				,'user'=>$TUser[$tab['fk_user']]
 				,'date'=> $tab['date']
@@ -93,14 +105,14 @@ foreach ($TPleins as $idcarte => $value) {
 	$kmfin = max(array_keys($value));
 	$diffkm = $kmfin-$kmdebut;
 	if ($diffkm>0){
-		$Moyconso = number_format((100*$sommeEssence)/($diffkm),2);
-		if ($Moyconso>=$limite){ $depassement = true; }
+		//$Moyconso = number_format((100*$sommeEssence)/($diffkm),2);
+		
 		$TTempLigne[] = array(
 				'nom'=>''
 				,'vehicule'=>''
 				,'km'=>''
 				,'diffkm' =>'Total: '.$diffkm.'km'
-				,'conso'=> ($limite>0) ? '<b style="color:red;">Moyenne : '.$Moyconso.'L/100km</b>' : 'Moyenne : '.$Moyconso.'L/100km'
+				,'conso'=> ''//($limite>0) ? '<b style="color:red;">Moyenne : '.$Moyconso.'L/100km</b>' : 'Moyenne : '.$Moyconso.'L/100km'
 				,'essence'=>'Total: '.$sommeEssence.'L'
 				,'date'=> ''
 				,'user'=>''

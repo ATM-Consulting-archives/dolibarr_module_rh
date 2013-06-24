@@ -270,13 +270,6 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][5] = 'voirPlanningUser';
 		
 		$r++;
-		$this->rights[$r][0] = 7116;
-		$this->rights[$r][1] = 'Créer une absence pour le pointage';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'myactions';
-		$this->rights[$r][5] = 'creerAbsencePointage';
-		
-		$r++;
 		$this->rights[$r][0] = 7117;
 		$this->rights[$r][1] = 'Visualiser les fichiers des absences';
 		$this->rights[$r][3] = 1;
