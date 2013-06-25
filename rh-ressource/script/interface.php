@@ -1,6 +1,7 @@
 <?php
 
 define('INC_FROM_CRON_SCRIPT', true);
+set_time_limit(0);
 require('../config.php');
 require('../lib/ressource.lib.php');
 
@@ -21,15 +22,15 @@ function _get(&$ATMdb, $case) {
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
 		default:
-			__out(_exportVoiture($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity'],$_REQUEST['fk_fournisseur'] ));
-			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
+			__out(_exportVoiture($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity'],
+						$_REQUEST['fk_fournisseur'], $_REQUEST['idTypeRessource'] ));
 			break;
 		
 		
 	}
 }
 
-function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseur){
+function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseur, $idTypeRessource){
 	$TLignes = array();
 	
 	$date_debut=explode("/", $date_debut);
@@ -74,7 +75,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 		LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ue ON (u.rowid = ue.fk_object)
-	WHERE t.fk_rh_ressource_type = ".$idVoiture."
+	WHERE t.fk_rh_ressource_type = ".$idTypeRessource."
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 	AND e.entity = ".$entity."
 	AND e.fk_fournisseur =".$fk_fournisseur."
@@ -121,7 +122,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
-		WHERE t.fk_rh_ressource_type = ".$idVoiture."
+		WHERE t.fk_rh_ressource_type = ".$idTypeRessource."
 		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 		AND e.entity = ".$entity."
 		AND e.fk_fournisseur =".$fk_fournisseur."
@@ -237,9 +238,11 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
-		WHERE t.fk_rh_ressource_type = ".$idVoiture."
-		AND r.typeVehicule = 'VP'
-		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+		WHERE t.fk_rh_ressource_type = ".$idTypeRessource." ";
+		
+		if ($idTypeRessource==$idVoiture){$sql .= "AND r.typeVehicule = 'VP' ";}
+		
+		$sql .= "AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 		AND e.entity = ".$entity."
 		AND e.fk_fournisseur =".$fk_fournisseur;
 		
@@ -286,7 +289,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
-	WHERE t.fk_rh_ressource_type = ".$idVoiture."
+	WHERE t.fk_rh_ressource_type = ".$idTypeRessource."
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 	AND e.fk_fournisseur =".$fk_fournisseur."
 	AND e.entity = ".$entity;
@@ -303,7 +306,10 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		$date_annee = $row->annee_date_debut;
 		//un VU : on prend le HT
 		//un VP on prend le TTC
-		$montant = (strtoupper($row->typeVehicule) == 'VP') ? $row->coutEntrepriseTTC : $row->coutEntrepriseHT;
+		if ($idTypeRessource==$idVoiture){
+			$montant = (strtoupper($row->typeVehicule) == 'VP') ? $row->coutEntrepriseTTC : $row->coutEntrepriseHT;}
+		else {
+			$montant = $row->coutEntrepriseTTC;}
 		$sens = 'C';
 		$code_compta = '425902';
 		$type_compte = 'X';
