@@ -397,5 +397,19 @@ function ressourceIsEmpruntee(&$ATMdb, $idRessource, $jour){
 		}
 		return 0;
 }	
+
+
+function getIdSociete(&$ATMdb, $nomMinuscule){
+	global $conf;
+	$idParcours = 0;
+	$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe ";
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		if (strtolower($ATMdb->Get_field('nom')) == $nomMinuscule){ 
+			return $ATMdb->Get_field('rowid');}}
+	
+	return false;
+}
+
 	
 	

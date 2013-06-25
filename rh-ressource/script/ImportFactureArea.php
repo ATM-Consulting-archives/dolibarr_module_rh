@@ -26,6 +26,8 @@ while($ATMdb->Get_line()) {
 
 		
 $idVoiture = getIdTypeVoiture($ATMdb);
+$idArea = getIdSociete($ATMdb, 'area');
+if (!$idArea){echo 'Pas de fournisseur (tiers) du nom de Area !';exit();}
 if (empty($nomFichier)){$nomFichier = "./fichierImports/fichier facture area.CSV";}
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
@@ -81,6 +83,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->numFacture = $infos[4];
 				$temp->compteFacture = $infos[13];
 				$temp->motif = htmlentities('Trajet de '.strtolower($infos[14]).' à '.strtolower($infos[19]), ENT_COMPAT , 'UTF-8');
+				$temp->fk_fournisseur = $idArea;
+				$temp->entity = $entity;
 				
 				if ($infos[15]=='WE'){
 					$temp->commentaire = 'Utilisation de la carte durant un WE !';

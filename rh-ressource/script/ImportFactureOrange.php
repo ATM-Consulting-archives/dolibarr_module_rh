@@ -10,6 +10,7 @@ require('../lib/ressource.lib.php');
 ini_set('memory_limit','512M'); //taille mémoire limitée
 set_time_limit(0); //durée d'execution illimitée.
 global $conf;
+$entity = (isset($_REQUEST['entity'])) ? $_REQUEST['entity'] : $conf->entity;
 $ATMdb=new TPDOdb;
 // relever le point de départ
 $timestart=microtime(true);
@@ -19,6 +20,8 @@ $message = '';
 
 //on charge quelques listes pour avoir les clés externes.
 $idCarteSim = getIdType('cartesim');
+$idOrange = getIdSociete($ATMdb, 'orange');
+if (!$idOrange){echo 'Pas de fournisseur (tiers) du nom de Orange !';exit();}
 $TNumeroInexistants = array();
 $TCompteurs = array();
 
@@ -44,7 +47,7 @@ foreach ($TNumero as $numId => $rowid) {
 
 $TUser = array();
 $TRowidUser = array();
-$sql="SELECT rowid, name, firstname, login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
+$sql="SELECT rowid, name, firstname, login FROM ".MAIN_DB_PREFIX."user";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
@@ -54,9 +57,7 @@ while($ATMdb->Get_line()) {
 
 $TGroups= array();
 $sql="SELECT fk_user, fk_usergroup
-	FROM ".MAIN_DB_PREFIX."usergroup_user
-	WHERE entity IN (0,".$conf->entity.")
-	";
+	FROM ".MAIN_DB_PREFIX."usergroup_user";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TGroups[$ATMdb->Get_field('fk_usergroup')][] = $ATMdb->Get_field('fk_user');
@@ -253,8 +254,8 @@ foreach ($TUser as $nom => $id) {
 		/*$fact->dureeE = $TCompteurs[$id]['consoExterne'];
 		$fact->dureeI = $TCompteurs[$id]['consoInterne'];
 		$fact->duree = $TCompteurs[$idUser]['conso'];*/ 
-		
-		
+		$fact->entity = $entity;
+		$fact->fk_fournisseur = $idOrange;
 		$fact->save($ATMdb);		
 		$cptFacture++;
 		

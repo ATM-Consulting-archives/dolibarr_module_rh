@@ -33,7 +33,8 @@ while($ATMdb->Get_line()) {
 
 $idVoiture = getIdType('voiture');
 $idCarteTotal = getIdType('cartetotal');
-
+$idTotal = getIdSociete($ATMdb, 'total');
+if (!$idTotal){echo 'Pas de fournisseur (tiers) du nom de Total !';exit();}
 
 $TRessource = getIDRessource($ATMdb, $idVoiture);
 
@@ -133,7 +134,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 									'.$infos[18].' Litres d\'essence.';
 									
 				}
-				$temp->entity = $entity;
+				
 				$temp->fk_user = $TAttribution[$plaque];
 				$temp->set_date('date_debut', $infos[15]);
 				$temp->set_date('date_fin', $infos[15]);
@@ -147,8 +148,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->compteFacture = $infos[13];
 				$temp->litreEssence = floatval(strtr($infos[18],',','.'));
 				$temp->kilometrage = intval($infos[31]);
-				
-				
+				$temp->fk_fournisseur = $idTotal;
+				$temp->entity = $entity;
 				$temp->save($ATMdb);
 				
 				$cpt++;

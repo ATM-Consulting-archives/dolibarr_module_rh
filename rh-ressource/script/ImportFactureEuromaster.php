@@ -25,6 +25,8 @@ while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
 }
 $idVoiture = getIdType('voiture');
+$idEuromaster = getIdSociete($ATMdb, 'euromaster');
+if (!$idEuromaster){echo 'Pas de fournisseur (tiers) du nom de Euromaster !';exit();}
 $TRessource = chargeVoiture($ATMdb);
 $TNonAttribuee = array();
 $TNoPlaque = array();
@@ -62,7 +64,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$temp->numFacture = $infos[22];
 			$temp->motif = $infos[8];
 			$temp->commentaire = $infos[7];
-			$temp->entity =$entity;
+			$temp->fk_fournisseur = $idEuromaster;
+			$temp->entity = $entity;
 			//$ttva = array_keys($temp->TTVA , floatval(strtr($infos[21], ',','.')));
 			//$temp->TVA = $ttva[0];
 			//$temp->compteFacture = $infos[13];
