@@ -88,7 +88,7 @@ foreach ($TPleins as $idcarte => $value) {
 				,'vehicule'=>$TVoiture[$tab['fk_rh_ressource']]
 				,'km'=>$tab['km'].' km'
 				,'diffkm' =>  ($memKm!=0) ? $diffkmtexte : ''
-				,'essence'=>$essencetexte
+				,'essence'=>($memKm!=0) ? $essencetexte : ''
 				,'conso'=> ($memKm!=0) ? $consotexte : ''
 				,'user'=>$TUser[$tab['fk_user']]
 				,'date'=> $tab['date']
