@@ -93,7 +93,7 @@
 	
 function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	global $conf,$user;	
-	llxHeader('','Liste des emprunts');
+	llxHeader('','Liste des événements');
 	
 	dol_fiche_head(ressourcePrepareHead($ressource, 'ressource')  , 'evenement', 'Ressource');
 	
@@ -123,18 +123,6 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutTTC as DECIMAL(16,2)), ' €') as 'Coût TTC', 
 				CONCAT (CAST(e.coutEntrepriseTTC as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise TTC', t.taux as 'TVA' ";
 			$jointureType = " AND e.type<>'emprunt' ";
-			break;
-		 case 'appel' :
-			$jointureChamps ="DATE(e.date_debut) as 'Date', e.appelHeure as 'Heure', e.appelNumero as 'Numéro appelé', 
-				e.appelDureeReel as 'Durée/Volume réel', e.appelDureeFacturee as 'Durée/Volume facturé',
-				e.motif as 'Motif', CONCAT (CAST(e.coutHT as DECIMAL(16,2)), ' €') as 'Montant HT' ";
-			$jointureType = " AND e.type='appel' ";
-			break;
-		case 'facture':		
-			$jointureChamps ="DATE(e.date_debut) as 'Date', DATE(e.date_fin) as 'Traité le', e.numFacture as 'Facture',
-				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutTTC as DECIMAL(16,2)), ' €') as 'Coût TTC', 
-				t.taux as 'TVA', CONCAT (CAST(e.coutEntrepriseHT as DECIMAL(16,2)), ' €') as 'Coût HT' ";
-			$jointureType = " AND e.type='facture' ";
 			break;
 		default :
 			$jointureChamps ="DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin',
@@ -177,7 +165,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 			,'Supprimer'=>"<a style=\"cursor:pointer;\" onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=".$ressource->getId()."&idEven=@ID@&type=".$type."&action=deleteEvent'};\"><img src=\"./img/delete.png\"></a>"
 		)
 		,'translate'=>array('Type'=>$evenement->TType)
-		,'hide'=>array('ID', 'idUser')
+		,'hide'=>array('ID','idUser')
 		,'type'=>array(
 			'Date début'=>'date'
 			,'Date fin'=>'date'
