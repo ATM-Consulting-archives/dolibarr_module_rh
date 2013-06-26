@@ -126,7 +126,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 		AND e.entity = ".$entity."
 		AND e.fk_fournisseur =".$fk_fournisseur."
-		AND t.codecomptable = ".$code_compta;
+		AND t.codecomptable = '".$code_compta."'";
 		
 		if(isset($_REQUEST['DEBUG'])) {
 			print $sql_anal;
@@ -299,6 +299,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	}
 	
 	$ATMdb->Execute($sql);
+	$TCredits = array();
 	
 	while($row = $ATMdb->Get_line()) {
 		$date = $row->date_debut;
@@ -320,7 +321,30 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			$compte_tiers=$TEntity[$entity];
 		}
 	
-		$TLignes[] = array(
+		if (empty($TCredits[$compte_tiers])){
+			$TCredits[$compte_tiers] = array(
+				'RES'
+				,date('dmy')
+				,'FF'
+				,$code_compta
+				,$type_compte
+				,$compte_tiers
+				,''
+				,'RESSOURCE '.date('m/Y')
+				,'V'
+				,date('dmy')
+				,$sens
+				,$montant
+				,'N'
+				,''
+				,''
+				,'EUR'
+			);
+		}
+		else {
+			$TCredits[$compte_tiers][11] += $montant;
+		}
+		/*$TLignes[] = array(
 			'RES'
 			,date('dmy')
 			,'FF'
@@ -337,7 +361,11 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			,''
 			,''
 			,'EUR'
-			);
+			);*/
+	}
+	
+	foreach ($TCredits as $key => $value) {
+		$TLignes[] = $value;
 	}
 	
 	return $TLignes;
