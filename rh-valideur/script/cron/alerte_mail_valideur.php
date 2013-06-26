@@ -81,7 +81,7 @@ function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 			
 			// Send mail
 			$mail = new TReponseMail($from,$sendto,$subject,$message);
-			$mail->emailtoBcc="alexis@atm-consulting.fr";
+			//$mail->emailtoBcc="alexis@atm-consulting.fr";
 			
 		    (int)$result = $mail->send(true, 'utf-8');		
 	}

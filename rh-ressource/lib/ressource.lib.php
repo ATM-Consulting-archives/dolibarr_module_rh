@@ -360,12 +360,13 @@ function modifierLimites(&$TLimites, $fk_user, $gen,  $int, $ext, $dataIll = fal
 
 
 function send_mail_resources($subject, $message){
-	global $langs;
+	global $langs,$user;
 	
 	$langs->load('mails');
 	
 	$from = USER_MAIL_SENDER;
-	$sendto = USER_MAIL_RECEIVER;
+	//$sendto = USER_MAIL_RECEIVER;
+	$sendto = $user->email;
 
 	$mail = new TReponseMail($from,$sendto,$subject,$message);
 	
