@@ -87,25 +87,27 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		/*
 		 * Analytique
 		 */
+		
 		$sql_anal = "SELECT
 						l.rowid
-						, l.total_ht as 'total_ht'
+						,SUM( l.total_ht * IFNULL( 100, a.pourcentage ) / 100  ) as 'total_ht'
 						, a.code as 'code_analytique'
-						, a.pourcentage as 'pourcentage'
+						,u.firstname,u.name,u.rowid as 'fk_user'
 					
 					FROM ".MAIN_DB_PREFIX."ndfp_det as l
 						LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp
 						LEFT JOIN ".MAIN_DB_PREFIX."c_exp as t ON t.rowid = l.fk_exp
 						LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON a.fk_user = n.fk_user
-					
+						LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid=n.fk_user
 					WHERE n.statut = 1
 					AND n.entity IN (".$entity.")
 					AND n.type LIKE '".$type."'
 					AND (n.datev>='".$date_debut."' AND n.datev<='".$date_fin."')
 					AND t.accountancy_code = ".$code_compta."
-					
+			GROUP BY a.code			
 		";
-		
+
+			
 		if(isset($_REQUEST['DEBUG'])) {
 			print $sql_anal;
 		}
@@ -113,7 +115,26 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		$nb_parts=0;
 		$new_code_compta=0;
 		$ATMdb2->Execute($sql_anal);
+
+		$TabAna=array();		
 		while($ATMdb2->Get_line()) {
+
+			$code_anal = $ATMdb2->Get_field('code_analytique');
+//print_r($code_anal);
+ 			if( isset( $_REQUEST['withLogin'] ) && empty( $code_anal ) ) {
+				$code_anal = '<a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('firstname').' '.$ATMdb2->Get_field('name') ."</a>";
+			}
+			$TabAna[ $code_anal ] = number_format($ATMdb2->Get_field('total_ht'),2);
+		}
+
+		foreach($TabAna as $code_analytique=>$total_ht_anal) {
+		 $TabNdf[] = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht_anal, 'N', '', '', 'EUR', '', '');
+
+		}
+
+/*
+		while($ATMdb2->Get_line()) {
+			
 			$ligne_id_new		=	$ATMdb2->Get_field('rowid');
 			
 			if($new_code_compta){
@@ -152,8 +173,9 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		
 		$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht_anal, 'N', '', '', 'EUR', '', '');
 		$TabNdf[]=$line;
-		
+		*/
 		$ndf_exist=1;
+		
 	}
 	
 	/**----**********************----**/
@@ -178,7 +200,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 			
 			$line = array('NDF', date('dmy'), 'OD', '445660', 'G', '', '', 'NOTE DE FRAIS '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva_ndf, 'N', '', '', 'EUR', '', '');
 			$TabNdf[]=$line;
-		}
+ 		}
 	}
 	
 	/**----**********************----**/
