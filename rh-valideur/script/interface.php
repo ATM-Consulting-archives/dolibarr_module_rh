@@ -226,24 +226,25 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	
 	/* Equilibrage */
 	
-	$balance = 0;$nb_debit = 0;
+	$totalHT=0;
+	$totalTTC=0;
 	foreach($TabNdf as $ligne) {
 		$credit = $ligne[10];	
 		$montant = $ligne[11];
 		$type =  $ligne[4];
 		
-		if($type=='G' || $type=='X') {
-			if($credit=='C')$balance+=$montant;
-			else {
-				$nb_debit++;
-				$balance-=$montant;
-			} 
+		if($type=='G' && $credit=='D') {
+			$totalHT+=$montant;
 		}
+		else if($type=='X' && $credit=='C') {
+			$totalTTC+=$montant;	
+		}
+		
 	}
 	
 	foreach($TabNdf as &$ligne) {
 		if($ligne[3]=='445660') {
-			$ligne[11]+=$balance;
+			$ligne[11]=$totalTTC-$totalHT;
 		}
 	}
 	
