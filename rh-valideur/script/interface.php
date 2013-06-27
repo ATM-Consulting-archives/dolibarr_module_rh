@@ -227,7 +227,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	/* Equilibrage */
 	
 	$balance = 0;$nb_debit = 0;
-	foreach($TNdf as $ligne) {
+	foreach($TabNdf as $ligne) {
 		$credit = $ligne[10];	
 		$montant = $ligne[11];
 		$type =  $ligne[4];
@@ -241,7 +241,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		}
 	}
 	
-	foreach($TNdf as &$ligne) {
+	foreach($TabNdf as &$ligne) {
 		if($ligne[3]=='445660') {
 			$ligne[11]-=$balance;
 		}
