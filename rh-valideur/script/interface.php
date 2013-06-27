@@ -233,7 +233,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		$montant = $ligne[11];
 		$type =  $ligne[4];
 		
-		if($type=='G' && $credit=='D') {
+		if($type=='G' && $credit=='D' && $ligne[3]!='445660') {
 			$totalHT+=$montant;
 		}
 		else if($type=='X' && $credit=='C') {
