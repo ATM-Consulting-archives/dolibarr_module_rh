@@ -90,7 +90,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		
 		$sql_anal = "SELECT
 						l.rowid
-						,SUM( l.total_ht * IFNULL( 100, a.pourcentage ) / 100  ) as 'total_ht'
+						, l.total_ht * IFNULL(  a.pourcentage, 100 ) / 100  as 'total_ht'
 						, a.code as 'code_analytique'
 						,u.firstname,u.name,u.rowid as 'fk_user'
 					
@@ -104,7 +104,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					AND n.type LIKE '".$type."'
 					AND (n.datev>='".$date_debut."' AND n.datev<='".$date_fin."')
 					AND t.accountancy_code = ".$code_compta."
-			GROUP BY a.code			
+			
 		";
 
 			
@@ -120,16 +120,38 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		while($ATMdb2->Get_line()) {
 
 			$code_anal = $ATMdb2->Get_field('code_analytique');
+			$total_anal = $ATMdb2->Get_field('total_ht');
 //print_r($code_anal);
  			if( isset( $_REQUEST['withLogin'] ) && empty( $code_anal ) ) {
 				$code_anal = '<a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('firstname').' '.$ATMdb2->Get_field('name') ."</a>";
 			}
-			$TabAna[ $code_anal ] = number_format($ATMdb2->Get_field('total_ht'),2);
+			if(isset($_REQUEST['DEBUG'])) {
+				print "$code_anal=$total_anal<br/>";
+			}
+			if(!isset($TabAna[$code_anal])) $TabAna[$code_anal]=0;
+			$TabAna[$code_anal]+=$total_anal;
+			/*$TabAna[] = array(
+				$code_anal
+				,number_format($ATMdb2->Get_field('total_ht'),2,'.','' )
+			);*/
 		}
 
-		foreach($TabAna as $code_analytique=>$total_ht_anal) {
-		 $TabNdf[] = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht_anal, 'N', '', '', 'EUR', '', '');
+		$nbElement = count($TabAna);
+		$total_partiel = 0;$cpt=0;
+		foreach($TabAna as $code_analytique=>$total_ht_anal /*$ana*/) {
+			//list($code_analytique,$total_ht_anal)=$ana ;
+			
+			if(isset($_REQUEST['DEBUG'])) {
+                                print "<b>$code_analytique=$total_ht_anal</b><br/>";
+                        }
 
+			$total_ht_anal = round($total_ht_anal,2);
+
+			if($cpt==$nbElement-1) $total_ht_anal = $total_ht - $total_partiel;
+ 			$total_partiel+=$total_ht_anal;
+
+			 $TabNdf[] = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', number_format($total_ht_anal,2,'.',''), 'N', '', '', 'EUR', '', '');
+			$cpt++;
 		}
 
 /*
