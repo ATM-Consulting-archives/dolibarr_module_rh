@@ -265,10 +265,10 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	/**----***********************----**/
 	
 	$TLoueurs = array();
-	$sql="SELECT rowid, code_compta FROM ".MAIN_DB_PREFIX."societe";
+	$sql="SELECT rowid, code_fournisseur FROM ".MAIN_DB_PREFIX."societe";
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
-		$TLoueurs[$row->rowid] = $row->code_compta;
+		$TLoueurs[$row->rowid] = $row->code_fournisseur;
 	}
 	
 	$TEntity = array();
@@ -278,13 +278,14 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		$TEntity[$row->rowid] = substr($row->label,0,13);
 	}
 	
+	$idTotal = getIdSociete($ATMdb, 'total');
 	
 	$sql="SELECT CAST(e.coutEntrepriseTTC as DECIMAL(16,2)) as coutEntrepriseTTC, 
 				CAST(e.coutEntrepriseHT as DECIMAL(16,2)) as coutEntrepriseHT, type, 
 				DATE_FORMAT(e.date_debut, '%d%m%y') as date_debut, 
 				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
 				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
-				r.typeVehicule, t.codecomptable, r.fk_loueur,
+				r.typeVehicule, t.codecomptable, r.fk_loueur, e.fk_fournisseur, 
 				r.fk_entity_utilisatrice
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
@@ -297,6 +298,8 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	if(isset($_REQUEST['DEBUG'])) {
 		print $sql;
 	}
+	
+	
 	
 	$ATMdb->Execute($sql);
 	$TCredits = array();
@@ -315,8 +318,8 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		$code_compta = '425902';
 		$type_compte = 'X';
 		
-		if($row->fk_entity_utilisatrice==$entity){
-			$compte_tiers=$TLoueurs[$row->fk_loueur];
+		if($row->fk_entity_utilisatrice==$entity || $row->$fk_fournisseur==$idTotal){
+			$compte_tiers=$TLoueurs[$row->fk_fournisseur];
 		}else{
 			$compte_tiers=$TEntity[$entity];
 		}
