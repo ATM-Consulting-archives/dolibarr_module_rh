@@ -243,7 +243,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	
 	foreach($TabNdf as &$ligne) {
 		if($ligne[3]=='445660') {
-			$ligne[11]-=$balance;
+			$ligne[11]+=$balance;
 		}
 	}
 	
