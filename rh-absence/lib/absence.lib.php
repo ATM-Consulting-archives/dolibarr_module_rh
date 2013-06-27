@@ -262,7 +262,7 @@ function mailConges(&$absence){
 
 	$TBS=new TTemplateTBS();
 	if($absence->etat=='Avalider'){
-		$subject = htmlentities("Création d'une demande de congés", ENT_COMPAT , 'ISO8859-1');
+		$subject = "Création d\'une demande de congés";
 		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.creation.tpl.php'
 			,array()
 			,array(
@@ -278,7 +278,7 @@ function mailConges(&$absence){
 				)
 		);
 	}else if($absence->etat=='Validee'){
-		$subject = htmlentities("Acceptation de votre demande de congés", ENT_COMPAT , 'ISO8859-1');
+		$subject = "Acceptation de votre demande de congés";
 		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.acceptation.tpl.php'
 			,array()
 			,array(
@@ -295,7 +295,7 @@ function mailConges(&$absence){
 		);
 	}
 	else if($absence->etat=='Refusee'){
-		$subject = htmlentities("Refus de votre demande de congés", ENT_COMPAT , 'ISO8859-1');
+		$subject = "Refus de votre demande de congés";
 		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.refus.tpl.php'
 			,array()
 			,array(
@@ -372,7 +372,7 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 		
 	$TBS=new TTemplateTBS();
 
-	$subject = htmlentities("Nouvelle demande d'absence à valider", ENT_COMPAT , 'ISO8859-1');
+	$subject = "Nouvelle demande d'absence à valider";
 	$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.creationValideur.tpl.php'
 		,array()
 		,array(

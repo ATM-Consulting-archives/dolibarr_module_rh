@@ -1,6 +1,7 @@
 <?php
 
 define('INC_FROM_CRON_SCRIPT', true);
+set_time_limit(0);
 require('../config.php');
 require('../lib/ressource.lib.php');
 
@@ -12,7 +13,7 @@ $get = isset($_REQUEST['get'])?$_REQUEST['get']:'emprunt';
 _get($ATMdb, $get);
 
 function _get(&$ATMdb, $case) {
-	switch ($case) {
+	switch (strtolower($case)) {
 		case 'emprunt':
 			__out( _emprunt($ATMdb, $_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
 			break;
@@ -20,17 +21,16 @@ function _get(&$ATMdb, $case) {
 			__out(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
-		case 'parcours':
-			__out(_exportVoiture($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
-			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
+		default:
+			__out(_exportVoiture($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity'],
+						$_REQUEST['fk_fournisseur'], $_REQUEST['idTypeRessource'] ));
 			break;
 		
-		default:
-			break;
+		
 	}
 }
 
-function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
+function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseur, $idTypeRessource){
 	$TLignes = array();
 	
 	$date_debut=explode("/", $date_debut);
@@ -75,9 +75,10 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 		LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ue ON (u.rowid = ue.fk_object)
-	WHERE t.fk_rh_ressource_type = ".$idVoiture."
+	WHERE t.fk_rh_ressource_type = ".$idTypeRessource."
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 	AND e.entity = ".$entity."
+	AND e.fk_fournisseur =".$fk_fournisseur."
 	GROUP BY t.codecomptable";
 	
 	if(isset($_REQUEST['DEBUG'])) {
@@ -121,10 +122,11 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
-		WHERE t.fk_rh_ressource_type = ".$idVoiture."
+		WHERE t.fk_rh_ressource_type = ".$idTypeRessource."
 		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 		AND e.entity = ".$entity."
-		AND t.codecomptable = ".$code_compta;
+		AND e.fk_fournisseur =".$fk_fournisseur."
+		AND t.codecomptable = '".$code_compta."'";
 		
 		if(isset($_REQUEST['DEBUG'])) {
 			print $sql_anal;
@@ -236,10 +238,13 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
-		WHERE t.fk_rh_ressource_type = ".$idVoiture."
-		AND r.typeVehicule = 'VP'
-		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
-		AND e.entity = ".$entity;
+		WHERE t.fk_rh_ressource_type = ".$idTypeRessource." ";
+		
+		if ($idTypeRessource==$idVoiture){$sql .= "AND r.typeVehicule = 'VP' ";}
+		
+		$sql .= "AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+		AND e.entity = ".$entity."
+		AND e.fk_fournisseur =".$fk_fournisseur;
 		
 		
 		if(isset($_REQUEST['DEBUG'])) {
@@ -260,10 +265,10 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 	/**----***********************----**/
 	
 	$TLoueurs = array();
-	$sql="SELECT rowid, code_compta FROM ".MAIN_DB_PREFIX."societe";
+	$sql="SELECT rowid, code_fournisseur FROM ".MAIN_DB_PREFIX."societe";
 	$ATMdb->Execute($sql);
 	while($row = $ATMdb->Get_line()) {
-		$TLoueurs[$row->rowid] = $row->code_compta;
+		$TLoueurs[$row->rowid] = $row->code_fournisseur;
 	}
 	
 	$TEntity = array();
@@ -273,26 +278,31 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		$TEntity[$row->rowid] = substr($row->label,0,13);
 	}
 	
+	$idTotal = getIdSociete($ATMdb, 'total');
 	
 	$sql="SELECT CAST(e.coutEntrepriseTTC as DECIMAL(16,2)) as coutEntrepriseTTC, 
 				CAST(e.coutEntrepriseHT as DECIMAL(16,2)) as coutEntrepriseHT, type, 
 				DATE_FORMAT(e.date_debut, '%d%m%y') as date_debut, 
 				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
 				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
-				r.typeVehicule, t.codecomptable, r.fk_loueur,
+				r.typeVehicule, t.codecomptable, r.fk_loueur, e.fk_fournisseur, 
 				r.fk_entity_utilisatrice
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
-	WHERE t.fk_rh_ressource_type = ".$idVoiture."
+	WHERE t.fk_rh_ressource_type = ".$idTypeRessource."
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+	AND e.fk_fournisseur =".$fk_fournisseur."
 	AND e.entity = ".$entity;
 	
 	if(isset($_REQUEST['DEBUG'])) {
 		print $sql;
 	}
 	
+	
+	
 	$ATMdb->Execute($sql);
+	$TCredits = array();
 	
 	while($row = $ATMdb->Get_line()) {
 		$date = $row->date_debut;
@@ -300,18 +310,44 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 		$date_annee = $row->annee_date_debut;
 		//un VU : on prend le HT
 		//un VP on prend le TTC
-		$montant = (strtoupper($row->typeVehicule) == 'VP') ? $row->coutEntrepriseTTC : $row->coutEntrepriseHT;
+		if ($idTypeRessource==$idVoiture){
+			$montant = (strtoupper($row->typeVehicule) == 'VP') ? $row->coutEntrepriseTTC : $row->coutEntrepriseHT;}
+		else {
+			$montant = $row->coutEntrepriseTTC;}
 		$sens = 'C';
 		$code_compta = '425902';
 		$type_compte = 'X';
 		
-		if($row->fk_entity_utilisatrice==$entity){
-			$compte_tiers=$TLoueurs[$row->fk_loueur];
+		if($row->fk_entity_utilisatrice==$entity || $row->$fk_fournisseur==$idTotal){
+			$compte_tiers=$TLoueurs[$row->fk_fournisseur];
 		}else{
 			$compte_tiers=$TEntity[$entity];
 		}
 	
-		$TLignes[] = array(
+		if (empty($TCredits[$compte_tiers])){
+			$TCredits[$compte_tiers] = array(
+				'RES'
+				,date('dmy')
+				,'FF'
+				,$code_compta
+				,$type_compte
+				,$compte_tiers
+				,''
+				,'RESSOURCE '.date('m/Y')
+				,'V'
+				,date('dmy')
+				,$sens
+				,$montant
+				,'N'
+				,''
+				,''
+				,'EUR'
+			);
+		}
+		else {
+			$TCredits[$compte_tiers][11] += $montant;
+		}
+		/*$TLignes[] = array(
 			'RES'
 			,date('dmy')
 			,'FF'
@@ -328,7 +364,11 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity){
 			,''
 			,''
 			,'EUR'
-			);
+			);*/
+	}
+	
+	foreach ($TCredits as $key => $value) {
+		$TLignes[] = $value;
 	}
 	
 	return $TLignes;

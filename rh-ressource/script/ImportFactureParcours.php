@@ -23,7 +23,9 @@ $ATMdb=new TPDOdb;
 $timestart=microtime(true);
 
 $idVoiture = getIdType('voiture');
-$idParcours = getIdParcours($ATMdb);
+$idParcours = getIdSociete($ATMdb, 'parcours');
+if (!$idParcours){echo 'Pas de fournisseur (tiers) du nom de Parcours !';exit();}
+
 if ($idParcours == 0){echo 'Aucun fournisseur du nom de "Parcours" ! ';exit;}
 
 $TUser = array();
@@ -111,6 +113,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 						$fact->TVA= $TTVA['19.6'];
 						$fact->coutEntrepriseHT = floatval(strtr($infos[12], ',','.'));
 						$fact->entity =$entity;
+						$fact->fk_fournisseur = $idParcours;
 						$fact->save($ATMdb);
 						$cptFactureLoyer++;
 						
@@ -220,16 +223,5 @@ function chargeVoiture(&$ATMdb){
 }
 
 
-function getIdParcours(&$ATMdb){
-	global $conf;
-	$idParcours = 0;
-	$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe ";
-	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		if (strtolower($ATMdb->Get_field('nom')) == 'parcours'){ 
-			$idParcours = $ATMdb->Get_field('rowid');}
-		}
-	
-	return $idParcours;
-}
+
 	

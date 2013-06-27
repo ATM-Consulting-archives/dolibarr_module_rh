@@ -276,9 +276,7 @@ class TRH_Ressource extends TObjetStd {
 										,$this->strToTimestamp(date("d/m/Y",strtotime($ATMdb->Get_field('date_debut'))))
 										,$this->strToTimestamp(date("d/m/Y",strtotime($ATMdb->Get_field('date_fin'))))))
 				{
-				return true;
-				}
-		}
+				return true;}}
 		return false;
 	}
 	

@@ -360,12 +360,13 @@ function modifierLimites(&$TLimites, $fk_user, $gen,  $int, $ext, $dataIll = fal
 
 
 function send_mail_resources($subject, $message){
-	global $langs;
+	global $langs,$user;
 	
 	$langs->load('mails');
 	
 	$from = USER_MAIL_SENDER;
-	$sendto = USER_MAIL_RECEIVER;
+	//$sendto = USER_MAIL_RECEIVER;
+	$sendto = $user->email;
 
 	$mail = new TReponseMail($from,$sendto,$subject,$message);
 	
@@ -397,5 +398,19 @@ function ressourceIsEmpruntee(&$ATMdb, $idRessource, $jour){
 		}
 		return 0;
 }	
+
+
+function getIdSociete(&$ATMdb, $nomMinuscule){
+	global $conf;
+	$idParcours = 0;
+	$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe ";
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		if (strtolower($ATMdb->Get_field('nom')) == $nomMinuscule){ 
+			return $ATMdb->Get_field('rowid');}}
+	
+	return false;
+}
+
 	
 	

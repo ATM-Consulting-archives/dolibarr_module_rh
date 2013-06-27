@@ -1,17 +1,13 @@
 <?php
 	require('config.php');
 	require('./class/ressource.class.php');
-	require('./class/contrat.class.php');
 	require('./class/evenement.class.php');
-	require('./lib/ressource.lib.php');
 	$langs->load('ressource@ressource');
 	
 	//if (!$user->rights->financement->affaire->read)	{ accessforbidden(); }
 	$ATMdb=new Tdb;
 	$emprunt=new TRH_Evenement;
 	$ressource=new TRH_ressource;
-	$contrat=new TRH_Contrat;
-	$contrat_ressource=new TRH_Contrat_Ressource;
 	
 	$mesg = '';
 	$error=false;
@@ -42,7 +38,6 @@ function _liste(&$ATMdb, &$ressource) {
 	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON ( (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource) AND e.type='emprunt')
-		AND e.entity IN (0, ".$conf->entity.")
 		AND e.date_debut<='".date("Y-m-d")."' AND e.date_fin >= '". date("Y-m-d")."' 
 	 LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid )";	
 	$sql.=" WHERE  (e.fk_rh_ressource IS NULL) ";

@@ -57,7 +57,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	
 	$sql = "SELECT
 			t.accountancy_code
-			,CAST(SUM(l.total_ht) as DECIMAL(16,2)) as 'total_ht'
+			,SUM(l.total_ht) as 'total_ht'
 			
 			FROM ".MAIN_DB_PREFIX."ndfp_det as l
 				LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp
@@ -79,11 +79,14 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		$code_compta		=	$ATMdb->Get_field('accountancy_code');
-		$total_ht			=	$ATMdb->Get_field('total_ht');
+		$total_ht			=	round($ATMdb->Get_field('total_ht'),2);
 		
 		$line = array('NDF', date('dmy'), 'OD', $code_compta, 'G', '', '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', 'EUR', '', '');
 		$TabNdf[]=$line;
 		
+		/*
+		 * Analytique
+		 */
 		$sql_anal = "SELECT
 						l.rowid
 						, l.total_ht as 'total_ht'
@@ -171,7 +174,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
-			$total_tva_ndf	=	$ATMdb->Get_field('total_tva');
+			$total_tva_ndf	=	round($ATMdb->Get_field('total_tva'),2);
 			
 			$line = array('NDF', date('dmy'), 'OD', '445660', 'G', '', '', 'NOTE DE FRAIS '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva_ndf, 'N', '', '', 'EUR', '', '');
 			$TabNdf[]=$line;
@@ -215,10 +218,34 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		$mois_ndf		=	substr($ATMdb->Get_field('datef'), 5, 2);
 		$annee_ndf		=	substr($ATMdb->Get_field('datef'), 0, 4);
     	//$datef_ndf		=	substr($ATMdb->Get_field('datef'), 8, 2).substr($ATMdb->Get_field('datef'), 5, 2).substr($ATMdb->Get_field('datef'), 2, 2);
-    	$total_ttc_ndf	=	$ATMdb->Get_field('total_ttc');
+    	$total_ttc_ndf	=	round($ATMdb->Get_field('total_ttc'),2);
 		
 		$line = array('NDF', date('dmy'), 'OD', '425902', 'X', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', '', '', 'EUR', '', '');
 		$TabNdf[]=$line;
+	}
+	
+	/* Equilibrage */
+	
+	$totalHT=0;
+	$totalTTC=0;
+	foreach($TabNdf as $ligne) {
+		$credit = $ligne[10];	
+		$montant = $ligne[11];
+		$type =  $ligne[4];
+		
+		if($type=='G' && $credit=='D' && $ligne[3]!='445660') {
+			$totalHT+=$montant;
+		}
+		else if($type=='X' && $credit=='C') {
+			$totalTTC+=$montant;	
+		}
+		
+	}
+	
+	foreach($TabNdf as &$ligne) {
+		if($ligne[3]=='445660') {
+			$ligne[11]=$totalTTC-$totalHT;
+		}
 	}
 	
 	return $TabNdf;
