@@ -270,10 +270,20 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][5] = 'voirPlanningUser';
 		
 		$r++;
+		$this->rights[$r][0] = 7116;
+		$this->rights[$r][1] = 'Voir l\'onglet des absences';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+		$this->rights[$r][5] = 'voirOngletAbsence';
+
+		
+		$r++;
 		$this->rights[$r][0] = 7117;
 		$this->rights[$r][1] = 'Visualiser les fichiers des absences';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'read';
+		
+		
 		
 		
 		
@@ -305,7 +315,7 @@ class modAbsence extends DolibarrModules
 								'langs'=>'absence@absence',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>100,
 								'enabled'=>'1',	// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
-								'perms'=>'',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
+								'perms'=>'$user->rights->absence->myactions->voirOngletAbsence',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>0);						                // 0=Menu for internal users, 1=external users, 2=both
 		
