@@ -48,7 +48,7 @@ while($ATMdb->Get_line()) {
 
 
 //----------------DEBUT DU TRAITEMENT DES LIGNES D'APPELS----------------------------------------------------------
-$nomFichier = "./evenements.csv";
+$nomFichier = "./ImportAbsenceValidee.csv";
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 
@@ -58,7 +58,7 @@ $cpt = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle)) != false){
 		
-		if($numLigne>1){
+		if($numLigne>0){
 			
 			$infos = explode(';', $data[0]);
 

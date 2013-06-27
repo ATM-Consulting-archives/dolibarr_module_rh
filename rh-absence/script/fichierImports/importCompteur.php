@@ -39,7 +39,7 @@ while($ATMdb->Get_line()) {
 
 
 //----------------DEBUT DU TRAITEMENT DES LIGNES D'APPELS----------------------------------------------------------
-$nomFichier = "./compteurSalaries.csv";
+$nomFichier = "./ImportCompteurAbsence.csv";
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 //début du parsing
