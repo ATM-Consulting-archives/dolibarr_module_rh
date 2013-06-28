@@ -10,8 +10,8 @@ if(isset($_REQUEST['idUser'])) {
 		$sql="SELECT DATE_FORMAT(date_debut, '%d/%m/%Y') as 'dateD', 
 		DATE_FORMAT(date_fin, '%d/%m/%Y')  as 'dateF', libelle, libelleEtat 
 		FROM `".MAIN_DB_PREFIX."rh_absence` WHERE fk_user=".$_REQUEST['idUser']." 
-		GROUP BY date_cre LIMIT 0,10";
-
+		ORDER BY date_cre LIMIT 0,10";
+		
 		$ATMdb->Execute($sql);
 		$TRecap=array();
 		$k=0;

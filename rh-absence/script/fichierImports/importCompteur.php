@@ -100,7 +100,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				//congés
 				$compteur->acquisExerciceNM1=$infos[11];
-				$compteur->congesPrisNM1=$infos[12];
+				$compteur->congesPrisNM1=$infos[12]+$infos[14];
 				$compteur->acquisExerciceN=$infos[13]; 	//	report
 				
 				$compteur->date_rttCloture=strtotime(DATE_RTT_CLOTURE);
