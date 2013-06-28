@@ -207,7 +207,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				$compteur->rttannee=$annee;
 				$compteur->nombreCongesAcquisMensuel=2.08;
-
+				
+				$compteur->acquisAncienneteN=$compteur->acquisAncienneteNM1;
 				$compteur->reportRtt=0;
 				
 				$compteur->save($ATMdb);
