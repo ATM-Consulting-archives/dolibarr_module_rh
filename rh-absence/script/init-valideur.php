@@ -1,7 +1,9 @@
 <?php
 
 	require('../config.php');
-	
+	require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
+	require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
+	dol_include_once("/valideur/class/valideur.class.php");
 	
 	$ATMdb=new TPDOdb;
 	
@@ -12,7 +14,7 @@ WHERE u.rowid IN (SELECT fk_user FROM llx_user) AND uvg.rowid IS NULL");
 	$TUser = $ATMdb->Get_All();
 	foreach($TUser as $row) {
 		
-		$fk_user = $row['rowid'];
+		$fk_user = $row->rowid;
 		
 		$fuser=new User($db);
 		$fuser->fetch($fk_user); 
@@ -21,10 +23,13 @@ WHERE u.rowid IN (SELECT fk_user FROM llx_user) AND uvg.rowid IS NULL");
 		
 		$group = new UserGroup($db);
 		if($group->fetch('',$groupname)) {
-			$idGroup=$group->id;
+			$idGroup=(int)$group->id;
+		}
+		else {
+			exit('impossible de charger le groupe');
 		}
 		
-		print "Ajout du droit validatio congé de  ".$fuser->login." dans ($idGroup)".$groupname."<br>";
+		print "Ajout du droit validation congé de  ".$fuser->login." dans (".$idGroup.")".$groupname."<br>";
 		
 		$v=new TRH_valideur_groupe;
 		$v->type = 'Conges';
