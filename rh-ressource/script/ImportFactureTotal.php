@@ -6,7 +6,7 @@
  * 
  */
  
-
+/*
 require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');
@@ -70,12 +70,7 @@ while($ATMdb->Get_line()) {
 	}
 
 //trouve l'id du SuperAdmin
-$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE name = 'SuperAdmin' ";
-$ATMdb->Execute($sql);
-if($row = $ATMdb->Get_line()) {
-	$idSuperAdmin = $row->rowid;}
-else {echo 'Pas d\'utilisateur du nom de SuperAdmin ! ';exit();}
-
+$idSuperAdmin = getIdSuperAdmin($ATMdb);
 
 //donne l'user qui utilise la carte
 /*$TAttribution = array();
@@ -228,17 +223,3 @@ function dateToInt($chaine){
 }
 
 
-function createRessourceFactice(&$ATMdb, $type, $idFacture, $entity, $fournisseur){
-	$ress = new TRH_Ressource;
-	if ($ress->loadBy($ATMdb, 'factice'.$idFacture, 'numId' )){
-		return $ress->getId();}
-	
-	$ress->numId = 'factice'.$idFacture;
-	$ress->fk_rh_ressource_type = $type;
-	$ress->libelle = 'Factice facture '.$idFacture;
-	$ress->fk_entity_utilisatrice = $entity;
-	$ress->fk_proprietaire = $entity;
-	$ress->fk_loueur = $fournisseur;
-	$ress->save($ATMdb);
-	return $ress->getId();
-}

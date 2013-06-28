@@ -399,6 +399,15 @@ function ressourceIsEmpruntee(&$ATMdb, $idRessource, $jour){
 		return 0;
 }	
 
+function getIdSuperAdmin(&$ATMdb){
+	//trouve l'id du SuperAdmin
+	$idSuperAdmin = 0;
+	$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE name = 'SuperAdmin' ";
+		$ATMdb->Execute($sql);
+		if($row = $ATMdb->Get_line()) {
+		$idSuperAdmin = $row->rowid;}
+	return $idSuperAdmin;
+}
 
 function getIdSociete(&$ATMdb, $nomMinuscule){
 	global $conf;
@@ -413,4 +422,18 @@ function getIdSociete(&$ATMdb, $nomMinuscule){
 }
 
 	
+
+function createRessourceFactice(&$ATMdb, $type, $idFacture, $entity, $fournisseur){
+	$ress = new TRH_Ressource;
+	if ($ress->loadBy($ATMdb, 'factice'.$idFacture, 'numId' )){
+		return $ress->getId();}
 	
+	$ress->numId = 'factice'.$idFacture;
+	$ress->fk_rh_ressource_type = $type;
+	$ress->libelle = 'Factice facture '.$idFacture;
+	$ress->fk_entity_utilisatrice = $entity;
+	$ress->fk_proprietaire = $entity;
+	$ress->fk_loueur = $fournisseur;
+	$ress->save($ATMdb);
+	return $ress->getId();
+}
