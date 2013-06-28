@@ -86,7 +86,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				//RTT cumulés
 				$compteur->rttCumulePris=$infos[123];
 				$compteur->rttCumuleAcquis=$infos[125];
-				$compteur->rttCumuleReportNM1=$infos[140];
+				$compteur->rttCumuleReportNM1=$infos[141];
 				$compteur->rttCumuleTotal=$compteur->rttCumuleAcquis+$compteur->rttCumuleReportNM1-$compteur->rttCumulePris;
 				$compteur->rttAcquisAnnuelCumuleInit=0; 	//à revoir
 				
@@ -94,13 +94,13 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				//RTT non cumulés
 				$compteur->rttNonCumulePris=$infos[124];
 				$compteur->rttNonCumuleAcquis=$infos[126];
-				$compteur->rttNonCumuleReportNM1=$infos[141];	//	report
+				$compteur->rttNonCumuleReportNM1=$infos[140];	//	report
 				$compteur->rttNonCumuleTotal=$compteur->rttNonCumuleAcquis+$compteur->rttNonCumuleReportNM1-$compteur->rttNonCumulePris;
 				$compteur->rttAcquisAnnuelNonCumuleInit=0;		//à revoir
 				
 				//congés
 				$compteur->acquisExerciceNM1=$infos[11];
-				$compteur->congesPrisNM1=$infos[12]+$infos[14];
+				$compteur->congesPrisNM1=$infos[14];
 				$compteur->acquisExerciceN=$infos[13]; 	//	report
 				
 				$compteur->date_rttCloture=strtotime(DATE_RTT_CLOTURE);
