@@ -24,7 +24,7 @@ WHERE u.rowid IN (SELECT fk_user FROM llx_user) AND uvg.rowid IS NULL");
 			$idGroup=$group->id;
 		}
 		
-		print "Ajout du droit validatio congé de  ".$fuser->login." dans ".$groupname."<br>";
+		print "Ajout du droit validatio congé de  ".$fuser->login." dans ($idGroup)".$groupname."<br>";
 		
 		$v=new TRH_valideur_groupe;
 		$v->type = 'Conges';
