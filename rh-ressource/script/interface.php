@@ -23,16 +23,19 @@ function _get(&$ATMdb, $case) {
 			break;
 		default:
 			__out(_exportVoiture($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity'],
-						$_REQUEST['fk_fournisseur'], $_REQUEST['idTypeRessource'] ));
+						$_REQUEST['fk_fournisseur'], $_REQUEST['idTypeRessource'] , $_REQUEST['idImport'] ));
 			break;
 		
 		
 	}
 }
 
-function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseur, $idTypeRessource){
+function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseur, $idTypeRessource, $idImport){
 	$TLignes = array();
+	if(isset($_REQUEST['DEBUG'])) {echo $idImport.'<br>';}
+						
 	
+	//$idImport = false;
 	$date_debut=explode("/", $date_debut);
 	$date_debut=date('Y-m-d',mktime(0, 0, 0, $date_debut[1], $date_debut[0], $date_debut[2]));
 	$date_fin=explode("/", $date_fin);
@@ -64,7 +67,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	
 	$sql="SELECT CAST(SUM(e.coutEntrepriseTTC) as DECIMAL(16,2)) as coutEntrepriseTTC, 
 				CAST(SUM(e.coutEntrepriseHT) as DECIMAL(16,2)) as coutEntrepriseHT, 
-				e.type, 
+				e.type, e.date_facture, 
 				DATE_FORMAT(e.date_debut, '%d%m%y') as date_debut, 
 				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
 				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
@@ -78,8 +81,9 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	WHERE t.fk_rh_ressource_type = ".$idTypeRessource."
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 	AND e.entity = ".$entity."
-	AND e.fk_fournisseur =".$fk_fournisseur."
-	GROUP BY t.codecomptable";
+	AND e.fk_fournisseur =".$fk_fournisseur;	
+	if ($idImport){ $sql .= " AND e.idImport = '".$idImport."' ";}
+	$sql .= " GROUP BY t.codecomptable";
 	
 	if(isset($_REQUEST['DEBUG'])) {
 		print $sql;
@@ -96,7 +100,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		
 		$TLignes[] = array(
 			'RES'
-			,date('dmy')
+			,date('dmy', date2ToInt($row->date_facture))
 			,'FF'
 			,$code_compta
 			,$type_compte
@@ -114,7 +118,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		);
 		
 		$sql_anal="SELECT e.rowid
-				, e.coutEntrepriseTTC as coutEntrepriseTTC
+				, e.coutEntrepriseTTC as coutEntrepriseTTC , e.date_facture
 				, (e.coutEntrepriseHT * IFNULL(a.pourcentage,100) / 100) as coutEntrepriseHT
 				, a.code as 'code_analytique'
 				, a.pourcentage as 'pourcentage'
@@ -127,8 +131,9 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		WHERE t.fk_rh_ressource_type = ".$idTypeRessource."
 		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 		AND e.entity = ".$entity."
-		AND e.fk_fournisseur =".$fk_fournisseur."
-		AND t.codecomptable = '".$code_compta."'";
+		AND e.fk_fournisseur =".$fk_fournisseur;
+		if ($idImport){ $sql_anal .= " AND e.idImport = '".$idImport."' ";}
+		$sql_anal .= " AND t.codecomptable = '".$code_compta."'";
 		
 		if(isset($_REQUEST['DEBUG'])) {
 			print $sql_anal;
@@ -173,7 +178,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 					
 					$TLignes[] = array(
 						'RES'
-						,date('dmy')
+						,date('dmy', date2ToInt($row->date_facture))
 						,'FF'
 						,$code_compta
 						,$type_compte
@@ -295,7 +300,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	
 	if($ressource_exist){
 		$sql="SELECT CAST(SUM(e.coutEntrepriseTTC) as DECIMAL(16,2)) as coutEntrepriseTTC, 
-					CAST(SUM(e.coutEntrepriseHT) as DECIMAL(16,2)) as coutEntrepriseHT 
+					CAST(SUM(e.coutEntrepriseHT) as DECIMAL(16,2)) as coutEntrepriseHT , e.date_facture
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
@@ -306,17 +311,17 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		$sql .= "AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 		AND e.entity = ".$entity."
 		AND e.fk_fournisseur =".$fk_fournisseur;
-		
+		if ($idImport){ $sql .= " AND e.idImport = '".$idImport."' ";}
 		
 		if(isset($_REQUEST['DEBUG'])) {
 			print $sql;
 		}
 		
 		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
+		while($row = $ATMdb->Get_line()) {
 			$total_tva	=	$ATMdb->Get_field('coutEntrepriseTTC') - $ATMdb->Get_field('coutEntrepriseHT');
 			
-			$line = array('RES', date('dmy'), 'FF', '445660', 'G', '', '', 'RESSOURCE '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva, 'N', '', '', 'EUR', '', '');
+			$line = array('RES', date('dmy', date2ToInt($row->date_facture)), 'FF', '445660', 'G', '', '', 'RESSOURCE '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva, 'N', '', '', 'EUR', '', '');
 			$TLignes[]=$line;
 		}
 	}
@@ -342,7 +347,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	$idTotal = getIdSociete($ATMdb, 'total');
 	
 	$sql="SELECT CAST(e.coutEntrepriseTTC as DECIMAL(16,2)) as coutEntrepriseTTC, 
-				CAST(e.coutEntrepriseHT as DECIMAL(16,2)) as coutEntrepriseHT, type, 
+				CAST(e.coutEntrepriseHT as DECIMAL(16,2)) as coutEntrepriseHT, type, e.date_facture, 
 				DATE_FORMAT(e.date_debut, '%d%m%y') as date_debut, 
 				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
 				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
@@ -355,6 +360,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 	AND e.fk_fournisseur =".$fk_fournisseur."
 	AND e.entity = ".$entity;
+	if ($idImport){ $sql .= " AND e.idImport = '".$idImport."'";}
 	
 	if(isset($_REQUEST['DEBUG'])) {
 		print $sql;
@@ -388,7 +394,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		if (empty($TCredits[$compte_tiers])){
 			$TCredits[$compte_tiers] = array(
 				'RES'
-				,date('dmy')
+				,date('dmy', date2ToInt($row->date_facture))
 				,'FF'
 				,$code_compta
 				,$type_compte
@@ -499,5 +505,12 @@ function _emprunt(&$ATMdb, $userId, $date_debut, $date_fin){
 	
 	$ATMdb->close();
 	return $TabEmprunt;
+}
+
+/**
+ * prend un format 2013-03-19 00:00:00 et renvoie un timestamp
+ */
+function date2ToInt($chaine){
+	return mktime(0,0,0,substr($chaine,5,2),substr($chaine,8,2),substr($chaine,0,4));
 }
 

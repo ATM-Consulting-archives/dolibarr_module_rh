@@ -13,7 +13,7 @@ $mode_retour = (isset($_REQUEST['mode_retour'])) ? $_REQUEST['mode_retour'] : 'j
 
 
 //chargement des voitures
-$TFacture = array('Tous'=>'Tous');
+$TFacture = array(0=>'Tous');
 $sql = "SELECT DISTINCT idImport
 	FROM ".MAIN_DB_PREFIX."rh_evenement
 	WHERE fk_fournisseur =".$fk_fournisseur."
