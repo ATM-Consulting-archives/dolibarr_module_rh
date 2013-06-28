@@ -186,6 +186,21 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					elseif(stristr($societe,'agt')!=false){
 						$compteur->rttTypeAcquisition='Annuel';
 						$compteur->rttMetier='aucunrtt';
+					}else{
+						if($tpsHebdoUser==37){
+								$compteur->rttMetier='noncadre37cpro';
+								$compteur->rttAcquisAnnuelCumuleInit=5;
+								$compteur->rttAcquisAnnuelNonCumuleInit=7;
+							}elseif($tpsHebdoUser==38){
+								$compteur->rttMetier='noncadre38cpro';
+								$compteur->rttAcquisAnnuelCumuleInit=3;
+								$compteur->rttAcquisAnnuelNonCumuleInit=3;
+							}elseif($tpsHebdoUser==39){
+								$compteur->rttMetier='noncadre39';
+								$compteur->rttAcquisAnnuelCumuleInit=0;
+								$compteur->rttAcquisAnnuelNonCumuleInit=0;
+							}
+							$compteur->rttTypeAcquisition='Annuel';
 					}
 
 				}
