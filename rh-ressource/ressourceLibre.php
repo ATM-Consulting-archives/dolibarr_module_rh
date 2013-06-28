@@ -30,9 +30,31 @@ function _liste(&$ATMdb, &$ressource) {
 	llxHeader('','Liste des ressources');
 	print dol_get_fiche_head(array()  , '', 'Liste ressources');
 	
+	
+	//récupération des champs spéciaux à afficher.
+	$sqlReq="SELECT code, libelle, type, options FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE inliste='oui' ";
+	$ATMdb->Execute($sqlReq);
+	$TSpeciaux = array();
+	
+	$TSearch=array();
+	while($ATMdb->Get_line()) {
+		$TSpeciaux[$ATMdb->Get_field('code')]= $ATMdb->Get_field('libelle');
+		if ($ATMdb->Get_field('type')=='liste'){
+			$TSearch[$ATMdb->Get_field('code')] = array_combine(explode(';', $ATMdb->Get_field('options')), explode(';', $ATMdb->Get_field('options')));
+		}
+		else {
+			$TSearch[$ATMdb->Get_field('code')] = true;}
+	}
+	
+	
+	
+	
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.libelle, r.fk_rh_ressource_type, 
 		r.numId ";
+	foreach ($TSpeciaux as $key=>$value) {
+		$sql .= ','.$key.' ';
+	}
 	if($user->rights->ressource->ressource->createRessource){
 		$sql.=", '' as 'Supprimer'";
 	}
@@ -79,17 +101,17 @@ function _liste(&$ATMdb, &$ressource) {
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 		)
-		,'title'=>array(
+		,'title'=>array_merge(array(
 			'libelle'=>'Libellé'
 			,'numId'=>'Numéro Id'
-			,'fk_rh_ressource_type'=> 'Type'
+			,'fk_rh_ressource_type'=> 'Type'), $TSpeciaux
 		)
 		,'search'=>($user->rights->ressource->ressource->searchRessource) ? 		
-			array(
+			array_merge(array(
 				'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
 				,'numId'=>true
 				,'libelle'=>true
-			)
+			), $TSearch)
 			: array()
 		,'orderBy'=>$TOrder
 		

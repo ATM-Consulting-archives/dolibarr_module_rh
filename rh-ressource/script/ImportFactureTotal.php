@@ -37,6 +37,7 @@ $idTotal = getIdSociete($ATMdb, 'total');
 if (!$idTotal){echo 'Pas de fournisseur (tiers) du nom de Total !';exit();}
 
 $TRessource = getIDRessource($ATMdb, $idVoiture);
+//foreach ($TRessource as $key => $value) {echo $key.'=>'.$value.'<br>';}//print_r($TRessource);exit;
 
 //charge une liste rowid de la voiture =>plaque de la voiture
 $TPlaque = array();
@@ -47,6 +48,8 @@ while($row = $ATMdb->Get_line()) {
 	$TPlaque[$row->rowid] = $row->numId;
 }
 
+
+
 //donne la carte (rowid) utilisée par une voiture (plaque)  : plaque de la voiture => rowid de la carte total
 $TCarte = array();
 $sql="SELECT rowid, numId, fk_rh_ressource FROM ".MAIN_DB_PREFIX."rh_ressource 
@@ -54,9 +57,10 @@ $sql="SELECT rowid, numId, fk_rh_ressource FROM ".MAIN_DB_PREFIX."rh_ressource
 $ATMdb->Execute($sql);
 while($row = $ATMdb->Get_line()) {
 	if ($row->fk_rh_ressource!=0){
-		$TCarte[$TPlaque[$row->fk_rh_ressource]] = $row->rowid;
-	}
+		$TCarte[$TPlaque[$row->fk_rh_ressource]] = $row->rowid;}
 }
+
+
 //Tableau des TVAs
 $TTVA = array();
 $sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
@@ -65,22 +69,34 @@ while($ATMdb->Get_line()) {
 	$TTVA[$ATMdb->Get_field('taux')] = $ATMdb->Get_field('rowid');
 	}
 
+//trouve l'id du SuperAdmin
+$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE name = 'SuperAdmin' ";
+$ATMdb->Execute($sql);
+if($row = $ATMdb->Get_line()) {
+	$idSuperAdmin = $row->rowid;}
+else {echo 'Pas d\'utilisateur du nom de SuperAdmin ! ';exit();}
+
 
 //donne l'user qui utilise la carte
-$TAttribution = array();
+/*$TAttribution = array();
 foreach ($TCarte as $numId => $rowid) {
 	$idUser = ressourceIsEmpruntee($ATMdb, $rowid, date("Y-m-d", time()) );
 	if ($idUser!=0){$TAttribution[$numId] = $idUser;} 
-}
+}*/
 
 
 
 if (empty($nomFichier)){$nomFichier = "./fichierImports/Facture TOTAL.csv";}
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
+//pour avoir un joli nom, on prend la chaine après le dernier caractère / 
+$v =  strrpos ( $nomFichier , '/' );
+$idImport = substr($nomFichier, $v+1);
+
 $TCarteInexistantes = array();
 $TCarteNonLie = array();
 $TCarteVoitureNonAttribue = array();
+$idRessFactice = createRessourceFactice($ATMdb, $idCarteTotal, $idImport, $entity, $idTotal);
 
 //print_r($TRessource);
 $cpt = 0;
@@ -93,8 +109,6 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$infos = explode(';', $data[0]);
 			
 			//print_r($infos);
-			
-			 
 			$plaque = $infos[11];
 			$plaque = str_replace('-VU', '', $plaque);
 			$plaque = str_replace('-', '', $plaque);
@@ -102,25 +116,24 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			if (empty ($TCarte[$plaque])){
 				$TCarteNonLie[$plaque] = 1;
+				$idRess = $idRessFactice;
 				//echo $plaque.' : carte pas liée à une voiture.<br>';
 				null;
 			}
-			else if (empty ($TAttribution[$plaque])){
-				$TCarteVoitureNonAttribue[$plaque] = 1;
-				//echo $plaque.' : carte liée à une voiture, mais non attribuée.<br>';
-				null;
-			}
 			else {
+				$idRess = $TCarte[$plaque];
+			}
+			//else {
 				//print_r($infos);echo '<br>';
 				$temp = new TRH_Evenement;
 				//$temp->load_liste($ATMdb);
 				$temp->fk_rh_ressource_type = $idCarteTotal;
-				$temp->fk_rh_ressource = $TCarte[$plaque];
+				$temp->fk_rh_ressource = $idRess;
 				$t = explode(' ',$infos[30]);
 				array_shift($t); 
 				$nomPeage = htmlentities(implode(' ', $t), ENT_COMPAT , 'ISO8859-1'); 
 				
-				if ( !empty($TEvents[strtolower($infos[17])]) ){
+				if ( !empty($TEvents[strtolower($infos[17])]) ){ //si aucun évenement ne correspond, on le met divers
 					$temp->type = $TEvents[strtolower($infos[17])];
 				}
 				else {
@@ -135,7 +148,16 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 									
 				}
 				
-				$temp->fk_user = $TAttribution[$plaque];
+				//utilisateur qui utilise la ressource au moment de l'évenement
+				if (!empty($TRessource[$plaque])){
+					$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], date("Y-m-d", dateToInt($infos[15])) );
+					if ($idUser!=0){ //si il trouve, on l'affecte à l'utilisateur 
+						$temp->fk_user = $idUser;}
+					else { //sinon à SuperAdmin.
+						$temp->fk_user = $idSuperAdmin;}
+				}
+				else {$temp->fk_user = $idSuperAdmin;}
+				
 				$temp->set_date('date_debut', $infos[15]);
 				$temp->set_date('date_fin', $infos[15]);
 				$temp->coutTTC = strtr($infos[19], ',','.');
@@ -144,7 +166,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$taux = number_format(floatval(str_replace(',', '.', $infos[25])),1);
 				$temp->TVA = $TTVA[$taux];
 				$temp->coutEntrepriseHT = strtr($infos[20], ',','.');
+				$temp->idImport = $idImport;
 				$temp->numFacture = $infos[1];
+				$temp->date_facture = $infos[3];
+				
 				$temp->compteFacture = $infos[13];
 				$temp->litreEssence = floatval(strtr($infos[18],',','.'));
 				$temp->kilometrage = intval($infos[31]);
@@ -153,7 +178,6 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->save($ATMdb);
 				
 				$cpt++;
-			}
 			
 		}
 		$numLigne++;
@@ -173,6 +197,7 @@ $message .=  '<br>Erreurs : Carte lié à une voiture mais non attribué : <br>'
 foreach ($TCarteVoitureNonAttribue as $key => $value) {
 	$message .= '     '.$key.'<br>';
 }
+$message .= '<br>Toutes ces cartes ont été liés à la ressource de numid et libellé : \'factice'.$idImport.'\'<br>';
 
 
 
@@ -195,4 +220,25 @@ function chargeVoiture(&$ATMdb){
 }
 
 
+/*
+ * prend un format d/m/Y et renvoie un timestamp
+ */
+function dateToInt($chaine){
+	return mktime(0,0,0,substr($chaine,3,2),substr($chaine,0,2),substr($chaine,6,4));
+}
+
+
+function createRessourceFactice(&$ATMdb, $type, $idFacture, $entity, $fournisseur){
+	$ress = new TRH_Ressource;
+	if ($ress->loadBy($ATMdb, 'factice'.$idFacture, 'numId' )){
+		return $ress->getId();}
 	
+	$ress->numId = 'factice'.$idFacture;
+	$ress->fk_rh_ressource_type = $type;
+	$ress->libelle = 'Factice facture '.$idFacture;
+	$ress->fk_entity_utilisatrice = $entity;
+	$ress->fk_proprietaire = $entity;
+	$ress->fk_loueur = $fournisseur;
+	$ress->save($ATMdb);
+	return $ress->getId();
+}

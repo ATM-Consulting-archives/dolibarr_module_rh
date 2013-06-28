@@ -38,6 +38,8 @@ class TRH_Evenement  extends TObjetStd {
 		parent::add_champs('natureRefac','type=chaine;'); //nature refacturée
 		
 		//pour une facture
+		parent::add_champs('date_facture','type=date;');
+		parent::add_champs('idImport','type=chaine;'); //sera le nom du fichier d'import d'où provient la facture.
 		parent::add_champs('numFacture','type=chaine;');
 		parent::add_champs('compteFacture','type=chaine;');
 		

@@ -380,7 +380,7 @@ function send_mail_resources($subject, $message){
 
 /**
  * La fonction renvoie le rowid de l'user qui a la ressource $idRessource à la date $jour, 0 sinon.
- * $jour a la forme
+ * $jour a la forme Y-m-d
  */
 function ressourceIsEmpruntee(&$ATMdb, $idRessource, $jour){
 		global $conf;
