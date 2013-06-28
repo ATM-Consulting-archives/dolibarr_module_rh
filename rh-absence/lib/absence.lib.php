@@ -311,8 +311,10 @@ function mailConges(&$absence){
 				)
 		);
 	}
+	
+	
 	$mail = new TReponseMail($from,$sendto,$subject,$message);
-    (int)$result = $mail->send();
+    (int)$result = $mail->send(true, 'utf-8');
 	return 1;	
 }
 
@@ -390,7 +392,7 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 	);
 	
 	$mail = new TReponseMail($from,$sendto,$subject,$message);
-    (int)$result = $mail->send();
+    (int)$result = $mail->send(true, 'utf-8');
 	return 1;
 }
 
