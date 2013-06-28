@@ -583,7 +583,6 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$regleId=$user->id;
 	}else $regleId=$absence->fk_user;
 	
-	
 	//récupération des règles liées à l'utilisateur 
 	//$TRegle=array();
 	//$TRegle=$absence->recuperationRegleUser($ATMdb, $regleId);
@@ -596,11 +595,12 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	if($ATMdb->Get_line()){
 		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 	}
-
+	$typeAbsenceCreable=$absence->TTypeAbsenceUser;
 	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
 		$sql="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 		$comboAbsence=2;
+		$typeAbsenceCreable=$absence->TTypeAbsenceAdmin;
 	}else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
 		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s  
@@ -612,18 +612,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			$comboAbsence=1;
 			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
+		$typeAbsenceCreable=$absence->TTypeAbsenceUser;
 	}
-	/*else if($user->rights->absence->myactions->creerAbsencePointage){
-		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
-			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s  
-			WHERE v.fk_user=".$user->id." 
-			AND v.type='Conges'
-			AND s.rowid=u.fk_user
-			AND v.fk_usergroup=u.fk_usergroup
-			AND v.pointeur=1
-			";
-			//echo $sqlReqUser;exit;
-		$droitsCreation=1;*/
 	else $droitsCreation=2; //on n'a pas les droits de création
 	if($droitsCreation==1){
 		$sql.=" ORDER BY name";
@@ -635,6 +625,19 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	//Tableau affichant les 10 dernières absences du collaborateur
 	$TRecap=array();
 	$TRecap=$absence->recuperationDerAbsUser($ATMdb, $regleId);
+	
+	//on regarde si l'utilisateur a le droit de créer une absence non justifiée
+	$pointeurTest=0;
+	$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` WHERE fk_user=".$user->id." AND pointeur=1";
+	$ATMdb->Execute($sql);
+	if($ATMdb->Get_line()) {
+		$pointeurTest++;
+	}
+	
+	if($pointeurTest>0){
+		$typeAbsenceCreable=$absence->TTypeAbsencePointeur;
+	}
+	
 	
 	
 	//on peut supprimer la demande d'absence lorsque temps que la date du jour n'est pas supérieure à datedébut-1
@@ -648,6 +651,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	elseif($user->rights->absence->myactions->creerAbsenceCollaborateur){
 		$droitSupprimer=1;
 	}
+	
+
 	
 		
 	$TBS=new TTemplateTBS();
@@ -695,7 +700,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
 				,'idUser'=>$user->id
-				,'comboType'=>$comboAbsence==2?$form->combo('','type',$absence->TTypeAbsenceAdmin,$absence->type):$form->combo('','type',$absence->TTypeAbsenceUser,$absence->type)
+				,'comboType'=>$form->combo('','type',$typeAbsenceCreable,$absence->type)
 				,'etat'=>$absence->etat
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
