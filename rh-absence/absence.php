@@ -589,7 +589,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	//$TRegle=array();
 	//$TRegle=$absence->recuperationRegleUser($ATMdb, $regleId);
 
-
+	$comboAbsence=0;
 	//création du tableau des utilisateurs liés au groupe du valideur, pour créer une absence, pointage...
 	$TUser = array();
 	$sql="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id;
@@ -601,6 +601,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
 		$sql="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
+		$comboAbsence=2;
 	}else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
 		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s  
@@ -609,6 +610,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			AND s.rowid=u.fk_user
 			AND v.fk_usergroup=u.fk_usergroup
 			";
+			$comboAbsence=1;
 			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
 	}
@@ -694,7 +696,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
 				,'idUser'=>$user->id
-				,'comboType'=>$droitsCreation==1?$form->combo('','type',$absence->TTypeAbsenceAdmin,$absence->type):$form->combo('','type',$absence->TTypeAbsenceUser,$absence->type)
+				,'comboType'=>$comboAbsence==2?$form->combo('','type',$absence->TTypeAbsenceAdmin,$absence->type):$form->combo('','type',$absence->TTypeAbsenceUser,$absence->type)
 				,'etat'=>$absence->etat
 				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
