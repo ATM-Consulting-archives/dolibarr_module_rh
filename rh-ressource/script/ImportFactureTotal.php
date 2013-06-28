@@ -6,7 +6,7 @@
  * 
  */
  
-/*
+
 require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');
@@ -89,9 +89,10 @@ foreach ($TCarte as $numId => $rowid) {
 if (empty($nomFichier)){$nomFichier = "./fichierImports/Facture TOTAL.csv";}
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
-//pour avoir un joli nom, on prend la chaine après le dernier caractère / 
+//pour avoir un joli nom, on prend la chaine après le dernier caractère /  et on remplace les espaces par des underscores
 $v =  strrpos ( $nomFichier , '/' );
 $idImport = substr($nomFichier, $v+1);
+$idImport = str_replace(' ', '_', $idImport);
 
 $TCarteInexistantes = array();
 $TCarteNonLie = array();
@@ -168,8 +169,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->coutEntrepriseHT = strtr($infos[20], ',','.');
 				$temp->idImport = $idImport;
 				$temp->numFacture = $infos[1];
-				$temp->date_facture = $infos[3];
-				
+				$temp->date_facture = dateToInt($infos[3]);
 				$temp->compteFacture = $infos[13];
 				$temp->litreEssence = floatval(strtr($infos[18],',','.'));
 				$temp->kilometrage = intval($infos[31]);
