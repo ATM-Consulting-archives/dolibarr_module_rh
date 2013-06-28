@@ -115,7 +115,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		
 		$sql_anal="SELECT e.rowid
 				, e.coutEntrepriseTTC as coutEntrepriseTTC
-				, e.coutEntrepriseHT as coutEntrepriseHT
+				, (e.coutEntrepriseHT /  a.pourcentage) as coutEntrepriseHT
 				, a.code as 'code_analytique'
 				, a.pourcentage as 'pourcentage'
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
@@ -131,7 +131,66 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		if(isset($_REQUEST['DEBUG'])) {
 			print $sql_anal;
 		}
-		
+    
+		$TabAna=array();		
+		while($ATMdb2->Get_line()) {
+
+			$code_anal = $ATMdb2->Get_field('code_analytique');
+			$total_anal = $ATMdb2->Get_field('coutEntrepriseHT');
+//print_r($code_anal);
+ 		
+     /*	if( isset( $_REQUEST['withLogin'] ) && empty( $code_anal ) ) {
+				$code_anal = '<a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('firstname').' '.$ATMdb2->Get_field('name') ."</a>";
+			} */
+			if(isset($_REQUEST['DEBUG'])) {
+				print "$code_anal=$total_anal<br/>";
+			}
+			if(!isset($TabAna[$code_anal])) $TabAna[$code_anal]=0;
+			$TabAna[$code_anal]+=$total_anal;
+			/*$TabAna[] = array(
+				$code_anal
+				,number_format($ATMdb2->Get_field('total_ht'),2,'.','' )
+			);*/
+		}
+    
+    $nbElement = count($TabAna);
+		$total_partiel = 0;$cpt=0;
+		foreach($TabAna as $code_analytique=>$total_ht_anal /*$ana*/) {
+			//list($code_analytique,$total_ht_anal)=$ana ;
+			
+			if(isset($_REQUEST['DEBUG'])) {
+                                print "<b>$code_analytique=$total_ht_anal</b><br/>";
+                        }
+
+			$total_ht_anal = round($total_ht_anal,2);
+
+			if($cpt==$nbElement-1) $total_ht_anal = $total_ht - $total_partiel;
+ 			$total_partiel+=$total_ht_anal;
+          
+          $type_compte 		= 	'A';
+					
+					$TLignes[] = array(
+						'RES'
+						,date('dmy')
+						,'FF'
+						,$code_compta
+						,$type_compte
+						,$code_analytique
+						,''
+						,'RESSOURCE '.date('m/Y')
+						,'V'
+						,date('dmy')
+						,$sens
+						,$total_ht_anal
+						,'N'
+						,''
+						,''
+						,'EUR'
+					);
+			 $cpt++;
+		}
+    
+     /* 
 		$nb_parts=0;
 		$new_code_compta=0;
 		$ATMdb2->Execute($sql_anal);
@@ -224,7 +283,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			,''
 			,'EUR'
 		);
-		
+		  */
 		$ressource_exist=1;
 	}
 
