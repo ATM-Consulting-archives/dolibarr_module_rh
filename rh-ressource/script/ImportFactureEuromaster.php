@@ -34,6 +34,13 @@ if (empty($nomFichier)){$nomFichier = "./fichierImports/B60465281_Masterplan-CPR
 $entity = (isset($_REQUEST['entity'])) ? $_REQUEST['entity'] : $conf->entity;
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
+//pour avoir un joli nom, on prend la chaine après le dernier caractère /  et on remplace les espaces par des underscores
+$v =  strrpos ( $nomFichier , '/' );
+$idImport = substr($nomFichier, $v+1);
+$idImport = str_replace(' ', '_', $idImport);
+$idRessFactice = createRessourceFactice($ATMdb, $idVoiture, $idImport, $entity, $idEuromaster);
+$idSuperAdmin = getIdSuperAdmin($ATMdb);
+
 //début du parsing
 $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
@@ -48,14 +55,26 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		$timestamp = mktime(0,0,0,intval(substr($infos[4], 3,2)),intval(substr($infos[4], 0,2)), intval(substr($infos[4], 6,4)));
 		$date = date("Y-m-d", $timestamp);
 		
-		if (empty($TRessource[$plaque])){
-			$TNoPlaque[$plaque] = 1 ;
-		}
-		else {
+		
+		if (!empty($TRessource[$plaque])){
+				$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], $date);
+				if ($idUser==0){ //si il trouve, on l'affecte à l'utilisateur 
+					$idUser = $idSuperAdmin;
+					$cptNoAttribution++;
+					echo 'Voiture non attribué le '.$date.' : '.$plaque.'<br>';}
+				}
+			else {
+				$idUser = $idSuperAdmin;
+				$TNoPlaque[$plaque] = 1 ;
+				$cptNoVoiture ++;
+			}
+			
+			
+		
 			$temp = new TRH_Evenement;
 			$temp->fk_rh_ressource = $TRessource[$plaque];
 			$temp->type = 'facture';
-			
+			$temp->fk_user = $idUser;
 			$temp->set_date('date_debut', $date);
 			$temp->set_date('date_fin', $date);
 			$temp->coutEntrepriseHT = strtr($infos[10], ',','.');
@@ -69,16 +88,11 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			//$ttva = array_keys($temp->TTVA , floatval(strtr($infos[21], ',','.')));
 			//$temp->TVA = $ttva[0];
 			//$temp->compteFacture = $infos[13];
+			$temp->idImport = $idImport;
+			$temp->numFacture = $infos[22];
+			$temp->date_facture = dateToInt($infos[23]);
 			
 			
-			$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], $date);
-			//echo $idUser.'<br>';
-			if ($idUser == 0) {
-				$TNonAttribuee[$date] = $plaque;
-			}
-			else {
-				$temp->fk_user = $idUser;
-			}
 			$temp->save($ATMdb);
 		}
 		}
