@@ -5,11 +5,12 @@
  * On créé un évenement par ligne de ce fichier
  * et une évenement de type facture
  */
- 
-/*require('../config.php');
+
+/*  
+require('../config.php');
 require('../class/evenement.class.php');
 require('../class/ressource.class.php');
-require('../lib/ressource.lib.php');*/
+require('../lib/ressource.lib.php');//*/
 
 global $conf;
 
@@ -56,7 +57,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		$date = date("Y-m-d", $timestamp);
 		
 		
-		if (!empty($TRessource[$plaque])){
+			if (!empty($TRessource[$plaque])){
 				$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], $date);
 				if ($idUser==0){ //si il trouve, on l'affecte à l'utilisateur 
 					$idUser = $idSuperAdmin;
@@ -94,7 +95,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			
 			$temp->save($ATMdb);
-		}
+		
 		}
 		$numLigne++;
 		
@@ -185,3 +186,10 @@ function chargeVoiture(&$ATMdb){
 }
 
 
+
+/*
+ * prend un format d/m/Y et renvoie un timestamp
+ */
+function dateToInt($chaine){
+	return mktime(0,0,0,substr($chaine,3,2),substr($chaine,0,2),substr($chaine,6,4));
+}
