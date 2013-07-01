@@ -262,7 +262,7 @@ function mailConges(&$absence){
 
 	$TBS=new TTemplateTBS();
 	if($absence->etat=='Avalider'){
-		$subject = "Création d\'une demande de congés";
+		$subject = "Création d'une demande de congés";
 		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.creation.tpl.php'
 			,array()
 			,array(
