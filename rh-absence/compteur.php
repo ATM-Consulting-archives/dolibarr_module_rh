@@ -295,7 +295,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				
 				
 				$rttCourant['cumuleAcquisInit']=$ATMdb->Get_field('rttAcquisAnnuelCumuleInit');
-				$rttCourant['cumuleAcquis']=$ATMdb->Get_field('rttCumuleAcquis')+$ATMdb->Get_field('rttAcquisMensuelInit');
+				$rttCourant['cumuleAcquis']=$ATMdb->Get_field('rttCumuleAcquis');
 				$rttCourant['cumulePris']=$ATMdb->Get_field('rttCumulePris');
 				$rttCourant['cumuleReport']=$ATMdb->Get_field('rttCumuleReportNM1');
 				$rttCourant['cumuleTotal']=$rttCourant['cumuleAcquis']+$rttCourant['cumuleReport']-$rttCourant['cumulePris'];
