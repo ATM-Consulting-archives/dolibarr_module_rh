@@ -84,7 +84,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				
 				//RTT cumulés
-				$compteur->rttCumulePris=$infos[125]-$infos[21];
+				$compteur->rttCumulePris=$infos[125]-$infos[21]+$infos[141];
 				$compteur->rttCumuleAcquis=$infos[125];
 				$compteur->rttCumuleReportNM1=$infos[141];
 				$compteur->rttCumuleTotal=$compteur->rttCumuleAcquis+$compteur->rttCumuleReportNM1-$compteur->rttCumulePris;
@@ -92,7 +92,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				//echo $compteur->rttCumuleAcquis;
 				//RTT non cumulés
-				$compteur->rttNonCumulePris=$infos[126]-$infos[20];
+				$compteur->rttNonCumulePris=$infos[126]-$infos[20]+$infos[140];
 				$compteur->rttNonCumuleAcquis=$infos[126];
 				$compteur->rttNonCumuleReportNM1=$infos[142];	//	report
 				$compteur->rttNonCumuleTotal=$compteur->rttNonCumuleAcquis+$compteur->rttNonCumuleReportNM1-$compteur->rttNonCumulePris;
