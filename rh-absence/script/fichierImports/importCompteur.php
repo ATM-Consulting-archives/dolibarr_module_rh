@@ -94,7 +94,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				//RTT non cumulés
 				$compteur->rttNonCumulePris=$infos[126]-$infos[20];
 				$compteur->rttNonCumuleAcquis=$infos[126];
-				$compteur->rttNonCumuleReportNM1=$infos[141];	//	report
+				$compteur->rttNonCumuleReportNM1=$infos[142];	//	report
 				$compteur->rttNonCumuleTotal=$compteur->rttNonCumuleAcquis+$compteur->rttNonCumuleReportNM1-$compteur->rttNonCumulePris;
 				$compteur->rttAcquisAnnuelNonCumuleInit=0;		//à revoir
 				
