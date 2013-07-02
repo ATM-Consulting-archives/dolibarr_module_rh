@@ -267,12 +267,12 @@ function mailConges(&$absence){
 			,array()
 			,array(
 				'absence'=>array(
-					'nom'=> utf8_encode($name)
-					,'prenom'=> utf8_encode($firstname)
+					'nom'=> htmlentities($name, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+					,'prenom'=> htmlentities($firstname, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 					,'date_debut'=> php2dmy($absence->date_debut)
 					,'date_fin'=>php2dmy($absence->date_fin)
-					,'libelle'=>utf8_encode($absence->libelle)
-					,'libelleEtat'=>utf8_encode($absence->libelleEtat)
+					,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+					,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 					
 				)
 				)
@@ -283,12 +283,19 @@ function mailConges(&$absence){
 			,array()
 			,array(
 				'absence'=>array(
-					'nom'=>utf8_encode($name)
+
+					/*'nom'=>utf8_encode($name)
 					,'prenom'=>utf8_encode($firstname)
 					,'date_debut'=>php2dmy($absence->date_debut)
 					,'date_fin'=>php2dmy($absence->date_fin)
 					,'libelle'=>utf8_encode($absence->libelle)
 					,'libelleEtat'=>utf8_encode($absence->libelleEtat)
+					*/'nom'=> htmlentities($name, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+                                        ,'prenom'=> htmlentities($firstname, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+                                        ,'date_debut'=> php2dmy($absence->date_debut)
+                                        ,'date_fin'=>php2dmy($absence->date_fin)
+                                        ,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+                                        ,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 					,'commentaireValideur'=>utf8_encode($absence->commentaireValideur)
 				)
 				)
@@ -300,12 +307,18 @@ function mailConges(&$absence){
 			,array()
 			,array(
 				'absence'=>array(
-					'nom'=>utf8_encode($name)
+					/*'nom'=>utf8_encode($name)
 					,'prenom'=>utf8_encode($firstname)
 					,'date_debut'=>php2dmy($absence->date_debut)
 					,'date_fin'=>php2dmy($absence->date_fin)
 					,'libelle'=>utf8_encode($absence->libelle)
 					,'libelleEtat'=>utf8_encode($absence->libelleEtat)
+					*/'nom'=> htmlentities($name, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+                                        ,'prenom'=> htmlentities($firstname, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+                                        ,'date_debut'=> php2dmy($absence->date_debut)
+                                        ,'date_fin'=>php2dmy($absence->date_fin)
+                                        ,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+                                        ,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 					,'commentaireValideur'=>utf8_encode($absence->commentaireValideur)
 				)
 				)
