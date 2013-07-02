@@ -31,7 +31,7 @@
 						$absence->load($ATMdb, $_REQUEST['id']);
 						if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
 							mailConges($absence);
-							mailCongesValideur($ATMdb,$absence);
+							mailCongesValideur($ATMdb,$absence,1);
 						}
 						
 						$mesg = '<div class="error">Demande enregistrée</div>';
@@ -46,7 +46,7 @@
 							$absence->load($ATMdb, $_REQUEST['id']);
 							if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
 								mailConges($absence);
-								mailCongesValideur($ATMdb,$absence);
+								mailCongesValideur($ATMdb,$absence,1);
 							}
 							$mesg = '<div class="error">Attention : La durée de l\'absence dépasse la règle en vigueur</div>';
 							_fiche($ATMdb, $absence,'view');
