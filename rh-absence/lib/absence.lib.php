@@ -334,7 +334,6 @@ function mailCongesValideur(&$ATMdb, &$absence, $niveau){
 	$sql="SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
 	WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).") AND pointeur=0 AND level=".$niveau;
 	
-	echo $sql;exit;
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()){
 		$TValideur[]=$ATMdb->Get_field('fk_user');
