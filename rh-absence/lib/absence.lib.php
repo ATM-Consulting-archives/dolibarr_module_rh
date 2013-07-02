@@ -345,7 +345,7 @@ function mailCongesValideur(&$ATMdb, &$absence){
 	
 	//on récupère tous les ids des collaborateurs à qui on devra envoyer un mail lors de la création d'une absence (valideurs des groupes précédents)
 	$sql="SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
-	WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).") AND pointeur=0 AND level=".$absence->niveauValidation;
+	WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).") AND pointeur=0 AND level=".$absence->niveauValidation." AND fk_user!=".$absence->fk_user;
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()){
@@ -392,14 +392,14 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 		,array()
 		,array(
 			'absence'=>array(
-				'nom'=>utf8_encode($name)
-				,'prenom'=>utf8_encode($firstname)
-				,'valideurNom'=>utf8_encode($nameValideur)
-				,'valideurPrenom'=>utf8_encode($firstnameValideur)
+				'nom'=>htmlentities($name, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+				,'prenom'=>htmlentities($firstname, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+				,'valideurNom'=>htmlentities($nameValideur, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+				,'valideurPrenom'=>htmlentities($firstnameValideur, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 				,'date_debut'=>php2dmy($absence->date_debut)
 				,'date_fin'=>php2dmy($absence->date_fin)
-				,'libelle'=>utf8_encode($absence->libelle)
-				,'libelleEtat'=>utf8_encode($absence->libelleEtat)
+				,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+				,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 			)
 		)
 	);
