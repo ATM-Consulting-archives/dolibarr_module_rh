@@ -319,7 +319,7 @@ function mailConges(&$absence){
 }
 
 //fonction permettant la récupération
-function mailCongesValideur(&$ATMdb, &$absence, $niveau){
+function mailCongesValideur(&$ATMdb, &$absence){
 	//on récupèreles ids des groupes auxquels appartient l'utilisateur
 	$sql="SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."usergroup_user 
 	WHERE fk_user= ".$absence->fk_user;
@@ -332,7 +332,7 @@ function mailCongesValideur(&$ATMdb, &$absence, $niveau){
 	
 	//on récupère tous les ids des collaborateurs à qui on devra envoyer un mail lors de la création d'une absence (valideurs des groupes précédents)
 	$sql="SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
-	WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).") AND pointeur=0 AND level=".$niveau;
+	WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).") AND pointeur=0 AND level=".$absence->niveauValidation;
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()){
@@ -399,12 +399,13 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 
 
 //envoi de mail au valideur
-function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
+/*function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 	global $conf;
 	//LISTE USERS À VALIDER
 	$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
 			WHERE v.fk_user=".$fk_user." 
 			AND v.type='Conges'
+			AND v.pointeur=0
 			AND v.fk_usergroup=u.fk_usergroup
 			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$fk_user.")";
 		
@@ -430,20 +431,20 @@ function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 	
 	
 	if($nbrAbsence>0) {
-		/*
-		 * S'il y a des demandes d'absence en attente
-		 */
+		
+		 // S'il y a des demandes d'absence en attente
+		 
 		$from = USER_MAIL_SENDER;
 			
 			$TBS=new TTemplateTBS();
-			$subject = "Alerte - Validation de demandes d'absence en attente (".$nbrNdf.")";
+			$subject = "Alerte - Validation de demandes d'absence en attente (".$nbrAbsence.")";
 			$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.validation.attente.tpl.php'
 				,array()
 				,array(
 					'validation'=>array(
 						'nom'=>$name
 						,'prenom'=>$firstname
-						,'nbr'=>$nbrNdf
+						,'nbr'=>$nbrAbsence
 					)
 				)
 			);
@@ -454,7 +455,7 @@ function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 		    (int)$result = $mail->send(true, 'utf-8');		
 	}	
 	return $result;
-}
+}*/
 
 
 
