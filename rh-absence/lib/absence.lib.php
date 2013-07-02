@@ -267,12 +267,12 @@ function mailConges(&$absence){
 			,array()
 			,array(
 				'absence'=>array(
-					'nom'=>htmlentities($name, ENT_COMPAT , 'ISO8859-1')
-					,'prenom'=>htmlentities($firstname, ENT_COMPAT , 'ISO8859-1')
-					,'date_debut'=>php2dmy($absence->date_debut)
+					'nom'=> utf8_encode($name)
+					,'prenom'=> utf8_encode($firstname)
+					,'date_debut'=> php2dmy($absence->date_debut)
 					,'date_fin'=>php2dmy($absence->date_fin)
-					,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT , 'ISO8859-1')
-					,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT , 'ISO8859-1')
+					,'libelle'=>utf8_encode($absence->libelle)
+					,'libelleEtat'=>utf8_encode($absence->libelleEtat)
 					
 				)
 				)
@@ -283,13 +283,13 @@ function mailConges(&$absence){
 			,array()
 			,array(
 				'absence'=>array(
-					'nom'=>htmlentities($name, ENT_COMPAT , 'ISO8859-1')
-					,'prenom'=>htmlentities($firstname, ENT_COMPAT , 'ISO8859-1')
+					'nom'=>utf8_encode($name)
+					,'prenom'=>utf8_encode($firstname)
 					,'date_debut'=>php2dmy($absence->date_debut)
 					,'date_fin'=>php2dmy($absence->date_fin)
-					,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT , 'ISO8859-1')
-					,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT , 'ISO8859-1')
-					,'commentaireValideur'=>htmlentities($absence->commentaireValideur, ENT_COMPAT , 'ISO8859-1')
+					,'libelle'=>utf8_encode($absence->libelle)
+					,'libelleEtat'=>utf8_encode($absence->libelleEtat)
+					,'commentaireValideur'=>utf8_encode($absence->commentaireValideur)
 				)
 				)
 		);
@@ -300,13 +300,13 @@ function mailConges(&$absence){
 			,array()
 			,array(
 				'absence'=>array(
-					'nom'=>htmlentities($name, ENT_COMPAT , 'ISO8859-1')
-					,'prenom'=>htmlentities($firstname, ENT_COMPAT , 'ISO8859-1')
+					'nom'=>utf8_encode($name)
+					,'prenom'=>utf8_encode($firstname)
 					,'date_debut'=>php2dmy($absence->date_debut)
 					,'date_fin'=>php2dmy($absence->date_fin)
-					,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT , 'ISO8859-1')
-					,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT , 'ISO8859-1')
-					,'commentaireValideur'=>htmlentities($absence->commentaireValideur, ENT_COMPAT , 'ISO8859-1')
+					,'libelle'=>utf8_encode($absence->libelle)
+					,'libelleEtat'=>utf8_encode($absence->libelleEtat)
+					,'commentaireValideur'=>utf8_encode($absence->commentaireValideur)
 				)
 				)
 		);
@@ -379,14 +379,14 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 		,array()
 		,array(
 			'absence'=>array(
-				'nom'=>htmlentities($name, ENT_COMPAT , 'ISO8859-1')
-				,'prenom'=>htmlentities($firstname, ENT_COMPAT , 'ISO8859-1')
-				,'valideurNom'=>htmlentities($nameValideur, ENT_COMPAT , 'ISO8859-1')
-				,'valideurPrenom'=>htmlentities($firstnameValideur, ENT_COMPAT , 'ISO8859-1')
+				'nom'=>utf8_encode($name)
+				,'prenom'=>utf8_encode($firstname)
+				,'valideurNom'=>utf8_encode($nameValideur)
+				,'valideurPrenom'=>utf8_encode($firstnameValideur)
 				,'date_debut'=>php2dmy($absence->date_debut)
 				,'date_fin'=>php2dmy($absence->date_fin)
-				,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT , 'ISO8859-1')
-				,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT , 'ISO8859-1')
+				,'libelle'=>utf8_encode($absence->libelle)
+				,'libelleEtat'=>utf8_encode($absence->libelleEtat)
 			)
 		)
 	);
