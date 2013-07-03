@@ -1,17 +1,13 @@
 <?php
 	require('config.php');
 	require('./class/ressource.class.php');
-	require('./class/contrat.class.php');
 	require('./class/evenement.class.php');
-	require('./lib/ressource.lib.php');
 	$langs->load('ressource@ressource');
 	
 	//if (!$user->rights->financement->affaire->read)	{ accessforbidden(); }
 	$ATMdb=new Tdb;
 	$emprunt=new TRH_Evenement;
 	$ressource=new TRH_ressource;
-	$contrat=new TRH_Contrat;
-	$contrat_ressource=new TRH_Contrat_Ressource;
 	
 	$mesg = '';
 	$error=false;
@@ -34,15 +30,36 @@ function _liste(&$ATMdb, &$ressource) {
 	llxHeader('','Liste des ressources');
 	print dol_get_fiche_head(array()  , '', 'Liste ressources');
 	
+	
+	//récupération des champs spéciaux à afficher.
+	$sqlReq="SELECT code, libelle, type, options FROM ".MAIN_DB_PREFIX."rh_ressource_field WHERE inliste='oui' ";
+	$ATMdb->Execute($sqlReq);
+	$TSpeciaux = array();
+	
+	$TSearch=array();
+	while($ATMdb->Get_line()) {
+		$TSpeciaux[$ATMdb->Get_field('code')]= $ATMdb->Get_field('libelle');
+		if ($ATMdb->Get_field('type')=='liste'){
+			$TSearch[$ATMdb->Get_field('code')] = array_combine(explode(';', $ATMdb->Get_field('options')), explode(';', $ATMdb->Get_field('options')));
+		}
+		else {
+			$TSearch[$ATMdb->Get_field('code')] = true;}
+	}
+	
+	
+	
+	
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.libelle, r.fk_rh_ressource_type, 
 		r.numId ";
+	foreach ($TSpeciaux as $key=>$value) {
+		$sql .= ','.$key.' ';
+	}
 	if($user->rights->ressource->ressource->createRessource){
 		$sql.=", '' as 'Supprimer'";
 	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON ( (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource) AND e.type='emprunt')
-		AND e.entity IN (0, ".$conf->entity.")
 		AND e.date_debut<='".date("Y-m-d")."' AND e.date_fin >= '". date("Y-m-d")."' 
 	 LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid )";	
 	$sql.=" WHERE  (e.fk_rh_ressource IS NULL) ";
@@ -84,17 +101,17 @@ function _liste(&$ATMdb, &$ressource) {
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 		)
-		,'title'=>array(
+		,'title'=>array_merge(array(
 			'libelle'=>'Libellé'
 			,'numId'=>'Numéro Id'
-			,'fk_rh_ressource_type'=> 'Type'
+			,'fk_rh_ressource_type'=> 'Type'), $TSpeciaux
 		)
 		,'search'=>($user->rights->ressource->ressource->searchRessource) ? 		
-			array(
+			array_merge(array(
 				'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
 				,'numId'=>true
 				,'libelle'=>true
-			)
+			), $TSearch)
 			: array()
 		,'orderBy'=>$TOrder
 		

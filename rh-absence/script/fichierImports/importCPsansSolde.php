@@ -48,7 +48,7 @@ while($ATMdb->Get_line()) {
 
 
 //----------------DEBUT DU TRAITEMENT DES LIGNES D'APPELS----------------------------------------------------------
-$nomFichier = "./ImportAbsenceValidee.csv";
+$nomFichier = "./importCPsanssolde.csv";
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 
@@ -86,27 +86,11 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$absence->etat='Validee';
 					$absence->commentaireValideur=$infos[2];
 					
+
+					$absence->type='nonremuneree';
+					$absence->libelle=saveLibelle($absence->type);
+					$absence->code='0980';//saveCodeTypeAbsence($ATMdb, $absence->type);
 					
-					switch($infos[1]){
-						case 40:
-							$absence->type='conges';
-							$absence->libelle=saveLibelle($absence->type);
-							$absence->code='0950';//saveCodeTypeAbsence($ATMdb, $absence->type);
-							
-							break;
-						case 73:
-							$absence->type='rttcumule';
-							$absence->libelle=saveLibelle($absence->type);
-							$absence->code='0940';//saveCodeTypeAbsence($ATMdb, $absence->type);
-
-							break;
-						case 74:
-							$absence->type='rttnoncumule';
-							$absence->libelle=saveLibelle($absence->type);
-							$absence->code='0930';//saveCodeTypeAbsence($ATMdb, $absence->type);
-
-							break;
-					}
 					
 					$absence->libelle=saveLibelle($absence->type);
 					$absence->libelleEtat='Acceptée';
@@ -157,7 +141,6 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					else $absence->dureeHeurePaie = $absence->dureeHeure;
 					
 					$absence->niveauValidation=1;
-					
 					$absence->save($ATMdb);
 					$cpt++;
 			}

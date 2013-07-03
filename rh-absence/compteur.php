@@ -151,7 +151,7 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 		CAST(r.acquisExerciceNM1 as DECIMAL(16,1)) as 'Conges Acquis N-1', 
 		CAST(r.congesPrisNM1 as DECIMAL(16,1)) as 'Conges Pris N-1'
 		FROM ".MAIN_DB_PREFIX."rh_compteur as r, ".MAIN_DB_PREFIX."user as c 
-		WHERE r.entity IN (0,".$conf->entity.") AND r.fk_user=c.rowid";
+		WHERE r.fk_user=c.rowid";
 	
 	
 	$TOrder = array('name'=>'ASC');
@@ -234,13 +234,13 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$CompteurActuel=$compteurUserCourant;
 
 	echo $form->hidden('id', $CompteurActuel);
-	$sqlReqUser="SELECT fk_user FROM `".MAIN_DB_PREFIX."rh_compteur` where rowid=".$CompteurActuel." AND entity IN (0,".$conf->entity.")";
+	$sqlReqUser="SELECT fk_user FROM `".MAIN_DB_PREFIX."rh_compteur` where rowid=".$CompteurActuel;
 	$ATMdb->Execute($sqlReqUser);
 	while($ATMdb->Get_line()) {
 				$userCompteurActuel=$ATMdb->Get_field('fk_user');
 	}
 	
-	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$userCompteurActuel." AND entity IN (0,".$conf->entity.")";
+	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$userCompteurActuel;
 
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
@@ -255,7 +255,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
-	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=". $userCourant->id." AND entity IN (0,".$conf->entity.")";
+	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=". $userCourant->id;
 	
 	$ATMdb->Execute($sqlReqUser);
 	$congePrec=array();
@@ -295,7 +295,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				
 				
 				$rttCourant['cumuleAcquisInit']=$ATMdb->Get_field('rttAcquisAnnuelCumuleInit');
-				$rttCourant['cumuleAcquis']=$ATMdb->Get_field('rttCumuleAcquis')+$ATMdb->Get_field('rttAcquisMensuelInit');
+				$rttCourant['cumuleAcquis']=$ATMdb->Get_field('rttCumuleAcquis');
 				$rttCourant['cumulePris']=$ATMdb->Get_field('rttCumulePris');
 				$rttCourant['cumuleReport']=$ATMdb->Get_field('rttCumuleReportNM1');
 				$rttCourant['cumuleTotal']=$rttCourant['cumuleAcquis']+$rttCourant['cumuleReport']-$rttCourant['cumulePris'];

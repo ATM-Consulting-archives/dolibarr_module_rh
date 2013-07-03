@@ -111,8 +111,7 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)";
-	$sql.=" WHERE e.entity IN (0,".$conf->entity.")
-		AND e.type='emprunt'
+	$sql.=" WHERE e.type='emprunt'
 		AND e.fk_rh_ressource=".$ressource->getId();
 	if(!$user->rights->ressource->ressource->manageAttribution){
 		$sql.=" AND e.fk_user=".$user->id;

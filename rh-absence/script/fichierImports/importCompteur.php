@@ -39,7 +39,7 @@ while($ATMdb->Get_line()) {
 
 
 //----------------DEBUT DU TRAITEMENT DES LIGNES D'APPELS----------------------------------------------------------
-$nomFichier = "./compteurSalaries.csv";
+$nomFichier = "./ImportsCompteurs.csv";
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 //début du parsing
@@ -84,23 +84,23 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				
 				//RTT cumulés
-				$compteur->rttCumulePris=$infos[123];
+				$compteur->rttCumulePris=$infos[125]-$infos[21]+$infos[141];
 				$compteur->rttCumuleAcquis=$infos[125];
-				$compteur->rttCumuleReportNM1=$infos[140];
+				$compteur->rttCumuleReportNM1=$infos[141];
 				$compteur->rttCumuleTotal=$compteur->rttCumuleAcquis+$compteur->rttCumuleReportNM1-$compteur->rttCumulePris;
 				$compteur->rttAcquisAnnuelCumuleInit=0; 	//à revoir
 				
-				
+				//echo $compteur->rttCumuleAcquis;
 				//RTT non cumulés
-				$compteur->rttNonCumulePris=$infos[124];
+				$compteur->rttNonCumulePris=$infos[126]-$infos[20]+$infos[140];
 				$compteur->rttNonCumuleAcquis=$infos[126];
-				$compteur->rttNonCumuleReportNM1=$infos[141];	//	report
+				$compteur->rttNonCumuleReportNM1=$infos[142];	//	report
 				$compteur->rttNonCumuleTotal=$compteur->rttNonCumuleAcquis+$compteur->rttNonCumuleReportNM1-$compteur->rttNonCumulePris;
 				$compteur->rttAcquisAnnuelNonCumuleInit=0;		//à revoir
 				
 				//congés
 				$compteur->acquisExerciceNM1=$infos[11];
-				$compteur->congesPrisNM1=$infos[12];
+				$compteur->congesPrisNM1=$infos[14];
 				$compteur->acquisExerciceN=$infos[13]; 	//	report
 				
 				$compteur->date_rttCloture=strtotime(DATE_RTT_CLOTURE);
@@ -186,13 +186,29 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					elseif(stristr($societe,'agt')!=false){
 						$compteur->rttTypeAcquisition='Annuel';
 						$compteur->rttMetier='aucunrtt';
+					}else{
+						if($tpsHebdoUser==37){
+								$compteur->rttMetier='noncadre37cpro';
+								$compteur->rttAcquisAnnuelCumuleInit=5;
+								$compteur->rttAcquisAnnuelNonCumuleInit=7;
+							}elseif($tpsHebdoUser==38){
+								$compteur->rttMetier='noncadre38cpro';
+								$compteur->rttAcquisAnnuelCumuleInit=3;
+								$compteur->rttAcquisAnnuelNonCumuleInit=3;
+							}elseif($tpsHebdoUser==39){
+								$compteur->rttMetier='noncadre39';
+								$compteur->rttAcquisAnnuelCumuleInit=0;
+								$compteur->rttAcquisAnnuelNonCumuleInit=0;
+							}
+							$compteur->rttTypeAcquisition='Annuel';
 					}
 
 				}
 				
 				$compteur->rttannee=$annee;
 				$compteur->nombreCongesAcquisMensuel=2.08;
-
+				
+				$compteur->acquisAncienneteN=$compteur->acquisAncienneteNM1;
 				$compteur->reportRtt=0;
 				
 				$compteur->save($ATMdb);

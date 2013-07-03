@@ -181,7 +181,6 @@ class TRH_Absence extends TObjetStd {
 		$this->TTypeAbsenceAdmin=array();
 		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence`";
 		$ATMdb->Execute($sql);
-
 		while($ATMdb->Get_line()) {
 			$this->TTypeAbsenceAdmin[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
 		}
@@ -192,10 +191,19 @@ class TRH_Absence extends TObjetStd {
 		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
 				WHERE admin=0";
 		$ATMdb->Execute($sql);
-
 		while($ATMdb->Get_line()) {
 			$this->TTypeAbsenceUser[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
 		}
+		
+		//combo box pour le type d'absence pointeur
+		$this->TTypeAbsencePointeur=array();
+		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
+				WHERE admin=0 OR typeAbsence LIKE 'nonjustifiee'";
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$this->TTypeAbsencePointeur[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+		}
+		
 		
 		
 		//combo pour le choix de matin ou après midi 

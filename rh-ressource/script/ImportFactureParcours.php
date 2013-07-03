@@ -64,7 +64,14 @@ while($ATMdb->Get_line()) {
 
 if (empty($nomFichier)){$nomFichier = "./fichierImports/CPRO - PRELVT DU 05 04 13.csv";}
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
-//$cptContrat = 0;
+
+//pour avoir un joli nom, on prend la chaine après le dernier caractère /  et on remplace les espaces par des underscores
+$v =  strrpos ( $nomFichier , '/' );
+$idImport = substr($nomFichier, $v+1);
+$idImport = str_replace(' ', '_', $idImport);
+$idRessFactice = createRessourceFactice($ATMdb, $idVoiture, $idImport, $entity, $idParcours);
+$idSuperAdmin = getIdSuperAdmin($ATMdb);
+
 $cptFactureLoyer = 0;
 $cptFactureGestEntre = 0;
 $cptNoAttribution = 0;
@@ -88,111 +95,73 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			if (empty($plaque)){
 				null;
 			}
-			else if (empty ($TRessource[$plaque]) ){
+			
+			if (!empty($TRessource[$plaque])){
+				$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], $date);
+				if ($idUser==0){ //si il trouve, on l'affecte à l'utilisateur 
+					$idUser = $idSuperAdmin;
+					$cptNoAttribution++;
+					echo 'Voiture non attribué le '.$date.' : '.$plaque.'<br>';}
+				}
+			else {
+				$idUser = $idSuperAdmin;
 				echo 'Pas de voiture correspondante : '.$plaque.'<br>';
 				$cptNoVoiture ++;
 			}
-			else {
-				$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], $date);
 				//echo $idUser.'<br>';
-				if ($idUser != 0) {
-					$numFacture = $infos[2];
-						//FACTURE SUR LE LOYER
-						$fact = new TRH_Evenement;
-						$fact->type = 'factureloyer';
-						$fact->numFacture = $numFacture;
-						$fact->fk_rh_ressource = $TRessource[$plaque];
-						$fact->fk_user = $idUser;
-						$fact->fk_rh_ressource_type = $idVoiture;
-						$fact->motif = 'Facture mensuelle Parcours : Loyer';
-						$fact->commentaire = 'Facture lié au contrat '.$infos[4];
-						$fact->set_date('date_debut', $infos[10]);
-						$fact->set_date('date_fin', $infos[1]);
-						$fact->coutTTC = floatval(strtr($infos[38], ',','.'));
-						$fact->coutEntrepriseTTC = floatval(strtr($infos[38], ',','.'));
-						$fact->TVA= $TTVA['19.6'];
-						$fact->coutEntrepriseHT = floatval(strtr($infos[12], ',','.'));
-						$fact->entity =$entity;
-						$fact->fk_fournisseur = $idParcours;
-						$fact->save($ATMdb);
-						$cptFactureLoyer++;
+				
+			$numFacture = $infos[2];
+			//FACTURE SUR LE LOYER
+			$fact = new TRH_Evenement;
+			$fact->type = 'factureloyer';
+			$fact->numFacture = $numFacture;
+			$fact->fk_rh_ressource = $TRessource[$plaque];
+			$fact->fk_user = $idUser;
+			$fact->fk_rh_ressource_type = $idVoiture;
+			$fact->motif = 'Facture mensuelle Parcours : Loyer';
+			$fact->commentaire = 'Facture lié au contrat '.$infos[4];
+			$fact->set_date('date_debut', $infos[10]);
+			$fact->set_date('date_fin', $infos[1]);
+			$fact->coutTTC = floatval(strtr($infos[38], ',','.'));
+			$fact->coutEntrepriseTTC = floatval(strtr($infos[38], ',','.'));
+			$fact->TVA= $TTVA['19.6'];
+			$fact->coutEntrepriseHT = floatval(strtr($infos[12], ',','.'));
+			$fact->entity =$entity;
+			$fact->fk_fournisseur = $idParcours;
+			$fact->idImport = $idImport;
+			$fact->numFacture = $infos[2];
+			$fact->date_facture = dateToInt($infos[3]);
+			$fact->save($ATMdb);
+			$cptFactureLoyer++;
+				
+			//FACTURE SUR L'ENTRETIEN ET LA GESTION
+			$fact = new TRH_Evenement;
+			$fact->type = 'facturegestionetentretien';
+			$fact->numFacture = $numFacture;
+			$fact->fk_rh_ressource = $TRessource[$plaque];
+			$fact->fk_user = $idUser;
+			$fact->fk_rh_ressource_type = $idVoiture;
+			$fact->motif = 'Facture mensuelle Parcours : Gestion et Entretien';
+			$fact->commentaire = 'Facture lié au contrat '.$infos[4].',<br>
+									Entretien TTC :'.floatval(strtr($infos[32], ',','.')).'€,<br>
+									Gestion TTC :'.floatval(strtr($infos[31], ',','.')).'€';
+			$fact->set_date('date_debut', $infos[10]);
+			$fact->set_date('date_fin', $infos[1]);
+			$fact->coutTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
+			$fact->coutEntrepriseTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
+			$fact->TVA= $TTVA['19.6'];
+			$fact->coutEntrepriseHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
+			$fact->fk_fournisseur = $idParcours;
+			$fact->idImport = $idImport;
+			$fact->numFacture = $infos[2];
+			$fact->date_facture = dateToInt($infos[3]);
+			$fact->entity =$entity;
+			$fact->save($ATMdb);
+			$cptFactureGestEntre++;
 						
-						//FACTURE SUR L'ENTRETIEN ET LA GESTION
-						$fact = new TRH_Evenement;
-						$fact->type = 'facturegestionetentretien';
-						$fact->numFacture = $numFacture;
-						$fact->fk_rh_ressource = $TRessource[$plaque];
-						$fact->fk_user = $idUser;
-						$fact->fk_rh_ressource_type = $idVoiture;
-						$fact->motif = 'Facture mensuelle Parcours : Gestion et Entretien';
-						$fact->commentaire = 'Facture lié au contrat '.$infos[4].',<br>
-												Entretien TTC :'.floatval(strtr($infos[32], ',','.')).'€,<br>
-												Gestion TTC :'.floatval(strtr($infos[31], ',','.')).'€';
-						$fact->set_date('date_debut', $infos[10]);
-						$fact->set_date('date_fin', $infos[1]);
-						$fact->coutTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
-						$fact->coutEntrepriseTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
-						$fact->TVA= $TTVA['19.6'];
-						$fact->coutEntrepriseHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
-						$fact->entity =$entity;
-						$fact->save($ATMdb);
-						$cptFactureGestEntre++;
-						
-						/*$TExtrasFieldValues = array();
-						$c = '';
-						for ($i = 30; $i <= 38; $i++) {
-				    			$c .= $TExtrasFieldKeys[$i]." : ".$infos[$i]."€\n";}
-						$fact->commentaire  = $c;*/
-						//CONTRAT
-						/*if (! array_key_exists ( strtolower($numContrat) , $TContrat )){
-							//print_r($infos);echo '<br><br>';
-							$contrat = new TRH_Contrat;
-							$contrat->libelle = 'Contrat n°'.$numContrat;
-							$contrat->numContrat = $numContrat;
-							$contrat->set_date('date_debut', '01/01/2013');
-							$contrat->set_date('date_fin', '31/12/2013');
-							$contrat->bail = 'location';
-							
-							$contrat->load_liste($ATMdb);
-							$ttva = array_keys($contrat->TTVA,19.6); //on met la TVA à 19.6%
-							$contrat->TVA = $ttva[0];
-							
-							$contrat->fk_tier_fournisseur = $idParcours;
-							$contrat->fk_rh_ressource_type = $idVoiture;
-							$contrat->loyer_TTC = floatval(strtr($infos[30],',','.'));
-							$contrat->assurance = floatval(strtr($infos[34],',','.')); 
-							$contrat->entretien = floatval(strtr($infos[32],',','.'));  
-							
-							$contrat->save($ATMdb);
-							$cptContrat ++;
-							
-							//LIAISON CONTRAT-RESSOURCE
-							$assocContrat =  new TRH_Contrat_Ressource;
-							$assocContrat->fk_rh_ressource = $TRessource[$plaque];
-							$assocContrat->fk_rh_contrat = $contrat->getId();
-							$assocContrat->save($ATMdb);
-						}
-						
-						$fact->numContrat = $numContrat;
-						$fact->fk_contrat = $TContrat[strtolower($numContrat)];*/
-						
-				}
-				else {
-					$cptNoAttribution++;
-					echo 'Voiture non attribué le '.$date.' : '.$plaque.'<br>';
-				}
-			}
-			
 		}
-		/*else if ($numLigne ==1) {//ligne d'entete : on charge les noms des champs
-			$TExtrasFieldKeys = array(); // 12 à 38
-			for ($i = 30; $i <= 38; $i++) {
-    			$TExtrasFieldKeys[$i] = $infos[$i];
-			}
-		}
-		*/
-		$numLigne++;
-	}
+	$numLigne++;
+}
 
 	//Fin du code PHP : Afficher le temps d'éxecution et le bilan.
 	//$message .= $cptContrat.' contrats importés.<br>';
@@ -212,14 +181,21 @@ function chargeVoiture(&$ATMdb){
 	$TRessource = array();
 	$sql="SELECT r.rowid as 'ID', t.rowid as 'IdType', r.numId FROM ".MAIN_DB_PREFIX."rh_ressource as r 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t on (r.fk_rh_ressource_type = t.rowid)
-	WHERE r.entity=".$conf->entity."
-	 AND (t.code='voiture' OR t.code='carte') ";
+	WHERE (t.code='voiture' OR t.code='carte') ";
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		//$idVoiture = $ATMdb->Get_field('IdType');
 		$TRessource[$ATMdb->Get_field('numId')] = $ATMdb->Get_field('ID');
 		}
 	return $TRessource;
+}
+
+
+/*
+ * prend un format d/m/Y et renvoie un timestamp
+ */
+function dateToInt($chaine){
+	return mktime(0,0,0,substr($chaine,3,2),substr($chaine,0,2),substr($chaine,6,4));
 }
 
 

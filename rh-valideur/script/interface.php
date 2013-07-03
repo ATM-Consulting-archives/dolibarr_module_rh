@@ -57,7 +57,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	
 	$sql = "SELECT
 			t.accountancy_code
-			,CAST(SUM(l.total_ht) as DECIMAL(16,2)) as 'total_ht'
+			,SUM(l.total_ht) as 'total_ht'
 			
 			FROM ".MAIN_DB_PREFIX."ndfp_det as l
 				LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp
@@ -79,30 +79,35 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		$code_compta		=	$ATMdb->Get_field('accountancy_code');
-		$total_ht			=	$ATMdb->Get_field('total_ht');
+		$total_ht			=	round($ATMdb->Get_field('total_ht'),2);
 		
 		$line = array('NDF', date('dmy'), 'OD', $code_compta, 'G', '', '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', 'EUR', '', '');
 		$TabNdf[]=$line;
 		
+		/*
+		 * Analytique
+		 */
+		
 		$sql_anal = "SELECT
 						l.rowid
-						, l.total_ht as 'total_ht'
+						, l.total_ht * IFNULL(  a.pourcentage, 100 ) / 100  as 'total_ht'
 						, a.code as 'code_analytique'
-						, a.pourcentage as 'pourcentage'
+						,u.firstname,u.name,u.rowid as 'fk_user'
 					
 					FROM ".MAIN_DB_PREFIX."ndfp_det as l
 						LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp
 						LEFT JOIN ".MAIN_DB_PREFIX."c_exp as t ON t.rowid = l.fk_exp
 						LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON a.fk_user = n.fk_user
-					
+						LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid=n.fk_user
 					WHERE n.statut = 1
 					AND n.entity IN (".$entity.")
 					AND n.type LIKE '".$type."'
 					AND (n.datev>='".$date_debut."' AND n.datev<='".$date_fin."')
 					AND t.accountancy_code = ".$code_compta."
-					
+			
 		";
-		
+
+			
 		if(isset($_REQUEST['DEBUG'])) {
 			print $sql_anal;
 		}
@@ -110,7 +115,48 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		$nb_parts=0;
 		$new_code_compta=0;
 		$ATMdb2->Execute($sql_anal);
+
+		$TabAna=array();		
 		while($ATMdb2->Get_line()) {
+
+			$code_anal = $ATMdb2->Get_field('code_analytique');
+			$total_anal = $ATMdb2->Get_field('total_ht');
+//print_r($code_anal);
+ 			if( isset( $_REQUEST['withLogin'] ) && empty( $code_anal ) ) {
+				$code_anal = '<a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('firstname').' '.$ATMdb2->Get_field('name') ."</a>";
+			}
+			if(isset($_REQUEST['DEBUG'])) {
+				print "$code_anal=$total_anal<br/>";
+			}
+			if(!isset($TabAna[$code_anal])) $TabAna[$code_anal]=0;
+			$TabAna[$code_anal]+=$total_anal;
+			/*$TabAna[] = array(
+				$code_anal
+				,number_format($ATMdb2->Get_field('total_ht'),2,'.','' )
+			);*/
+		}
+
+		$nbElement = count($TabAna);
+		$total_partiel = 0;$cpt=0;
+		foreach($TabAna as $code_analytique=>$total_ht_anal /*$ana*/) {
+			//list($code_analytique,$total_ht_anal)=$ana ;
+			
+			if(isset($_REQUEST['DEBUG'])) {
+                                print "<b>$code_analytique=$total_ht_anal</b><br/>";
+                        }
+
+			$total_ht_anal = round($total_ht_anal,2);
+
+			if($cpt==$nbElement-1) $total_ht_anal = $total_ht - $total_partiel;
+ 			$total_partiel+=$total_ht_anal;
+
+			 $TabNdf[] = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', number_format($total_ht_anal,2,'.',''), 'N', '', '', 'EUR', '', '');
+			$cpt++;
+		}
+
+/*
+		while($ATMdb2->Get_line()) {
+			
 			$ligne_id_new		=	$ATMdb2->Get_field('rowid');
 			
 			if($new_code_compta){
@@ -149,8 +195,9 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		
 		$line = array('NDF', date('dmy'), 'OD', $code_compta, 'A', $code_analytique, '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht_anal, 'N', '', '', 'EUR', '', '');
 		$TabNdf[]=$line;
-		
+		*/
 		$ndf_exist=1;
+		
 	}
 	
 	/**----**********************----**/
@@ -171,11 +218,11 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
-			$total_tva_ndf	=	$ATMdb->Get_field('total_tva');
+			$total_tva_ndf	=	round($ATMdb->Get_field('total_tva'),2);
 			
 			$line = array('NDF', date('dmy'), 'OD', '445660', 'G', '', '', 'NOTE DE FRAIS '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva_ndf, 'N', '', '', 'EUR', '', '');
 			$TabNdf[]=$line;
-		}
+ 		}
 	}
 	
 	/**----**********************----**/
@@ -215,10 +262,34 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		$mois_ndf		=	substr($ATMdb->Get_field('datef'), 5, 2);
 		$annee_ndf		=	substr($ATMdb->Get_field('datef'), 0, 4);
     	//$datef_ndf		=	substr($ATMdb->Get_field('datef'), 8, 2).substr($ATMdb->Get_field('datef'), 5, 2).substr($ATMdb->Get_field('datef'), 2, 2);
-    	$total_ttc_ndf	=	$ATMdb->Get_field('total_ttc');
+    	$total_ttc_ndf	=	round($ATMdb->Get_field('total_ttc'),2);
 		
 		$line = array('NDF', date('dmy'), 'OD', '425902', 'X', $compte_tiers, $ref, 'NOTE DE FRAIS '.$mois_ndf.'/'.$annee_ndf, 'V', date('dmy'), 'C', $total_ttc_ndf, 'N', '', '', 'EUR', '', '');
 		$TabNdf[]=$line;
+	}
+	
+	/* Equilibrage */
+	
+	$totalHT=0;
+	$totalTTC=0;
+	foreach($TabNdf as $ligne) {
+		$credit = $ligne[10];	
+		$montant = $ligne[11];
+		$type =  $ligne[4];
+		
+		if($type=='G' && $credit=='D' && $ligne[3]!='445660') {
+			$totalHT+=$montant;
+		}
+		else if($type=='X' && $credit=='C') {
+			$totalTTC+=$montant;	
+		}
+		
+	}
+	
+	foreach($TabNdf as &$ligne) {
+		if($ligne[3]=='445660') {
+			$ligne[11]=$totalTTC-$totalHT;
+		}
 	}
 	
 	return $TabNdf;
