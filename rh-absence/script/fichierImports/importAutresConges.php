@@ -48,7 +48,7 @@ while($ATMdb->Get_line()) {
 
 
 //----------------DEBUT DU TRAITEMENT DES LIGNES D'APPELS----------------------------------------------------------
-$nomFichier = "./ImportAbsenceValidee.csv";
+$nomFichier = "./autresAbsences.csv";
 echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 
@@ -89,9 +89,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					
 					switch($infos[1]){
 						case 1:
-							$absence->type='conges';
+							$absence->type='maladienonmaintenue';
 							$absence->libelle=saveLibelle($absence->type);
-							$absence->code='0950';//saveCodeTypeAbsence($ATMdb, $absence->type)
+							$absence->code='0961';//saveCodeTypeAbsence($ATMdb, $absence->type)
 							break;
 						case 3:
 							$absence->type='enfantmalade';
@@ -144,9 +144,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 							$absence->code='2020';//saveCodeTypeAbsence($ATMdb, $absence->type);
 							break;
 						case 172:
-							$absence->type='rttnoncumule';
+							$absence->type='maladiemaintenue';
 							$absence->libelle=saveLibelle($absence->type);
-							$absence->code='0930';//saveCodeTypeAbsence($ATMdb, $absence->type);
+							$absence->code='0960';//saveCodeTypeAbsence($ATMdb, $absence->type);
 							break;
 						case 176:
 							$absence->type='pathologie';
@@ -181,7 +181,6 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					
 					$absence->duree=0;
 					$absence->dureeHeure=0;
-					
 					//calcul de la durée des absences en jours
 					$dureeAbsenceCourante=$absence->calculDureeAbsence($ATMdb, $absence->date_debut, $absence->date_fin, $absence);
 					
