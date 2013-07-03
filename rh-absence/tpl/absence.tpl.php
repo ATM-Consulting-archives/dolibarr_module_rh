@@ -162,12 +162,16 @@
 				$("#dfMoment").val('apresmidi');
 				//on empêche que la date de début dépasse pas celle de fin
 				function comparerDates(){
-					jd = parseInt($("#date_debut").val().substr(0,2));
-					md = parseInt($("#date_debut").val().substr(3,2));
-					ad = parseInt($("#date_debut").val().substr(6,4));
-					jf = parseInt($("#date_fin").val().substr(0,2));
-					mf = parseInt($("#date_fin").val().substr(3,2));
-					af = parseInt($("#date_fin").val().substr(6,4));
+
+					var t1 = $("#date_debut").val().split('/');
+					var t2 = $("#date_fin").val().split('/');
+					jd = t1[0];
+					md = t1[1];
+					ad = t1[2];
+					jf = t2[0];
+					mf = t2[1];
+					af = t2[2];
+
 					if(af<ad){
 						$("#date_fin").val($("#date_debut").val());
 						return;
