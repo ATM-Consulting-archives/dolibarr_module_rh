@@ -70,9 +70,9 @@ function print_rh_menu($db,$atarget,$type_user)
 	print '</a>';
 	print_end_menu_entry();
 
-
+//print_r($user->rights->societe);
 	// Third parties
-	$tmpentry=array('enabled'=>($conf->societe->enabled || $conf->fournisseur->enabled), 'perms'=>($user->rights->societe->lire || $user->rights->fournisseur->lire), 'module'=>'societe|fournisseur');
+	$tmpentry=array('enabled'=>($conf->societe->enabled || $conf->fournisseur->enabled), 'perms'=>($user->rights->societe->creer || $user->rights->fournisseur->creer), 'module'=>'societe|fournisseur');
 	
 	$showmode=dol_rh_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)

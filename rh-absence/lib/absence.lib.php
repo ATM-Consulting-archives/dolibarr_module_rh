@@ -267,12 +267,12 @@ function mailConges(&$absence){
 			,array()
 			,array(
 				'absence'=>array(
-					'nom'=>htmlentities($name, ENT_COMPAT , 'ISO8859-1')
-					,'prenom'=>htmlentities($firstname, ENT_COMPAT , 'ISO8859-1')
-					,'date_debut'=>php2dmy($absence->date_debut)
+					'nom'=> htmlentities($name, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+					,'prenom'=> htmlentities($firstname, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+					,'date_debut'=> php2dmy($absence->date_debut)
 					,'date_fin'=>php2dmy($absence->date_fin)
-					,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT , 'ISO8859-1')
-					,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT , 'ISO8859-1')
+					,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+					,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 					
 				)
 				)
@@ -283,13 +283,20 @@ function mailConges(&$absence){
 			,array()
 			,array(
 				'absence'=>array(
-					'nom'=>htmlentities($name, ENT_COMPAT , 'ISO8859-1')
-					,'prenom'=>htmlentities($firstname, ENT_COMPAT , 'ISO8859-1')
+
+					/*'nom'=>utf8_encode($name)
+					,'prenom'=>utf8_encode($firstname)
 					,'date_debut'=>php2dmy($absence->date_debut)
 					,'date_fin'=>php2dmy($absence->date_fin)
-					,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT , 'ISO8859-1')
-					,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT , 'ISO8859-1')
-					,'commentaireValideur'=>htmlentities($absence->commentaireValideur, ENT_COMPAT , 'ISO8859-1')
+					,'libelle'=>utf8_encode($absence->libelle)
+					,'libelleEtat'=>utf8_encode($absence->libelleEtat)
+					*/'nom'=> htmlentities($name, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+                                        ,'prenom'=> htmlentities($firstname, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+                                        ,'date_debut'=> php2dmy($absence->date_debut)
+                                        ,'date_fin'=>php2dmy($absence->date_fin)
+                                        ,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+                                        ,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+					,'commentaireValideur'=>utf8_encode($absence->commentaireValideur)
 				)
 				)
 		);
@@ -300,13 +307,19 @@ function mailConges(&$absence){
 			,array()
 			,array(
 				'absence'=>array(
-					'nom'=>htmlentities($name, ENT_COMPAT , 'ISO8859-1')
-					,'prenom'=>htmlentities($firstname, ENT_COMPAT , 'ISO8859-1')
+					/*'nom'=>utf8_encode($name)
+					,'prenom'=>utf8_encode($firstname)
 					,'date_debut'=>php2dmy($absence->date_debut)
 					,'date_fin'=>php2dmy($absence->date_fin)
-					,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT , 'ISO8859-1')
-					,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT , 'ISO8859-1')
-					,'commentaireValideur'=>htmlentities($absence->commentaireValideur, ENT_COMPAT , 'ISO8859-1')
+					,'libelle'=>utf8_encode($absence->libelle)
+					,'libelleEtat'=>utf8_encode($absence->libelleEtat)
+					*/'nom'=> htmlentities($name, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+                                        ,'prenom'=> htmlentities($firstname, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+                                        ,'date_debut'=> php2dmy($absence->date_debut)
+                                        ,'date_fin'=>php2dmy($absence->date_fin)
+                                        ,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+                                        ,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+					,'commentaireValideur'=>utf8_encode($absence->commentaireValideur)
 				)
 				)
 		);
@@ -332,7 +345,7 @@ function mailCongesValideur(&$ATMdb, &$absence){
 	
 	//on récupère tous les ids des collaborateurs à qui on devra envoyer un mail lors de la création d'une absence (valideurs des groupes précédents)
 	$sql="SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
-	WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).")";
+	WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).") AND pointeur=0 AND level=".$absence->niveauValidation." AND fk_user!=".$absence->fk_user;
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()){
@@ -379,14 +392,14 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 		,array()
 		,array(
 			'absence'=>array(
-				'nom'=>htmlentities($name, ENT_COMPAT , 'ISO8859-1')
-				,'prenom'=>htmlentities($firstname, ENT_COMPAT , 'ISO8859-1')
-				,'valideurNom'=>htmlentities($nameValideur, ENT_COMPAT , 'ISO8859-1')
-				,'valideurPrenom'=>htmlentities($firstnameValideur, ENT_COMPAT , 'ISO8859-1')
+				'nom'=>htmlentities($name, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+				,'prenom'=>htmlentities($firstname, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+				,'valideurNom'=>htmlentities($nameValideur, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+				,'valideurPrenom'=>htmlentities($firstnameValideur, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 				,'date_debut'=>php2dmy($absence->date_debut)
 				,'date_fin'=>php2dmy($absence->date_fin)
-				,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT , 'ISO8859-1')
-				,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT , 'ISO8859-1')
+				,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+				,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 			)
 		)
 	);
@@ -399,12 +412,13 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 
 
 //envoi de mail au valideur
-function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
+/*function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 	global $conf;
 	//LISTE USERS À VALIDER
 	$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
 			WHERE v.fk_user=".$fk_user." 
 			AND v.type='Conges'
+			AND v.pointeur=0
 			AND v.fk_usergroup=u.fk_usergroup
 			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$fk_user.")";
 		
@@ -430,20 +444,20 @@ function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 	
 	
 	if($nbrAbsence>0) {
-		/*
-		 * S'il y a des demandes d'absence en attente
-		 */
+		
+		 // S'il y a des demandes d'absence en attente
+		 
 		$from = USER_MAIL_SENDER;
 			
 			$TBS=new TTemplateTBS();
-			$subject = "Alerte - Validation de demandes d'absence en attente (".$nbrNdf.")";
+			$subject = "Alerte - Validation de demandes d'absence en attente (".$nbrAbsence.")";
 			$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.validation.attente.tpl.php'
 				,array()
 				,array(
 					'validation'=>array(
 						'nom'=>$name
 						,'prenom'=>$firstname
-						,'nbr'=>$nbrNdf
+						,'nbr'=>$nbrAbsence
 					)
 				)
 			);
@@ -454,7 +468,7 @@ function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 		    (int)$result = $mail->send(true, 'utf-8');		
 	}	
 	return $result;
-}
+}*/
 
 
 

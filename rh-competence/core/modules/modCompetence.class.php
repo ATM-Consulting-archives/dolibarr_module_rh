@@ -166,7 +166,7 @@ class modCompetence extends DolibarrModules
 		$r=0;
 		$this->rights[$r][0] = 7951;
 		$this->rights[$r][1] = 'Rechercher un profil';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'rechercheProfil';
 		$r++;
@@ -174,28 +174,28 @@ class modCompetence extends DolibarrModules
 		
 		$this->rights[$r][0] = 7952;
 		$this->rights[$r][1] = 'Ajouter/Supprimer une ligne de rémunération';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'ajoutRemuneration';
 		$r++;
 		
 		$this->rights[$r][0] = 7953;
 		$this->rights[$r][1] = 'Consulter toutes les fiches de DIF';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'consulterAllDif';
 		$r++;
 		
 		$this->rights[$r][0] = 7954;
 		$this->rights[$r][1] = 'Consulter ses propres fiches de DIF';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'consulterOwnDif';
 		$r++;
 		
 		$this->rights[$r][0] = 7955;
 		$this->rights[$r][1] = 'Gérer les DIF';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'gererDif';
 		$r++;
