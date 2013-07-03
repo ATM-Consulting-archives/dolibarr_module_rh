@@ -106,16 +106,19 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	$sql="SELECT DISTINCT e.rowid as 'ID', CONCAT(u.firstname,' ',u.name) as 'Utilisateur', 
 		DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.commentaire as 'Commentaire'";
 	if($user->rights->ressource->ressource->manageAttribution){
-		$sql.=",'' as 'Supprimer'";
+		$sql.=",GROUP_CONCAT(CONCAT(' ',code)) as 'Codes analytiques' ,'' as 'Supprimer'";
 	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as ua ON (e.fk_user = ua.fk_user)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)";
 	$sql.=" WHERE e.type='emprunt'
 		AND e.fk_rh_ressource=".$ressource->getId();
 	if(!$user->rights->ressource->ressource->manageAttribution){
 		$sql.=" AND e.fk_user=".$user->id;
+		
 	}
+	$sql.=" GROUP BY ua.fk_user ";
 	
 	$TOrder = array('Date fin'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
