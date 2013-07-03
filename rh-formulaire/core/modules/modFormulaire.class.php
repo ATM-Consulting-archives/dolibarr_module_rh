@@ -164,7 +164,7 @@ class modFormulaire extends DolibarrModules
 		$r=0;
 		$this->rights[$r][0] = 7301;
 		$this->rights[$r][1] = 'Accéder aux formulaires';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'formulaire';
 		$this->rights[$r][5] = 'read';
 		$r++;
