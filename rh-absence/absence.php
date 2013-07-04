@@ -596,11 +596,17 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 	}
 	$typeAbsenceCreable=$absence->TTypeAbsenceUser;
+
+	$droitAdmin=0;
+
 	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
 		$sql="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 		$comboAbsence=2;
 		$typeAbsenceCreable=$absence->TTypeAbsenceAdmin;
+		$droitAdmin=1;
+//print "admin";
+//print_r( $typeAbsenceCreable);
 	}else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
 		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s  
@@ -634,7 +640,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$pointeurTest++;
 	}
 	
-	if($pointeurTest>0){
+	if($pointeurTest>0 && $droitAdmin==0){
 		$typeAbsenceCreable=$absence->TTypeAbsencePointeur;
 	}
 	
