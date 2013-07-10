@@ -113,6 +113,7 @@
 				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
 					SET etat='Refusee', libelleEtat='Refusée' 
 					WHERE fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
+				//print $sqlEtat;
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);

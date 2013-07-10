@@ -129,7 +129,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>"<a style=\"cursor:pointer;\" onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=".$ressourceType->getId()."&idRegle=@ID@&action=delete'};\"><img src=\"./img/delete.png\"></a>"
+			,'Supprimer'=>"<a style=\"cursor:pointer;\" onclick=\"if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=".$ressourceType->getId()."&idRegle=@ID@&action=delete'};\"><img src=\"./img/delete.png\"></a>"
 			//'<a href="?id='.$ressourceType->getId().'&idRegle=@ID@&action=delete"><img src="./img/delete.png"></a>'
 		) 
 		,'eval'=>array(

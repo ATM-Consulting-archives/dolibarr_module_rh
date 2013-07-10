@@ -111,7 +111,7 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 		)
 		,'link'=>array(
 			'date_jourOff'=>'<a href="?idJour=@ID@&fk_user='.$user->id.'&action=view">@val@</a>'
-			,'Supprimer'=>$user->rights->absence->myactions->ajoutJourOff?"<a onclick=\"if (confirm('Voulez-vous vraiment supprimer le jour férié ?')){href='?idJour=@ID@&fk_user=".$user->id."&action=delete'};\"><img src='./img/delete.png'></a>":''
+			,'Supprimer'=>$user->rights->absence->myactions->ajoutJourOff?"<a onclick=\"if (window.confirm('Voulez-vous vraiment supprimer le jour férié ?')){href='?idJour=@ID@&fk_user=".$user->id."&action=delete'};\"><img src='./img/delete.png'></a>":''
 		) 
 		,'translate'=>array(
 			'Période'=>array('matin'=>'Matin','apresmidi'=>'Après-midi','allday'=>'Toute la journée')

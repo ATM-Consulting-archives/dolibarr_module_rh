@@ -190,7 +190,7 @@
 	[onshow;block=begin;when [view.mode]=='view']
 		[onshow;block=begin;when [view.userRight]==1]
 			<a class="butAction"  href="?id=[ressource.id]&idEven=[NEvent.id]&action=edit">Modifier</a>
-			<a class="butActionDelete" onclick="if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=[ressource.id]&idEven=[NEvent.id]&action=deleteEvent'};">Supprimer</a>
+			<a class="butActionDelete" onclick="if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=[ressource.id]&idEven=[NEvent.id]&action=deleteEvent'};">Supprimer</a>
 		[onshow;block=end]
 	[onshow;block=end]
  

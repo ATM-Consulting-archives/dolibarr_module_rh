@@ -70,7 +70,7 @@
 	<div class="tabsAction">
 		<a href="?fk_user=[userCourant.id]" class="butAction">Retour</a>
 		<a href="?id=[newRule.id]&action=edit&fk_user=[userCourant.id]" class="butAction">Modifier</a>
-		<a class="butActionDelete"  onclick="if (confirm('Voulez vous supprimer cette règle ?')){document.location.href='?id=[newRule.id]&action=delete&fk_user=[userCourant.id]'};">Supprimer</a>
+		<a class="butActionDelete"  onclick="if (window.confirm('Voulez vous supprimer cette règle ?')){document.location.href='?id=[newRule.id]&action=delete&fk_user=[userCourant.id]'};">Supprimer</a>
 	</div>
 		
 		</div>

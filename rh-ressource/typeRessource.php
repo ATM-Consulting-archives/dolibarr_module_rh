@@ -131,7 +131,7 @@ function _liste(&$ATMdb, &$ressource) {
 		)
 		,'link'=>array(
 			'Libellé'=>'<a href="?id=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>"<a style=\"cursor:pointer;\" onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=@ID@&action=delete'};\"><img src=\"./img/delete.png\"></a>"
+			,'Supprimer'=>"<a style=\"cursor:pointer;\" onclick=\"if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=@ID@&action=delete'};\"><img src=\"./img/delete.png\"></a>"
 		)
 		,'translate'=>array()
 		,'hide'=>array()

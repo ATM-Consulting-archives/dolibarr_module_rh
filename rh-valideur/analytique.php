@@ -108,7 +108,7 @@ function _liste(&$ATMdb) {
 			,'link'=>array(
 				'ID'=>'<a href="?fk_user='.$fuser->id.'&id=@ID@&action=edit_code">@val@</a>'
 				,'Pourcentage'=>'@Pourcentage@%'
-				,'Supprimer'=>"<a onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=@ID@&action=delete_code&fk_user=".$fuser->id."'};\" style='cursor:pointer;'><img src=\"./img/delete.png\"></a>"
+				,'Supprimer'=>"<a onclick=\"if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=@ID@&action=delete_code&fk_user=".$fuser->id."'};\" style='cursor:pointer;'><img src=\"./img/delete.png\"></a>"
 			)
 			,'hide'=>array()
 			,'type'=>array()

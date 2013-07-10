@@ -63,7 +63,7 @@
 	<div class="tabsAction">
 		<a href="?id=[ressourceType.id]&idTypeEvent=[newEvent.id]&action=edit" class="butAction">Modifier</a>
 		[onshow;block=begin;when [newEvent.supprimable]=='vrai']		
-			<a class="butActionDelete" onclick="if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=[ressourceType.id]&idTypeEvent=[newEvent.id]&action=delete'};">Supprimer</a>
+			<a class="butActionDelete" onclick="if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=[ressourceType.id]&idTypeEvent=[newEvent.id]&action=delete'};">Supprimer</a>
 			
 		[onshow;block=end]	
 	</div>

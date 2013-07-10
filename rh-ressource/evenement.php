@@ -162,7 +162,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		)
 		,'link'=>array(
 			'Motif'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>"<a style=\"cursor:pointer;\" onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=".$ressource->getId()."&idEven=@ID@&type=".$type."&action=deleteEvent'};\"><img src=\"./img/delete.png\"></a>"
+			,'Supprimer'=>"<a style=\"cursor:pointer;\" onclick=\"if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=".$ressource->getId()."&idEven=@ID@&type=".$type."&action=deleteEvent'};\"><img src=\"./img/delete.png\"></a>"
 		)
 		,'translate'=>array('Type'=>$evenement->TType)
 		,'hide'=>array('ID','idUser')

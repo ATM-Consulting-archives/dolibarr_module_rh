@@ -167,7 +167,7 @@ $r->liste($ATMdb, $sql, array(
 	,'search'=>array(
 	)
 	,'link'=>array(
-			'Supprimer'=>"<a onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=@ID@&action=delete'};\" style='cursor:pointer;'><img src=\"./img/delete.png\"></a>"
+			'Supprimer'=>"<a onclick=\"if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=@ID@&action=delete'};\" style='cursor:pointer;'><img src=\"./img/delete.png\"></a>"
 		)
 	,'orderBy'=>$TOrder
 	

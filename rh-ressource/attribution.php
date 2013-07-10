@@ -132,7 +132,7 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=view">@val@</a>'
-			,'Supprimer'=>"<a style=\"cursor:pointer;\" onclick=\"if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=".$ressource->getId()."&idEven=@ID@&action=deleteAttribution'};\"><img src=\"./img/delete.png\"></a>"
+			,'Supprimer'=>"<a style=\"cursor:pointer;\" onclick=\"if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=".$ressource->getId()."&idEven=@ID@&action=deleteAttribution'};\"><img src=\"./img/delete.png\"></a>"
 			//,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=deleteAttribution"><img src="./img/delete.png"></a>'
 		)
 		,'eval'=>array(

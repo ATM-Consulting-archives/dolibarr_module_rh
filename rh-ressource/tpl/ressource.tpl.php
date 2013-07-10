@@ -271,7 +271,7 @@
 		[onshow;block=end]
 		[onshow;block=begin;when [view.mode]!='edit']
 			<a class="butAction"  href="?id=[ressource.id]&action=edit">Modifier</a>
-			&nbsp; &nbsp;<a class="butActionDelete"  onclick="if (confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=[ressource.id]&action=delete'};">Supprimer</a>
+			&nbsp; &nbsp;<a class="butActionDelete"  onclick="if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=[ressource.id]&action=delete'};">Supprimer</a>
 		[onshow;block=end]
 </div>
 [onshow;block=end]
