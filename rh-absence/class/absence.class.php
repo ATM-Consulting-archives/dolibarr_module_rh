@@ -296,10 +296,11 @@ class TRH_Absence extends TObjetStd {
 		
 		//on calcule la duree de l'absence, en décomptant jours fériés et jours non travaillés par le collaborateur
 		$dureeAbsenceCourante=$this->calculDureeAbsence($db, $this->date_debut, $this->date_fin, $absence);
-		$dureeAbsenceCourante=$this->calculJoursFeries($db, $dureeAbsenceCourante, $this->date_debut, $this->date_fin, $absence);
-		$dureeAbsenceCourante=$this->calculJoursTravailles($db, $dureeAbsenceCourante, $this->date_debut, $this->date_fin, $absence); 
+		$dureeJourConge=$this->calculJoursFeries($db, 0, $this->date_debut, $this->date_fin, $absence);
 		
-
+		$dureeJourNonTravaille=$this->calculJoursTravailles($db, 0, $this->date_debut, $this->date_fin, $absence); 
+		
+		$dureeAbsenceCourante += ($dureeJourConge + $dureeJourNonTravaille) ;
 		
 		//autres paramètes à sauvegarder
 		$this->libelle=saveLibelle($this->type);
@@ -316,6 +317,10 @@ class TRH_Absence extends TObjetStd {
 			return 0;
 		}
 		
+		
+			//print "$dureeAbsenceCourante = ($dureeJourConge + $dureeJourNonTravaille) ".$this->type ;
+		
+	
 		//on teste si c'est une demande de jours non cumulés, 
 		//si les jours N-1 début absence et N+1 fin absence sont travaillés
 		//////////////////// FINALEMENT AUCUNE REGLES SUR LES RTT NON CUMULES : LAISSER PLACE AUX EXCEPTIONS
@@ -356,9 +361,13 @@ class TRH_Absence extends TObjetStd {
 			//$this->rttNonCumulePris=$this->rttNonCumulePris-$dureeAbsenceCourante;
 		}
 		else if($this->type=="conges"||$this->type=="cppartiel"){	//autre que RTT : décompte les congés
+		
 			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
 				SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." 
 				WHERE fk_user=".$userConcerne;
+		/*	print $sqlDecompte;	
+				
+				exit("  $dureeAbsenceCourante $userConcerne");*/
 			$db->Execute($sqlDecompte);
 			$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 		}
@@ -397,7 +406,66 @@ class TRH_Absence extends TObjetStd {
 	
 	//calcul la durée de l'absence après le décompte des jours fériés
 	function calculJoursFeries(&$ATMdb, $duree, $date_debut, $date_fin, &$absence){
-
+				
+		//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
+		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries`";
+		$ATMdb->Execute($sql);
+		$Tab = array();
+		while($ATMdb->Get_line()) {
+			$Tab[date('Y-m-d', strtotime($ATMdb->Get_field('date_jourOff')))]= array(
+				'rowid'=>$ATMdb->Get_field('rowid')
+				,'moment'=>$ATMdb->Get_field('moment')
+				);
+		}
+				
+		$t_current = $t_start = $date_debut;
+		$t_end = $date_fin;
+		
+		while($t_current<=$t_end) {
+			
+			$date_current = date('Y-m-d', $t_current);
+			
+		//	print " $date_current ";
+			if(isset($Tab[$date_current])) {
+		//		print "$date_current est férié";
+				if($t_current==$t_start && $absence->ddMoment=='apresmidi') {
+					if($Tab[$date_current]['moment']=='matin') {
+						null;
+					}	
+					else {
+						$duree-=.5;	
+					}
+					 
+				}	
+				else if($t_current==$t_end && $absence->dfMoment=='matin') {
+					if($Tab[$date_current]['moment']=='apresmidi') {
+						null;
+					}	
+					else {
+						$duree-=.5;	
+					}
+				}
+				else {
+					
+					if($Tab[$date_current]['moment']=='allday') {
+						$duree-=1;
+					}
+					else {
+						$duree-=.5;
+					}
+					
+					
+				}
+				
+			}
+			
+			
+			$t_current = strtotime("+1 day", $t_current);
+		}
+		
+		
+		return $duree;
+		/*
 		$dateDebutAbs=$absence->php2Date($date_debut);
 		$dateFinAbs=$absence->php2Date($date_fin);
 		
@@ -411,8 +479,7 @@ class TRH_Absence extends TObjetStd {
 				,'moment'=>$ATMdb->Get_field('moment')
 				);
 		}
-		//print "ddmoment =".$this->ddMoment. "   debutAbs".$dateDebutAbs."   fin abs".$dateFinAbs;
-		//traitement pour chaque jour férié
+		
 		if(!empty($Tab)){
 			foreach ($Tab as $key=>$jour) {
 			//on teste si le jour est égal à l'une des extrémités de la demande d'absence, sinon il n'y a pas de test spécial à faire
@@ -486,13 +553,15 @@ class TRH_Absence extends TObjetStd {
 		}
 		}
 		
-		return $duree;
+		return $duree;*/
 	}
 
 		
 	function calculJoursTravailles(&$ATMdb, $duree, $date_debut, $date_fin, &$absence){
-		
-		global $conf;
+		/*
+		 * Cette fonction est ignoble, à retravailler !
+		 */
+		global $conf, $TJourNonTravailleEntreprise;
 		
 		//on récupère l'information permettant de savoir si l'on doit décompter les jours normalement ou non
 		$sql="SELECT decompteNormal FROM ".MAIN_DB_PREFIX."rh_type_absence WHERE typeAbsence LIKE '".$absence->type."'";
@@ -633,7 +702,7 @@ class TRH_Absence extends TObjetStd {
 					if($TTravail[$jourDebutSem.'am']==0){
 						if($decompteNormal=='oui'){
 							$duree-=0.5;
-						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+						}else if(in_array($jourDebutSem, $TJourNonTravailleEntreprise)){
 							$duree-=0.5;
 						}
 						
@@ -646,7 +715,7 @@ class TRH_Absence extends TObjetStd {
 					if($TTravail[$jourDebutSem.'pm']==0){
 						if($decompteNormal=='oui'){
 							$duree-=0.5;
-						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+						}else if(in_array($jourDebutSem, $TJourNonTravailleEntreprise)){
 							$duree-=0.5;
 						}
 					}
@@ -658,7 +727,7 @@ class TRH_Absence extends TObjetStd {
 					if($TTravail[$jourDebutSem.'am']==0){
 						if($decompteNormal=='oui'){
 							$duree-=0.5;
-						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+						}else if(in_array($jourDebutSem, $TJourNonTravailleEntreprise)){
 							$duree-=0.5;
 						}
 					}else{
@@ -669,7 +738,7 @@ class TRH_Absence extends TObjetStd {
 					if($TTravail[$jourDebutSem.'pm']==0){
 						if($decompteNormal=='oui'){
 							$duree-=0.5;
-						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+						}else if(!in_array($jourDebutSem, $TJourNonTravailleEntreprise)){
 							$duree-=0.5;
 						}
 					}else{
@@ -724,14 +793,14 @@ class TRH_Absence extends TObjetStd {
 					if($TTravail[$jourDebutSem.'am']==0){
 						if($decompteNormal=='oui'){
 							$duree-=0.5;
-						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+						}else if(in_array($jourDebutSem, $TJourNonTravailleEntreprise)){
 							$duree-=0.5;
 						}	
 					}
 					if($TTravail[$jourDebutSem.'pm']==0){
 						if($decompteNormal=='oui'){
 							$duree-=0.5;
-						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+						}else if(in_array($jourDebutSem, $TJourNonTravailleEntreprise)){
 							$duree-=0.5;
 						}
 					}
@@ -739,7 +808,7 @@ class TRH_Absence extends TObjetStd {
 					if($TTravail[$jourDebutSem.'pm']==0){
 						if($decompteNormal=='oui'){
 							$duree-=0.5;
-						}else if($jourDebutSem=="samedi"||$jourDebutSem=="dimanche"){
+						}else if(in_array($jourDebutSem, $TJourNonTravailleEntreprise)){
 							$duree-=0.5;
 						}
 					}
@@ -775,7 +844,7 @@ class TRH_Absence extends TObjetStd {
 					if($TTravail[$jourFinSem.'am']==0){
 						if($decompteNormal=='oui'){
 							$duree-=0.5;
-						}else if($jourFinSem=="samedi"||$jourFinSem=="dimanche"){
+						}else if(in_array($jourFinSem, $TJourNonTravailleEntreprise)){
 							$duree-=0.5;
 						}
 					}
@@ -783,14 +852,14 @@ class TRH_Absence extends TObjetStd {
 					if($TTravail[$jourFinSem.'am']==0){
 						if($decompteNormal=='oui'){
 							$duree-=0.5;
-						}else if($jourFinSem=="samedi"||$jourFinSem=="dimanche"){
+						}else if(in_array($jourFinSem, $TJourNonTravailleEntreprise)){
 							$duree-=0.5;
 						}
 					}
 					if($TTravail[$jourFinSem.'pm']==0){
 						if($decompteNormal=='oui'){
 							$duree-=0.5;
-						}else if($jourFinSem=="samedi"||$jourFinSem=="dimanche"){
+						}else if(in_array($jourFinSem, $TJourNonTravailleEntreprise)){
 							$duree-=0.5;
 						}
 					}
@@ -804,7 +873,6 @@ class TRH_Absence extends TObjetStd {
 		while($jourEnCours!=$jourFin){
 			$ferie=0;
 			//echo "boucle1";
-			
 			foreach($TabFerie as $jourFerie){	//si le jour est un jour férié, on ne le traite pas en jours, car déjà traité avant. 
 												//on traite les heures
 	 			if(strtotime($jourFerie['date_jourOff'])==$jourEnCours){
@@ -832,11 +900,13 @@ class TRH_Absence extends TObjetStd {
 					if($jour==$jourEnCoursSem){
 						foreach(array('am','pm') as $moment) {
 							if($TTravail[$jour.$moment]==0){
+								//print "$jour $moment $decompteNormal $duree<br>";
 								if($decompteNormal=='oui'){
 									$duree-=0.5;
-								}else if($jour=="samedi"||$jour=="dimanche"){
+								}else if(in_array($jour, $TJourNonTravailleEntreprise)){
 									$duree-=0.5;
 								}
+								//print "$duree<br>";
 							}
 						}
 					}

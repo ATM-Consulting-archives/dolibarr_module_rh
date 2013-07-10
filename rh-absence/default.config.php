@@ -30,3 +30,5 @@
 	
 	define('DATE_RTT_CLOTURE', '28-02-2014');
 	define('DATE_CONGES_CLOTURE', '31-05-2014');
+	
+	$TJourNonTravailleEntreprise=array('samedi','dimanche');

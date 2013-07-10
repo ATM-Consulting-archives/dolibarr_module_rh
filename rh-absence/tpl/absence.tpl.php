@@ -44,7 +44,7 @@
 				</tr>
 				[onshow;block=begin;when [view.mode]!='edit']
 					<tr>
-						<td>Durée (en demi-journées)</td>
+						<td>Durée (en journées)</td>
 						<td>[absenceCourante.duree;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
