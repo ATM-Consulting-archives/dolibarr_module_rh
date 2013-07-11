@@ -1643,18 +1643,30 @@ class TRH_EmploiTemps extends TObjetStd {
 		
 		
 		$tpsHebdo='0:0';
+		
+		$tps = 0;
+		
 		foreach ($edt->TJour as $jour) {
 			if($edt->{$jour."am"}=="1"){
 				//echo $edt->{"date_".$jour."_heuredam"}.$edt->{"date_".$jour."_heurefam"};exit;
-				$tpsHebdo=additionnerHeure($tpsHebdo,difheure(date('h:i',$edt->{"date_".$jour."_heuredam"}), date('h:i',$edt->{"date_".$jour."_heurefam"})));
+				//$tpsHebdo=additionnerHeure($tpsHebdo,difheure(date('h:i',$edt->{"date_".$jour."_heuredam"}), date('h:i',$edt->{"date_".$jour."_heurefam"})));
+			
+				$tps += $edt->{"date_".$jour."_heurefam"} - $edt->{"date_".$jour."_heuredam"};	
 			}
+			
 			if($edt->{$jour."pm"}=="1"){
-				$tpsHebdo=additionnerHeure($tpsHebdo,difheure(date('h:i',$edt->{"date_".$jour."_heuredpm"}), date('h:i',$edt->{"date_".$jour."_heurefpm"})));
+				//$tpsHebdo=additionnerHeure($tpsHebdo,difheure(date('h:i',$edt->{"date_".$jour."_heuredpm"}), date('h:i',$edt->{"date_".$jour."_heurefpm"})));
+
+				$tps += $edt->{"date_".$jour."_heurefpm"} - $edt->{"date_".$jour."_heuredpm"};	
 				
 			}
 		}
 	
-		return horaireMinuteEnCentieme($tpsHebdo);
+		$nbHeure = $tps / 60 / 60;
+		//print "$nbHeure";
+	    return $nbHeure;
+	
+		//return horaireMinuteEnCentieme($tpsHebdo);
 	}
 	
 
