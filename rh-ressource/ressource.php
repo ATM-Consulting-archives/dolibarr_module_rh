@@ -183,7 +183,7 @@ function _liste(&$ATMdb, &$ressource) {
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.libelle, r.fk_rh_ressource_type,
 		r.numId , name as 'Statut', firstname, name 
-		,GROUP_CONCAT(CONCAT(' ',ua.code)) as 'Codes analytiques' ";
+		,GROUP_CONCAT(CONCAT(ua.code,'(',ua.pourcentage,'%)') SEPARATOR ', ' ) as 'Codes analytiques' ";
 	
 	//rajout des champs spéciaux parametré par les types de ressources
 	foreach ($TSpeciaux as $key=>$value) {
