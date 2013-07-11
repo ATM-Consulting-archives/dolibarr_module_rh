@@ -629,6 +629,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$typeAbsenceCreable=$absence->TTypeAbsenceUser;
 	}
 	else $droitsCreation=2; //on n'a pas les droits de création
+	
 	if($droitsCreation==1){
 		$sql.=" ORDER BY name";
 		$ATMdb->Execute($sql);
@@ -641,15 +642,34 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$TRecap=$absence->recuperationDerAbsUser($ATMdb, $regleId);
 	
 	//on regarde si l'utilisateur a le droit de créer une absence non justifiée
-	$pointeurTest=0;
-	$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` WHERE fk_user=".$user->id." AND pointeur=1";
+	
+	$sql="SELECT count(*) as 'nb' FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` WHERE fk_user=".$user->id." AND type='Conges' AND pointeur=1";
 	$ATMdb->Execute($sql);
-	if($ATMdb->Get_line()) {
-		$pointeurTest++;
-	}
+	$ATMdb->Get_line();
+	
+	$pointeurTest=(int)$ATMdb->Get_field('nb');
 	
 	if($pointeurTest>0 && $droitAdmin==0){
 		$typeAbsenceCreable=$absence->TTypeAbsencePointeur;
+		
+		
+		if(!$user->rights->absence->myactions->creerAbsenceCollaborateur && !$user->rights->absence->myactions->creerAbsenceCollaborateurGroupe) {
+			$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
+			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s  
+			WHERE v.fk_user=".$user->id." 
+			AND v.type='Conges'
+			AND s.rowid=u.fk_user
+			AND v.fk_usergroup=u.fk_usergroup
+			AND v.pointeur=1
+			ORDER BY name
+			";
+			
+			while($ATMdb->Get_line()) {
+				$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			}
+		}
+		
+		
 	}
 	
 	
