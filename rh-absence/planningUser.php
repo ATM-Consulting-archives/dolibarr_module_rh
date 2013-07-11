@@ -165,11 +165,34 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	//on va obtenir la requête correspondant à la recherche désirée
 	$TPlanningUser=$absence->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $_REQUEST['date_debut'], $_REQUEST['date_fin']);
 
-	print '<table border="1" >';
+	?><style type="text/css">
+	table.planning {
+		border-collapse:collapse; border:1px solid #ccc; font-size:9px;
+	}		
+	table.planning td {
+		border:1px solid #ccc;
+	}	
+	
+	table.planning tr:nth-child(even) {
+		background: #ddd;
+	}
+	table.planning tr:nth-child(odd) {
+		background: #fff;
+	}
+	
+	.rouge{
+			background-color:#C03000;
+	}
+	
+			
+	</style>
+	<?
+
+	print '<table class="planning" border="0">';
 	print "<tr>";
 	print "<td ></td>";
 	foreach($TPlanningUser as $planning=>$val){
-		print '<td colspan="2">'.$planning.'</td>';
+		print '<td colspan="2">'.substr($planning,0,5).'</td>';
 		foreach($val as $id=>$present){
 			$tabUserMisEnForme[$id][$planning]=$present;	
 		}
@@ -183,10 +206,11 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			$name = htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 		print '<tr >';		
-		print '<td style="width:15%;text-align:right;">'.$name.'</td>';
+		print '<td style="text-align:right; font-weight:bold;" nowrap="nowrap">'.$name.'</td>';
 		foreach($planning as $ouinon){
 			if($ouinon=='non'){
-				print '<td class="vert" style="text-align:center;width:100px;height:20px;"></td><td class="vert" style="text-align:center;width:100px;"></td>';
+				print '<td style="text-align:center;width:100px;height:20px;"></td>
+				<td class="vert" style="text-align:center;width:100px;"></td>';
 			}else{
 				$boucleOk=0;
 				if(strpos($ouinon,'DAM')===false){
@@ -246,16 +270,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	}
 	
 	print '</table>';
-				
-	?><style>
-		.rouge{
-			background-color:#C03000;
-		}
-		.vert{
-			background-color:#D8DFDE;
-		}
-		
-	</style><?
+	
 	echo $form->end_form();
 	
 	global $mesg, $error;
