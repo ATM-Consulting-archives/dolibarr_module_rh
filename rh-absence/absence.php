@@ -617,12 +617,10 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 //print_r( $typeAbsenceCreable);
 	}else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
 		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
-			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s  
+			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as u ON (v.fk_usergroup=u.fk_usergroup)
+				INNER JOIN ".MAIN_DB_PREFIX."user as s ON (s.rowid=u.fk_user)  
 			WHERE v.fk_user=".$user->id." 
-			AND v.type='Conges'
-			AND s.rowid=u.fk_user
-			AND v.fk_usergroup=u.fk_usergroup
-			";
+			AND v.type='Conges'";
 			$comboAbsence=1;
 			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
@@ -655,13 +653,12 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		
 		if(!$user->rights->absence->myactions->creerAbsenceCollaborateur && !$user->rights->absence->myactions->creerAbsenceCollaborateurGroupe) {
 			$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
-			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, ".MAIN_DB_PREFIX."user as s  
+			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as u ON (v.fk_usergroup=u.fk_usergroup)
+				INNER JOIN ".MAIN_DB_PREFIX."user as s ON (s.rowid=u.fk_user)  
 			WHERE v.fk_user=".$user->id." 
 			AND v.type='Conges'
-			AND s.rowid=u.fk_user
-			AND v.fk_usergroup=u.fk_usergroup
 			AND v.pointeur=1
-			ORDER BY name
+			ORDER BY s.name
 			";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
