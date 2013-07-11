@@ -262,7 +262,7 @@ function _planning(&$ATMdb, &$absence, $date_debut, $date_fin) {
 				if(strpos($ouinon,'DAM')!==false){
 						print '<td class="'.$class.'" title="'.$labelAbs.'" colspan="2">&nbsp;</td>';
 				}	
-				if(strpos($ouinon,'DPM')!==false){
+				else if(strpos($ouinon,'DPM')!==false){
 						print '<td class="vert">&nbsp;</td>
 						<td class="'.$class.'" title="'.$labelAbs.'">&nbsp;</td>';
 				}	
