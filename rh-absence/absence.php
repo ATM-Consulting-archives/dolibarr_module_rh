@@ -663,7 +663,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			AND v.pointeur=1
 			ORDER BY name
 			";
-			
+			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 			}
