@@ -184,7 +184,7 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	//print $page;
 	$l=new TListviewTBS('listContrat');
 	
-	$l->render($ATMdb, $sql, array(
+	print $l->render($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
 			,'nbLine'=>'30'
