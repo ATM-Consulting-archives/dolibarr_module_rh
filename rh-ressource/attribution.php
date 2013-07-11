@@ -166,7 +166,7 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	/*
 	 * Liste des contrat associé
 	 */
-	$r = new TSSRenderControler($emprunt);
+	
 	$sql="SELECT DISTINCT a.rowid as 'ID',  c.rowid as 'IDContrat' , c.libelle as 'Libellé',
 		DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin', a.commentaire as 'Commentaire'";
 	
@@ -182,7 +182,9 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
 	//print $page;
-	$r->liste($ATMdb, $sql, array(
+	$l=new TListviewTBS('listContrat');
+	
+	$l->render($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
 			,'nbLine'=>'30'
