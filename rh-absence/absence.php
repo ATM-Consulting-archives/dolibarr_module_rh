@@ -641,7 +641,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$TRecap=array();
 	$TRecap=$absence->recuperationDerAbsUser($ATMdb, $regleId);
 	
-	//on regarde si l'utilisateur a le droit de créer une absence non justifiée
+	//on regarde si l'utilisateur a le droit de créer une absence non justifiée (POINTEUR)
 	
 	$sql="SELECT count(*) as 'nb' FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` WHERE fk_user=".$user->id." AND type='Conges' AND pointeur=1";
 	$ATMdb->Execute($sql);
@@ -669,6 +669,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			}
 		}
 		
+		$droitsCreation=1;
 		
 	}
 	
