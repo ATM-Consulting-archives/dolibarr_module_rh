@@ -210,7 +210,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			$date_fin =date('t/m/Y', $t_current);	
 		}
 		
-		_planning($ATMdb, $absence, $date_debut, $date_fin );
+		_planning($ATMdb, $absence, $idGroupeRecherche, $date_debut, $date_fin );
 	
 		
 		$t_current=strtotime('+1 month', $t_current);
@@ -225,7 +225,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	
 }	
 
-function _planning(&$ATMdb, &$absence, $date_debut, $date_fin) {
+function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $date_debut, $date_fin) {
 	
 //on va obtenir la requête correspondant à la recherche désirée
 	$TPlanningUser=$absence->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $date_debut, $date_fin);
