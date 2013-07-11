@@ -246,7 +246,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 	//droits d'admin : accès à toutes les absences sur la liste
 
 	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-		 	a.libelle,a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
+		 	a.libelle, ROUND(a.duree ,1) as 'duree', a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
 		  	a.libelleEtat as 'Statut demande', a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE u.rowid=a.fk_user";
@@ -257,7 +257,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','POST');		
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');		
 	echo $form->hidden('action', 'listeAdmin');
 	//print $page;
 	$r->liste($ATMdb, $sql, array(
@@ -297,6 +297,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			,'firstname'=>'Prénom'
 			,'name'=>'Nom'
 			,'login'=>'Login'
+			,'duree'=>'Durée (en jour)'
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
