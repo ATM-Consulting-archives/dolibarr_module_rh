@@ -159,8 +159,62 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 	));
 	
 	if($user->rights->ressource->ressource->manageAttribution){
-	?></div><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
+		?></div><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
 	}
+	
+	
+	/*
+	 * Liste des contrat associé
+	 */
+	$r = new TSSRenderControler($emprunt);
+	$sql="SELECT DISTINCT a.rowid as 'ID',  c.rowid as 'IDContrat' , c.libelle as 'Libellé',
+		DATE(c.date_debut) as 'Date début', DATE(c.date_fin) as 'Date fin', a.commentaire as 'Commentaire'";
+	
+	$sql.=" FROM ".MAIN_DB_PREFIX."rh_contrat_ressource as a
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_contrat as c ON (a.fk_rh_contrat = c.rowid)
+		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (a.fk_rh_ressource = r.rowid)";
+	$sql.=" WHERE 1 
+		AND a.fk_rh_ressource=".$ressource->getId();
+	
+	$TOrder = array('Date début'=>'ASC');
+	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+				
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
+	//print $page;
+	$r->liste($ATMdb, $sql, array(
+		'limit'=>array(
+			'page'=>$page
+			,'nbLine'=>'30'
+		)
+		,'link'=>array(
+			'ID'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@">@val@</a>'
+			,'Libellé'=>'<a href="contrat.php?id=@IDContrat@">@val@</a>'
+			,'Commentaire'=>'<a href="?id='.$ressource->getId().'&idAssoc=@ID@">@val@</a>'
+		)
+		,'translate'=>array()
+		,'hide'=>array('DateCre', 'IDContrat')
+		,'type'=>array(
+			'Date début'=>'date'
+			,'Date fin'=>'date'
+			)
+		,'liste'=>array(
+			'titre'=>'Liste des contrats'
+			,'image'=>img_picto('','title.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
+			,'picto_suivant'=>img_picto('','next.png', '', 0)
+			,'noheader'=> (int)isset($_REQUEST['socid'])
+			,'messageNothing'=>"Il n'y a aucun contrat à afficher"
+			,'order_down'=>img_picto('','1downarrow.png', '', 0)
+			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			
+		)
+		,'orderBy'=>$TOrder
+		
+	));
+	
+	
+	
 	?><div style="clear:both"></div></div><?
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
