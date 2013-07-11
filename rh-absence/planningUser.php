@@ -102,7 +102,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Planning');
 
 	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','GET');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('fk_user', $user->id);
 	echo $form->hidden('entity', $conf->entity);
@@ -162,9 +162,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	);
 	
 	
-	//on va obtenir la requête correspondant à la recherche désirée
-	$TPlanningUser=$absence->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $_REQUEST['date_debut'], $_REQUEST['date_fin']);
-
+	
 	?><style type="text/css">
 	table.planning {
 		border-collapse:collapse; border:1px solid #ccc; font-size:9px;
@@ -180,14 +178,58 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		background: #fff;
 	}
 	
-	.rouge{
+	table.planning tr td.rouge{
 			background-color:#C03000;
 	}
-	
+	table.planning tr td.rougeRTT {
+			background-color:#d87a00;
+	}
 			
 	</style>
 	<?
+	
+	
+	$absence->set_date('debut_debut_planning', $_REQUEST['date_debut']);
+	$absence->set_date('debut_fin_planning', $_REQUEST['date_fin']);
+	
+	$t_current = $absence->debut_debut_planning;
+	
+	while($t_current<=$absence->debut_fin_planning) {
+		
+		if($t_current==$absence->debut_debut_planning) {
+			$date_debut =date('d/m/Y', $absence->debut_debut_planning);	
+		}
+		else {
+			$date_debut =date('01/m/Y', $t_current);	
+		}
+		
+		if($t_current==$absence->debut_fin_planning) {
+			$date_fin =date('d/m/Y', $absence->debut_fin_planning);	
+		}
+		else {
+			$date_fin =date('t/m/Y', $t_current);	
+		}
+		
+		_planning($ATMdb, $absence, $date_debut, $date_fin );
+	
+		
+		$t_current=strtotime('+1 month', $t_current);
+	}
+	
+	
+	echo $form->end_form();
+	
+	global $mesg, $error;
+	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	llxFooter();
+	
+}	
 
+function _planning(&$ATMdb, &$absence, $date_debut, $date_fin) {
+	
+//on va obtenir la requête correspondant à la recherche désirée
+	$TPlanningUser=$absence->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $date_debut, $date_fin);
+	
 	print '<table class="planning" border="0">';
 	print "<tr>";
 	print "<td ></td>";
@@ -206,62 +248,41 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			$name = htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 		print '<tr >';		
-		print '<td style="text-align:right; font-weight:bold;" nowrap="nowrap">'.$name.'</td>';
+		print '<td style="text-align:right; font-weight:bold;height:20px;" nowrap="nowrap">'.$name.'</td>';
 		foreach($planning as $ouinon){
 			if($ouinon=='non'){
-				print '<td style="text-align:center;width:100px;height:20px;"></td>
-				<td class="vert" style="text-align:center;width:100px;"></td>';
+				print '<td style="text-align:center;" colspan="2">&nbsp;</td>';
 			}else{
 				$boucleOk=0;
-				if(strpos($ouinon,'DAM')===false){
-				}else{
-					if($boucleOk!=1){
-						print '<td class="rouge" style="text-align:center;color:#FEFEFE;width:100px;height:20px;">'.substr($ouinon,0,-5).'</td><td class="rouge" style="text-align:center;color:#FEFEFE;width:100px;">'.substr($ouinon,0,-5).'</td>';
-						$boucleOk=1;
-					}
-				}
 				
-				if(strpos($ouinon,'DPM')===false){
-				}else{
-					if($boucleOk!=1){
-						print '<td class="vert" style="text-align:center;color:#FEFEFE;width:100px;height:20px;"></td><td class="rouge" style="text-align:center;color:#FEFEFE;width:100px;">'.substr($ouinon,0,-5).'</td>';
-						$boucleOk=1;
-					}
+				$labelAbs = substr($ouinon,0,-5);
+				
+				$class = (strpos($ouinon, 'RTT')!==false) ? 'rougeRTT' : 'rouge';
+				
+				if(strpos($ouinon,'DAM')!==false){
+						print '<td class="'.$class.'" title="'.$labelAbs.'" colspan="2">&nbsp;</td>';
 				}	
-				
-				if(strpos($ouinon,'FAM')===false){
-				}else{
-					if($boucleOk!=1){
-						print '<td class="rouge" style="text-align:center;color:#FEFEFE;width:100px;height:20px;">'.substr($ouinon,0,-5).'</td><td class="vert" style="text-align:center;color:#FEFEFE;width:100px;"></td>';
-						$boucleOk=1;
-					}
+				if(strpos($ouinon,'DPM')!==false){
+						print '<td class="vert">&nbsp;</td>
+						<td class="'.$class.'" title="'.$labelAbs.'">&nbsp;</td>';
+				}	
+				else if(strpos($ouinon,'FAM')!==false){
+						print '<td class="'.$class.'"  title="'.$labelAbs.'">&nbsp;</td>
+						<td class="vert" >&nbsp;</td>';
 				}
-				
-				if(strpos($ouinon,'FPM')===false){
-				}else{
-					if($boucleOk!=1){
-						print '<td class="rouge" style="text-align:center;color:#FEFEFE;width:100px;height:20px;">'.substr($ouinon,0,-5).'</td><td class="rouge" style="text-align:center;color:#FEFEFE;width:100px;">'.substr($ouinon,0,-5).'</td>';
-						$boucleOk=1;
-					}
+				else if(strpos($ouinon,'FPM')!==false){
+						print '<td class="'.$class.'" title="'.$labelAbs.'" colspan="2">&nbsp;</td>';
 				}
-				if(strpos($ouinon,'AM')===false){
-				}else{
-					if($boucleOk!=1){
-						print '<td class="rouge" style="text-align:center;color:#FEFEFE;width:100px;height:20px;">'.substr($ouinon,0,-5).'</td><td class="vert" style="text-align:center;color:#FEFEFE;width:100px;"></td>';
-						$boucleOk=1;
-					}
+				else if(strpos($ouinon,'AM')!==false){
+						print '<td class="'.$class.'"  title="'.$labelAbs.'">&nbsp;</td>
+						<td class="vert" >&nbsp;</td>';
 				}
-				if(strpos($ouinon,'PM')===false){
-				}else {
-					if($boucleOk!=1){
-						print '<td class="vert" style="text-align:center;color:#FEFEFE;width:100px;height:20px;"></td><td class="rouge" style="text-align:center;color:#FEFEFE;width:100px;">'.substr($ouinon,0,-5).'</td>';
-						$boucleOk=1;
-					}
+				else if(strpos($ouinon,'PM')!==false){
+						print '<td class="vert" >&nbsp;</td>
+						<td class="'.$class.'"  title="'.$labelAbs.'">&nbsp;</td>';
 				}
-				
-				if($boucleOk!=1){
-						print '<td class="rouge" style="text-align:center;color:#FEFEFE;width:100px;height:20px;">'.$ouinon.'</td><td class="rouge" style="text-align:center;color:#FEFEFE;width:100px;">'.$ouinon.'</td>';
-						$boucleOk=1;
+				else {
+						print '<td class="'.$class.'" title="'.$ouinon.'" colspan="2">&nbsp;</td>';
 				}
 			}
 		}
@@ -269,14 +290,8 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		print "</tr>";
 	}
 	
-	print '</table>';
+	print '</table><p>&nbsp;</p>';
 	
-	echo $form->end_form();
-	
-	global $mesg, $error;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
-	llxFooter();
-	
-}	
+}
 
 
