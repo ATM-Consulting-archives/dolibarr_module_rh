@@ -219,6 +219,32 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	
 	echo $form->end_form();
 	
+	?><script type="text/javascript">
+		
+	/*	$(document).ready(function() {
+			
+			$('table.planning tr.entete').each(function() {
+								
+			});
+			
+		});
+		
+		function isScrolledIntoView(elem)
+		{
+		    var docViewTop = $(window).scrollTop();
+		    var docViewBottom = docViewTop + $(window).height();
+		
+		    var elemTop = $(elem).offset().top;
+		    var elemBottom = elemTop + $(elem).height();
+		
+		    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+		}
+		*/
+	</script>
+	
+	
+	<?
+	
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
@@ -231,7 +257,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $date_debut, $date_fi
 	$TPlanningUser=$absence->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $date_debut, $date_fin);
 	
 	print '<table class="planning" border="0">';
-	print "<tr>";
+	print "<tr class=\"entete\">";
 	print "<td ></td>";
 	foreach($TPlanningUser as $planning=>$val){
 		print '<td colspan="2">'.substr($planning,0,5).'</td>';
