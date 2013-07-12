@@ -215,6 +215,7 @@ function _liste(&$ATMdb, &$absence) {
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
+			,'date_fin'=>array('recherche'=>'calendar')
 			,'libelle'=>true
 			,"firstname"=>true
 			,"name"=>true
@@ -301,6 +302,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
+			,'date_fin'=>array('recherche'=>'calendar')
 			,'libelle'=>true
 			,"firstname"=>true
 			,"name"=>true
