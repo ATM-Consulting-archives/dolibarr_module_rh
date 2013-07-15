@@ -1346,29 +1346,70 @@ class TRH_Absence extends TObjetStd {
 	
 	//fonction qui renvoie 1 si une absence existe déjà pendant la date que l'on veut ajouter, 0 sinon
 	function testExisteDeja($ATMdb, $absence){
+			
+		if($absence->ddMoment=='apresmidi')	{
+			$date_debut = strtotime( date('Y-m-d 12:00:00', $absence->date_debut) );
+		}
+		else {
+			$date_debut = strtotime( date('Y-m-d 00:00:00', $absence->date_debut) );
+		}
+		
+		if($absence->dfMoment=='matin')	{
+			$date_fin = strtotime( date('Y-m-d 11:59:59', $absence->date_fin) );
+		}
+		else {
+			$date_fin = strtotime( date('Y-m-d 23:59:59', $absence->date_fin) );
+		}			
+			
 		//on récupère toutes les date d'absences du collaborateur
-		$sql="SELECT date_debut, date_fin FROM ".MAIN_DB_PREFIX."rh_absence WHERE (etat LIKE 'Validee' OR etat LIKE 'Avalider') 
-		AND fk_user=".$absence->fk_user;
+		$sql="SELECT date_debut, date_fin, ddMoment, dfMoment 
+		FROM ".MAIN_DB_PREFIX."rh_absence 
+		WHERE fk_user=".$absence->fk_user." AND etat IN ('Validee','Avalider')
+		";
 
 		$ATMdb->Execute($sql);
 		$k=0;
+		
+		$TAbs=array();
 		while($ATMdb->Get_line()) {
 			$TAbs[$k]['date_debut']=strtotime($ATMdb->Get_field('date_debut'));
-			$TAbs[$k]['date_fin']=strtotime($ATMdb->Get_field('date_fin'));
+			$TAbs[$k]['date_fin']=strtotime($ATMdb->Get_field('date_fin')) + 86399;
+			
+			/*$TAbs[$k]['ddMoment']=strtotime($ATMdb->Get_field('ddMoment'));
+			$TAbs[$k]['dfMoment']=strtotime($ATMdb->Get_field('dfMoment'));*/
+			
+			if($ATMdb->Get_field('ddMoment')=='apresmidi') $TAbs[$k]['date_debut'] = strtotime( date('Y-m-d 12:00:00', $TAbs[$k]['date_debut']) );
+			if($ATMdb->Get_field('dfMoment')=='matin') $TAbs[$k]['date_fin'] = strtotime( date('Y-m-d 12:00:00', $TAbs[$k]['date_fin']) );
+			
+			
 			$k++;
 		}
-		if($k>0){
-			if(!empty($TAbs)){
+		//print_r($TAbs);
+		if(!empty($TAbs)){
 				foreach($TAbs as $dateAbs){
-				//on traite le début de l'absence	
-				if($absence->date_debut<$dateAbs['date_debut']&&$absence->date_fin>$dateAbs['date_fin']) return 1;
-				
-				//on traite la fin de l'absence	
-				if($absence->date_debut>$dateAbs['date_debut']&&$absence->date_fin<$dateAbs['date_fin']) return 1;
-			}
+					//on traite le début de l'absence
+					//print_r($dateAbs);
+					
+			/*		print date('Y-m-d H:i:s', $date_debut).' - '.date('Y-m-d H:i:s', $date_fin).' - '.date('Y-m-d H:i:s',$dateAbs['date_debut']).' - '
+					.date('Y-m-d H:i:s', $dateAbs['date_fin']).' - 	<br>';*/
+					if(( $date_debut >= $dateAbs['date_debut'] && $date_debut<=$dateAbs['date_fin'])
+						||( $date_fin >= $dateAbs['date_debut'] && $date_fin<=$dateAbs['date_fin']))
+					 {
+			/*		 	exit( "non" );*/
+						return 1;
+						
+					}
+						/*
+					if($absence->date_debut<$dateAbs['date_debut'] && $absence->date_fin>$dateAbs['date_fin']) return 1;
+					
+					//on traite la fin de l'absence	
+					if($absence->date_debut>$dateAbs['date_debut'] && $absence->date_fin<$dateAbs['date_fin']) return 1;*/
+				}
 		 }
 			
-		}
+		//exit();
+		
+		
 		
 		return 0;
 	}
