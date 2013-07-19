@@ -81,13 +81,16 @@ foreach ($TCarte as $numId => $rowid) {
 
 
 
-if (empty($nomFichier)){$nomFichier = "./fichierImports/Facture TOTAL.csv";}
+if (empty($nomFichier)){ exit("Pas de fichier total"); /*$nomFichier = "./fichierImports/Facture TOTAL.csv";*/ }
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 //pour avoir un joli nom, on prend la chaine après le dernier caractère /  et on remplace les espaces par des underscores
-$v =  strrpos ( $nomFichier , '/' );
-$idImport = substr($nomFichier, $v+1);
+/*$v =  strrpos ( $nomFichier , '/' );
+$idImport = substr($nomFichier, $v+1);*/
+$idImport = basename($nomFichier);
 $idImport = str_replace(' ', '_', $idImport);
+
+$ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement WHERE idImport='$idImport'");
 
 $TCarteInexistantes = array();
 $TCarteNonLie = array();
@@ -118,6 +121,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			}
 			else {
 				$idRess = $TCarte[$plaque];
+				print "Ajout de l'évènement sur plaque $plaque<br>";
 			}
 			//else {
 				//print_r($infos);echo '<br>';
@@ -180,17 +184,28 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		//print_r(explode('\n', $data));
 	}	
 }
-$message .= 'Erreurs : Pas de carte correspondante : <br>';
-foreach ($TCarteInexistantes as $key => $value) {
-	$message .= '     '.$key.'<br>';
+if(!empty($TCarteInexistantes)) {
+	$message .= 'Erreurs : Pas de carte correspondante : <br>';
+	foreach ($TCarteInexistantes as $key => $value) {
+		$message .= '     '.$key.'<br>';
+	}
+	
 }
-$message .=  '<br>Erreurs : Carte non lié : <br>';
-foreach ($TCarteNonLie as $key => $value) {
-	$message .= '     '.$key.'<br>';
+
+if(!empty($TCarteNonLie)) {
+	$message .=  '<br>Erreurs : Carte non lié : <br>';
+	foreach ($TCarteNonLie as $key => $value) {
+		$message .= '     '.$key.'<br>';
+	}
+	
 }
-$message .=  '<br>Erreurs : Carte lié à une voiture mais non attribué : <br>';
-foreach ($TCarteVoitureNonAttribue as $key => $value) {
-	$message .= '     '.$key.'<br>';
+
+if(!empty($TCarteVoitureNonAttribue)) {
+	$message .=  '<br>Erreurs : Carte lié à une voiture mais non attribué : <br>';
+	foreach ($TCarteVoitureNonAttribue as $key => $value) {
+		$message .= '     '.$key.'<br>';
+	}
+	
 }
 $message .= '<br>Toutes ces cartes ont été liés à la ressource de numid et libellé : \'factice'.$idImport.'\'<br>';
 
