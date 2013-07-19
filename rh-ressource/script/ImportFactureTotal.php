@@ -121,7 +121,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			}
 			else {
 				$idRess = $TCarte[$plaque];
-				print "Ajout de l'évènement sur plaque $plaque<br>";
+				print "Ajout de l'évènement sur plaque $plaque ($idRess)<br>";
 			}
 			//else {
 				//print_r($infos);echo '<br>';

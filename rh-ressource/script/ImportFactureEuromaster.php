@@ -36,9 +36,12 @@ $entity = (isset($_REQUEST['entity'])) ? $_REQUEST['entity'] : $conf->entity;
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 //pour avoir un joli nom, on prend la chaine après le dernier caractère /  et on remplace les espaces par des underscores
-$v =  strrpos ( $nomFichier , '/' );
-$idImport = substr($nomFichier, $v+1);
+$idImport = basename($nomFichier);
 $idImport = str_replace(' ', '_', $idImport);
+
+$ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement WHERE idImport='$idImport'");
+
+
 $idRessFactice = createRessourceFactice($ATMdb, $idVoiture, $idImport, $entity, $idEuromaster);
 $idSuperAdmin = getIdSuperAdmin($ATMdb);
 
