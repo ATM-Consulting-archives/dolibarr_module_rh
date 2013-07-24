@@ -146,9 +146,10 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			$total_anal = $ATMdb2->Get_field('coutEntrepriseHT');
 //print_r($code_anal);
  		
-     			if( isset( $_REQUEST['withLogin'] ) && empty( $code_anal ) ) {
-				$code_anal = '<a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('firstname').' '.$ATMdb2->Get_field('name') ."</a>";
+ 			if( isset( $_REQUEST['withLogin'] ) /*&& empty( $code_anal )*/ ) {
+				$code_anal .= ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('firstname').' '.$ATMdb2->Get_field('name') ."</a>";
 			} 
+			
 			if(isset($_REQUEST['DEBUG'])) {
 				print "$code_anal=$total_anal<br/>";
 			}
