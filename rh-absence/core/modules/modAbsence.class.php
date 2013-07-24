@@ -155,6 +155,9 @@ class modAbsence extends DolibarrModules
         // Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
         $this->boxes = array();			// List of boxes
+        $r = 0;
+        $this->boxes[$r][1] = "box_absence@absence";
+        
 		//$r=0;
 		// Example:
 		/*
