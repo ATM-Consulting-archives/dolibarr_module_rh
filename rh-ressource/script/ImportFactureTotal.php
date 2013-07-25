@@ -113,6 +113,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$plaque = str_replace('-', '', $plaque);
 			$plaque = str_replace(' ', '', $plaque);
 			
+			$typeVehicule = 'VU';
+				
 			if (empty ($TCarte[$plaque])){
 				$TCarteNonLie[$plaque] = 1;
 				$idRess = $idRessFactice;
@@ -122,6 +124,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			else {
 				$idRess = $TCarte[$plaque];
 				print "Ajout de l'évènement sur plaque $plaque ($idRess)<br>";
+				
+				$ressourceLocale = new TRH_Ressource;
+				$ressourceLocale->load($ATMdb, $idRess);
+				$typeVehicule = $ressourceLocale->typevehicule;
 			}
 			//else {
 				//print_r($infos);echo '<br>';
@@ -169,7 +175,6 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				 * Correction des taux d'import pour traitement retour
 				 */ 
 				$typeCarburant = (strpos( strtolower($infos[19]), 'gazole')!==false) ? 'gazole' : 'essence';
-				$typeVehicule = (strpos( strtolower($infos[14]), 'tourisme')!==false) ? 'VP' : 'VU';
 				
 				if($typeVehicule=='VP' && $typeCarburant=='essence')$taux=0;
 				else if($typeVehicule=='VP' && $typeCarburant=='gazoil')$taux=15.68;
