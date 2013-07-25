@@ -66,7 +66,7 @@ $TTVA = array();
 $sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0].' AND active=1';
 $ATMdb->Execute($sqlReq);
 while($ATMdb->Get_line()) {
-	$TTVA[$ATMdb->Get_field('taux')] = $ATMdb->Get_field('rowid');
+	$TTVA[(double)$ATMdb->Get_field('taux')] = $ATMdb->Get_field('rowid');
 	}
 
 //trouve l'id du SuperAdmin
@@ -188,7 +188,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				} 
 				  
 //			print_r($TTVA);
-				if(!isset($TTVA[$taux])) exit("TVA $taux inexistante");
+				if(!isset($TTVA[$taux])) exit("TVA $taux inexistante" . print_r($TTVA, true));
 				$temp->TVA = $TTVA[$taux];
 //print $temp->TVA;
 				$temp->coutEntrepriseHT = round( $temp->coutEntrepriseTTC / (1+ ($taux/100) ),2  )  ;
