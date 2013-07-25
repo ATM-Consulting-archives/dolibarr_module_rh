@@ -178,7 +178,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				/*
 				 * Correction des taux d'import pour traitement retour
 				 */ 
-				$typeCarburant = (strpos( strtolower($infos[19]), 'gazole')!==false) ? 'gazole' : 'essence';
+				$typeCarburant = (strpos( strtolower($infos[17]), 'gazole')!==false) ? 'gazole' : 'essence';
 				
 				if($typeVehicule=='VP' && $typeCarburant=='essence')$taux=0;
 				else if($typeVehicule=='VP' && $typeCarburant=='gazoil')$taux=15.68;
