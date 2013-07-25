@@ -117,6 +117,10 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			,'EUR'
 		);
 		
+		/*
+		 * Exploitation de l'analytique
+		 */
+		 
 		$sql_anal="SELECT e.rowid
 				, e.coutEntrepriseTTC as coutEntrepriseTTC , e.date_facture
 				, (e.coutEntrepriseHT * IFNULL(a.pourcentage,100) / 100) as coutEntrepriseHT

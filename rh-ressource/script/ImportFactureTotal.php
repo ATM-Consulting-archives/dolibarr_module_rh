@@ -63,7 +63,7 @@ while($row = $ATMdb->Get_line()) {
 
 //Tableau des TVAs
 $TTVA = array();
-$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
+$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0].' AND active=1';
 $ATMdb->Execute($sqlReq);
 while($ATMdb->Get_line()) {
 	$TTVA[$ATMdb->Get_field('taux')] = $ATMdb->Get_field('rowid');
@@ -164,6 +164,17 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->coutEntrepriseTTC = strtr($infos[19], ',','.');
 				
 				$taux = number_format(floatval(str_replace(',', '.', $infos[25])),1);
+				
+				/*
+				 * Correction des taux d'import pour traitement retour
+				 */ 
+				$typeCarburant = (strpos( strtolower($infos[19]), 'gazole')!==false) ? 'gazole' : 'essence';
+				$typeVehicule = (strpos( strtolower($infos[14]), 'tourisme')!==false) ? 'VP' : 'VU';
+				
+				if($typeVehicule=='VP' && $typeCarburant=='essence')$taux=0;
+				else if($typeVehicule=='VP' && $typeCarburant=='gazoil')$taux=15.68;
+			
+				
 				$temp->TVA = $TTVA[$taux];
 				$temp->coutEntrepriseHT = strtr($infos[20], ',','.');
 				$temp->idImport = $idImport;
