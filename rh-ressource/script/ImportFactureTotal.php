@@ -177,11 +177,16 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				/*
 				 * Correction des taux d'import pour traitement retour
-				 */ 
-				$typeCarburant = (strpos( strtolower($infos[17]), 'gazole')!==false) ? 'gazole' : 'essence';
-				
-				if($typeVehicule=='VP' && $typeCarburant=='essence')$taux=0;
-				else if($typeVehicule=='VP' && $typeCarburant=='gazole')$taux=15.68;
+				 */
+				$typeCarburant = null;
+				if (strpos( strtolower($infos[17]), 'gazole')!==false) $typeCarburant = 'gazole';
+				else if (strpos( strtolower($infos[17]), 'essence')!==false) $typeCarburant = 'essence';
+				 
+				if(!is_null($typeCarburant)) {
+					if($typeVehicule=='VP' && $typeCarburant=='essence')$taux=0;
+					else if($typeVehicule=='VP' && $typeCarburant=='gazole')$taux=15.68;
+				} 
+				  
 //			print_r($TTVA);
 				
 				$temp->TVA = $TTVA["$taux"];
