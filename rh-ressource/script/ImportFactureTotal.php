@@ -186,7 +186,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				$temp->TVA = $TTVA["$taux"];
 //print $temp->TVA;
-				$temp->coutEntrepriseHT = strtr($infos[20], ',','.');
+				$temp->coutEntrepriseHT = round( $temp->coutEntrepriseTTC / (1+ ($taux/100) )  )  ;
 				$temp->idImport = $idImport;
 				$temp->numFacture = $infos[1];
 				$temp->date_facture = dateToInt($infos[3]);
