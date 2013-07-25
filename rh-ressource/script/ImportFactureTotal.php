@@ -188,8 +188,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				} 
 				  
 //			print_r($TTVA);
-				if(!isset($TTVA[$taux])) exit("TVA $taux inexistante" . print_r($TTVA, true));
-				$temp->TVA = $TTVA[$taux];
+
+				$idTVA = getTVAId($TTVA, $taux);
+				if($idTVA<0) exit("TVA $taux inexistante" . print_r($TTVA, true));
+				$temp->TVA = $idTVA;
 //print $temp->TVA;
 				$temp->coutEntrepriseHT = round( $temp->coutEntrepriseTTC / (1+ ($taux/100) ),2  )  ;
 				$temp->idImport = $idImport;
@@ -263,4 +265,12 @@ function dateToInt($chaine){
 	return mktime(0,0,0,substr($chaine,3,2),substr($chaine,0,2),substr($chaine,6,4));
 }
 
-
+function getTVAId(&$TTVA, $tva) {
+	
+	foreach($TTVA as $taux=>$id) {
+		if((double)$tva==(double)$taux) return $id;
+		
+	}
+	return -1;
+	
+}
