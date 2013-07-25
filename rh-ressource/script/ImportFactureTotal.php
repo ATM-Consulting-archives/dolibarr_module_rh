@@ -181,7 +181,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$typeCarburant = (strpos( strtolower($infos[17]), 'gazole')!==false) ? 'gazole' : 'essence';
 				
 				if($typeVehicule=='VP' && $typeCarburant=='essence')$taux=0;
-				else if($typeVehicule=='VP' && $typeCarburant=='gazoil')$taux=15.68;
+				else if($typeVehicule=='VP' && $typeCarburant=='gazole')$taux=15.68;
 			
 				
 				$temp->TVA = $TTVA[$taux];
