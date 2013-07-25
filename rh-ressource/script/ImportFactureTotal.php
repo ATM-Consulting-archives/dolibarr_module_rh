@@ -188,7 +188,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				} 
 				  
 //			print_r($TTVA);
-				
+				if(!isset($TTVA[$taux])) exit("TVA $taux inexistante");
 				$temp->TVA = $TTVA[$taux];
 //print $temp->TVA;
 				$temp->coutEntrepriseHT = round( $temp->coutEntrepriseTTC / (1+ ($taux/100) ),2  )  ;
