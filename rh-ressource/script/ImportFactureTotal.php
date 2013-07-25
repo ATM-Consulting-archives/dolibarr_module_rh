@@ -125,7 +125,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$idRess = $TCarte[$plaque];
 				
 				$ressourceLocale = new TRH_Ressource;
-				$ressourceLocale->load($ATMdb, $idRess);
+				//$ATMdb->debug=true;
+				$ressourceLocale->load_by_numId($ATMdb, $plaque);
 				$typeVehicule = strtoupper( $ressourceLocale->typevehicule );
 				
 				print "Ajout de l'évènement sur plaque $plaque ($idRess : $typeVehicule)<br>";
