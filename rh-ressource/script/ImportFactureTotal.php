@@ -182,9 +182,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				if($typeVehicule=='VP' && $typeCarburant=='essence')$taux=0;
 				else if($typeVehicule=='VP' && $typeCarburant=='gazole')$taux=15.68;
-			
+//			print_r($TTVA);
 				
-				$temp->TVA = $TTVA[$taux];
+				$temp->TVA = $TTVA["$taux"];
+//print $temp->TVA;
 				$temp->coutEntrepriseHT = strtr($infos[20], ',','.');
 				$temp->idImport = $idImport;
 				$temp->numFacture = $infos[1];
