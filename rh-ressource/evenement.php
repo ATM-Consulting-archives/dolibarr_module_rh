@@ -120,7 +120,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	switch($type){
 		case 'all' :
 			$jointureChamps ="DATE(e.date_debut) as 'Date début', DATE(e.date_fin) as 'Date fin', e.type as 'Type',
-				e.motif as 'Motif', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutTTC as DECIMAL(16,2)), ' €') as 'Coût TTC', 
+				e.motif as 'Motif', tr.codecomptable as 'code comptable', e.commentaire as 'Commentaire', CONCAT (CAST(e.coutTTC as DECIMAL(16,2)), ' €') as 'Coût TTC', 
 				CONCAT (CAST(e.coutEntrepriseTTC as DECIMAL(16,2)), ' €') as 'Coût pour l\'entreprise TTC', t.taux as 'TVA' ";
 			$jointureType = " AND e.type<>'emprunt' ";
 			break;
@@ -141,6 +141,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_evenement as e
 			LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid)
 			LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
+			LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as tr ON (e.type=tr.code)
 			LEFT JOIN ".MAIN_DB_PREFIX."c_tva as t ON (e.tva = t.rowid)
 			WHERE e.fk_rh_ressource=".$ressource->getId().$jointureType;
 	if(!$user->rights->ressource->ressource->manageEvents){
