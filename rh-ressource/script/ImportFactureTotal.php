@@ -147,7 +147,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 				
 				if ( !empty($TEvents[strtolower($typeEvent)]) ){ //si aucun évenement ne correspond, on le met divers
-					$temp->type = $TEvents[strtolower($infos[17])];
+					$temp->type = $TEvents[strtolower($typeEvent)];
 					print "Type reconnu : {$temp->type}<br>"; 
 				}
 				else {
