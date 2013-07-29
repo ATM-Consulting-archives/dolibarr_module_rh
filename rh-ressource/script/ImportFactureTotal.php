@@ -104,7 +104,7 @@ $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($data = fgetcsv($handle, 0,'\r')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=2 ){
+		if ($numLigne >=1 ){
 			$infos = explode(';', $data[0]);
 			
 			//print_r($infos);
@@ -142,8 +142,11 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$t = explode(' ',$infos[30]);
 				array_shift($t); 
 				$nomPeage = htmlentities(implode(' ', $t), ENT_COMPAT , 'ISO8859-1'); 
+			
+				$typeEvent = $infos[17];
 				
-				if ( !empty($TEvents[strtolower($infos[17])]) ){ //si aucun évenement ne correspond, on le met divers
+	
+				if ( !empty($TEvents[strtolower($typeEvent)]) ){ //si aucun évenement ne correspond, on le met divers
 					$temp->type = $TEvents[strtolower($infos[17])];
 				}
 				else {
