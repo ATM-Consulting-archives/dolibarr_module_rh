@@ -143,7 +143,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				array_shift($t); 
 				$nomPeage = htmlentities(implode(' ', $t), ENT_COMPAT , 'ISO8859-1'); 
 			
-				$typeEvent = $infos[17];
+				$typeEvent = utf8_encode($infos[17]);
 				
 	
 				if ( !empty($TEvents[strtolower($typeEvent)]) ){ //si aucun évenement ne correspond, on le met divers
