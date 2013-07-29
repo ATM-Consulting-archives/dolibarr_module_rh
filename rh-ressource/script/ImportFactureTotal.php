@@ -148,6 +148,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				if ( !empty($TEvents[strtolower($typeEvent)]) ){ //si aucun évenement ne correspond, on le met divers
 					$temp->type = $TEvents[strtolower($infos[17])];
+					print "Type reconnu : {$temp->type}<br>"; 
 				}
 				else {
 					print "<b>$typeEvent non reconnu : à créer dans le type de ressource > Evènement pour prise en compte<br /></b>";
