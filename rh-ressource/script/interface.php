@@ -121,7 +121,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		 * Exploitation de l'analytique
 		 */
 		 
-		$sql_anal="SELECT e.rowid
+		$sql_anal="SELECT DISTINCT e.rowid
 				, e.coutEntrepriseTTC as coutEntrepriseTTC , e.date_facture
 				, (e.coutEntrepriseHT * IFNULL(a.pourcentage,100) / 100) as coutEntrepriseHT
 				, a.code as 'code_analytique'
