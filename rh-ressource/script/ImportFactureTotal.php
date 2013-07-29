@@ -114,7 +114,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$plaque = str_replace(' ', '', $plaque);
 			
 			$typeVehicule = 'VU';
+			$typeEvent = utf8_encode($infos[17]);
 				
+	
 			if (empty ($TCarte[$plaque])){
 				$TCarteNonLie[$plaque] = 1;
 				$idRess = $idRessFactice;
@@ -129,7 +131,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$ressourceLocale->load_by_numId($ATMdb, $plaque);
 				$typeVehicule = strtoupper( $ressourceLocale->typevehicule );
 				
-				print "Ajout de l'évènement sur plaque $plaque ($idRess : $typeVehicule)<br>";
+				print "Ajout de l'évènement ($typeEvent) sur plaque $plaque ($idRess : $typeVehicule)<br>";
 				
 			
 			}
@@ -143,9 +145,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				array_shift($t); 
 				$nomPeage = htmlentities(implode(' ', $t), ENT_COMPAT , 'ISO8859-1'); 
 			
-				$typeEvent = utf8_encode($infos[17]);
 				
-	
 				if ( !empty($TEvents[strtolower($typeEvent)]) ){ //si aucun évenement ne correspond, on le met divers
 					$temp->type = $TEvents[strtolower($infos[17])];
 				}
