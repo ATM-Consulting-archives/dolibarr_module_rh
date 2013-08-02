@@ -22,7 +22,7 @@
 				$absence->set_values($_REQUEST);
 				$absence->niveauValidation=1;
 				$existeDeja=$absence->testExisteDeja($ATMdb, $absence);
-				if(!$existeDeja){
+				if($existeDeja===false){
 					$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
 					$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
 				
@@ -57,7 +57,7 @@
 						}
 					}
 				}else{
-					$mesg = '<div class="error">Création impossible : il existe déjà une autre demande d\'absence pendant cette période</div>';
+					$mesg = '<div class="error">Création impossible : il existe déjà une autre demande d\'absence pendant cette période : '.$existeDeja.'</div>';
 					_fiche($ATMdb, $absence,'edit');
 				}
 				break;

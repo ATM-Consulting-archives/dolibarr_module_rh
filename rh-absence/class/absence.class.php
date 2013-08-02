@@ -1360,7 +1360,7 @@ class TRH_Absence extends TObjetStd {
 		else {
 			$date_fin = strtotime( date('Y-m-d 23:59:59', $absence->date_fin) );
 		}			
-			
+		//print date('Y-m-d H:i:s', $date_debut).' '.date('Y-m-d H:i:s', $date_fin);	
 		//on récupère toutes les date d'absences du collaborateur
 		$sql="SELECT date_debut, date_fin, ddMoment, dfMoment 
 		FROM ".MAIN_DB_PREFIX."rh_absence 
@@ -1379,7 +1379,7 @@ class TRH_Absence extends TObjetStd {
 			$TAbs[$k]['dfMoment']=strtotime($ATMdb->Get_field('dfMoment'));*/
 			
 			if($ATMdb->Get_field('ddMoment')=='apresmidi') $TAbs[$k]['date_debut'] = strtotime( date('Y-m-d 12:00:00', $TAbs[$k]['date_debut']) );
-			if($ATMdb->Get_field('dfMoment')=='matin') $TAbs[$k]['date_fin'] = strtotime( date('Y-m-d 12:00:00', $TAbs[$k]['date_fin']) );
+			if($ATMdb->Get_field('dfMoment')=='matin') $TAbs[$k]['date_fin'] = strtotime( date('Y-m-d 11:59:59', $TAbs[$k]['date_fin']) );
 			
 			
 			$k++;
@@ -1390,13 +1390,13 @@ class TRH_Absence extends TObjetStd {
 					//on traite le début de l'absence
 					//print_r($dateAbs);
 					
-			/*		print date('Y-m-d H:i:s', $date_debut).' - '.date('Y-m-d H:i:s', $date_fin).' - '.date('Y-m-d H:i:s',$dateAbs['date_debut']).' - '
+					/*print date('Y-m-d H:i:s', $date_debut).' - '.date('Y-m-d H:i:s', $date_fin).' - '.date('Y-m-d H:i:s',$dateAbs['date_debut']).' - '
 					.date('Y-m-d H:i:s', $dateAbs['date_fin']).' - 	<br>';*/
 					if(( $date_debut >= $dateAbs['date_debut'] && $date_debut<=$dateAbs['date_fin'])
 						||( $date_fin >= $dateAbs['date_debut'] && $date_fin<=$dateAbs['date_fin']))
 					 {
 			/*		 	exit( "non" );*/
-						return 1;
+						return date('Y-m-d H:i',$dateAbs['date_debut'])." au ".date('Y-m-d H:i', $dateAbs['date_fin']);
 						
 					}
 						/*
@@ -1411,7 +1411,7 @@ class TRH_Absence extends TObjetStd {
 		
 		
 		
-		return 0;
+		return false;
 	}
 	
 	//fonction qui va renvoyer la requête sql de recherche pour le planning
