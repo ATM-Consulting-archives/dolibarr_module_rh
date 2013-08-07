@@ -204,13 +204,18 @@ class TRH_Absence extends TObjetStd {
 			$this->TTypeAbsencePointeur[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
 		}
 		
-		
-		
 		//combo pour le choix de matin ou après midi 
 		$this->TddMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date début
 		$this->TdfMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date fin
 		
 		//on crée un tableau des utilisateurs pour l'afficher en combo box, et ensuite sélectionner quelles absences afficher
+		
+		$this->TEtat=array(
+			'Validee'=>'Acceptée'
+			,'Refusee'=>'Refusée'
+			,'Avalider'=>'En attente de validation'
+		
+		);
 		
 	}
 

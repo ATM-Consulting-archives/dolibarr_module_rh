@@ -163,7 +163,7 @@ function _liste(&$ATMdb, &$absence) {
 	//LISTE D'ABSENCES DU COLLABORATEUR
 	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
 			a.libelle,a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
-			a.libelleEtat as 'Statut demande', a.avertissement
+			a.etat, a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user";
 	
@@ -189,6 +189,7 @@ function _liste(&$ATMdb, &$absence) {
 			'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
 			'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
 			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
+			,'etat'=>$absence->TEtat
 		)
 		,'hide'=>array('DateCre', 'fk_user', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
@@ -212,6 +213,7 @@ function _liste(&$ATMdb, &$absence) {
 			,'firstname'=>'Prénom'
 			,'name'=>'Nom'
 			,'login'=>'Login'
+			,'etat'=>'Statut demande'
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
@@ -220,10 +222,13 @@ function _liste(&$ATMdb, &$absence) {
 			,"firstname"=>true
 			,"name"=>true
 			,"login"=>true
+			,'etat'=>$absence->TEtat
 		)
 		,'eval'=>array(
 			'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			,'etat'=>'_setColorEtat("@val@")'
+			
 		)
 		,'orderBy'=>$TOrder
 		
@@ -248,7 +253,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 
 	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
 		 	a.libelle, ROUND(a.duree ,1) as 'duree', a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
-		  	a.libelleEtat as 'Statut demande', a.avertissement
+		  	a.etat, a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE u.rowid=a.fk_user";
 	
@@ -269,11 +274,9 @@ function _listeAdmin(&$ATMdb, &$absence) {
 		,'link'=>array(
 			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
-		,'translate'=>array('Statut demande'=>array(
-			'Refusée'=>'<b style="color:#A72947">Refusée</b>',
-			'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
-			'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
-			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
+		,'translate'=>array(
+			'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
+			,'etat'=>$absence->TEtat
 		)
 		,'hide'=>array('DateCre', 'fk_user', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
@@ -287,7 +290,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
-			
+			,'etat'=>$absence->TEtat
 			
 		)
 		,'title'=>array(
@@ -299,6 +302,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			,'name'=>'Nom'
 			,'login'=>'Login'
 			,'duree'=>'Durée (en jour)'
+			,'etat'=>'Statut demande'
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
@@ -307,10 +311,12 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			,"firstname"=>true
 			,"name"=>true
 			,"login"=>true
+			,'etat'=>$absence->TEtat
 		)
 		,'eval'=>array(
 			'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			,'etat'=>'_setColorEtat("@val@")'
 		)
 		,'orderBy'=>$TOrder
 		
@@ -321,7 +327,13 @@ function _listeAdmin(&$ATMdb, &$absence) {
 	
 	llxFooter();
 }	
-
+function _setColorEtat($val) {
+	return strtr($val,array(
+				'Refusée'=>'<b style="color:#A72947">Refusée</b>',
+				'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
+				'Acceptée'=>'<b style="color:#30B300">Acceptée</b>'
+	));
+}
 	
 function _listeValidation(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
