@@ -175,7 +175,7 @@ function _liste(&$ATMdb, &$absence) {
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');		
 	//print $page;
-	echo $form->hidden('action', 'listeValidation');
+	//echo $form->hidden('action', 'listeValidation');
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
@@ -460,7 +460,9 @@ function _listeValidation(&$ATMdb, &$absence) {
 		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 					
 		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
-		$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');		
+		$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');	
+		echo $form->hidden('action', 'listeValidation');
+			
 		//print $page;
 		$r->liste($ATMdb, $sql, array(
 			'limit'=>array(
