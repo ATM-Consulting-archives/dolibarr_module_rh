@@ -11,7 +11,7 @@ function competencePrepareHead(&$obj, $type='competence') {
 		
 		case 'planFormation':
 				return array(
-					array(DOL_URL_ROOT_ALT.'/competence/rechercheCompetence.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
+					array(DOL_URL_ROOT_ALT.'/competence/planFormation.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
 				);
 				break;
 		

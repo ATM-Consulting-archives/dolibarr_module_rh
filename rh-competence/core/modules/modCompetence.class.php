@@ -273,7 +273,7 @@ class modCompetence extends DolibarrModules
 			        	'type'=> 'left',			// This is a Top menu entry
 			        	'titre'=>$langs->trans('Plans de Formation'),
 			        	'mainmenu'=> 'competence',
-			        	'leftmenu'=> 'sousformation',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+			        	'leftmenu'=> 'listeplanformation',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 						'url'=> '/competence/planFormation.php',
 						'langs'=> 'competence@competence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						'position'=> 103,
@@ -284,12 +284,12 @@ class modCompetence extends DolibarrModules
         );
 		$r++;
 		$this->menu[$r]=array(
-			            'fk_menu'=>'fk_mainmenu=competence,fk_leftmenu=sousformation',			// Put 0 if this is a top menu
+			            'fk_menu'=>'fk_mainmenu=competence,fk_leftmenu=listeplanformation',			// Put 0 if this is a top menu
 			        	'type'=> 'left',			// This is a Top menu entry
-			        	'titre'=>$langs->trans('Formations'),
+			        	'titre'=>$langs->trans('Liste des Plans'),
 			        	'mainmenu'=> '',
-			        	'leftmenu'=> 'sousformation',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-						'url'=> '/competence/formation.php',
+			        	'leftmenu'=> 'listeplanformation',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+						'url'=> '/competence/planFormation.php',
 						'langs'=> 'competence@competence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						'position'=> 104,
 						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -300,12 +300,12 @@ class modCompetence extends DolibarrModules
 		$r++;
 		
 		$this->menu[$r]=array(
-			            'fk_menu'=>'fk_mainmenu=competence,fk_leftmenu=sousformation',			// Put 0 if this is a top menu
+			            'fk_menu'=>'fk_mainmenu=competence,fk_leftmenu=listeplanformation',			// Put 0 if this is a top menu
 			        	'type'=> 'left',			// This is a Top menu entry
-			        	'titre'=>$langs->trans('Sessions Formation'),
+			        	'titre'=>$langs->trans('Nouveau Plan'),
 			        	'mainmenu'=> '',
-			        	'leftmenu'=> 'soussousformation',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-						'url'=> '/competence/sessionFormation.php',
+			        	'leftmenu'=> 'nouveauplanformation',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+						'url'=> '/competence/planFormation.php?action=new',
 						'langs'=> 'competence@competence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						'position'=> 105,
 						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
