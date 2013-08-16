@@ -7,10 +7,13 @@
 	
 	require('../config.php');
 	require('../class/competence.class.php');
+	require('../class/formation.class.php');
+	
 
 	$ATMdb=new Tdb;
 	$ATMdb->db->debug=true;
-
+	
+	//Competence
 	$o=new TRH_ligne_cv;
 	$o->init_db_by_vars($ATMdb);
 	
@@ -24,4 +27,27 @@
 	$r->init_db_by_vars($ATMdb);
 	
 	$r=new TRH_dif;
+	$r->init_db_by_vars($ATMdb);
+	
+	
+	//Formation
+	$r=new TRH_formation_plan;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_formation_section;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_formation;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_formation_type_priorite;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_formation_session;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_formation_participant;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_formation_participant_statut;
 	$r->init_db_by_vars($ATMdb);
