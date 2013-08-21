@@ -7,36 +7,37 @@
 	$ATMdb=new Tdb;
 	$planFormation = new TRH_formation_plan;
 	
+	(!empty($_REQUEST['id'])) ? $planFormation->load($ATMdb, $_REQUEST['id']) : '' ;
+	
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'new':
 				$planFormation->set_values($_REQUEST);
-				_fiche($ATMdb,$planFormation,$_REQUEST['action']);
+				_fiche($ATMdb,$planFormation,'new');
 				break;	
 				
 			case 'edit':
-				$planFormation->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb,$planFormation,$_REQUEST['action']);
+				_fiche($ATMdb,$planFormation,'edit');
 				break;
 				
 			case 'save':
-				$planFormation->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb,$planFormation,$_REQUEST['action']);
+				$planFormation->set_values($_REQUEST);
+				$planFormation->save($ATMdb);
+				_fiche($ATMdb,$planFormation,'view');
 				break;
 			
 			case 'view':
-				$planFormation->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb,$planFormation,$_REQUEST['action']);
+				_fiche($ATMdb,$planFormation,'view');
 				break;
 				
 			case 'delete':
-				_liste($ATMdb,$planFormation);
+				$planFormation->delete($ATMdb);
+				_liste($ATMdb,$planFormation,'view');
 				break;
 		}
 	}
 	elseif(isset($_REQUEST['id'])) {
-		$planFormation->load($ATMdb, $_REQUEST['id']);
 		_fiche($ATMdb,$planFormation);
 	}
 	else {
@@ -67,6 +68,9 @@ function _liste(&$ATMdb,$planFormation) {
 		)
 		,'hide'=>array('IdPlan')
 		,'type'=>array('LibellePlan'=>'string')
+		,'link'=>array(
+			'LibellePlan'=>'<a href="?id=@IdPlan@&action=view">@val@</a>'
+		)
 		,'liste'=>array(
 			'titre'=>'Liste des PLans de Formations'
 			,'image'=>img_picto('','title.png', '', 0)
@@ -92,7 +96,7 @@ function _liste(&$ATMdb,$planFormation) {
 	llxFooter();
 }
 
-function _fiche(&$ATMdb,&$planFormation,&$mode = 'view') {
+function _fiche(&$ATMdb,&$planFormation,$mode = 'view') {
 	global $langs,$conf,$db,$user;
 	
 	llxHeader('', 'Plan de Formation');
@@ -100,31 +104,33 @@ function _fiche(&$ATMdb,&$planFormation,&$mode = 'view') {
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	
-	if ($mode=='new')
-		echo $form->hidden('action', 'edit');
-	else 
-		echo $form->hidden('action', 'save');
+	if($mode=="edit")
+		echo $form->hidden('id',$planFormation->getId());
+	echo $form->hidden('action', 'save');
+		
+	//Chargement de la liste des Formation associé au plan
+	$listeFormation = $planFormation->getListeFormation($ATMdb);
 		
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/planFormation.tpl.php'
 		,array()
 		,array(
 			'planFormation'=>array(
-				'numId'=>$form->texte('', 'numId', $planFormation->rowid, 50,255,'','','-')
-				,'libelle'=>$form->texte('', 'libelle', $planFormation->libelle, 50,255,'','','-')
+				'ID'=>$planFormation->rowid
+				,'libelle'=>$form->texte('','libelle', $planFormation->libelle,50,255,'','','-')
 				,'description'=>$form->zonetexte('','description',$planFormation->description,50)
-				,'date_debut'=>$form->calendrier('', 'date_debut', $planFormation->date_debut,12, 12)
-				,'date_fin'=>$form->calendrier('', 'date_fin', $planFormation->date_fin,12, 12)
-				,'budget'=>$form->texte('', 'buget', $planFormation->budget, 10,255,'','','-')
+				,'date_debut'=>$form->calendrier('','date_debut', $planFormation->date_debut,12, 12)
+				,'date_fin'=>$form->calendrier('','date_fin', $planFormation->date_fin,12, 12)
+				,'budget'=>$form->texte('','budget',$planFormation->budget,10,255,'','')
 			)
-			/*,'listeContrat'=>array(
-				'liste' => $listeContrat	
-			)*/
+			,'listeFormation'=>array(
+				'liste' => $listeFormation	
+			)
 			,'view'=>array(
 				'mode'=>$mode
 				,'userRight'=>((int)$user->rights->ressource->ressource->createRessource)
-				,'head'=>dol_get_fiche_head(competencePrepareHead($planFormation, 'planFormation')  , 'fiche', 'Plan de Formation')
-				,'onglet'=>dol_get_fiche_head(array()  , '', 'Création Plan de formation')
+				,'head'=>dol_get_fiche_head(competencePrepareHead($planFormation,'planFormation'),'fiche','Plan de Formation')
+				,'onglet'=>dol_get_fiche_head(array(),'','Plan de formation')
 			)
 		)
 	);
