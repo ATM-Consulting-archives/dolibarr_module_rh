@@ -115,8 +115,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			$typeVehicule = 'VU';
 			$typeEvent = utf8_encode($infos[17]);
-				
-	
+			
 			if (empty ($TCarte[$plaque])){
 				$TCarteNonLie[$plaque] = 1;
 				$idRess = $idRessFactice;
@@ -145,9 +144,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				array_shift($t); 
 				$nomPeage = htmlentities(implode(' ', $t), ENT_COMPAT , 'ISO8859-1'); 
 			
-				
-				if ( !empty($TEvents[strtolower($typeEvent)]) ){ //si aucun évenement ne correspond, on le met divers
-					$temp->type = $TEvents[strtolower($typeEvent)];
+				echo utf8_decode(strtolower($typeEvent)).'<br>';	
+				if ( !empty($TEvents[utf8_decode(strtolower($typeEvent))]) ){ //si aucun évenement ne correspond, on le met divers
+					$temp->type = $TEvents[utf8_decode(strtolower($typeEvent))];
 					print "Type reconnu : {$temp->type}<br>"; 
 				}
 				else {
@@ -179,7 +178,6 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->coutEntrepriseTTC = strtr($infos[19], ',','.');
 				
 				$taux = number_format(floatval(str_replace(',', '.', $infos[25])),1);
-				
 				/*
 				 * Correction des taux d'import pour traitement retour
 				 */
