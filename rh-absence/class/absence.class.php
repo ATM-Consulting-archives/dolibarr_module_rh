@@ -388,6 +388,106 @@ class TRH_Absence extends TObjetStd {
 		parent::save($db);
 	}
 
+	/*
+	 * Faire une fonction qui marche
+	 */
+	 
+	function getJourFerie(&$ATMdb) {
+		
+		$ATMdb->Execute("SELECT date_jourOff, moment FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries 
+		WHERE date_jourOff BETWEEN '".date('Y-m-d 00:00:00', $this->date_debut)."' AND '".date('Y-m-d 23:59:59', $this->date_fin)."'");
+		
+		$Tab=array();
+		while($ATMdb->Get_line()) {
+		
+			$moment = $ATMdb->Get_field('moment');
+			$date_jourOff = date('Y-m-d', strtotime($ATMdb->Get_field('date_jourOff')));
+			
+			if($moment=='matin') {
+				$Tab[$date_jourOff]['am']=true;	
+			}
+			elseif($moment=='apremidi') {
+				$Tab[$date_jourOff]['pm']=true;	
+			}
+			else{
+				$Tab[$date_jourOff]['am']=true;	
+				$Tab[$date_jourOff]['pm']=true;	
+			}
+			
+		}
+		return $Tab;
+	}
+	function calculDureeAbsenceParAddition(&$ATMdb) {
+		global $TJourNonTravailleEntreprise, $langs;
+		
+		$TJourSemaine = array('dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi');
+		$TJourFerie = $this->getJourFerie($ATMdb);	
+		
+	//	print_r($TJourFerie);
+		
+		$duree = 0;
+		
+		$t_start = $this->date_debut;
+		$t_end = $this->date_fin;
+		$t_current = $t_start;
+		
+		$typeAbs = new TRH_TypeAbsence;
+		
+		$typeAbs->load_by_type($ATMdb, $this->type);
+		//print_r($typeAbs);
+		$emploiTemps = new TRH_EmploiTemps;
+		$emploiTemps->load_by_fkuser($ATMdb, $this->fk_user);
+		
+		while($t_current<=$t_end) {
+			//print date('Y-m-d', $t_current).'<br>';;
+			$current_day = $TJourSemaine[(int)date('w', $t_current)];
+			if(!in_array($current_day, $TJourNonTravailleEntreprise)) {
+				
+			/*	
+				if(date('Y-m-d', $t_current)=='2013-08-13') {
+					print "$t_current==$t_start {$this->ddMoment} {$this->dfMoment}";
+				//	print_r( debug_backtrace() );
+				}
+				*/
+				if( ($t_current==$t_start && $this->ddMoment=='matin') || $t_current>$t_start  ) {
+					if(!isset($TJourFerie[ date('Y-m-d', $t_current) ]['am'])) {
+	
+						if($emploiTemps->{$current_day.'am'}==1 ) {
+							$duree+=.5;
+						}		
+						else if($typeAbs->decompteNormal=='non' && $emploiTemps->{$current_day.'am'}==0 ) {
+							$duree+=.5;
+						}
+						
+					}
+				}
+				
+				
+				if(($t_current==$t_end && $this->dfMoment=='apresmidi') || $t_current<$t_end  ) {
+				
+				
+					if(!isset($TJourFerie[ date('Y-m-d', $t_current) ]['pm'])) {
+	
+						if($emploiTemps->{$current_day.'pm'}==1 ) {
+							$duree+=.5;
+						}		
+						else if($typeAbs->decompteNormal=='non' && $emploiTemps->{$current_day.'pm'}==0 ) {
+							$duree+=.5;
+						}
+						
+					}
+				
+				}
+				//print "$current_day<br>";
+
+			}
+			
+			
+			$t_current = strtotime("+1day",$t_current);
+		}
+		
+		return $duree;
+	}
 	
 	//calcul de la durée initiale de l'absence (sans jours fériés, sans les jours travaillés du salariés)
 	function calculDureeAbsence(&$ATMdb, $date_debut, $date_fin, &$absence){
@@ -411,7 +511,8 @@ class TRH_Absence extends TObjetStd {
 	
 	//calcul la durée de l'absence après le décompte des jours fériés
 	function calculJoursFeries(&$ATMdb, $duree, $date_debut, $date_fin, &$absence){
-				
+			
+		global $conf, $TJourNonTravailleEntreprise;		
 		//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
 		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries`";
 		$ATMdb->Execute($sql);
@@ -422,23 +523,28 @@ class TRH_Absence extends TObjetStd {
 				,'moment'=>$ATMdb->Get_field('moment')
 				);
 		}
-				
+		
+		/*echo '<pre>';
+		print_r($Tab);
+		echo '</pre>';*/	
 		$t_current = $t_start = $date_debut;
 		$t_end = $date_fin;
-		
 		while($t_current<=$t_end) {
 			
 			$date_current = date('Y-m-d', $t_current);
+			$jour = $absence->jourSemaine($t_current);
 			
+			if(in_array($jour, $TJourNonTravailleEntreprise))
+				$duree -= 0.5;
 		//	print " $date_current ";
-			if(isset($Tab[$date_current])) {
+			elseif(isset($Tab[$date_current])) {
 		//		print "$date_current est férié";
 				if($t_current==$t_start && $absence->ddMoment=='apresmidi') {
 					if($Tab[$date_current]['moment']=='matin') {
 						null;
 					}	
 					else {
-						$duree-=.5;	
+						$duree-=0.5;	
 					}
 					 
 				}	
@@ -447,16 +553,15 @@ class TRH_Absence extends TObjetStd {
 						null;
 					}	
 					else {
-						$duree-=.5;	
+						$duree-=0.5;	
 					}
 				}
 				else {
-					
 					if($Tab[$date_current]['moment']=='allday') {
 						$duree-=1;
 					}
 					else {
-						$duree-=.5;
+						$duree-=0.5;
 					}
 					
 					
@@ -648,7 +753,7 @@ class TRH_Absence extends TObjetStd {
 		, tempsHebdo
 		FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` 
 		WHERE fk_user=".$absence->fk_user;  
-
+//print $sql;
 		$ATMdb->Execute($sql);
 		$TTravail = array();
 		$TTravailHeure= array();
@@ -731,9 +836,9 @@ class TRH_Absence extends TObjetStd {
 				}else{	//sinon on traite les cas matin et apres midi
 					if($TTravail[$jourDebutSem.'am']==0){
 						if($decompteNormal=='oui'){
-							$duree-=0.5;
+							$duree-=.5;
 						}else if(in_array($jourDebutSem, $TJourNonTravailleEntreprise)){
-							$duree-=0.5;
+							$duree-=.5;
 						}
 					}else{
 						$absence->dureeHeure=$absence->additionnerHeure($absence->dureeHeure,$absence->difheure($TTravailHeure["date_".$jourDebutSem."_heuredam"], $TTravailHeure["date_".$jourDebutSem."_heurefam"]));
@@ -899,6 +1004,7 @@ class TRH_Absence extends TObjetStd {
 	 			}
 	 		}
 			if(!$ferie){
+				
 				$jourEnCoursSem=$absence->jourSemaine($jourEnCours);
 				//echo $jourEnCoursSem;
 				foreach ($absence->TJour as $jour) {
@@ -1674,7 +1780,7 @@ class TRH_EmploiTemps extends TObjetStd {
 	}
 	
 	//remet à 0 les checkbox avant la sauvegarde
-	function razCheckbox(&$ATMdb, $emploiTemps){
+	function razCheckbox(&$ATMdb){
 		global $conf, $user;
 		$this->entity = $conf->entity;
 		
@@ -1873,8 +1979,16 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::add_champs('unite','type=chaine;');
 		parent::add_champs('entity','type=int;');
 		
+		parent::add_champs('decompteNormal','type=chaine;');
+		
 		parent::_init_vars();
 		parent::start();
+	}
+	
+	function load_by_type(&$ATMdb, $type) {
+		
+		return parent::loadBy(&$ATMdb, $type, 'typeAbsence');
+		
 	}
 }
 
