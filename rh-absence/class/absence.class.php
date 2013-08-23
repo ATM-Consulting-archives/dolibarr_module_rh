@@ -454,9 +454,11 @@ class TRH_Absence extends TObjetStd {
 	
 						if($emploiTemps->{$current_day.'am'}==1 ) {
 							$duree+=.5;
+							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"am");
 						}		
 						else if($typeAbs->decompteNormal=='non' && $emploiTemps->{$current_day.'am'}==0 ) {
 							$duree+=.5;
+							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"am");
 						}
 						
 					}
@@ -470,9 +472,11 @@ class TRH_Absence extends TObjetStd {
 	
 						if($emploiTemps->{$current_day.'pm'}==1 ) {
 							$duree+=.5;
+							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"pm");
 						}		
 						else if($typeAbs->decompteNormal=='non' && $emploiTemps->{$current_day.'pm'}==0 ) {
 							$duree+=.5;
+							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"pm");
 						}
 						
 					}
@@ -485,6 +489,13 @@ class TRH_Absence extends TObjetStd {
 			
 			$t_current = strtotime("+1day",$t_current);
 		}
+		
+		if($emploiTemps->tempsHebdo > 35){
+			$this->dureeHeurePaie=7*$duree;
+		}
+		else{
+			$this->dureeHeurePaie=$this->dureeHeure;
+		} 
 		
 		return $duree;
 	}
@@ -1122,7 +1133,9 @@ class TRH_Absence extends TObjetStd {
 		if($tpsHebdoUser>=35){
 			$absence->dureeHeurePaie=7*$duree;
 		}
-		else $absence->dureeHeurePaie=$absence->dureeHeure;
+		else{
+			$absence->dureeHeurePaie=$absence->dureeHeure;
+		}
 		
 		
 	    return $duree;
@@ -1837,7 +1850,10 @@ class TRH_EmploiTemps extends TObjetStd {
 		return false;
 	}
 	
-	
+	function getHeurePeriode($current_day,$periode){
+		
+		return ($this->{"date_".$current_day."_heuref".$periode} - $this->{"date_".$current_day."_heured".$periode}) / 3600;
+	}	
 	
 }
 
