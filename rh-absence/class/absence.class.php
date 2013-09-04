@@ -300,12 +300,14 @@ class TRH_Absence extends TObjetStd {
 		
 		
 		//on calcule la duree de l'absence, en décomptant jours fériés et jours non travaillés par le collaborateur
-		$dureeAbsenceCourante=$this->calculDureeAbsence($db, $this->date_debut, $this->date_fin, $absence);
+		/*$dureeAbsenceCourante=$this->calculDureeAbsence($db, $this->date_debut, $this->date_fin, $absence);
 		$dureeJourConge=$this->calculJoursFeries($db, 0, $this->date_debut, $this->date_fin, $absence);
 		
 		$dureeJourNonTravaille=$this->calculJoursTravailles($db, 0, $this->date_debut, $this->date_fin, $absence); 
 		
 		$dureeAbsenceCourante += ($dureeJourConge + $dureeJourNonTravaille) ;
+		*/
+		$dureeAbsenceCourante = $this->calculDureeAbsenceParAddition($db);
 		
 		//autres paramètes à sauvegarder
 		$this->libelle=saveLibelle($this->type);

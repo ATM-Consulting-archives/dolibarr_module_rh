@@ -351,12 +351,12 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 		,array(
 			'congesPrec'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
-				'acquisEx'=>$form->texte('','acquisExerciceNM1',round2Virgule($congePrec['acquisEx']),10,50,'',$class="text", $default='')
-				,'acquisAnc'=>$form->texte('','acquisAncienneteNM1',round2Virgule($congePrec['acquisAnc']),10,50,'',$class="text", $default='')
-				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeNM1',round2Virgule($congePrec['acquisHorsPer']),10,50,'',$class="text", $default='')
-				,'reportConges'=>$form->texte('','reportCongesNM1',round2Virgule($congePrec['reportConges']),10,50,'',$class="text", $default='')
-				,'congesPris'=>$form->texte('','congesPrisNM1',round2Virgule($congePrec['congesPris']),10,50,'',$class="text", $default='')
-				,'anneePrec'=>$form->texte('','anneeNM1',round2Virgule($anneePrec),10,50,'',$class="text", $default='')
+				'acquisEx'=>$form->texte('','acquisExerciceNM1',round2Virgule($congePrec['acquisEx']),10,50,'')
+				,'acquisAnc'=>$form->texte('','acquisAncienneteNM1',round2Virgule($congePrec['acquisAnc']),10,50,'')
+				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeNM1',round2Virgule($congePrec['acquisHorsPer']),10,50,'')
+				,'reportConges'=>$form->texte('','reportCongesNM1',round2Virgule($congePrec['reportConges']),10,50,'')
+				,'congesPris'=>$form->texte('','congesPrisNM1',round2Virgule($congePrec['congesPris']),10,50)
+				,'anneePrec'=>$form->texte('','anneeNM1',round2Virgule($anneePrec),10,50,'')
 				,'total'=>round2Virgule($congePrecTotal)
 				,'reste'=>round2Virgule($congePrecReste)
 				,'idUser'=>$congePrec->fk_user
