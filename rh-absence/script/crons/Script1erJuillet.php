@@ -3,6 +3,8 @@
 	
 	define('INC_FROM_CRON_SCRIPT', true);
 	
+	chdir(__DIR__);
+	
 	require('../../config.php');
 	require('../../class/absence.class.php');
 
