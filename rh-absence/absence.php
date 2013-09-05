@@ -760,6 +760,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'userAbsenceCourant'=>$droitsCreation==1?'':$form->hidden('fk_user', $user->id)
 				,'niveauValidation'=>$absence->niveauValidation
 				,'commentaireValideur'=>$absence->commentaireValideur
+				,'dt_cre'=>$absence->get_dtcre()
+				
 				
 				,'titreNvDemande'=>load_fiche_titre("Nouvelle demande d'absence",'', 'title.png', 0, '')
 				,'titreRecapAbsence'=>load_fiche_titre("Récapitulatif de la demande d'absence",'', 'title.png', 0, '')
@@ -818,7 +820,10 @@ function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
 	<br><t style='color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica;font-weight: bold;text-decoration: none;text-shadow: 1px 1px 2px #CFCFCF;'>
     Vous pouvez ajouter un commentaire pour justifier votre choix </t><br/><br/><br/>
 	<textarea name="commentValid" rows="3" cols="40"></textarea><br><br>
-	<INPUT class="button" TYPE="submit"   id="commentaire" VALUE="Continuer"><br><br>
+	<INPUT class="button" TYPE="submit"   id="commentaire" VALUE="Continuer">
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
+	<INPUT class="button" TYPE="button" id="newAsk" VALUE="Nouvelle demande sur le même utilisateur" onclick="document.location.href='absence.php?action=new&fk_user=<?=$absence->fk_user ?>'">	
+	<br><br>
 
 	<?
 	

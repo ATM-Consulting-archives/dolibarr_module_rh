@@ -76,6 +76,10 @@
 						<td>Commentaire</td>
 						<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
 					</tr>
+					<tr>
+						<td>Créée le </td>
+						<td>[absenceCourante.dt_cre;strconv=no;protect=no]</td>
+					</tr>
 					
 				
 			</table>

@@ -16,6 +16,9 @@
 				<td> Groupe</td> <td> [recherche.TGroupe;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
+				<td>Ou Utilisateur</td> <td> [recherche.TUser;block=tr;strconv=no;protect=no]</td>
+			</tr>
+			<tr >
 				<td colspan="2" style="text-align:center"> [recherche.btValider;block=tr;strconv=no;protect=no]</td>
 			</tr>	
 		</table>	

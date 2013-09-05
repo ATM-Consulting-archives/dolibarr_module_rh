@@ -101,10 +101,10 @@ class TRH_Ressource extends TObjetStd {
 
 		$this->load_ressource_type($ATMdb);
 		//chargement d'une liste de toutes les ressources (pour le combo "ressource associé")
-		$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid!=".$this->getId();
+		$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid!=".$this->getId()." ORDER BY fk_rh_ressource_type, numId";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('libelle').' '.$ATMdb->Get_field('numId');
+			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('numId').' '.$ATMdb->Get_field('libelle');
 			}	
 	}
 	

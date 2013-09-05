@@ -15,7 +15,7 @@
 				_planningResult($ATMdb,$absence,'edit');
 				break;
 			case 'view':
-				_fiche($ATMdb,$absence, 'edit');
+				_planningResult($ATMdb,$absence, 'edit');
 				break;
 			case 'edit':
 				
@@ -35,66 +35,6 @@
 	llxFooter();
 	
 	
-
-function _fiche(&$ATMdb, $absence,  $mode) {
-	global $db,$user, $langs, $conf;
-	llxHeader('','Planning des collaborateurs');
-
-	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Planning');
-	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
-	$form->Set_typeaff($mode);
-	echo $form->hidden('fk_user', $user->id);
-	echo $form->hidden('entity', $conf->entity);
-	
-	$idGroupeRecherche=isset($_REQUEST['groupe']) ? $_REQUEST['groupe'] : 0;
-	
-	//tableau pour la combobox des groupes
-	$TGroupe  = array();
-	$TGroupe[0]  = 'Tous';
-	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
-	$ATMdb->Execute($sqlReq);
-	while($ATMdb->Get_line()) {
-		$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
-	}
-	
-		
-	
-	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/planningUser.tpl.php'
-		,array(
-			
-		)
-		,array(
-			'recherche'=>array(
-				'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche)
-				,'btValider'=>$form->btsubmit('Valider', 'valider')
-				,'date_debut'=> $form->calendrier('', 'date_debut', time(), 12)
-				,'date_fin'=> $form->calendrier('', 'date_fin', strtotime('+7day',time()), 12)
-				,'titreRecherche'=>load_fiche_titre("Planning des collaborateurs",'', 'title.png', 0, '')
-				,'titrePlanning'=>load_fiche_titre("Planning des collaborateurs",'', 'title.png', 0, '')
-				
-			)
-			,'userCourant'=>array(
-				'id'=>$fuser->id
-				,'nom'=>$fuser->lastname
-				,'prenom'=>$fuser->firstname
-				,'droitRecherche'=>$user->rights->absence->myactions->rechercherAbsence?1:0
-			)
-			,'view'=>array(
-				'mode'=>'view'
-				,'head'=>dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Planning')
-			)
-		)	
-	);
-	
-	echo $form->end_form();
-	
-	global $mesg, $error;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
-	llxFooter();
-}
-
 	
 function _planningResult(&$ATMdb, &$absence, $mode) {
 	global $langs, $conf, $db, $user;	
@@ -106,6 +46,9 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	$form->Set_typeaff($mode);
 	echo $form->hidden('fk_user', $user->id);
 	echo $form->hidden('entity', $conf->entity);
+	
+	$date_debut=time();
+	$date_fin=strtotime('+7day');
 	
 	if(isset($_REQUEST['groupe'])) $idGroupeRecherche=$_REQUEST['idGroupeRecherche'];
 	if(isset($_REQUEST['date_debut'])) $date_debut=$_REQUEST['date_debut'];
@@ -143,6 +86,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			'recherche'=>array(
 				'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche)
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
+				
 				,'date_debut'=> $form->calendrier('', 'date_debut', $date_debut, 12)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $date_fin, 12)
 				,'titreRecherche'=>load_fiche_titre("Récapitulatif de la recherche",'', 'title.png', 0, '')
@@ -188,32 +132,35 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	</style>
 	<?
 	
-	
-	$absence->set_date('debut_debut_planning', $_REQUEST['date_debut']);
-	$absence->set_date('debut_fin_planning', $_REQUEST['date_fin']);
-	
-	$t_current = $absence->debut_debut_planning;
-	
-	while($t_current<=$absence->debut_fin_planning) {
+	if(!empty( $_REQUEST['date_debut'] )) {
 		
-		if($t_current==$absence->debut_debut_planning) {
-			$date_debut =date('d/m/Y', $absence->debut_debut_planning);	
-		}
-		else {
-			$date_debut =date('01/m/Y', $t_current);	
-		}
 		
-		if($t_current==$absence->debut_fin_planning) {
-			$date_fin =date('d/m/Y', $absence->debut_fin_planning);	
-		}
-		else {
-			$date_fin =date('t/m/Y', $t_current);	
-		}
+		$absence->set_date('debut_debut_planning', $_REQUEST['date_debut']);
+		$absence->set_date('debut_fin_planning', $_REQUEST['date_fin']);
 		
-		_planning($ATMdb, $absence, $idGroupeRecherche, $date_debut, $date_fin );
-	
+		$t_current = $absence->debut_debut_planning;
 		
-		$t_current=strtotime('+1 month', $t_current);
+		while($t_current<=$absence->debut_fin_planning) {
+			
+			if($t_current==$absence->debut_debut_planning) {
+				$date_debut =date('d/m/Y', $absence->debut_debut_planning);	
+			}
+			else {
+				$date_debut =date('01/m/Y', $t_current);	
+			}
+			
+			if($t_current==$absence->debut_fin_planning) {
+				$date_fin =date('d/m/Y', $absence->debut_fin_planning);	
+			}
+			else {
+				$date_fin =date('t/m/Y', $t_current);	
+			}
+			
+			_planning($ATMdb, $absence, $idGroupeRecherche, $date_debut, $date_fin );
+		
+			
+			$t_current=strtotime('+1 month', $t_current);
+		}
 	}
 	
 	
