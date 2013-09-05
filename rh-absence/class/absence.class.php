@@ -2005,7 +2005,7 @@ class TRH_TypeAbsence extends TObjetStd {
 	
 	function load_by_type(&$ATMdb, $type) {
 		
-		return parent::loadBy(&$ATMdb, $type, 'typeAbsence');
+		return parent::loadBy($ATMdb, $type, 'typeAbsence');
 		
 	}
 }

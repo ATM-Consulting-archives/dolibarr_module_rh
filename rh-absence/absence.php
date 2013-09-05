@@ -168,7 +168,7 @@ function _liste(&$ATMdb, &$absence) {
 			WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user";
 	
 	
-	$TOrder = array('DateCre'=>'DESC');
+	$TOrder = array('date_debut'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -258,7 +258,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			WHERE u.rowid=a.fk_user";
 	
 	
-	$TOrder = array('DateCre'=>'DESC');
+	$TOrder = array('date_debut'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				

@@ -146,8 +146,12 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$nomPeage = htmlentities(implode(' ', $t), ENT_COMPAT , 'ISO8859-1'); 
 			
 				echo utf8_decode(strtolower($typeEvent)).'<br>';	
-				if ( !empty($TEvents[strtolower($typeEvent)/*utf8_decode(strtolower($typeEvent))*/]) ){ //si aucun évenement ne correspond, on le met divers
-					$temp->type = $TEvents[utf8_decode(strtolower($typeEvent))];
+				if ( !empty($TEvents[strtolower($typeEvent)]) ){ //si aucun évenement ne correspond, on le met divers
+					$temp->type = $TEvents[strtolower($typeEvent)];
+					print "Type reconnu : {$temp->type}<br>"; 
+				}
+				else if ( !empty($TEvents[strtolower(utf8_decode($typeEvent))]) ){ //si aucun évenement ne correspond, on le met divers
+					$temp->type = $TEvents[strtolower(utf8_decode($typeEvent))];
 					print "Type reconnu : {$temp->type}<br>"; 
 				}
 				else {
