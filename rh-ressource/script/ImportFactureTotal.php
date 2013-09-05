@@ -110,6 +110,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			//print_r($infos);
 			$plaque = $infos[11];
 			$plaque = str_replace('-VU', '', $plaque);
+			$plaque = str_replace('-VP', '', $plaque);
 			$plaque = str_replace('-', '', $plaque);
 			$plaque = str_replace(' ', '', $plaque);
 			
