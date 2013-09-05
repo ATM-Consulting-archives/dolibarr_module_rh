@@ -537,6 +537,7 @@ class TRH_Absence extends TObjetStd {
 				);
 		}
 		
+		
 		/*echo '<pre>';
 		print_r($Tab);
 		echo '</pre>';*/	
@@ -1541,9 +1542,26 @@ class TRH_Absence extends TObjetStd {
 	}
 	
 	//fonction qui va renvoyer la requête sql de recherche pour le planning
-	function requetePlanningAbsence(&$ATMdb, $idGroupeRecherche, $date_debut, $date_fin){
+	function requetePlanningAbsence(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin){
 		global $conf;
-		if($idGroupeRecherche!=0){	//on recherche un groupe précis
+		
+		
+		if($idUserRecherche>0){	//on recherche une  personne précis
+	
+			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.name,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
+				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment
+				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
+				WHERE a.fk_user=u.rowid 
+				AND  g.fk_user=u.rowid
+				AND u.rowid=".$idUserRecherche."
+				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
+				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
+				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
+				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)";
+			//	print $sql;
+		}
+
+		else if($idGroupeRecherche>0){	//on recherche un groupe précis
 			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.name,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
@@ -1555,6 +1573,7 @@ class TRH_Absence extends TObjetStd {
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)";
 		}
+		
 		else
 		{	//on recherche pour tous les utilisateurs
 			$sql="SELECT a.rowid as 'ID',  u.rowid as 'idUser', u.login, u.name, u.firstname, 
@@ -1573,6 +1592,7 @@ class TRH_Absence extends TObjetStd {
 		// on traite la recherche pour le planning
 		$k=0;
 		$ATMdb->Execute($sql);
+		$TabLogin=array();
 		while ($ATMdb->Get_line()) {
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['date_debut']=$ATMdb->Get_field('date_debut');
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['date_fin']=$ATMdb->Get_field('date_fin');
@@ -1580,13 +1600,19 @@ class TRH_Absence extends TObjetStd {
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['type']=$ATMdb->Get_field('libelle');
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['ddMoment']=$ATMdb->Get_field('ddMoment');
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['dfMoment']=$ATMdb->Get_field('dfMoment');
+			
+			
 			$k++;
 		}
 	
 	
 		
 		//on récupère les différents utilisateurs concernés par la recherche
-		if($idGroupeRecherche!=0){	//on recherche un groupe précis
+		
+		if($idUserRecherche>0) {
+			$sql="SELECT u.rowid, u.login, u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u WHERE rowid=".$idUserRecherche;
+		}
+		else if($idGroupeRecherche!=0){	//on recherche un groupe précis
 			$sql="SELECT u.rowid, u.login, u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
 			WHERE u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupeRecherche." ORDER BY u.name";
 		}else{
@@ -1594,7 +1620,7 @@ class TRH_Absence extends TObjetStd {
 		}
 		$ATMdb->Execute($sql);
 		while ($ATMdb->Get_line()) {
-			$TabLogin[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('firstname');
+			$TabLogin[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name');
 		}
 		
 		$jourFin=strtotime(str_replace("/","-",$date_fin));

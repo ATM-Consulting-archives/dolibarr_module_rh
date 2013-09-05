@@ -42,17 +42,20 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Planning');
 
 	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','GET');
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formPlanning','GET');
 	$form->Set_typeaff($mode);
-	echo $form->hidden('fk_user', $user->id);
+	/*echo $form->hidden('fk_user', $user->id);
 	echo $form->hidden('entity', $conf->entity);
-	
+	*/
 	$date_debut=time();
 	$date_fin=strtotime('+7day');
+	$idGroupeRecherche=0;
+	$idUserRecherche=0;
 	
 	if(isset($_REQUEST['groupe'])) $idGroupeRecherche=$_REQUEST['idGroupeRecherche'];
 	if(isset($_REQUEST['date_debut'])) $date_debut=$_REQUEST['date_debut'];
 	if(isset($_REQUEST['date_fin'])) $date_fin=$_REQUEST['date_fin'];
+	if(isset($_REQUEST['fk_user'])) $idUserRecherche=$_REQUEST['fk_user'];
 
 	$idGroupeRecherche=$_REQUEST['groupe'];
 	
@@ -76,7 +79,21 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 	}
 	
-	
+	$TUser=array('Tous');
+	$sql=" SELECT DISTINCT u.rowid, u.name, u.firstname 
+			FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON (u.rowid=ug.fk_user)
+			";
+
+	if($idGroupeRecherche>0) {
+		$sql.=" WHERE ug.fk_usergroup=".$idGroupeRecherche;
+	}
+
+	$sql.=" ORDER BY u.name, u.firstname";
+	//print $sql;
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+	}
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/planningUser.tpl.php'
@@ -86,6 +103,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			'recherche'=>array(
 				'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche)
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
+				,'TUser'=>$form->combo('','fk_user',$TUser,$idUserRecherche)
 				
 				,'date_debut'=> $form->calendrier('', 'date_debut', $date_debut, 12)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $date_fin, 12)
@@ -156,7 +174,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 				$date_fin =date('t/m/Y', $t_current);	
 			}
 			
-			_planning($ATMdb, $absence, $idGroupeRecherche, $date_debut, $date_fin );
+			_planning($ATMdb, $absence, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin );
 		
 			
 			$t_current=strtotime('+1 month', $t_current);
@@ -198,10 +216,11 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	
 }	
 
-function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $date_debut, $date_fin) {
+function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin) {
 	
 //on va obtenir la requête correspondant à la recherche désirée
-	$TPlanningUser=$absence->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $date_debut, $date_fin);
+
+	$TPlanningUser=$absence->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin);
 	
 	print '<table class="planning" border="0">';
 	print "<tr class=\"entete\">";
