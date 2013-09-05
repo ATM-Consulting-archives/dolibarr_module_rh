@@ -145,7 +145,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$nomPeage = htmlentities(implode(' ', $t), ENT_COMPAT , 'ISO8859-1'); 
 			
 				echo utf8_decode(strtolower($typeEvent)).'<br>';	
-				if ( !empty($TEvents[utf8_decode(strtolower($typeEvent))]) ){ //si aucun évenement ne correspond, on le met divers
+				if ( !empty($TEvents[strtolower($typeEvent)/*utf8_decode(strtolower($typeEvent))*/]) ){ //si aucun évenement ne correspond, on le met divers
 					$temp->type = $TEvents[utf8_decode(strtolower($typeEvent))];
 					print "Type reconnu : {$temp->type}<br>"; 
 				}
@@ -186,7 +186,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				else if (strpos( strtolower($infos[17]), 'essence')!==false) $typeCarburant = 'essence';
 				 
 				if(!is_null($typeCarburant)) {
-					if($typeVehicule=='VP' && $typeCarburant=='essence')$taux="0";
+					if( $typeCarburant=='essence')$taux="0";
 					else if($typeVehicule=='VP' && $typeCarburant=='gazole')$taux="15.68";
 				} 
 				  
