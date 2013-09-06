@@ -32,7 +32,7 @@
 		$congePrecTotal=$c->acquisExerciceNM1 + $c->acquisAncienneteN+$c->acquisHorsPeriodeNM1 + $c->reportCongesNM1;
 		$congePrecReste=$congePrecTotal-$c->congesPrisNM1;
 		
-		$rttC = $c->rttCumuleTotal + $c->rttNonCumuleTotal;
+		$rttC = $c->rttCumuleTotal;
 		
 		if($congePrecReste!=$congeRestant) {
 			
@@ -56,13 +56,35 @@
 			if($congePrecReste+$dureePlus!=$congeRestant) {
 				print '<span style="color:red;'.($dureePlus==0?'font-weight:bold;':'').'">CP restant '.($congePrecReste+$dureePlus).' au lieu de '.$congeRestant.'</span>';
 				
+				
+				
 			}
 			
 		}
 		
-		/*if($rtt!=$rttC) {
-			print ' <span style="color:orange;">RTT restant '.$rttC.' au lieu de '.$rtt.'</span>';
-		}*/
+		if($rtt!=$rttC) {
+			
+			$ATMdb->Execute("SELECT rowid FROM llx_rh_absence WHERE fk_user=".$user->id." AND type LIKE 'rttcumule' AND date_fin>'2013-08-20' ");
+			$TAbs = $ATMdb->Get_All();
+			$dureePlus=0;
+			foreach($TAbs as $abs) {
+				
+				$absence = new TRH_Absence;
+				$absence->load($ATMdb, $abs->rowid);
+						
+				if($absence->date_debut < strtotime('2013-08-21') ) $absence->date_debut = 	strtotime('2013-08-21');
+				//print $absence->get_date('date_debut');
+				$dureePlus += $absence->calculDureeAbsenceParAddition($ATMdb);	
+				//print " $dureePlus ";		
+			}
+			
+			
+			if($rttC+$dureePlus!=$rtt) {
+				print ' <span style="color:orange;">RTT restant '.($rttC+$dureePlus).' au lieu de '.$rtt.'</span>';	
+			}
+			
+			
+		}
 		
 		
 		print "<br />";

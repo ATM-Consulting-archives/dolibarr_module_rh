@@ -192,7 +192,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				 
 				if(!is_null($typeCarburant)) {
 					if( $typeCarburant=='essence')$taux="0";
-					else if($typeVehicule=='VP' && $typeCarburant=='gazole')$taux="15.68";
+					else if($typeVehicule=='VP' && $typeCarburant=='gazole')$taux="15.09";
 				} 
 				  
 //			print_r($TTVA);
@@ -201,7 +201,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				if($idTVA<0) exit("TVA $taux inexistante" . print_r($TTVA, true));
 				$temp->TVA = $idTVA;
 //print $temp->TVA;
-				$temp->coutEntrepriseHT = round( $temp->coutEntrepriseTTC / (1+ ($taux/100) ),2  )  ;
+				$temp->coutEntrepriseHT =  round( $temp->coutEntrepriseTTC / (1+ ($taux/100) ),2  )  ;
 				$temp->idImport = $idImport;
 				$temp->numFacture = $infos[1];
 				$temp->date_facture = dateToInt($infos[3]);
