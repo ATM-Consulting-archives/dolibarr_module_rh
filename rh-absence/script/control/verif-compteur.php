@@ -12,10 +12,12 @@
 	while (($row = fgetcsv($f1, 0, ";")) !== FALSE) {
         
 		$login = $row[0];
-		print "test de $login...";
-
+		
 		$user=new User($db);
 		$user->fetch('', $login);
+		
+		print "test de $login ({$user->id})...";
+		
 		
 		$c=new TRH_Compteur;
 		$c->load_by_fkuser($ATMdb, $user->id);
@@ -33,11 +35,34 @@
 		$rttC = $c->rttCumuleTotal + $c->rttNonCumuleTotal;
 		
 		if($congePrecReste!=$congeRestant) {
-			print '<span style="color:red;">CP restant '.$congePrecReste.' au lieu de '.$congeRestant.'</span>';
+			
+			
+			$ATMdb->Execute("SELECT rowid FROM llx_rh_absence WHERE fk_user=".$user->id." AND type='conges' AND date_fin>'2013-08-20' ");
+			$TAbs = $ATMdb->Get_All();
+			$dureePlus=0;
+			foreach($TAbs as $abs) {
+				
+				$absence = new TRH_Absence;
+				$absence->load($ATMdb, $abs->rowid);
+						
+				if($absence->date_debut < strtotime('2013-08-21') ) $absence->date_debut = 	strtotime('2013-08-21');
+				//print $absence->get_date('date_debut');
+				$dureePlus += $absence->calculDureeAbsenceParAddition($ATMdb);	
+				//print " $dureePlus ";		
+			}
+			
+		
+			
+			if($congePrecReste+$dureePlus!=$congeRestant) {
+				print '<span style="color:red;'.($dureePlus==0?'font-weight:bold;':'').'">CP restant '.($congePrecReste+$dureePlus).' au lieu de '.$congeRestant.'</span>';
+				
+			}
+			
 		}
-		if($rtt!=$rttC) {
+		
+		/*if($rtt!=$rttC) {
 			print ' <span style="color:orange;">RTT restant '.$rttC.' au lieu de '.$rtt.'</span>';
-		}
+		}*/
 		
 		
 		print "<br />";
