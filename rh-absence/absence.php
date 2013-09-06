@@ -85,7 +85,7 @@
 			case 'accept':
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
-					SET etat='Validee', libelleEtat='Acceptée' 
+					SET etat='Validee', libelleEtat='Acceptée', date_validation='".date('Y-m-d')."', fk_user_valideur=".$user->id." 
 					WHERE fk_user=".$absence->fk_user. " 
 					AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
@@ -700,8 +700,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$droitSupprimer=1;
 	}
 	
-
-	
+	$userValidation=new User($db);
+	$userValidation->fetch($absence->fk_user_valideur);
+	//print_r($userValidation);
 		
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/absence.tpl.php'
@@ -761,7 +762,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'niveauValidation'=>$absence->niveauValidation
 				,'commentaireValideur'=>$absence->commentaireValideur
 				,'dt_cre'=>$absence->get_dtcre()
-				
+				,'time_validation'=>$absence->date_validation
+				,'date_validation'=>$absence->get_date('date_validation')
+				,'userValidation'=>$userValidation->firstname.' '.$userValidation->lastname
 				
 				,'titreNvDemande'=>load_fiche_titre("Nouvelle demande d'absence",'', 'title.png', 0, '')
 				,'titreRecapAbsence'=>load_fiche_titre("Récapitulatif de la demande d'absence",'', 'title.png', 0, '')

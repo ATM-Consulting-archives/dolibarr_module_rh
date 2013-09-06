@@ -153,7 +153,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('code','type=int;');				//code  congé
 		parent::add_champs('type','type=varchar;');				//type de congé
 		parent::add_champs('libelle','type=varchar;');				//type de congé
-		parent::add_champs('date_debut,date_fin','type=date;');	//dates debut fin de congés
+		parent::add_champs('date_debut,date_fin, date_validation','type=date;');	//dates debut fin de congés
 		parent::add_champs('ddMoment, dfMoment','type=chaine;');		//moment (matin ou après midi)
 		parent::add_champs('duree','type=float;');	
 		parent::add_champs('dureeHeure','type=chaine;');	
@@ -165,7 +165,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('libelleEtat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('niveauValidation','type=entier;');	//niveau de validation
 		parent::add_champs('idAbsImport','type=entier;');	//niveau de validation
-		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
+		parent::add_champs('fk_user, fk_user_valideur','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=int;');	
 		
 		parent::_init_vars();
@@ -216,6 +216,8 @@ class TRH_Absence extends TObjetStd {
 			,'Avalider'=>'En attente de validation'
 		
 		);
+		
+		$this->date_validation=0;
 		
 	}
 

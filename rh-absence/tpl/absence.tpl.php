@@ -80,7 +80,12 @@
 						<td>Créée le </td>
 						<td>[absenceCourante.dt_cre;strconv=no;protect=no]</td>
 					</tr>
-					
+					[onshow;block=begin;when [absenceCourante.time_validation]+-0 ]
+					<tr>
+						<td>Validée le </td>
+						<td>[absenceCourante.date_validation;strconv=no;protect=no] par [absenceCourante.userValidation]</td>
+					</tr>
+					[onshow;block=end]
 				
 			</table>
 
