@@ -106,40 +106,37 @@
 </div>
 
 <script>
+	var ecartEntreDate = 0;
+
 	$(document).ready( function(){
 		//on empêche que la date de début dépasse pas celle de fin
-		function comparerDates(){
+		function comparerDates(idObj){
 			jd = parseInt($("#date_debut").val().substr(0,2));
 			md = parseInt($("#date_debut").val().substr(3,2));
 			ad = parseInt($("#date_debut").val().substr(6,4));
 			jf = parseInt($("#date_fin").val().substr(0,2));
 			mf = parseInt($("#date_fin").val().substr(3,2));
 			af = parseInt($("#date_fin").val().substr(6,4));
-			if(af<ad){
-				$("#date_fin").val($("#date_debut").val());
-				return;
-			}
-			else if(af==ad){
+			
+			
+			var dDebut = new Date(ad, md-1, jd, 0,0,0,0); 
+			var dFin = new Date(af, mf-1, jf, 0,0,0,0); 
 				
-				if(mf<md){
-					$("#date_fin").val($("#date_debut").val());
-					return;}
-					
-				else if(mf==md){
-					
-					if(jf<jd){
-						$("#date_fin").val($("#date_debut").val());
-						return;}
-					else if(jf=jd){return;}
-					else{return;}
-					
-				}
-				else{return;}
-			}
-			else{return;}
 			
+			if(idObj=='date_debut') {
+				dFin.setTime(dDebut.getTime()+ecartEntreDate);
+				//alert(dFin+'='+ ecart);
+				$("#date_fin").val($.datepicker.formatDate('dd/mm/yy', dFin ));
+			} 	
 			
-		};
+			if(dDebut>dFin) {
+				$("#date_fin").val($.datepicker.formatDate('dd/mm/yy', dDebut ));
+			}	
+
+			ecartEntreDate = dFin.getTime() - dDebut.getTime();
+			
+
+		}
 		
 		function effacerChamps(){
 			$('#responsabilite').hide();
@@ -147,7 +144,7 @@
 			$('#numFacture').hide();
 			$('#numContrat').hide();
 			$('#listeappels').hide();
-		};
+		}
 		
 		function afficherSelonType(type){
 			effacerChamps();
@@ -166,9 +163,13 @@
 					break;}
 		};
 				
-		$("#date_debut").change(comparerDates);
-		$("#date_fin").change(comparerDates);
-		
+		$("#date_debut").change(function() {
+			comparerDates($(this).attr('id'));	
+		});
+		$("#date_fin").change(function() {
+			comparerDates($(this).attr('id'));	
+		});
+
 		[onshow;block=begin;when [view.mode]=='view']
 		afficherSelonType('[NEvent.type;strconv=no;protect=no]');
 		[onshow;block=end]
