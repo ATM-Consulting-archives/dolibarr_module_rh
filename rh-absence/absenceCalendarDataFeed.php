@@ -1,7 +1,7 @@
 <?php
 
 require('config.php');
-dol_include_once("/library/wdCalendar/php/functions.php");
+include_once("../rh-library/wdCalendar/php/functions.php");
 $ATMdb=new TPDOdb;
 
 $method = $_GET["method"];
