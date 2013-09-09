@@ -703,6 +703,10 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$userValidation=new User($db);
 	$userValidation->fetch($absence->fk_user_valideur);
 	//print_r($userValidation);
+	
+	if(isset($_REQUEST['calcul'])) {
+		$absence->duree = $absence->calculDureeAbsenceParAddition($ATMdb);
+	}
 		
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/absence.tpl.php'
