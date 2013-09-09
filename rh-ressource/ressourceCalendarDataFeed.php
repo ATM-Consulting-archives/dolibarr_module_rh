@@ -2,7 +2,7 @@
 
 require('config.php');
 require('./lib/ressource.lib.php');
-include_once("../rh-library/wdCalendar/php/functions.php");
+dol_include_once("/library/wdCalendar/php/functions.php");
 $ATMdb=new TPDOdb;
 
 
