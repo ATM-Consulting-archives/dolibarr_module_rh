@@ -1,0 +1,286 @@
+<?php
+	require('config.php');
+	require('./class/absence.class.php');
+	
+	$langs->load('report@report');
+	
+	$ATMdb=new TPDOdb;
+	$absence=new TRH_Absence;
+	
+	$mesg = '';
+	$error=false;
+	
+	
+	_fiche($ATMdb);
+	
+	$ATMdb->close();
+	llxFooter();
+
+
+function _fiche(&$ATMdb) {
+	global $db, $user, $langs, $conf;
+	llxHeader('', 'Exports Absences');
+	
+	print dol_get_fiche_head(array()  , '', 'Statistiques sur les absences');
+	
+	$title = $langs->trans('GenerateStatsAbsenceExports');
+	print_fiche_titre($title, '', 'report.png@report');
+
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','GET');
+	
+	echo $form->hidden('showStat', 1);
+	
+	$fk_usergroup= isset($_REQUEST['$fk_usergroup']) ? $_REQUEST['$fk_usergroup'] : 0;
+	$fk_user=$_REQUEST['$fk_user']? $_REQUEST['$fk_user']:0;
+	
+	//LISTE DE USERS
+	$TUser=array();
+	$sql="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u ORDER BY u.name, u.firstname ";
+
+	$ATMdb->Execute($sql);	
+	$TUser[0] = 'Tous';		
+	while($ATMdb->Get_line()) {
+		$TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+	}
+	
+	//LISTE DE GROUPES	
+	$TGroup=array();
+	$TGroup[0] = 'Tous';
+	$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup";
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$TGroup[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+	}
+	
+	//LISTE DES TYPES ABSENCES	
+	$TType=array();
+	$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` ";
+	$ATMdb->Execute($sql);
+	$k=0;
+	while($ATMdb->Get_line()) {
+		$type = $ATMdb->Get_field('typeAbsence');
+		
+		$TType[$k]['libelle'] =$ATMdb->Get_field('libelleAbsence');
+		$TType[$k]['type']= $type;
+		$TType[$k]['case']=$form->checkbox1('','TType['. $type .']','1',(isset($_REQUEST['TType'][$type]))? '1':'0');
+		$k++;
+	}
+	
+	$TRecap=array();
+	if(isset($_REQUEST['showStat'])) {
+		$TRecap = _get_stat_recap($ATMdb, $_REQUEST['TType'], $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['fk_usergroup'], $_REQUEST['fk_user']);
+	}
+	
+
+	$TBS=new TTemplateTBS();
+	print $TBS->render('./tpl/statsAbsence.tpl.php'
+		,array(
+			'TType'=>$TType
+			,'TRecap'=>$TRecap
+		)
+		,array(
+			'exports'=>array(
+				'date_debut'=>$form->calendrier('', 'date_debut', __get('date_debut', date('01/m/Y')), 15,10)
+				,'date_fin'=>$form->calendrier('', 'date_fin', __get('date_fin', date('t/m/Y')), 15,10)
+				,'action'=>$form->hidden('action','save')
+				,'fk_user'=>$form->combo('', 'fk_user',$TUser, $fk_user)
+				,'fk_group'=>$form->combo('', 'fk_usergroup',$TGroup, $fk_usergroup)
+			)
+			,'view'=>array(
+				'showStat'=>(int)isset($_REQUEST['showStat'])
+			)
+		)
+	);
+	
+	echo $form->end_form();
+	
+	global $mesg, $error;
+	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	llxFooter();
+}
+
+function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup, $fk_user){
+	global $conf, $db;
+	
+	$o=new TObjetStd;
+	$t_debut_export = $o->set_date('date_debut',$date_debut );
+	$t_fin_export = $o->set_date('date_fin',$date_fin );
+
+	
+	$sql="SELECT DISTINCT a.rowid
+			FROM ".MAIN_DB_PREFIX."rh_absence as a INNER JOIN ".MAIN_DB_PREFIX."user  as u ON (u.rowid=a.fk_user)
+					LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (u.rowid=g.fk_user)
+							LEFT JOIN ".MAIN_DB_PREFIX."rh_absence_emploitemps as e ON (e.fk_user=u.rowid)
+			WHERE a.date_debut<='". date("Y-m-d H:i:s", $t_fin_export)."' 
+			AND a.date_fin>='".date("Y-m-d H:i:s", $t_debut_export)."'
+			AND a.etat LIKE 'Validee' AND a.code!=''
+			";
+	//on traite le cas où l'on recherche un groupe ou un utilisateur seulement
+	if($fk_user!=0){
+		$sql.=" AND a.fk_user=".$fk_user;
+	}else if($fk_usergroup!=0){
+		
+		$sql.=" AND g.fk_usergroup=".$fk_usergroup." ";
+	}else{
+		$sql.=" AND a.entity=".$conf->entity;
+	}
+	
+	$sql.=" ORDER BY u.name,u.firstname,a.type ";
+	
+	$ATMdb->Execute($sql);
+	
+	$TId  =$ATMdb->Get_All();
+
+	$Tab=array();
+	$fk_user_last=-1;
+	$lastType='';		
+			
+	$TTotal = array(
+		'dureeJour'=>0
+			,'dureeHeure'=>0
+			,'dureeJourPlage'=>0
+			,'dureeHeurePlage'=>0
+	
+	);		
+	$TTotalType=array(
+			'dureeJour'=>0
+			,'dureeHeure'=>0
+			,'dureeJourPlage'=>0
+			,'dureeHeurePlage'=>0
+	);
+	
+	foreach ($TId as $abs) {
+		$absence = new TRH_Absence;
+		$absence->load($ATMdb, $abs->rowid);
+		
+		if($TType[$absence->type]) {
+		
+			$date_debut = $absence->get_date('date_debut');
+			$date_fin = $absence->get_date('date_fin');
+			
+			$dureeJour = $absence->calculDureeAbsenceParAddition($ATMdb);
+			$dureeHeure = $absence->dureeHeure;
+			
+			if($absence->date_debut<$t_debut_export)$absence->date_debut=$t_debut_export;
+			if($absence->date_fin>$t_fin_export)$absence->date_fin=$t_fin_export;
+			
+			$dureeJourPlage = $absence->calculDureeAbsenceParAddition($ATMdb);
+			$dureeHeurePlage = $absence->dureeHeure;
+			
+			/*if($absence->type!=$lastType || $absence->fk_user!=$fk_user_last) {
+				
+				if($TTotalType['dureeJour']>0) {
+					
+					$Tab[]=array(
+						'event'=>'<strong>Total '.$lastType.'</strong>'
+						,'fk_user'=>0
+						,'date_debut'=>''
+						,'date_fin'=>''
+						,'dureeJour'=>$TTotalType['dureeJour']
+						,'dureeHeure'=>$TTotalType['dureeHeure']
+						,'dureeJourPlage'=>$TTotalType['dureeJourPlage']
+						,'dureeHeurePlage'=>$TTotalType['dureeHeurePlage']
+					);
+				
+				}
+				$TTotalType=array(
+						'dureeJour'=>0
+						,'dureeHeure'=>0
+						,'dureeJourPlage'=>0
+						,'dureeHeurePlage'=>0
+				);
+				
+				$lastType=$absence->type;
+			}
+			
+			
+			*/
+			
+			if($absence->fk_user!=$fk_user_last) {
+					
+				if($TTotal['dureeJour']>0) {
+					$Tab[]=array(
+						'event'=>'<strong>TOTAL</strong>'
+						,'fk_user'=>0
+						,'date_debut'=>''
+						,'date_fin'=>''
+						,'dureeJour'=>'<strong>'.$TTotal['dureeJour'].'</strong>'
+						,'dureeHeure'=>'<strong>'.$TTotal['dureeHeure'].'</strong>'
+						,'dureeJourPlage'=>'<strong>'.$TTotal['dureeJourPlage'].'</strong>'
+						,'dureeHeurePlage'=>'<strong>'.$TTotal['dureeHeurePlage'].'</strong>'
+					);
+					
+				}	
+					
+					
+					
+				$fk_user_last = $absence->fk_user;
+				$userAbs = new User($db);
+				$userAbs->fetch($fk_user_last);
+				//print_r($userAbs);
+				
+				$Tab[]=array(
+					'event'=>'<br /><br /><strong>'.$userAbs->firstname.' '.$userAbs->lastname.'</strong>'
+					,'fk_user'=>0
+					,'date_debut'=>''
+					,'date_fin'=>''
+					,'dureeJour'=>''
+					,'dureeHeure'=>''
+					,'dureeJourPlage'=>''
+					,'dureeHeurePlage'=>''
+				);
+				
+				$lastType='';
+				
+				$TTotal = array(
+					'dureeJour'=>0
+						,'dureeHeure'=>0
+						,'dureeJourPlage'=>0
+						,'dureeHeurePlage'=>0
+				
+				);		
+							
+			}
+			
+
+			$Tab[]=array(
+				'event'=>$absence->type
+				,'fk_user'=>$absence->fk_user			
+				,'date_debut'=>$date_debut
+				,'date_fin'=>$date_fin
+				,'dureeJour'=>$dureeJour
+				,'dureeHeure'=>$dureeHeure
+				,'dureeJourPlage'=>$dureeJourPlage
+				,'dureeHeurePlage'=>$dureeHeurePlage
+			);
+
+			$TTotal['dureeJour']+=$dureeJour;
+			$TTotal['dureeHeure']+=$dureeHeure;
+			$TTotal['dureeJourPlage']+=$dureeJourPlage;
+			$TTotal['dureeHeurePlage']+=$dureeHeurePlage;
+
+			$TTotalType['dureeJour']+=$dureeJour;
+			$TTotalType['dureeHeure']+=$dureeHeure;
+			$TTotalType['dureeJourPlage']+=$dureeJourPlage;
+			$TTotalType['dureeHeurePlage']+=$dureeHeurePlage;
+
+
+		}
+		
+		
+	}
+	$Tab[]=array(
+		'event'=>'<strong>TOTAL</strong>'
+		,'fk_user'=>0
+		,'date_debut'=>''
+		,'date_fin'=>''
+		,'dureeJour'=>'<strong>'.$TTotal['dureeJour'].'</strong>'
+		,'dureeHeure'=>'<strong>'.$TTotal['dureeHeure'].'</strong>'
+		,'dureeJourPlage'=>'<strong>'.$TTotal['dureeJourPlage'].'</strong>'
+		,'dureeHeurePlage'=>'<strong>'.$TTotal['dureeHeurePlage'].'</strong>'
+	);
+	
+	
+	
+	return $Tab;
+}

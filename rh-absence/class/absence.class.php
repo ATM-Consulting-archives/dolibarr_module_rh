@@ -431,6 +431,8 @@ class TRH_Absence extends TObjetStd {
 		
 		$duree = 0;
 		
+		$this->dureeHeure=0;
+		
 		$t_start = $this->date_debut;
 		$t_end = $this->date_fin;
 		$t_current = $t_start;
