@@ -56,8 +56,8 @@
 			<td> [TRecap.date_fin;strconv=no;protect=no] </td>
 			<td> [TRecap.dureeJour;strconv=no;protect=no] </td>
 			<td> [TRecap.dureeHeure;strconv=no;protect=no] </td>
-			<td> [TRecap.dureeJourPlage;strconv=no;protect=no] </td>
-			<td> [TRecap.dureeHeurePlage;strconv=no;protect=no] </td>
+			<td style="background-color: #e1d0df;"> [TRecap.dureeJourPlage;strconv=no;protect=no] </td>
+			<td style="background-color: #e1d0df;"> [TRecap.dureeHeurePlage;strconv=no;protect=no] </td>
 			
 		</tr>
 		<tr class="impair">
@@ -66,8 +66,8 @@
 			<td> [TRecap.date_fin;strconv=no;protect=no] </td>
 			<td> [TRecap.dureeJour;strconv=no;protect=no] </td>
 			<td> [TRecap.dureeHeure;strconv=no;protect=no] </td>
-			<td> [TRecap.dureeJourPlage;strconv=no;protect=no] </td>
-			<td> [TRecap.dureeHeurePlage;strconv=no;protect=no] </td>
+			<td style="background-color: #cfc0cd;"> [TRecap.dureeJourPlage;strconv=no;protect=no] </td>
+			<td style="background-color: #cfc0cd;"> [TRecap.dureeHeurePlage;strconv=no;protect=no] </td>
 			
 		</tr>
 

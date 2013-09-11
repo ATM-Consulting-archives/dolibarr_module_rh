@@ -30,8 +30,8 @@ function _fiche(&$ATMdb) {
 	
 	echo $form->hidden('showStat', 1);
 	
-	$fk_usergroup= isset($_REQUEST['$fk_usergroup']) ? $_REQUEST['$fk_usergroup'] : 0;
-	$fk_user=$_REQUEST['$fk_user']? $_REQUEST['$fk_user']:0;
+	$fk_usergroup= isset($_REQUEST['fk_usergroup']) ? $_REQUEST['fk_usergroup'] : 0;
+	$fk_user=$_REQUEST['fk_user']? $_REQUEST['fk_user']:0;
 	
 	//LISTE DE USERS
 	$TUser=array();
@@ -69,6 +69,7 @@ function _fiche(&$ATMdb) {
 	$TRecap=array();
 	if(isset($_REQUEST['showStat'])) {
 		$TRecap = _get_stat_recap($ATMdb, $_REQUEST['TType'], $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['fk_usergroup'], $_REQUEST['fk_user']);
+		$TRecap = _get_stat_recap_format($TRecap);
 	}
 	
 
@@ -97,6 +98,107 @@ function _fiche(&$ATMdb) {
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
+}
+
+function _get_stat_recap_format(&$TRecap) {
+global $db;
+	
+	$fk_user_last=-1;
+	$lastType='';		
+			
+	$TTotal = array(
+		'dureeJour'=>0
+			,'dureeHeure'=>0
+			,'dureeJourPlage'=>0
+			,'dureeHeurePlage'=>0
+	
+	);		
+	$TTotalType=array(
+			'dureeJour'=>0
+			,'dureeHeure'=>0
+			,'dureeJourPlage'=>0
+			,'dureeHeurePlage'=>0
+	);
+	
+	
+	$Tab=array();
+	
+	foreach($TRecap as $recap) {
+		
+			if($recap['fk_user']!=$fk_user_last) {
+					
+				if($TTotal['dureeJour']>0) {
+					$Tab[]=array(
+						'event'=>'<h3>TOTAL</h3>'
+						,'fk_user'=>0
+						,'date_debut'=>''
+						,'date_fin'=>''
+						,'dureeJour'=>'<h3>'.$TTotal['dureeJour'].'</h3>'
+						,'dureeHeure'=>'<h3>'.$TTotal['dureeHeure'].'</h3>'
+						,'dureeJourPlage'=>'<h3>'.$TTotal['dureeJourPlage'].'</h3>'
+						,'dureeHeurePlage'=>'<h3>'.$TTotal['dureeHeurePlage'].'</h3>'
+					);
+					
+				}	
+					
+				$fk_user_last = $recap['fk_user'];
+				$userAbs = new User($db);
+				$userAbs->fetch($fk_user_last);
+				//print_r($userAbs);
+				
+				$Tab[]=array(
+					'event'=>'<br /><br /><strong>'.$userAbs->firstname.' '.$userAbs->lastname.'</strong>'
+					,'fk_user'=>0
+					,'date_debut'=>''
+					,'date_fin'=>''
+					,'dureeJour'=>''
+					,'dureeHeure'=>''
+					,'dureeJourPlage'=>''
+					,'dureeHeurePlage'=>''
+				);
+				
+			
+				$TTotal = array(
+					'dureeJour'=>0
+						,'dureeHeure'=>0
+						,'dureeJourPlage'=>0
+						,'dureeHeurePlage'=>0
+				
+				);		
+				
+			}
+			
+			$Tab[]= $recap;
+		
+			$TTotal['dureeJour']+=$recap['dureeJour'];
+			$TTotal['dureeHeure']+=$recap['dureeHeure'];
+			$TTotal['dureeJourPlage']+=$recap['dureeJourPlage'];
+			$TTotal['dureeHeurePlage']+=$recap['dureeHeurePlage'];
+
+			
+		
+	}
+	
+	
+	if($TTotal['dureeJour']>0) {
+	$Tab[]=array(
+		'event'=>'<h3>TOTAL</h3>'
+		,'fk_user'=>0
+		,'date_debut'=>''
+		,'date_fin'=>''
+		,'dureeJour'=>'<h3>'.$TTotal['dureeJour'].'</h3>'
+		,'dureeHeure'=>'<h3>'.$TTotal['dureeHeure'].'</h3>'
+		,'dureeJourPlage'=>'<h3>'.$TTotal['dureeJourPlage'].'</h3>'
+		,'dureeHeurePlage'=>'<h3>'.$TTotal['dureeHeurePlage'].'</h3>'
+	);
+		
+	}
+			
+	
+	
+	return $Tab;
+	
+	
 }
 
 function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup, $fk_user){
@@ -132,22 +234,7 @@ function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup,
 	$TId  =$ATMdb->Get_All();
 
 	$Tab=array();
-	$fk_user_last=-1;
-	$lastType='';		
-			
-	$TTotal = array(
-		'dureeJour'=>0
-			,'dureeHeure'=>0
-			,'dureeJourPlage'=>0
-			,'dureeHeurePlage'=>0
 	
-	);		
-	$TTotalType=array(
-			'dureeJour'=>0
-			,'dureeHeure'=>0
-			,'dureeJourPlage'=>0
-			,'dureeHeurePlage'=>0
-	);
 	
 	foreach ($TId as $abs) {
 		$absence = new TRH_Absence;
@@ -166,82 +253,6 @@ function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup,
 			
 			$dureeJourPlage = $absence->calculDureeAbsenceParAddition($ATMdb);
 			$dureeHeurePlage = $absence->dureeHeure;
-			
-			/*if($absence->type!=$lastType || $absence->fk_user!=$fk_user_last) {
-				
-				if($TTotalType['dureeJour']>0) {
-					
-					$Tab[]=array(
-						'event'=>'<strong>Total '.$lastType.'</strong>'
-						,'fk_user'=>0
-						,'date_debut'=>''
-						,'date_fin'=>''
-						,'dureeJour'=>$TTotalType['dureeJour']
-						,'dureeHeure'=>$TTotalType['dureeHeure']
-						,'dureeJourPlage'=>$TTotalType['dureeJourPlage']
-						,'dureeHeurePlage'=>$TTotalType['dureeHeurePlage']
-					);
-				
-				}
-				$TTotalType=array(
-						'dureeJour'=>0
-						,'dureeHeure'=>0
-						,'dureeJourPlage'=>0
-						,'dureeHeurePlage'=>0
-				);
-				
-				$lastType=$absence->type;
-			}
-			
-			
-			*/
-			
-			if($absence->fk_user!=$fk_user_last) {
-					
-				if($TTotal['dureeJour']>0) {
-					$Tab[]=array(
-						'event'=>'<strong>TOTAL</strong>'
-						,'fk_user'=>0
-						,'date_debut'=>''
-						,'date_fin'=>''
-						,'dureeJour'=>'<strong>'.$TTotal['dureeJour'].'</strong>'
-						,'dureeHeure'=>'<strong>'.$TTotal['dureeHeure'].'</strong>'
-						,'dureeJourPlage'=>'<strong>'.$TTotal['dureeJourPlage'].'</strong>'
-						,'dureeHeurePlage'=>'<strong>'.$TTotal['dureeHeurePlage'].'</strong>'
-					);
-					
-				}	
-					
-					
-					
-				$fk_user_last = $absence->fk_user;
-				$userAbs = new User($db);
-				$userAbs->fetch($fk_user_last);
-				//print_r($userAbs);
-				
-				$Tab[]=array(
-					'event'=>'<br /><br /><strong>'.$userAbs->firstname.' '.$userAbs->lastname.'</strong>'
-					,'fk_user'=>0
-					,'date_debut'=>''
-					,'date_fin'=>''
-					,'dureeJour'=>''
-					,'dureeHeure'=>''
-					,'dureeJourPlage'=>''
-					,'dureeHeurePlage'=>''
-				);
-				
-				$lastType='';
-				
-				$TTotal = array(
-					'dureeJour'=>0
-						,'dureeHeure'=>0
-						,'dureeJourPlage'=>0
-						,'dureeHeurePlage'=>0
-				
-				);		
-							
-			}
-			
 
 			$Tab[]=array(
 				'event'=>$absence->type
@@ -254,31 +265,12 @@ function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup,
 				,'dureeHeurePlage'=>$dureeHeurePlage
 			);
 
-			$TTotal['dureeJour']+=$dureeJour;
-			$TTotal['dureeHeure']+=$dureeHeure;
-			$TTotal['dureeJourPlage']+=$dureeJourPlage;
-			$TTotal['dureeHeurePlage']+=$dureeHeurePlage;
-
-			$TTotalType['dureeJour']+=$dureeJour;
-			$TTotalType['dureeHeure']+=$dureeHeure;
-			$TTotalType['dureeJourPlage']+=$dureeJourPlage;
-			$TTotalType['dureeHeurePlage']+=$dureeHeurePlage;
-
+			
 
 		}
 		
 		
 	}
-	$Tab[]=array(
-		'event'=>'<strong>TOTAL</strong>'
-		,'fk_user'=>0
-		,'date_debut'=>''
-		,'date_fin'=>''
-		,'dureeJour'=>'<strong>'.$TTotal['dureeJour'].'</strong>'
-		,'dureeHeure'=>'<strong>'.$TTotal['dureeHeure'].'</strong>'
-		,'dureeJourPlage'=>'<strong>'.$TTotal['dureeJourPlage'].'</strong>'
-		,'dureeHeurePlage'=>'<strong>'.$TTotal['dureeHeurePlage'].'</strong>'
-	);
 	
 	
 	
