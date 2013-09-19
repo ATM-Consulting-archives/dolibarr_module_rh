@@ -194,10 +194,10 @@ function _liste(&$ATMdb, &$ressource) {
 	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON ( (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource) AND e.type='emprunt')
-		AND e.date_debut<='".date("Y-m-d")."' AND e.date_fin >= '". date("Y-m-d")."' 
 	 LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid )
-	 LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as ua ON (e.fk_user = ua.fk_user)";	
-	$sql.=" WHERE 1 ";
+	 LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as ua ON (e.fk_user = ua.fk_user)	
+	
+	WHERE e.date_debut<='".date("Y-m-d")."' AND e.date_fin >= '". date("Y-m-d")."' ";
 	
 	
 	if(!$user->rights->ressource->ressource->viewRessource){
