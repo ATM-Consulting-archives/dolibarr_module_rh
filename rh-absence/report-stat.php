@@ -248,8 +248,16 @@ function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup,
 			$dureeJour = $absence->calculDureeAbsenceParAddition($ATMdb);
 			$dureeHeure = $absence->dureeHeure;
 			
-			if($absence->date_debut<$t_debut_export)$absence->date_debut=$t_debut_export;
-			if($absence->date_fin>$t_fin_export)$absence->date_fin=$t_fin_export;
+			if($absence->date_debut<$t_debut_export) {
+				 $absence->date_debut=$t_debut_export;
+				 $absence->ddMoment='matin'; 	 
+			}
+				 
+			if($absence->date_fin>$t_fin_export) {
+				$absence->date_fin=$t_fin_export;
+				$absence->dfMoment='apresmidi'; 	 
+				
+			}
 			
 			$dureeJourPlage = $absence->calculDureeAbsenceParAddition($ATMdb);
 			$dureeHeurePlage = $absence->dureeHeure;
