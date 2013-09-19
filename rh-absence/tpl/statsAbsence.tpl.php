@@ -44,6 +44,8 @@
 			<th>Date de fin</th>
 			<th>Durée réelle (Jours)</th>
 			<th>Durée réelle (Heures)</th>
+			<th>Date de début sur la plage</th>
+			<th>Date de fin sur la plage</th>
 			<th>Durée sur la plage (Jours)</th>
 			<th>Durée sur la plage (Heures)</th>
 			
@@ -56,6 +58,8 @@
 			<td> [TRecap.date_fin;strconv=no;protect=no] </td>
 			<td> [TRecap.dureeJour;strconv=no;protect=no] </td>
 			<td> [TRecap.dureeHeure;strconv=no;protect=no] </td>
+			<td style="background-color: #e1d0df;"> [TRecap.date_debutPlage;strconv=no;protect=no] </td>
+			<td style="background-color: #e1d0df;"> [TRecap.date_finPlage;strconv=no;protect=no] </td>
 			<td style="background-color: #e1d0df;"> [TRecap.dureeJourPlage;strconv=no;protect=no] </td>
 			<td style="background-color: #e1d0df;"> [TRecap.dureeHeurePlage;strconv=no;protect=no] </td>
 			
@@ -66,6 +70,8 @@
 			<td> [TRecap.date_fin;strconv=no;protect=no] </td>
 			<td> [TRecap.dureeJour;strconv=no;protect=no] </td>
 			<td> [TRecap.dureeHeure;strconv=no;protect=no] </td>
+			<td style="background-color: #cfc0cd;"> [TRecap.date_debutPlage;strconv=no;protect=no] </td>
+			<td style="background-color: #cfc0cd;"> [TRecap.date_finPlage;strconv=no;protect=no] </td>
 			<td style="background-color: #cfc0cd;"> [TRecap.dureeJourPlage;strconv=no;protect=no] </td>
 			<td style="background-color: #cfc0cd;"> [TRecap.dureeHeurePlage;strconv=no;protect=no] </td>
 			

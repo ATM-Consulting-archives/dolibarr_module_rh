@@ -2,6 +2,8 @@
 	require('config.php');
 	require('./class/absence.class.php');
 	
+	dol_include_once('/core/class/extrafields.class.php');
+	
 	$langs->load('report@report');
 	
 	$ATMdb=new TPDOdb;
@@ -133,6 +135,8 @@ global $db;
 						,'fk_user'=>0
 						,'date_debut'=>''
 						,'date_fin'=>''
+						,'date_debutPlage'=>''
+						,'date_finPlage'=>''
 						,'dureeJour'=>'<h3>'.$TTotal['dureeJour'].'</h3>'
 						,'dureeHeure'=>'<h3>'.$TTotal['dureeHeure'].'</h3>'
 						,'dureeJourPlage'=>'<h3>'.$TTotal['dureeJourPlage'].'</h3>'
@@ -144,13 +148,20 @@ global $db;
 				$fk_user_last = $recap['fk_user'];
 				$userAbs = new User($db);
 				$userAbs->fetch($fk_user_last);
-				//print_r($userAbs);
+				
+				$extrafields=new ExtraFields($db);
+				$extralabels=$extrafields->fetch_name_optionals_label('user',true);
+				$userAbs->fetch_optionals($userAbs->id, $extralabels);
+				
+				$compte_tier = $userAbs->array_options["options_COMPTE_TIERS"];
 				
 				$Tab[]=array(
-					'event'=>'<br /><br /><strong>'.$userAbs->firstname.' '.$userAbs->lastname.'</strong>'
+					'event'=>'<br /><br /><strong>'.$userAbs->firstname.' '.$userAbs->lastname.'</strong> '.$compte_tier 
 					,'fk_user'=>0
 					,'date_debut'=>''
 					,'date_fin'=>''
+					,'date_debutPlage'=>''
+					,'date_finPlage'=>''
 					,'dureeJour'=>''
 					,'dureeHeure'=>''
 					,'dureeJourPlage'=>''
@@ -186,6 +197,8 @@ global $db;
 		,'fk_user'=>0
 		,'date_debut'=>''
 		,'date_fin'=>''
+		,'date_debutPlage'=>''
+		,'date_finPlage'=>''
 		,'dureeJour'=>'<h3>'.$TTotal['dureeJour'].'</h3>'
 		,'dureeHeure'=>'<h3>'.$TTotal['dureeHeure'].'</h3>'
 		,'dureeJourPlage'=>'<h3>'.$TTotal['dureeJourPlage'].'</h3>'
@@ -259,6 +272,9 @@ function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup,
 				
 			}
 			
+			$date_debutPlage = $absence->get_date('date_debut');
+			$date_finPlage = $absence->get_date('date_fin');
+			
 			$dureeJourPlage = $absence->calculDureeAbsenceParAddition($ATMdb);
 			$dureeHeurePlage = $absence->dureeHeure;
 
@@ -267,6 +283,8 @@ function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup,
 				,'fk_user'=>$absence->fk_user			
 				,'date_debut'=>$date_debut
 				,'date_fin'=>$date_fin
+				,'date_debutPlage'=>$date_debutPlage
+				,'date_finPlage'=>$date_finPlage
 				,'dureeJour'=>$dureeJour
 				,'dureeHeure'=>$dureeHeure
 				,'dureeJourPlage'=>$dureeJourPlage
