@@ -27,7 +27,7 @@ while($ATMdb->Get_line()){
 	$GroupUser = new UserGroup($db);
 	$GroupUser->fetch($ATMdb->Get_field('groupe'));
 	$TGroupUser = $GroupUser->listUsersForGroup();
-	
+	//print_r($TGroupUser);
 	$Tligne = array();
 	if(array_key_exists($user->id,$TGroupUser)){
 			
