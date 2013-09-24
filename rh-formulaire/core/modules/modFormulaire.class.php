@@ -191,26 +191,13 @@ class modFormulaire extends DolibarrModules
 		// Add here entries to declare new menus
 		//
 		// Example to declare a new Top Menu entry and its Left menu entry:
-		$this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
-								'type'=>'top',			                // This is a Top menu entry
-								'titre'=>$langs->trans('formulaire'),
-								'mainmenu'=>'formulaire',
-								'leftmenu'=>'',
-								'url'=>'/formulaire/index.php',
-								'langs'=>'formulaire@formulaire',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>100,
-								'enabled'=>'1',	// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
-								'perms'=>'$user->rights->formulaire->formulaire->read',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
-								'target'=>'',
-								'user'=>0);						                // 0=Menu for internal users, 1=external users, 2=both
 		
-		
-		$r++;
+
         $this->menu[$r]=array(
-			            'fk_menu'=>'fk_mainmenu=formulaire',			// Put 0 if this is a top menu
+			            'fk_menu'=>'fk_mainmenu=competence',			// Put 0 if this is a top menu
 			        	'type'=> 'left',			// This is a Top menu entry
 			        	'titre'=>$langs->trans('formulaire'),
-			        	'mainmenu'=> 'formulaire',
+			        	'mainmenu'=> 'competence',
 			        	'leftmenu'=> 'formulaires',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 						'url'=> '/formulaire/index.php',
 						'langs'=> 'formulaire@formulaire',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
@@ -223,10 +210,10 @@ class modFormulaire extends DolibarrModules
 
 		$r++;
         $this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=formulaire,fk_leftmenu=formulaires',			// Put 0 if this is a top menu
+		            'fk_menu'=>'fk_mainmenu=competence,fk_leftmenu=formulaires',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
 		        	'titre'=> $langs->trans('adminFormulaire'),
-		        	'mainmenu'=> 'formulaire',
+		        	'mainmenu'=> 'competence',
 		        	'leftmenu'=> 'formulaires',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/formulaire/admin.php',
 					'langs'=> 'formulaire@formulaire',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
