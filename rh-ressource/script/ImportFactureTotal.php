@@ -192,6 +192,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				if(!is_null($typeCarburant)) {
 					if( $typeCarburant=='essence')$taux="0";
 					else if($typeVehicule=='VP' && $typeCarburant=='gazole')$taux="15.09";
+				}
+				else{
+					if($typeVehicule == "VU")$taux="0";
+					else $taux=$infos[25];
 				} 
 				  
 //			print_r($TTVA);
