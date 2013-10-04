@@ -53,7 +53,7 @@
 			df = $("#date_fin").val().split("/");
 			
 			var dDebut = new Date(dd[2], dd[1]-1, dd[0], 0,0,0,0); 
-			var dFin = new Date(df[2], df[1]-1, df[1], 0,0,0,0); 
+			var dFin = new Date(df[2], df[1]-1, df[0], 0,0,0,0); 
 			
 			if(dFin.getTime() < dDebut.getTime()) {
 				$("#date_fin").val($("#date_debut").val());
