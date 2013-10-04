@@ -54,30 +54,14 @@
 			jf = parseInt($("#date_fin").val().substr(0,2));
 			mf = parseInt($("#date_fin").val().substr(3,2));
 			af = parseInt($("#date_fin").val().substr(6,4));
-			if(af<ad){
+			
+			var dDebut = new Date(ad, md-1, jd, 0,0,0,0); 
+			var dFin = new Date(af, mf-1, jf, 0,0,0,0); 
+			
+			if(dFin.getTime() < dDebut.getTime()) {
 				$("#date_fin").val($("#date_debut").val());
-				return;
 			}
-			else if(af==ad){
-				
-				if(mf<md){
-					$("#date_fin").val($("#date_debut").val());
-					return;}
-					
-				else if(mf==md){
-					
-					if(jf<jd){
-						$("#date_fin").val($("#date_debut").val());
-						return;}
-					else if(jf=jd){return;}
-					else{return;}
-					
-				}
-				else{return;}
-			}
-			else{return;}
-			
-			
+
 		};
 		
 		$("#date_debut").change(comparerDates);
