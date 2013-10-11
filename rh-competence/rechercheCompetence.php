@@ -6,7 +6,7 @@
 	$langs->load('competence@competence');
 	$langs->load("users");
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$lignecv=new TRH_ligne_cv;
 	$formation=new TRH_formation_cv;
 	$tagCompetence=new TRH_competence_cv;
@@ -85,10 +85,13 @@ function _liste(&$ATMdb,  $tagCompetence, $recherche ) {
 			
 		)
 		,'title'=>array(
-			'libelleCompetence'=>'Libellé Compétence'
+			'libelleCompetence'=>'Compétence(s)'
 			,'name'=>'Utilisateur'
-			//,'firstname'=>'Prénom'
+			,'Niveau'=>'Nombre de compétences recherchées'
 			
+		)
+		,'eval'=>array(
+			'libelleCompetence'=>'_get_competence_user(@fkuser@)'
 		)
 		,'search'=>array(
 			'libelleExperience'=>array('recherche'=>'calendar')
@@ -104,7 +107,21 @@ function _liste(&$ATMdb,  $tagCompetence, $recherche ) {
 	
 	llxFooter();
 }	
-
+function _get_competence_user($fk_user) {
+	global $ATMdb;
+	
+	$sql="SELECT DISTINCT libelleCompetence FROM ".MAIN_DB_PREFIX."rh_competence_cv WHERE fk_user=".$fk_user;
+	$ATMdb->Execute($sql);
+	$Tab = $ATMdb->Get_All();
+	
+	$competences='';
+	foreach ($Tab as $c) {
+		if(!empty($competences))$competences.=', ';
+		$competences.=$c->libelleCompetence;
+	} 
+	
+	return $competences;
+}
 	
 function _fiche(&$ATMdb,$tagCompetence, $mode) {
 	global $db,$user, $langs, $conf;
