@@ -101,10 +101,9 @@ $cpt = 0;
 //début du parsing
 $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
-	while(($data = fgetcsv($handle, 0,'\r')) != false){
+	while(($infos = fgetcsv($handle, 0,";",'"')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
 		if ($numLigne >=1 ){
-			$infos = explode(';', $data[0]);
 			
 			//print_r($infos);
 			$plaque = $infos[11];
@@ -181,7 +180,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->coutTTC = strtr($infos[19], ',','.');
 				$temp->coutEntrepriseTTC = strtr($infos[19], ',','.');
 				
-				$taux = number_format(floatval(str_replace(',', '.', $infos[25])),1);
+				$taux = floatval(str_replace(',', '.', $infos[25]));
 				/*
 				 * Correction des taux d'import pour traitement retour
 				 */
@@ -194,12 +193,11 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					else if($typeVehicule=='VP' && $typeCarburant=='gazole')$taux="15.09";
 				}
 				else{
-					if($typeVehicule == "VU")$taux=$infos[25];
+					if($typeVehicule == "VU")null;
 					else $taux="0";
 				} 
 				  
 //			print_r($TTVA);
-
 				$idTVA = getTVAId($TTVA, $taux);
 				if($idTVA<0) exit("TVA $taux inexistante" . print_r($TTVA, true));
 				$temp->TVA = $idTVA;
