@@ -52,12 +52,36 @@
 					
 				}
 				else {
-					print "pas de contrat ($idContrat)...";
+					print "erreur contrat...";
 				}
 				
 			}
 			else if(count($TContrat)==0) {
-				print "pas de contrat...";
+				
+				if($reel=='Y') {
+					$contrat=new TRH_Contrat;
+					$contrat->frais = Tools::string2num($data[10]);
+					$contrat->entretien = Tools::string2num($data[11]);
+					$contrat->loyer_TTC = Tools::string2num($data[12]);
+					$contrat->assurance = Tools::string2num($data[14]);
+					$contrat->fk_rh_ressource_type = 1;
+					$contrat->date_debut = $r->date_achat; 
+					$contrat->date_fin = $r->date_vente; 
+					
+					$contrat->save($ATMdb);
+					
+					$cr=new TRH_Contrat_Ressource;
+					$cr->fk_rh_contrat=$contrat->getId();
+					$cr->fk_rh_ressource = $r->getId();
+					$cr->commentaire = "Créer par ticket#191";
+					
+					$cr->save($ATMdb);						
+					
+				}
+				
+				print "pas de contrat : création (".$contrat->getId().")...";
+				
+				
 			}
 			else {
 				print "nombre de contrat non cohérent...";
