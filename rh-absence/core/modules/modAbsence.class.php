@@ -73,19 +73,11 @@ class modAbsence extends DolibarrModules
 		// for default path (eg: /mymodule/core/xxxxx) (0=disable, 1=enable)
 		// for specific path of parts (eg: /mymodule/core/modules/barcode)
 		// for specific css file (eg: /mymodule/css/mymodule.css.php)
-		//$this->module_parts = array(
-		//                        	'triggers' => 0,                                 // Set this to 1 if module has its own trigger directory
-		//							'login' => 0,                                    // Set this to 1 if module has its own login method directory
-		//							'substitutions' => 0,                            // Set this to 1 if module has its own substitution function file
-		//							'menus' => 0,                                    // Set this to 1 if module has its own menus handler directory
-		//							'barcode' => 0,                                  // Set this to 1 if module has its own barcode directory
-		//							'models' => 0,                                   // Set this to 1 if module has its own models directory
-		//							'css' => '/mymodule/css/mymodule.css.php',       // Set this to relative path of css if module has its own css file
-		//							'hooks' => array('hookcontext1','hookcontext2')  // Set here all hooks context managed by module
-		//							'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE')) // Set here all workflow context managed by module
-		//                        );
+		
+		
 		$this->module_parts = array(
-			'hooks'=>array('userdao')
+			'triggers' =>1      
+			,'hooks'=>array('userdao')
 		);
 
 		// Data directories to create when module is enabled.
