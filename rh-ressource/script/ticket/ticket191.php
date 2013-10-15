@@ -1,0 +1,80 @@
+<?php
+	
+	set_time_limit(0);
+	ini_set('memory_limit','512M');
+	
+	
+	require('../../config.php');
+	require('../../class/contrat.class.php');
+	require('../../class/evenement.class.php');
+	require('../../class/ressource.class.php');
+	require('../../lib/ressource.lib.php');
+	
+	$reel = __get('reel','N');
+
+	$ATMdb=new TPDOdb;
+
+	$f1=fopen('ticket191.csv','r');
+	fgets($f1);
+	fgets($f1);
+	
+	while($data = fgetcsv($f1,1024,';','"')) {
+		
+		$r=new TRH_Ressource;
+		$ref = trim($data[0]);
+		if($r->load_by_numId($ATMdb, $ref)!==false) {
+			print "$ref...";
+			$r->co2 = $data[1];
+			$r->libelle = $data[2];
+			$r->marquevoit = $data[3];
+			$r->modlevoit = $data[4];
+			$r->modlevoitversioncomm = $data[8];
+			$r->pf = $data[9];
+			$r->coderefac = $data[13];
+			
+			
+			$ATMdb->Execute("SELECT fk_rh_contrat FROM llx_rh_contrat_ressource WHERE fk_rh_ressource=".$r->getId());
+			$TContrat = $ATMdb->Get_All();
+			if(count($TContrat)==1) {
+				
+				$idContrat = $TContrat[0]->fk_rh_contrat;
+				
+				$contrat=new TRH_Contrat;
+				if($contrat->load($ATMdb, $idContrat)) {
+					$contrat->frais = Tools::string2num($data[10]);
+					$contrat->entretien = Tools::string2num($data[11]);
+					$contrat->loyer_TTC = Tools::string2num($data[12]);
+					$contrat->assurance = Tools::string2num($data[14]);
+					
+				//	exit($contrat->loyer_TTC);
+					
+					if($reel=='Y')$contrat->save($ATMdb);
+					
+				}
+				else {
+					print "pas de contrat ($idContrat)...";
+				}
+				
+			}
+			else if(count($TContrat)==0) {
+				print "pas de contrat...";
+			}
+			else {
+				print "nombre de contrat non cohérent...";
+			}
+
+
+			if($reel=='Y')$r->save($ATMdb);
+
+			print "ok<br/>";
+		}
+		else {
+			print $ref." non trouvé <br/>";
+			
+		}
+		
+		
+		
+		
+	}
+	

@@ -95,17 +95,23 @@ class TRH_Ressource extends TObjetStd {
 		return false;
 	}
 	
-	function load(&$ATMdb, $id) {
+	function load(&$ATMdb, $id, $annexe=true) {
 		global $conf;
 		parent::load($ATMdb, $id);
 
 		$this->load_ressource_type($ATMdb);
-		//chargement d'une liste de toutes les ressources (pour le combo "ressource associé")
-		$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid!=".$this->getId()." ORDER BY fk_rh_ressource_type, numId";
-		$ATMdb->Execute($sqlReq);
-		while($ATMdb->Get_line()) {
-			$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('numId').' '.$ATMdb->Get_field('libelle');
-			}	
+	
+		if($annexe) {
+			
+			//chargement d'une liste de toutes les ressources (pour le combo "ressource associé")
+			// AA à supprimer et mettre cette horreur ailleur
+				$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE rowid!=".$this->getId()." ORDER BY fk_rh_ressource_type, numId";
+				$ATMdb->Execute($sqlReq);
+				while($ATMdb->Get_line()) {
+					$this->TRessource[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('numId').' '.$ATMdb->Get_field('libelle');
+				}	
+		}
+			
 	}
 	
 	/**
