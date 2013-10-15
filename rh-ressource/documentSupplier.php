@@ -1,5 +1,6 @@
 <?php
 	require('config.php');
+	set_time_limit(0);
 	require('./class/ressource.class.php');
 	require('./class/evenement.class.php');
 	require('./class/contrat.class.php');
