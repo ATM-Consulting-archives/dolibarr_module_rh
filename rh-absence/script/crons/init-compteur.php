@@ -1,9 +1,13 @@
+#!/usr/bin/php
 <?php
 	define('INC_FROM_CRON_SCRIPT', true);
+	chdir(__DIR__);
 	
 	require('../config.php');
 	require('../class/absence.class.php');
 	require('../class/pointeuse.class.php');
+	
+	
 	
 	$ATMdb=new Tdb;
 
