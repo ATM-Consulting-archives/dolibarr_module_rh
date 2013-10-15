@@ -68,18 +68,26 @@
 					$contrat->date_debut = $r->date_achat; 
 					$contrat->date_fin = $r->date_vente; 
 					
-					$contrat->save($ATMdb);
-					
-					$cr=new TRH_Contrat_Ressource;
-					$cr->fk_rh_contrat=$contrat->getId();
-					$cr->fk_rh_ressource = $r->getId();
-					$cr->commentaire = "Créer par ticket#191";
-					
-					$cr->save($ATMdb);						
+					if($contrat->loyer_TTC>0) {
+							
+						$contrat->save($ATMdb);
+						
+						$cr=new TRH_Contrat_Ressource;
+						$cr->fk_rh_contrat=$contrat->getId();
+						$cr->fk_rh_ressource = $r->getId();
+						$cr->commentaire = "Créer par ticket#191";
+						
+						$cr->save($ATMdb);						
+						print "pas de contrat : création (".$contrat->getId().")...";
+						
+					}
+					else {
+						print "pas de contrat...";
+					}
 					
 				}
 				
-				print "pas de contrat : création (".$contrat->getId().")...";
+				
 				
 				
 			}
