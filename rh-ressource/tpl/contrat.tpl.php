@@ -83,12 +83,20 @@
 	 	
 	 	[onshow;block=begin;when [view.userRightViewContrat]==1]
 		 	<tr>
-		 		<td>Montant Entretien</td>
+		 		<td>Montant entretien mensuel TTC</td>
 		 		<td>[contrat.entretien;strconv=no;protect=no] €</td>
-		 	</tr><tr>
-		 		<td>Montant Assurance</td>
+		 	</tr>
+		 	
+		 	<tr>
+		 		<td>Frais de gestion mensuel TTC</td>
+		 		<td>[contrat.frais;strconv=no;protect=no] €</td>
+		 	</tr>
+		 	
+		 	<tr>
+		 		<td>Assurance mensuelle</td>
 		 		<td>[contrat.assurance;strconv=no;protect=no] €</td>
-		 	</tr><tr>
+		 	</tr>
+		 	<tr>
 		 		<td>Loyer mensuel TTC</td>
 		 		<td>[contrat.loyer_TTC;strconv=no;protect=no] €</td>
 		 	</tr>

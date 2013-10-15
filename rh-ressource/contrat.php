@@ -185,6 +185,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 				,'date_fin'=> $form->calendrier('', 'date_fin', $contrat->date_fin,12, 12)
 				,'entretien'=>$form->texte('', 'entretien', $contrat->entretien, 10,20,'','','0')
 				,'assurance'=>$form->texte('', 'assurance', $contrat->assurance, 10,20,'','','0')
+				,'frais'=>$form->texte('', 'frais', $contrat->frais, 10,20,'','','0')
 				,'kilometre'=>$form->texte('', 'kilometre', $contrat->kilometre, 8,8,'','','')
 				,'dureemois'=>$form->texte('', 'dureeMois', $contrat->dureeMois, 8,8,'','','')
 				,'loyer_TTC'=>$form->texte('', 'loyer_TTC', $contrat->loyer_TTC, 10,20,'','','0')

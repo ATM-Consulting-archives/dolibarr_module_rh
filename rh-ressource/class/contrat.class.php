@@ -8,7 +8,7 @@ class TRH_Contrat  extends TObjetStd {
 		parent::add_champs('date_debut, date_fin','type=date;');
 		
 		parent::add_champs('TVA, kilometre, dureeMois','type=entier;');
-		parent::add_champs('loyer_TTC, assurance, entretien','type=float;');
+		parent::add_champs('loyer_TTC,assurance,entretien,frais','type=float;');
 		
 		//Un evenement est lié à une ressource et deux tiers (agence utilisatrice et fournisseur)
 		parent::add_champs('fk_tier_fournisseur,entity,fk_rh_ressource_type','type=entier;index;');
