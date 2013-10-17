@@ -104,8 +104,7 @@
 				function actuHT(){
 					ttc = parseFloat($('#loyer_TTC').val());
 					tva = parseFloat($('#TVA option:selected').html());
-					ht = ttc*(1-(tva/100));
-					ht = ht.toFixed(2)
+					ht = ttc/(1+(tva/100));
 					$('#loyer_HT').val(ht);
 				}
 				
