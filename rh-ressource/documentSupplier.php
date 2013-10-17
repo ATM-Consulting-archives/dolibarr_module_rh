@@ -89,6 +89,13 @@
 			$message = $langs->trans("FileHasBeenRemoved");
 		}
 		
+		//Suppression d'un import
+		if($action == 'delimport'){
+			if(!empty($_REQUEST['idImport'])){
+				$ATMdb->Execute('DELETE FROM '.MAIN_DB_PREFIX.'rh_evenement WHERE idImport = "'.$_REQUEST['idImport'].'" AND idImport != "" AND idImport IS NOT NULL');
+			}
+		}
+		
 		// Get all files
 		$sortfield  = GETPOST("sortfield", 'alpha');
 		$sortorder  = GETPOST("sortorder", 'alpha');
@@ -169,6 +176,40 @@
 				$("form[name='formuserfile']").children().children().children().children().prepend('<? print $select_types_imports; ?>');
 			});
 		</script>
+		<br>
+		<div class="titre">Liste des imports déjàs effectués</div>
+		<?php
+		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
+		
+		$sql = "SELECT DISTINCT(idImport) as idImport, rowid as ID, '' as Action FROM ".MAIN_DB_PREFIX."rh_evenement
+				WHERE idImport IS NOT NULL AND idImport != ''
+				GROUP BY idImport";
+		
+		$l=new TListviewTBS('listImports');
+		
+		print $l->render($ATMdb, $sql, array(
+			'limit'=>array(
+				'page'=>$page
+				,'nbLine'=>'15'
+			)
+			,'link'=>array(
+				'Action' => '<a href="?idImport=@idImport@&action=delimport" onclick="return confirm(\'Voulez-vous vraiment supprimer tous les événements importés depuis le fichier @idImport@ ?\');"><img border="0" title="Supprimer" alt="Supprimer" src="'.DOL_URL_ROOT.'/theme/rh/img/delete.png"></a>'
+			)
+			,'title'=>array(
+				'idImport' => 'Intitulé du fichier importé'
+			)
+			,'hide'=>array('ID')
+			,'liste'=>array(
+				'titre' => 'Liste des Imports'
+				,'image'=>img_picto('','title.png', '', 0)
+				,'picto_precedent'=>img_picto('','previous.png', '', 0)
+				,'picto_suivant'=>img_picto('','next.png', '', 0)
+				,'messageNothing'=>"Il n'y a aucun imports à afficher"
+				,'order_down'=>img_picto('','1downarrow.png', '', 0)
+				,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			)
+		));
+		?>
 		
 		<div style="clear:both"></div></div><?
 		
