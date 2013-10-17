@@ -32,6 +32,10 @@
 			$r->pf = $data[9];
 			$r->coderefac = $data[13];
 			
+			$r->fk_utilisatrice = _getIdGroupe($ATMdb, $data[5] );
+			$r->fk_proprietaire = _getIdEntity($data[6] );
+			$r->fk_entity_utilisatrice = _getIdEntity($data[7] );
+			
 			
 			$ATMdb->Execute("SELECT fk_rh_contrat FROM llx_rh_contrat_ressource WHERE fk_rh_ressource=".$r->getId());
 			$TContrat = $ATMdb->Get_All();
@@ -109,4 +113,40 @@
 		
 		
 	}
+function _getIdGroupe(&$ATMdb, $groupe) {
 	
+	if($groupe=='CPRO TELECOM')$groupe='AGT';
+	
+	$ATMdb->Execute("SELECT rowid FROM `llx_usergroup`
+WHERE `nom` LIKE '$groupe' LIMIT 1");
+	if($ATMdb->Get_line()) {
+		return $ATMdb->Get_field('rowid');
+	}
+	else{
+		print('erreur agence non trouvée');
+		return 0;
+	}
+	
+}	
+	
+function _getIdEntity($company) {
+	$company=strtolower($company);
+				
+		if(strpos($company,'informatique')!==false) {
+			$ldap_entity_login = 3;
+		}
+		else if(strpos($company,'groupe')!==false) {
+			$ldap_entity_login = 1;
+		}
+		else if(strpos($company,'global')!==false) {
+			$ldap_entity_login = 5;
+		}
+		else if(strpos($company,'agt')!==false || strpos($company,'telecom')!==false) {
+			$ldap_entity_login = 4;
+		}
+		else {
+			$ldap_entity_login = 2; 
+		}
+	
+	return $ldap_entity_login;
+}
