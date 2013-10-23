@@ -206,7 +206,7 @@ function _liste(&$ATMdb, &$ressource) {
 	 LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid )
 	 LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as ua ON (e.fk_user = ua.fk_user)	
 	
-	WHERE e.date_debut<='".date("Y-m-d")."' AND e.date_fin >= '". date("Y-m-d")."' ";
+	WHERE 1 ";
 	
 	
 	if(!$user->rights->ressource->ressource->viewRessource){
