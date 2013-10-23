@@ -42,7 +42,16 @@ class TRH_Ressource extends TObjetStd {
 		$this->TListeContrat = array(); 	//liste des id et libellés de tout les contrats
 		$this->TEntity = array();
 	}
-	
+	function getClone() {
+		
+		$clone = clone $this;
+		
+		$clone->start();
+		
+		$clone->numId = ''; 
+		
+		return $clone;
+	}
 	function load_liste_type_ressource(&$ATMdb){
 		//chargement d'une liste de tout les types de ressources
 		$temp = new TRH_Ressource_type;

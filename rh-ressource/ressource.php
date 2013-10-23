@@ -23,6 +23,15 @@
 				$ressource->set_values($_REQUEST);
 				_fiche($ATMdb, $emprunt, $ressource, $contrat,'new');
 				break;	
+			case 'clone':
+				$ressource->load($ATMdb, $_REQUEST['id']);
+				$ressource->load_ressource_type($ATMdb);
+				
+				$clone = $ressource->getClone();
+				//print_r($clone);exit;
+				_fiche($ATMdb, $emprunt, $clone, $contrat,'edit');
+				
+				break;
 			case 'edit'	:
 				//$ATMdb->db->debug=true;
 				//print_r($_REQUEST);
@@ -35,7 +44,7 @@
 				break;
 				
 			case 'save':
-				//$ATMdb->db->debug=true;
+			//	$ATMdb->db->debug=true;
 				$ressource->fk_rh_ressource_type = $_REQUEST['fk_rh_ressource_type'];
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				//on vérifie que le libellé est renseigné
