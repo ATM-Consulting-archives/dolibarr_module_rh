@@ -21,12 +21,13 @@ function _get(&$ATMdb, $case) {
 			__out(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
+		case 'autocomplete':
+			__out(_autocomplete($ATMdb,$_REQUEST['fieldcode'],$_REQUEST['term']));
+			break;
 		default:
 			__out(_exportVoiture($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity'],
 						$_REQUEST['fk_fournisseur'], $_REQUEST['idTypeRessource'] , $_REQUEST['idImport'] ));
 			break;
-		
-		
 	}
 }
 
@@ -426,3 +427,18 @@ function date2ToInt($chaine){
 	return mktime(0,0,0,substr($chaine,5,2),substr($chaine,8,2),substr($chaine,0,4));
 }
 
+//Autocomplete sur les différents champs d'une ressource
+function _autocomplete(&$ATMdb,$fieldcode,$value){
+	$sql = "SELECT DISTINCT(".$fieldcode.")
+			FROM ".MAIN_DB_PREFIX."rh_ressource
+			WHERE ".$fieldcode." LIKE '".$value."%'
+			ORDER BY ".$fieldcode." ASC";
+	$ATMdb->Execute($sql);
+	
+	while ($ATMdb->Get_line()) {
+		$TResult[] = $ATMdb->Get_field($fieldcode);
+	}
+	
+	$ATMdb->close();
+	return $TResult;
+}
