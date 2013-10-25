@@ -177,11 +177,11 @@
 			});
 		</script>
 		<br>
-		<div class="titre">Liste des imports déjàs effectués</div>
+		<div class="titre">Liste des imports déjà effectués</div>
 		<?php
 		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
 		
-		$sql = "SELECT DISTINCT(idImport) as idImport, rowid as ID, '' as Action FROM ".MAIN_DB_PREFIX."rh_evenement
+		$sql = "SELECT idImport as idImport, count(*) as 'Nombre de lignes', rowid as ID, '' as Action FROM ".MAIN_DB_PREFIX."rh_evenement
 				WHERE idImport IS NOT NULL AND idImport != ''
 				GROUP BY idImport";
 		
