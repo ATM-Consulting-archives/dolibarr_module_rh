@@ -362,28 +362,62 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 	//Ressources
 	$TFields=array();
 	
-	foreach($ressource->ressourceType->TField as $k=>$field) {
-		switch($field->type){
-			case liste:
-				$temp = $form->combo('',$field->code,$field->TListe,$ressource->{$field->code});
-				break;
-			case checkbox:
-				$temp = $form->combo('',$field->code,array('oui'=>'Oui', 'non'=>'Non'),$ressource->{$field->code});
-				break;
-			default:
-				$temp = $form->texte('', $field->code, $ressource->{$field->code}, 50,255,'','','-');
-				break;
+	?>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			
+		<?php
+		foreach($ressource->ressourceType->TField as $k=>$field) {
+			switch($field->type){
+				case liste:
+					$temp = $form->combo('',$field->code,$field->TListe,$ressource->{$field->code});
+					break;
+				case checkbox:
+					$temp = $form->combo('',$field->code,array('oui'=>'Oui', 'non'=>'Non'),$ressource->{$field->code});
+					break;
+				default:
+					$temp = $form->texte('', $field->code, $ressource->{$field->code}, 50,255,'','','-');
+					break;
+			}
+			
+			$TFields[$k]=array(
+					'libelle'=>$field->libelle
+					,'valeur'=>$temp
+					//champs obligatoire : 0 = obligatoire ; 1 = non obligatoire
+					,'obligatoire'=>$field->obligatoire ? 'class="field"': 'class="fieldrequired"' 
+				);
+			
+			//Autocompletion
+			if($field->type != combo && $field->type != liste){
+				?>
+				$("#<?=$field->code; ?>").autocomplete({
+					source: "script/interface.php?get=autocomplete&json=1&fieldcode=<?=$field->code; ?>",
+					minLength : 1
+				});
+				
+				<?php
+			}
 		}
-		
-		$TFields[$k]=array(
-				'libelle'=>$field->libelle
-				,'valeur'=>$temp
-				//champs obligatoire : 0 = obligatoire ; 1 = non obligatoire
-				,'obligatoire'=>$field->obligatoire ? 'class="field"': 'class="fieldrequired"' 
-			);
-	}
 
-
+		//Concaténation des champs dans le libelle ressource
+		foreach($ressource->ressourceType->TField as $k=>$field) {
+			
+			if($field->inlibelle == "oui"){
+				$chaineid .= "#".$field->code.", ";
+				$chaineval .= "$('#".$field->code."').val().toUpperCase()+' '+";
+			}
+			
+		}
+		$chaineval = substr($chaineval, 0,-5);
+		$chaineid = substr($chaineid, 0,-2);
+		?>
+			$('<?=$chaineid; ?>').bind("keyup change", function(e) {
+				$('#libelle').val(<?=$chaineval; ?>);
+			});
+		});
+	</script>
+	<?php
+	
 	//requete pour avoir toutes les ressources associées à la ressource concernées
 	$k=0;
 	$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource WHERE fk_rh_ressource=".$ressource->rowid;

@@ -526,7 +526,7 @@ class TRH_Ressource_field extends TObjetStd {
 		parent::add_champs('ordre','type=entier;');
 		parent::add_champs('options','type=chaine;');
 		parent::add_champs('supprimable','type=entier;');
-		parent::add_champs('inliste','type=chaine;'); //varchar booléen : oui/non si le champs sera dans la liste de Ressource.
+		parent::add_champs('inliste,inlibelle','type=chaine;'); //varchar booléen : oui/non si le champs sera dans la liste de Ressource.
 		parent::add_champs('fk_rh_ressource_type,entity','type=entier;index;');
 		
 		$this->TListe = array();
@@ -547,7 +547,7 @@ class TRH_Ressource_field extends TObjetStd {
 	}
 	
 	
-	function chargement(&$db, $libelle, $code, $type, $obligatoire, $ordre, $options, $supprimable, $fk_rh_ressource_type, $inliste = "non"){
+	function chargement(&$db, $libelle, $code, $type, $obligatoire, $ordre, $options, $supprimable, $fk_rh_ressource_type, $inliste = "non", $inlibelle = "non"){
 		$this->load_by_code($db, $code);	
 		$this->libelle = $libelle;
 		$this->code = $code;
@@ -557,6 +557,7 @@ class TRH_Ressource_field extends TObjetStd {
 		$this->options = $options;
 		$this->supprimable = $supprimable;
 		$this->inliste = $inliste;
+		$this->inlibelle = $inlibelle;
 		$this->fk_rh_ressource_type = $fk_rh_ressource_type;
 		
 		
