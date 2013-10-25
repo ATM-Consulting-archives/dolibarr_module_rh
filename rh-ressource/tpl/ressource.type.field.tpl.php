@@ -36,6 +36,7 @@
 			<td>Options</td>
 			<td>Obligatoire</td>
 			<td>Visible dans la liste</td>
+			<td>Concaténer dans le libellé</td>
 			[onshow;block=begin;when [view.mode]=='edit']
 				<td>Action</td>
 			[onshow;block=end]
@@ -55,6 +56,7 @@
 		<td>[ressourceField.options;strconv=no;protect=no]</td>
 		<td>[ressourceField.obligatoire;strconv=no;protect=no]</td>
 		<td>[ressourceField.inliste;strconv=no;protect=no]</td>
+		<td>[ressourceField.inlibelle;strconv=no;protect=no]</td>
 		[onshow;block=begin;when [view.mode]=='edit']
 			<td>
 				<img src="./img/delete.png"  onclick="document.location.href='?id=[ressourceType.id]&idField=[ressourceField.id]&action=deleteField'">
@@ -73,6 +75,7 @@
 			<td>[newField.options;strconv=no;protect=no]</td>
 			<td>[newField.obligatoire;strconv=no;protect=no]</td>
 			<td>[newField.inliste;strconv=no;protect=no]</td>
+			<td>[newField.inlibelle;strconv=no;protect=no]</td>
 			<td><input type="submit" value="Ajouter" name="newField" class="button"></td>
 		</tr>
 	[onshow;block=end]

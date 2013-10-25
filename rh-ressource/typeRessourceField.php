@@ -171,6 +171,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'options'=>$form->texte('', 'TField['.$k.'][options]', $field->options, 20,255,'','','-')
 				,'obligatoire'=>$form->combo('','TField['.$k.'][obligatoire]',array('Oui','Non'),$field->obligatoire)
 				,'inliste'=>$form->combo('','TField['.$k.'][inliste]',array("non"=>"Non","oui"=>"Oui"),$field->inliste)
+				,'inlibelle'=>$form->combo('','TField['.$k.'][inlibelle]',array("non"=>"Non","oui"=>"Oui"),$field->inlibelle)
 				,'numero'=>$k
 			);
 	}
@@ -199,7 +200,7 @@ function _fiche(&$ATMdb, &$ressource, $mode) {
 				,'options'=>$form->texte('', 'TNField[options]', '', 20,255,'','','-')
 				,'obligatoire'=>$form->combo('','TNField[obligatoire]',array('Oui','Non'),'0')
 				,'inliste'=>$form->combo('','TNField[inliste]',array("non"=>"Non","oui"=>"Oui"),'0')
-			
+				,'inlibelle'=>$form->combo('','TNField[inlibelle]',array("non"=>"Non","oui"=>"Oui"),'0')
 			)
 			,'view'=>array(
 				'mode'=>$mode

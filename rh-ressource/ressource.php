@@ -387,6 +387,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 					,'obligatoire'=>$field->obligatoire ? 'class="field"': 'class="fieldrequired"' 
 				);
 			
+			//Autocompletion
 			if($field->type != combo && $field->type != liste){
 				?>
 				$("#<?=$field->code; ?>").autocomplete({
@@ -396,10 +397,23 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 				
 				<?php
 			}
+		}
+
+		//Concaténation des champs dans le libelle ressource
+		foreach($ressource->ressourceType->TField as $k=>$field) {
+			
+			if($field->inlibelle == "oui"){
+				$chaineid .= "#".$field->code.", ";
+				$chaineval .= "$('#".$field->code."').val().toUpperCase()+' '+";
+			}
 			
 		}
+		$chaineval = substr($chaineval, 0,-5);
+		$chaineid = substr($chaineid, 0,-2);
 		?>
-		
+			$('<?=$chaineid; ?>').bind("keyup change", function(e) {
+				$('#libelle').val(<?=$chaineval; ?>);
+			});
 		});
 	</script>
 	<?php
