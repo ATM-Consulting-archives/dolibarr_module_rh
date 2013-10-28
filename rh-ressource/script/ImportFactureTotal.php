@@ -96,6 +96,16 @@ $TCarteNonLie = array();
 $TCarteVoitureNonAttribue = array();
 $idRessFactice = createRessourceFactice($ATMdb, $idCarteTotal, $idImport, $entity, $idTotal);
 
+?>
+<table class="border">
+	<tr>
+		<th>Message</th>
+		<th>Ressource</th>
+		<th>Type</th>
+	</tr>
+
+<?
+
 //print_r($TRessource);
 $cpt = 0;
 //début du parsing
@@ -103,7 +113,7 @@ $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($infos = fgetcsv($handle, 0,";",'"')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=1 ){
+		if ($numLigne >=1 && !empty($infos[11])){
 			
 			//print_r($infos);
 			$plaque = $infos[11];
@@ -119,6 +129,11 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$TCarteNonLie[$plaque] = 1;
 				$idRess = $idRessFactice;
 				//echo $plaque.' : carte pas liée à une voiture.<br>';
+				
+				?><tr style="background-color: red;">
+					<td>Plaque non reconnue</td><td><?="$plaque" ?></td>
+				<?
+				
 				null;
 			}
 			else {
@@ -129,7 +144,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$ressourceLocale->load_by_numId($ATMdb, $plaque);
 				$typeVehicule = strtoupper( $ressourceLocale->typevehicule );
 				
-				print "Ajout de l'évènement ($typeEvent) sur plaque $plaque ($idRess : $typeVehicule)<br>";
+				?><tr>
+					<td>Ajout de l'évènement (<?=$typeEvent?>)</td><td><?="$plaque ($idRess) $typeVehicule" ?></td>
+				<?
+				
 				
 			
 			}
@@ -143,17 +161,18 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				array_shift($t); 
 				$nomPeage = htmlentities(implode(' ', $t), ENT_COMPAT , 'ISO8859-1'); 
 			
-				echo utf8_decode(strtolower($typeEvent)).'<br>';	
+				//echo utf8_decode(strtolower($typeEvent)).'<br>';	
 				if ( !empty($TEvents[strtolower($typeEvent)]) ){ //si aucun évenement ne correspond, on le met divers
 					$temp->type = $TEvents[strtolower($typeEvent)];
-					print "Type reconnu : {$temp->type}<br>"; 
+					?><td><?=$temp->type ?></td><? 
 				}
 				else if ( !empty($TEvents[strtolower(utf8_decode($typeEvent))]) ){ //si aucun évenement ne correspond, on le met divers
 					$temp->type = $TEvents[strtolower(utf8_decode($typeEvent))];
-					print "Type reconnu : {$temp->type}<br>"; 
+					?><td><?=$temp->type ?></td><? 
+					
 				}
 				else {
-					print "<b>$typeEvent non reconnu : à créer dans le type de ressource > Evènement pour prise en compte<br /></b>";
+					?><td style="background-color: red; font-weight: bold"><span title="à créer dans le type de ressource > Evènement pour prise en compte"><?=$typeEvent ?> non reconnu</span></td><? 
 					$temp->type = 'divers';
 				}
 				
@@ -164,7 +183,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 									'.$infos[18].' Litres d\'essence.';
 									
 				}
-				
+				?></tr><?
 				//utilisateur qui utilise la ressource au moment de l'évenement
 				if (!empty($TRessource[$plaque])){
 					$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], date("Y-m-d", dateToInt($infos[15])) );
@@ -246,7 +265,9 @@ if(!empty($TCarteVoitureNonAttribue)) {
 }
 $message .= '<br>Toutes ces cartes ont été liés à la ressource de numid et libellé : \'factice'.$idImport.'\'<br>';
 
-
+?>
+</table>
+<?
 
 $message .= 'Fin du traitement. '.$cpt.' événements créés.<br><br>';
 send_mail_resources('Import - Factures TOTAL',$message);
