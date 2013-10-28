@@ -132,25 +132,30 @@ class TRH_Evenement  extends TObjetStd {
 		
 	}
 	
-	function attributionAuto(&$db){
-		global $conf;
+	function attributionAuto(&$ATMdb){
+		global $conf, $db;
 		
-		if($this->type == "emprunt"){
+		if(defined('AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE') && AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE 
+		&& $this->type == 'emprunt'
+		&& $this->date_fin>=strtotime(date('Y-m-d'))
+		&& $this->date_debut<=strtotime(date('Y-m-d'))
+		){
 			
 			$ressource = new TRH_Ressource();
-			$ressource->load($db, $this->fk_rh_ressource);
+			$ressource->load($ATMdb, $this->fk_rh_ressource);
 			
 			$utilisateur = new User($db);
-			$utilisateur->fetch_user($this->fk_user);
+			
 			
 			if($conf->multicompany->transverse_mode){
-				$utilisateur->fetch_optionals($utilisateur->id, array('ldap_entity_login'=>'ldap_entity_login'));
-				$ressource->fk_entity_utilisatrice = $utilisateur->array_options["options_ldap_entity_login"];
+				$utilisateur->fetch_optionals($this->fk_user, array('ldap_entity_login'=>'ldap_entity_login'));
+				$ressource->fk_entity_utilisatrice = $utilisateur->array_options['options_ldap_entity_login'];
 			}
 			elseif($conf->multicompany){
 				$ressource->fk_entity_utilisatrice = $utilisateur->entity;
 			}
-			$ressource->udpdate();
+			//print_r($utilisateur);
+			$ressource->save($ATMdb);
 		}
 	}
 }	

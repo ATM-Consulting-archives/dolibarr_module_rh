@@ -30,3 +30,5 @@
 	define('USER_MAIL_RECEIVER', 'webmaster@atm-consulting.fr');
 	
 	define('DAYS_BEFORE_ALERT',30);
+
+	define('AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE', true);

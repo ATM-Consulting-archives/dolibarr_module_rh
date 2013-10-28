@@ -439,6 +439,9 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 	$ressource->load_liste_type_ressource($ATMdb);
 	$listeContrat = $ressource->liste_contrat($ATMdb);
 	
+	$combo_entite_utilisatrice = (defined('AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE') && AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE ) ? $ressource->TEntity[$ressource->fk_entity_utilisatrice] : $form->combo('','fk_entity_utilisatrice', $ressource->TEntity, $ressource->fk_entity_utilisatrice );
+		
+	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
 		,array(
@@ -465,7 +468,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 				//,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->date_garantie, 12)
 				,'fk_proprietaire'=>$form->combo('','fk_proprietaire',$ressource->TEntity,$ressource->fk_proprietaire)
 				,'fk_utilisatrice'=>$form->combo('','fk_utilisatrice',$ressource->TAgence,$ressource->fk_utilisatrice)
-				,'fk_entity_utilisatrice'=>$form->combo('','fk_entity_utilisatrice',$ressource->TEntity,$ressource->fk_entity_utilisatrice)
+				,'fk_entity_utilisatrice'=>$combo_entite_utilisatrice
 				,'fk_loueur'=>$form->combo('','fk_loueur',$ressource->TFournisseur,$ressource->fk_loueur)
 			)
 			,'ressourceNew' =>array(
