@@ -296,7 +296,7 @@ function dateToInt($chaine){
 }
 
 function getTVAId(&$TTVA, $tva) {
-	
+
 	foreach($TTVA as $taux=>$id) {
 		if((double)$tva==(double)$taux) return $id;
 		
