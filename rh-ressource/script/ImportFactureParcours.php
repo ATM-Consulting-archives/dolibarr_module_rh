@@ -65,9 +65,7 @@ while($ATMdb->Get_line()) {
 if (empty($nomFichier)){$nomFichier = "./fichierImports/CPRO - PRELVT DU 05 04 13.csv";}
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
-//pour avoir un joli nom, on prend la chaine après le dernier caractère /  et on remplace les espaces par des underscores
-$idImport = basename($nomFichier);
-$idImport = str_replace(' ', '_', $idImport);
+$idImport = _url_format(basename($nomFichier), false, true);
 
 $ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement WHERE idImport='$idImport'");
 
@@ -83,17 +81,44 @@ $TRessource = chargeVoiture($ATMdb);
 //début du parsing
 $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
-	while(($data = fgetcsv($handle, 0,'\r')) != false){
+	
+	?>
+<table class="border">
+	<tr>
+		<th>Message</th>
+		<th>Ressource</th>
+		<th>Montant Loyer</th>
+		<th>Montant Entretient</th>
+		<th>Info</th>
+	</tr>
+
+<?
+	
+	
+	
+	while(($infos = fgetcsv($handle, 0,';')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
-		$infos = explode(';', $data[0]);
-		if ($numLigne >=1 ){
+	
+		$numFacture = $infos[2];
+		
+		if ($numLigne >=1 && $numFacture!=''){
 			//print_r($infos);
 			
 			$plaque = str_replace('-','',$infos[8]);
 			$plaque = str_replace(' ','',$plaque);
 			
+			
+			
 			$timestamp = mktime(0,0,0,substr($infos[3], 3,2),substr($infos[3], 0,2), substr($infos[3], 6,4));
 			$date = date("Y-m-d", $timestamp);
+			
+			?>
+			<tr>
+				<td>Ajout facture <?=$numFacture ?></td>
+				<td><?=$plaque ?></td>
+			<?
+		
+			
 			
 			if (empty($plaque)){
 				null;
@@ -104,16 +129,20 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				if ($idUser==0){ //si il trouve, on l'affecte à l'utilisateur 
 					$idUser = $idSuperAdmin;
 					$cptNoAttribution++;
-					echo 'Voiture non attribué le '.$date.' : '.$plaque.'<br>';}
+					$info =  'Voiture non attribué le '.$date;
 				}
+				else {
+					$info = 'Ok';
+				}
+			}
 			else {
 				$idUser = $idSuperAdmin;
-				echo 'Pas de voiture correspondante : '.$plaque.'<br>';
+				$info = 'Pas de voiture correspondante';
 				$cptNoVoiture ++;
 			}
 				//echo $idUser.'<br>';
 				
-			$numFacture = $infos[2];
+			
 			//FACTURE SUR LE LOYER
 			$fact = new TRH_Evenement;
 			$fact->type = 'factureloyer';
@@ -137,35 +166,43 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$fact->save($ATMdb);
 			$cptFactureLoyer++;
 				
+				
+				
 			//FACTURE SUR L'ENTRETIEN ET LA GESTION
-			$fact = new TRH_Evenement;
-			$fact->type = 'facturegestionetentretien';
-			$fact->numFacture = $numFacture;
-			$fact->fk_rh_ressource = $TRessource[$plaque];
-			$fact->fk_user = $idUser;
-			$fact->fk_rh_ressource_type = $idVoiture;
-			$fact->motif = 'Facture mensuelle Parcours : Gestion et Entretien';
-			$fact->commentaire = 'Facture lié au contrat '.$infos[4].',<br>
+			$factEnt = new TRH_Evenement;
+			$factEnt->type = 'facturegestionetentretien';
+			$factEnt->numFacture = $numFacture;
+			$factEnt->fk_rh_ressource = $TRessource[$plaque];
+			$factEnt->fk_user = $idUser;
+			$factEnt->fk_rh_ressource_type = $idVoiture;
+			$factEnt->motif = 'Facture mensuelle Parcours : Gestion et Entretien';
+			$factEnt->commentaire = 'Facture lié au contrat '.$infos[4].',<br>
 									Entretien TTC :'.floatval(strtr($infos[32], ',','.')).'€,<br>
 									Gestion TTC :'.floatval(strtr($infos[31], ',','.')).'€';
-			$fact->set_date('date_debut', $infos[10]);
-			$fact->set_date('date_fin', $infos[1]);
-			$fact->coutTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
-			$fact->coutEntrepriseTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
-			$fact->TVA= $TTVA['19.6'];
-			$fact->coutEntrepriseHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
-			$fact->fk_fournisseur = $idParcours;
-			$fact->idImport = $idImport;
-			$fact->numFacture = $infos[2];
-			$fact->date_facture = dateToInt($infos[3]);
-			$fact->entity =$entity;
-			$fact->save($ATMdb);
+			$factEnt->set_date('date_debut', $infos[10]);
+			$factEnt->set_date('date_fin', $infos[1]);
+			$factEnt->coutTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
+			$factEnt->coutEntrepriseTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
+			$factEnt->TVA= $TTVA['19.6'];
+			$factEnt->coutEntrepriseHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
+			$factEnt->fk_fournisseur = $idParcours;
+			$factEnt->idImport = $idImport;
+			$factEnt->numFacture = $infos[2];
+			$factEnt->date_facture = dateToInt($infos[3]);
+			$factEnt->entity =$entity;
+			$factEnt->save($ATMdb);
 			$cptFactureGestEntre++;
+				
+			
+			?><td><?=$fact->coutEntrepriseTTC ?></td><td><?=$factEnt->coutEntrepriseTTC ?></td><td><?=$info ?></td></tr><?
 						
 		}
 	$numLigne++;
+	
+	
 }
-
+	?></table>
+	<?
 	//Fin du code PHP : Afficher le temps d'éxecution et le bilan.
 	//$message .= $cptContrat.' contrats importés.<br>';
 	$message .= $cptNoVoiture.' plaques sans correspondance.<br>';

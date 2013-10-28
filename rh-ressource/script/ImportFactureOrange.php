@@ -96,6 +96,9 @@ exit();*/
 if (empty($nomFichier)){$nomFichier = "./fichierImports/detail_appels10.csv";}
 $message .= 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
+$idImport = _url_format(basename($nomFichier), false, true);
+$ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement WHERE idImport='$idImport'");
+
 //début du parsing
 $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
@@ -256,6 +259,9 @@ foreach ($TUser as $nom => $id) {
 		$fact->duree = $TCompteurs[$idUser]['conso'];*/ 
 		$fact->entity = $entity;
 		$fact->fk_fournisseur = $idOrange;
+		
+		$fact->idImport = $idImport;
+		
 		$fact->save($ATMdb);		
 		$cptFacture++;
 		
