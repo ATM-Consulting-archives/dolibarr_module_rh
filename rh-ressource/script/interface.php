@@ -21,12 +21,13 @@ function _get(&$ATMdb, $case) {
 			__out(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
+		case 'autocomplete':
+			__out(_autocomplete($ATMdb,$_REQUEST['fieldcode'],$_REQUEST['term']));
+			break;
 		default:
 			__out(_exportVoiture($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity'],
 						$_REQUEST['fk_fournisseur'], $_REQUEST['idTypeRessource'] , $_REQUEST['idImport'] ));
 			break;
-		
-		
 	}
 }
 
@@ -99,22 +100,24 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		$type_compte = 'G';
 		
 		$TLignes[] = array(
-			'RES'
-			,date('dmy', date2ToInt($row->date_facture))
-			,'FF'
-			,$code_compta
-			,$type_compte
-			,''
-			,''
-			,'RESSOURCE '.date('m/Y')
-			,'V'
-			,date('dmy')
-			,$sens
-			,$montant
-			,'N'
-			,''
-			,''
-			,'EUR'
+			'codeJournal'=>'RES'
+			,'datePiece'=>date('dmy', date2ToInt($row->date_facture))
+			,'typePiece'=> 'FF'
+			,'compteGeneral'=> $code_compta
+			,'typeCompte'=> $type_compte
+			,'codeAnalytique'=> ''
+			,'nom'=>''
+			,'prenom'=>''
+			,'referenceEcriture' => ''
+			,'libelleEcriture'=> 'RESSOURCE '.date('m/Y')
+			,'modePaiement'=> 'V'
+			,'dateEcheance'=> date('dmy')
+			,'sens'=> $sens
+			,'montant'=>  $montant
+			,'typeEcriture'=> 'N'
+			,'numeroPiece'=> ''
+			,'devise'=>'EUR'
+			
 		);
 		
 		/*
@@ -143,17 +146,18 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			print $sql_anal;
 		}
     		$ATMdb2->Execute($sql_anal);
-		$TabAna=array();		
+		$TabAna=array();	$TUser=array();	
 		while($ATMdb2->Get_line()) {
 
 			$code_anal = $ATMdb2->Get_field('code_analytique');
 			$total_anal = $ATMdb2->Get_field('coutEntrepriseHT');
 //print_r($code_anal);
- 		
- 			if( isset( $_REQUEST['withLogin'] ) /*&& empty( $code_anal )*/ ) {
-				$code_anal .= ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('firstname').' '.$ATMdb2->Get_field('name') ."</a>";
-			} 
-			
+
+			$TUser[$code_anal]=array(
+					'nom' => ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('name') ."</a>"
+					,'prenom' => $ATMdb2->Get_field('firstname')
+			);
+ 						
 			if(isset($_REQUEST['DEBUG'])) {
 				print "$code_anal=$total_anal<br/>";
 			}
@@ -165,7 +169,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			);*/
 		}
     
-    $nbElement = count($TabAna);
+    	$nbElement = count($TabAna);
 		$total_partiel = 0;$cpt=0;
 		foreach($TabAna as $code_analytique=>$total_ht_anal /*$ana*/) {
 			//list($code_analytique,$total_ht_anal)=$ana ;
@@ -182,22 +186,27 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
           		$type_compte 		= 	'A';
 					
 					$TLignes[] = array(
-						'RES'
-						,date('dmy', date2ToInt($row->date_facture))
-						,'FF'
-						,$code_compta
-						,$type_compte
-						,$code_analytique
-						,''
-						,'RESSOURCE '.date('m/Y')
-						,'V'
-						,date('dmy')
-						,$sens
-						,number_format($total_ht_anal,2,'.','')
-						,'N'
-						,''
-						,''
-						,'EUR'
+					
+						'codeJournal'=>'RES'
+						,'datePiece'=>date('dmy', date2ToInt($row->date_facture))
+						,'typePiece'=> 'FF'
+						,'compteGeneral'=> $code_compta
+						,'typeCompte'=> $type_compte
+						,'codeAnalytique'=> $code_analytique
+						,'nom'=>$TUser[$code_analytique]['nom']
+						,'prenom'=>$TUser[$code_analytique]['prenom']
+						,'referenceEcriture' => ''
+						,'libelleEcriture'=> 'RESSOURCE '.date('m/Y')
+						,'modePaiement'=> 'V'
+						,'dateEcheance'=> date('dmy')
+						,'sens'=> $sens
+						,'montant'=>  number_format($total_ht_anal,2,'.','')
+						,'typeEcriture'=> 'N'
+						,'numeroPiece'=> ''
+						,'devise'=>'EUR'
+						
+						
+							
 					);
 			 $cpt++;
 		}
@@ -233,8 +242,28 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		while($row = $ATMdb->Get_line()) {
 			$total_tva	=	$ATMdb->Get_field('coutEntrepriseTTC') - $ATMdb->Get_field('coutEntrepriseHT');
 			
-			$line = array('RES', date('dmy', date2ToInt($row->date_facture)), 'FF', '445660', 'G', '', '', 'RESSOURCE '.date('m/Y'), 'V', date('dmy'), 'D', $total_tva, 'N', '', '', 'EUR', '', '');
-			$TLignes[]=$line;
+			$TLignes[] =array(
+				'codeJournal'=>'RES'
+				,'datePiece'=>date('dmy', date2ToInt($row->date_facture))
+				,'typePiece'=> 'FF'
+				,'compteGeneral'=> '445660'
+				,'typeCompte'=> 'G'
+				,'codeAnalytique'=> ''
+				,'nom'=>''
+				,'prenom'=>''
+				
+				,'referenceEcriture' => ''
+				,'libelleEcriture'=> 'RESSOURCE '.date('m/Y')
+				,'modePaiement'=> 'V'
+				,'dateEcheance'=> date('dmy')
+				,'sens'=> 'D'
+				,'montant'=> $total_tva
+				,'typeEcriture'=> 'N'
+				,'numeroPiece'=> ''
+				,'devise'=>'EUR'
+				
+			); 
+			
 		}
 	}
 	
@@ -305,45 +334,30 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	
 		if (empty($TCredits[$compte_tiers])){
 			$TCredits[$compte_tiers] = array(
-				'RES'
-				,date('dmy', date2ToInt($row->date_facture))
-				,'FF'
-				,$code_compta
-				,$type_compte
-				,$compte_tiers
-				,''
-				,'RESSOURCE '.date('m/Y')
-				,'V'
-				,date('dmy')
-				,$sens
-				,$montant
-				,'N'
-				,''
-				,''
-				,'EUR'
+				'codeJournal'=>'RES'
+				,'datePiece'=>date('dmy', date2ToInt($row->date_facture))
+				,'typePiece'=> 'FF'
+				,'compteGeneral'=> $code_compta
+				,'typeCompte'=> $type_compte
+				,'codeAnalytique'=> $compte_tiers
+				,'nom'=>''
+				,'prenom'=>''
+				,'referenceEcriture' => ''
+				,'libelleEcriture'=> 'RESSOURCE '.date('m/Y')
+				,'modePaiement'=> 'V'
+				,'dateEcheance'=> date('dmy')
+				,'sens'=> $sens
+				,'montant'=>  number_format($total_ht_anal,2,'.','')
+				,'typeEcriture'=> 'N'
+				,'numeroPiece'=> ''
+				,'devise'=>'EUR'
+				
 			);
 		}
 		else {
-			$TCredits[$compte_tiers][11] += $montant;
+			$TCredits[$compte_tiers]['montant'] += $montant;
 		}
-		/*$TLignes[] = array(
-			'RES'
-			,date('dmy')
-			,'FF'
-			,$code_compta
-			,$type_compte
-			,$compte_tiers
-			,''
-			,'RESSOURCE '.date('m/Y')
-			,'V'
-			,date('dmy')
-			,$sens
-			,$montant
-			,'N'
-			,''
-			,''
-			,'EUR'
-			);*/
+		
 	}
 	
 	foreach ($TCredits as $key => $value) {
@@ -426,3 +440,18 @@ function date2ToInt($chaine){
 	return mktime(0,0,0,substr($chaine,5,2),substr($chaine,8,2),substr($chaine,0,4));
 }
 
+//Autocomplete sur les différents champs d'une ressource
+function _autocomplete(&$ATMdb,$fieldcode,$value){
+	$sql = "SELECT DISTINCT(".$fieldcode.")
+			FROM ".MAIN_DB_PREFIX."rh_ressource
+			WHERE ".$fieldcode." LIKE '".$value."%'
+			ORDER BY ".$fieldcode." ASC"; //TODO Rajouté un filtre entité ?
+	$ATMdb->Execute($sql);
+	
+	while ($ATMdb->Get_line()) {
+		$TResult[] = $ATMdb->Get_field($fieldcode);
+	}
+	
+	$ATMdb->close();
+	return $TResult;
+}

@@ -124,12 +124,40 @@ class TRH_Evenement  extends TObjetStd {
 			$this->subject = "[ ".$nom." ] ".$this->TType[$this->type]." : ".$this->motif;
 		}*/
 		
+		$this->attributionAuto($db);
+		
 		$this->isAllDayEvent = 1;
 		if (empty($this->coutEntrepriseHT)) {$this->coutEntrepriseHT = ($this->coutEntrepriseTTC)*(1-(0.01*$this->TTVA[$this->TVA]));}
 		parent::save($db);
 		
 	}
 	
+	function attributionAuto(&$ATMdb){
+		global $conf, $db;
+		
+		if(defined('AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE') && AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE 
+		&& $this->type == 'emprunt'
+		&& $this->date_fin>=strtotime(date('Y-m-d'))
+		&& $this->date_debut<=strtotime(date('Y-m-d'))
+		){
+			
+			$ressource = new TRH_Ressource();
+			$ressource->load($ATMdb, $this->fk_rh_ressource);
+			
+			$utilisateur = new User($db);
+			
+			
+			if($conf->multicompany->transverse_mode){
+				$utilisateur->fetch_optionals($this->fk_user, array('ldap_entity_login'=>'ldap_entity_login'));
+				$ressource->fk_entity_utilisatrice = $utilisateur->array_options['options_ldap_entity_login'];
+			}
+			elseif($conf->multicompany){
+				$ressource->fk_entity_utilisatrice = $utilisateur->entity;
+			}
+			//print_r($utilisateur);
+			$ressource->save($ATMdb);
+		}
+	}
 }	
 
 

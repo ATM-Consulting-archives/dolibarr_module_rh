@@ -49,7 +49,7 @@ class TRH_Compteur extends TObjetStd {
 
 		
 		parent::add_champs('rttTypeAcquisition','type=chaine;');				//annuel, mensuel...
-		parent::add_champs('fk_user','type=entier;');			//utilisateur concerné
+		parent::add_champs('fk_user','type=entier;index;');			//utilisateur concerné
 		parent::add_champs('rttannee','type=int;');	
 		parent::add_champs('rttMetier','type=chaine;');		
 		parent::add_champs('date_rttCloture','type=date;');	//date de clôture période rtt
@@ -150,10 +150,10 @@ class TRH_Absence extends TObjetStd {
 		
 		global $user,$conf;
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence');
-		parent::add_champs('code','type=int;');				//code  congé
-		parent::add_champs('type','type=varchar;');				//type de congé
+		parent::add_champs('code','type=entier;index;');				//code  congé
+		parent::add_champs('type','type=varchar;index;');				//type de congé
 		parent::add_champs('libelle','type=varchar;');				//type de congé
-		parent::add_champs('date_debut,date_fin, date_validation','type=date;');	//dates debut fin de congés
+		parent::add_champs('date_debut,date_fin, date_validation','type=date;index;');	//dates debut fin de congés
 		parent::add_champs('ddMoment, dfMoment','type=chaine;');		//moment (matin ou après midi)
 		parent::add_champs('duree','type=float;');	
 		parent::add_champs('dureeHeure','type=chaine;');	
@@ -164,8 +164,8 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('avertissement','type=int;');	
 		parent::add_champs('libelleEtat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('niveauValidation','type=entier;');	//niveau de validation
-		parent::add_champs('idAbsImport','type=entier;');	//niveau de validation
-		parent::add_champs('fk_user, fk_user_valideur','type=entier;');	//utilisateur concerné
+		parent::add_champs('idAbsImport','type=entier;index;');	//niveau de validation
+		parent::add_champs('fk_user, fk_user_valideur','type=entier;index;');	//utilisateur concerné
 		parent::add_champs('entity','type=int;');	
 		
 		parent::_init_vars();
@@ -1745,10 +1745,10 @@ class TRH_EmploiTemps extends TObjetStd {
 			parent::add_champs('date_'.$jour.'_heurefpm','type=date;');
 		}
 					
-		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
+		parent::add_champs('fk_user','type=entier;index;');	//utilisateur concerné
 		parent::add_champs('tempsHebdo','type=float;');
 		parent::add_champs('societeRtt','type=chaine;');
-		parent::add_champs('entity','type=int;');
+		parent::add_champs('entity','type=int;index;');
 		
 		parent::_init_vars();
 		parent::start();	
@@ -2022,10 +2022,10 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_type_absence');
 		parent::add_champs('typeAbsence','type=chaine;');
 		parent::add_champs('libelleAbsence','type=chaine;');
-		parent::add_champs('codeAbsence','type=chaine;');
+		parent::add_champs('codeAbsence','type=chaine;index;');
 		parent::add_champs('admin','type=int;');
 		parent::add_champs('unite','type=chaine;');
-		parent::add_champs('entity','type=int;');
+		parent::add_champs('entity','type=int;index;');
 		
 		parent::add_champs('decompteNormal','type=chaine;');
 		

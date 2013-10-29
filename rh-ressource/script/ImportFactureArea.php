@@ -39,6 +39,9 @@ $TCarteNonAttribue = array();
 $cpt =0;
 //print_r($TRessource);
 
+$idImport = _url_format(basename($nomFichier), false, true);
+$ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement WHERE idImport='$idImport'");
+
 //début du parsing
 $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
@@ -93,6 +96,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				else {
 					$temp->commentaire = '';	
 				}
+				
+				$temp->idImport = $idImport;
+				
 				$temp->save($ATMdb);
 				$cpt ++;
 			}

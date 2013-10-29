@@ -70,7 +70,7 @@ function _liste(&$ATMdb, &$ressource) {
 	}
 	$ressource->load_liste_type_ressource($ATMdb);
 
-	$TOrder = array('ID'=>'ASC');
+	$TOrder = array('r.fk_rh_ressource_type'=>'ASC',  'r.numId'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				

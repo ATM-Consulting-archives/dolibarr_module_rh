@@ -36,8 +36,7 @@ $entity = (isset($_REQUEST['entity'])) ? $_REQUEST['entity'] : $conf->entity;
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 //pour avoir un joli nom, on prend la chaine après le dernier caractère /  et on remplace les espaces par des underscores
-$idImport = basename($nomFichier);
-$idImport = str_replace(' ', '_', $idImport);
+$idImport = _url_format(basename($nomFichier), false, true);
 
 $ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement WHERE idImport='$idImport'");
 
@@ -45,19 +44,45 @@ $ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement WHERE idImport='$idI
 $idRessFactice = createRessourceFactice($ATMdb, $idVoiture, $idImport, $entity, $idEuromaster);
 $idSuperAdmin = getIdSuperAdmin($ATMdb);
 
+$ressource_source = new TRH_Evenement;
+$ressource_source->load_liste($ATMdb);
+
 //début du parsing
 $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
-	while(($data = fgetcsv($handle, 0,'\r')) != false){
+	
+	?>
+<table class="border">
+	<tr>
+		<th>Message</th>
+		<th>Ressource</th>
+		<th>Montant</th>
+		<th>TVA</th>
+		<th>Info</th>
+	</tr>
+
+<?
+	
+	
+	
+	while(($data = fgetcsv($handle, 0,'\r')) != false) {
 		//echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=1 ){
-		$infos = explode(';', $data[0]);
+		if ($numLigne >=1 ) {
+			$infos = explode(';', $data[0]);
+			
+			$plaque = str_replace('-','',$infos[0]);
+			$plaque = str_replace(' ','',$plaque);
+			
+			$timestamp = mktime(0,0,0,intval(substr($infos[4], 3,2)),intval(substr($infos[4], 0,2)), intval(substr($infos[4], 6,4)));
+			$date = date("Y-m-d", $timestamp);
 		
-		$plaque = str_replace('-','',$infos[0]);
-		$plaque = str_replace(' ','',$plaque);
+			$numero =  $infos[22];
 		
-		$timestamp = mktime(0,0,0,intval(substr($infos[4], 3,2)),intval(substr($infos[4], 0,2)), intval(substr($infos[4], 6,4)));
-		$date = date("Y-m-d", $timestamp);
+			?>
+			<tr>
+				<td>Ajout facture <?=$numero ?></td>
+				<td><?=$plaque ?></td>
+			<?
 		
 		
 			if (!empty($TRessource[$plaque])){
@@ -65,32 +90,46 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				if ($idUser==0){ //si il trouve, on l'affecte à l'utilisateur 
 					$idUser = $idSuperAdmin;
 					$cptNoAttribution++;
-					echo 'Voiture non attribué le '.$date.' : '.$plaque.'<br>';}
+					$info = 'Voiture non attribué le '.$date.' : '.$plaque.'<br>';
 				}
+			
+				$info = 'Ok';
+			}	
 			else {
 				$idUser = $idSuperAdmin;
 				$TNoPlaque[$plaque] = 1 ;
 				$cptNoVoiture ++;
+				
+				$info = 'Véhicule non trouvé';
 			}
 			
 			
 		
 			$temp = new TRH_Evenement;
+			
+			
 			$temp->fk_rh_ressource = $TRessource[$plaque];
 			$temp->type = 'facture';
 			$temp->fk_user = $idUser;
 			$temp->set_date('date_debut', $date);
 			$temp->set_date('date_fin', $date);
-			$temp->coutEntrepriseHT = strtr($infos[10], ',','.');
+			$temp->coutEntrepriseHT = (double)strtr($infos[10], ',','.');
 			$temp->coutTTC = strtr($infos[25], ',','.');
-			$temp->coutEntrepriseTTC = strtr($infos[25], ',','.');
-			$temp->numFacture = $infos[22];
+			$temp->coutEntrepriseTTC = (double)strtr($infos[25], ',','.');
+			$temp->numFacture = $numero;
 			$temp->motif = $infos[8];
 			$temp->commentaire = $infos[7];
 			$temp->fk_fournisseur = $idEuromaster;
 			$temp->entity = $entity;
-			//$ttva = array_keys($temp->TTVA , floatval(strtr($infos[21], ',','.')));
-			//$temp->TVA = $ttva[0];
+			
+			//$ttva = array_keys($temp->TTVA , floatval());
+			$tvaCalc = (round( $temp->coutEntrepriseTTC / $temp->coutEntrepriseHT,3 )-1) * 100;
+			$idTVA = getTVAId($ressource_source->TTVA, $tvaCalc );
+			if($idTVA==-1) {
+				exit('Code TVA inconnu '.$tvaCalc);
+			}
+			
+			$temp->TVA = $idTVA;
 			//$temp->compteFacture = $infos[13];
 			$temp->idImport = $idImport;
 			$temp->numFacture = $infos[22];
@@ -99,12 +138,13 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			$temp->save($ATMdb);
 		
+			?><td><?=$infos[25] ?></td><td><?=$ressource_source->TTVA[$temp->TVA] ?></td><td><?=$info ?></td></tr><?
+		
 		}
 		$numLigne++;
 		
 	}
-	
-	
+	?></table><?
 	//Fin du code PHP : Afficher le temps d'éxecution et les résultats.
 	if (!empty($TNoPlaque)){
 		$message .= 'Voitures non trouvées :<br>';}
@@ -124,6 +164,18 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	echo $message;
 	
 	
+	
+}
+
+function getTVAId(&$TTVA, $tva) {
+		
+	foreach($TTVA as $id=>$taux) {
+		$ecart = abs((double)$tva-(double)$taux);
+		if($ecart <= 1) return $id;
+		/*else print "($taux $tva)".$ecart.'<br />';*/
+	}
+	//print_r ($tva);
+	return -1;
 	
 }
 
