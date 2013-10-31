@@ -133,7 +133,7 @@ class TRH_Evenement  extends TObjetStd {
 	}
 	
 	function attributionAuto(&$ATMdb){
-		global $conf, $db;
+		global $conf, $db, $TGroupeAutomaticAttributionByAnalytique;
 		
 		if(defined('AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE') && AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE 
 		&& $this->type == 'emprunt'
@@ -154,9 +154,44 @@ class TRH_Evenement  extends TObjetStd {
 			elseif($conf->multicompany){
 				$ressource->fk_entity_utilisatrice = $utilisateur->entity;
 			}
+			
+			if(isset($TGroupeAutomaticAttributionByAnalytique)) {
+		
+				$ressource->fk_utilisatrice = $this->get_AAGroupe($ATMdb, $TGroupeAutomaticAttributionByAnalytique);
+				
+			}
+			
 			//print_r($utilisateur);
 			$ressource->save($ATMdb);
 		}
+	}
+	
+	function get_AAGroupe(&$ATMdb, $TGroupeAutomaticAttributionByAnalytique) {
+		global $db;
+		
+				dol_include_once('/valideur/class/analytique_user.class.php');
+				dol_include_once('/user/class/usergroup.class.php');
+		
+				$TAnal = TRH_analytique_user::getUserAnalytique($ATMdb, $this->fk_user);
+				
+				foreach($TGroupeAutomaticAttributionByAnalytique as $mask=>$groupName) {
+					
+					foreach($TAnal as $anal) { 
+						//print "{$anal->code} $mask => $groupName<br />";
+						if(strpos($anal->code, $mask)===0) { // si le début correspond
+							
+							$grp=new UserGroup($db);
+							$grp->fetch('',$groupName);
+						
+							
+							
+							return $grp->id;
+						}
+						
+					}
+					
+				}
+			return false;
 	}
 }	
 

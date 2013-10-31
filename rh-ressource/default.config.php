@@ -32,3 +32,11 @@
 	define('DAYS_BEFORE_ALERT',30);
 
 	define('AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE', true);
+	$TGroupeAutomaticAttributionByAnalytique=array(
+		 /*'SG'=>'CPRO Groupe'
+		 ,'05'=>'CPRO Informatique'
+		 ,'02'=>'Cpro Valence'
+		 ,'03'=>'CPRO Alliance'
+		 ,'04'=>'CPRO Pixel'
+		 ,'06'=>'CPRO VDI'*/
+	);
