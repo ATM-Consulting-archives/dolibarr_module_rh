@@ -25,4 +25,14 @@ class TRH_analytique_user extends TObjetStd {
 		
 		parent::save($db);
 	}
+	
+	static function getUserAnalytique(&$ATMdb, $fk_user) {
+		$sql= "SELECT rowid, code, pourcentage
+		FROM ".MAIN_DB_PREFIX."rh_analytique_user
+			WHERE fk_user = ".$fk_user;
+			
+		$ATMdb->Execute($sql);
+		
+		return $ATMdb->Get_All();	
+	}
 }

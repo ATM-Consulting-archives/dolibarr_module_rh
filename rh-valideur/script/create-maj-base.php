@@ -31,6 +31,7 @@
 	$extrafields->addExtraField('NB_ENF_CHARGE', 'Nombre d\'enfants à charge', 'int', 0, 10, 'user', 0, 0);
 	$extrafields->addExtraField('DDA', 'Date d\'ancienneté', 'date', 0, 10, 'user', 0, 0);
 	$extrafields->addExtraField('COMPTE_TIERS', 'Compte tiers', 'varchar', 0, 10, 'user', 0, 0);
+	$extrafields->addExtraField('ldap_entity_login', 'Entité par défaut (transverse mdoe)', 'int', 0, 10, 'user', 0, 0);
 	
 	$extrafields->addExtraField('HORAIRE', 'Horaire contractuel', 'varchar', 0, 150, 'user', 0, 0);
 	$extrafields->addExtraField('STATUT', 'Statut', 'varchar', 0, 150, 'user', 0, 0);
