@@ -127,7 +127,20 @@ function _liste(&$ATMdb) {
 			
 		));
 		
-		if($user->rights->valideur->myactions->affecterCodeAnalytique=="1"){
+		
+		$sql= "SELECT SUM(u.pourcentage) as 'pourcentage' FROM ".MAIN_DB_PREFIX."rh_analytique_user as u WHERE u.fk_user = ".$fuser->id;
+		$ATMdb->Execute($sql);
+		$res = $ATMdb->Get_line();
+		$sum_code_anal = $res->pourcentage;
+		
+		if($sum_code_anal!=100) {
+			?>
+			<div class="error">La somme des code analytiques ne fait pas 100% !</div>
+			<?
+			
+		}
+		
+		if($user->rights->valideur->myactions->affecterCodeAnalytique && $sum_code_anal<100){
 			?><a class="butAction" href="?action=new_code&fk_user=<?=$fuser->id ?>">Affecter un code</a>
 			<div style="clear:both;"></div><?
 		}else{
