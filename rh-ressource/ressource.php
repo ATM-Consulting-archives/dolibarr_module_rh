@@ -195,7 +195,7 @@ function _liste(&$ATMdb, &$ressource) {
 		,GROUP_CONCAT(CONCAT(ua.code,'(',ua.pourcentage,'%)') SEPARATOR ', ' ) as 'Codes analytiques' ";
 	
 	if(!empty($_REQUEST['TListTBS']['list_llx_rh_ressource']['search'])) {
-		$sql.=", CONCAT(DATE_FORMAT(e.date_debut,'%d/%m/%Y') ,' - ', DATE_FORMAT(e.date_fin,'%d/%m/%Y')) as 'dates'";
+		$sql.=", CONCAT(DATE_FORMAT(e.date_debut,'%d/%m/%Y') ,' ', DATE_FORMAT(e.date_fin,'%d/%m/%Y')) as 'dates'";
 	}
 	
 	//rajout des champs spéciaux parametré par les types de ressources
