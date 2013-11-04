@@ -73,7 +73,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
 				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
 				r.typeVehicule, u.name, u.firstname, e.entity, t.codecomptable, 
-				ue.COMPTE_TIERS
+				ue.COMPTE_TIERS, e.idImport
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
@@ -117,7 +117,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			,'typeEcriture'=> 'N'
 			,'numeroPiece'=> ''
 			,'devise'=>'EUR'
-			
+			,'idImport'=>$row->idImport
 		);
 		
 		/*
@@ -130,6 +130,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 				, a.code as 'code_analytique'
 				, a.pourcentage as 'pourcentage'
 				,u.firstname,u.name,u.rowid as 'fk_user'
+				,e.idImport
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
@@ -204,7 +205,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 						,'typeEcriture'=> 'N'
 						,'numeroPiece'=> ''
 						,'devise'=>'EUR'
-						
+						,'idImport'=>$row->idImport
 						
 							
 					);
@@ -221,7 +222,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	
 	if($ressource_exist){
 		$sql="SELECT CAST(SUM(e.coutEntrepriseTTC) as DECIMAL(16,2)) as coutEntrepriseTTC, 
-					CAST(SUM(e.coutEntrepriseHT) as DECIMAL(16,2)) as coutEntrepriseHT , e.date_facture
+					CAST(SUM(e.coutEntrepriseHT) as DECIMAL(16,2)) as coutEntrepriseHT , e.date_facture, e.idImport
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
@@ -261,7 +262,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 				,'typeEcriture'=> 'N'
 				,'numeroPiece'=> ''
 				,'devise'=>'EUR'
-				
+				,'idImport'=>$row->idImport
 			); 
 			
 		}
@@ -293,7 +294,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
 				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
 				r.typeVehicule, t.codecomptable, r.fk_loueur, e.fk_fournisseur, 
-				r.fk_entity_utilisatrice
+				r.fk_entity_utilisatrice,e.idImport
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
@@ -351,7 +352,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 				,'typeEcriture'=> 'N'
 				,'numeroPiece'=> ''
 				,'devise'=>'EUR'
-				
+				,'idImport'=>$row->idImport
 			);
 		}
 		else {
