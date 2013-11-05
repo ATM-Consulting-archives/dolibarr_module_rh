@@ -50,7 +50,7 @@
 				<th>Total</th>
 			[onshow;block=end]
 			[onshow;block=begin;when [exports.typeDirect]!='Orange']
-				<th>Import</th>
+				<th>Facture</th>
 				<th>Code journal</th>
 				<th>Date de pièce</th>
 				<th>Type de pièce</th>
@@ -89,7 +89,7 @@
 				<td> [ligne.total;strconv=no;protect=no;noerr] </td>
 			[onshow;block=end]
 			[onshow;block=begin;when [exports.typeDirect]!='Orange']
-				<td> [ligne.idImport;block=tr;strconv=no;protect=no;noerr] </td>
+				<td> [ligne.numFacture;block=tr;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.codeJournal;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.datePiece;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.typePiece;strconv=no;protect=no;noerr] </td>
