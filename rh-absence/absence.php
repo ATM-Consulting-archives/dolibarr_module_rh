@@ -663,7 +663,13 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	$pointeurTest=(int)$ATMdb->Get_field('nb');
 	
+	if(_debug()) {
+		print $sql;
+	}
+
 	if($pointeurTest>0 && $droitAdmin==0){
+		//			print "Utilisateur Pointeur";
+
 		$typeAbsenceCreable=$absence->TTypeAbsencePointeur;
 		
 		
