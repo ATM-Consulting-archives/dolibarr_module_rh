@@ -13,7 +13,7 @@ chdir(__DIR__);
 require('../../config.php');
 require('../../class/absence.class.php');
 	
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 	
 //on récupère toutes les dates dont on doit incrémenter le niveau parce que cela fait plus de 10 jours qu'elles ont été créées, 
 //et donc doivent aller au niveau 2 de validation

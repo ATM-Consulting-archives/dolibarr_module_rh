@@ -5,7 +5,7 @@
 class TRH_valideur_groupe extends TObjetStd {
 	function __construct() { /* declaration */
 		global $conf;
-		$ATMdb=new Tdb;
+		$ATMdb=new TPDOdb;
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_valideur_groupe');
 		parent::add_champs('type','type=chaine;');				//type de valideur

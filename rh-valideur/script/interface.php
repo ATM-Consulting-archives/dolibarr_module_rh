@@ -4,7 +4,7 @@ define('INC_FROM_CRON_SCRIPT', true);
 require('../config.php');
 
 //Interface qui renvoie toutes les lignes de notes de frais étant classées comme "comptabilisées"
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 
 $get = isset($_REQUEST['get'])?$_REQUEST['get']:'ndf';
 
@@ -73,7 +73,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		print $sql;
 	}
 	
-	$ATMdb2=new Tdb;
+	$ATMdb2=new TPDOdb;
 	$ndf_exist=0;
 			
 	$ATMdb->Execute($sql);

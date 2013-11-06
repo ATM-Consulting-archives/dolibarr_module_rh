@@ -5,7 +5,6 @@
 class TRH_analytique_user extends TObjetStd {
 	function __construct() { /* declaration */
 		global $conf;
-		$ATMdb=new Tdb;
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_analytique_user');
 		parent::add_champs('code','type=chaine;');

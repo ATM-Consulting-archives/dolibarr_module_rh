@@ -175,7 +175,7 @@ class TRH_Absence extends TObjetStd {
 		$this->Tjoursem = array('dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'); 
 		
 		
-		$ATMdb=new Tdb;
+		$ATMdb=new TPDOdb;
 		
 		//combo box pour le type d'absence admin
 		$this->TTypeAbsenceAdmin=array();
@@ -295,7 +295,7 @@ class TRH_Absence extends TObjetStd {
 	
 
 	function testDemande(&$db, $userConcerne, &$absence){
-		$ATMdb=new Tdb;
+		$ATMdb=new TPDOdb;
 		global $conf, $user;
 		$this->entity = $conf->entity;
 		
@@ -1959,7 +1959,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		
 		$this->choixApplication = 'all';
 		global $conf;
-		$ATMdb=new Tdb;
+		$ATMdb=new TPDOdb;
 		//combo box pour le type d'absence admin
 		$this->TTypeAbsenceAdmin=array();
 		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` ";

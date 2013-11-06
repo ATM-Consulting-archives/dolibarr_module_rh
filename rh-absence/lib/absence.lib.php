@@ -246,7 +246,7 @@ function mailConges(&$absence){
 	$from = USER_MAIL_SENDER;
 	
 
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	
 	/*
 	 * Mail destinataire
