@@ -255,7 +255,7 @@ function mailConges(&$absence){
 	$ATMdb->Execute($sql);
 	if($ATMdb->Get_line()){
 		$sendto=$ATMdb->Get_field('email');
-		$name=$ATMdb->Get_field('name');
+		$name=$ATMdb->Get_field('lastname');
 		$firstname=$ATMdb->Get_field('firstname');
 	}
 		
@@ -369,7 +369,7 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$absence->fk_user;
 	$ATMdb->Execute($sql);
 	if($ATMdb->Get_line()){
-		$name=$ATMdb->Get_field('name');
+		$name=$ATMdb->Get_field('lastname');
 		$firstname=$ATMdb->Get_field('firstname');
 	}
 		
@@ -379,7 +379,7 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$idValideur;
 	$ATMdb->Execute($sql);
 	if($ATMdb->Get_line()){
-		$nameValideur=$ATMdb->Get_field('name');
+		$nameValideur=$ATMdb->Get_field('lastname');
 		$firstnameValideur=$ATMdb->Get_field('firstname');
 		$sendto=$ATMdb->Get_field('email');
 	}	
