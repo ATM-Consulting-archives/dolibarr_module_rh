@@ -20,7 +20,7 @@ $TTrigramme = array();
 $sql="SELECT rowid, lastname, firstname,login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0, ".$conf->entity.")";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
-	 /*strtoupper($ATMdb->Get_field('firstname')).' '.strtoupper($ATMdb->Get_field('name'))*/
+	 /*strtoupper($ATMdb->Get_field('firstname')).' '.strtoupper($ATMdb->Get_field('lastname'))*/
 	$TTrigramme[strtolower($ATMdb->Get_field('login'))] = $ATMdb->Get_field('rowid');
 	}
 

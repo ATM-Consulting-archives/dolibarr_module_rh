@@ -50,7 +50,7 @@ $TRowidUser = array();
 $sql="SELECT rowid, lastname, firstname, login FROM ".MAIN_DB_PREFIX."user";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
-	$TUser[strtolower($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
+	$TUser[strtolower($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('lastname'))] = $ATMdb->Get_field('rowid');
 	$TRowidUser[] = $ATMdb->Get_field('rowid');
 	
 }

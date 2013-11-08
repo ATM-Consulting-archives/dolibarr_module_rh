@@ -36,7 +36,7 @@ function send_mail_formulaire($object)
 			,array()
 			,array(
 				'formulaire'=>array(
-					'nom'=>$ATMdb->Get_field('name')
+					'nom'=>$ATMdb->Get_field('lastname')
 					,'prenom'=>$ATMdb->Get_field('firstname')
 					,'dated'=>date('d/m/Y',$object->date_deb)
 					,'datef'=>date('d/m/Y',$object->date_fin)

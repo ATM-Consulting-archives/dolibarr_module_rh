@@ -94,7 +94,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 		$sql.=" AND e.fk_user=".$user->id;
 	}
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');	
-	$TOrder = array('name'=>'ASC');
+	$TOrder = array('lastname'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -110,7 +110,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 		)
 		,'title'=>array(
 			'firstname'=>'Prénom'
-			,'name'=>'Nom'
+			,'lastname'=>'Nom'
 			,'login'=>'Login'
 		)
 		,'translate'=>array()
@@ -130,11 +130,11 @@ function _liste(&$ATMdb, &$emploiTemps) {
 		,'orderBy'=>$TOrder
 		,'search'=>array(
 			'firstname'=>true
-			,'name'=>true
+			,'lastname'=>true
 			,'login'=>true
 		)
 		,'eval'=>array(
-				'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+				'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		
@@ -159,7 +159,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	while($ATMdb->Get_line()) {
 				
 				$userCourant['firstname']=$ATMdb->Get_field('firstname');
-				$userCourant['name']=$ATMdb->Get_field('name');
+				$userCourant['lastname']=$ATMdb->Get_field('lastname');
 	}
 	
 	
@@ -201,7 +201,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence')
 				,'compteur_id'=>$emploiTemps->getId()
-				,'titreEdt'=>load_fiche_titre("Emploi du temps de ".htmlentities($userCourant['firstname'], ENT_COMPAT , 'ISO8859-1')." ".htmlentities($userCourant['name'], ENT_COMPAT , 'ISO8859-1'),'', 'title.png', 0, '')
+				,'titreEdt'=>load_fiche_titre("Emploi du temps de ".htmlentities($userCourant['firstname'], ENT_COMPAT , 'ISO8859-1')." ".htmlentities($userCourant['lastname'], ENT_COMPAT , 'ISO8859-1'),'', 'title.png', 0, '')
 			)
 			,'droits'=>array(
 				'modifierEdt'=>$user->rights->absence->myactions->modifierEdt

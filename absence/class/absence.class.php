@@ -227,11 +227,11 @@ class TRH_Absence extends TObjetStd {
 		$TUser=array();
 		$TUser[0] = 'Tous';	
 		$sqlReqUser="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` 
-						ORDER BY name";
+						ORDER BY lastname";
 		$ATMdb->Execute($sqlReqUser);
 
 		while($ATMdb->Get_line()) {
-			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 		return $TUser;
 	}
@@ -1624,7 +1624,7 @@ class TRH_Absence extends TObjetStd {
 		}
 		$ATMdb->Execute($sql);
 		while ($ATMdb->Get_line()) {
-			$TabLogin[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name');
+			$TabLogin[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('lastname');
 		}
 		
 		$jourFin=strtotime(str_replace("/","-",$date_fin));
@@ -2010,7 +2010,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		$sqlReq="SELECT rowid, firstname, lastname FROM ".MAIN_DB_PREFIX."user";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1');
 		}
 	}
 }

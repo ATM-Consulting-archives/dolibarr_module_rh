@@ -70,7 +70,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 
 	$ATMdb->Execute($sqlReqUser);
 	while($ATMdb->Get_line()) {
-		$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+		$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1');
 	}
 	
 	//on récupère tous les types d'absences existants
@@ -158,7 +158,7 @@ function _listeResult(&$ATMdb, &$absence) {
 		WHERE rowid =".$idUserRecherche;
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
-			$nomUserRecherche=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+			$nomUserRecherche=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1');
 		}
 	}else{
 		$nomUserRecherche='Tous';
@@ -224,7 +224,7 @@ function _listeResult(&$ATMdb, &$absence) {
 	$sql=$absence->requeteRechercheAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, $horsConges, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $typeAbsence);
 	
 	
-	$TOrder = array('name'=>'ASC');
+	$TOrder = array('lastname'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
@@ -271,17 +271,17 @@ function _listeResult(&$ATMdb, &$absence) {
 			,'date_fin'=>'Date fin'
 			,'libelle'=>'Type d\'absence'
 			,'firstname'=>'Prénom'
-			,'name'=>'Nom'
+			,'lastname'=>'Nom'
 			,'login'=>'Login'
 			,'libelleEtat'=>'Statut demande'
 		)
 		,'search'=>array(
 			'login'=>true
-			,'name'=>true
+			,'lastname'=>true
 			,'firstname'=>true
 		)
 		,'eval'=>array(
-				'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+				'lastname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		,'orderBy'=>$TOrder

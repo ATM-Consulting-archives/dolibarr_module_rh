@@ -15,11 +15,11 @@ if(isset($_REQUEST['groupe'])) {
 			WHERE g.fk_user=u.rowid AND g.fk_usergroup=".$_REQUEST['groupe'];
 		
 		}
-		$sqlReq.=" ORDER BY name";
+		$sqlReq.=" ORDER BY lastname";
 		
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$TUser[$ATMdb->Get_field('rowid')] = ucwords(strtolower(html_entity_decode(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
+			$TUser[$ATMdb->Get_field('rowid')] = ucwords(strtolower(html_entity_decode(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
 		}
 		
 		echo json_encode($TUser);

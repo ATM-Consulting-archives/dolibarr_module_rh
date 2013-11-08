@@ -149,7 +149,7 @@ function _fiche(&$ATMdb, $regle, $mode) {
 				$userCourant=new User($ATMdb);
 				$userCourant->firstname=$ATMdb->Get_field('firstname');
 				$userCourant->id=$ATMdb->Get_field('rowid');
-				$userCourant->lastname=$ATMdb->Get_field('name');
+				$userCourant->lastname=$ATMdb->Get_field('lastname');
 	}
 	
 	

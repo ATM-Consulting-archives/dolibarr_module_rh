@@ -42,7 +42,7 @@ function _fiche(&$ATMdb) {
 	$ATMdb->Execute($sql);	
 	$TUser[0] = 'Tous';		
 	while($ATMdb->Get_line()) {
-		$TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+		$TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 	}
 	
 	//LISTE DE GROUPES	

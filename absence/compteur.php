@@ -103,7 +103,7 @@ function _liste(&$ATMdb, &$compteur) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'name'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'lastname'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			,'firstname'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array()
@@ -121,12 +121,12 @@ function _liste(&$ATMdb, &$compteur) {
 			
 		)
 		,'title'=>array(
-			'name'=>'Nom'
+			'lastname'=>'Nom'
 			,'firstname'=>'Prénom'
 		)
 		,'orderBy'=>$TOrder
 		,'eval'=>array(
-			'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+			'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		
@@ -154,7 +154,7 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 		WHERE r.fk_user=c.rowid";
 	
 	
-	$TOrder = array('name'=>'ASC');
+	$TOrder = array('lastname'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 	
@@ -190,16 +190,16 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 		)
 		,'title'=>array(
 			'firstname'=>'Prénom'
-			,'name'=>'Nom'
+			,'lastname'=>'Nom'
 			,'login'=>'Login'
 		)
 		,'search'=>array(
 			'firstname'=>true
-			,'name'=>true
+			,'lastname'=>true
 			,'login'=>true
 		)
 		,'eval'=>array(
-			'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+			'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		,'orderBy'=>$TOrder
@@ -248,7 +248,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				$userCourant=new User($db);
 				$userCourant->firstname=$ATMdb->Get_field('firstname');
 				$userCourant->id=$ATMdb->Get_field('rowid');
-				$userCourant->lastname=$ATMdb->Get_field('name');
+				$userCourant->lastname=$ATMdb->Get_field('lastname');
 	}
 	
 	

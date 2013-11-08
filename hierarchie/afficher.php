@@ -89,7 +89,7 @@ $idUserCourant=$_GET["id"];
 	$ATMdb->Get_line();
 	$userCourant=new User($db);
 	$userCourant->id=$ATMdb->Get_field('rowid');
-	$userCourant->lastname=$ATMdb->Get_field('name');
+	$userCourant->lastname=$ATMdb->Get_field('lastname');
 	$userCourant->firstname=$ATMdb->Get_field('firstname');
 	$userCourant->fk_user=$ATMdb->Get_field('fk_user');
 	$Tab[]=$userCourant;
@@ -329,7 +329,7 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 				while($ATMdb->Get_line()) {
 					//récupère les id des différents nom des  groupes de l'utilisateur
 					
-					print '<ul><li>'.$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name')/*."<br/>(Votre supérieur)"*/;
+					print '<ul><li>'.$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('lastname')/*."<br/>(Votre supérieur)"*/;
 					
 				}
 				afficherSalarieDessous($ATMdb,$userCourant->fk_user);

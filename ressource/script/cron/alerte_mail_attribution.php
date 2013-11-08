@@ -25,7 +25,7 @@
 		$TAttribution[] = array(
 			'ressourceID'=>$ATMdb->Get_field('numId')
 			,'ressourceName'=>$ATMdb->Get_field('libelle')
-			,'userName'=>$ATMdb->Get_field('name')
+			,'userName'=>$ATMdb->Get_field('lastname')
 			,'userFirstname'=>$ATMdb->Get_field('firstname')
 			,'dateFinAttribution'=>$ATMdb->Get_field('date_fin')
 		);

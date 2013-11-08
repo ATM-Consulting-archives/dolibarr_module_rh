@@ -66,10 +66,10 @@
 	$TabUser=array();
 	$TabUser[0]='Tous';
 	if($idGroupe==0){
-		$sql="SELECT rowid,name, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$user->id;
+		$sql="SELECT rowid,lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$user->id;
 		$ATMdb->Execute($sql);
 		if($ATMdb->Get_line()) {
-			$TabUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(html_entity_decode(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
+			$TabUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(html_entity_decode(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
 		}
 		$sql="SELECT u.rowid,u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u";
 	}else{
@@ -77,13 +77,13 @@
 		".MAIN_DB_PREFIX."usergroup_user as g 
 		WHERE g.fk_user=u.rowid AND g.fk_usergroup=".$idGroupe;
 	}
-	$sql.=" ORDER BY name";
+	$sql.=" ORDER BY lastname";
 	
 	$ATMdb->Execute($sql);
 	
 	
 	while($ATMdb->Get_line()) {
-		$TabUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(html_entity_decode(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
+		$TabUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(html_entity_decode(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
 	}
 
 

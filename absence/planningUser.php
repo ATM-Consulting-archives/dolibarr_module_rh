@@ -92,7 +92,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	//print $sql;
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
-		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 	}
 	
 	$TBS=new TTemplateTBS();
@@ -237,7 +237,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 		$sql="SELECT name, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$id;
 		$ATMdb->Execute($sql);
 		if($ATMdb->Get_line()) {
-			$name = htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$name = htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 		print '<tr >';		
 		print '<td style="text-align:right; font-weight:bold;height:20px;" nowrap="nowrap">'.$name.'</td>';

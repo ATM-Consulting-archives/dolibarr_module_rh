@@ -21,7 +21,7 @@ $TUser = array();
 $sql="SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
-	$TUser[strtolower($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
+	$TUser[strtolower($ATMdb->Get_field('lastname'))] = $ATMdb->Get_field('rowid');
 }
 
 		
@@ -163,7 +163,7 @@ function chargeEmprunts(&$ATMdb){
 			'debut'=>$ATMdb->Get_field('date_debut')
 			,'fin'=>$ATMdb->Get_field('date_fin')
 			,'fk_user'=>$ATMdb->Get_field('fk_user')
-			,'user'=>$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name')
+			,'user'=>$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('lastname')
 		);
 	}
 	return $TUsers;

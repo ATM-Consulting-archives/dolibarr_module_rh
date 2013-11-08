@@ -151,13 +151,13 @@ function getUsers($avecAll = false, $inEntity = true){
 	$TUser = $avecAll ? array(0=>'Tous') : array() ;
 	$ATMdb =new TPDOdb;
 	
-	$sqlReq = "SELECT rowid,name, firstname FROM ".MAIN_DB_PREFIX."user";
+	$sqlReq = "SELECT rowid,lastname, firstname FROM ".MAIN_DB_PREFIX."user";
 	if ($inEntity){$sqlReq .= " WHERE entity IN (0,".$conf->entity.") ";} 
-	$sqlReq.= " ORDER BY name, firstname ";
+	$sqlReq.= " ORDER BY lastname, firstname ";
 	
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
-		$TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');
+		$TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1');
 		}
 	$ATMdb->close();
 	return $TUser;

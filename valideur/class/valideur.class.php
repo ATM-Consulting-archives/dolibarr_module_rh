@@ -32,7 +32,7 @@ class TRH_valideur_groupe extends TObjetStd {
 		$sqlReq="SELECT rowid, firstname, lastname FROM ".MAIN_DB_PREFIX."user";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$this->TUser[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('name');
+			$this->TUser[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('lastname');
 			}
 		
 	}

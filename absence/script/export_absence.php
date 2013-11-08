@@ -18,7 +18,7 @@
 	
 	while($ATMdb->Get_line()) {
 				$rowid=$ATMdb->Get_field('rowid');
-				$name=$ATMdb->Get_field('name');
+				$name=$ATMdb->Get_field('lastname');
 				$firstname=$ATMdb->Get_field('firstname');
 				$type=$ATMdb->Get_field('type');
 				$date_debut=dol_print_date($ATMdb->Get_field('date_debut'),"day");

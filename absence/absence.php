@@ -225,7 +225,7 @@ function _liste(&$ATMdb, &$absence) {
 			,'etat'=>$absence->TEtat
 		)
 		,'eval'=>array(
-			'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+			'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 			,'etat'=>'_setColorEtat("@val@")'
 			
@@ -314,7 +314,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			,'etat'=>$absence->TEtat
 		)
 		,'eval'=>array(
-			'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+			'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 			,'etat'=>'_setColorEtat("@val@")'
 		)
@@ -507,7 +507,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				,"name"=>true
 			)
 			,'eval'=>array(
-				'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+				'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 			)
 			
@@ -592,7 +592,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				$userCourant=new User($db);
 				$userCourant->firstname=$ATMdb->Get_field('firstname');
 				$userCourant->id=$ATMdb->Get_field('rowid');
-				$userCourant->lastname=$ATMdb->Get_field('name');
+				$userCourant->lastname=$ATMdb->Get_field('lastname');
 	}
 	
 	
@@ -617,7 +617,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id;
 	$ATMdb->Execute($sql);
 	if($ATMdb->Get_line()){
-		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 	}
 	$typeAbsenceCreable=$absence->TTypeAbsenceUser;
 
@@ -645,10 +645,10 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	else $droitsCreation=2; //on n'a pas les droits de création
 	
 	if($droitsCreation==1){
-		$sql.=" ORDER BY name";
+		$sql.=" ORDER BY lastname";
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
-			$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 	}
 	//Tableau affichant les 10 dernières absences du collaborateur
@@ -684,7 +684,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
-				$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+				$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 			}
 		}
 		

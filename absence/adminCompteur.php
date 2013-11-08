@@ -84,7 +84,7 @@ function _liste(&$ATMdb, &$compteur) {
 		WHERE r.entity IN (0,".$conf->entity.") AND r.fk_user=c.rowid";
 		
 	
-	$TOrder = array('name'=>'ASC');
+	$TOrder = array('lastname'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');			
@@ -117,14 +117,14 @@ function _liste(&$ATMdb, &$compteur) {
 		)
 		,'title'=>array(
 			'firstname'=>'Nom'
-			,'name'=>'Prénom'
+			,'lastname'=>'Prénom'
 		)
 		,'search'=>array(
 			'firstname'=>true
-			,'name'=>true
+			,'lastname'=>true
 		)
 		,'eval'=>array(
-			'name'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			'lastname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		,'orderBy'=>$TOrder
@@ -164,7 +164,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				$userCourant=new User($db);
 				$userCourant->firstname=$ATMdb->Get_field('firstname');
 				$userCourant->id=$ATMdb->Get_field('rowid');
-				$userCourant->lastname=$ATMdb->Get_field('name');
+				$userCourant->lastname=$ATMdb->Get_field('lastname');
 	}
 	
 	

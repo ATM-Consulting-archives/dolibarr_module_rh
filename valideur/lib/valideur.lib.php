@@ -26,7 +26,7 @@ function send_mail(&$db, $object, $user, $langs, $statut)
 	/*
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
-		$name=$ATMdb->Get_field('name');
+		$name=$ATMdb->Get_field('lastname');
 		$firstname=$ATMdb->Get_field('firstname');
 		$email=$ATMdb->Get_field('email');
 	}*/

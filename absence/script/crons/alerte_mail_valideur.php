@@ -26,7 +26,7 @@
 		
 		$TValideur[] = array(
 			'id'=>$ATMdb->Get_field('rowid')
-			,'name'=>$ATMdb->Get_field('name')
+			,'lastname'=>$ATMdb->Get_field('lastname')
 			,'firstname'=>$ATMdb->Get_field('firstname')
 			,'email'=>$ATMdb->Get_field('email')
 			
@@ -36,7 +36,7 @@
 
 	
 	foreach($TValideur as $valideur) {
-		_mail_valideur($ATMdb, $valideur['id'],$valideur['firstname'],$valideur['name'], $valideur['email'] );
+		_mail_valideur($ATMdb, $valideur['id'],$valideur['firstname'],$valideur['lastname'], $valideur['email'] );
 	}*/
 	$sql = "SELECT rowid
 	FROM ".MAIN_DB_PREFIX."rh_absence 
