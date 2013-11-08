@@ -37,7 +37,7 @@ function _fiche(&$ATMdb) {
 	
 	//LISTE DE USERS
 	$TUser=array();
-	$sql="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u ORDER BY u.name, u.firstname ";
+	$sql="SELECT u.rowid,u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u ORDER BY u.lastname, u.firstname ";
 
 	$ATMdb->Execute($sql);	
 	$TUser[0] = 'Tous';		
@@ -240,7 +240,7 @@ function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup,
 		$sql.=" AND a.entity=".$conf->entity;
 	}
 	
-	$sql.=" ORDER BY u.name,u.firstname,a.type ";
+	$sql.=" ORDER BY u.lastname,u.firstname,a.type ";
 	
 	$ATMdb->Execute($sql);
 	

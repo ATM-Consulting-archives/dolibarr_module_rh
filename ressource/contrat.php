@@ -259,7 +259,7 @@ function _fiche(&$ATMdb, &$contrat, $mode) {
 		print "<br/>";
 		//liste des adresses liés au contrat
 		$r = new TSSRenderControler($contrat);
-		$sql= "SELECT s.rowid as ID , s.name as 'Nom', CONCAT(s.address, ' ', s.cp, ' ',s.ville) as 'Adresse',
+		$sql= "SELECT s.rowid as ID , s.lastname as 'Nom', CONCAT(s.address, ' ', s.cp, ' ',s.ville) as 'Adresse',
 				s.phone as 'Tél pro.', s.phone_mobile as 'Tél portable', s.fax as 'Fax', s.email as 'EMail'
 				FROM ".MAIN_DB_PREFIX."socpeople as s
 				LEFT JOIN	".MAIN_DB_PREFIX."rh_contrat as c ON (s.fk_soc = c.fk_tier_fournisseur)

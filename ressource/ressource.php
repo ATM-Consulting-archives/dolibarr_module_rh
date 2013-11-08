@@ -279,7 +279,7 @@ function _liste(&$ATMdb, &$ressource) {
 	if(! $user->rights->ressource->ressource->hideRegle){
 		echo '<br>';
 		$r = new TSSRenderControler($ressource);
-		$sql="SELECT DISTINCT r.rowid as 'ID', r.choixLimite as 'CL', r.choixApplication as 'CA', u.firstname ,u.name, g.nom as 'Groupe',
+		$sql="SELECT DISTINCT r.rowid as 'ID', r.choixLimite as 'CL', r.choixApplication as 'CA', u.firstname ,u.lastname, g.nom as 'Groupe',
 		duree, dureeInt,dureeExt, natureRefac,  CONCAT (CAST(montantRefac as DECIMAL(16,2)), ' €') as 'Montant à déduire'
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)

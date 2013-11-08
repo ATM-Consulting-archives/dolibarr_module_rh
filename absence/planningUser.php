@@ -80,7 +80,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	}
 	
 	$TUser=array('Tous');
-	$sql=" SELECT DISTINCT u.rowid, u.name, u.firstname 
+	$sql=" SELECT DISTINCT u.rowid, u.lastname, u.firstname 
 			FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON (u.rowid=ug.fk_user)
 			";
 
@@ -88,7 +88,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		$sql.=" WHERE ug.fk_usergroup=".$idGroupeRecherche;
 	}
 
-	$sql.=" ORDER BY u.name, u.firstname";
+	$sql.=" ORDER BY u.lastname, u.firstname";
 	//print $sql;
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {

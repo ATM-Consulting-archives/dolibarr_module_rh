@@ -51,7 +51,7 @@ function _dureeMaladieMaintenue(&$ATMdb, $userId, $date_debut, $date_fin){
 	
 	$TabRecapMaladie=array();
 		
-	$sql="SELECT u.name, u.firstname, a.type, a.date_debut, a.date_fin, a.duree 
+	$sql="SELECT u.lastname, u.firstname, a.type, a.date_debut, a.date_fin, a.duree 
 	FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."rh_absence as a 
 	WHERE u.rowid=a.fk_user 
 	AND a.type LIKE 'maladiemaintenue'
@@ -72,7 +72,7 @@ function _dureeMaladieNonMaintenue(&$ATMdb, $userId, $date_debut, $date_fin){
 	
 	$TabRecapMaladie=array();
 		
-	$sql="SELECT u.name, u.firstname, a.type, a.date_debut, a.date_fin, a.duree 
+	$sql="SELECT u.lastname, u.firstname, a.type, a.date_debut, a.date_fin, a.duree 
 	FROM ".MAIN_DB_PREFIX."rh_absence as a
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user = u.rowid)
 	WHERE a.type LIKE 'maladienonmaintenue'

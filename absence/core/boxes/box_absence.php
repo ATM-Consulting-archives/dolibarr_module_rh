@@ -48,7 +48,7 @@ class box_absence extends ModeleBoxes {
 
 		if ($user->rights->absence->myactions->valideurConges)	{
 			$sql="SELECT a.rowid , a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-		 	a.libelle, ROUND(a.duree ,1) as 'duree', a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
+		 	a.libelle, ROUND(a.duree ,1) as 'duree', a.fk_user,  a.fk_user, u.login, u.firstname, u.lastname,
 		  	a.libelleEtat as 'Statut demande', a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE u.rowid=a.fk_user";

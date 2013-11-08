@@ -9,9 +9,9 @@ if(isset($_REQUEST['groupe'])) {
 		$ATMdb =new TPDOdb;
 		$TUser[0] = 'Tous';	
 		if($_REQUEST['groupe']==0){
-			$sqlReq="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u";
+			$sqlReq="SELECT u.rowid,u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u";
 		}else{
-			$sqlReq="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u,".MAIN_DB_PREFIX."usergroup_user as g  
+			$sqlReq="SELECT u.rowid,u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u,".MAIN_DB_PREFIX."usergroup_user as g  
 			WHERE g.fk_user=u.rowid AND g.fk_usergroup=".$_REQUEST['groupe'];
 		
 		}

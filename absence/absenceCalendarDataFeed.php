@@ -1,7 +1,7 @@
 <?php
 
 require('config.php');
-include_once("../rh-library/wdCalendar/php/functions.php");
+include_once("../rhlibrary/wdCalendar/php/functions.php");
 $ATMdb=new TPDOdb;
 
 $method = $_GET["method"];
@@ -30,7 +30,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbs
 	if($user->rights->absence->myactions->voirToutesAbsences){		//si on a le droit de voir toutes les absences
 		
 		if($idUser==0&&$idGroupe==0){	//on affiche toutes les absences 
-	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u 
 	  		WHERE r.fk_user=u.rowid";
 	  		if($typeAbsence!='Tous'){
@@ -40,7 +40,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbs
 	      
 	  	}
 	  	else if($idUser==0){		//on recherche un groupe
-	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
 	  		WHERE r.fk_user=u.rowid AND u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupe; 
 			if($typeAbsence!='Tous'){
@@ -49,7 +49,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbs
 	 		//" AND (r.date_debut <= '".php2MySqlTime($ed)."' AND r.date_fin >='". php2MySqlTime($sd)."')";
 	  	}
 	  	else if($idGroupe==0){		//on recherche un utilisateur
-	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
 	  		WHERE r.fk_user=u.rowid AND u.rowid=g.fk_user AND u.rowid=".$idUser;
 			if($typeAbsence!='Tous'){
@@ -59,7 +59,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbs
 	      
 	  	}
 	  	else{		//on recherche un groupe et un utilisateur
-	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u
 	  		WHERE r.fk_user=u.rowid AND u.rowid=".$idUser;
 			if($typeAbsence!='Tous'){
@@ -71,7 +71,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbs
 		$sql1.= " AND u.entity IN (0,".$conf->entity.") ";
 	}
 	else{ //on ne peut voir que ses propres absences
-		$sql1="SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.name, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
+		$sql1="SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u
 	  		WHERE r.fk_user=u.rowid AND u.rowid=".$user->id;
 			if($typeAbsence!='Tous'){

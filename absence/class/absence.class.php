@@ -1349,7 +1349,7 @@ class TRH_Absence extends TObjetStd {
 			global $conf;
 			
 			//on recherche les absences d'un groupe pendant la période
-			$sql="SELECT  a.rowid as 'ID', u.login, u.name,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
+			$sql="SELECT  a.rowid as 'ID', u.login, u.lastname,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
 				WHERE a.fk_user=u.rowid 
@@ -1373,7 +1373,7 @@ class TRH_Absence extends TObjetStd {
 
 			if($idUserRecherche!=0){
 				
-				$sql="SELECT DISTINCT u.login, u.name, u.firstname
+				$sql="SELECT DISTINCT u.login, u.lastname, u.firstname
 				FROM ".MAIN_DB_PREFIX."user as u 
 				WHERE u.rowid =".$idUserRecherche." AND u.rowid NOT IN (
 							SELECT a.fk_user 
@@ -1391,7 +1391,7 @@ class TRH_Absence extends TObjetStd {
 			}
 			//	on recherche les utilisateurs n'ayant pas eu d'absences pendant la période désirée
 			else if($idGroupeRecherche==0){ 
-				$sql="SELECT DISTINCT u.login, u.name, u.firstname
+				$sql="SELECT DISTINCT u.login, u.lastname, u.firstname
 				FROM ".MAIN_DB_PREFIX."user as u 
 				WHERE u.rowid NOT IN (
 							SELECT a.fk_user 
@@ -1410,7 +1410,7 @@ class TRH_Absence extends TObjetStd {
 			else
 			{	//	on recherche les utilisateurs d'un groupe n'ayant pas eu d'absences pendant la période désirée
 
-				$sql="SELECT DISTINCT g.fk_user,  u.login, u.name, u.firstname
+				$sql="SELECT DISTINCT g.fk_user,  u.login, u.lastname, u.firstname
 				FROM ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."user as u
 				WHERE u.rowid=g.fk_user";
 				if($idGroupeRecherche!=0){
@@ -1440,7 +1440,7 @@ class TRH_Absence extends TObjetStd {
 			global $conf;
 
 			//on recherche les absences d'un utilisateur pendant la période
-			$sql="SELECT a.rowid as 'ID',  u.login, u.name, u.firstname, 
+			$sql="SELECT a.rowid as 'ID',  u.login, u.lastname, u.firstname, 
 				DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
@@ -1552,7 +1552,7 @@ class TRH_Absence extends TObjetStd {
 		
 		if($idUserRecherche>0){	//on recherche une  personne précis
 	
-			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.name,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
+			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.lastname,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
 				WHERE a.fk_user=u.rowid 
@@ -1566,7 +1566,7 @@ class TRH_Absence extends TObjetStd {
 		}
 
 		else if($idGroupeRecherche>0){	//on recherche un groupe précis
-			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.name,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
+			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.lastname,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
 				WHERE a.fk_user=u.rowid 
@@ -1580,7 +1580,7 @@ class TRH_Absence extends TObjetStd {
 		
 		else
 		{	//on recherche pour tous les utilisateurs
-			$sql="SELECT a.rowid as 'ID',  u.rowid as 'idUser', u.login, u.name, u.firstname, 
+			$sql="SELECT a.rowid as 'ID',  u.rowid as 'idUser', u.login, u.lastname, u.firstname, 
 				DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, a.ddMoment, a.dfMoment,
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
@@ -1614,11 +1614,11 @@ class TRH_Absence extends TObjetStd {
 		//on récupère les différents utilisateurs concernés par la recherche
 		
 		if($idUserRecherche>0) {
-			$sql="SELECT u.rowid, u.login, u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u WHERE rowid=".$idUserRecherche;
+			$sql="SELECT u.rowid, u.login, u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u WHERE rowid=".$idUserRecherche;
 		}
 		else if($idGroupeRecherche!=0){	//on recherche un groupe précis
-			$sql="SELECT u.rowid, u.login, u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
-			WHERE u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupeRecherche." ORDER BY u.name";
+			$sql="SELECT u.rowid, u.login, u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
+			WHERE u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupeRecherche." ORDER BY u.lastname";
 		}else{
 			$sql="SELECT rowid, login, name, firstname FROM ".MAIN_DB_PREFIX."user";
 		}

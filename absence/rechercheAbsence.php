@@ -66,7 +66,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 	//tableau pour la combobox des utilisateurs
 	$TUser=array();
 	$TUser[0]='Tous';
-	$sqlReqUser="SELECT u.rowid, u.name,  u.firstname FROM `".MAIN_DB_PREFIX."user` as u";
+	$sqlReqUser="SELECT u.rowid, u.lastname,  u.firstname FROM `".MAIN_DB_PREFIX."user` as u";
 
 	$ATMdb->Execute($sqlReqUser);
 	while($ATMdb->Get_line()) {

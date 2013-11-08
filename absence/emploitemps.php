@@ -86,7 +86,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	$r = new TSSRenderControler($emploiTemps);
 	$sql="SELECT DISTINCT e.rowid as 'ID', e.date_cre as 'DateCre', 
 	 e.fk_user as 'Id Utilisateur', '' as 'Emploi du temps', u.login,
-	u.firstname, u.name, '' as '','' as ''
+	u.firstname, u.lastname, '' as '','' as ''
 		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."user as u
 		WHERE e.entity IN (0,".$conf->entity.") AND u.rowid=e.fk_user ";
 

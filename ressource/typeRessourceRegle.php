@@ -104,7 +104,7 @@ function _liste(&$ATMdb, &$ressourceType, &$regle) {
 		</table><br>';
 		
 	$r = new TSSRenderControler($ressourceType);
-	$sql="SELECT DISTINCT r.rowid as 'ID', r.choixApplication as 'CA',  r.choixLimite as 'CL', u.firstname ,u.name, g.nom as 'Groupe',
+	$sql="SELECT DISTINCT r.rowid as 'ID', r.choixApplication as 'CA',  r.choixLimite as 'CL', u.firstname ,u.lastname, g.nom as 'Groupe',
 		duree, dureeInt,dureeExt,dataIllimite, dataIphone, mailforfait, smsIllimite, data15Mo, '' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)

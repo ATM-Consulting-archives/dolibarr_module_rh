@@ -5,21 +5,21 @@
 	
 	
 	llxHeader('','Calendrier des ressources', '', '', 0,0,
-		array(//"/library/wdCalendar/src/jquery.js"   
-			"/library/wdCalendar/src/Plugins/Common.js"    
-			,"/library/wdCalendar/src/Plugins/datepicker_lang_FR.js" 
-			,"/library/wdCalendar/src/Plugins/jquery.datepicker.js" 
-			,"/library/wdCalendar/src/Plugins/jquery.alert.js"   
-			,"/library/wdCalendar/src/Plugins/jquery.ifrmdailog.js" 
-			,"/library/wdCalendar/src/Plugins/wdCalendar_lang_FR.js" 
-			,"/library/wdCalendar/src/Plugins/jquery.calendar.js" )
+		array(//"/rhlibrary/wdCalendar/src/jquery.js"   
+			"/rhlibrary/wdCalendar/src/Plugins/Common.js"    
+			,"/rhlibrary/wdCalendar/src/Plugins/datepicker_lang_FR.js" 
+			,"/rhlibrary/wdCalendar/src/Plugins/jquery.datepicker.js" 
+			,"/rhlibrary/wdCalendar/src/Plugins/jquery.alert.js"   
+			,"/rhlibrary/wdCalendar/src/Plugins/jquery.ifrmdailog.js" 
+			,"/rhlibrary/wdCalendar/src/Plugins/wdCalendar_lang_FR.js" 
+			,"/rhlibrary/wdCalendar/src/Plugins/jquery.calendar.js" )
 	
 	
-		,array("/library/wdCalendar/css/dailog.css" 
-			,"/library/wdCalendar/css/calendar.css"
-			,"/library/wdCalendar/css/dp.css" 
-			,"/library/wdCalendar/css/alert.css" 
-			,"/library/wdCalendar/css/main.css")
+		,array("/rhlibrary/wdCalendar/css/dailog.css" 
+			,"/rhlibrary/wdCalendar/css/calendar.css"
+			,"/rhlibrary/wdCalendar/css/dp.css" 
+			,"/rhlibrary/wdCalendar/css/alert.css" 
+			,"/rhlibrary/wdCalendar/css/main.css")
 	);
 	
 		

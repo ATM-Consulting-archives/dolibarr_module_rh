@@ -5,20 +5,20 @@
 //print_r(get_defined_vars());	
 	llxHeader('','Calendrier des absences', '', '', 0,0,
 		array(//"/library/wdCalendar/src/jquery.js"   
-			"/library/wdCalendar/src/Plugins/Common.js"    
-			,"/library/wdCalendar/src/Plugins/datepicker_lang_FR.js" 
-			,"/library/wdCalendar/src/Plugins/jquery.datepicker.js" 
-			,"/library/wdCalendar/src/Plugins/jquery.alert.js"   
-			,"/library/wdCalendar/src/Plugins/jquery.ifrmdailog.js" 
-			,"/library/wdCalendar/src/Plugins/wdCalendar_lang_FR.js" 
-			,"/library/wdCalendar/src/Plugins/jquery.calendar.js" )
+			"/rhlibrary/wdCalendar/src/Plugins/Common.js"    
+			,"/rhlibrary/wdCalendar/src/Plugins/datepicker_lang_FR.js" 
+			,"/rhlibrary/wdCalendar/src/Plugins/jquery.datepicker.js" 
+			,"/rhlibrary/wdCalendar/src/Plugins/jquery.alert.js"   
+			,"/rhlibrary/wdCalendar/src/Plugins/jquery.ifrmdailog.js" 
+			,"/rhlibrary/wdCalendar/src/Plugins/wdCalendar_lang_FR.js" 
+			,"/rhlibrary/wdCalendar/src/Plugins/jquery.calendar.js" )
 	
 	
-		,array("/library/wdCalendar/css/dailog.css" 
-			,"/library/wdCalendar/css/calendar.css"
-			,"/library/wdCalendar/css/dp.css" 
-			,"/library/wdCalendar/css/alert.css" 
-			,"/library/wdCalendar/css/main.css")
+		,array("/rhlibrary/wdCalendar/css/dailog.css" 
+			,"/rhlibrary/wdCalendar/css/calendar.css"
+			,"/rhlibrary/wdCalendar/css/dp.css" 
+			,"/rhlibrary/wdCalendar/css/alert.css" 
+			,"/rhlibrary/wdCalendar/css/main.css")
 	);
 		
 	$ATMdb=new Tdb;
@@ -71,9 +71,9 @@
 		if($ATMdb->Get_line()) {
 			$TabUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(html_entity_decode(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
 		}
-		$sql="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u";
+		$sql="SELECT u.rowid,u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u";
 	}else{
-		$sql="SELECT u.rowid,u.name, u.firstname FROM ".MAIN_DB_PREFIX."user as u,
+		$sql="SELECT u.rowid,u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u,
 		".MAIN_DB_PREFIX."usergroup_user as g 
 		WHERE g.fk_user=u.rowid AND g.fk_usergroup=".$idGroupe;
 	}

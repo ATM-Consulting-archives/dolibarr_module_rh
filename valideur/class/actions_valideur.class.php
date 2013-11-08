@@ -71,7 +71,7 @@ class ActionsValideur
             }
                    
             $sql = "SELECT n.rowid, n.ref, n.tms, n.total_ht, n.total_ttc, n.fk_user, n.statut, n.fk_soc, n.dates, n.datee,
-			u.rowid as uid, u.name, u.firstname, s.nom AS soc_name, s.rowid AS soc_id, u.login, n.total_tva, SUM(p.amount) AS already_paid 
+			u.rowid as uid, u.lastname, u.firstname, s.nom AS soc_name, s.rowid AS soc_id, u.login, n.total_tva, SUM(p.amount) AS already_paid 
 			FROM (((((".MAIN_DB_PREFIX."ndfp as n 
 			LEFT JOIN ".MAIN_DB_PREFIX."ndfp_pay_det as p ON (p.fk_ndfp = n.rowid))
 			       LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (n.fk_user = u.rowid))
@@ -108,7 +108,7 @@ class ActionsValideur
 	        }
 	        if ($parameters[4])
 	        {
-	            $sql.= ' AND (u.name LIKE \'%'.$db->escape(trim($parameters[4])).'%\' OR u.firstname LIKE \'%'.$db->escape(trim($parameters[4])).'%\')';
+	            $sql.= ' AND (u.lastname LIKE \'%'.$db->escape(trim($parameters[4])).'%\' OR u.firstname LIKE \'%'.$db->escape(trim($parameters[4])).'%\')';
 	        }
 	
 	        if ($parameters[5])

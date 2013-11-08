@@ -66,7 +66,7 @@ function _liste(&$ATMdb, $regle) {
 	print dol_get_fiche_head(reglePrepareHead($regle,'regle')  , 'regle', 'Règles');
 		
 	$r = new TSSRenderControler($regle);
-	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.name) as 'Utilisateur', g.nom as 'Groupe',
+	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.lastname) as 'Utilisateur', g.nom as 'Groupe',
 		r.typeAbsence, r.nbJourCumulable , r.restrictif as 'Restrictif', '' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_absence_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)

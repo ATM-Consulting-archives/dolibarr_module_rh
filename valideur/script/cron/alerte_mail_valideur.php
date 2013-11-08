@@ -11,7 +11,7 @@
 	$ATMdb=new TPDOdb;
 	$langs->load('mails');
 	
-	$sql = "SELECT u.rowid, u.name,u.firstname,u.email 
+	$sql = "SELECT u.rowid, u.lastname,u.firstname,u.email 
 	FROM ".MAIN_DB_PREFIX."user u LEFT JOIN ".MAIN_DB_PREFIX."rh_valideur_groupe v ON (v.fk_user=u.rowid)
 	WHERE u.email!=''
 	AND v.type='NDFP'";

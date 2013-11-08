@@ -92,7 +92,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 						l.rowid
 						, l.total_ht * IFNULL(  a.pourcentage, 100 ) / 100  as 'total_ht'
 						, a.code as 'code_analytique'
-						,u.firstname,u.name,u.rowid as 'fk_user'
+						,u.firstname,u.lastname,u.rowid as 'fk_user'
 					
 					FROM ".MAIN_DB_PREFIX."ndfp_det as l
 						LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp
@@ -236,7 +236,7 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 					,e.COMPTE_TIERS as 'compte_tiers'
 					,u.login as 'login'
 					,u.firstname as 'firstname'
-					,u.name as 'lastname'
+					,u.lastname as 'lastname'
 					FROM ".MAIN_DB_PREFIX."ndfp as n
 					LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = n.fk_user
 						LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as e ON u.rowid = e.fk_object

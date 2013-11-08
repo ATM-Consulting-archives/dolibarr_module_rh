@@ -21,7 +21,7 @@ function send_mail_formulaire($object)
 		$titre_form=$ATMdb->Get_field('surveyls_title');
 	}
 	
-	$sql="SELECT u.firstname, u.name, u.email
+	$sql="SELECT u.firstname, u.lastname, u.email
 		FROM ".MAIN_DB_PREFIX."user as u
 		LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (u.rowid=g.fk_user)
 		WHERE g.fk_usergroup = ".$object->fk_usergroup;

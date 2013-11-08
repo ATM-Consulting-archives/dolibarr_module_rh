@@ -432,7 +432,7 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 	
 	if($k>0)
 	{	$sql="SELECT COUNT(a.rowid) as 'nbrAbsence', a.rowid as 'ID', a.date_cre as 'DateCre',DATE(a.date_debut) as 'date_debut', DATE(a.date_fin) as 'Date Fin', 
-				  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  CONCAT(u.firstname,' ',u.name) as 'Utilisateur',
+				  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  CONCAT(u.firstname,' ',u.lastname) as 'Utilisateur',
 				  a.libelleEtat as 'Statut demande', '' as 'Supprimer'
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE a.fk_user IN(".implode(',', $TabUser).") AND u.rowid=a.fk_user AND a.etat LIKE 'Avalider'";

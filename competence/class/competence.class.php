@@ -152,16 +152,19 @@ class TRH_competence_cv extends TObjetStd {
 		//print_r($recherche);
 		$sql="";
 		foreach($recherche as $tagRecherche){
+			
+			/* TODO réécrire */
+			
 			if($k==0){
 				$sql.="SELECT c.fk_user_formation as 'ID' , u.rowid as 'fkuser', c.rowid , c.date_cre as 'DateCre', 
-			 	CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence, c.fk_user, COUNT(*) as 'Niveau'
+			 	CONCAT(u.firstname,' ',u.lastname) as 'name' ,c.libelleCompetence, c.fk_user, COUNT(*) as 'Niveau'
 				FROM   ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."user as u 
 				WHERE c.fk_user=u.rowid AND( ";
 		 		$sql.=$this->separerEt($tagRecherche). ") GROUP BY c.fk_user ";
 		 		
 		 	}else{
 		 		$sql.=" UNION SELECT c.fk_user_formation as 'ID' , u.rowid as 'fkuser', c.rowid , c.date_cre as 'DateCre', 
-			 	CONCAT(u.firstname,' ',u.name) as 'name' ,c.libelleCompetence, c.fk_user, COUNT(*) as 'Niveau'
+			 	CONCAT(u.firstname,' ',u.lastname) as 'name' ,c.libelleCompetence, c.fk_user, COUNT(*) as 'Niveau'
 				FROM   ".MAIN_DB_PREFIX."rh_competence_cv as c, ".MAIN_DB_PREFIX."user as u 
 				WHERE  c.fk_user=u.rowid AND( ";
 		 		$sql.=$this->separerEt($tagRecherche). ") GROUP BY c.fk_user ";

@@ -162,7 +162,7 @@ function _liste(&$ATMdb, &$absence) {
 
 	//LISTE D'ABSENCES DU COLLABORATEUR
 	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-			a.libelle,a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
+			a.libelle,a.fk_user,  a.fk_user, u.login, u.firstname, u.lastname,
 			a.etat, a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user";
@@ -252,7 +252,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 	//droits d'admin : accès à toutes les absences sur la liste
 
 	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-		 	a.libelle, ROUND(a.duree ,1) as 'duree', a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
+		 	a.libelle, ROUND(a.duree ,1) as 'duree', a.fk_user,  a.fk_user, u.login, u.firstname, u.lastname,
 		  	a.etat, a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE u.rowid=a.fk_user";
@@ -364,7 +364,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 	if($k==1){		//on n'a qu'un groupe de validation
 		$sql=" SELECT DISTINCT u.fk_user, 
 				a.rowid as 'ID', a.date_cre  as 'DateCre',a.date_debut, a.date_fin, 
-			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.name,
+			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.lastname,
 			 	a.libelleEtat as 'Statut demande', a.avertissement
 				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
 				".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as s
@@ -393,7 +393,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 	}else if($k>1){		//on a plusieurs groupes de validation
 		$sql=" SELECT DISTINCT u.fk_user, 
 				a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
-			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.name,
+			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.lastname
 			 	a.libelleEtat as 'Statut demande', a.avertissement
 				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
 				".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as s
@@ -632,7 +632,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 //print "admin";
 //print_r( $typeAbsenceCreable);
 	}else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
-		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
+		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.lastname,  s.firstname 
 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as u ON (v.fk_usergroup=u.fk_usergroup)
 				INNER JOIN ".MAIN_DB_PREFIX."user as s ON (s.rowid=u.fk_user)  
 			WHERE v.fk_user=".$user->id." 
@@ -674,13 +674,13 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		
 		
 		if(!$user->rights->absence->myactions->creerAbsenceCollaborateur && !$user->rights->absence->myactions->creerAbsenceCollaborateurGroupe) {
-			$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.name,  s.firstname 
+			$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.lastname,  s.firstname 
 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as u ON (v.fk_usergroup=u.fk_usergroup)
 				INNER JOIN ".MAIN_DB_PREFIX."user as s ON (s.rowid=u.fk_user)  
 			WHERE v.fk_user=".$user->id." 
 			AND v.type='Conges'
 			AND v.pointeur=1
-			ORDER BY s.name
+			ORDER BY s.lastname
 			";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {

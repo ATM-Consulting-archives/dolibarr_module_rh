@@ -134,7 +134,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 		}	
 	
 	$sql = "SELECT DISTINCT e.rowid as 'ID', u.rowid as idUser, 
-			CONCAT(u.firstname,' ',u.name) as 'Utilisateur', ".$jointureChamps;
+			CONCAT(u.firstname,' ',u.lastname) as 'Utilisateur', ".$jointureChamps;
 	if($user->rights->ressource->ressource->manageEvents){
 		$sql.=",'' as 'Supprimer'";
 	}

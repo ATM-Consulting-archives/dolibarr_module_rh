@@ -11,7 +11,7 @@
 	$ATMdb=new TPDOdb;
 	$langs->load('mails');
 	
-	$sql = "SELECT r.numId, r.libelle, u.name, u.firstname, e.date_fin
+	$sql = "SELECT r.numId, r.libelle, u.lastname, u.firstname, e.date_fin
 	FROM ".MAIN_DB_PREFIX."user u
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement e ON (e.fk_user=u.rowid)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource r ON (e.fk_rh_ressource=r.rowid)
