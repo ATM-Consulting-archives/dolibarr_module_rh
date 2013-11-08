@@ -17,7 +17,7 @@ $idVoiture = getIdType('voiture');
 
 //chargement des voitures
 $TVoitures = getRessource($idVoiture);
-$sql = "SELECT r.rowid, fk_utilisatrice,  immatriculation , marquevoit, modlevoit, name, firstname, date_debut, date_fin
+$sql = "SELECT r.rowid, fk_utilisatrice,  immatriculation , marquevoit, modlevoit, lastname, firstname, date_debut, date_fin
 	FROM ".MAIN_DB_PREFIX."rh_ressource as r
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (
 										e.type='emprunt' 

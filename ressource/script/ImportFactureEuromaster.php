@@ -20,7 +20,7 @@ $ATMdb=new TPDOdb;
 $timestart=microtime(true);
 
 $TUser = array();
-$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
+$sql="SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
@@ -207,7 +207,7 @@ function getUser(&$listeEmprunts , $id, $jour){
 
 function chargeEmprunts(&$ATMdb){
 	global $conf;
-	$sqlReq="SELECT DISTINCT e.date_debut, e.date_fin , e.fk_user, e.fk_rh_ressource, firstname, name 
+	$sqlReq="SELECT DISTINCT e.date_debut, e.date_fin , e.fk_user, e.fk_rh_ressource, u.firstname, u.lastname 
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e  
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user=u.rowid) 
 	WHERE e.type='emprunt'

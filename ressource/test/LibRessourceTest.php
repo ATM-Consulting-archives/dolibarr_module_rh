@@ -263,7 +263,7 @@ class LibRessourceTest extends PHPUnit_Framework_TestCase
     	global $ress, $ATMdb, $conf ;
 		$TGroups = getGroups();
 		$TRowidUser = array();
-		$sql="SELECT rowid, name, firstname, login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
+		$sql="SELECT rowid, lastname, firstname, login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
 			$TRowidUser[] = $ATMdb->Get_field('rowid');

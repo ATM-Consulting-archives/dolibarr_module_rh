@@ -17,7 +17,7 @@ $entity = (isset($_REQUEST['entity'])) ? $_REQUEST['entity'] : $conf->entity;
 $ATMdb=new TPDOdb;
 
 $TUser = array();
-$sql="SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user";
+$sql="SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."user";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');

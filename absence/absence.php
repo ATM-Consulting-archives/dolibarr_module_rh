@@ -5,7 +5,7 @@
 	
 	$langs->load('absence@absence');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$absence=new TRH_Absence;
 
 	if(isset($_REQUEST['action'])) {
@@ -211,7 +211,7 @@ function _liste(&$ATMdb, &$absence) {
 			,'avertissement'=>'Règle'
 			,'libelle'=>'Type d\'absence'
 			,'firstname'=>'Prénom'
-			,'name'=>'Nom'
+			,'lastname'=>'Nom'
 			,'login'=>'Login'
 			,'etat'=>'Statut demande'
 		)
@@ -299,7 +299,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			,'avertissement'=>'Règle'
 			,'libelle'=>'Type d\'absence'
 			,'firstname'=>'Prénom'
-			,'name'=>'Nom'
+			,'lastname'=>'Nom'
 			,'login'=>'Login'
 			,'duree'=>'Durée (en jour)'
 			,'etat'=>'Statut demande'
@@ -497,7 +497,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				,'date_fin'=>'Date fin'
 				,'avertissement'=>'Règle'
 				,'firstname'=>'Prénom'
-				,'name'=>'Nom'
+				,'lastname'=>'Nom'
 				
 			)
 			,'search'=>array(
@@ -614,7 +614,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$comboAbsence=0;
 	//création du tableau des utilisateurs liés au groupe du valideur, pour créer une absence, pointage...
 	$TUser = array();
-	$sql="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id;
+	$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id;
 	$ATMdb->Execute($sql);
 	if($ATMdb->Get_line()){
 		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
@@ -624,7 +624,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$droitAdmin=0;
 
 	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
-		$sql="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user`";
+		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 		$comboAbsence=2;
 		$typeAbsenceCreable=$absence->TTypeAbsenceAdmin;

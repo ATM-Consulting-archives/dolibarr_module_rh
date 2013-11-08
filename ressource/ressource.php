@@ -191,7 +191,7 @@ function _liste(&$ATMdb, &$ressource) {
 	
 	$r = new TSSRenderControler($ressource);
 	$sql="SELECT r.rowid as 'ID', r.date_cre as 'DateCre', r.libelle, r.fk_rh_ressource_type,
-		r.numId , name as 'Statut', firstname, name 
+		r.numId , name as 'Statut', firstname, lastname 
 		,GROUP_CONCAT(CONCAT(ua.code,'(',ua.pourcentage,'%)') SEPARATOR ', ' ) as 'Codes analytiques' ";
 	
 	if(!empty($_REQUEST['TListTBS']['list_llx_rh_ressource']['search'])) {

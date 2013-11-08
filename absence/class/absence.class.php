@@ -226,7 +226,7 @@ class TRH_Absence extends TObjetStd {
 		global $conf;
 		$TUser=array();
 		$TUser[0] = 'Tous';	
-		$sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` 
+		$sqlReqUser="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` 
 						ORDER BY name";
 		$ATMdb->Execute($sqlReqUser);
 
@@ -1620,7 +1620,7 @@ class TRH_Absence extends TObjetStd {
 			$sql="SELECT u.rowid, u.login, u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
 			WHERE u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupeRecherche." ORDER BY u.lastname";
 		}else{
-			$sql="SELECT rowid, login, name, firstname FROM ".MAIN_DB_PREFIX."user";
+			$sql="SELECT rowid, login, lastname, firstname FROM ".MAIN_DB_PREFIX."user";
 		}
 		$ATMdb->Execute($sql);
 		while ($ATMdb->Get_line()) {
@@ -2007,7 +2007,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		
 		//LISTE DE USERS
 		$this->TUser = array();
-		$sqlReq="SELECT rowid, firstname, name FROM ".MAIN_DB_PREFIX."user";
+		$sqlReq="SELECT rowid, firstname, lastname FROM ".MAIN_DB_PREFIX."user";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($ATMdb->Get_field('name'), ENT_COMPAT , 'ISO8859-1');

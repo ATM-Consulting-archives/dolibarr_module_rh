@@ -17,7 +17,7 @@ echo 'Import initial des badges AREA.<br><br>';
 $idVoiture=  getIdType('voiture');
 //on charge quelques listes pour avoir les clés externes.
 $TTrigramme = array();
-$sql="SELECT rowid, name, firstname,login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0, ".$conf->entity.")";
+$sql="SELECT rowid, lastname, firstname,login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0, ".$conf->entity.")";
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
 	 /*strtoupper($ATMdb->Get_field('firstname')).' '.strtoupper($ATMdb->Get_field('name'))*/

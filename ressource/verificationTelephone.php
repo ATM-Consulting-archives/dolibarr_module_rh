@@ -84,7 +84,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $mode) {
 	
 	$TUser = array();
 	$TRowidUser = array();
-	$sql="SELECT rowid, name, firstname, login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
+	$sql="SELECT rowid, lastname, firstname, login FROM ".MAIN_DB_PREFIX."user WHERE entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		$TUser[strtolower($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
@@ -128,7 +128,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $mode) {
 	
 	
 	
-	$sql="SELECT dureeI, dureeE, duree, u.rowid as 'idUser', name, firstname, fk_rh_ressource
+	$sql="SELECT dureeI, dureeE, duree, u.rowid as 'idUser', u.lastname, u.firstname, fk_rh_ressource
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 	LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as c ON (c.fk_object = e.fk_user)
