@@ -161,17 +161,10 @@
 		<br>
 		
 		
-		
 
-		
-
-		<script>
-			//	script vérifiant que la date de début ne dépasse pas celle de fin
-			$(document).ready( function(){
-				$("#dfMoment").val('apresmidi');
-				//on empêche que la date de début dépasse pas celle de fin
-				function comparerDates(){
-
+		<script type="text/javascript">
+			function comparerDates(){
+			/* TODO AA réécrire,  à chier  */
 					var t1 = $("#date_debut").val().split('/');
 					var t2 = $("#date_fin").val().split('/');
 					jd = t1[0];
@@ -208,259 +201,67 @@
 					else{return;}
 					
 					
-				};
+			}
+			function loadRecapCompteur() {
 				
+					$.ajax({
+						url: 'script/chargerCompteurDemandeAbsence.php?user='+$('#fk_user').val()
+					}).done(function(data) {
+						liste = JSON.parse(data);
+	
+						$('#reste').empty();
+						$('#reste').append(liste.reste);
+						
+						$('#cumule').empty();
+						$('#cumule').append(liste.annuelCumule);
+						
+						$('#noncumule').empty();
+						$('#noncumule').append(liste.annuelNonCumule);
+						
+						$('#mensuel').empty();
+						$('#mensuel').append(liste.mensuel);
+	
+					});
+				
+				
+			}
+			
+			function loadRecapAbsence() {
+				
+					$.ajax({
+						url: 'script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user').val()
+					}).done(function(data) {
+						liste = JSON.parse(data);
+						$('#TRecapAbs').html('');
+						for (var i=0; i<liste.length; i++){
+							var texte = "<tr>"
+								+"<td>"+liste[i].date_debut+"</td>"
+								+"<td>"+liste[i].date_fin+"</td>"
+								+"<td>"+liste[i].libelle+"</td>"
+								+"<td>"+liste[i].libelleEtat+"</td>"
+								+"</tr>";
+							$('#TRecapAbs').html($('#TRecapAbs').html()+texte);
+						}
+					});
+				
+				
+			}
+			
+			//	script vérifiant que la date de début ne dépasse pas celle de fin
+			$(document).ready( function(){
+				$("#dfMoment").val('apresmidi');
 				$("#date_debut").change(comparerDates);
 				$("#date_fin").change(comparerDates);
 				$("#ddMoment").change(comparerDates);
 				$("#dfMoment").change(comparerDates);
+				
+				loadRecapCompteur();
+				loadRecapAbsence()
 			});
-		</script>
-		
-		<script>
-		//	script qui charge le compteur de jours du salarié
-		$(document).ready( function(){
-			
-			if($('#userRecapCompteur').val()==0){
 				
-				if($('#userAbsenceCree').val()!=0){
-					var urlajax='script/chargerCompteurDemandeAbsence.php?user='+$('#userAbsenceCree').val();
-				}else{	
-					
-					if($('#fk_user option:selected').val()){
-						var urlajax='script/chargerCompteurDemandeAbsence.php?user='+$('#fk_user option:selected').val();
-					}else{
-						var urlajax='script/chargerCompteurDemandeAbsence.php?user='+$('#fk_user').val();
-					}			
-					
-				}
-				
-				$.ajax({
-					url: urlajax
-				}).done(function(data) {
-
-					liste = JSON.parse(data);
-
-					$('#reste').empty();
-					$('#reste').append(liste.reste);
-					
-					$('#cumule').empty();
-					$('#cumule').append(liste.annuelCumule);
-					
-					$('#noncumule').empty();
-					$('#noncumule').append(liste.annuelNonCumule);
-					
-					$('#mensuel').empty();
-					$('#mensuel').append(liste.mensuel);
-
-				});
-			}
-			else{
-				$.ajax({
-					url: 'script/chargerCompteurDemandeAbsence.php?user='+$('#userRecapCompteur').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
-
-					$('#reste').empty();
-					$('#reste').append(liste.reste);
-					
-					$('#cumule').empty();
-					$('#cumule').append(liste.annuelCumule);
-					
-					$('#noncumule').empty();
-					$('#noncumule').append(liste.annuelNonCumule);
-					
-					$('#mensuel').empty();
-					$('#mensuel').append(liste.mensuel);
-
-				});
-			}
-			
-		});
-		
 		$('#fk_user').change(function(){
-				//alert('top');
-				$.ajax({
-					url: 'script/chargerCompteurDemandeAbsence.php?user='+$('#fk_user option:selected').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
-
-					$('#reste').empty();
-					$('#reste').append(liste.reste);
-					
-					$('#cumule').empty();
-					$('#cumule').append(liste.annuelCumule);
-					
-					$('#noncumule').empty();
-					$('#noncumule').append(liste.annuelNonCumule);
-					
-					$('#mensuel').empty();
-					$('#mensuel').append(liste.mensuel);
-
-				});
+				loadRecapCompteur();
+				loadRecapAbsence()
 		});
 		</script>
-
-
-	<script>
-		// 	script qui charge les dernières absences de l'utilisateur
-		$(document).ready( function(){
-			
-			if($('#userRecapCompteur').val()==0){
-
-				if($('#userAbsenceCree').val()!=0){
-					
-					var urlajax='script/chargerRecapAbsenceUser.php?idUser='+$('#userAbsenceCree').val();
-				}else{	
-					
-					if($('#fk_user option:selected').val()){
-						var urlajax='script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user option:selected').val();
-					}else{
-						var urlajax='script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user').val();
-					}				
-				}
-				
-				$.ajax({
-					url: urlajax//'script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user option:selected').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
-					$('#TRecapAbs').html('');
-					for (var i=0; i<liste.length; i++){
-						var texte = "<tr>"
-							+"<td>"+liste[i].date_debut+"</td>"
-							+"<td>"+liste[i].date_fin+"</td>"
-							+"<td>"+liste[i].libelle+"</td>"
-							+"<td>"+liste[i].libelleEtat+"</td>"
-							+"</tr>";
-						$('#TRecapAbs').html($('#TRecapAbs').html()+texte);
-					}
-				});
-			}
-			else{
-				$.ajax({
-					url: 'script/chargerRecapAbsenceUser.php?idUser='+$('#userRecapCompteur').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
-					$('#TRecapAbs').html('');
-					for (var i=0; i<liste.length; i++){
-						var texte = "<tr>"
-							+"<td>"+liste[i].date_debut+"</td>"
-							+"<td>"+liste[i].date_fin+"</td>"
-							+"<td>"+liste[i].libelle+"</td>"
-							+"<td>"+liste[i].libelleEtat+"</td>"
-							+"</tr>";
-						$('#TRecapAbs').html($('#TRecapAbs').html()+texte);
-					}
-				});
-			}
-		});
-		
-		$('#fk_user').change(function(){
-				$.ajax({
-					url: 'script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user option:selected').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
-					$('#TRecapAbs').html('');
-					for (var i=0; i<liste.length; i++){
-						var texte = "<tr>"
-							+"<td>"+liste[i].date_debut+"</td>"
-							+"<td>"+liste[i].date_fin+"</td>"
-							+"<td>"+liste[i].libelle+"</td>"
-							+"<td>"+liste[i].libelleEtat+"</td>"
-							+"</tr>";
-						$('#TRecapAbs').html($('#TRecapAbs').html()+texte);
-					}
-				});
-		});
-		</script>
-		
-		
-		
-		
-		<script>
-		/*<div>
-		[absenceCourante.titreRegle;strconv=no;protect=no] 
-		<table  class="liste formdoc noborder" style="width:100%">
-				<tr class="liste_titre">
-					<td><b>Type d'absence concerné</b></td>
-					<td><b>Nombre de jours cumulables possible</b></td>
-					<td><b>Restrictif</b></td>
-				</tr>
-				<tbody  id="TRecapRegle">
-					<tr class="pair">
-						<td>[TRegle.libelle;block=tr;strconv=no;protect=no]</td>
-						<td>[TRegle.nbJourCumulable;block=tr;strconv=no;protect=no]</td>
-						<td>[TRegle.restrictif;block=tr;strconv=no;protect=no]</td>
-					</tr>
-				</tbody>	
-		</table>
-		</div>
-		
-		// 	script qui charge les règles de l'utilisateur courant
-		$(document).ready( function(){
-			if($('#userRecapCompteur').val()==0){
-				
-				if($('#userAbsenceCree').val()!=0){
-					var urlajax='script/chargerRecapRegleUser.php?idUser='+$('#userAbsenceCree').val();
-				}else{	
-					
-					if($('#fk_user option:selected').val()){
-						var urlajax='script/chargerRecapRegleUser.php?idUser='+$('#fk_user option:selected').val();
-					}else{
-						var urlajax='script/chargerRecapRegleUser.php?idUser='+$('#fk_user').val();
-					}				
-				}
-				
-				$.ajax({
-					url: urlajax//'script/chargerRecapRegleUser.php?idUser='+$('#fk_user option:selected').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
-					$('#TRecapRegle').html('');
-					for (var i=0; i<liste.length; i++){
-						var texte = "<tr>"
-							+"<td>"+liste[i].libelle+"</td>"
-							+"<td>"+liste[i].nbJourCumulable+"</td>"
-							+"<td>"+liste[i].restrictif+"</td>"
-							+"</tr>";
-						$('#TRecapRegle').html($('#TRecapRegle').html()+texte);
-					}
-				});
-			}
-			else{
-				$.ajax({
-					url: 'script/chargerRecapRegleUser.php?idUser='+$('#userRecapCompteur').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
-					$('#TRecapRegle').html('');
-					for (var i=0; i<liste.length; i++){
-						var texte = "<tr>"
-							+"<td>"+liste[i].libelle+"</td>"
-							+"<td>"+liste[i].nbJourCumulable+"</td>"
-							+"<td>"+liste[i].restrictif+"</td>"
-							+"</tr>";
-						$('#TRecapRegle').html($('#TRecapRegle').html()+texte);
-					}
-				});
-			}
-		});
-		
-		$('#fk_user').change(function(){
-				$.ajax({
-					url: 'script/chargerRecapRegleUser.php?idUser='+$('#fk_user option:selected').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
-					$('#TRecapRegle').html('');
-					for (var i=0; i<liste.length; i++){
-						var texte = "<tr>"
-							+"<td>"+liste[i].libelle+"</td>"
-							+"<td>"+liste[i].nbJourCumulable+"</td>"
-							+"<td>"+liste[i].restrictif+"</td>"
-							+"</tr>";
-						$('#TRecapRegle').html($('#TRecapRegle').html()+texte);
-					}
-				});
-		});*/
-		</script>
-
-
 
