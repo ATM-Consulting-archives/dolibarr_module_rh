@@ -14,20 +14,17 @@ switch ($method) {
 }
 echo json_encode($ret); 
 
-function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbsence='Tous'){
+function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGroupe=0, $typeAbsence='Tous'){
 
   global $conf,$user;
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
-  $ret["start"] = php2JsTime($sd);
-  $ret["end"] = php2JsTime($ed);
+  $ret["start"] = $date_start;
+  $ret["end"] =$date_end;
   $ret['error'] = null;
-
   
-  try{
-
-	if($user->rights->absence->myactions->voirToutesAbsences){		//si on a le droit de voir toutes les absences
+  	if($user->rights->absence->myactions->voirToutesAbsences){		//si on a le droit de voir toutes les absences
 		
 		if($idUser==0&&$idGroupe==0){	//on affiche toutes les absences 
 	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat 
@@ -104,8 +101,8 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbs
 	     $ret['events'][] = array(
 	        $row->rowid,
 	        htmlentities($row->name, ENT_COMPAT , 'ISO8859-1').' '.htmlentities($row->firstname, ENT_COMPAT , 'ISO8859-1')." : ".$row->libelle,
-	        php2JsTime(mySql2PhpTime($row->date_debut)),
-	        php2JsTime(mySql2PhpTime($row->date_fin)),
+	        $row->date_debut,
+	        $row->date_fin,
 	        1,//$row->isAllDayEvent,
 	        0, //more than one day event
 	        //$row->InstanceType,
@@ -118,8 +115,23 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbs
 	      );
 	  }  
 	  
-	  //récupération des jours fériés 
-	$sql2=" SELECT DISTINCT * FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
+	$TJourFerie=getJourFerie($ATMdb);
+	$ret['events'] = array_merge($ret['events'], $TJourFerie); 
+      
+    $TAgenda=getAgendaEvent($ATMdb, $date_start, $date_end);
+	$ret['events'] = array_merge($ret['events'], $TAgenda); 
+    
+	$ret['events'] = $TAgenda;
+	 
+	
+
+  return $ret;
+}
+
+function getJourFerie(&$ATMdb) {
+	$Tab=array();
+		  //récupération des jours fériés 
+	$sql2=" SELECT moment,commentaire,date_jourOff,rowid FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
 	 WHERE entity IN (0,".$conf->entity.")";
 	 //AND date_jourOff <='".php2MySqlTime($ed)."' AND date_jourOff >='". php2MySqlTime($sd)."' ";
 	 //echo $sql2;
@@ -137,7 +149,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbs
 				$moment="Toute la journée";
 				break;
     	}
-	      $ret['events'][] = array(
+	      $Tab[] = array(
 	        $row->rowid,
 	        "Férié ".$moment." ".$row->commentaire,
 	        php2JsTime(mySql2PhpTime($row->date_jourOff)),
@@ -153,18 +165,14 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbs
 	      );
 	  
      }
-      
-     
-	}catch(Exception $e){
-     $ret['error'] = $e->getMessage();
-  }
-
-  return $ret;
+	
+	return $Tab;
+	
 }
 
 function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idGroupe, $typeAbsence){
   	
-  $phpTime = js2PhpTime($day);
+  /*$phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
   switch($type){
     case "month":
@@ -182,10 +190,102 @@ function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idGroupe, $typeAbsence)
       $st = mktime(0, 0, 0, date("m", $phpTime), date("d", $phpTime), date("Y", $phpTime));
       $et = mktime(0, 0, -1, date("m", $phpTime), date("d", $phpTime)+1, date("Y", $phpTime));
       break;
-  }
-  //echo $st . "--" . $et;
-  /*$ret=array();
-  $ret=listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idGroupe);*/
-  return listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idGroupe, $typeAbsence);
+	default:  
+	
+		$st = strtotime( date('Y-m-01', strtotime($day)) );
+		$et = strtotime( date('Y-m-t', strtotime($day)) );
+	  
+  }*/
+  
+  
+  $st = date('Y-m-01', strtotime($day)) ;
+  $et = date('Y-m-t', strtotime($day)) ;
+	  
+  
+
+	return listCalendarByRange($ATMdb, $st, $et, $idAbsence, $idGroupe, $typeAbsence);
 }
 
+function getAgendaEvent(&$ATMdb, $date_start, $date_end, $socid=0, $actioncode='', $pid=0, $status='', $filtera='', $filterd='',$filtert='') {
+global $user;
+			
+	$sql = 'SELECT a.id,a.label,';
+	$sql.= ' a.datep,';
+	$sql.= ' a.datep2,';
+	$sql.= ' a.datea,';
+	$sql.= ' a.datea2,';
+	$sql.= ' a.percent,';
+	$sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
+	$sql.= ' a.priority, a.fulldayevent, a.location,';
+	$sql.= ' a.fk_soc, a.fk_contact,';
+	$sql.= ' ca.code';
+	$sql.= ' FROM ('.MAIN_DB_PREFIX.'c_actioncomm as ca,';
+	$sql.= " ".MAIN_DB_PREFIX.'user as u,';
+	$sql.= " ".MAIN_DB_PREFIX."actioncomm as a)";
+	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+	$sql.= ' WHERE a.fk_action = ca.id';
+	$sql.= ' AND a.fk_user_author = u.rowid';
+	$sql.= ' AND a.entity IN ('.getEntity().')';
+	if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
+	if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
+	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
+	if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
+	
+	
+    $sql.= " AND (";
+    $sql.= " (datep BETWEEN '".$date_start."'";
+    $sql.= " AND '".$date_end."')";
+    $sql.= " OR ";
+    $sql.= " (datep2 BETWEEN '".$date_start."'";
+    $sql.= " AND '".$date_end."')";
+    $sql.= " OR ";
+    $sql.= " (datep < '".$date_start."'";
+    $sql.= " AND datep2 > '".$date_end."')";
+    $sql.= ')';
+
+    if ($type) $sql.= " AND ca.id = ".$type;
+	if ($status == 'done') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
+	if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
+	if ($filtera > 0 || $filtert > 0 || $filterd > 0)
+	{
+	    $sql.= " AND (";
+	    if ($filtera > 0) $sql.= " a.fk_user_author = ".$filtera;
+	    if ($filtert > 0) $sql.= ($filtera>0?" OR ":"")." a.fk_user_action = ".$filtert;
+	    if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
+	    $sql.= ")";
+	}
+	// Sort on date
+	$sql.= ' ORDER BY datep';
+	
+	
+	$ATMdb->Execute($sql);
+	$Tab = $ATMdb->Get_All();
+	
+	$TEvent=array();
+	
+	foreach($Tab as $row) {
+		
+		 if(empty($row->datep2)) $row->datep2 = date('Y-m-d H:i:s', strtotime($row->datep) + (60 * 30) ) ; // 1/2h
+		
+		
+		 $TEvent[] = array(
+	        $row->id
+	        , $row->label
+	        , $row->datep
+	        , $row->datep2
+	        ,1
+	        ,0, //more than one day event
+	        //$row->InstanceType,
+	        0,//Recurring event,
+	        1,//$row->color,
+	        1,//editable
+	        '/comm/action/fiche.php?id='.$row->id  //dol_build_path('/comm/action/fiche.php?id='.$row->id)
+	        ,
+	        '',//$attends
+	      );
+	  	
+		
+	}
+	
+	return $TEvent;
+}
