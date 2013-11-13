@@ -323,12 +323,16 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		$date_annee = $row->annee_date_debut;
 		//un VU : on prend le HT
 		//un VP on prend le TTC
-		if ($idTypeRessource==$idVoiture){
+		/*if ($idTypeRessource==$idVoiture){
 			$montant = (strtoupper($row->typeVehicule) == 'VP') ? $row->coutEntrepriseTTC : $row->coutEntrepriseHT;}
 		else {
-			$montant = $row->coutEntrepriseTTC;}
+			$montant = $row->coutEntrepriseTTC;
+		}*/
+		
+		$montant = $row->coutEntrepriseTTC;
+		
 		$sens = 'C';
-		$code_compta = '425902';
+		$code_compta = '425902'; //TODO paramètre
 		$type_compte = 'X';
 		
 		//if($row->fk_entity_utilisatrice==$entity || $row->$fk_fournisseur==$idTotal){
