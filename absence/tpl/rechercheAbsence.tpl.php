@@ -42,8 +42,8 @@
 		$('#groupe').change(function(){
 				$.ajax({
 					url: 'script/loadUtilisateurs.php?groupe='+$('#groupe option:selected').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
+					,dataType:'json'
+				}).done(function(liste) {
 					$("#user").empty(); // remove old options
 					$.each(liste, function(key, value) {
 					  $("#user").append($("<option></option>")
@@ -52,17 +52,6 @@
 				});
 		});
 		
-		/*$(document).ready( function(){
-			$.ajax({
-					url: 'script/loadUtilisateurs.php?groupe='+$('#groupe option:selected').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
-					$("#user").empty(); // remove old options
-					$.each(liste, function(key, value) {
-					  $("#user").append($("<option></option>")
-					     .attr("value", key).text(value));
-					});	
-			});
-		});*/
+		
 		</script>
 	
