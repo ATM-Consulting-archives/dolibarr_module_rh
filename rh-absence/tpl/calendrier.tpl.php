@@ -29,8 +29,8 @@
 				//alert('top');
 				$.ajax({
 					url: 'script/loadUtilisateurs.php?groupe='+$('#groupe option:selected').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
+					,dataType:'json'
+				}).done(function(liste) {
 					$("#idUtilisateur").empty(); // remove old options
 					$.each(liste, function(key, value) {
 					  $("#idUtilisateur").append($("<option></option>")

@@ -4,35 +4,7 @@
 Contrats dont la fin est comprise entre [infos.plagedebut;strconv=no;protect=no] et [infos.plagefin;strconv=no;protect=no] 
 [infos.valider;strconv=no;protect=no]<br><br>
 
-<script>
-/*
-function ajax(){
-	$.ajax({
-			url: 'script/loadContratLimite.php?plagedebut='+$('#date_debut').val()+'&plagefin='+$('#date_fin').val()
-		}).done(function(data) {
-			liste = JSON.parse(data);
-			$('#content').html('');
-			for (var i=0; i<liste.length; i++){
-				var texte = "<tr>"
-					+"<td>"+liste[i].societe+"</td>"
-					+"<td>"+liste[i].collaborateur+"</td>"
-					+"<td>"+liste[i].immatriculation+"</td>"
-					+"<td>"+liste[i].marque+"</td>"
-					+"<td>"+liste[i].version+"</td>"
-					+"<td>"+liste[i].loyer+"</td>"
-					+"<td>"+liste[i].assurance+"</td>"
-					+"<td>"+liste[i].entretien+"</td>"
-					+"<td>"+liste[i].date_debut+"</td>"
-					+"<td>"+liste[i].date_fin+"</td>"
-					+"<td>"+liste[i].fournisseur+"</td>"
-					+"</tr>";
-				$('#content').html($('#content').html()+texte);
-			}
-		});
-}
-*/
 
-</script>
 <div>
 	<table class="liste formdoc noborder" style="width:100%">
 		<thead >

@@ -44,11 +44,11 @@
 [onshow;block=end] 	
 
 <script>
-ajaxLoadType = function(){
+function ajaxLoadType(){
 	$.ajax({
 			url: 'script/loadTypeEvent.php?type='+$('#type option:selected').val()
-		}).done(function(data) {
-			liste = JSON.parse(data);
+			,dataType:'json'
+		}).done(function(liste) {
 			$("#typeEven").empty(); // remove old options
 			$.each(liste, function(key, value) {
 			  $("#typeEven").append($("<option></option>")
@@ -60,8 +60,8 @@ ajaxLoadType = function(){
 $('#type').change(function(){
 		$.ajax({
 			url: 'script/loadRessources.php?type='+$('#type option:selected').val()
-		}).done(function(data) {
-			liste = JSON.parse(data);
+			,dataType:'json'
+		}).done(function(liste) {
 			$("#id").empty(); // remove old options
 			$.each(liste, function(key, value) {
 			  $("#id").append($("<option></option>")
