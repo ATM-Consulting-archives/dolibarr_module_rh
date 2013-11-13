@@ -21,7 +21,7 @@
 			,"/rhlibrary/wdCalendar/css/main.css")
 	);
 		
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	global $user, $conf;
 	$absence=new TRH_absence;
 	if(isset($_REQUEST['id'])){

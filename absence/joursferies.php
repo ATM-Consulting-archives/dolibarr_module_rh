@@ -5,7 +5,7 @@
 	
 	$langs->load('absence@absence');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$feries=new TRH_JoursFeries;
 	$emploiTemps=new TRH_EmploiTemps;
 	

@@ -6,7 +6,7 @@ require('../config.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php");
 
 //Interface qui renvoie les congés maladie (maintenue ou non) et les jours ancienneté acquis du collaborateur souhaité durant la période demandée
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 
 $get = isset($_REQUEST['get'])?$_REQUEST['get']:'';
 

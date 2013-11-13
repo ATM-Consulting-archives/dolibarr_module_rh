@@ -5,7 +5,7 @@
 	
 	$langs->load('absence@absence');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$emploiTemps=new TRH_EmploiTemps;
 
 	if(isset($_REQUEST['action'])) {

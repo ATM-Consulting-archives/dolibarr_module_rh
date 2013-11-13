@@ -23,7 +23,7 @@
 	);
 	
 		
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$ressource=new TRH_ressource;
 	$ressource->load($ATMdb, $_REQUEST['id']);
 	
