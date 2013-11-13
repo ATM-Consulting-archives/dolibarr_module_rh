@@ -206,9 +206,9 @@
 				
 					$.ajax({
 						url: 'script/chargerCompteurDemandeAbsence.php?user='+$('#fk_user').val()
-					}).done(function(data) {
-						liste = JSON.parse(data);
-	
+						,dataType:'json'
+					}).done(function(liste) {
+						
 						$('#reste').empty();
 						$('#reste').append(liste.reste);
 						
@@ -230,8 +230,8 @@
 				
 					$.ajax({
 						url: 'script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user').val()
-					}).done(function(data) {
-						liste = JSON.parse(data);
+						,dataType:'json'
+					}).done(function(liste) {
 						$('#TRecapAbs').html('');
 						for (var i=0; i<liste.length; i++){
 							var texte = "<tr>"
