@@ -356,7 +356,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 				,'modePaiement'=> 'V'
 				,'dateEcheance'=> date('dmy')
 				,'sens'=> $sens
-				,'montant'=>  number_format($total_ht_anal,2,'.','')
+				,'montant'=>  $montant
 				,'typeEcriture'=> 'N'
 				,'numeroPiece'=> ''
 				,'devise'=>'EUR'
