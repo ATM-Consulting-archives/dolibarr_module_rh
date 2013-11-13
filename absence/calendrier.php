@@ -22,7 +22,7 @@
 	);
 		
 	$ATMdb=new Tdb;
-	global $user, $conf;
+	
 	$absence=new TRH_absence;
 	if(isset($_REQUEST['id'])){
 		$absence->load($ATMdb, $_REQUEST['id']);
@@ -113,8 +113,8 @@
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'calendrier', 'Absence')
 				,'head3'=>dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', 'Absence')
-				,'titreCalendar'=>load_fiche_titre("Agenda des absences",'', 'title.png', 0, '')
-				,'agendaEnabled'=>0
+				,'titreCalendar'=>load_fiche_titre("Mon planning",'', 'title.png', 0, '')
+				,'agendaEnabled'=>(int)$conf->agenda->enabled
 			)
 			
 			

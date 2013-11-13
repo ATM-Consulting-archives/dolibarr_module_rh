@@ -1,13 +1,13 @@
 <?php
 
-require('config.php');
-include_once("../rhlibrary/wdCalendar/php/functions.php");
+require('../config.php');
+include_once("../../rhlibrary/wdCalendar/php/functions.php");
 $ATMdb=new TPDOdb;
 
 $method = $_GET["method"];
 switch ($method) {
     case "list":
-	       	$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], $_GET['idUser'], $_GET['idGroupe'], $_GET['typeAbsence']);
+	       	$ret = listCalendar($ATMdb, $_REQUEST["showdate"], $_REQUEST["viewtype"], $_REQUEST['idUser'], $_REQUEST['idGroupe'], $_REQUEST['typeAbsence']);
 
         break; 
 
@@ -86,48 +86,6 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbs
    
   	$ATMdb->Execute($sql1);
     
-   /* while ($row = $ATMdb->Get_line()) {
-    	switch($row->type){
-			case 'rttcumule' : 
-				$color=6;
-				break;
-			case 'rttnoncumule':
-				$color=8;
-				break;
-			case 'conges':
-				$color=10;
-				break;
-			case 'maladiemaintenue':
-				$color=12;
-				break;
-			case 'maladienonmaintenue':
-				$color=14;
-				break;
-			case 'maternite':
-				$color=16;
-				break;
-			case 'paternite':
-				$color=18;
-				break;
-			case 'nonremuneree':
-				$color=15;
-				break;
-			case 'accidentdetravail':
-				$color=2;
-				break;
-			case 'maladieprofessionnelle':
-				$color=4;
-				break;
-			case 'congeparental':
-				$color=19;
-				break;
-			case 'accidentdetrajet':
-				$color=17;
-				break;
-			case 'mitempstherapeutique':
-				$color=0;
-				break;
-    	}*/
     while ($row = $ATMdb->Get_line()) {
     				
 		$idAbs[]=$row->rowid;

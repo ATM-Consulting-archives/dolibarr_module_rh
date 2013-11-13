@@ -385,12 +385,14 @@ div.cHead div.ptogtitle input
 
 div.ctoolbar
 {
-    BORDER-RIGHT: #99bbe8 1px solid;	
+    /*BORDER-RIGHT: #99bbe8 1px solid;	
     BORDER-TOP: #99bbe8 0px solid;	
-    BACKGROUND: #ccc url(images/calendar/tbg.gif)  repeat-x 50% top;	
-    OVERFLOW: hidden;	
+    BACKGROUND: #ccc url(images/calendar/tbg.gif)  repeat-x 50% top;
     BORDER-LEFT: #99bbe8 1px solid;
     BORDER-BOTTOM: #99bbe8 1px solid;	
+    
+    * */	
+    OVERFLOW: hidden;	
     POSITION: relative;
     HEIGHT: 25px
 }

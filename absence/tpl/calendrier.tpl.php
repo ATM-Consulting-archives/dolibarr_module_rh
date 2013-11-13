@@ -46,7 +46,7 @@
         $(document).ready(function() {     
             var view="month";          
            
-            var DATA_FEED_URL = "absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]&typeAbsence=[absence.typeAbsence;strconv=no;protect=no]"
+            var DATA_FEED_URL = "./script/absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]&typeAbsence=[absence.typeAbsence;strconv=no;protect=no]"
             var op = {
                 view: view,
                 theme:3,
@@ -86,20 +86,8 @@
             });
             function cal_beforerequest(type)
             {
-                var t="Loading data...";
-                switch(type)
-                {
-                    case 1:
-                        t="Loading data...";
-                        break;
-                    case 2:                      
-                    case 3:  
-                    case 4:    
-                        t="The request is being processed ...";                                   
-                        break;
-                }
                 $("#errorpannel").hide();
-                $("#loadingpannel").html(t).show();    
+                $("#loadingpannel").show();    
             }
             function cal_afterrequest(type)
             {
@@ -235,28 +223,31 @@
     <div>
 
       <div id="calhead" style="padding-left:1px;padding-right:1px;">          
-            <div class="cHead"><div class="ftitle">Mon calendrier</div>
             <div id="loadingpannel" class="ptogtitle loadicon" style="display: none;">Chargement...</div>
              <div id="errorpannel" class="ptogtitle loaderror" style="display: none;">Impossible de charger les données.</div>
             </div>          
             
             <div id="caltoolbar" class="ctoolbar">
-              <!--<div id="faddbtn" class="fbutton">
-                <div><span title='Click to Create New Event' class="addcal">
-
-                Nouvel Evénement                
-                </span></div>
-            </div>-->
-            <div class="btnseparator"></div>
+            <div>
+            	[onshow; block=div; when [view.agendaEnabled]==1]
+	            <div id="faddbtn" class="fbutton">
+	                <div><span title='Click to Create New Event' class="addcal">
+	
+	                Nouvel Evénement                
+	                </span></div>
+	            </div>
+	            <div class="btnseparator"></div>
+            </div>
              <div id="showtodaybtn" class="fbutton">
                 <div><span title='Click to back to today ' class="showtoday">
                 Aujourd'hui</span></div>
             </div>
               <div class="btnseparator"></div>
 
-            <!--<div id="showdaybtn" class="fbutton">
+           <div id="showdaybtn" class="fbutton">
+           	[onshow; block=div; when [view.agendaEnabled]==1]
                 <div><span title='Day' class="showdayview">Jour</span></div>
-            </div>-->
+            </div>
               <div  id="showweekbtn" class="fbutton">
                 <div><span title='Week' class="showweekview">Semaine</span></div>
             </div>
@@ -289,20 +280,12 @@
       </div>
       <div style="padding:1px;">
 
-        <div class="t1 chromeColor">
-            &nbsp;</div>
-        <div class="t2 chromeColor">
-            &nbsp;</div>
+        
         <div id="dvCalMain" class="calmain printborder">
             <div id="gridcontainer" style="overflow-y: visible;">
             </div>
         </div>
-        <div class="t2 chromeColor">
-
-            &nbsp;</div>
-        <div class="t1 chromeColor">
-            &nbsp;
-        </div>   
+        
         </div>
      
   </div>
