@@ -234,7 +234,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 	print "</tr>";
 	
 	foreach($tabUserMisEnForme as $id=>$planning){
-		$sql="SELECT name, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$id;
+		$sql="SELECT lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$id;
 		$ATMdb->Execute($sql);
 		if($ATMdb->Get_line()) {
 			$name = htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');

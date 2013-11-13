@@ -34,7 +34,8 @@
 	$TJourNonTravailleEntreprise=array('samedi','dimanche');
 
 	$TTypeMetier=array(
-		'35h'=>'Au 35h'
+		'cadre'=>'Cadre'
+		,'35h'=>'Au 35h'
 		,'39h'=>'Au 39h'
 		,'noRTT'=>'Sans RTT'
 	);

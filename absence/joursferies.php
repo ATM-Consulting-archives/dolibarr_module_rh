@@ -96,7 +96,7 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 		WHERE entity IN (0,".$conf->entity.")";
 		
 	
-	$TOrder = array('ID'=>'DESC');
+	$TOrder = array('date_jourOff'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
