@@ -134,6 +134,8 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 	 print "TotalHT = ".$montantHT."<br/>";
 	 print "TotalTTC = ".$montantTTC."<br/>";
 	
+	if(isset($_REQUEST['DEBUG']))print "Ecart : ".$total;
+	
 	if($boutonGenerer){
 		
 		?>
