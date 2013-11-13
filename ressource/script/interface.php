@@ -272,6 +272,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		}
 	}
 	
+	
 	/**----***********************----**/
 	/**----** Lignes de crédit **----**/
 	/**----***********************----**/
@@ -292,8 +293,8 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	
 	$idTotal = getIdSociete($ATMdb, 'total');
 	
-	$sql="SELECT CAST(e.coutEntrepriseTTC as DECIMAL(16,2)) as coutEntrepriseTTC, 
-				CAST(e.coutEntrepriseHT as DECIMAL(16,2)) as coutEntrepriseHT, type, e.date_facture, 
+	$sql="SELECT SUM(e.coutEntrepriseTTC) as coutEntrepriseTTC, 
+				e.coutEntrepriseHT as coutEntrepriseHT, type, e.date_facture, 
 				DATE_FORMAT(e.date_debut, '%d%m%y') as date_debut, 
 				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
 				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
@@ -323,12 +324,16 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		$date_annee = $row->annee_date_debut;
 		//un VU : on prend le HT
 		//un VP on prend le TTC
-		if ($idTypeRessource==$idVoiture){
+		/*if ($idTypeRessource==$idVoiture){
 			$montant = (strtoupper($row->typeVehicule) == 'VP') ? $row->coutEntrepriseTTC : $row->coutEntrepriseHT;}
 		else {
-			$montant = $row->coutEntrepriseTTC;}
+			$montant = $row->coutEntrepriseTTC;
+		}*/
+		
+		$montant = $row->coutEntrepriseTTC;
+		
 		$sens = 'C';
-		$code_compta = '425902';
+		$code_compta = '425902'; //TODO paramètre
 		$type_compte = 'X';
 		
 		//if($row->fk_entity_utilisatrice==$entity || $row->$fk_fournisseur==$idTotal){
@@ -337,8 +342,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			$compte_tiers=$TEntity[$entity];
 		}*/
 	
-		if (empty($TCredits[$compte_tiers])){
-			$TCredits[$compte_tiers] = array(
+		$TLignes[] =array(
 				'numFacture'=>$row->numFacture
 				,'codeJournal'=>'RES'
 				,'datePiece'=>date('dmy', date2ToInt($row->date_facture))
@@ -353,24 +357,18 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 				,'modePaiement'=> 'V'
 				,'dateEcheance'=> date('dmy')
 				,'sens'=> $sens
-				,'montant'=>  number_format($total_ht_anal,2,'.','')
+				,'montant'=>  round($montant,2)
 				,'typeEcriture'=> 'N'
 				,'numeroPiece'=> ''
 				,'devise'=>'EUR'
 				,'idImport'=>$row->idImport
 				
-			);
-		}
-		else {
-			$TCredits[$compte_tiers]['montant'] += $montant;
-		}
+		);
+	
+		
 		
 	}
-	
-	foreach ($TCredits as $key => $value) {
-		$TLignes[] = $value;
-	}
-	
+
 	return $TLignes;
 	
 }
