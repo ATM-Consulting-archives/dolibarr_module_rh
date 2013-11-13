@@ -32,3 +32,9 @@
 	define('DATE_CONGES_CLOTURE', '31-05-2014');
 	
 	$TJourNonTravailleEntreprise=array('samedi','dimanche');
+
+	$TTypeMetier=array(
+		'35h'=>'Au 35h'
+		,'39h'=>'Au 39h'
+		,'noRTT'=>'Sans RTT'
+	);

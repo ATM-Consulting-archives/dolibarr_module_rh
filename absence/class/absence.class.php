@@ -64,11 +64,8 @@ class TRH_Compteur extends TObjetStd {
 		parent::start();
 		
 		$this->TTypeAcquisition = array('Annuel'=>'Annuel','Mensuel'=>'Mensuel');
-		$this->TMetier = array('cadre'=>'Cadre',
-		'noncadre37cpro'=>'Non Cadre 37h C\'PRO','noncadre37cproinfo'=>'Non Cadre 37h C\'PRO Info',
-		'noncadre38cpro'=>'Non Cadre 38h C\'PRO', 'noncadre38cproinfo'=>'Non Cadre 38h C\'PRO Info',
-		'noncadre39'=>'Non Cadre 39h', 'aucunrtt' => 'Aucun RTT',
-		'autre'=>'Autre');
+		
+		
 	}
 	
 	

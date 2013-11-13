@@ -213,7 +213,7 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 	
 	
 function _fiche(&$ATMdb, &$compteur, $mode) {
-	global $db,$user,$conf;
+	global $db,$user,$conf,$TTypeMetier;
 	llxHeader('');
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
@@ -392,7 +392,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'annuelCumuleInit'=>$form->texte('','rttAcquisAnnuelCumuleInit',round2Virgule($rttCourant['annuelCumuleInit']),10,50,'',$class="text", $default='')
 				,'annuelNonCumuleInit'=>$form->texte('','rttAcquisAnnuelNonCumuleInit',round2Virgule($rttCourant['annuelNonCumuleInit']),10,50,'',$class="text", $default='')
 				,'typeAcquisition'=>$form->combo('','rttTypeAcquisition',$compteur->TTypeAcquisition,$compteur->rttTypeAcquisition)
-				,'rttMetier'=>$form->combo('','rttMetier',$compteur->TMetier,$rttCourant['rttMetier'])
+				,'rttMetier'=>$form->combo('','rttMetier',$TTypeMetier,$rttCourant['rttMetier'])
 				,'rttTypeAcquis'=>$compteur->rttTypeAcquisition
 				,'reste'=>$form->texte('','total',round2Virgule($rttCourantReste),10,50,'',$class="text", $default='')
 				,'id'=>$compteur->getId()
