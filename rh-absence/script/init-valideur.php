@@ -38,7 +38,7 @@ WHERE u.rowid IN (SELECT fk_user FROM llx_user) AND uvg.rowid IS NULL");
 		$v->level = 1;
 		
 		$v->fk_usergroup = $idGroup;
-		
+		$v->save($ATMdb);		
 		/*	parent::add_champs('type','type=chaine;');				//type de valideur
 		parent::add_champs('nbjours','type=entier;');			//nbjours avant alerte
 		parent::add_champs('montant','type=float;');			//montant avant alerte
