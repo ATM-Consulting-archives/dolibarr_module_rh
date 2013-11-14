@@ -20,9 +20,13 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
-  $ret["start"] = $date_start;
-  $ret["end"] =$date_end;
+  $ret["start"] = _justDate($date_start);
+  $ret["end"] =  _justDate($date_end);
   $ret['error'] = null;
+  
+  
+  	$TJourFerie=getJourFerie($ATMdb);
+	$ret['events'] = array_merge($ret['events'], $TJourFerie); 
   
   	if($user->rights->absence->myactions->voirToutesAbsences){		//si on a le droit de voir toutes les absences
 		
@@ -100,9 +104,9 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 		
 	     $ret['events'][] = array(
 	        $row->rowid,
-	        htmlentities($row->name, ENT_COMPAT , 'ISO8859-1').' '.htmlentities($row->firstname, ENT_COMPAT , 'ISO8859-1')." : ".$row->libelle,
-	        $row->date_debut,
-	        $row->date_fin,
+	        utf8_encode($row->name.' '.$row->firstname).' : '.$row->libelle,
+	        _justDate($row->date_debut),
+	        _justDate($row->date_fin),
 	        1,//$row->isAllDayEvent,
 	        0, //more than one day event
 	        //$row->InstanceType,
@@ -115,20 +119,27 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 	      );
 	  }  
 	  
-	$TJourFerie=getJourFerie($ATMdb);
-	$ret['events'] = array_merge($ret['events'], $TJourFerie); 
+	
       
-    $TAgenda=getAgendaEvent($ATMdb, $date_start, $date_end);
-	$ret['events'] = array_merge($ret['events'], $TAgenda); 
-    
-	$ret['events'] = $TAgenda;
-	 
+	  
+	if($conf->agenda->enabled) {
+	    $TAgenda=getAgendaEvent($ATMdb, $date_start, $date_end);
+		$ret['events'] = array_merge($ret['events'], $TAgenda); 
+		//$ret['events'] = $TAgenda;
+		
+	}  
 	
 
   return $ret;
 }
 
+function _justDate($date,$frm = 'Y-m-d') {
+	return date($frm, strtotime($date));
+}
+
 function getJourFerie(&$ATMdb) {
+global $conf;	
+	
 	$Tab=array();
 		  //récupération des jours fériés 
 	$sql2=" SELECT moment,commentaire,date_jourOff,rowid FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
@@ -140,20 +151,20 @@ function getJourFerie(&$ATMdb) {
      while ($row = $ATMdb->Get_line()) {
 		  switch($row->moment){
 			case 'apresmidi' : 
-				$moment="Après-midi";
+				$moment="Fermé l'après-midi";
 				break;
 			case 'matin':
-				$moment="Matin";
+				$moment="Fermé le matin";
 				break;
 			case 'allday':
-				$moment="Toute la journée";
+				$moment="Jour férié";
 				break;
     	}
 	      $Tab[] = array(
-	        $row->rowid,
-	        "Férié ".$moment." ".$row->commentaire,
-	        php2JsTime(mySql2PhpTime($row->date_jourOff)),
-	       	php2JsTime(mySql2PhpTime($row->date_jourOff)),
+	        100000+$row->rowid,
+	        $moment." ".$row->commentaire,
+	        _justDate($row->date_jourOff),
+	       	_justDate($row->date_jourOff),
 	        1,//$row->isAllDayEvent,
 	        0, //more than one day event
 	        //$row->InstanceType,
@@ -269,20 +280,20 @@ global $user;
 		
 		
 		 $TEvent[] = array(
-	        $row->id
-	        , $row->label
-	        , $row->datep
-	        , $row->datep2
-	        ,1
+	        200000+$row->id
+	        ,$row->label
+	        ,_justDate( $row->datep)
+	        ,_justDate( $row->datep2)
+	        ,0
 	        ,0, //more than one day event
 	        //$row->InstanceType,
 	        0,//Recurring event,
-	        1,//$row->color,
+	        -1,//$row->color,
 	        1,//editable
 	        '/comm/action/fiche.php?id='.$row->id  //dol_build_path('/comm/action/fiche.php?id='.$row->id)
 	        ,
 	        '',//$attends
-	      );
+	     );
 	  	
 		
 	}
