@@ -87,12 +87,12 @@
 	}
 
 
-	$idUser=$_REQUEST['idUtilisateur']? $_REQUEST['idUtilisateur']:0;
+	$idUser=__get('idUtilisateur', $user->id);
 	
 	
 	
 	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/calendrier.tpl.php'
+	print $TBS->render('./tpl/calendrierPerso.tpl.php'
 		,array()
 		,array(
 			'absence'=>array(
@@ -102,7 +102,6 @@
 				,'TGroupe'=>$form->combo('', 'groupe', $TabGroupe,  $idGroupe)
 				//,'TUser'=>$user->rights->absence->myactions->voirToutesAbsences?$form->combo('', 'rowid', $absence->TUser,  $absence->TUser):$form->combo('', 'rowid',$TabUser,  $TabUser)
 				,'TUser'=>$form->combo('', 'idUtilisateur', $TabUser,  $idUser)
-				,'TTypeAbsence'=>$form->combo('', 'typeAbsence', $TTypeAbsence,  $typeAbsence)
 				,'droits'=>$user->rights->absence->myactions->voirToutesAbsences?1:0
 				,'btValider'=>$form->btsubmit('Valider', 'valider')
 				//,'idAfficher'=>$_REQUEST['rowid']? $_REQUEST['rowid']:0

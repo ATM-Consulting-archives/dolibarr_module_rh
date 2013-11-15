@@ -13,10 +13,6 @@
 					<td>[absence.TUser;strconv=no;protect=no]</td>
 				<tr/>
 				<tr>
-					<td>Type</td>
-					<td> [absence.TTypeAbsence;strconv=no;protect=no]</td>
-				<tr/>
-				<tr>
 					<td></td>
 				 	<td colspan="2">[absence.btValider;strconv=no;protect=no] </td>
 				<tr/>
@@ -44,9 +40,9 @@
 			<div id="agenda">
 				 <script type="text/javascript">
         $(document).ready(function() {     
-            var view="month";          
+            var view="week";          
            
-           var DATA_FEED_URL = "./script/absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]&typeAbsence=[absence.typeAbsence;strconv=no;protect=no]&withAgenda=[view.agendaEnabled]"
+            var DATA_FEED_URL = "./script/absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]&typeAbsence=[absence.typeAbsence;strconv=no;protect=no]&withAgenda=[view.agendaEnabled]"
             var op = {
                 view: view,
                 theme:0,
@@ -60,9 +56,9 @@
                 onRequestDataError: cal_onerror, 
                 autoload:true,
                 url: DATA_FEED_URL + "&method=list",  
-                quickAddUrl: false, 
-                quickUpdateUrl: false,
-                quickDeleteUrl: false   
+                quickAddUrl: DATA_FEED_URL + "&method=add", 
+                quickUpdateUrl: DATA_FEED_URL + "&method=update",
+                quickDeleteUrl: DATA_FEED_URL + "&method=remove"   
                 ,method:"GET"
                 ,enableDrag :false    
             };
@@ -246,10 +242,10 @@
            	[onshow; block=div; when [view.agendaEnabled]==1]
                 <div><span title='Day' class="showdayview">Jour</span></div>
             </div>
-              <div  id="showweekbtn" class="fbutton">
+              <div  id="showweekbtn" class="fbutton fcurrent">
                 <div><span title='Week' class="showweekview">Semaine</span></div>
             </div>
-              <div  id="showmonthbtn" class="fbutton fcurrent">
+              <div  id="showmonthbtn" class="fbutton">
                 <div><span title='Month' class="showmonthview">Mois</span></div>
 
             </div>
