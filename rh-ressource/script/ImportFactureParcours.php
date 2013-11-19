@@ -154,8 +154,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$fact->commentaire = 'Facture lié au contrat '.$infos[4];
 			$fact->set_date('date_debut', $infos[10]);
 			$fact->set_date('date_fin', $infos[1]);
-			$fact->coutTTC = floatval(strtr($infos[38], ',','.'));
-			$fact->coutEntrepriseTTC = floatval(strtr($infos[38], ',','.'));
+			$fact->coutTTC = floatval(strtr($infos[30], ',','.'));
+			$fact->coutEntrepriseTTC = floatval(strtr($infos[30], ',','.'));
 			$fact->TVA= $TTVA['19.6'];
 			$fact->coutEntrepriseHT = floatval(strtr($infos[12], ',','.'));
 			$fact->entity =$entity;

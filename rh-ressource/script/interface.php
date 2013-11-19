@@ -230,7 +230,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 		WHERE t.fk_rh_ressource_type = ".$idTypeRessource." ";
 		
-		if ($idTypeRessource==$idVoiture){$sql .= "AND r.typeVehicule = 'VP' ";}
+		//if ($idTypeRessource==$idVoiture){$sql .= "AND r.typeVehicule = 'VP' ";}
 		
 		$sql .= "AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 		AND e.entity = ".$entity."
@@ -238,7 +238,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		if ($idImport){ $sql .= " AND e.idImport = '".$idImport."' ";}
 		
 		if(isset($_REQUEST['DEBUG'])) {
-			print $sql;
+			print ' TVA ****** '.$sql;
 		}
 		
 		$ATMdb->Execute($sql);
