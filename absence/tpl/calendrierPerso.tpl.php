@@ -56,11 +56,11 @@
                 onRequestDataError: cal_onerror, 
                 autoload:true,
                 url: DATA_FEED_URL + "&method=list",  
-                quickAddUrl: DATA_FEED_URL + "&method=add", 
-                quickUpdateUrl: DATA_FEED_URL + "&method=update",
-                quickDeleteUrl: DATA_FEED_URL + "&method=remove"   
+                quickAddUrl: DATA_FEED_URL + "&method=add",   
+                quickUpdateUrl: false,
+                quickDeleteUrl: false   
                 ,method:"GET"
-                ,enableDrag :false    
+                ,enableDrag :true    
             };
             var $dv = $("#calhead");
             var _MH = document.documentElement.clientHeight;
@@ -117,9 +117,16 @@
                 for(x in data) {
                     str += "[" + x + "]: " + data[x] + "\n";
                 }
-                alert(str);*/
+                alert(str);
+               */
+              
+               if (data[0].indexOf('url:')!=-1) {
+               		document.location.href=data[0].substring(4);
+               }
+               else {
+               		document.location.href=data[9];	
+               }
                
-               document.location.href=data[9];
                               
             }    
             function Delete(data,callback)

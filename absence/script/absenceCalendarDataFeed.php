@@ -10,9 +10,58 @@ switch ($method) {
 	       	$ret = listCalendar($ATMdb, $_REQUEST["showdate"], $_REQUEST["viewtype"], $_REQUEST['idUser'], $_REQUEST['idGroupe'], $_REQUEST['typeAbsence']);
 
         break; 
+		
+	case 'add':
+			
+			$ret = addCalendar($ATMdb, $_REQUEST['CalendarTitle'], $_REQUEST['CalendarStartTime'], $_REQUEST['CalendarEndTime'], $_REQUEST['isAllDayEvent']);
+			
+		break;
 
 }
 echo json_encode($ret); 
+
+function addCalendar(&$ATMdb, $title, $date_start,$date_end, $fulldayevent=1, $actionCode=50) {
+global $db, $user;	
+	
+	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+	
+	
+	$t_start = strtotime($date_start);
+	$t_end = strtotime($date_end);
+	
+	$cactioncomm = new CActionComm($db);
+	$actioncomm = new ActionComm($db);
+	
+	$result=$cactioncomm->fetch($actionCode);
+	
+	$actioncomm->label = $title;
+	
+	$actioncomm->type_id = $cactioncomm->id;
+	$actioncomm->type_code = $cactioncomm->code;
+	$actioncomm->priority = 0;
+	$actioncomm->fulldayevent = $fulldayevent;
+	$actioncomm->location = '';
+	$actioncomm->transparency = 1;
+	
+	$actioncomm->datep = $t_start;
+	$actioncomm->datef = $t_end;
+	$actioncomm->percentage = 0;
+	$actioncomm->duree=$t_end - $t_start;
+
+	$actioncomm->usertodo = $user;
+
+	$idaction=$actioncomm->add($user);
+	
+	$ret = array();
+	  $ret['IsSuccess'] = true;
+	  $ret['Msg'] = 'add success';
+	  $ret['Data'] = 'url:'.dol_buildpath('/comm/action/fiche.php?action=edit&id='.$idaction,1) ;
+	  	
+	
+	return $ret;
+}
+
 
 function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGroupe=0, $typeAbsence='Tous'){
 
@@ -269,7 +318,7 @@ global $user;
 	        ,$row->label
 	        ,_justDate( $row->datep)
 	        ,_justDate( $row->datep2)
-	        ,0
+	        ,$row->fulldayevent
 	        ,0, //more than one day event
 	        //$row->InstanceType,
 	        0,//Recurring event,

@@ -30,13 +30,11 @@
 				//print_r($feries);		
 				$feries->set_values($_REQUEST);
 				
-				$existeDeja=$feries->testExisteDeja($ATMdb, $feries);
+				$existeDeja=$feries->testExisteDeja($ATMdb);
 				
 				if(!$existeDeja){
-					$mesg = '<div class="error">Jour non travaillé ajouté</div>';
 					$feries->save($ATMdb);
-					$feries->load($ATMdb, $_REQUEST['idJour']);	
-					_fiche($ATMdb, $feries , $emploiTemps,'view');
+					_liste($ATMdb, $feries , $emploiTemps);
 				}else{
 					$mesg = '<div class="error">Création impossible : il existe déjà un jour non travaillé à cette date</div>';
 					_fiche($ATMdb, $feries , $emploiTemps,'edit');

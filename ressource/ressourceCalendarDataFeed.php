@@ -2,7 +2,7 @@
 
 require('config.php');
 require('./lib/ressource.lib.php');
-include_once("../rh-library/wdCalendar/php/functions.php");
+include_once("../rhlibrary/wdCalendar/php/functions.php");
 $ATMdb=new TPDOdb;
 
 
@@ -89,7 +89,8 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
 	  	$lien = 'evenement.php?id='.$row->fk_rh_ressource.'&idEven='.$row->rowid.'&action=view';
 	  }
 	 
-	 
+	  $moreOneDay=(int)( strtotime($row->date_debut) < strtotime($row->date_fin) );
+		
 	 
 	  //on écrit l'intitulé du calendrier en fonction des données de la fonction
 	  $sujet = '';
@@ -104,11 +105,11 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
         php2JsTime(mySql2PhpTime($row->date_debut)),
         php2JsTime(mySql2PhpTime($row->date_fin)),
         $row->isAllDayEvent,
-        0, //more than one day event
+        $moreOneDay, //more than one day event
         //$row->InstanceType,
         $row->fk_user,//Recurring event,
         $row->color,
-        1,//editable
+        0,//editable
         $lien,//$row->location,
         '',//$attends
         $row->fk_user
