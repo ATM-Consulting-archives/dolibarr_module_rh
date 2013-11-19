@@ -41,10 +41,11 @@
 		
 		if ($_REQUEST["sendit"])
 		{
+			
 			$upload_dir = DIR_DOC_OUTPUT.'import_fournisseurs';
 		
-			if (dol_mkdir($upload_dir) >= 0)
-			{
+			dol_mkdir($upload_dir);
+			
 				
 				$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1,0,$_FILES['userfile']['error']);
 				
@@ -74,7 +75,7 @@
 						$message = $langs->trans($resupload);
 					}
 				}
-			}
+			
 		
 		}
 		
