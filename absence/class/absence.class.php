@@ -1914,23 +1914,16 @@ class TRH_JoursFeries extends TObjetStd {
 
 	
 	//fonction qui renvoie 1 si le jour férié que l'on veut créer existe déjà à la date souhaitée, sinon 0
-	function testExisteDeja($ATMdb, $feries){
+	function testExisteDeja($ATMdb){
 		global $conf;
 		//on récupère toutes les dates de jours fériés existant
-		$sql="SELECT date_jourOff  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries";
+		$sql="SELECT count(*) as 'nb'  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE date_jourOff='".$this->date_jourOff."' AND rowid!=".$this->getId();
 		$ATMdb->Execute($sql);
-		$k=0;
-		while($ATMdb->Get_line()) {
-			$TJFeries[]=strtotime($ATMdb->Get_field('date_jourOff'));
-			$k++;
-		}
-		
-		
+		$obj = $ATMdb->Get_line();
+			
 		//on teste si l'un d'eux est égal à celui que l'on veut créer
-		if($k>0){
-			foreach($TJFeries as $jour){
-				if($jour==$feries->date_jourOff) return 1;
-			}	
+		if($obj->nb > 0){
+			return 1;	
 		}
 		
 		return 0;
