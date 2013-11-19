@@ -108,9 +108,11 @@ $('#type').change(function(){
                 onRequestDataError: cal_onerror, 
                 autoload:true,
                 url: DATA_FEED_URL + "&method=list",  
-                quickAddUrl: DATA_FEED_URL + "&method=add", 
-                quickUpdateUrl: DATA_FEED_URL + "&method=update",
-                quickDeleteUrl: DATA_FEED_URL + "&method=remove"        
+                quickAddUrl: false, 
+                quickUpdateUrl: false,
+                quickDeleteUrl: false        
+                ,method:"GET"
+                ,enableDrag :false 
             };
             var $dv = $("#calhead");
             var _MH = document.documentElement.clientHeight;
@@ -183,11 +185,7 @@ $('#type').change(function(){
             }    
             function View(data)
             {
-                var str = "";
-                $.each(data, function(i, item){
-                    str += "[" + i + "]: " + item + "\n";
-                });
-                alert(str);               
+                document.location.href=data[9]; 
             }    
             function Delete(data,callback)
             {           
