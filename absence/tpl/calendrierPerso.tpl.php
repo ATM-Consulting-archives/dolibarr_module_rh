@@ -2,23 +2,62 @@
 [view.head3;strconv=no]
 		[view.titreCalendar;strconv=no;protect=no] 	
 		
-		[onshow;block=begin;when [absence.droits]=='1']
-			<table class="liste border" style="width:100%">			
-				<tr>
-					<td >Groupe</td>
-					<td>[absence.TGroupe;strconv=no;protect=no]</td>
-				<tr/>
-				<tr>
-					<td>Utilisateur</td>
-					<td>[absence.TUser;strconv=no;protect=no]</td>
-				<tr/>
-				<tr>
-					<td></td>
-				 	<td colspan="2">[absence.btValider;strconv=no;protect=no] </td>
-				<tr/>
+		
+		<table class="liste border">
+			<tr>
+				<td valign="top">
+					
+					[onshow;block=begin;when [absence.droits]=='1']
+					<table class="nobordernopadding" style="width:100%">	
+						<tr>
+							<th colspan="2">Absences</th>
+						</tr>		
+						<tr>
+							<td >Groupe</td>
+							<td>[absence.TGroupe;strconv=no;protect=no]</td>
+						<tr/>
+						<tr>
+							<td>Utilisateur</td>
+							<td>[absence.TUser;strconv=no;protect=no]</td>
+						<tr/>
+						
+					</table>
+					[onshow;block=end]
+		 		
+		 		</td>
+		 		<td valign="top">	
+		 					 			
+				 	<table class="nobordernopadding">
+				 		<tr>
+							<th colspan="2">Agenda</th>
+						</tr>		
+				 			<tr>
+				 				<td>Événements enregistrés par &nbsp;</td>
+				 				<td>[agenda.userasked;strconv=no]</td>
+				 			</tr>
+				 			<tr><td class="nowrap">ou Événements affectés à &nbsp;</td>
+				 				<td class="nowrap">[agenda.usertodo;strconv=no]
+							</td></tr>
+							<tr><td class="nowrap">ou Événements réalisés par &nbsp;</td>
+							<td class="nowrap">[agenda.userdone;strconv=no]</td></tr>
+							<tr><td class="nowrap">Type &nbsp;</td><td class="nowrap">
+								[agenda.actioncode;strconv=no]
+							</td></tr>
+							<tr>[onshow;block=tr;when [agenda.projectEnabled]==1 ]<td class="nowrap">Projet &nbsp; </td>
+							<td class="nowrap">[agenda.projectid;strconv=no]</td>
+						</tr>
+					</table>
+			
+				</td>
+				
+				<td>[absence.btValider;strconv=no;protect=no]</td>
+				</tr>
 			</table>
+		 
 		 	<br> 
-		[onshow;block=end]
+		 	
+		 	
+		
 	
 		<script>
 		$('#groupe').change(function(){

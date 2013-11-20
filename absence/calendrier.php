@@ -2,6 +2,51 @@
 	require('config.php');
 	require('./class/absence.class.php');
 	require('./lib/absence.lib.php');
+	
+	/*
+	 * Inclusion Agenda
+	 */
+	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+	dol_include_once('/core/class/html.formactions.class.php');
+	dol_include_once('/core/class/html.form.class.php');
+	if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	
+	$filter=GETPOST("filter",'',3);
+	$filtera = GETPOST("userasked","int",3)?GETPOST("userasked","int",3):GETPOST("filtera","int",3);
+	$filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
+	$filterd = GETPOST("userdone","int",3)?GETPOST("userdone","int",3):GETPOST("filterd","int",3);
+	$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
+	$socid = GETPOST("socid","int",1);
+	if ($user->societe_id) $socid=$user->societe_id;
+	
+	$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+
+	$canedit=1;
+	if (! $user->rights->agenda->myactions->read) accessforbidden();
+	if (! $user->rights->agenda->allactions->read) $canedit=0;
+	if (! $user->rights->agenda->allactions->read || $filter =='mine')  // If no permission to see all, we show only affected to me
+	{
+	    $filtera=$user->id;
+	    $filtert=$user->id;
+	    $filterd=$user->id;
+	}
+	
+	$action=GETPOST('action','alpha');
+	//$year=GETPOST("year");
+	$year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
+	$month=GETPOST("month","int")?GETPOST("month","int"):date("m");
+	$week=GETPOST("week","int")?GETPOST("week","int"):date("W");
+	$day=GETPOST("day","int")?GETPOST("day","int"):0;
+	$pid=GETPOST("projectid","int",3);
+	$status=GETPOST("status");
+	$type=GETPOST("type");
+	$maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
+	$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=="0"?'':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
+		
 //print_r(get_defined_vars());	
 	llxHeader('','Calendrier des absences', '', '', 0,0,
 		array(//"/library/wdCalendar/src/jquery.js"   
@@ -36,11 +81,11 @@
 	
 	$typeAbsence= isset($_REQUEST['typeAbsence']) ? $_REQUEST['typeAbsence'] : 'Tous';
 	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
-	echo $form->hidden('action', 'afficher');
-	echo $form->hidden('id',$absence->getId());
+	$formATM=new TFormCore($_SERVER['PHP_SELF'],'form2','GET');
+	echo $formATM->hidden('action', 'afficher');
+	echo $formATM->hidden('id',$absence->getId());
 	
-	
+	$form=new Form($db);
 	
 	
 	$TabGroupe=array();
@@ -89,6 +134,15 @@
 
 	$idUser=__get('idUtilisateur', $user->id);
 	
+	$formactions=new FormActions($db);
+	
+	ob_start();
+	$formactions->select_type_actions($actioncode, "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
+	$actionCode = ob_get_clean();
+
+	ob_start();
+	select_projects($socid?$socid:-1, $pid, 'projectid', 64);
+	$select_project = ob_get_clean();
 	
 	
 	$TBS=new TTemplateTBS();
@@ -99,14 +153,22 @@
 				'idUser' =>$idUser
 				,'idGroupe'=>$idGroupe
 				,'typeAbsence'=>$typeAbsence
-				,'TGroupe'=>$form->combo('', 'groupe', $TabGroupe,  $idGroupe)
-				//,'TUser'=>$user->rights->absence->myactions->voirToutesAbsences?$form->combo('', 'rowid', $absence->TUser,  $absence->TUser):$form->combo('', 'rowid',$TabUser,  $TabUser)
-				,'TUser'=>$form->combo('', 'idUtilisateur', $TabUser,  $idUser)
+				,'TGroupe'=>$formATM->combo('', 'groupe', $TabGroupe,  $idGroupe)
+				//,'TUser'=>$user->rights->absence->myactions->voirToutesAbsences?$formATM->combo('', 'rowid', $absence->TUser,  $absence->TUser):$formATM->combo('', 'rowid',$TabUser,  $TabUser)
+				,'TUser'=>$formATM->combo('', 'idUtilisateur', $TabUser,  $idUser)
 				,'droits'=>$user->rights->absence->myactions->voirToutesAbsences?1:0
-				,'btValider'=>$form->btsubmit('Valider', 'valider')
+				,'btValider'=>$formATM->btsubmit('Valider', 'valider')
 				//,'idAfficher'=>$_REQUEST['rowid']? $_REQUEST['rowid']:0
-				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->date_debut, 12)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
+				,'date_debut'=> $formATM->calendrier('', 'date_debut', $absence->date_debut, 12)
+				,'date_fin'=> $formATM->calendrier('', 'date_fin', $absence->date_fin, 12)
+			)
+			,'agenda'=>array(
+				'userasked'=>$form->select_dolusers($filtera,'userasked',1,'',!$canedit)
+				,'usertodo'=>$form->select_dolusers($filtert,'usertodo',1,'',!$canedit)
+				,'userdone'=>$form->select_dolusers($filterd,'userdone',1,'',!$canedit)
+				,'actioncode'=>$actionCode
+				,'projectid'=>(! empty($conf->projet->enabled) && $user->rights->projet->lire)?$select_project:''
+				,'projectEnabled'=>(int)(! empty($conf->projet->enabled) && $user->rights->projet->lire)
 			)
 			,'view'=>array(
 				'mode'=>$mode
