@@ -28,29 +28,19 @@
 				
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				
-				//on sélectionne tous les users qui sont des cadres de C'PRO ou C'PRO Groupe, 
-				//puis ceux qui sont des cadres de C'PRO info
-				$sql="SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."entity as t
-				WHERE e.societeRtt=t.rowid AND t.label LIKE '%info%'";
-				$ATMdb->Execute($sql);
-				$TUserCproInfo=array();
-				While($ATMdb->Get_line()) {
-							$TUserCproInfo[]=$ATMdb->Get_field('fk_user');
-				}
-				
-				$sql="SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."entity as t
-				WHERE e.societeRtt=t.rowid AND t.label LIKE '%groupe%'";
-				$ATMdb->Execute($sql);
-				$TUserCproGroupe=array();
-				While($ATMdb->Get_line()) {
-							$TUserCproGroupe[]=$ATMdb->Get_field('fk_user');
-				}
 				
 				// on met à jour les compteurs des cpro info TODO
 				$sql="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
 					SET rttAcquisAnnuelCumuleInit=".$compteur->rttCumuleInitCadreCpro." 
-					WHERE rttMetier LIKE 'cadre'
-					 AND fk_user IN(".implode(',', $TUserCproInfo).")";
+					WHERE rttMetier LIKE 'cadre' ";
+				
+				if(!empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode)) {
+					null;
+				}
+				elseif(!empty($conf->multicompany->enabled)) {
+					$sql.=" AND entity=".$conf->entity;
+				}	
+					 
 					
 				$ATMdb->Execute($sql);
 
