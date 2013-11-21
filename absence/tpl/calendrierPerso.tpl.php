@@ -81,7 +81,7 @@
         $(document).ready(function() {     
             var view="week";          
            
-            var DATA_FEED_URL = "./script/absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]&typeAbsence=[absence.typeAbsence;strconv=no;protect=no]&withAgenda=[view.agendaEnabled]"
+            var DATA_FEED_URL = "./script/absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]&typeAbsence=[absence.typeAbsence;strconv=no;protect=no]&withAgenda=[view.agendaEnabled]&projectid=[view.projectid]&actioncode=[view.actioncode]&userdone=[view.userdone]&usertodo=[view.usertodo]&userasked=[view.userasked]"
             var op = {
                 view: view,
                 theme:0,
@@ -99,7 +99,8 @@
                 quickUpdateUrl: false,
                 quickDeleteUrl: false   
                 ,method:"GET"
-                ,enableDrag :true    
+                ,enableDrag :true 
+                
             };
             var $dv = $("#calhead");
             var _MH = document.documentElement.clientHeight;

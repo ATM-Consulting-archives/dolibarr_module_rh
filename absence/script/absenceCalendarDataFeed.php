@@ -136,12 +136,17 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 		if($row->ddMoment=='apresmidi')$timeDebut += (3600 * 12) ; //+12h
 		if($row->dfMoment=='matin')$timeFin -= (3600 * 12) ; //-12h
 					
-		$allDayEvent=(int)($row->ddMoment=='matin' && $row->dfMoment=='apresmidi');		
+		$allDayEvent=(int)($row->ddMoment=='matin' && $row->dfMoment=='apresmidi' || $row->date_debut<$row->date_fin);		
 		$moreOneDay=(int)($row->date_debut<$row->date_fin);
 		
-	     $ret['events'][] = array(
+		$label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
+		if($moreOneDay) {
+			$label.=' du '._justDate($timeDebut,'d/m').' au '._justDate($timeDebut,'d/m/Y');
+		}
+		
+		$ret['events'][] = array(
 	        $row->rowid,
-	        utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle,
+	        $label,
 	        _justDate($timeDebut),
 	        _justDate($timeFin),
 	        $allDayEvent,//$row->isAllDayEvent,
@@ -151,7 +156,7 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 	        $color,//$row->color,
 	        0,//editable
 	        "absence.php?id=".$row->rowid."&action=view",//$row->location,
-	        '',//$attends
+	        'absence',//$attends
 	        $row->fk_user
 	      );
 	  }  
@@ -180,6 +185,8 @@ function _justDate($date,$frm = 'm/d/Y H:i') {
 function getJourFerie(&$ATMdb, $date_start, $date_end) {
 global $conf;	
 	
+	
+
 	$Tab=array();
 		  //récupération des jours fériés 
 	$sql2=" SELECT moment,commentaire,date_jourOff,rowid FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
@@ -251,8 +258,37 @@ function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idGroupe, $typeAbsence)
 	return listCalendarByRange($ATMdb, $date_start, $date_end, $idAbsence, $idGroupe, $typeAbsence);
 }
 
-function getAgendaEvent(&$ATMdb, $date_start, $date_end, $socid=0, $actioncode='', $pid=0, $status='', $filtera='', $filterd='',$filtert='') {
-global $user;
+function getAgendaEvent(&$ATMdb, $date_start, $date_end) {
+global $user, $conf;
+		
+	
+	$filter=GETPOST("filter",'',3);
+	$filtera = GETPOST("userasked","int",3)?GETPOST("userasked","int",3):GETPOST("filtera","int",3);
+	$filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
+	$filterd = GETPOST("userdone","int",3)?GETPOST("userdone","int",3):GETPOST("filterd","int",3);
+	$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
+	$socid = GETPOST("socid","int",1);
+	if ($user->societe_id) $socid=$user->societe_id;
+	
+	$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+
+	$canedit=1;
+	if (! $user->rights->agenda->myactions->read) return array();
+	if (! $user->rights->agenda->allactions->read) $canedit=0;
+	if (! $user->rights->agenda->allactions->read || $filter =='mine')  // If no permission to see all, we show only affected to me
+	{
+	    $filtera=$user->id;
+	    $filtert=$user->id;
+	    $filterd=$user->id;
+	}
+	
+	$action=GETPOST('action','alpha');
+	$pid=GETPOST("projectid","int",3);
+	$status=GETPOST("status");
+	$type=GETPOST("type");
+	$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=="0"?'':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
+		
+		
 			
 	$sql = 'SELECT a.id,a.label,';
 	$sql.= ' a.datep,';
@@ -271,8 +307,8 @@ global $user;
 	$sql.= ' WHERE a.fk_action = ca.id';
 	$sql.= ' AND a.fk_user_author = u.rowid';
 	$sql.= ' AND a.entity IN ('.getEntity().')';
-	if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
-	if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
+	if ($actioncode) $sql.=" AND ca.code=".$ATMdb->quote($actioncode);
+	if ($pid) $sql.=" AND a.fk_project=".$ATMdb->quote($pid);
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
 	if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
 	
@@ -313,18 +349,21 @@ global $user;
 		 if(empty($row->datep2)) $row->datep2 = date('Y-m-d H:i:s', strtotime($row->datep) + (60 * 60) ) ; // 1h
 		
 		
+		 if($row->code=='AC_OTH_AUTO')$color=5;
+		 else $color = -1; 
+		
 		 $TEvent[] = array(
 	        200000+$row->id
-	        ,$row->label
+	        ,utf8_encode( $row->label )
 	        ,_justDate( $row->datep)
 	        ,_justDate( $row->datep2)
 	        ,$row->fulldayevent
 	        ,0, //more than one day event
 	        //$row->InstanceType,
 	        0,//Recurring event,
-	        -1,//$row->color,
-	        0,//editable
-	        dol_buildpath('/comm/action/fiche.php?action=edit&id='.$row->id,1)  //dol_build_path('/comm/action/fiche.php?id='.$row->id)
+	        $color,//$row->color,
+	        1,//editable
+	        ($canedit ? dol_buildpath('/comm/action/fiche.php?action=edit&id='.$row->id,1) : dol_buildpath('/comm/action/fiche.php?id='.$row->id,1) )  //dol_build_path('/comm/action/fiche.php?id='.$row->id)
 	        ,
 	        '',//$attends
 	     );

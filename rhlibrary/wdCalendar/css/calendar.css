@@ -365,10 +365,13 @@ border-bottom:2px solid #c3d9ff;
 	left:0;
 	width:100%;
 	background:#c3d9ff;
-	color:#112abb
+	font-weight:bold;
+	color:#000;
+	font-size: 12px;
+    line-height: 14px;
 }
 .mv-dayname {
-	font-weight:normal
+	font-weight:bold;
 }
 
 .mv-event-container {

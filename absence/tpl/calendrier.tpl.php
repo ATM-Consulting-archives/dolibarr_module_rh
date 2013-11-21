@@ -64,7 +64,8 @@
                 quickUpdateUrl: false,
                 quickDeleteUrl: false   
                 ,method:"GET"
-                ,enableDrag :false    
+                ,enableDrag :false   
+                ,height:false 
             };
             var $dv = $("#calhead");
             var _MH = document.documentElement.clientHeight;

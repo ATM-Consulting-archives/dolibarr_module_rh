@@ -138,7 +138,7 @@
 	
 	ob_start();
 	$formactions->select_type_actions($actioncode, "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
-	$actionCode = ob_get_clean();
+	$actionCodeInput = ob_get_clean();
 
 	ob_start();
 	select_projects($socid?$socid:-1, $pid, 'projectid', 64);
@@ -166,7 +166,7 @@
 				'userasked'=>$form->select_dolusers($filtera,'userasked',1,'',!$canedit)
 				,'usertodo'=>$form->select_dolusers($filtert,'usertodo',1,'',!$canedit)
 				,'userdone'=>$form->select_dolusers($filterd,'userdone',1,'',!$canedit)
-				,'actioncode'=>$actionCode
+				,'actioncode'=>$actionCodeInput
 				,'projectid'=>(! empty($conf->projet->enabled) && $user->rights->projet->lire)?$select_project:''
 				,'projectEnabled'=>(int)(! empty($conf->projet->enabled) && $user->rights->projet->lire)
 				,'newEvent'=>dol_buildpath('/comm/action/fiche.php?mainmenu=agenda&leftmenu=agenda&action=create&idmenu=530',1)
@@ -177,6 +177,13 @@
 				,'head3'=>dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', 'Absence')
 				,'titreCalendar'=>load_fiche_titre("Mon planning",'', 'title.png', 0, '')
 				,'agendaEnabled'=>(int)$conf->agenda->enabled
+				
+				,'projectid'=>$pid
+				,'actioncode'=>$actioncode
+				,'userdone'=>$filterd
+				,'usertodo'=>$filtert
+				,'userasked'=>$filtera
+				
 			)
 			
 			
