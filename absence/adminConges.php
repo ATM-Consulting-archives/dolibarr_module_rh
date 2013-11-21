@@ -29,9 +29,8 @@
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				
 				
-				// on met à jour les compteurs des cpro info TODO
 				$sql="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-					SET rttAcquisAnnuelCumuleInit=".$compteur->rttCumuleInitCadreCpro." 
+					SET rttAcquisAnnuelCumuleInit=".$compteur->rttCumuleInit." 
 					WHERE rttMetier LIKE 'cadre' ";
 				
 				if(!empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode)) {
@@ -44,28 +43,19 @@
 					
 				$ATMdb->Execute($sql);
 
-				//on mets à jour les compteurs des cpro groupe
 				$sql="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-					SET rttAcquisAnnuelCumuleInit=".$compteur->rttCumuleInitCadreCpro." 
-					WHERE rttMetier LIKE 'cadre'
-					 AND fk_user IN(".implode(',', $TUserCproGroupe).")";
-				$ATMdb->Execute($sql);
-				
-				//on récupère la liste des utilisateurs 
-				$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user";
-				$ATMdb->Execute($sql);
-				$TUser=array();
-				While($ATMdb->Get_line()) {
-							$TUser[]=$ATMdb->Get_field('rowid');
-				}
-				
-				foreach($TUser as $fk_user){
-					//on modifie les infos des compteurs de chaque employé
-					$sql="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
 					SET date_rttCloture='".date('Y-m-d h:i:s',$compteur->date_rttClotureInit)."', date_congesCloture='".date('Y-m-d h:i:s',$compteur->date_congesClotureInit)."'
-					,nombreCongesAcquisMensuel=".$compteur->congesAcquisMensuelInit." WHERE fk_user=".$fk_user;
-					$ATMdb->Execute($sql);
+					,nombreCongesAcquisMensuel=".$compteur->congesAcquisMensuelInit;	
+					
+				if(!empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode)) {
+					null;
 				}
+				elseif(!empty($conf->multicompany->enabled)) {
+					$sql.=" AND entity=".$conf->entity;
+				}		
+					
+				$ATMdb->Execute($sql);
+				
 				
 				
 				$mesg = '<div class="ok">Modifications effectuées</div>';
