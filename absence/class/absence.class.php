@@ -1958,7 +1958,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		parent::add_champs('typeAbsence','type=chaine;');
 		parent::add_champs('choixApplication','type=chaine;');
 		parent::add_champs('nbJourCumulable','type=int;');
-		parent::add_champs('restrictif','type=int;');
+		parent::add_champs('restrictif','type=entier;');
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('fk_usergroup','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=int;');
@@ -2035,18 +2035,45 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::add_champs('codeAbsence','type=chaine;index;');
 		parent::add_champs('admin','type=int;');
 		parent::add_champs('unite','type=chaine;');
-		parent::add_champs('entity','type=int;index;');
+		parent::add_champs('entity,isPresence','type=int;index;');
 		
 		parent::add_champs('decompteNormal','type=chaine;');
 		
 		parent::_init_vars();
 		parent::start();
+		
+		$this->TIsPresence=array(
+			0=>'Non'
+			,1=>'Oui'
+		);
+		
 	}
 	
 	function load_by_type(&$ATMdb, $type) {
 		
 		return parent::loadBy($ATMdb, $type, 'typeAbsence');
 		
+	}
+	
+	static function getList(&$ATMdb) {
+		global $conf;
+		
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIXB."rh_type_absence
+		WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.") 
+		ORDER BY codeAbsence";
+		
+		$Tab = TRequeteCore::_get_id_by_sql($db, $sql);
+		$TAbsenceType=array();
+		
+		foreach($Tab as $id) {
+			
+			$a=new TRH_TypeAbsence;
+			$a->load($ATMdb, $id);
+			
+			$TAbsenceType[] = $a;
+		}
+		
+		return $TAbsenceType;
 	}
 }
 

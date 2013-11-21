@@ -120,7 +120,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 			
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(adminCongesPrepareHead($compteur, 'compteur')  , 'adminconges', 'Administration des congés')
+				,'head'=>dol_get_fiche_head(adminCongesPrepareHead( 'compteur')  , 'adminconges', 'Administration des congés')
 			)
 			
 			

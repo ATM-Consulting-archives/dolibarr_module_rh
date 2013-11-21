@@ -45,13 +45,14 @@ function adminCompteurPrepareHead(&$obj, $type='compteur') {
 	}
 }
 
-function adminCongesPrepareHead(&$obj, $type='compteur') {
+function adminCongesPrepareHead($type='compteur') {
 	global $user;
 	switch ($type) {
 		
 		case 'compteur':
 			return array(
-			array(DOL_URL_ROOT_ALT.'/absence/adminConges.php?action=view', 'Données générales des congés','adminconges')
+				array(DOL_URL_ROOT_ALT.'/absence/adminConges.php', 'Données générales des congés','adminconges')
+				,array(DOL_URL_ROOT_ALT.'/absence/typeAbsence.php', "Types d'absences et de présences",'typeabsence')
 			);
 			break;
 	}
