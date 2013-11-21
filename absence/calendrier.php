@@ -169,6 +169,7 @@
 				,'actioncode'=>$actionCode
 				,'projectid'=>(! empty($conf->projet->enabled) && $user->rights->projet->lire)?$select_project:''
 				,'projectEnabled'=>(int)(! empty($conf->projet->enabled) && $user->rights->projet->lire)
+				,'newEvent'=>dol_buildpath('/comm/action/fiche.php?mainmenu=agenda&leftmenu=agenda&action=create&idmenu=530',1)
 			)
 			,'view'=>array(
 				'mode'=>$mode

@@ -228,11 +228,13 @@
             });
             
             //Add a new event
-/*            $("#faddbtn").click(function(e) {
-                var url ="../wdCalendar/edit.php";
-                OpenModelWindow(url,{ width: 500, height: 400, caption: "Créer un nouveau calendrier"});
+            $("#faddbtn").click(function(e) {
+                
+                url = "[agenda.newEvent;strconv=no]";
+                document.location.href=url;
+                
             });
-*/            //go to today
+            //go to today
             $("#showtodaybtn").click(function(e) {
                 var p = $("#gridcontainer").gotoDate().BcalGetOp();
                 if (p && p.datestrshow) {
@@ -271,7 +273,7 @@
             <div>
             	[onshow; block=div; when [view.agendaEnabled]==1]
 	            <div id="faddbtn" class="fbutton">
-	                <div><span title='Click to Create New Event' class="addcal">
+	                <div><span title="Cliquez pour créer un nouvel événement" class="addcal">
 	
 	                Nouvel Evénement                
 	                </span></div>
