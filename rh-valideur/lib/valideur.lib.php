@@ -71,6 +71,7 @@ function send_mail(&$db, $object, $user, $langs, $statut)
 					,'prenom'=>$firstname
 					,'ref'=>$object->ref
 					,'total_ttc'=>$object->total_ttc
+					,'motif'=>(isset($_REQUEST['cancelComment']) ?$_REQUEST['cancelComment']:'')
 				)
 			)
 		);
