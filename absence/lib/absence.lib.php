@@ -230,8 +230,10 @@ function saveLibelleEtat($etat){
 //arrondi variable float à 2 virgules
 function round2Virgule($variable){
 	if($variable==0){
-		return "0";
-	}else return round($variable,2);
+		return '0';
+	}else {
+		return number_format($variable,2,'.','');
+	} 
 }
 
 //retourne la date au format "d/m/Y"

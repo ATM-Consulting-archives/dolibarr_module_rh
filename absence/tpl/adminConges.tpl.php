@@ -25,17 +25,13 @@
 	 <br/>                                         
 		<table class="border" style="width:100%">
 				<tr>
-					<td style="width:30%;">Nombre de RTT acquis pour les cadres de C'PRO Groupe</td>
+					<td style="width:30%;">Nombre de RTT acquis pour les cadres</td>
 					<td>[compteurGlobal.rttCumuleInitCadreCpro;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Nombre de RTT acquis pour les cadres de C'PRO Informatique</td>
-					<td>[compteurGlobal.rttCumuleInitCadreCproInfo;strconv=no;protect=no]</td>
-				</tr>
-				<tr>
-					<td>Date clôture RTT</td>
-					<td>[compteurGlobal.date_rttClotureInit;strconv=no;protect=no]</td>
-				</tr>
+						<td>Date clôture RTT</td>
+						<td>[compteurGlobal.date_rttClotureInit;strconv=no;protect=no]</td>
+					</tr>
 		</table>     
 	<br/><br/><br/>
 

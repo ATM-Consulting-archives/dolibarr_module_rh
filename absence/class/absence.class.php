@@ -1704,13 +1704,20 @@ class TRH_AdminCompteur extends TObjetStd {
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_admin_compteur');
 		parent::add_champs('congesAcquisMensuelInit','type=float;');
-		parent::add_champs('rttCumuleInitCadreCpro','type=float;');
-		parent::add_champs('rttCumuleInitCadreCproInfo','type=float;');
+		parent::add_champs('rttCumuleInit','type=float;');
 		parent::add_champs('date_rttClotureInit','type=date;');
 		parent::add_champs('date_congesClotureInit','type=date;');				
+
+		parent::add_champs('entity','type=entier;index;');
+
 					
 		parent::_init_vars();
 		parent::start();	
+		
+		
+		$this->date_rttClotureInit=strtotime(DATE_RTT_CLOTURE);
+		$this->date_congesClotureInit=strtotime(DATE_CONGES_CLOTURE);
+		
 	}
 	
 	
@@ -1720,6 +1727,19 @@ class TRH_AdminCompteur extends TObjetStd {
 		
 		parent::save($db);
 	}
+	function loadCompteur(&$db) {
+	global $conf;
+		
+		$sql="SELECT rowid FROM ".$this->get_table()." 
+		WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+		$db->Execute($sql);
+		
+		$db->Get_line();
+		
+		$this->load($db, $db->Get_field('rowid'));
+		
+	}
+	
 }
 
 //définition de la classe pour l'emploi du temps des salariés

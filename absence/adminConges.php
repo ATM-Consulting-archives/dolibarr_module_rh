@@ -9,8 +9,7 @@
 	$compteur=new TRH_AdminCompteur;
 	
 	
-	if(isset($_REQUEST['action'])) {
-		switch($_REQUEST['action']) {
+		switch(__get('action','view')) {
 			case 'add':
 			case 'new':
 				_fiche($ATMdb, $compteur,'edit');
@@ -47,7 +46,7 @@
 							$TUserCproGroupe[]=$ATMdb->Get_field('fk_user');
 				}
 				
-				// on met à jour les compteurs des cpro info
+				// on met à jour les compteurs des cpro info TODO
 				$sql="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
 					SET rttAcquisAnnuelCumuleInit=".$compteur->rttCumuleInitCadreCpro." 
 					WHERE rttMetier LIKE 'cadre'
@@ -86,13 +85,7 @@
 			
 			case 'view':
 			
-					//récupération compteur admin
-					$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_admin_compteur";
-					$ATMdb->Execute($sql);
-					if($ATMdb->Get_line()) {
-								$idComptEnCours=$ATMdb->Get_field('rowid');
-					}
-					$compteur->load($ATMdb, $idComptEnCours);
+					$compteur->loadCompteur($ATMdb);
 					_fiche($ATMdb, $compteur,'view');
 					
 				break;
@@ -101,13 +94,8 @@
 				
 				break;
 		}
-	}
-	elseif(isset($_REQUEST['id'])) {
-		
-	}
-	else {
-		
-	}
+	
+	
 
 	$ATMdb->close();
 	
@@ -125,9 +113,6 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	echo $form->hidden('action', 'save');
 	//echo $form->hidden('fk_user', $_REQUEST['id']);
 
-
-	
-	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/adminConges.tpl.php'
 		,array(
@@ -138,9 +123,9 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				'rowid'=>$compteur->rowid
 				,'date_rttClotureInit'=>$form->calendrier('', 'date_rttClotureInit', $compteur->date_rttClotureInit, 12)
 				,'date_congesClotureInit'=>$form->calendrier('', 'date_congesClotureInit', $compteur->date_congesClotureInit, 12)
-				,'congesAcquisMensuelInit'=>$form->texte('','congesAcquisMensuelInit',round2Virgule($compteur->congesAcquisMensuelInit),10,50,'',$class="text", $default='')
-				,'rttCumuleInitCadreCpro'=>$form->texte('','rttCumuleInitCadreCpro',round2Virgule($compteur->rttCumuleInitCadreCpro),10,50,'',$class="text", $default='')	
-				,'rttCumuleInitCadreCproInfo'=>$form->texte('','rttCumuleInitCadreCproInfo',round2Virgule($compteur->rttCumuleInitCadreCproInfo),10,50,'',$class="text", $default='')	
+				,'congesAcquisMensuelInit'=>$form->texte('','congesAcquisMensuelInit',round2Virgule($compteur->congesAcquisMensuelInit),10,50)
+				,'rttCumuleInitCadreCpro'=>$form->texte('','rttCumuleInitCadreCpro',round2Virgule($compteur->rttCumuleInit),10,50)	
+				/*,'rttCumuleInitCadreCproInfo'=>$form->texte('','rttCumuleInitCadreCproInfo',round2Virgule($compteur->rttCumuleInitCadreCproInfo),10,50)*/	
 				
 				,'titreConges'=>load_fiche_titre("Congés payés",'', 'title.png', 0, '')
 				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')	

@@ -183,6 +183,8 @@
 				,'userdone'=>$filterd
 				,'usertodo'=>$filtert
 				,'userasked'=>$filtera
+				,'filter'=>$filter
+				,'status'=>$status
 				
 			)
 			
