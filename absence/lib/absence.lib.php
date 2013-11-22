@@ -1,5 +1,12 @@
 <?php
 
+function pointeusePrepareHead() {
+		return array(
+			array(dol_buildpath('/absence/pointeuse.php', 'Pointeuse','fiche'))
+		);
+}
+
+
 function absencePrepareHead(&$obj, $type='absence') {
 	global $user;
 	switch ($type) {
@@ -18,6 +25,7 @@ function absencePrepareHead(&$obj, $type='absence') {
 		
 	}
 }
+
 
 function compteurPrepareHead(&$obj, $type='absence', $nomUser, $prenomUser) {
 	global $user;
