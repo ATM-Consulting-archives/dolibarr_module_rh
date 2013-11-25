@@ -7,11 +7,17 @@ class TRH_formation_plan extends TObjetStd {
 		parent::add_champs('date_debut,date_fin','type=date;');
 		parent::add_champs('libelle','type=chaine');
 		parent::add_champs('description','type=chaine');
-		parent::add_champs('budget','type=float');
+		parent::add_champs('budget','type=float;');
 		parent::add_champs('entity','type=entier;');
 		
 		parent::_init_vars();
 		parent::start();
+		
+		$this->date_debut =strtotime( date('Y-01-01') );
+		$this->date_fin =strtotime( date('Y-12-31') );
+		
+		$this->libelle = 'Plan de formation '.date('Y');
+		
 	}
 	
 	//Retourne la liste des Formation associées au plan
