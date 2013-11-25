@@ -98,9 +98,10 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		$sens = 'D';
 		$code_compta = $row->codecomptable;
 		$type_compte = 'G';
+		$numeroFacture = $row->numFacture;
 		
 		$TLignes[] = array(
-			'numFacture'=>$row->numFacture
+			'numFacture'=>$numeroFacture
 			,'codeJournal'=>'RES'
 			,'datePiece'=>date('dmy', date2ToInt($row->date_facture))
 			,'typePiece'=> 'FF'
@@ -143,7 +144,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		AND e.entity = ".$entity."
 		AND e.fk_fournisseur =".$fk_fournisseur;
 		if ($idImport){ $sql_anal .= " AND e.idImport = '".$idImport."' ";}
-		$sql_anal .= " AND t.codecomptable = '".$code_compta."'";
+		$sql_anal .= " AND t.codecomptable = '".$code_compta."' AND e.numFacture='".$numeroFacture."'";
 		
 		if(isset($_REQUEST['DEBUG'])) {
 			print $sql_anal;
