@@ -2043,8 +2043,23 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::start();
 		
 		$this->TIsPresence=array(
+			0=>'Absence'
+			,1=>'Présence'
+		);
+		
+		$this->TDecompteNormal=array(
+			'oui'=>'Oui'
+			,'non'=>'Non'
+		);
+		
+		$this->TForAdmin=array(
 			0=>'Non'
 			,1=>'Oui'
+		);
+	
+		$this->TUnite=array(
+			'jour'=>'Jour'
+			,'heure'=>'Heure'
 		);
 		
 	}
@@ -2054,15 +2069,21 @@ class TRH_TypeAbsence extends TObjetStd {
 		return parent::loadBy($ATMdb, $type, 'typeAbsence');
 		
 	}
-	
+	function save(&$ATMdb) {
+		global $conf;
+		
+		$this->entity = $conf->entity;
+		
+		parent::save($ATMdb);
+	}
 	static function getList(&$ATMdb) {
 		global $conf;
 		
-		$sql="SELECT rowid FROM ".MAIN_DB_PREFIXB."rh_type_absence
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_type_absence
 		WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.") 
-		ORDER BY codeAbsence";
+		ORDER BY typeAbsence";
 		
-		$Tab = TRequeteCore::_get_id_by_sql($db, $sql);
+		$Tab = TRequeteCore::_get_id_by_sql($ATMdb, $sql);
 		$TAbsenceType=array();
 		
 		foreach($Tab as $id) {
