@@ -72,7 +72,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 				DATE_FORMAT(e.date_debut, '%d%m%y') as date_debut, 
 				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
 				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
-				r.typeVehicule, u.name, u.firstname, e.entity, t.codecomptable, 
+				r.typeVehicule, u.name as 'lastname', u.firstname, e.entity, t.codecomptable, 
 				ue.COMPTE_TIERS, e.idImport,e.numFacture
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
@@ -84,7 +84,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	AND e.entity = ".$entity."
 	AND e.fk_fournisseur =".$fk_fournisseur;	
 	if ($idImport){ $sql .= " AND e.idImport = '".$idImport."' ";}
-	$sql .= " GROUP BY t.codecomptable";
+	$sql .= " GROUP BY e.numFacture, t.codecomptable";
 	
 	if(isset($_REQUEST['DEBUG'])) {
 		print $sql;
@@ -131,7 +131,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 				, (e.coutEntrepriseHT * IFNULL(a.pourcentage,100) / 100) as coutEntrepriseHT
 				, a.code as 'code_analytique'
 				, a.pourcentage as 'pourcentage'
-				,u.firstname,u.name,u.rowid as 'fk_user'
+				,u.firstname,u.name as 'lastname',u.rowid as 'fk_user'
 				,e.idImport,e.numFacture
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
@@ -154,18 +154,19 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 
 			$code_anal = $ATMdb2->Get_field('code_analytique');
 			$total_anal = $ATMdb2->Get_field('coutEntrepriseHT');
+			$fk_user =  $ATMdb2->Get_field('fk_user');
 //print_r($code_anal);
 
-			$TUser[$code_anal]=array(
-					'nom' => ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('name') ."</a>"
+			$TUser[$code_anal][$fk_user]=array(
+					'nom' => ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('lastname') ."</a>"
 					,'prenom' => $ATMdb2->Get_field('firstname')
 			);
  						
 			if(isset($_REQUEST['DEBUG'])) {
 				print "$code_anal=$total_anal<br/>";
 			}
-			if(!isset($TabAna[$code_anal])) $TabAna[$code_anal]=0;
-			$TabAna[$code_anal]+=$total_anal;
+			if(!isset($TabAna[$code_anal][$fk_user])) $TabAna[$code_anal][$fk_user]=0;
+			$TabAna[$code_anal][$fk_user]+=$total_anal;
 			/*$TabAna[] = array(
 				$code_anal
 				,number_format($ATMdb2->Get_field('total_ht'),2,'.','' )
@@ -174,9 +175,10 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
     
     	$nbElement = count($TabAna);
 		$total_partiel = 0;$cpt=0;
-		foreach($TabAna as $code_analytique=>$total_ht_anal /*$ana*/) {
-			//list($code_analytique,$total_ht_anal)=$ana ;
+		foreach($TabAna as $code_analytique=>$TAnal_user /*$ana*/) {
 			
+			
+			foreach($TAnal_user as $fk_user=>$total_ht_anal) {
 			if(isset($_REQUEST['DEBUG'])) {
                                 print "<b>$code_analytique=$total_ht_anal</b><br/>";
                         }
@@ -184,34 +186,39 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			$total_ht_anal = round($total_ht_anal,2);
 
 			if($cpt==$nbElement-1) $total_ht_anal = $montant - $total_partiel;
- 			$total_partiel+=$total_ht_anal;
-          
-          		$type_compte 		= 	'A';
-					
-					$TLignes[] = array(
-						'numFacture'=>$row->numFacture
-						,'codeJournal'=>'RES'
-						,'datePiece'=>date('dmy', date2ToInt($row->date_facture))
-						,'typePiece'=> 'FF'
-						,'compteGeneral'=> $code_compta
-						,'typeCompte'=> $type_compte
-						,'codeAnalytique'=> $code_analytique
-						,'nom'=>$TUser[$code_analytique]['nom']
-						,'prenom'=>$TUser[$code_analytique]['prenom']
-						,'referenceEcriture' => ''
-						,'libelleEcriture'=> 'RESSOURCE '.date('m/Y')
-						,'modePaiement'=> 'V'
-						,'dateEcheance'=> date('dmy')
-						,'sens'=> $sens
-						,'montant'=>  number_format($total_ht_anal,2,'.','')
-						,'typeEcriture'=> 'N'
-						,'numeroPiece'=> ''
-						,'devise'=>'EUR'
-						,'idImport'=>$row->idImport
+	 			$total_partiel+=$total_ht_anal;
+	          
+	          		$type_compte 		= 	'A';
 						
+						$TLignes[] = array(
+							'numFacture'=>$row->numFacture
+							,'codeJournal'=>'RES'
+							,'datePiece'=>date('dmy', date2ToInt($row->date_facture))
+							,'typePiece'=> 'FF'
+							,'compteGeneral'=> $code_compta
+							,'typeCompte'=> $type_compte
+							,'codeAnalytique'=> $code_analytique
+							,'nom'=>$TUser[$code_analytique][$fk_user]['nom']
+							,'prenom'=>$TUser[$code_analytique][$fk_user]['prenom']
+							,'referenceEcriture' => ''
+							,'libelleEcriture'=> 'RESSOURCE '.date('m/Y')
+							,'modePaiement'=> 'V'
+							,'dateEcheance'=> date('dmy')
+							,'sens'=> $sens
+							,'montant'=>  number_format($total_ht_anal,2,'.','')
+							,'typeEcriture'=> 'N'
+							,'numeroPiece'=> ''
+							,'devise'=>'EUR'
+							,'idImport'=>$row->idImport
 							
-					);
-			 $cpt++;
+								
+						);
+				 $cpt++;				
+			}
+			
+			//list($code_analytique,$total_ht_anal)=$ana ;
+			
+
 		}
     
      
@@ -237,13 +244,15 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		AND e.fk_fournisseur =".$fk_fournisseur;
 		if ($idImport){ $sql .= " AND e.idImport = '".$idImport."' ";}
 		
+		$sql.=" GROUP BY e.numFacture ";
+		
 		if(isset($_REQUEST['DEBUG'])) {
-			print ' TVA ****** '.$sql;
+			print $sql;
 		}
 		
 		$ATMdb->Execute($sql);
 		while($row = $ATMdb->Get_line()) {
-			$total_tva	=	$ATMdb->Get_field('coutEntrepriseTTC') - $ATMdb->Get_field('coutEntrepriseHT');
+			$total_tva	= number_format(floatval($ATMdb->Get_field('coutEntrepriseTTC')) - floatval($ATMdb->Get_field('coutEntrepriseHT')),2,'.','');
 			
 			$TLignes[] =array(
 				'numFacture'=>$row->numFacture
@@ -271,6 +280,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			
 		}
 	}
+	
 	
 	/**----***********************----**/
 	/**----** Lignes de crédit **----**/
@@ -307,6 +317,8 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	AND e.fk_fournisseur =".$fk_fournisseur."
 	AND e.entity = ".$entity;
 	if ($idImport){ $sql .= " AND e.idImport = '".$idImport."'";}
+	
+	$sql.=" GROUP BY e.numFacture ";
 	
 	if(isset($_REQUEST['DEBUG'])) {
 		print $sql;
@@ -356,7 +368,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 				,'modePaiement'=> 'V'
 				,'dateEcheance'=> date('dmy')
 				,'sens'=> $sens
-				,'montant'=>  round($montant,2)
+				,'montant'=>  number_format($montant,2,'.','')
 				,'typeEcriture'=> 'N'
 				,'numeroPiece'=> ''
 				,'devise'=>'EUR'
@@ -367,7 +379,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		
 		
 	}
-	
+
 	return $TLignes;
 	
 }
