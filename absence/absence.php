@@ -449,7 +449,9 @@ function _listeValidation(&$ATMdb, &$absence) {
  		}
  		$sql.=")";
 	}
- 	
+ 	else {
+		?><div class="error">Vous n'&ecirc;tes pas valideur de cong&eacute;  </div><?
+	}
  
 	
 		//LISTE DES ABSENCES À VALIDER

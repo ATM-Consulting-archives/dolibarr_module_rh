@@ -206,7 +206,8 @@ function _liste(&$ATMdb, &$ressource) {
 		$sql.=", '' as 'Supprimer'";
 	}
 	$sql.=" FROM ".MAIN_DB_PREFIX."rh_ressource as r
-		LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON ( (e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource) AND e.type='emprunt')
+			LEFT JOIN (SELECT fk_rh_ressource, date_debut,date_fin,fk_user FROM ".MAIN_DB_PREFIX."rh_evenement WHERE type='emprunt' AND date_fin>=NOW() AND date_debut<=NOW()) as e ON ( e.fk_rh_ressource=r.rowid OR e.fk_rh_ressource=r.fk_rh_ressource)
+	
 	 LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user = u.rowid )
 	 LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as ua ON (e.fk_user = ua.fk_user)	
 	
