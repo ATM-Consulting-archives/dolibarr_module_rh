@@ -455,7 +455,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 		//LISTE DES ABSENCES À VALIDER
 		$r = new TSSRenderControler($absence);
 		
-		$TOrder = array('DateCre'=>'DESC');
+		$TOrder = array('date_cre'=>'DESC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 					
