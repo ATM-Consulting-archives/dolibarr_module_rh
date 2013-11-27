@@ -64,11 +64,8 @@ class TRH_Compteur extends TObjetStd {
 		parent::start();
 		
 		$this->TTypeAcquisition = array('Annuel'=>'Annuel','Mensuel'=>'Mensuel');
-		$this->TMetier = array('cadre'=>'Cadre',
-		'noncadre37cpro'=>'Non Cadre 37h C\'PRO','noncadre37cproinfo'=>'Non Cadre 37h C\'PRO Info',
-		'noncadre38cpro'=>'Non Cadre 38h C\'PRO', 'noncadre38cproinfo'=>'Non Cadre 38h C\'PRO Info',
-		'noncadre39'=>'Non Cadre 39h', 'aucunrtt' => 'Aucun RTT',
-		'autre'=>'Autre');
+		
+		
 	}
 	
 	
@@ -1707,13 +1704,20 @@ class TRH_AdminCompteur extends TObjetStd {
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_admin_compteur');
 		parent::add_champs('congesAcquisMensuelInit','type=float;');
-		parent::add_champs('rttCumuleInitCadreCpro','type=float;');
-		parent::add_champs('rttCumuleInitCadreCproInfo','type=float;');
+		parent::add_champs('rttCumuleInit','type=float;');
 		parent::add_champs('date_rttClotureInit','type=date;');
 		parent::add_champs('date_congesClotureInit','type=date;');				
+
+		parent::add_champs('entity','type=entier;index;');
+
 					
 		parent::_init_vars();
 		parent::start();	
+		
+		
+		$this->date_rttClotureInit=strtotime(DATE_RTT_CLOTURE);
+		$this->date_congesClotureInit=strtotime(DATE_CONGES_CLOTURE);
+		
 	}
 	
 	
@@ -1723,6 +1727,19 @@ class TRH_AdminCompteur extends TObjetStd {
 		
 		parent::save($db);
 	}
+	function loadCompteur(&$db) {
+	global $conf;
+		
+		$sql="SELECT rowid FROM ".$this->get_table()." 
+		WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+		$db->Execute($sql);
+		
+		$db->Get_line();
+		
+		$this->load($db, $db->Get_field('rowid'));
+		
+	}
+	
 }
 
 //définition de la classe pour l'emploi du temps des salariés
@@ -1917,23 +1934,16 @@ class TRH_JoursFeries extends TObjetStd {
 
 	
 	//fonction qui renvoie 1 si le jour férié que l'on veut créer existe déjà à la date souhaitée, sinon 0
-	function testExisteDeja($ATMdb, $feries){
+	function testExisteDeja($ATMdb){
 		global $conf;
 		//on récupère toutes les dates de jours fériés existant
-		$sql="SELECT date_jourOff  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries";
+		$sql="SELECT count(*) as 'nb'  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE date_jourOff='".$this->date_jourOff."' AND rowid!=".$this->getId();
 		$ATMdb->Execute($sql);
-		$k=0;
-		while($ATMdb->Get_line()) {
-			$TJFeries[]=strtotime($ATMdb->Get_field('date_jourOff'));
-			$k++;
-		}
-		
-		
+		$obj = $ATMdb->Get_line();
+			
 		//on teste si l'un d'eux est égal à celui que l'on veut créer
-		if($k>0){
-			foreach($TJFeries as $jour){
-				if($jour==$feries->date_jourOff) return 1;
-			}	
+		if($obj->nb > 0){
+			return 1;	
 		}
 		
 		return 0;
@@ -1948,7 +1958,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		parent::add_champs('typeAbsence','type=chaine;');
 		parent::add_champs('choixApplication','type=chaine;');
 		parent::add_champs('nbJourCumulable','type=int;');
-		parent::add_champs('restrictif','type=int;');
+		parent::add_champs('restrictif','type=entier;');
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('fk_usergroup','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=int;');
@@ -2025,18 +2035,66 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::add_champs('codeAbsence','type=chaine;index;');
 		parent::add_champs('admin','type=int;');
 		parent::add_champs('unite','type=chaine;');
-		parent::add_champs('entity','type=int;index;');
+		parent::add_champs('entity,isPresence','type=int;index;');
 		
 		parent::add_champs('decompteNormal','type=chaine;');
 		
 		parent::_init_vars();
 		parent::start();
+		
+		$this->TIsPresence=array(
+			0=>'Absence'
+			,1=>'Présence'
+		);
+		
+		$this->TDecompteNormal=array(
+			'oui'=>'Oui'
+			,'non'=>'Non'
+		);
+		
+		$this->TForAdmin=array(
+			0=>'Non'
+			,1=>'Oui'
+		);
+	
+		$this->TUnite=array(
+			'jour'=>'Jour'
+			,'heure'=>'Heure'
+		);
+		
 	}
 	
 	function load_by_type(&$ATMdb, $type) {
 		
 		return parent::loadBy($ATMdb, $type, 'typeAbsence');
 		
+	}
+	function save(&$ATMdb) {
+		global $conf;
+		
+		$this->entity = $conf->entity;
+		
+		parent::save($ATMdb);
+	}
+	static function getList(&$ATMdb) {
+		global $conf;
+		
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_type_absence
+		WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.") 
+		ORDER BY typeAbsence";
+		
+		$Tab = TRequeteCore::_get_id_by_sql($ATMdb, $sql);
+		$TAbsenceType=array();
+		
+		foreach($Tab as $id) {
+			
+			$a=new TRH_TypeAbsence;
+			$a->load($ATMdb, $id);
+			
+			$TAbsenceType[] = $a;
+		}
+		
+		return $TAbsenceType;
 	}
 }
 

@@ -16,8 +16,8 @@
 		var urlFact = $('#urlFacture').val()+$('#type option:selected').val()
 		$.ajax({
 			 url: urlFact
-		}).done(function(data) {
-			liste = JSON.parse(data);
+			 ,dataType:'json'
+		}).done(function(liste) {
 			$("#idImport").empty(); // remove old options
 			$.each(liste, function(key, value) {
 			  $("#idImport").append($("<option></option>")

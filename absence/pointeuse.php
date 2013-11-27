@@ -1,0 +1,221 @@
+<?php
+	require('config.php');
+	require('./class/absence.class.php');
+	require('./class/pointeuse.class.php');
+	require('./lib/absence.lib.php');
+	
+	$langs->load('absence@absence');
+	
+	$ATMdb=new TPDOdb;
+	
+	$pointeuse=new TRH_Pointeuse;
+	llxHeader('','Pointage');
+	switch(__get('action','list') ) {
+			case 'new':
+				$pointeuse->set_values($_REQUEST);
+				_fiche($ATMdb, $absence,'edit');	
+				break;	
+
+			case 'imcomming':
+				$pointeuse->loadByDate($ATMdb, date('Y-m-d'));
+				
+				if(date('H')<12 && $pointeuse->date_deb_am==0) {
+					$pointeuse->date_deb_am = time();
+				}
+				else if($pointeuse->date_deb_pm==0) {
+					$pointeuse->date_deb_pm = time();
+				}  
+						
+				$pointeuse->fk_user = $user->id;		
+						
+				$pointeuse->set_date('date_jour', date('d/m/Y'));					
+				$pointeuse->save($ATMdb);
+				
+				_liste($ATMdb, $pointeuse);	
+				break;	
+
+
+			case 'imleaving':
+				$pointeuse->loadByDate($ATMdb, date('Y-m-d'));
+
+				if(date('H')<12) {
+					$pointeuse->date_fin_am = time();
+				}
+				else {
+					$pointeuse->date_fin_pm = time();
+				}  
+				
+				$pointeuse->fk_user = $user->id;		
+				
+				$pointeuse->set_date('date_jour', date('d/m/Y'));					
+				$pointeuse->save($ATMdb);
+				
+				_liste($ATMdb, $pointeuse);	
+				break;	
+
+
+			case 'save':
+				$pointeuse->load($ATMdb, $_REQUEST['id']);
+				
+				$pointeuse->set_date('date_jour', $_REQUEST['date_jour']);
+				//print_r($_REQUEST);
+				$pointeuse->date_deb_am = strtotime(date('Y-m-d '.$_REQUEST['date_deb_am'], $pointeuse->date_jour));
+				$pointeuse->date_deb_pm = strtotime(date('Y-m-d '.$_REQUEST['date_deb_pm'], $pointeuse->date_jour));
+				$pointeuse->date_fin_am = strtotime(date('Y-m-d '.$_REQUEST['date_fin_am'], $pointeuse->date_jour));
+				$pointeuse->date_fin_pm = strtotime(date('Y-m-d '.$_REQUEST['date_fin_pm'], $pointeuse->date_jour));
+				
+				//$ATMdb->debug=true;
+				$pointeuse->save($ATMdb);
+				
+				_fiche($ATMdb, $pointeuse,'view');
+				
+				break;
+				
+			case 'view':
+				$pointeuse->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $pointeuse,'view');
+				break;
+
+			case 'edit':
+				$pointeuse->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $pointeuse,'edit');
+				break;
+
+			case 'delete':
+				$pointeuse->load($ATMdb, $_REQUEST['id']);
+				$pointeuse->delete($ATMdb);
+				
+				?>
+				<script language="javascript">
+					document.location.href="?delete_ok=1";					
+				</script>
+				<?
+				break;
+
+			case 'list' : 
+				_liste($ATMdb, $pointeuse);
+				break;
+		}
+
+
+	$ATMdb->close();
+	
+	llxFooter();
+	
+	
+function _liste(&$ATMdb, &$pointeuse) {
+	global $langs, $conf, $db, $user;	
+	
+	print dol_get_fiche_head(pointeusePrepareHead()  , '', 'Pointeuse');
+
+	$r = new TSSRenderControler($pointeuse);
+
+	$sql="SELECT rowid as 'Id', date_deb_am,date_fin_am,date_deb_pm,date_fin_pm
+			,time_presence as 'Temps de présence'
+			,date_jour
+			FROM ".MAIN_DB_PREFIX."rh_pointeuse WHERE 1 ";
+			
+	$sql.=" AND fk_user=".$user->id; // TODO mode admin
+	
+	
+	$TOrder = array('date_jour'=>'DESC');
+	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+				
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
+	
+	?><div style="text-align: right">
+		<a class="butAction" href="?action=imcomming">J'arrive</a>
+		<a class="butAction" href="?action=imleaving">Je pars</a>
+		<a class="butAction" href="?id=<?=$pointeuse->getId()?>&action=new">Nouveau pointage</a><div style="clear:both"></div>
+	</div><?
+	
+	$r->liste($ATMdb, $sql, array(
+		'limit'=>array(
+			'page'=>$page
+			,'nbLine'=>'30'
+		)
+		,'link'=>array(
+			'Id'=>'<a href="?id=@val@&action=view">@val@</a>'
+		)
+		
+		,'hide'=>array()
+		,'type'=>array('date_deb_am'=>'hour', 'date_fin_am'=>'hour', 'date_deb_pm'=>'hour', 'date_fin_pm'=>'hour', 'date_jour'=>'date')
+		,'liste'=>array(
+			'titre'=>'Liste de vos absences'
+			,'image'=>img_picto('','title.png', '', 0)
+			,'picto_precedent'=>img_picto('','previous.png', '', 0)
+			,'picto_suivant'=>img_picto('','next.png', '', 0)
+			,'noheader'=> (int)isset($_REQUEST['socid'])
+			,'messageNothing'=>"Il n'y a aucune absence à afficher"
+			,'order_down'=>img_picto('','1downarrow.png', '', 0)
+			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			
+		)
+		,'title'=>array(
+			'date_deb_am'=>'Arrivée le matin'
+			, 'date_fin_am'=>'Départ le matin'
+			, 'date_deb_pm'=>'Arrivée l\'après-midi'
+			, 'date_fin_pm'=>'Départ l\'après-midi'
+			, 'date_jour'=>'Jour'
+		)
+		,'search'=>array(
+			'date_jour'=>array('recherche'=>'calendar')
+		)
+		,'eval'=>array(
+			'Temps de présence'=>"_get_temps_presence(@val@)"
+		)
+		,'orderBy'=>$TOrder
+		
+	));
+	
+	
+	llxFooter();
+}	
+function _get_temps_presence($time_presence) {
+			
+	return date('H\h i\m', $time_presence + strtotime(date('Y-01-01')));
+	
+}
+function _fiche(&$ATMdb, &$pointeuse, $mode) {
+	global $db,$user,$conf;
+	
+	//echo $_REQUEST['validation'];
+	
+	$fk_user = $user->id; //TODO admin
+	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
+	$form->Set_typeaff($mode);
+	echo $form->hidden('id', $pointeuse->getId());
+	echo $form->hidden('fk_user', $fk_user);
+	echo $form->hidden('action', 'save');
+		
+	$TBS=new TTemplateTBS();
+	print $TBS->render('./tpl/pointeuse.tpl.php'
+		,array(  )
+		,array(
+			'pointeuse'=>array(
+				'date_deb_am'=>$form->texte('','date_deb_am', date('H:i',$pointeuse->date_deb_am) ,5,7)
+				,'date_fin_am'=>$form->texte('','date_fin_am', date('H:i',$pointeuse->date_fin_am),5,7)
+				,'date_deb_pm'=>$form->texte('','date_deb_pm', date('H:i',$pointeuse->date_deb_pm),5,7)
+				,'date_fin_pm'=>$form->texte('','date_fin_pm', date('H:i',$pointeuse->date_fin_pm),5,7)
+				,'date_jour'=>$form->calendrier('', 'date_jour', $pointeuse->date_jour)
+				,'time_presence'=>_get_temps_presence($pointeuse->time_presence)
+				,'id'=>$pointeuse->getId()	
+			)
+			,'view'=>array(
+				'mode'=>$mode
+				,'head'=>dol_get_fiche_head(pointeusePrepareHead(), 'fiche', 'Pointage')
+			)
+		)	
+	);
+	
+	echo $form->end_form();
+	// End of page
+	
+	global $mesg, $error;
+	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	llxFooter();
+}
+

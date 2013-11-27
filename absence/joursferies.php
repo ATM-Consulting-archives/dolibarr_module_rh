@@ -5,7 +5,7 @@
 	
 	$langs->load('absence@absence');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$feries=new TRH_JoursFeries;
 	$emploiTemps=new TRH_EmploiTemps;
 	
@@ -30,13 +30,11 @@
 				//print_r($feries);		
 				$feries->set_values($_REQUEST);
 				
-				$existeDeja=$feries->testExisteDeja($ATMdb, $feries);
+				$existeDeja=$feries->testExisteDeja($ATMdb);
 				
 				if(!$existeDeja){
-					$mesg = '<div class="error">Jour non travaillé ajouté</div>';
 					$feries->save($ATMdb);
-					$feries->load($ATMdb, $_REQUEST['idJour']);	
-					_fiche($ATMdb, $feries , $emploiTemps,'view');
+					_liste($ATMdb, $feries , $emploiTemps);
 				}else{
 					$mesg = '<div class="error">Création impossible : il existe déjà un jour non travaillé à cette date</div>';
 					_fiche($ATMdb, $feries , $emploiTemps,'edit');
@@ -96,7 +94,7 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 		WHERE entity IN (0,".$conf->entity.")";
 		
 	
-	$TOrder = array('ID'=>'DESC');
+	$TOrder = array('date_jourOff'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				

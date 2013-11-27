@@ -29,8 +29,8 @@
 				//alert('top');
 				$.ajax({
 					url: 'script/loadUtilisateurs.php?groupe='+$('#groupe option:selected').val()
-				}).done(function(data) {
-					liste = JSON.parse(data);
+					,dataType:'json'
+				}).done(function(liste) {
 					$("#idUtilisateur").empty(); // remove old options
 					$.each(liste, function(key, value) {
 					  $("#idUtilisateur").append($("<option></option>")
@@ -46,10 +46,10 @@
         $(document).ready(function() {     
             var view="month";          
            
-            var DATA_FEED_URL = "absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]&typeAbsence=[absence.typeAbsence;strconv=no;protect=no]"
+           var DATA_FEED_URL = "./script/absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]&typeAbsence=[absence.typeAbsence;strconv=no;protect=no]&withAgenda=[view.agendaEnabled]"
             var op = {
                 view: view,
-                theme:3,
+                theme:0,
                 showday: new Date(),
                 EditCmdhandler:Edit,
                 DeleteCmdhandler:Delete,
@@ -60,9 +60,12 @@
                 onRequestDataError: cal_onerror, 
                 autoload:true,
                 url: DATA_FEED_URL + "&method=list",  
-                quickAddUrl: DATA_FEED_URL + "&method=add", 
-                quickUpdateUrl: DATA_FEED_URL + "&method=update",
-                quickDeleteUrl: DATA_FEED_URL + "&method=remove"        
+                quickAddUrl: false, 
+                quickUpdateUrl: false,
+                quickDeleteUrl: false   
+                ,method:"GET"
+                ,enableDrag :false   
+                ,height:false 
             };
             var $dv = $("#calhead");
             var _MH = document.documentElement.clientHeight;
@@ -86,20 +89,8 @@
             });
             function cal_beforerequest(type)
             {
-                var t="Loading data...";
-                switch(type)
-                {
-                    case 1:
-                        t="Loading data...";
-                        break;
-                    case 2:                      
-                    case 3:  
-                    case 4:    
-                        t="The request is being processed ...";                                   
-                        break;
-                }
                 $("#errorpannel").hide();
-                $("#loadingpannel").html(t).show();    
+                $("#loadingpannel").show();    
             }
             function cal_afterrequest(type)
             {
@@ -123,22 +114,18 @@
             }
             function Edit(data)
             {
-               var eurl="../wdCalendar/edit.php?id={0}&start={2}&end={3}&isallday={4}&title={1}";   
-                if(data)
-                {
-                    var url = StrFormat(eurl,data);
-                    OpenModelWindow(url,{ width: 600, height: 400, caption:"Gérer le calendrier",onclose:function(){
-                       $("#gridcontainer").reload();
-                    }});
-                }
+               
             }    
             function View(data)
             {
-                var str = "";
-                $.each(data, function(i, item){
-                    str += "[" + i + "]: " + item + "\n";
-                });
-                alert(str);               
+               /* var str = "";
+                for(x in data) {
+                    str += "[" + x + "]: " + data[x] + "\n";
+                }
+                alert(str);*/
+               
+               document.location.href=data[9];
+                              
             }    
             function Delete(data,callback)
             {           
@@ -235,28 +222,31 @@
     <div>
 
       <div id="calhead" style="padding-left:1px;padding-right:1px;">          
-            <div class="cHead"><div class="ftitle">Mon calendrier</div>
             <div id="loadingpannel" class="ptogtitle loadicon" style="display: none;">Chargement...</div>
              <div id="errorpannel" class="ptogtitle loaderror" style="display: none;">Impossible de charger les données.</div>
             </div>          
             
             <div id="caltoolbar" class="ctoolbar">
-              <!--<div id="faddbtn" class="fbutton">
-                <div><span title='Click to Create New Event' class="addcal">
-
-                Nouvel Evénement                
-                </span></div>
-            </div>-->
-            <div class="btnseparator"></div>
+            <div>
+            	[onshow; block=div; when [view.agendaEnabled]==1]
+	            <div id="faddbtn" class="fbutton">
+	                <div><span title='Click to Create New Event' class="addcal">
+	
+	                Nouvel Evénement                
+	                </span></div>
+	            </div>
+	            <div class="btnseparator"></div>
+            </div>
              <div id="showtodaybtn" class="fbutton">
                 <div><span title='Click to back to today ' class="showtoday">
                 Aujourd'hui</span></div>
             </div>
               <div class="btnseparator"></div>
 
-            <!--<div id="showdaybtn" class="fbutton">
+           <div id="showdaybtn" class="fbutton">
+           	[onshow; block=div; when [view.agendaEnabled]==1]
                 <div><span title='Day' class="showdayview">Jour</span></div>
-            </div>-->
+            </div>
               <div  id="showweekbtn" class="fbutton">
                 <div><span title='Week' class="showweekview">Semaine</span></div>
             </div>
@@ -289,20 +279,12 @@
       </div>
       <div style="padding:1px;">
 
-        <div class="t1 chromeColor">
-            &nbsp;</div>
-        <div class="t2 chromeColor">
-            &nbsp;</div>
+        
         <div id="dvCalMain" class="calmain printborder">
             <div id="gridcontainer" style="overflow-y: visible;">
             </div>
         </div>
-        <div class="t2 chromeColor">
-
-            &nbsp;</div>
-        <div class="t1 chromeColor">
-            &nbsp;
-        </div>   
+        
         </div>
      
   </div>

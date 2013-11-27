@@ -12,7 +12,7 @@
 	$langs->load('main');
 	$langs->load('other');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$absence=new TRH_Absence;
 	
 	_fiche($ATMdb, $absence);

@@ -21,7 +21,7 @@
 			,"/rhlibrary/wdCalendar/css/main.css")
 	);
 		
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	global $user, $conf;
 	$absence=new TRH_absence;
 	if(isset($_REQUEST['id'])){
@@ -114,6 +114,7 @@
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'calendrier', 'Absence')
 				,'head3'=>dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', 'Absence')
 				,'titreCalendar'=>load_fiche_titre("Agenda des absences",'', 'title.png', 0, '')
+				,'agendaEnabled'=>0
 			)
 			
 			

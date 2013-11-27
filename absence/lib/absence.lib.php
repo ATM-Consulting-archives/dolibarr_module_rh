@@ -1,5 +1,12 @@
 <?php
 
+function pointeusePrepareHead() {
+		return array(
+			array(dol_buildpath('/absence/pointeuse.php', 'Pointeuse','fiche'))
+		);
+}
+
+
 function absencePrepareHead(&$obj, $type='absence') {
 	global $user;
 	switch ($type) {
@@ -18,6 +25,7 @@ function absencePrepareHead(&$obj, $type='absence') {
 		
 	}
 }
+
 
 function compteurPrepareHead(&$obj, $type='absence', $nomUser, $prenomUser) {
 	global $user;
@@ -45,13 +53,14 @@ function adminCompteurPrepareHead(&$obj, $type='compteur') {
 	}
 }
 
-function adminCongesPrepareHead(&$obj, $type='compteur') {
+function adminCongesPrepareHead($type='compteur') {
 	global $user;
 	switch ($type) {
 		
 		case 'compteur':
 			return array(
-			array(DOL_URL_ROOT_ALT.'/absence/adminConges.php?action=view', 'Données générales des congés','adminconges')
+				array(DOL_URL_ROOT_ALT.'/absence/adminConges.php', 'Données générales des congés','adminconges')
+				,array(DOL_URL_ROOT_ALT.'/absence/typeAbsence.php', "Types d'absences et de présences",'typeabsence')
 			);
 			break;
 	}
@@ -230,8 +239,10 @@ function saveLibelleEtat($etat){
 //arrondi variable float à 2 virgules
 function round2Virgule($variable){
 	if($variable==0){
-		return "0";
-	}else return round($variable,2);
+		return '0';
+	}else {
+		return number_format($variable,2,'.','');
+	} 
 }
 
 //retourne la date au format "d/m/Y"

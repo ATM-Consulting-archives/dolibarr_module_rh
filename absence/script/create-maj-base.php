@@ -50,8 +50,7 @@
 	$q=new TRH_AdminCompteur;
 	$q->init_db_by_vars($ATMdb);
 	$q->congesAcquisMensuelInit=2.08;
-	$q->rttCumuleInitCadreCpro=8;
-	$q->rttCumuleInitCadreCproInfo=9;
+	$q->rttCumuleInit=8;
 	$q->date_rttClotureInit=strtotime(DATE_RTT_CLOTURE);
 	$q->date_congesClotureInit=strtotime(DATE_CONGES_CLOTURE);
 	$q->save($ATMdb);

@@ -5,7 +5,7 @@
 	
 	$langs->load('absence@absence');
 
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$regle=new TRH_RegleAbsence;
 
 	if(isset($_REQUEST['action'])) {
