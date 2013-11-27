@@ -175,7 +175,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			);*/
 		}
     
-    	$nbElement = count($TabAna);
+    	$nbElement = count($TabAna, COUNT_RECURSIVE );
 		$total_partiel = 0;$cpt=0;
 		foreach($TabAna as $code_analytique=>$TAnal_user /*$ana*/) {
 			
