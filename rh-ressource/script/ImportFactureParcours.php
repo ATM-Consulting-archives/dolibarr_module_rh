@@ -134,14 +134,37 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				else {
 					$info = 'Ok';
 				}
+				
+				$ressource = new TRH_Ressource();
+				$ressource->load($ATMdb, $TRessource[$plaque]);
+				$typeVehicule = $ressource->typevehicule;
 			}
 			else {
 				$idUser = $idSuperAdmin;
 				$info = 'Pas de voiture correspondante';
 				$cptNoVoiture ++;
+				
+				$typeVehicule = $info[9];	
 			}
 				//echo $idUser.'<br>';
 				
+			
+			
+			/*
+				 * Correction des taux d'import pour traitement retour
+				 */
+			//$typeVehicule = $info[9];	 
+				 
+				 
+			$loyerTTC = floatval(strtr($infos[30], ',','.'));
+			$loyerHT = floatval(strtr($infos[12], ',','.'));
+		
+			$taux = '19.6';
+			if($typeVehicule == "VU") { null; }
+			else {
+				$taux="0";
+				$loyerHT = $TTC;
+			} 
 			
 			//FACTURE SUR LE LOYER
 			$fact = new TRH_Evenement;
@@ -154,10 +177,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$fact->commentaire = 'Facture lié au contrat '.$infos[4];
 			$fact->set_date('date_debut', $infos[10]);
 			$fact->set_date('date_fin', $infos[1]);
-			$fact->coutTTC = floatval(strtr($infos[30], ',','.'));
-			$fact->coutEntrepriseTTC = floatval(strtr($infos[30], ',','.'));
-			$fact->TVA= $TTVA['19.6'];
-			$fact->coutEntrepriseHT = floatval(strtr($infos[12], ',','.'));
+			$fact->coutTTC = $loyerTTC;
+			$fact->coutEntrepriseTTC =  $loyerTTC;
+			$fact->TVA= $TTVA[$taux];
+			$fact->coutEntrepriseHT = $loyerHT;
 			$fact->entity =$entity;
 			$fact->fk_fournisseur = $idParcours;
 			$fact->idImport = $idImport;
@@ -167,6 +190,17 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$cptFactureLoyer++;
 				
 				
+		
+			$loyerTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
+			$loyerHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
+		
+			$taux = '19.6';
+			if($typeVehicule == "VU") { null; }
+			else {
+				$taux="0";
+				$loyerHT = $TTC;
+			} 
+			
 				
 			//FACTURE SUR L'ENTRETIEN ET LA GESTION
 			$factEnt = new TRH_Evenement;
@@ -181,10 +215,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 									Gestion TTC :'.floatval(strtr($infos[31], ',','.')).'€';
 			$factEnt->set_date('date_debut', $infos[10]);
 			$factEnt->set_date('date_fin', $infos[1]);
-			$factEnt->coutTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
-			$factEnt->coutEntrepriseTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
-			$factEnt->TVA= $TTVA['19.6'];
-			$factEnt->coutEntrepriseHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
+			$factEnt->coutTTC = $loyerTTC;
+			$factEnt->coutEntrepriseTTC = $loyerTTC;
+			$factEnt->TVA= $TTVA[$taux];
+			$factEnt->coutEntrepriseHT = $loyerHT ;
 			$factEnt->fk_fournisseur = $idParcours;
 			$factEnt->idImport = $idImport;
 			$factEnt->numFacture = $infos[2];
