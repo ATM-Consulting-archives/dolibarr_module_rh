@@ -771,6 +771,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'fk_user'=>$absence->fk_user
 				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$absence->fk_user):''
 				,'userAbsenceCourant'=>$droitsCreation==1?'':$form->hidden('fk_user', $user->id)
+				,'fk_user_absence'=>$form->hidden('fk_user_absence', $absence->fk_user)
 				,'niveauValidation'=>$absence->niveauValidation
 				,'commentaireValideur'=>$absence->commentaireValideur
 				,'dt_cre'=>$absence->get_dtcre()

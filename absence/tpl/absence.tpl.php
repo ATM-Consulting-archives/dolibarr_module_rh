@@ -206,9 +206,12 @@
 					
 			}
 			function loadRecapCompteur() {
+					if($('#fk_user').length>0) fk_user = $('#fk_user').val();
+					else  fk_user = $('#fk_user_absence').val() ; 
+					
 				
 					$.ajax({
-						url: 'script/chargerCompteurDemandeAbsence.php?user='+$('#fk_user').val()
+						url: 'script/chargerCompteurDemandeAbsence.php?user='+fk_user
 						,dataType:'json'
 					}).done(function(liste) {
 						
@@ -230,9 +233,11 @@
 			}
 			
 			function loadRecapAbsence() {
-				
+					if($('#fk_user').length>0) fk_user = $('#fk_user').val();
+					else  fk_user = $('#fk_user_absence').val() ; 
+					
 					$.ajax({
-						url: 'script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user').val()
+						url: 'script/chargerRecapAbsenceUser.php?idUser='+fk_user
 						,dataType:'json'
 					}).done(function(liste) {
 							$('#TRecapAbs').html('');
