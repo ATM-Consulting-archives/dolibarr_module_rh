@@ -14,8 +14,8 @@
 			 [onshow;block=begin;when [view.mode]!='edit']
            		[absenceCourante.titreRecapAbsence;strconv=no;protect=no]                   
 			[onshow;block=end]
-
-
+			
+			[absenceCourante.fk_user_absence;strconv=no;protect=no]
 			<table class="border" style="width:40%">
 				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='1']
 				<tr>
@@ -203,9 +203,12 @@
 					
 			}
 			function loadRecapCompteur() {
+					
+					if($('#fk_user').length>0) fk_user = $('#fk_user').val();
+					else  fk_user = $('#fk_user_absence').val() ; 
 				
 					$.ajax({
-						url: 'script/chargerCompteurDemandeAbsence.php?user='+$('#fk_user').val()
+						url: 'script/chargerCompteurDemandeAbsence.php?user='+fk_user
 						,dataType:'json'
 					}).done(function(liste) {
 						
@@ -228,8 +231,11 @@
 			
 			function loadRecapAbsence() {
 				
+					if($('#fk_user').length>0) fk_user = $('#fk_user').val();
+					else  fk_user = $('#fk_user_absence').val() ; 
+				
 					$.ajax({
-						url: 'script/chargerRecapAbsenceUser.php?idUser='+$('#fk_user').val()
+						url: 'script/chargerRecapAbsenceUser.php?idUser='+fk_user
 						,dataType:'json'
 					}).done(function(liste) {
 						$('#TRecapAbs').html('');
