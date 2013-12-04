@@ -50,11 +50,6 @@ function training_prepare_head($object)
 	$hselected = $h;
 	$h++;
 
-	$head[$h][0] = dol_buildpath('/agefodd/training/training_adm.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("AgftrainingAdmTask");
-	$head[$h][2] = 'trainingadmtask';
-	$hselected = $h;
-	$h++;
 
 	$head[$h][0] = dol_buildpath('/agefodd/training/note.php',1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("AgfNote");
@@ -97,37 +92,12 @@ function session_prepare_head($object,$showconv=0)
 	$head[$h][2] = 'subscribers';
 	$h++;
 
-	if ($conf->global->AGF_MANAGE_CERTIF) {
-		$head[$h][0] = dol_buildpath('/agefodd/session/subscribers_certif.php',1).'?id='.$object->id;
-		$head[$h][1] = $langs->trans("AgfCertificate");
-		$head[$h][2] = 'certificate';
-		$h++;
-	}
-
 	$head[$h][0] = dol_buildpath('/agefodd/session/trainer.php',1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("AgfFormateur");
 	$head[$h][2] = 'trainers';
 	$h++;
 
-	/*$head[$h][0] = DOL_URL_ROOT.'/agefodd/s_fpresence.php?id='.$object->id;
-	 $head[$h][1] = $langs->trans("AgfFichePresence");
-	$head[$h][2] = 'presence';
-	$h++;*/ //TODO fiche de presence
-
-	$head[$h][0] = dol_buildpath('/agefodd/session/administrative.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("AgfAdmSuivi");
-	$head[$h][2] = 'administrative';
-	$h++;
-
-	$head[$h][0] = dol_buildpath('/agefodd/session/document.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("AgfLinkedDocuments");
-	$head[$h][2] = 'document';
-	$h++;
-
-	$head[$h][0] = dol_buildpath('/agefodd/session/send_docs.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("AgfSendDocuments");
-	$head[$h][2] = 'send_docs';
-	$h++;
+	
 	
 	$head[$h][0] = dol_buildpath('/agefodd/session/document_files.php',1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
@@ -148,61 +118,6 @@ function session_prepare_head($object,$showconv=0)
 	$h++;
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'agefodd_session');
-
-	return $head;
-}
-
-/**
- *  Return head table for trainee tabs screen
- *
- *  @param	object	$object        Current trainee
- *  @return array      		   	 head table of tabs
- */
-function trainee_prepare_head($object,$showcursus=0)
-{
-	global $langs, $conf, $user;
-
-	$h = 0;
-	$head = array();
-
-	$head[$h][0] = dol_buildpath('/agefodd/trainee/card.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
-
-	if ($conf->global->AGF_MANAGE_CERTIF) {
-		$head[$h][0] = dol_buildpath('/agefodd/trainee/certificate.php',1).'?id='.$object->id;
-		$head[$h][1] = $langs->trans("AgfCertificate");
-		$head[$h][2] = 'certificate';
-		$h++;
-	}
-
-	$head[$h][0] = dol_buildpath('/agefodd/trainee/session.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("AgfSessionDetail");
-	$head[$h][2] = 'sessionlist';
-	$h++;
-	
-	if ($conf->global->AGF_MANAGE_CURSUS) {
-		$head[$h][0] = dol_buildpath('/agefodd/trainee/cursus.php',1).'?id='.$object->id;
-		$head[$h][1] = $langs->trans("AgfMenuCursus");
-		$head[$h][2] = 'cursus';
-		$h++;
-		
-		if (!empty($showcursus)) {
-			$head[$h][0] = dol_buildpath('/agefodd/trainee/cursus_detail.php',1).'?id='.$object->id.'&cursus_id='.$object->cursus_id;
-			$head[$h][1] = $langs->trans("AgfCursusDetail");
-			$head[$h][2] = 'cursusdetail';
-			$h++;
-			
-		}
-	}
-
-	$head[$h][0] = dol_buildpath('/agefodd/trainee/info.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
-
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'agefodd_trainee');
 
 	return $head;
 }
@@ -281,11 +196,6 @@ function site_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = dol_buildpath('/agefodd/site/reg_int.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("AgfRegInt");
-	$head[$h][2] = 'reg_int';
-	$h++;
-
 	$head[$h][0] = dol_buildpath('/agefodd/session/list.php',1).'?site_view=1&search_site='.$object->id;
 	$head[$h][1] = $langs->trans("AgfMenuSess");
 	$head[$h][2] = 'sessions';
@@ -297,39 +207,6 @@ function site_prepare_head($object)
 	$h++;
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'agefodd_site');
-
-	return $head;
-}
-
-/**
- *  Return head table for program tabs screen
- *
- *  @param	object	$object        Current program
- *  @return array      		   	 head table of tabs
- */
-function cursus_prepare_head($object)
-{
-	global $langs, $conf, $user;
-
-	$h = 0;
-	$head = array();
-
-	$head[$h][0] = dol_buildpath('/agefodd/cursus/card.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
-	$head[$h][2] = 'card';
-	$h++;
-
-	$head[$h][0] = dol_buildpath('/agefodd/cursus/card_trainee.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("AgfMenuActStagiaire");
-	$head[$h][2] = 'trainee';
-	$h++;
-
-	$head[$h][0] = dol_buildpath('/agefodd/cursus/info.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
-
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'agefodd_cursus');
 
 	return $head;
 }
