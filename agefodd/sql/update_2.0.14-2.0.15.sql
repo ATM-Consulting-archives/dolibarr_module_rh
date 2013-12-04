@@ -1,0 +1,1 @@
+ALTER TABLE llx_agefodd_session_calendrier DROP FOREIGN KEY llx_agefodd_place_ibfk_2;

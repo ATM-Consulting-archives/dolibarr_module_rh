@@ -1,0 +1,10 @@
+ALTER TABLE llx_agefodd_formateur MODIFY fk_socpeople integer;
+ALTER TABLE llx_agefodd_formateur ADD COLUMN fk_user integer AFTER fk_socpeople;
+ALTER TABLE llx_agefodd_formateur ADD COLUMN type_trainer varchar(20) AFTER fk_user;
+ALTER TABLE llx_agefodd_formateur DROP FOREIGN KEY llx_agefodd_formateur_ibfk_1;
+ALTER TABLE llx_agefodd_formateur ADD COLUMN entity integer NOT NULL DEFAULT 1 AFTER rowid;
+ALTER TABLE llx_agefodd_formateur ADD INDEX idx_agefodd_formateur_fk_user (fk_user);
+UPDATE llx_agefodd_formateur SET type_trainer='socpeople' WHERE fk_socpeople IS NOT NULL;
+ALTER TABLE llx_agefodd_formation_catalogue ADD COLUMN ref_interne varchar(80) NULL AFTER ref;
+ALTER TABLE llx_agefodd_contact ADD COLUMN entity integer NOT NULL DEFAULT 1 AFTER rowid;
+ALTER TABLE llx_agefodd_reg_interieur DROP FOREIGN KEY llx_agefodd_reg_interieur_ibfk_1;
