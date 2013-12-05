@@ -30,6 +30,14 @@
 		<td>Budget</td>
 		<td>[planFormation.budget;strconv=no;protect=no]&nbsp;&euro;</td>
 	</tr>		
+	<tr>
+		<td>Budget accepté par l'OPCA</td>
+		<td>[planFormation.budget_opca;strconv=no;protect=no]&nbsp;&euro;</td>
+	</tr>		
+	<tr>
+		<td>Budget consommé</td>
+		<td>[planFormation.budget_final;strconv=no;protect=no]&nbsp;&euro;</td>
+	</tr>		
 	
 </table>
 

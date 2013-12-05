@@ -2,46 +2,51 @@
 	require('config.php');
 	require('./class/formation.class.php');
 	require('./lib/competence.lib.php');
+	
 	$langs->load('competence@competence');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$planFormation = new TRH_formation_plan;
 	
-	(!empty($_REQUEST['id'])) ? $planFormation->load($ATMdb, $_REQUEST['id']) : '' ;
+	$action = __get('action','list');
 	
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
-			case 'add':
 			case 'new':
 				$planFormation->set_values($_REQUEST);
 				_fiche($ATMdb,$planFormation,'new');
 				break;	
 				
 			case 'edit':
+				 $planFormation->load($ATMdb, __get('id',0,'int'));
+
 				_fiche($ATMdb,$planFormation,'edit');
 				break;
 				
 			case 'save':
+				$planFormation->load($ATMdb, __get('id',0,'int'));
+				
 				$planFormation->set_values($_REQUEST);
 				$planFormation->save($ATMdb);
 				_fiche($ATMdb,$planFormation,'view');
 				break;
 			
 			case 'view':
+				$planFormation->load($ATMdb, __get('id',0,'int'));
+				
 				_fiche($ATMdb,$planFormation,'view');
 				break;
 				
 			case 'delete':
+				$planFormation->load($ATMdb, __get('id',0,'int'));
+				
 				$planFormation->delete($ATMdb);
 				_liste($ATMdb,$planFormation,'view');
 				break;
+			case 'list':
+				_liste($ATMdb,$planFormation,'view');
+				break;
 		}
-	}
-	elseif(isset($_REQUEST['id'])) {
-		_fiche($ATMdb,$planFormation);
-	}
-	else {
-		_liste($ATMdb,$planFormation);
 	}
 	
 	$ATMdb->close();
@@ -122,6 +127,8 @@ function _fiche(&$ATMdb,&$planFormation,$mode = 'view') {
 				,'date_debut'=>$form->calendrier('','date_debut', $planFormation->date_debut,12, 12)
 				,'date_fin'=>$form->calendrier('','date_fin', $planFormation->date_fin,12, 12)
 				,'budget'=>$form->texte('','budget',$planFormation->budget,10,255,'','')
+				,'budget_opca'=>$planFormation->budget_opca
+				,'budget_final'=>$planFormation->budget_final
 			)
 			,'listeFormation'=>array(
 				'liste' => $listeFormation	
