@@ -49,7 +49,8 @@
 			case 'view':
 				//$ATMdb->db->debug=true;
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				$evenement->load($ATMdb, $_REQUEST['idEven']);
+				$evenement->load($ATMdb, $_REQUEST['idEven'],true);
+				
 				_fiche($ATMdb, $evenement,$ressource,'view');
 				break;
 			
