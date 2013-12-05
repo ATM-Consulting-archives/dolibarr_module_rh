@@ -355,7 +355,7 @@ function getStatut($val){
 
 function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 	global $db,$user;
-	llxHeader('', 'Ressource', '', '', 0, 0, array('/rhlibrary/js/jquery.jOrgChart.js'));
+	llxHeader('', 'Ressource', '', '', 0, 0, array('/rhlibrary/jquery.jOrgChart.js'));
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
