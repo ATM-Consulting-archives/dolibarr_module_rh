@@ -63,15 +63,17 @@ class TRH_Evenement  extends TObjetStd {
 	}
 
 	function load_liste(&$ATMdb){
-		global $conf;
+		global $conf, $user;
+		
+		list($fk_pays) = explode(':',$conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 		
 		//chargement d'une liste de touts les TVA (pour le combo "TVA")
 		$this->TTVA = array();
-		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0].' AND active=1';
+		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$fk_pays.' AND active=1';
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
-			}
+		}
 		
 		//chargement d'une liste de touts les users (pour le combo "Utilisateur")
 		$this->TUser = array();
@@ -79,7 +81,7 @@ class TRH_Evenement  extends TObjetStd {
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname')." ".strtoupper($ATMdb->Get_field('lastname')), ENT_COMPAT , 'ISO8859-1'); 
-			}
+		}
 	}
 
 	function load_liste_type($idRessourceType){
@@ -137,7 +139,10 @@ class TRH_Evenement  extends TObjetStd {
 		$this->attributionAuto($db);
 		
 		$this->isAllDayEvent = 1;
-		if (empty($this->coutEntrepriseHT)) {$this->coutEntrepriseHT = ($this->coutEntrepriseTTC)*(1-(0.01*$this->TTVA[$this->TVA]));}
+		
+		/*if (empty($this->coutEntrepriseHT)) {*/$this->coutEntrepriseHT = ($this->coutEntrepriseTTC)*(1-(0.01*$this->TTVA[$this->TVA]));/*}*/
+		
+		
 		parent::save($db);
 		
 	}

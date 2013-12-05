@@ -32,6 +32,7 @@
 				//$ATMdb->db->debug=true;
 				$evenement->load($ATMdb, $_REQUEST['idEven']);
 				$evenement->set_values($_REQUEST);
+				
 				$evenement->save($ATMdb);
 				if (!isset($_REQUEST['motif'])|| $_REQUEST['motif']==''){
 					$mesg = '<div class="error">Le motif doit être renseigné.</div>';
