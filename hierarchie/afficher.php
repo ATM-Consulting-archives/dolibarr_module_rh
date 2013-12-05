@@ -53,7 +53,7 @@ $arret=0;
 
 $ATMdb=new Tdb;
 
-llxHeader('', '', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
+llxHeader('', '', '', '', 0, 0, array('/rhlibrary/jquery.jOrgChart.js'));
 
 
 ?>
