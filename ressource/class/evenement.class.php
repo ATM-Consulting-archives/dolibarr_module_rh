@@ -58,7 +58,7 @@ class TRH_Evenement  extends TObjetStd {
 		parent::load($ATMdb, $id);
 		if($annexe) {
 			$this->load_liste($ATMdb);
-			$this->load_liste_type($ATMdb);
+			$this->load_liste_type($this->fk_rh_ressource_type);
 		}
 	}
 
