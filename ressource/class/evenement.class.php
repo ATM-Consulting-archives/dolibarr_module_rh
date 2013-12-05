@@ -53,6 +53,8 @@ class TRH_Evenement  extends TObjetStd {
 	}
 
 	function load(&$ATMdb, $id, $annexe=false) {
+		global $conf;
+		
 		parent::load($ATMdb, $id);
 		if($annexe) {
 			$this->load_liste($ATMdb);
