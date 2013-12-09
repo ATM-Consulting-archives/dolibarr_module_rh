@@ -1,5 +1,30 @@
 <?php
 
+class TRH_formation_besoin extends  TObjetStd {
+	
+	function __construct() {
+		
+		parent::set_table(MAIN_DB_PREFIX.'rh_formation_besoin');
+		parent::add_champs('theme','type=chaine');
+		parent::add_champs('fk_user,entity','type=entier;index;');
+		
+		parent::_init_vars();
+		parent::start();
+
+		$this->statut = 'TODO';
+		
+		$this->TStatut =array(
+			'TODO'=>'A faire'
+			,'OK'=>'Fait'
+			,'KO'=>'Abandonné'
+		);
+
+		
+	}
+	
+	
+}
+
 class TRH_formation_plan extends TObjetStd {
 	function __construct() {
 		
@@ -20,8 +45,8 @@ class TRH_formation_plan extends TObjetStd {
 		
 	}
 	
-	//Retourne la liste des Formation associées au plan
-	function getListeFormation(&$ATMdb){
+	//Retourne la liste des Formation associées au plan TODO utile en class ?
+	static function getListeFormation(&$ATMdb, $id_plan){
 		global $user, $conf;
 		
 		$r = new TListviewTBS('listeFormation');
@@ -29,7 +54,7 @@ class TRH_formation_plan extends TObjetStd {
 		$sql = "SELECT f.rowid AS 'ID', f.fk_formation_plan AS 'idPlan', f.libelle AS 'Intitule', f.description AS 'Description', f.budget AS 'Budget', f.budget_consomme AS 'Consomme', ftp.libelle AS 'LibelleType'
 				FROM ".MAIN_DB_PREFIX."rh_formation AS f 
 					LEFT JOIN ".MAIN_DB_PREFIX."rh_formation_type_priorite AS ftp ON (f.fk_priorite = ftp.rowid)
-				WHERE f.fk_formation_plan = ".$this->getId()."
+				WHERE f.fk_formation_plan = ".$id_plan."
 				ORDER BY ftp.rowid ASC";
 		
 		$res = $r->render($ATMdb, $sql, array(
