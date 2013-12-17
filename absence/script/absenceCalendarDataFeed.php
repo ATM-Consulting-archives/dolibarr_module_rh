@@ -141,7 +141,7 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 		
 		$label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
 		if($moreOneDay) {
-			$label.=' du '._justDate($timeDebut,'d/m').' au '._justDate($timeDebut,'d/m/Y');
+			$label.=' du '._justDate($timeDebut,'d/m').' au '._justDate($timeFin,'d/m/Y');
 		}
 		
 		$ret['events'][] = array(
