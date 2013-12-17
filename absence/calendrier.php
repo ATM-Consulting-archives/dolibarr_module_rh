@@ -140,10 +140,15 @@
 	$formactions->select_type_actions($actioncode, "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0));
 	$actionCodeInput = ob_get_clean();
 
-	ob_start();
-	select_projects($socid?$socid:-1, $pid, 'projectid', 64);
-	$select_project = ob_get_clean();
-	
+	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
+
+		ob_start();
+		select_projects($socid?$socid:-1, $pid, 'projectid', 64);
+		$select_project = ob_get_clean();
+	}
+	else{
+		$select_project = '';
+	}	
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrierPerso.tpl.php'
@@ -167,7 +172,7 @@
 				,'usertodo'=>$form->select_dolusers($filtert,'usertodo',1,'',!$canedit)
 				,'userdone'=>$form->select_dolusers($filterd,'userdone',1,'',!$canedit)
 				,'actioncode'=>$actionCodeInput
-				,'projectid'=>(! empty($conf->projet->enabled) && $user->rights->projet->lire)?$select_project:''
+				,'projectid'=>$select_project
 				,'projectEnabled'=>(int)(! empty($conf->projet->enabled) && $user->rights->projet->lire)
 				,'newEvent'=>dol_buildpath('/comm/action/fiche.php?mainmenu=agenda&leftmenu=agenda&action=create&idmenu=530',1)
 			)

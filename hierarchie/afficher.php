@@ -79,8 +79,8 @@ dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
 <?
 global $user;
 
-$orgChoisie=isset($_REQUEST["choixAffichage"]) ? $_REQUEST["choixAffichage"] : 'equipe';
-$idUserCourant=$_GET["id"];
+$orgChoisie=__get("choixAffichage", 'equipe','string',30);
+$idUserCourant=__get('id',0,'integer');
 
 //////////////////////////////////////récupération des informations de l'utilisateur courant
 	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$idUserCourant;
@@ -101,17 +101,19 @@ $idUserCourant=$_GET["id"];
 
 
 //Fonction qui permet d'afficher les utilisateurs qui sont en dessous hiérarchiquement du salarié passé en paramètre
-function afficherSalarieDessous(&$ATMdb, $idBoss = 0, $niveau=1){
+function afficherSalarieDessous(&$ATMdb, $idBoss = -1, $niveau=1){
 		
 				global $user, $db, $idUserCourant, $userCourant, $conf;
-				
 				?>
 				<ul id="ul-niveau-<?=$niveau ?>">
 				<?
 				
-				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` where fk_user=".$idBoss." AND entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+				$sqlReq="SELECT rowid FROM `".MAIN_DB_PREFIX."user` WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+				if($idBoss>0)$sqlReq.= " AND fk_user=".$idBoss;
+				else $sqlReq.=" AND fk_user IS NULL ";
+
 				$ATMdb->Execute($sqlReq);
-				
+
 				$Tab=array();
 				while($ATMdb->Get_line()) {
 					$user=new User($db);
@@ -300,7 +302,7 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 		<ul id="JQorganigramme" style="display:none;">
 			<li><?=$socName ?>
 		<?php 		
-			$ATMdb=new Tdb;
+			$ATMdb=new TPDOdb;
 			afficherSalarieDessous($ATMdb);
 			$ATMdb->close();
 		?>
@@ -320,7 +322,7 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 		<ul id="JQorganigramme" style="display:none;">
 			<li>Votre Equipe
 		<?php 		
-			$ATMdb=new Tdb;
+			$ATMdb=new TPDOdb;
 			if($userCourant->fk_user!="0"){		// si on a un supérieur hiérarchique, on affiche son nom, puis l'équipe 
 			
 				$sqlReq="SELECT name,firstname FROM `".MAIN_DB_PREFIX."user` where rowid=".$userCourant->fk_user;
@@ -362,7 +364,7 @@ if($orgChoisie=="entreprise"){	//on affiche l'organigramme de l'entreprise
 		<ul id="JQorganigramme" style="display:none;">
 			<li> 
 		<?php 	
-			$ATMdb=new Tdb;
+			$ATMdb=new TPDOdb;
 			//on affiche les utilisateurs du groupe en cours
 		 	afficherUtilisateurGroupe($ATMdb,$orgChoisie);
 			$ATMdb->close();
