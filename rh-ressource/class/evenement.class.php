@@ -77,7 +77,20 @@ class TRH_Evenement  extends TObjetStd {
 		$this->TType = getTypeEvent($idRessourceType);		
 		
 	}
+	static function listTypeEvent(&$ATMdb, $id_ressource) {
+		$TEvent = array();
 	
+		$sql="SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."rh_type_evenement 
+		WHERE (fk_rh_ressource_type=".(int)$idTypeRessource." OR fk_rh_ressource_type=0) ORDER BY fk_rh_ressource_type";
+		
+		$ATMdb->Execute($sql);
+		
+		while($row = $ATMdb->Get_line()) {
+			$TEvent[$row->code] = $row->libelle;	
+		}
+		
+		return $TEvent;
+	}
 	function save(&$db) {
 		global $conf;
 		//si l'entité n'est pas encore renseigné, on met celle de l'entité courante.
@@ -97,7 +110,7 @@ class TRH_Evenement  extends TObjetStd {
 		}*/
 			
 		$this->load_liste($db);
-		$this->load_liste_type($this->fk_rh_ressource_type);
+		$this->TType =  TRH_Evenement::listTypeEvent($db, $this->fk_rh_ressource_type);
 		
 		switch($this->type){
 			case 'accident':

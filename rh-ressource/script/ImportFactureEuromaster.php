@@ -15,6 +15,7 @@ require('../lib/ressource.lib.php');//*/
 global $conf;
 
 $ATMdb=new TPDOdb;
+$ATMdbEvent=new TPDOdb;
 
 // relever le point de départ
 $timestart=microtime(true);
@@ -67,24 +68,21 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	
 	while(($data = fgetcsv($handle, 0,'\r')) != false) {
 		//echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=1 ) {
+		if ($numLigne >=1) {
 			$infos = explode(';', $data[0]);
 			
 			$plaque = str_replace('-','',$infos[0]);
 			$plaque = str_replace(' ','',$plaque);
+			
+			if(empty($plaque)) continue;
 			
 			$timestamp = mktime(0,0,0,intval(substr($infos[4], 3,2)),intval(substr($infos[4], 0,2)), intval(substr($infos[4], 6,4)));
 			$date = date("Y-m-d", $timestamp);
 		
 			$numero =  $infos[22];
 		
-			?>
-			<tr>
-				<td>Ajout facture <?=$numero ?></td>
-				<td><?=$plaque ?></td>
-			<?
-		
-		
+			
+			$style = '';
 			if (!empty($TRessource[$plaque])){
 				$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], $date);
 				if ($idUser==0){ //si il trouve, on l'affecte à l'utilisateur 
@@ -92,30 +90,55 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$cptNoAttribution++;
 					$info = 'Voiture non attribué le '.$date.' : '.$plaque.'<br>';
 				}
-			
-				$info = 'Ok';
+				else {
+					$info = 'Ok';	
+				}
+				$id_ressource = $TRessource[$plaque];
+				
+				$ressource = new TRH_Ressource();
+                $ressource->load($ATMdb, $TRessource[$plaque]);
+                $typeVehicule = $ressource->typevehicule;
+				
 			}	
 			else {
 				$idUser = $idSuperAdmin;
 				$TNoPlaque[$plaque] = 1 ;
 				$cptNoVoiture ++;
 				
+				$id_ressource = $idRessFactice;
+				
 				$info = 'Véhicule non trouvé';
+				$style = 'background-color:red;';
 			}
 			
+			?>
+			<tr style="<?=$style ?>">
+				<td>Ajout facture <?=$numero ?></td>
+				<td><?=$plaque ?></td>
+			<?
+		
 			
 		
 			$temp = new TRH_Evenement;
 			
+			$loyerHT = (double)strtr($infos[10], ',','.');
+			$loyerTTC = strtr($infos[25], ',','.');
+			 
+			$taux = '19.6';
+            if($typeVehicule == "VU") { null; }
+            else {
+                   $taux="0";
+                   $loyerHT = $loyerTTC;
+            } 
 			
-			$temp->fk_rh_ressource = $TRessource[$plaque];
+			$temp->fk_rh_ressource = $id_ressource;
 			$temp->type = 'facture';
 			$temp->fk_user = $idUser;
 			$temp->set_date('date_debut', $date);
 			$temp->set_date('date_fin', $date);
-			$temp->coutEntrepriseHT = (double)strtr($infos[10], ',','.');
-			$temp->coutTTC = strtr($infos[25], ',','.');
-			$temp->coutEntrepriseTTC = (double)strtr($infos[25], ',','.');
+			$temp->coutEntrepriseHT = $loyerHT;
+			$temp->coutTTC = $loyerTTC;
+			$temp->coutEntrepriseTTC = $loyerTTC;
 			$temp->numFacture = $numero;
 			$temp->motif = $infos[8];
 			$temp->commentaire = $infos[7];
@@ -123,20 +146,15 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$temp->entity = $entity;
 			
 			//$ttva = array_keys($temp->TTVA , floatval());
-			$tvaCalc = (round( $temp->coutEntrepriseTTC / $temp->coutEntrepriseHT,3 )-1) * 100;
-			$idTVA = getTVAId($ressource_source->TTVA, $tvaCalc );
-			if($idTVA==-1) {
-				exit('Code TVA inconnu '.$tvaCalc);
-			}
 			
-			$temp->TVA = $idTVA;
+			$temp->TVA = $ressource_source->TTVA[$taux];
 			//$temp->compteFacture = $infos[13];
 			$temp->idImport = $idImport;
 			$temp->numFacture = $infos[22];
 			$temp->date_facture = dateToInt($infos[23]);
 			
 			
-			$temp->save($ATMdb);
+			$temp->save($ATMdbEvent);
 		
 			?><td><?=$infos[25] ?></td><td><?=$ressource_source->TTVA[$temp->TVA] ?></td><td><?=$info ?></td></tr><?
 		
@@ -207,7 +225,7 @@ function getUser(&$listeEmprunts , $id, $jour){
 
 function chargeEmprunts(&$ATMdb){
 	global $conf;
-	$sqlReq="SELECT DISTINCT e.date_debut, e.date_fin , e.fk_user, e.fk_rh_ressource, firstname, name 
+	$sqlReq="SELECT DISTINCT e.date_debut, e.date_fin , e.fk_user, e.fk_rh_ressource, u.firstname, u.lastname 
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e  
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (e.fk_user=u.rowid) 
 	WHERE e.type='emprunt'
@@ -220,7 +238,7 @@ function chargeEmprunts(&$ATMdb){
 			'debut'=>$ATMdb->Get_field('date_debut')
 			,'fin'=>$ATMdb->Get_field('date_fin')
 			,'fk_user'=>$ATMdb->Get_field('fk_user')
-			,'user'=>$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('name')
+			,'user'=>$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('lastname')
 		);
 	}
 	return $TUsers;

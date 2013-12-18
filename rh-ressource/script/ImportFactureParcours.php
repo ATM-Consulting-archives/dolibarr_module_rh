@@ -198,7 +198,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			if($typeVehicule == "VU") { null; }
 			else {
 				$taux="0";
-				$loyerHT = $TTC;
+				$loyerHT = $loyerTTC;
 			} 
 			
 				
