@@ -135,11 +135,15 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$info = 'Ok';
 				}
 				
+				$id_ressource = $TRessource[$plaque];
+				
 				$ressource = new TRH_Ressource();
-				$ressource->load($ATMdb, $TRessource[$plaque]);
+				$ressource->load($ATMdb, $id_ressource);
 				$typeVehicule = $ressource->typevehicule;
 			}
 			else {
+				$id_ressource = $idRessFactice;
+				
 				$idUser = $idSuperAdmin;
 				$info = 'Pas de voiture correspondante';
 				$cptNoVoiture ++;
@@ -163,14 +167,14 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			if($typeVehicule == "VU") { null; }
 			else {
 				$taux="0";
-				$loyerHT = $TTC;
+				$loyerHT = $loyerTTC;
 			} 
 			
 			//FACTURE SUR LE LOYER
 			$fact = new TRH_Evenement;
 			$fact->type = 'factureloyer';
 			$fact->numFacture = $numFacture;
-			$fact->fk_rh_ressource = $TRessource[$plaque];
+			$fact->fk_rh_ressource = $id_ressource;
 			$fact->fk_user = $idUser;
 			$fact->fk_rh_ressource_type = $idVoiture;
 			$fact->motif = 'Facture mensuelle Parcours : Loyer';

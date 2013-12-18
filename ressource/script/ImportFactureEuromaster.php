@@ -92,13 +92,22 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$cptNoAttribution++;
 					$info = 'Voiture non attribué le '.$date.' : '.$plaque.'<br>';
 				}
-			
-				$info = 'Ok';
+				else {
+					$info = 'Ok';	
+				}
+				$id_ressource = $TRessource[$plaque];
+				
+				$ressource = new TRH_Ressource();
+                $ressource->load($ATMdb, $TRessource[$plaque]);
+                $typeVehicule = $ressource->typevehicule;
+				
 			}	
 			else {
 				$idUser = $idSuperAdmin;
 				$TNoPlaque[$plaque] = 1 ;
 				$cptNoVoiture ++;
+				
+				$id_ressource = $idRessFactice;
 				
 				$info = 'Véhicule non trouvé';
 			}
@@ -107,15 +116,24 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		
 			$temp = new TRH_Evenement;
 			
+			$loyerHT = (double)strtr($infos[10], ',','.');
+			$loyerTTC = strtr($infos[25], ',','.');
+			 
+			$taux = '19.6';
+            if($typeVehicule == "VU") { null; }
+            else {
+                   $taux="0";
+                   $loyerHT = $loyerTTC;
+            } 
 			
-			$temp->fk_rh_ressource = $TRessource[$plaque];
+			$temp->fk_rh_ressource = $id_ressource;
 			$temp->type = 'facture';
 			$temp->fk_user = $idUser;
 			$temp->set_date('date_debut', $date);
 			$temp->set_date('date_fin', $date);
-			$temp->coutEntrepriseHT = (double)strtr($infos[10], ',','.');
-			$temp->coutTTC = strtr($infos[25], ',','.');
-			$temp->coutEntrepriseTTC = (double)strtr($infos[25], ',','.');
+			$temp->coutEntrepriseHT = $loyerHT;
+			$temp->coutTTC = $loyerTTC;
+			$temp->coutEntrepriseTTC = $loyerTTC;
 			$temp->numFacture = $numero;
 			$temp->motif = $infos[8];
 			$temp->commentaire = $infos[7];
@@ -123,13 +141,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$temp->entity = $entity;
 			
 			//$ttva = array_keys($temp->TTVA , floatval());
-			$tvaCalc = (round( $temp->coutEntrepriseTTC / $temp->coutEntrepriseHT,3 )-1) * 100;
-			$idTVA = getTVAId($ressource_source->TTVA, $tvaCalc );
-			if($idTVA==-1) {
-				exit('Code TVA inconnu '.$tvaCalc);
-			}
 			
-			$temp->TVA = $idTVA;
+			$temp->TVA = $ressource_source->TTVA[$taux];
 			//$temp->compteFacture = $infos[13];
 			$temp->idImport = $idImport;
 			$temp->numFacture = $infos[22];
