@@ -147,7 +147,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			//$ttva = array_keys($temp->TTVA , floatval());
 			
-			$temp->TVA = $ressource_source->TTVA[$taux];
+			$temp->TVA = getTVAId($ressource_source->TTVA,$taux);
 			//$temp->compteFacture = $infos[13];
 			$temp->idImport = $idImport;
 			$temp->numFacture = $infos[22];
