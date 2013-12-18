@@ -84,7 +84,7 @@ class TRH_Evenement  extends TObjetStd {
 		}
 	}
 
-	function load_liste_type($idRessourceType){
+	function load_liste_type($idRessourceType){ // TODO deprecated
 		global $conf;
 		$this->TType = getTypeEvent($idRessourceType);		
 		
@@ -109,7 +109,7 @@ class TRH_Evenement  extends TObjetStd {
 		}*/
 			
 		$this->load_liste($db);
-		$this->load_liste_type($this->fk_rh_ressource_type);
+		$this->TType =  TRH_Evenement::listTypeEvent($db, $this->fk_rh_ressource_type);
 		
 		switch($this->type){
 			case 'accident':
@@ -208,6 +208,22 @@ class TRH_Evenement  extends TObjetStd {
 				}
 			return false;
 	}
+	
+	static function listTypeEvent(&$ATMdb, $id_ressource) {
+		$TEvent = array();
+	
+		$sql="SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."rh_type_evenement 
+		WHERE (fk_rh_ressource_type=".(int)$idTypeRessource." OR fk_rh_ressource_type=0) ORDER BY fk_rh_ressource_type";
+		
+		$ATMdb->Execute($sql);
+		
+		while($row = $ATMdb->Get_line()) {
+			$TEvent[$row->code] = $row->libelle;	
+		}
+		
+		return $TEvent;
+	}
+	
 }	
 
 

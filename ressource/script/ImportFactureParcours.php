@@ -152,7 +152,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			}
 				//echo $idUser.'<br>';
 				
-			
+			$ATMdb=new TPDOdb;
 			
 			/*
 				 * Correction des taux d'import pour traitement retour

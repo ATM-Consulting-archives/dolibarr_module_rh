@@ -15,6 +15,7 @@ require('../lib/ressource.lib.php');//*/
 global $conf;
 
 $ATMdb=new TPDOdb;
+$ATMdbEvent=new TPDOdb;
 
 // relever le point de départ
 $timestart=microtime(true);
@@ -67,24 +68,21 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	
 	while(($data = fgetcsv($handle, 0,'\r')) != false) {
 		//echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=1 ) {
+		if ($numLigne >=1) {
 			$infos = explode(';', $data[0]);
 			
 			$plaque = str_replace('-','',$infos[0]);
 			$plaque = str_replace(' ','',$plaque);
+			
+			if(empty($plaque)) continue;
 			
 			$timestamp = mktime(0,0,0,intval(substr($infos[4], 3,2)),intval(substr($infos[4], 0,2)), intval(substr($infos[4], 6,4)));
 			$date = date("Y-m-d", $timestamp);
 		
 			$numero =  $infos[22];
 		
-			?>
-			<tr>
-				<td>Ajout facture <?=$numero ?></td>
-				<td><?=$plaque ?></td>
-			<?
-		
-		
+			
+			$style = '';
 			if (!empty($TRessource[$plaque])){
 				$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], $date);
 				if ($idUser==0){ //si il trouve, on l'affecte à l'utilisateur 
@@ -110,8 +108,15 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$id_ressource = $idRessFactice;
 				
 				$info = 'Véhicule non trouvé';
+				$style = 'background-color:red;';
 			}
 			
+			?>
+			<tr style="<?=$style ?>">
+				<td>Ajout facture <?=$numero ?></td>
+				<td><?=$plaque ?></td>
+			<?
+		
 			
 		
 			$temp = new TRH_Evenement;
@@ -149,7 +154,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$temp->date_facture = dateToInt($infos[23]);
 			
 			
-			$temp->save($ATMdb);
+			$temp->save($ATMdbEvent);
 		
 			?><td><?=$infos[25] ?></td><td><?=$ressource_source->TTVA[$temp->TVA] ?></td><td><?=$info ?></td></tr><?
 		
