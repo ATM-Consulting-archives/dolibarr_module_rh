@@ -79,8 +79,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 	LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
 		LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ue ON (u.rowid = ue.fk_object)
-	WHERE t.fk_rh_ressource_type = ".$idTypeRessource."
-	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+	WHERE (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 	AND e.entity = ".$entity."
 	AND e.fk_fournisseur =".$fk_fournisseur;	
 	if ($idImport){ $sql .= " AND e.idImport = '".$idImport."' ";}
@@ -139,8 +138,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user as a ON (e.fk_user=a.fk_user)
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=e.fk_user
-		WHERE t.fk_rh_ressource_type = ".$idTypeRessource."
-		AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+		WHERE (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 		AND e.entity = ".$entity."
 		AND e.fk_fournisseur =".$fk_fournisseur;
 		if ($idImport){ $sql_anal .= " AND e.idImport = '".$idImport."' ";}
@@ -236,11 +234,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
-		WHERE t.fk_rh_ressource_type = ".$idTypeRessource." ";
-		
-		//if ($idTypeRessource==$idVoiture){$sql .= "AND r.typeVehicule = 'VP' ";}
-		
-		$sql .= "AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+		WHERE (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 		AND e.entity = ".$entity."
 		AND e.fk_fournisseur =".$fk_fournisseur;
 		if ($idImport){ $sql .= " AND e.idImport = '".$idImport."' ";}
@@ -313,8 +307,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
-	WHERE t.fk_rh_ressource_type = ".$idTypeRessource."
-	AND (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
+	WHERE (e.date_debut<='".$date_fin."' AND e.date_debut>='".$date_debut."')
 	AND e.fk_fournisseur =".$fk_fournisseur."
 	AND e.entity = ".$entity;
 	if ($idImport){ $sql .= " AND e.idImport = '".$idImport."'";}
