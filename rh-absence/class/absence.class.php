@@ -150,7 +150,7 @@ class TRH_Absence extends TObjetStd {
 		
 		global $user,$conf;
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence');
-		parent::add_champs('code','type=entier;index;');				//code  congé
+		parent::add_champs('code','type=varchar;index;');				//code  congé
 		parent::add_champs('type','type=varchar;index;');				//type de congé
 		parent::add_champs('libelle','type=varchar;');				//type de congé
 		parent::add_champs('date_debut,date_fin, date_validation','type=date;index;');	//dates debut fin de congés
