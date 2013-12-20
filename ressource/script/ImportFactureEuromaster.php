@@ -66,15 +66,14 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	
 	
 	
-	while(($data = fgetcsv($handle, 0,'\r')) != false) {
+	while(($infos = fgetcsv($handle, 0,';','"')) != false) {
 		//echo 'Traitement de la ligne '.$numLigne.'...';
-		if ($numLigne >=1) {
-			$infos = explode(';', $data[0]);
+		if ($numLigne >=1 && !empty($infos)) {
 			
 			$plaque = str_replace('-','',$infos[0]);
 			$plaque = str_replace(' ','',$plaque);
 			
-			if(empty($plaque)) continue;
+			//if(empty($plaque)) continue; si avoir plaque vide alors faut faire le taf
 			
 			$timestamp = mktime(0,0,0,intval(substr($infos[4], 3,2)),intval(substr($infos[4], 0,2)), intval(substr($infos[4], 6,4)));
 			$date = date("Y-m-d", $timestamp);
@@ -83,7 +82,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		
 			
 			$style = '';
-			if (!empty($TRessource[$plaque])){
+			if (!empty($plaque) && !empty($TRessource[$plaque])){
 				$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], $date);
 				if ($idUser==0){ //si il trouve, on l'affecte à l'utilisateur 
 					$idUser = $idSuperAdmin;
