@@ -1555,6 +1555,7 @@ class TRH_Absence extends TObjetStd {
 				WHERE a.fk_user=u.rowid 
 				AND  g.fk_user=u.rowid
 				AND u.rowid=".$idUserRecherche."
+				AND a.etat!='Refusee'
 				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
@@ -1569,6 +1570,7 @@ class TRH_Absence extends TObjetStd {
 				WHERE a.fk_user=u.rowid 
 				AND  g.fk_user=u.rowid
 				AND g.fk_usergroup=".$idGroupeRecherche."
+				AND a.etat!='Refusee'
 				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
@@ -1582,7 +1584,7 @@ class TRH_Absence extends TObjetStd {
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 				WHERE a.fk_user=u.rowid 
-				
+				AND a.etat!='Refusee'
 				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
@@ -1955,6 +1957,26 @@ class TRH_JoursFeries extends TObjetStd {
 		return 0;
 	}
 	
+	static function estFerie(&$ATMdb, $date) {
+		global $conf;
+		//on récupère toutes les dates de jours fériés existant
+		$sql="SELECT count(*) as 'nb'  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries
+			 WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")
+			 AND  date_jourOff=".$ATMdb->quote($date);
+			 
+		$ATMdb->Execute($sql);
+		$obj = $ATMdb->Get_line();
+			
+		//on teste si l'un d'eux est égal à celui que l'on veut créer
+		if($obj->nb > 0){
+			return true;	
+		}
+		
+		return false;
+		
+		
+	}
+	
 	static function syncronizeFromURL(&$ATMdb, $url) {
 		
 		$iCal = new ICalReader( 'http://www.google.com/calendar/ical/fr.french%23holiday%40group.v.calendar.google.com/public/basic.ics' );
@@ -1980,6 +2002,29 @@ class TRH_JoursFeries extends TObjetStd {
 		}
 		
 	}
+	
+	
+	static function getAll(&$ATMdb, $date_start='', $date_end='') {
+		global $conf;	
+		
+		$Tab=array();
+			  //récupération des jours fériés 
+		$sql2=" SELECT moment,commentaire,date_jourOff,rowid FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
+		 WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+		 
+		if(!empty($date_start) && !empty($date_end)) $sql2.="AND date_jourOff BETWEEN ".$ATMdb->quote($date_start)." AND ".$ATMdb->quote($date_end);
+		 
+		
+		$ATMdb->Execute($sql2);
+   		
+	     while ($row = $ATMdb->Get_line()) {
+			 $Tab[] =$row;
+		  
+	     }
+		
+		return $Tab;
+	
+}
 	
 }
 

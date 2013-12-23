@@ -146,6 +146,9 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	table.planning tr td.rougeRTT {
 			background-color:#d87a00;
 	}
+	table.planning tr td.jourFerie {
+			background-color:#666;
+	}
 			
 	</style>
 	<?
@@ -232,7 +235,8 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 		}
 	}
 	print "</tr>";
-	
+	/*pre($tabUserMisEnForme);
+	exit;*/
 	foreach($tabUserMisEnForme as $id=>$planning){
 		$sql="SELECT lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$id;
 		$ATMdb->Execute($sql);
@@ -241,15 +245,22 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 		}
 		print '<tr >';		
 		print '<td style="text-align:right; font-weight:bold;height:20px;" nowrap="nowrap">'.$name.'</td>';
-		foreach($planning as $ouinon){
+		foreach($planning as $dateJour=>$ouinon){
+			
+			$class='';
+			
+			$std = new TObjetStd;
+			$std->set_date('date_jour', $dateJour);
+			if(TRH_JoursFeries::estFerie($ATMdb, $std->get_date('date_jour','Y-m-d') )) { $class = 'jourFerie';  }	
+			
 			if($ouinon=='non'){
-				print '<td style="text-align:center;" colspan="2">&nbsp;</td>';
+				print '<td style="text-align:center;" colspan="2" class="'.$class.'">&nbsp;</td>';
 			}else{
 				$boucleOk=0;
 				
 				$labelAbs = substr($ouinon,0,-5);
 				
-				$class = (strpos($ouinon, 'RTT')!==false) ? 'rougeRTT' : 'rouge';
+				$class .= (strpos($ouinon, 'RTT')!==false) ? ' rougeRTT' : ' rouge';
 				
 				if(strpos($ouinon,'DAM')!==false){
 						print '<td class="'.$class.'" title="'.$labelAbs.'" colspan="2">&nbsp;</td>';

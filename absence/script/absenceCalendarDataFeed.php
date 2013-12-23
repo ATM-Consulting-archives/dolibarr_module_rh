@@ -1,6 +1,7 @@
 <?php
 
 require('../config.php');
+include_once("../class/absence.class.php");
 include_once("../../rhlibrary/wdCalendar/php/functions.php");
 $ATMdb=new TPDOdb;
 
@@ -75,7 +76,7 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
   
   
   	$TJourFerie=getJourFerie($ATMdb, $date_start, $date_end);
-	$ret['events'] = array_merge($ret['events'], $TJourFerie); 
+	$ret['events'] = array_merge($TJourFerie, $ret['events']); 
   
   	if($user->rights->absence->myactions->voirToutesAbsences){		//si on a le droit de voir toutes les absences
 	  	
@@ -192,15 +193,9 @@ global $conf;
 	
 	
 
-	$Tab=array();
+	$TJF=TRH_JoursFeries::getAll($ATMdb, $date_start, $date_end);
 		  //récupération des jours fériés 
-	$sql2=" SELECT moment,commentaire,date_jourOff,rowid FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
-	 WHERE entity IN (0,".$conf->entity.")  AND date_jourOff BETWEEN '".$date_start."' AND '".$date_end."'";
-	 //AND date_jourOff <='".php2MySqlTime($ed)."' AND date_jourOff >='". php2MySqlTime($sd)."' ";
-	 //echo $sql2;
-  	 $ATMdb->Execute($sql2);
-   		
-     while ($row = $ATMdb->Get_line()) {
+	foreach($TJF as $row) {
 		  switch($row->moment){
 			case 'apresmidi' : 
 				$moment="Fermé l'après-midi";
@@ -211,10 +206,12 @@ global $conf;
 			case 'allday':
 				$moment="Jour férié";
 				break;
-    	}
+    		}
+		  
+		  
 	      $Tab[] = array(
 	        100000+$row->rowid,
-	        $moment." ".$row->commentaire,
+	        $moment.' : '.$row->commentaire,
 	        _justDate($row->date_jourOff),
 	       	_justDate($row->date_jourOff),
 	        1,//$row->isAllDayEvent,
