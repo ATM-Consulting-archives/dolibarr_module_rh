@@ -1942,7 +1942,8 @@ class TRH_JoursFeries extends TObjetStd {
 	function testExisteDeja(&$ATMdb){
 		global $conf;
 		//on récupère toutes les dates de jours fériés existant
-		$sql="SELECT count(*) as 'nb'  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE date_jourOff='".$this->date_jourOff."' AND rowid!=".$this->getId();
+		$sql="SELECT count(*) as 'nb'  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries
+			 WHERE date_jourOff='".$this->get_date('date_jourOff','Y-m-d')."' AND rowid!=".$this->getId();
 		$ATMdb->Execute($sql);
 		$obj = $ATMdb->Get_line();
 			
