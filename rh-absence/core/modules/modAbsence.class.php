@@ -292,7 +292,12 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'pointeuse';
 		
-		
+		$r++;
+		$this->rights[$r][0] = 7120;
+		$this->rights[$r][1] = 'Voir les absences refusee sur le planning';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+		$this->rights[$r][5] = 'voirAbsenceRefusee';
 		
 		
 		

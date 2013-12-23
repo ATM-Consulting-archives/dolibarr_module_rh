@@ -143,6 +143,10 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idUser=0, $idGroupe=0, $typeAbs
 				break;
 		}
 		
+		if($row->etat=='Refusee' && !$user->rights->absence->myactions->voirAbsenceRefusee){
+			continue;
+		}
+		
 	     $ret['events'][] = array(
 	        $row->rowid,
 	        htmlentities($row->name, ENT_COMPAT , 'ISO8859-1').' '.htmlentities($row->firstname, ENT_COMPAT , 'ISO8859-1')." : ".$row->libelle,
