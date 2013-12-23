@@ -130,6 +130,11 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 				break;
 		}
 		
+		if($row->etat=='Refusee' && !$user->rights->absence->myactions->voirAbsenceRefusee){
+			continue;
+		}
+		
+		
 		$timeDebut = strtotime($row->date_debut);
 		$timeFin = strtotime($row->date_fin)+86399; // par défaut 23:59:59
 		
