@@ -1922,6 +1922,8 @@ class TRH_JoursFeries extends TObjetStd {
 		
 		$this->TFerie=array();
 		$this->TMoment=array('allday'=>'Toute La journée', 'matin'=>'Matin', 'apresmidi'=>'Après-midi');
+		
+		$this->moment = 'allday'; 		
 	}
 	
 	
@@ -1929,12 +1931,15 @@ class TRH_JoursFeries extends TObjetStd {
 		global $conf;
 		$this->entity = $conf->entity;
 		
-		parent::save($db);
+		if(!$this->testExisteDeja($db)) {
+			parent::save($db);	
+		}
+
 	}
 
 	
 	//fonction qui renvoie 1 si le jour férié que l'on veut créer existe déjà à la date souhaitée, sinon 0
-	function testExisteDeja($ATMdb){
+	function testExisteDeja(&$ATMdb){
 		global $conf;
 		//on récupère toutes les dates de jours fériés existant
 		$sql="SELECT count(*) as 'nb'  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE date_jourOff='".$this->date_jourOff."' AND rowid!=".$this->getId();
@@ -1947,6 +1952,32 @@ class TRH_JoursFeries extends TObjetStd {
 		}
 		
 		return 0;
+	}
+	
+	static function syncronizeFromURL(&$ATMdb, $url) {
+		
+		$iCal = new ICalReader( 'http://www.google.com/calendar/ical/fr.french%23holiday%40group.v.calendar.google.com/public/basic.ics' );
+		
+		foreach($iCal->cal['VEVENT'] as $event) {
+		
+			if($event['STATUS']=='CONFIRMED') {
+				
+				$jf = new TRH_JoursFeries;
+				$jf->commentaire = $event['SUMMARY'];
+				
+				$aaaa = substr($event['DTSTART'], 0,4);
+				$mm = substr($event['DTSTART'], 4,2);
+				$jj = substr($event['DTSTART'], 6,2);
+				
+				$jf->set_date('date_jourOff', $jj.'/'.$mm.'/'.$aaaa);
+				
+				$jf->save($ATMdb);
+				
+			}
+
+
+		}
+		
 	}
 	
 }

@@ -20,6 +20,7 @@
 
 	define('DOL_PACKAGE', true);
 	define('USE_TBS', true);
+	define('USE_CALENDAR', true);
 	
 	require(COREROOT.'inc.core.php');
 	

@@ -11,6 +11,13 @@
 	
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
+			case 'sync':
+				
+				TRH_JoursFeries::syncronizeFromURL($ATMdb, 'http://www.google.com/calendar/feeds/fr.french%23holiday%40group.v.calendar.google.com/public/basic');
+				
+				_liste($ATMdb, $feries , $emploiTemps);
+				
+				break;
 			case 'add':
 			case 'new':
 				//$ATMdb->db->debug=true;
@@ -140,7 +147,10 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 	));
 	if($user->rights->absence->myactions->ajoutJourOff=="1"){
 		?>
-		<a class="butAction" href="?fk_user=<?=$user->id?>&action=new">Nouveau</a><div style="clear:both"></div>
+		<a class="butAction" href="?fk_user=<?=$user->id?>&action=new">Nouveau</a>
+		&nbsp;
+		<a class="butAction" href="?action=sync">Syncronisation en ligne</a>
+		<div style="clear:both"></div>
 		<?
 	}
 	$form->end();
