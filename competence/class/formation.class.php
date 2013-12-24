@@ -96,7 +96,10 @@ class TRH_formation_section extends TObjetStd {
 		parent::start();
 	}
 }
-
+/*
+ * 
+ * Géré dans le module AGEFODD
+ * 
 class TRH_formation extends TObjetStd {
 	function __construct() {
 		
@@ -199,3 +202,6 @@ class TRH_formation_participant_statut extends TObjetStd {
 		parent::start();
 	}
 }
+ * 
+ * */
+ */
