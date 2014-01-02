@@ -19,7 +19,17 @@
 			case 'imcomming':
 				$pointeuse->loadByDate($ATMdb, date('Y-m-d'));
 				
-				if(date('H')<12 && $pointeuse->date_deb_am==0) {
+				$pointeuse->set_date('date_jour', date('d/m/Y'));					
+				
+				$planing = new TRH_EmploiTemps;
+				$planing->loadByuser($ATMdb, $user->id);
+				
+				$date = $pointeuse->get_date('date_jour','Y-m-d');
+				
+				$THeure = $planing->getHeures($date);
+				$heureFinMatin = (int)date('Hi', $THeure[1]);
+				
+				if(date('Hi')<$heureFinMatin && $pointeuse->date_deb_am==0) {
 					$pointeuse->date_deb_am = time();
 				}
 				else if($pointeuse->date_deb_pm==0) {
@@ -28,7 +38,6 @@
 						
 				$pointeuse->fk_user = $user->id;		
 						
-				$pointeuse->set_date('date_jour', date('d/m/Y'));					
 				$pointeuse->save($ATMdb);
 				
 				_liste($ATMdb, $pointeuse);	
@@ -38,7 +47,16 @@
 			case 'imleaving':
 				$pointeuse->loadByDate($ATMdb, date('Y-m-d'));
 
-				if(date('H')<12) {
+				$planing = new TRH_EmploiTemps;
+				$planing->loadByuser($ATMdb, $user->id);
+				
+				$date = $pointeuse->get_date('date_jour','Y-m-d');
+				
+				$THeure = $planing->getHeures($date);
+				$heureFinMatin = (int)date('Hi', $THeure[1]);
+				
+
+				if(date('Hi')<$heureFinMatin) {
 					$pointeuse->date_fin_am = time();
 				}
 				else {

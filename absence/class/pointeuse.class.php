@@ -27,7 +27,7 @@ class TRH_Pointeuse extends TObjetStd {
 	}
 	function get_time_presence() {
 		
-		if($this->date_fin_am==0 || $this->date_deb_pm==0) {
+		if($this->date_fin_am==0 || $this->date_deb_pm==0) {
 			$this->time_presence = $this->date_fin_pm - $this->date_deb_am;
 		}
 		else {

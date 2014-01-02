@@ -1901,6 +1901,21 @@ class TRH_EmploiTemps extends TObjetStd {
 		return false;
 	}
 	
+	function getHeures($date) {
+				
+		$iJour = (int)date('N', strtotime($date)) - 1 ; 	
+		
+		$jour = $this->TJour[$iJour];
+	//	exit($date.' '.$iJour.' '.$jour);
+		return array(
+			$this->{"date_".$jour."_heuredam"}
+			,$this->{"date_".$jour."_heurefam"}
+			,$this->{"date_".$jour."_heuredpm"}
+			,$this->{"date_".$jour."_heurefpm"}
+		);
+		
+	}
+	
 	function getHeurePeriode($current_day,$periode){
 		
 		return ($this->{"date_".$current_day."_heuref".$periode} - $this->{"date_".$current_day."_heured".$periode}) / 3600;
