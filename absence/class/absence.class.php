@@ -174,32 +174,7 @@ class TRH_Absence extends TObjetStd {
 		
 		$ATMdb=new TPDOdb;
 		
-		//combo box pour le type d'absence admin
-		$this->TTypeAbsenceAdmin=array();
-		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence`";
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			$this->TTypeAbsenceAdmin[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
-		}
 		
-		
-		//combo box pour le type d'absence utilisateur
-		$this->TTypeAbsenceUser=array();
-		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-				WHERE admin=0";
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			$this->TTypeAbsenceUser[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
-		}
-		
-		//combo box pour le type d'absence pointeur
-		$this->TTypeAbsencePointeur=array();
-		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-				WHERE admin=0 OR typeAbsence LIKE 'nonjustifiee'";
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			$this->TTypeAbsencePointeur[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
-		}
 		
 		//combo pour le choix de matin ou après midi 
 		$this->TddMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date début
@@ -2060,16 +2035,6 @@ class TRH_RegleAbsence extends TObjetStd {
 		parent::start();	
 		
 		$this->choixApplication = 'all';
-		global $conf;
-		$ATMdb=new TPDOdb;
-		//combo box pour le type d'absence admin
-		$this->TTypeAbsenceAdmin=array();
-		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` ";
-		$ATMdb->Execute($sql);
-
-		while($ATMdb->Get_line()) {
-			$this->TTypeAbsenceAdmin[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
-		}
 		
 		$this->TUser = array();
 		$this->TGroup  = array();
@@ -2188,6 +2153,45 @@ class TRH_TypeAbsence extends TObjetStd {
 		
 		return $TAbsenceType;
 	}
+	
+	static function getTypeAbsence(&$ATMdb, $type='') {
+	/* Retourne un tableau code => label */		
+		$Tab=array();
+		
+		if($type=='user') {
+			
+			$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
+				WHERE admin=0";
+			$ATMdb->Execute($sql);
+			while($ATMdb->Get_line()) {
+				$Tab[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+			}
+			
+		}
+		else if($type=='valideur') {
+
+			$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
+					WHERE admin=0 OR typeAbsence LIKE 'nonjustifiee'";
+			$ATMdb->Execute($sql);
+			while($ATMdb->Get_line()) {
+				$Tab[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+			}	
+
+		}
+		else {
+
+			$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence`";
+			$ATMdb->Execute($sql);
+			while($ATMdb->Get_line()) {
+				$Tab[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+			}
+
+		}
+		
+		return $Tab;
+
+	}
+	
 }
 
 		

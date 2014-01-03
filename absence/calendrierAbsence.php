@@ -3,7 +3,7 @@
 	require('./class/absence.class.php');
 	require('./lib/absence.lib.php');
 //print_r(get_defined_vars());	
-	llxHeader('','Calendrier des absences', '', '', 0,0,
+	llxHeader('','Calendrier des absences/présences', '', '', 0,0,
 		array(//"/library/wdCalendar/src/jquery.js"   
 			"/rhlibrary/wdCalendar/src/Plugins/Common.js"    
 			,"/rhlibrary/wdCalendar/src/Plugins/datepicker_lang_FR.js" 
@@ -113,7 +113,7 @@
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'calendrier', 'Absence')
 				,'head3'=>dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', 'Absence')
-				,'titreCalendar'=>load_fiche_titre("Agenda des absences",'', 'title.png', 0, '')
+				,'titreCalendar'=>load_fiche_titre("Agenda des absences/présences",'', 'title.png', 0, '')
 				,'agendaEnabled'=>0
 			)
 			

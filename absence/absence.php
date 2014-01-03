@@ -621,7 +621,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	if($ATMdb->Get_line()){
 		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 	}
-	$typeAbsenceCreable=$absence->TTypeAbsenceUser;
+	$typeAbsenceCreable= TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user');
 
 	$droitAdmin=0;
 
@@ -629,7 +629,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 		$comboAbsence=2;
-		$typeAbsenceCreable=$absence->TTypeAbsenceAdmin;
+		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin');
 		$droitAdmin=1;
 //print "admin";
 //print_r( $typeAbsenceCreable);
@@ -642,7 +642,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			$comboAbsence=1;
 			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
-		$typeAbsenceCreable=$absence->TTypeAbsenceUser;
+		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user');
 	}
 	else $droitsCreation=2; //on n'a pas les droits de création
 	

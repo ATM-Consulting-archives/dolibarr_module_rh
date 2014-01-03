@@ -217,14 +217,14 @@ class modAbsence extends DolibarrModules
 		$r++;
 
 		$this->rights[$r][0] = 7108;
-		$this->rights[$r][1] = 'Voir toutes les absences sur la liste des absences';
+		$this->rights[$r][1] = 'Voir toutes les absences ou présences sur la liste des absences';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirToutesAbsencesListe';
 		$r++;
 		
 		$this->rights[$r][0] = 7109;
-		$this->rights[$r][1] = 'Voir toutes les absences des collaborateurs sur le calendrier';
+		$this->rights[$r][1] = 'Voir toutes les absences ou présences des collaborateurs sur le calendrier';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirToutesAbsences';
@@ -238,14 +238,14 @@ class modAbsence extends DolibarrModules
 		$r++;
 		
 		$this->rights[$r][0] = 7111;
-		$this->rights[$r][1] = 'Créer une absence pour un collaborateur';
+		$this->rights[$r][1] = 'Créer une absence ou présence pour un collaborateur';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'creerAbsenceCollaborateur';
 		$r++;
 		
 		$this->rights[$r][0] = 7112;
-		$this->rights[$r][1] = 'Créer une absence pour un collaborateur de son groupe';
+		$this->rights[$r][1] = 'Créer une absence ou présence pour un collaborateur de son groupe';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'creerAbsenceCollaborateurGroupe';
@@ -259,7 +259,7 @@ class modAbsence extends DolibarrModules
 		
 		$r++;
 		$this->rights[$r][0] = 7114;
-		$this->rights[$r][1] = 'Effectuer une recherche sur les absences des collaborateurs';
+		$this->rights[$r][1] = 'Effectuer une recherche sur les absences ou présence des collaborateurs';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'rechercherAbsence';
@@ -273,7 +273,7 @@ class modAbsence extends DolibarrModules
 		
 		$r++;
 		$this->rights[$r][0] = 7116;
-		$this->rights[$r][1] = 'Voir l\'onglet des absences';
+		$this->rights[$r][1] = 'Voir l\'onglet des absences/présences';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'voirOngletAbsence';
@@ -325,7 +325,7 @@ class modAbsence extends DolibarrModules
 		// Example to declare a new Top Menu entry and its Left menu entry:
 		$this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
 								'type'=>'top',			                // This is a Top menu entry
-								'titre'=>$langs->trans('Absences'),
+								'titre'=>$langs->trans('Planning'),
 								'mainmenu'=>'absence',
 								'leftmenu'=>'',
 								'url'=>'/absence/calendrierAbsence.php?',
