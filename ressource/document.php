@@ -39,7 +39,7 @@
 		
 		if ($_REQUEST["sendit"])
 		{
-			$upload_dir = DIR_DOC_OUTPUT.'ressource/'.dol_sanitizeFileName($ressource->getId());
+			$upload_dir = DOL_DATA_ROOT.'/ressource/'.dol_sanitizeFileName($ressource->getId());
 		
 			if (dol_mkdir($upload_dir) >= 0)
 			{
@@ -75,7 +75,7 @@
 		// Delete
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		{
-			$upload_dir = DIR_DOC_OUTPUT.'ressource/'.dol_sanitizeFileName($ressource->getId());
+			$upload_dir = DOL_DATA_ROOT.'/ressource/'.dol_sanitizeFileName($ressource->getId());
 		
 			$file = $upload_dir . '/' . $_REQUEST['urlfile'];
 			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $object);
@@ -101,7 +101,7 @@
 		if (!$sortfield) $sortfield = "name";
 		
 		
-		$upload_dir = DIR_DOC_OUTPUT.'ressource/'.dol_sanitizeFileName($ressource->getId());
+		$upload_dir = DOL_DATA_ROOT.'/ressource/'.dol_sanitizeFileName($ressource->getId());
 		
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$totalsize = 0;
