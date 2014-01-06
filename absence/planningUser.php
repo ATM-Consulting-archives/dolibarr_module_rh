@@ -8,27 +8,8 @@
 	$ATMdb=new TPDOdb;
 	$absence=new TRH_Absence;
 
-	
-	if(isset($_REQUEST['action'])) {
-		switch($_REQUEST['action']) {
-			case 'recherche':
-				_planningResult($ATMdb,$absence,'edit');
-				break;
-			case 'view':
-				_planningResult($ATMdb,$absence, 'edit');
-				break;
-			case 'edit':
-				
-				break;
-			
-		}
-	}
-	else if(isset($_REQUEST['valider'])){
-		_planningResult($ATMdb,$absence, 'edit');
-	}
-	else{
-		_planningResult($ATMdb,$absence, 'edit');
-	}
+
+	_planningResult($ATMdb,$absence, 'edit');
 	
 	$ATMdb->close();
 	
@@ -125,7 +106,10 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	
 	
 	
-	?><style type="text/css">
+	?>
+	<div id="plannings" style="background-color:#fff">
+		
+	<style type="text/css">
 	table.planning {
 		border-collapse:collapse; border:1px solid #ccc; font-size:9px;
 	}		
@@ -151,17 +135,31 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	}
 			
 	</style>
+	
 	<?
 	
-	if(!empty( $_REQUEST['date_debut'] )) {
+	if(!empty( $_REQUEST['date_debut'] ) || $idUserRecherche>0) {
 		
+		if($idUserRecherche>0 && empty( $_REQUEST['date_debut'] )) {
+			
+			$absence->debut_debut_planning = strtotime( date('Y-m-01', strtotime('-1 month') ) );
+			$absence->debut_fin_planning = strtotime( date('Y-m-t', strtotime('+3 month') ) );
+	
+		}
+		else {
+			$absence->set_date('debut_debut_planning', $_REQUEST['date_debut']);
+			$absence->set_date('debut_fin_planning', $_REQUEST['date_fin']);
+			
+		}
 		
-		$absence->set_date('debut_debut_planning', $_REQUEST['date_debut']);
-		$absence->set_date('debut_fin_planning', $_REQUEST['date_fin']);
 		
 		$t_current = $absence->debut_debut_planning;
 		
+		$annee_old = '';
+		
 		while($t_current<=$absence->debut_fin_planning) {
+			
+			$annee = date('Y', $t_current);
 			
 			if($t_current==$absence->debut_debut_planning) {
 				$date_debut =date('d/m/Y', $absence->debut_debut_planning);	
@@ -177,7 +175,11 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 				$date_fin =date('t/m/Y', $t_current);	
 			}
 			
+			if($annee!=$annee_old) print '<p style="text-align:left;font-weight:bold">'.$annee.'</strong><br />';
+			
 			_planning($ATMdb, $absence, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin );
+		
+			$annee_old = $annee;
 		
 			
 			$t_current=strtotime('+1 month', $t_current);
@@ -187,28 +189,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	
 	echo $form->end_form();
 	
-	?><script type="text/javascript">
-		
-	/*	$(document).ready(function() {
-			
-			$('table.planning tr.entete').each(function() {
-								
-			});
-			
-		});
-		
-		function isScrolledIntoView(elem)
-		{
-		    var docViewTop = $(window).scrollTop();
-		    var docViewBottom = docViewTop + $(window).height();
-		
-		    var elemTop = $(elem).offset().top;
-		    var elemBottom = elemTop + $(elem).height();
-		
-		    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
-		}
-		*/
-	</script>
+	?></div>
 	
 	
 	<?

@@ -148,15 +148,14 @@
 					<td><b>Etat</b></td>
 				</tr>
 				<tbody id="TRecapAbs">
-					<tr>
-						<td>[TRecap.date_debut;block=tr;strconv=no;protect=no]</td>
-						<td>[TRecap.date_fin;block=tr;strconv=no;protect=no]</td>
-						<td>[TRecap.libelle;block=tr;strconv=no;protect=no]</td>
-						<td>[TRecap.libelleEtat;block=tr;strconv=no;protect=no]</td>
-					</tr>
-
+					
 				</tbody>
 		</table>
+		
+		<div id="user-planning">
+			
+		</div>
+		
 		</div>
 		<br>
 		
@@ -256,7 +255,8 @@
 						
 					});
 				
-				
+
+					$('#user-planning').load('planningUser.php?fk_user='+fk_user+' #plannings');
 			}
 			
 			//	script vérifiant que la date de début ne dépasse pas celle de fin
