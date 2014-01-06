@@ -2050,10 +2050,19 @@ class TRH_RegleAbsence extends TObjetStd {
 		$this->entity = $conf->entity;
 		
 		switch ($this->choixApplication){
-			case 'all':$this->fk_user = NULL;$this->fk_usergroup=NULL;break;
-			case 'user':$this->fk_usergroup = NULL;break;
-			case 'group':$this->fk_user = NULL;break;
-			default : echo'pbchoixapplication';break;				
+			case 'all':
+				$this->fk_user = NULL;
+				$this->fk_usergroup=NULL;
+				break;
+			case 'user':
+				$this->fk_usergroup = NULL;
+				break;
+			case 'group':
+				$this->fk_user = NULL;
+				break;
+			default : 
+				echo'pbchoixapplication';
+				break;				
 		}
 		
 		parent::save($ATMdb);
@@ -2096,6 +2105,8 @@ class TRH_TypeAbsence extends TObjetStd {
 		
 		parent::add_champs('decompteNormal','type=chaine;');
 		
+		parent::add_champs('date_hourStart,date_hourEnd','type=date;');
+		
 		parent::_init_vars();
 		parent::start();
 		
@@ -2133,11 +2144,12 @@ class TRH_TypeAbsence extends TObjetStd {
 		
 		parent::save($ATMdb);
 	}
-	static function getList(&$ATMdb) {
+	static function getList(&$ATMdb, $isPresence=false) {
 		global $conf;
 		
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_type_absence
 		WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.") 
+		AND isPresence=".(int)$isPresence."
 		ORDER BY typeAbsence";
 		
 		$Tab = TRequeteCore::_get_id_by_sql($ATMdb, $sql);
@@ -2154,14 +2166,17 @@ class TRH_TypeAbsence extends TObjetStd {
 		return $TAbsenceType;
 	}
 	
-	static function getTypeAbsence(&$ATMdb, $type='') {
+	static function getTypeAbsence(&$ATMdb, $type='', $isPresence=false) {
 	/* Retourne un tableau code => label */		
 		$Tab=array();
 		
 		if($type=='user') {
 			
 			$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-				WHERE admin=0";
+				WHERE admin=0 AND isPresence=".(int)$isPresence."
+				ORDER BY libelleAbsence
+				"
+				;
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$Tab[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
@@ -2171,7 +2186,9 @@ class TRH_TypeAbsence extends TObjetStd {
 		else if($type=='valideur') {
 
 			$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-					WHERE admin=0 OR typeAbsence LIKE 'nonjustifiee'";
+					WHERE (admin=0 OR typeAbsence LIKE 'nonjustifiee') AND isPresence=".(int)$isPresence."
+					ORDER BY libelleAbsence
+					";
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$Tab[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
@@ -2180,7 +2197,11 @@ class TRH_TypeAbsence extends TObjetStd {
 		}
 		else {
 
-			$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence`";
+			$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
+				WHERE isPresence=".(int)$isPresence."
+				ORDER BY libelleAbsence
+				"
+				;
 			$ATMdb->Execute($sql);
 			while($ATMdb->Get_line()) {
 				$Tab[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');

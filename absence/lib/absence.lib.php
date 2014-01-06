@@ -60,7 +60,8 @@ function adminCongesPrepareHead($type='compteur') {
 		case 'compteur':
 			return array(
 				array(DOL_URL_ROOT_ALT.'/absence/adminConges.php', 'Données générales des congés','adminconges')
-				,array(DOL_URL_ROOT_ALT.'/absence/typeAbsence.php', "Types d'absences et de présences",'typeabsence')
+				,array(DOL_URL_ROOT_ALT.'/absence/typeAbsence.php', "Types d'absences",'typeabsence')
+				,array(DOL_URL_ROOT_ALT.'/absence/typePresence.php', "Types de présences",'typepresence')
 			);
 			break;
 	}

@@ -43,7 +43,7 @@
 
 	llxHeader();
 	
-	$TAbsenceType = TRH_TypeAbsence::getList($ATMdb);
+	$TAbsenceType = TRH_TypeAbsence::getList($ATMdb, true);
 
 	$absenceTypeDummy = new TRH_TypeAbsence;
 
@@ -61,8 +61,13 @@
 			,'codeAbsence'=>$form->texte('', 'TTypeAbsence['.$absenceType->getId().'][codeAbsence]', $absenceType->codeAbsence, 6,10)
 			
 			,'unite'=>$form->combo('', 'TTypeAbsence['.$absenceType->getId().'][unite]', $absenceTypeDummy->TUnite , $absenceType->unite)
-			,'decompteNormal'=>$form->combo('', 'TTypeAbsence['.$absenceType->getId().'][decompteNormal]', $absenceTypeDummy->TDecompteNormal , $absenceType->decompteNormal)
-			,'isPresence'=>$form->hidden( 'TTypeAbsence['.$absenceType->getId().'][isPresence]', 0)
+			,'decompteNormal'=>$form->hidden( 'TTypeAbsence['.$absenceType->getId().'][decompteNormal]', 'oui')
+			,'isPresence'=>$form->hidden( 'TTypeAbsence['.$absenceType->getId().'][isPresence]', 1) 
+			
+			,'hourStart'=>$form->timepicker('', 'TTypeAbsence['.$absenceType->getId().'][date_hourStart]', $absenceType->get_date('date_hourStart','H:i') , 5,10)
+			,'hourEnd'=>$form->timepicker('', 'TTypeAbsence['.$absenceType->getId().'][date_hourEnd]', $absenceType->get_date('date_hourEnd','H:i'), 5,10)
+			
+			
 			,'admin'=>$form->combo('', 'TTypeAbsence['.$absenceType->getId().'][admin]', $absenceTypeDummy->TForAdmin , $absenceType->admin)
 			
 			,'delete'=>$form->checkbox1('', 'TTypeAbsence['.$absenceType->getId().'][delete]', 1)
@@ -76,21 +81,23 @@
 			,'codeAbsence'=>$form->texte('', 'TTypeAbsenceNew[codeAbsence]', '', 6,10)
 			
 			,'unite'=>$form->combo('', 'TTypeAbsenceNew[unite]', $absenceTypeDummy->TUnite , null)
-			,'decompteNormal'=>$form->combo('', 'TTypeAbsenceNew[decompteNormal]', $absenceTypeDummy->TDecompteNormal , null)
-			,'isPresence'=>$form->hidden( 'TTypeAbsenceNew[isPresence]', 0)
+			,'hourStart'=>$form->timepicker('', 'TTypeAbsenceNew[hourStart]', '8:00', 5,10)
+			,'hourEnd'=>$form->timepicker('', 'TTypeAbsenceNew[hourEnd]', '18:00', 5,10)
+			,'decompteNormal'=>$form->hidden('TTypeAbsenceNew[decompteNormal]', 'oui')
+			,'isPresence'=>$form->hidden('TTypeAbsenceNew[isPresence]', 1)
 			,'admin'=>$form->combo('', 'TTypeAbsenceNew[admin]', $absenceTypeDummy->TForAdmin , null)
 		);
 
 
 	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/typeAbsence.tpl.php'
+	print $TBS->render('./tpl/typePresence.tpl.php'
 		,array(
 			'typeAbsence'=>$TFormAbsenceType
 		)
 		,array(
 			'typeAbsenceNew'=>$TFormAbsenceTypeNew
 			,'view'=>array(
-				'head'=>dol_get_fiche_head(adminCongesPrepareHead('compteur')  , 'typeabsence', 'Administration des absences et présences')
+				'head'=>dol_get_fiche_head(adminCongesPrepareHead('compteur')  , 'typepresence', 'Administration des absences et présences')
 			)
 		)	
 		
