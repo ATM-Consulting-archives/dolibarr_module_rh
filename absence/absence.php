@@ -34,7 +34,7 @@
 							mailCongesValideur($ATMdb,$absence);
 						}
 						
-						$mesg = '<div class="error">Demande enregistrée</div>';
+						$mesg = 'Demande enregistrée';
 						_fiche($ATMdb, $absence,'view');
 					}else{
 						if($demandeRecevable==0){
