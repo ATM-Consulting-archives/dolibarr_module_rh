@@ -24,6 +24,8 @@
 				if($existeDeja===false){
 					$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
 				
+						$absence->etat='Validee';
+				
 						$absence->save($ATMdb);
 						$mesg = 'Présence enregistrée';
 						_fiche($ATMdb, $absence,'view');
@@ -592,8 +594,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'fiche', 'Présence')
-				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Présence')
+				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'presence')  , 'fiche', 'Présence')
+				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'presence')  , 'fiche', 'Présence')
 				
 				
 			)

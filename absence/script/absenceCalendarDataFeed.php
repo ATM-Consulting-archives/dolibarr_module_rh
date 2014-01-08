@@ -81,20 +81,23 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
   	if($user->rights->absence->myactions->voirToutesAbsences){		//si on a le droit de voir toutes les absences
 	  	
 	  	if($idUser>0){		//on recherche un groupe et un utilisateur
-	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat, r.ddMoment, r.dfMoment 
-	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u
-	  		WHERE r.fk_user=u.rowid AND u.rowid=".$idUser." AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
-	     
+	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, t.libelleAbsence as 'libelle', r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat, r.ddMoment, r.dfMoment,t.isPresence, r.date_hourStart, r.date_hourEnd ,t.colorId
+	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r LEFT JOIN `".MAIN_DB_PREFIX."user` as u ON (r.fk_user=u.rowid)
+	  			LEFT JOIN `".MAIN_DB_PREFIX."rh_type_absence` t ON (r.type=t.typeAbsence) 
+	  		WHERE u.rowid=".$idUser." AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
 	  	}
 	  	else if($idGroupe>0){		//on recherche un groupe
-	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat, r.ddMoment, r.dfMoment 
-	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u, `".MAIN_DB_PREFIX."usergroup_user` as g
-	  		WHERE r.fk_user=u.rowid AND u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupe." AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";; 
+	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, t.libelleAbsence as 'libelle',  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat, r.ddMoment, r.dfMoment,t.isPresence, r.date_hourStart, r.date_hourEnd ,t.colorId
+	  			FROM `".MAIN_DB_PREFIX."rh_absence` as r LEFT JOIN `".MAIN_DB_PREFIX."user` as u ON (r.fk_user=u.rowid)
+	  				LEFT JOIN `".MAIN_DB_PREFIX."usergroup_user` as g ON (u.rowid=g.fk_user)
+	  				LEFT JOIN `".MAIN_DB_PREFIX."rh_type_absence` t ON (r.type=t.typeAbsence) 
+	  		WHERE g.fk_usergroup=".$idGroupe." AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";;
 	  	}
 		else {
-			$sql1 = "SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat , r.ddMoment, r.dfMoment
-			  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u 
-			  		WHERE r.fk_user=u.rowid AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
+			$sql1 = "SELECT DISTINCT r.rowid as rowid, t.libelleAbsence as 'libelle',  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat , r.ddMoment, r.dfMoment,t.isPresence, r.date_hourStart, r.date_hourEnd,t.colorId
+			  		FROM `".MAIN_DB_PREFIX."rh_absence` as r LEFT JOIN `".MAIN_DB_PREFIX."user` as u ON (r.fk_user=u.rowid)
+	  						LEFT JOIN `".MAIN_DB_PREFIX."rh_type_absence` t ON (r.type=t.typeAbsence) 
+			  		WHERE r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
 		}
 
 		if($typeAbsence!='Tous'){
@@ -104,9 +107,10 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 		$sql1.= " AND u.entity IN (0,".$conf->entity.") ";
 	}
 	else{ //on ne peut voir que ses propres absences
-		$sql1="SELECT DISTINCT r.rowid as rowid, r.libelle,  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat , r.ddMoment, r.dfMoment
-	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r, `".MAIN_DB_PREFIX."user` as u
-	  		WHERE r.fk_user=u.rowid AND u.rowid=".$user->id." AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
+		$sql1="SELECT DISTINCT r.rowid as rowid, t.libelleAbsence as 'libelle',  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat , r.ddMoment, r.dfMoment,t.isPresence, r.date_hourStart, r.date_hourEnd,t.colorId
+	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r LEFT JOIN `".MAIN_DB_PREFIX."user` as u ON (r.fk_user=u.rowid)
+	  						LEFT JOIN `".MAIN_DB_PREFIX."rh_type_absence` t ON (r.type=t.typeAbsence) 
+	  		WHERE u.rowid=".$user->id." AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
 			if($typeAbsence!='Tous'){
 	  			$sql1.=" AND r.type LIKE '".$typeAbsence."' ";
 	  		}
@@ -119,52 +123,112 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
     while ($row = $ATMdb->Get_line()) {
     				
 		$idAbs[]=$row->rowid;
-    	switch($row->etat){
-			case 'Avalider' : 
-				$color=6;
-				break;
-			case 'Refusee':
-				$color=14;
-				break;
-			default:
-				$color=8;
-				break;
+    	
+    	if($row->isPresence==1) {
+    		$color=($row->colorId) ? $row->colorId : 2;
+    	}
+		else {
+			switch($row->etat){
+				case 'Avalider' : 
+					$color=6;
+					break;
+				case 'Refusee':
+					$color=14;
+					break;
+				default:
+					$color=8;
+					break;
+			}
+			
+			
 		}
+		
 		
 		if($row->etat=='Refusee' && !$user->rights->absence->myactions->voirAbsenceRefusee){
 			continue;
 		}
 		
-		
-		$timeDebut = strtotime($row->date_debut);
-		$timeFin = strtotime($row->date_fin)+86399; // par défaut 23:59:59
-		
-		if($row->ddMoment=='apresmidi')$timeDebut += (3600 * 12) ; //+12h
-		if($row->dfMoment=='matin')$timeFin -= (3600 * 12) ; //-12h
-					
-		$allDayEvent=(int)($row->ddMoment=='matin' && $row->dfMoment=='apresmidi' || $row->date_debut<$row->date_fin);		
-		$moreOneDay=(int)($row->date_debut<$row->date_fin);
-		
-		$label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
-		if($moreOneDay) {
-			$label.=' du '._justDate($timeDebut,'d/m').' au '._justDate($timeFin,'d/m/Y');
+		if($row->isPresence==1) {
+			
+			$time_debut_jour = strtotime($row->date_debut);
+			$time_fin_jour = strtotime($row->date_fin);
+			
+	        $moreOneDay=(int)($row->date_debut<$row->date_fin);
+	        
+	        $t_current = $time_debut_jour;
+			while($t_current<=$time_fin_jour) {
+				
+				
+				$timeDebut = strtotime( date('Y-m-d',$t_current).' '.substr($row->date_hourStart,11) ); 
+				$timeFin = strtotime(date('Y-m-d',$t_current).' '.substr($row->date_hourEnd,11) ) ; 
+				
+				$url = "presence.php?id=".$row->rowid."&action=view";//$row->location,
+		        $attends = 'presence';//$attends
+	
+				$label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
+				if($moreOneDay) {
+					$label.=' du '._justDate($timeDebut,'d/m').' au '._justDate($timeFin,'d/m/Y');
+				}
+				
+				$ret['events'][] = array(
+			        $row->rowid,
+			        $label,
+			        _justDate($timeDebut),
+			        _justDate($timeFin),
+			        0,//$row->isAllDayEvent,
+			        0, //more than one day event
+			        //$row->InstanceType,
+			        $row->fk_user,//Recurring event,
+			        $color,//$row->color,
+			        0//editable
+			        ,$url
+			        ,$attends
+			        ,$row->fk_user
+			      );
+				
+				$t_current=strtotime('+1day', $t_current);
+			}
+			
+			
+		}
+		else {
+			$timeDebut = strtotime($row->date_debut);
+			$timeFin = strtotime($row->date_fin)+86399; // par défaut 23:59:59
+			
+			if($row->ddMoment=='apresmidi')$timeDebut += (3600 * 12) ; //+12h
+			if($row->dfMoment=='matin')$timeFin -= (3600 * 12) ; //-12h
+						
+			$allDayEvent=(int)($row->ddMoment=='matin' && $row->dfMoment=='apresmidi' || $row->date_debut<$row->date_fin);		
+			$moreOneDay=(int)($row->date_debut<$row->date_fin);
+			$url = "absence.php?id=".$row->rowid."&action=view";//$row->location,
+	        $attends = 'absence';//$attends
+	        
+	        $label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
+			if($moreOneDay) {
+				$label.=' du '._justDate($timeDebut,'d/m').' au '._justDate($timeFin,'d/m/Y');
+			}
+			
+			$ret['events'][] = array(
+		        $row->rowid,
+		        $label,
+		        _justDate($timeDebut),
+		        _justDate($timeFin),
+		        $allDayEvent,//$row->isAllDayEvent,
+		        $moreOneDay, //more than one day event
+		        //$row->InstanceType,
+		        $row->fk_user,//Recurring event,
+		        $color,//$row->color,
+		        0//editable
+		        ,$url
+		        ,$attends
+		        ,$row->fk_user
+		      );
+	        
+	        
 		}
 		
-		$ret['events'][] = array(
-	        $row->rowid,
-	        $label,
-	        _justDate($timeDebut),
-	        _justDate($timeFin),
-	        $allDayEvent,//$row->isAllDayEvent,
-	        $moreOneDay, //more than one day event
-	        //$row->InstanceType,
-	        $row->fk_user,//Recurring event,
-	        $color,//$row->color,
-	        0,//editable
-	        "absence.php?id=".$row->rowid."&action=view",//$row->location,
-	        'absence',//$attends
-	        $row->fk_user
-	      );
+		
+		
 	  }  
 	  
 	

@@ -36,16 +36,25 @@
 				</tr>
 				<tr>
 					<td>Date début</td>
-			 		<td>[absenceCourante.date_debut;strconv=no;protect=no] [absenceCourante.hourStart;strconv=no;protect=no]</td>
+			 		<td>[absenceCourante.date_debut;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>Date fin</td>
-			 		<td>[absenceCourante.date_fin;strconv=no;protect=no] [absenceCourante.hourEnd;strconv=no;protect=no]</td>
+			 		<td>[absenceCourante.date_fin;strconv=no;protect=no]</td>
 				</tr>
-					<tr>
-						<td>Commentaire</td>
-						<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
-					</tr>
+				<tr>
+					<td>Heure de début</td>
+			 		<td>[absenceCourante.hourStart;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Heure de fin</td>
+			 		<td>[absenceCourante.hourEnd;strconv=no;protect=no]</td>
+				</tr>
+				
+				<tr>
+					<td>Commentaire</td>
+					<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
+				</tr>
 					<tr>
 						<td>Créée le </td>
 						<td>[absenceCourante.dt_cre;strconv=no;protect=no]</td>

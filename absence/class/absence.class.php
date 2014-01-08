@@ -151,6 +151,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('type','type=varchar;index;');				//type de congé
 		parent::add_champs('libelle','type=varchar;');				//type de congé
 		parent::add_champs('date_debut,date_fin, date_validation','type=date;index;');	//dates debut fin de congés
+		parent::add_champs('date_hourStart,date_hourEnd','type=date;');	//dates debut fin de congés
 		parent::add_champs('ddMoment, dfMoment','type=chaine;');		//moment (matin ou après midi)
 		parent::add_champs('duree','type=float;');	
 		parent::add_champs('dureeHeure','type=chaine;');	
@@ -2101,7 +2102,7 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::add_champs('codeAbsence','type=chaine;index;');
 		parent::add_champs('admin','type=int;');
 		parent::add_champs('unite','type=chaine;');
-		parent::add_champs('entity,isPresence','type=int;index;');
+		parent::add_champs('entity,isPresence,colorId','type=int;index;');
 		
 		parent::add_champs('decompteNormal','type=chaine;');
 		

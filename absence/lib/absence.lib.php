@@ -16,6 +16,12 @@ function absencePrepareHead(&$obj, $type='absence') {
 				,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(), 'Calendrier','calendrier')
 			);
 			break;
+		case 'presence':
+			return array(
+				array(DOL_URL_ROOT_ALT.'/absence/presence.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
+				,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(), 'Calendrier','calendrier')
+			);
+			break;
 		case 'absenceCreation':
 			return array(
 				array(DOL_URL_ROOT_ALT.'/absence/absence.php?action=new', 'Fiche','fiche')
