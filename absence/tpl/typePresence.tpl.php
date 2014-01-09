@@ -12,6 +12,7 @@
 				<th>heure de fin</th>
 				
 				<th>Code Comptable</th>
+				<th>Code couleur</th>
 				<th>Réservé Admin ?</th>
 				<th>Supprimer ?</th>
 				
@@ -25,6 +26,9 @@
 				<td>[typeAbsence.hourStart; strconv=no]</td>
 				<td>[typeAbsence.hourEnd; strconv=no]</td>
 				<td>[typeAbsence.codeAbsence; strconv=no]</td>
+				<td>[typeAbsence.colorId; strconv=no]</td>
+			
+			
 				<td>[typeAbsence.admin; strconv=no][typeAbsence.decompteNormal; strconv=no][typeAbsence.isPresence; strconv=no]</td>
 				<td>[typeAbsence.delete; strconv=no]</td>
 			</tr>
@@ -37,6 +41,7 @@
 				<td>[typeAbsenceNew.hourStart; strconv=no]</td>
 				<td>[typeAbsenceNew.hourEnd; strconv=no]</td>
 				<td>[typeAbsenceNew.codeAbsence; strconv=no]</td>
+				<td>[typeAbsenceNew.colorId; strconv=no]</td>
 				<td>[typeAbsenceNew.admin; strconv=no][typeAbsenceNew.decompteNormal; strconv=no][typeAbsenceNew.isPresence; strconv=no]</td>
 				
 				<td>Nouveau</td>

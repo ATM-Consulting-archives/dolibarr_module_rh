@@ -123,32 +123,14 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
     while ($row = $ATMdb->Get_line()) {
     				
 		$idAbs[]=$row->rowid;
-    	
-    	if($row->isPresence==1) {
-    		$color=($row->colorId) ? $row->colorId : 2;
-    	}
-		else {
-			switch($row->etat){
-				case 'Avalider' : 
-					$color=6;
-					break;
-				case 'Refusee':
-					$color=14;
-					break;
-				default:
-					$color=8;
-					break;
-			}
-			
-			
-		}
-		
-		
+    
 		if($row->etat=='Refusee' && !$user->rights->absence->myactions->voirAbsenceRefusee){
 			continue;
 		}
 		
 		if($row->isPresence==1) {
+	
+			$color= $row->colorId;
 			
 			$time_debut_jour = strtotime($row->date_debut);
 			$time_fin_jour = strtotime($row->date_fin);
@@ -192,6 +174,19 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 			
 		}
 		else {
+			
+			switch($row->etat){
+				case 'Avalider' : 
+					$color=6;
+					break;
+				case 'Refusee':
+					$color=14;
+					break;
+				default:
+					$color=8;
+					break;
+			}
+			
 			$timeDebut = strtotime($row->date_debut);
 			$timeFin = strtotime($row->date_fin)+86399; // par défaut 23:59:59
 			
@@ -255,7 +250,7 @@ function _justDate($date,$frm = 'm/d/Y H:i') {
 function getJourFerie(&$ATMdb, $date_start, $date_end) {
 global $conf;	
 	
-	
+	$Tab=array();
 
 	$TJF=TRH_JoursFeries::getAll($ATMdb, $date_start, $date_end);
 		  //récupération des jours fériés 

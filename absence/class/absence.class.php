@@ -2131,6 +2131,25 @@ class TRH_TypeAbsence extends TObjetStd {
 			,'heure'=>'Heure'
 		);
 		
+		$this->TColorId=array(
+			0=>'gris'
+			,1=>'rouge'
+			,2=>'rose'
+			,3=>'violet'
+			,4=>'pourpre'
+			,5=>'bleu nuit'
+			,6=>'bleu'
+			,7=>'cyan'
+			,8=>'vert'
+			,9=>'vert sombre'
+			,10=>'vert clair'
+			,11=>'vert jaune'
+			,12=>'jaune'
+			,13=>'orange'
+			,14=>'orange sanguin'
+			,15=>'rose'
+		);
+		
 	}
 	
 	function load_by_type(&$ATMdb, $type) {

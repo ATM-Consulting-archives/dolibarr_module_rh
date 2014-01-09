@@ -67,6 +67,7 @@
 			,'hourStart'=>$form->timepicker('', 'TTypeAbsence['.$absenceType->getId().'][date_hourStart]', $absenceType->get_date('date_hourStart','H:i') , 5,10)
 			,'hourEnd'=>$form->timepicker('', 'TTypeAbsence['.$absenceType->getId().'][date_hourEnd]', $absenceType->get_date('date_hourEnd','H:i'), 5,10)
 			
+			,'colorId'=>$form->combo('', 'TTypeAbsence['.$absenceType->getId().'][colorId]', $absenceTypeDummy->TColorId , $absenceType->colorId)
 			
 			,'admin'=>$form->combo('', 'TTypeAbsence['.$absenceType->getId().'][admin]', $absenceTypeDummy->TForAdmin , $absenceType->admin)
 			
@@ -86,6 +87,10 @@
 			,'decompteNormal'=>$form->hidden('TTypeAbsenceNew[decompteNormal]', 'oui')
 			,'isPresence'=>$form->hidden('TTypeAbsenceNew[isPresence]', 1)
 			,'admin'=>$form->combo('', 'TTypeAbsenceNew[admin]', $absenceTypeDummy->TForAdmin , null)
+			
+			,'colorId'=>$form->combo('', 'TTypeAbsenceNew[colorId]', $absenceTypeDummy->TColorId , null)
+			
+			
 		);
 
 
