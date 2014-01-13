@@ -199,6 +199,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->coutTTC = strtr($infos[19], ',','.');
 				$temp->coutEntrepriseTTC = strtr($infos[19], ',','.');
 				
+				$temp->date_facture = dateToInt($infos[3]);
+				
 				$taux = floatval(str_replace(',', '.', $infos[25]));
 				/*
 				 * Correction des taux d'import pour traitement retour
@@ -209,7 +211,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				 
 				if(!is_null($typeCarburant)) {
 					if( $typeCarburant=='essence')$taux="0";
-					else if($typeVehicule=='VP' && $typeCarburant=='gazole')$taux="15.828";
+					else if($typeVehicule=='VP' && $typeCarburant=='gazole')$taux= (date('Y', $temp->date_facture)<2014 )? '15.09' : "15.828";
 				}
 				else{
 					if($typeVehicule == "VU")null;
@@ -224,7 +226,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$temp->coutEntrepriseHT =  round( $temp->coutEntrepriseTTC / (1+ ($taux/100) ),2  )  ;
 				$temp->idImport = $idImport;
 				$temp->numFacture = $infos[1];
-				$temp->date_facture = dateToInt($infos[3]);
+				
 				$temp->compteFacture = $infos[13];
 				$temp->litreEssence = floatval(strtr($infos[18],',','.'));
 				$temp->kilometrage = intval($infos[31]);
