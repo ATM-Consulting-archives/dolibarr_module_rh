@@ -204,4 +204,4 @@ class TRH_formation_participant_statut extends TObjetStd {
 }
  * 
  * */
- */
+
