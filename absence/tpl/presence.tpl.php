@@ -31,51 +31,30 @@
 				</tr>
 				[onshow;block=end]	
 				<tr>
-					<td>Type d'absence</td>
+					<td>Type de présence</td>
 					<td>[absenceCourante.comboType;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>Date début</td>
-			 		<td>[absenceCourante.date_debut;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.ddMoment;strconv=no;protect=no]</td>
+			 		<td>[absenceCourante.date_debut;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>Date fin</td>
-			 		<td>[absenceCourante.date_fin;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]</td>
+			 		<td>[absenceCourante.date_fin;strconv=no;protect=no]</td>
 				</tr>
-				[onshow;block=begin;when [view.mode]!='edit']
-					<tr>
-						<td>Durée (en journées)</td>
-						<td>[absenceCourante.duree;strconv=no;protect=no]</td>
-					</tr>
-					<tr>
-						<td>Durée (en heures)</td>
-						<td>[absenceCourante.dureeHeure;strconv=no;protect=no]</td>
-					</tr>
-					<tr>
-						<td>Durée comptabilisée (en heures)</td>
-						<td>[absenceCourante.dureeHeurePaie;strconv=no;protect=no]</td>
-					</tr>
-					<tr>
-						<td>Etat</td>
-						<td>[absenceCourante.libelleEtat;strconv=no;protect=no]</td>
-					</tr>
-					<tr>
-						<td>Avertissement</td>
-						<td>[absenceCourante.avertissement;strconv=no;protect=no]</td>
-					</tr>
-					<tr>
-						<td>Niveau de validation</td>
-						<td>[absenceCourante.niveauValidation;strconv=no;protect=no]</td>
-					</tr>
-					<tr>
-						<td>Commentaire du valideur</td>
-						<td>[absenceCourante.commentaireValideur;strconv=no;protect=no]</td>
-					</tr>
-					[onshow;block=end]
-					<tr>
-						<td>Commentaire</td>
-						<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
-					</tr>
+				<tr>
+					<td>Heure de début</td>
+			 		<td>[absenceCourante.hourStart;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td>Heure de fin</td>
+			 		<td>[absenceCourante.hourEnd;strconv=no;protect=no]</td>
+				</tr>
+				
+				<tr>
+					<td>Commentaire</td>
+					<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
+				</tr>
 					<tr>
 						<td>Créée le </td>
 						<td>[absenceCourante.dt_cre;strconv=no;protect=no]</td>
@@ -89,23 +68,6 @@
 				
 			</table>
 
-   		 <br/>
-     	[absenceCourante.titreJourRestant;strconv=no;protect=no] 			
-            <table class="border" style="width:40%">
-				<tr>
-					<td>Congés payés</td>
-					<td id='reste'>[congesPrec.reste;strconv=no;protect=no]</td>
-				</tr>	
-				<tr>
-					<td>RTT cumulés</td>
-					<td id='cumule'>[rttCourant.cumuleReste;strconv=no;protect=no]</td>
-				</tr>
-				<tr>
-					<td>RTT non cumulés</td>
-					<td id='noncumule'>[rttCourant.nonCumuleReste;strconv=no;protect=no]</td>
-				</tr>
-			</table>
-	
 		[onshow;block=begin;when [absenceCourante.etat]!='Refusee']
 		[onshow;block=begin;when [absenceCourante.etat]!='Validee']
 			
@@ -259,6 +221,24 @@
 					$('#user-planning').load('planningUser.php?fk_user='+fk_user+' #plannings');
 			}
 			
+			function loadDefaultTimes() {
+				
+				type = $('#type').val();
+				
+				$.ajax({
+						url: 'script/interface.php?get=typeAbsence_hour&json=1&type='+type
+						,dataType:'json'
+					}).done(function(hours) {
+							$('#date_hourStart').val(hours.start);
+							$('#date_hourEnd').val(hours.end);
+						
+					});
+				
+				
+				
+				
+			}
+			
 			//	script vérifiant que la date de début ne dépasse pas celle de fin
 			$(document).ready( function(){
 				$("#dfMoment").val('apresmidi');
@@ -267,8 +247,14 @@
 				$("#ddMoment").change(comparerDates);
 				$("#dfMoment").change(comparerDates);
 				
+				
+				$('#type').change( loadDefaultTimes);
+				
 				loadRecapCompteur();
-				loadRecapAbsence()
+				loadRecapAbsence();
+				
+				loadDefaultTimes();
+				
 			});
 				
 		$('#fk_user').change(function(){

@@ -65,12 +65,12 @@
                 quickDeleteUrl: false   
                 ,method:"GET"
                 ,enableDrag :false   
-                ,height:false 
+                /*,height:false*/ 
             };
-            var $dv = $("#calhead");
-            var _MH = document.documentElement.clientHeight;
-            var dvH = $dv.height() + 2;
-            op.height = _MH - dvH;
+            
+            op.height = document.documentElement.clientHeight - 400;
+			if(op.height<500)op.height=500;
+
             op.eventItems =[];
 
             var p = $("#gridcontainer").bcalendar(op).BcalGetOp();
@@ -114,7 +114,7 @@
             }
             function Edit(data)
             {
-               
+            
             }    
             function View(data)
             {
@@ -215,12 +215,14 @@
                     $("#txtdatetimeshow").text(p.datestrshow);
                 }
             });
-            
+           
+           
+           
         });
     </script>    
 
     <div>
-
+    
       <div id="calhead" style="padding-left:1px;padding-right:1px;">          
             <div id="loadingpannel" class="ptogtitle loadicon" style="display: none;">Chargement...</div>
              <div id="errorpannel" class="ptogtitle loaderror" style="display: none;">Impossible de charger les données.</div>

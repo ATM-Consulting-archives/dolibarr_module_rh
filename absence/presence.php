@@ -20,44 +20,18 @@
 				//$ATMdb->db->debug=true;
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->set_values($_REQUEST);
-				$absence->niveauValidation=1;
 				$existeDeja=$absence->testExisteDeja($ATMdb, $absence);
 				if($existeDeja===false){
 					$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
-					$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
 				
-					if($demandeRecevable==1){
+						$absence->etat='Validee';
+				
 						$absence->save($ATMdb);
-						$absence->load($ATMdb, $_REQUEST['id']);
-						if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
-							mailConges($absence);
-							mailCongesValideur($ATMdb,$absence);
-						}
-						
-						$mesg = 'Demande enregistrée';
+						$mesg = 'Présence enregistrée';
 						_fiche($ATMdb, $absence,'view');
-					}else{
-						if($demandeRecevable==0){
-							$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur</div>';
-							_fiche($ATMdb, $absence,'edit');
-						}else if($demandeRecevable==2){
-							$absence->avertissement=1;
-							$absence->save($ATMdb);
-							$absence->load($ATMdb, $_REQUEST['id']);
-							if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
-								mailConges($absence);
-								mailCongesValideur($ATMdb,$absence);
-							}
-							$mesg = '<div class="error">Attention : La durée de l\'absence dépasse la règle en vigueur</div>';
-							_fiche($ATMdb, $absence,'view');
-						}
-						else if($demandeRecevable==3){		// demande rtt non cumulés acollée à un congé, ou rtt ou jour férié
-							$mesg = '<div class="error">Demande refusée à cause des règles sur les RTT non cumulés</div>';
-							_fiche($ATMdb, $absence,'edit');
-						}
-					}
+				
 				}else{
-					$mesg = '<div class="error">Création impossible : il existe déjà une autre demande d\'absence pendant cette période : '.$existeDeja.'</div>';
+					$mesg = '<div class="error">Création impossible : il existe déjà une autre présence pendant cette période : '.$existeDeja.'</div>';
 					_fiche($ATMdb, $absence,'edit');
 				}
 				break;
@@ -82,53 +56,6 @@
 				<?
 				break;
 				
-			case 'accept':
-				$absence->load($ATMdb, $_REQUEST['id']);
-				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
-					SET etat='Validee', libelleEtat='Acceptée', date_validation='".date('Y-m-d')."', fk_user_valideur=".$user->id." 
-					WHERE fk_user=".$absence->fk_user. " 
-					AND rowid=".$absence->getId();
-				$ATMdb->Execute($sqlEtat);
-				$absence->load($ATMdb, $_REQUEST['id']);
-				mailConges($absence);
-				$mesg = '<div class="error">Demande d\'absence acceptée</div>';
-				_ficheCommentaire($ATMdb, $absence,'edit');
-				break;
-				
-			case 'niveausuperieur':
-				$absence->load($ATMdb, $_REQUEST['id']);
-				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
-					SET niveauValidation=niveauValidation+1 WHERE rowid=".$absence->getId();
-				$ATMdb->Execute($sqlEtat);
-				$absence->load($ATMdb, $_REQUEST['id']);
-				mailConges($absence);
-				$mesg = '<div class="error">Demande d\'absence envoyée au valideur supérieur</div>';
-				_fiche($ATMdb, $absence,'view');
-				break;
-				
-			case 'refuse':
-				$absence->load($ATMdb, $_REQUEST['id']);
-				$absence->recrediterHeure($ATMdb);
-				$absence->load($ATMdb, $_REQUEST['id']);
-				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
-					SET etat='Refusee', libelleEtat='Refusée' 
-					WHERE fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
-				//print $sqlEtat;
-				$ATMdb->Execute($sqlEtat);
-				$absence->load($ATMdb, $_REQUEST['id']);
-				mailConges($absence);
-				$mesg = '<div class="error">Demande d\'absence refusée</div>';
-				_ficheCommentaire($ATMdb, $absence,'edit');
-				break;
-				
-			case 'saveComment':
-				
-				$absence->load($ATMdb, $_REQUEST['id']);
-				$absence->commentaireValideur=$_REQUEST['commentValid'];
-				$absence->save($ATMdb);
-				_fiche($ATMdb, $absence,'view');
-
-				break;
 			case 'listeValidation' : 
 				_listeValidation($ATMdb, $absence);
 				break;
@@ -153,7 +80,7 @@
 	
 function _liste(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
-	llxHeader('','Liste de vos absences');
+	llxHeader('','Liste de vos périodes présences');
 	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
 
 	//getStandartJS();
@@ -165,7 +92,7 @@ function _liste(&$ATMdb, &$absence) {
 			a.libelle,a.fk_user,  a.fk_user, u.login, u.firstname, u.lastname,
 			a.etat, a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-			WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user";
+			WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user AND isPresence=1";
 	
 	
 	$TOrder = array('date_debut'=>'DESC');
@@ -523,7 +450,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 
 function _fiche(&$ATMdb, &$absence, $mode) {
 	global $db,$user,$conf;
-	llxHeader('','Demande d\'absence');
+	llxHeader('','Planification de presence');
 	//echo $_REQUEST['validation'];
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
@@ -532,87 +459,15 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('userRecapCompteur', isset($_REQUEST['fk_user'])?$_REQUEST['fk_user']:0);
 	echo $form->hidden('userAbsenceCree', isset($absence->fk_user)!=0?$absence->fk_user:0);
-	
-	$anneeCourante=date('Y');
-	$anneePrec=$anneeCourante-1;
-	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
-	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` 
-				WHERE fk_user=".$user->id;
-	$ATMdb->Execute($sqlReqUser);
-	$congePrec=array();
-	$congeCourant=array();
-	$rttCourant=array();
-	while($ATMdb->Get_line()) {
-				$congePrec['id']=$ATMdb->Get_field('rowid');
-				$congePrec['acquisEx']=$ATMdb->Get_field('acquisExerciceNM1');
-				$congePrec['acquisAnc']=$ATMdb->Get_field('acquisAncienneteNM1');
-				$congePrec['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeNM1');
-				$congePrec['reportConges']=$ATMdb->Get_field('reportCongesNM1');
-				$congePrec['congesPris']=$ATMdb->Get_field('congesPrisNM1');
-				$congePrec['annee']=$ATMdb->Get_field('anneeNM1');
-				$congePrec['fk_user']=$ATMdb->Get_field('fk_user');
-	
-				$congeCourant['id']=$ATMdb->Get_field('rowid');
-				$congeCourant['acquisEx']=$ATMdb->Get_field('acquisExerciceN');
-				$congeCourant['acquisAnc']=$ATMdb->Get_field('acquisAncienneteN');
-				$congeCourant['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeN');
-				$congeCourant['annee']=$ATMdb->Get_field('anneeN');
-				$congeCourant['fk_user']=$ATMdb->Get_field('fk_user');
-				
-				
-				$rttCourant['id']=$ATMdb->Get_field('rowid');
-				
-				/*$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('rttCumuleTotal'));
-				$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('rttNonCumuleTotal'));
-				*/
-				$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('cumuleAcquis')+$ATMdb->Get_field('cumuleReport')-$ATMdb->Get_field('cumulePris'));
-				
-				$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('nonCumuleAcquis')+$ATMdb->Get_field('nonCumuleReport')-$ATMdb->Get_field('nonCumulePris'));
-				
-				$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
-	
-	
-	
-	}
-	
-	$congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+$congePrec['acquisHorsPer']+$congePrec['reportConges'];
-	$congePrecReste=$congePrecTotal-$congePrec['congesPris'];
-	
 
-	
-	
-	
 	//récupération informations utilisateur dont on observe l'absence, ou la crée
+	$userCourant=new User($db);
 	if($absence->fk_user!=0){
-		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$absence->fk_user;
+		$userCourant->fetch($absence->fk_user);
 	}else{
-		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id;
-	}
-	$ATMdb->Execute($sqlReqUser);
-	$Tab=array();
-	while($ATMdb->Get_line()) {
-				$userCourant=new User($db);
-				$userCourant->firstname=$ATMdb->Get_field('firstname');
-				$userCourant->id=$ATMdb->Get_field('rowid');
-				$userCourant->lastname=$ATMdb->Get_field('lastname');
+		$userCourant->fetch($user->id);
 	}
 	
-	
-	//$estValideur=$absence->estValideur($ATMdb,$user->id);
-	if(isset($_REQUEST['validation'])){
-		if($_REQUEST['validation']=='ok'){
-			$estValideur=1;
-		}else $estValideur=0;
-	}else $estValideur=0;
-	
-	if($absence->fk_user==0){
-		$regleId=$user->id;
-	}else $regleId=$absence->fk_user;
-	
-	//récupération des règles liées à l'utilisateur 
-	//$TRegle=array();
-	//$TRegle=$absence->recuperationRegleUser($ATMdb, $regleId);
-
 	$comboAbsence=0;
 	//création du tableau des utilisateurs liés au groupe du valideur, pour créer une absence, pointage...
 	$TUser = array();
@@ -621,7 +476,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	if($ATMdb->Get_line()){
 		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 	}
-	$typeAbsenceCreable= TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user');
+
+	$typeAbsenceCreable= TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user',true);
 
 	$droitAdmin=0;
 
@@ -629,22 +485,22 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 		$comboAbsence=2;
-		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin');
+		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin',true);
 		$droitAdmin=1;
-//print "admin";
-//print_r( $typeAbsenceCreable);
-	}else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
+	}
+	else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
 		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.lastname,  s.firstname 
 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as u ON (v.fk_usergroup=u.fk_usergroup)
 				INNER JOIN ".MAIN_DB_PREFIX."user as s ON (s.rowid=u.fk_user)  
 			WHERE v.fk_user=".$user->id." 
 			AND v.type='Conges'";
 			$comboAbsence=1;
-			//echo $sqlReqUser;exit;
-		$droitsCreation=1;
-		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user');
+			$droitsCreation=1;
+			$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user',true);
 	}
-	else $droitsCreation=2; //on n'a pas les droits de création
+	else {
+		$droitsCreation=2; //on n'a pas les droits de création
+	}
 	
 	if($droitsCreation==1){
 		$sql.=" ORDER BY lastname";
@@ -659,46 +515,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	//on regarde si l'utilisateur a le droit de créer une absence non justifiée (POINTEUR)
 	
-	$sql="SELECT count(*) as 'nb' FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` WHERE fk_user=".$user->id." AND type='Conges' AND pointeur=1";
-	$ATMdb->Execute($sql);
-	$ATMdb->Get_line();
-	
-	$pointeurTest=(int)$ATMdb->Get_field('nb');
-	
-	if(_debug()) {
-		print $sql;
-	}
-
-	if($pointeurTest>0 && $droitAdmin==0){
-		//			print "Utilisateur Pointeur";
-
-		$typeAbsenceCreable=$absence->TTypeAbsencePointeur;
-		
-		
-		if(!$user->rights->absence->myactions->creerAbsenceCollaborateur && !$user->rights->absence->myactions->creerAbsenceCollaborateurGroupe) {
-			$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.lastname,  s.firstname 
-			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as u ON (v.fk_usergroup=u.fk_usergroup)
-				INNER JOIN ".MAIN_DB_PREFIX."user as s ON (s.rowid=u.fk_user)  
-			WHERE v.fk_user=".$user->id." 
-			AND v.type='Conges'
-			AND v.pointeur=1
-			ORDER BY s.lastname
-			";
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
-			}
-		}
-		
-		$droitsCreation=1;
-		
-	}
-	
-	
-	
 	//on peut supprimer la demande d'absence lorsque temps que la date du jour n'est pas supérieure à datedébut-1
 	
-	$diff=strtotime('+0day',$absence->date_debut)-time();
+	$diff=strtotime('+0day',$absence->date_debut)-time(); // TODO Mais WTF ?!! J'avoue que parfois je suis scié
 	$duree=intval($diff/3600/24);
 
 	if($duree>0&&$absence->fk_user==$user->id/* && $absence->etat!='Validee'*/){
@@ -717,49 +536,22 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	}
 		
 	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/absence.tpl.php'
+	print $TBS->render('./tpl/presence.tpl.php'
 		,array(
 			//'TRegle' =>$TRegle
 			'TRecap'=>$TRecap
 		)
 		,array(
-			'congesPrec'=>array(
-				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
-				'acquisEx'=>$form->texte('','acquisExerciceNM1',$congePrec['acquisEx'],10,50,'')
-				,'acquisAnc'=>$form->texte('','acquisAncienneteNM1',$congePre['acquisAnc'],10,50)
-				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeNM1',$congePrec['acquisHorsPer'],10,50)
-				,'reportConges'=>$form->texte('','reportcongesNM1',$congePrec['reportConges'],10,50)
-				,'congesPris'=>$form->texte('','congesprisNM1',$congePrec['congesPris'],10,50)
-				,'anneePrec'=>$form->texte('','anneeNM1',$anneePrec,10,50)
-				,'total'=>$form->texte('','total',$congePrecTotal,10,50)
-				,'reste'=>round2Virgule($congePrecReste)
-				,'idUser'=>$_REQUEST['id']
-			)
-			,'congesCourant'=>array(
-				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
-				'acquisEx'=>$form->texte('','acquisExerciceN',$congeCourant['acquisEx'],10,50)
-				,'acquisAnc'=>$form->texte('','acquisAncienneteN',$congeCourant['acquisAnc'],10,50)
-				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeN',$congeCourant['acquisHorsPer'],10,50)
-				,'anneeCourante'=>$form->texte('','anneeN',$anneeCourante,10,50)
-				,'idUser'=>$_REQUEST['id']
-			)
-			,'rttCourant'=>array(
-				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
-				'acquis'=>$form->texte('','rttAcquis',$rttCourant['acquis'],10,50)
-				,'rowid'=>$form->texte('','rowid',$rttCourant['id'],10,50,'')
-				//,'id'=>$form->texte('','fk_user',$_REQUEST['id'],10,50,'',$class="text", $default='')
-				,'cumuleReste'=>round2Virgule($rttCourant['cumuleReste'])
-				,'nonCumuleReste'=>round2Virgule($rttCourant['nonCumuleReste'])
-				,'idNum'=>$idRttCourant
-			)
-			,'absenceCourante'=>array(
+			'absenceCourante'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'id'=>$absence->getId()
 				,'commentaire'=>$form->zonetexte('','commentaire',$absence->commentaire, 30,3,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->date_debut,12)
-				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
-				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
+				
+				,'hourStart'=>$form->timepicker('', 'date_hourStart', $absence->date_hourStart,5)
+				,'hourEnd'=>$form->timepicker('', 'date_hourEnd', $absence->date_hourEnd,5)
+				
 				,'idUser'=>$user->id
 				,'comboType'=>$form->combo('','type',$typeAbsenceCreable,$absence->type)
 				,'etat'=>$absence->etat
@@ -779,11 +571,11 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'date_validation'=>$absence->get_date('date_validation')
 				,'userValidation'=>$userValidation->firstname.' '.$userValidation->lastname
 				
-				,'titreNvDemande'=>load_fiche_titre("Nouvelle demande d'absence",'', 'title.png', 0, '')
-				,'titreRecapAbsence'=>load_fiche_titre("Récapitulatif de la demande d'absence",'', 'title.png', 0, '')
+				,'titreNvDemande'=>load_fiche_titre("Planification de presence",'', 'title.png', 0, '')
+				,'titreRecapAbsence'=>load_fiche_titre("Récapitulatif",'', 'title.png', 0, '')
 				,'titreJourRestant'=>load_fiche_titre("Jours restants à prendre",'', 'title.png', 0, '')
-				,'titreDerAbsence'=>load_fiche_titre("Dernières absences",'', 'title.png', 0, '')
-				,'titreRegle'=>load_fiche_titre("Règles applicable",'', 'title.png', 0, '')
+				,'titreDerAbsence'=>load_fiche_titre("Vos dernières présences/absences",'', 'title.png', 0, '')
+				,'titreRegle'=>load_fiche_titre("Règles vous concernant",'', 'title.png', 0, '')
 				
 				,'droitSupprimer'=>$droitSupprimer
 				
@@ -802,8 +594,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'fiche', 'Absence')
-				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence')
+				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'presence')  , 'fiche', 'Présence')
+				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'presence')  , 'fiche', 'Présence')
 				
 				
 			)
@@ -812,36 +604,6 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		)	
 		
 	);
-	
-	echo $form->end_form();
-	// End of page
-	
-	global $mesg, $error;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
-	llxFooter();
-}
-
-function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
-	global $db,$user,$conf;
-	llxHeader('','Demande d\'absence');
-
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
-	$form->Set_typeaff($mode);
-	echo $form->hidden('id', $absence->getId());
-	echo $form->hidden('action', 'saveComment');
-	
-	print dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence');
-	
-	?> 
-	<br><t style='color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica;font-weight: bold;text-decoration: none;text-shadow: 1px 1px 2px #CFCFCF;'>
-    Vous pouvez ajouter un commentaire pour justifier votre choix </t><br/><br/><br/>
-	<textarea name="commentValid" rows="3" cols="40"></textarea><br><br>
-	<INPUT class="button" TYPE="submit"   id="commentaire" VALUE="Continuer">
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
-	<INPUT class="button" TYPE="button" id="newAsk" VALUE="Nouvelle demande sur le même utilisateur" onclick="document.location.href='absence.php?action=new&fk_user=<?=$absence->fk_user ?>'">	
-	<br><br>
-
-	<?
 	
 	echo $form->end_form();
 	// End of page

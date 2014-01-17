@@ -163,7 +163,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	$THoraire=array();
 	foreach($emploiTemps->TJour as $jour) {
 		foreach(array('dam','fam','dpm','fpm') as $pm) {
-			$THoraire[$jour.'_heure'.$pm]=$form->texte('','date_'.$jour.'_heure'.$pm, date('H:i',$emploiTemps->{'date_'.$jour.'_heure'.$pm}) ,5,5);
+			$THoraire[$jour.'_heure'.$pm]=$form->timepicker('','date_'.$jour.'_heure'.$pm, date('H:i',$emploiTemps->{'date_'.$jour.'_heure'.$pm}) ,5,5);
 		}
 	} 
 

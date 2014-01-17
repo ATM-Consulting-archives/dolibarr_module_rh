@@ -20,13 +20,13 @@
 
 	define('DOL_PACKAGE', true);
 	define('USE_TBS', true);
+	define('USE_CALENDAR', true);
 	
 	require(COREROOT.'inc.core.php');
 	
 	define('DOL_ADMIN_USER', 'admin');
 	
 	define('USER_MAIL_SENDER', 'webmaster@atm-consulting.fr');
-	define('DIR_DOC_OUTPUT', '/var/lib/dolibarr/documents/absence/');
 	
 	define('DATE_RTT_CLOTURE', '28-02-2014');
 	define('DATE_CONGES_CLOTURE', '31-05-2014');

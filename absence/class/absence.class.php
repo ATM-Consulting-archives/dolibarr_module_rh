@@ -147,10 +147,11 @@ class TRH_Absence extends TObjetStd {
 		
 		global $user,$conf;
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence');
-		parent::add_champs('code','type=entier;index;');				//code  congé
+		parent::add_champs('code','type=varchar;index;');				//code  congé
 		parent::add_champs('type','type=varchar;index;');				//type de congé
 		parent::add_champs('libelle','type=varchar;');				//type de congé
 		parent::add_champs('date_debut,date_fin, date_validation','type=date;index;');	//dates debut fin de congés
+		parent::add_champs('date_hourStart,date_hourEnd','type=date;');	//dates debut fin de congés
 		parent::add_champs('ddMoment, dfMoment','type=chaine;');		//moment (matin ou après midi)
 		parent::add_champs('duree','type=float;');	
 		parent::add_champs('dureeHeure','type=chaine;');	
@@ -174,32 +175,7 @@ class TRH_Absence extends TObjetStd {
 		
 		$ATMdb=new TPDOdb;
 		
-		//combo box pour le type d'absence admin
-		$this->TTypeAbsenceAdmin=array();
-		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence`";
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			$this->TTypeAbsenceAdmin[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
-		}
 		
-		
-		//combo box pour le type d'absence utilisateur
-		$this->TTypeAbsenceUser=array();
-		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-				WHERE admin=0";
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			$this->TTypeAbsenceUser[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
-		}
-		
-		//combo box pour le type d'absence pointeur
-		$this->TTypeAbsencePointeur=array();
-		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
-				WHERE admin=0 OR typeAbsence LIKE 'nonjustifiee'";
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			$this->TTypeAbsencePointeur[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
-		}
 		
 		//combo pour le choix de matin ou après midi 
 		$this->TddMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date début
@@ -1555,6 +1531,7 @@ class TRH_Absence extends TObjetStd {
 				WHERE a.fk_user=u.rowid 
 				AND  g.fk_user=u.rowid
 				AND u.rowid=".$idUserRecherche."
+				AND a.etat!='Refusee'
 				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
@@ -1569,6 +1546,7 @@ class TRH_Absence extends TObjetStd {
 				WHERE a.fk_user=u.rowid 
 				AND  g.fk_user=u.rowid
 				AND g.fk_usergroup=".$idGroupeRecherche."
+				AND a.etat!='Refusee'
 				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
@@ -1582,7 +1560,7 @@ class TRH_Absence extends TObjetStd {
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 				WHERE a.fk_user=u.rowid 
-				
+				AND a.etat!='Refusee'
 				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
@@ -1899,6 +1877,21 @@ class TRH_EmploiTemps extends TObjetStd {
 		return false;
 	}
 	
+	function getHeures($date) {
+				
+		$iJour = (int)date('N', strtotime($date)) - 1 ; 	
+		
+		$jour = $this->TJour[$iJour];
+	//	exit($date.' '.$iJour.' '.$jour);
+		return array(
+			$this->{"date_".$jour."_heuredam"}
+			,$this->{"date_".$jour."_heurefam"}
+			,$this->{"date_".$jour."_heuredpm"}
+			,$this->{"date_".$jour."_heurefpm"}
+		);
+		
+	}
+	
 	function getHeurePeriode($current_day,$periode){
 		
 		return ($this->{"date_".$current_day."_heuref".$periode} - $this->{"date_".$current_day."_heured".$periode}) / 3600;
@@ -1922,6 +1915,8 @@ class TRH_JoursFeries extends TObjetStd {
 		
 		$this->TFerie=array();
 		$this->TMoment=array('allday'=>'Toute La journée', 'matin'=>'Matin', 'apresmidi'=>'Après-midi');
+		
+		$this->moment = 'allday'; 		
 	}
 	
 	
@@ -1929,15 +1924,19 @@ class TRH_JoursFeries extends TObjetStd {
 		global $conf;
 		$this->entity = $conf->entity;
 		
-		parent::save($db);
+		if(!$this->testExisteDeja($db)) {
+			parent::save($db);	
+		}
+
 	}
 
 	
 	//fonction qui renvoie 1 si le jour férié que l'on veut créer existe déjà à la date souhaitée, sinon 0
-	function testExisteDeja($ATMdb){
+	function testExisteDeja(&$ATMdb){
 		global $conf;
 		//on récupère toutes les dates de jours fériés existant
-		$sql="SELECT count(*) as 'nb'  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries WHERE date_jourOff='".$this->date_jourOff."' AND rowid!=".$this->getId();
+		$sql="SELECT count(*) as 'nb'  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries
+			 WHERE date_jourOff='".$this->get_date('date_jourOff','Y-m-d')."' AND rowid!=".$this->getId();
 		$ATMdb->Execute($sql);
 		$obj = $ATMdb->Get_line();
 			
@@ -1948,6 +1947,75 @@ class TRH_JoursFeries extends TObjetStd {
 		
 		return 0;
 	}
+	
+	static function estFerie(&$ATMdb, $date) {
+		global $conf;
+		//on récupère toutes les dates de jours fériés existant
+		$sql="SELECT count(*) as 'nb'  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries
+			 WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")
+			 AND  date_jourOff=".$ATMdb->quote($date);
+			 
+		$ATMdb->Execute($sql);
+		$obj = $ATMdb->Get_line();
+			
+		//on teste si l'un d'eux est égal à celui que l'on veut créer
+		if($obj->nb > 0){
+			return true;	
+		}
+		
+		return false;
+		
+		
+	}
+	
+	static function syncronizeFromURL(&$ATMdb, $url) {
+		
+		$iCal = new ICalReader( 'http://www.google.com/calendar/ical/fr.french%23holiday%40group.v.calendar.google.com/public/basic.ics' );
+		
+		foreach($iCal->cal['VEVENT'] as $event) {
+		
+			if($event['STATUS']=='CONFIRMED') {
+				
+				$jf = new TRH_JoursFeries;
+				$jf->commentaire = $event['SUMMARY'];
+				
+				$aaaa = substr($event['DTSTART'], 0,4);
+				$mm = substr($event['DTSTART'], 4,2);
+				$jj = substr($event['DTSTART'], 6,2);
+				
+				$jf->set_date('date_jourOff', $jj.'/'.$mm.'/'.$aaaa);
+				
+				$jf->save($ATMdb);
+				
+			}
+
+
+		}
+		
+	}
+	
+	
+	static function getAll(&$ATMdb, $date_start='', $date_end='') {
+		global $conf;	
+		
+		$Tab=array();
+			  //récupération des jours fériés 
+		$sql2=" SELECT moment,commentaire,date_jourOff,rowid FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries
+		 WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+		 
+		if(!empty($date_start) && !empty($date_end)) $sql2.="AND date_jourOff BETWEEN ".$ATMdb->quote($date_start)." AND ".$ATMdb->quote($date_end);
+		 
+		
+		$ATMdb->Execute($sql2);
+   		
+	     while ($row = $ATMdb->Get_line()) {
+			 $Tab[] =$row;
+		  
+	     }
+		
+		return $Tab;
+	
+}
 	
 }
 
@@ -1968,16 +2036,6 @@ class TRH_RegleAbsence extends TObjetStd {
 		parent::start();	
 		
 		$this->choixApplication = 'all';
-		global $conf;
-		$ATMdb=new TPDOdb;
-		//combo box pour le type d'absence admin
-		$this->TTypeAbsenceAdmin=array();
-		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` ";
-		$ATMdb->Execute($sql);
-
-		while($ATMdb->Get_line()) {
-			$this->TTypeAbsenceAdmin[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
-		}
 		
 		$this->TUser = array();
 		$this->TGroup  = array();
@@ -1993,10 +2051,19 @@ class TRH_RegleAbsence extends TObjetStd {
 		$this->entity = $conf->entity;
 		
 		switch ($this->choixApplication){
-			case 'all':$this->fk_user = NULL;$this->fk_usergroup=NULL;break;
-			case 'user':$this->fk_usergroup = NULL;break;
-			case 'group':$this->fk_user = NULL;break;
-			default : echo'pbchoixapplication';break;				
+			case 'all':
+				$this->fk_user = NULL;
+				$this->fk_usergroup=NULL;
+				break;
+			case 'user':
+				$this->fk_usergroup = NULL;
+				break;
+			case 'group':
+				$this->fk_user = NULL;
+				break;
+			default : 
+				echo'pbchoixapplication';
+				break;				
 		}
 		
 		parent::save($ATMdb);
@@ -2035,9 +2102,11 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::add_champs('codeAbsence','type=chaine;index;');
 		parent::add_champs('admin','type=int;');
 		parent::add_champs('unite','type=chaine;');
-		parent::add_champs('entity,isPresence','type=int;index;');
+		parent::add_champs('entity,isPresence,colorId','type=int;index;');
 		
 		parent::add_champs('decompteNormal','type=chaine;');
+		
+		parent::add_champs('date_hourStart,date_hourEnd','type=date;');
 		
 		parent::_init_vars();
 		parent::start();
@@ -2062,6 +2131,25 @@ class TRH_TypeAbsence extends TObjetStd {
 			,'heure'=>'Heure'
 		);
 		
+		$this->TColorId=array(
+			0=>'gris'
+			,1=>'rouge'
+			,2=>'rose'
+			,3=>'violet'
+			,4=>'pourpre'
+			,5=>'bleu nuit'
+			,6=>'bleu'
+			,7=>'cyan'
+			,8=>'vert'
+			,9=>'vert sombre'
+			,10=>'vert clair'
+			,11=>'vert jaune'
+			,12=>'jaune'
+			,13=>'orange'
+			,14=>'orange sanguin'
+			,15=>'rose'
+		);
+		
 	}
 	
 	function load_by_type(&$ATMdb, $type) {
@@ -2076,11 +2164,12 @@ class TRH_TypeAbsence extends TObjetStd {
 		
 		parent::save($ATMdb);
 	}
-	static function getList(&$ATMdb) {
+	static function getList(&$ATMdb, $isPresence=false) {
 		global $conf;
 		
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_type_absence
 		WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.") 
+		AND isPresence=".(int)$isPresence."
 		ORDER BY typeAbsence";
 		
 		$Tab = TRequeteCore::_get_id_by_sql($ATMdb, $sql);
@@ -2096,6 +2185,54 @@ class TRH_TypeAbsence extends TObjetStd {
 		
 		return $TAbsenceType;
 	}
+	
+	static function getTypeAbsence(&$ATMdb, $type='', $isPresence=false) {
+	/* Retourne un tableau code => label */		
+		$Tab=array();
+		
+		if($type=='user') {
+			
+			$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
+				WHERE admin=0 AND isPresence=".(int)$isPresence."
+				ORDER BY libelleAbsence
+				"
+				;
+			$ATMdb->Execute($sql);
+			while($ATMdb->Get_line()) {
+				$Tab[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+			}
+			
+		}
+		else if($type=='valideur') {
+
+			$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
+					WHERE (admin=0 OR typeAbsence LIKE 'nonjustifiee') AND isPresence=".(int)$isPresence."
+					ORDER BY libelleAbsence
+					";
+			$ATMdb->Execute($sql);
+			while($ATMdb->Get_line()) {
+				$Tab[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+			}	
+
+		}
+		else {
+
+			$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
+				WHERE isPresence=".(int)$isPresence."
+				ORDER BY libelleAbsence
+				"
+				;
+			$ATMdb->Execute($sql);
+			while($ATMdb->Get_line()) {
+				$Tab[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+			}
+
+		}
+		
+		return $Tab;
+
+	}
+	
 }
 
 		

@@ -28,11 +28,11 @@ if (!$idParcours){echo 'Pas de fournisseur (tiers) du nom de Parcours !';exit();
 
 if ($idParcours == 0){echo 'Aucun fournisseur du nom de "Parcours" ! ';exit;}
 
-$TUser = array();
+$TUser = array();// TODO mais à quoi ça sert ?!
 $sql="SELECT rowid, lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE entity=".$conf->entity;
 $ATMdb->Execute($sql);
 while($ATMdb->Get_line()) {
-	$TUser[strtolower($ATMdb->Get_field('name'))] = $ATMdb->Get_field('rowid');
+	$TUser[strtolower($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('lastname'))] = $ATMdb->Get_field('rowid');
 }
 
 /*$TContrat = array();
@@ -134,30 +134,57 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				else {
 					$info = 'Ok';
 				}
+				
+				$id_ressource = $TRessource[$plaque];
+				
+				$ressource = new TRH_Ressource();
+				$ressource->load($ATMdb, $id_ressource);
+				$typeVehicule = $ressource->typevehicule;
 			}
 			else {
+				$id_ressource = $idRessFactice;
+				
 				$idUser = $idSuperAdmin;
 				$info = 'Pas de voiture correspondante';
 				$cptNoVoiture ++;
+				
+				$typeVehicule = $info[9];	
 			}
 				//echo $idUser.'<br>';
 				
+			$ATMdb=new TPDOdb;
+			
+			/*
+				 * Correction des taux d'import pour traitement retour
+				 */
+			//$typeVehicule = $info[9];	 
+				 
+				 
+			$loyerTTC = floatval(strtr($infos[30], ',','.'));
+			$loyerHT = floatval(strtr($infos[12], ',','.'));
+		
+			$taux = '19.6';
+			if($typeVehicule == "VU") { null; }
+			else {
+				$taux="0";
+				$loyerHT = $loyerTTC;
+			} 
 			
 			//FACTURE SUR LE LOYER
 			$fact = new TRH_Evenement;
 			$fact->type = 'factureloyer';
 			$fact->numFacture = $numFacture;
-			$fact->fk_rh_ressource = $TRessource[$plaque];
+			$fact->fk_rh_ressource = $id_ressource;
 			$fact->fk_user = $idUser;
 			$fact->fk_rh_ressource_type = $idVoiture;
 			$fact->motif = 'Facture mensuelle Parcours : Loyer';
 			$fact->commentaire = 'Facture lié au contrat '.$infos[4];
 			$fact->set_date('date_debut', $infos[10]);
 			$fact->set_date('date_fin', $infos[1]);
-			$fact->coutTTC = floatval(strtr($infos[30], ',','.'));
-			$fact->coutEntrepriseTTC = floatval(strtr($infos[30], ',','.'));
-			$fact->TVA= $TTVA['19.6'];
-			$fact->coutEntrepriseHT = floatval(strtr($infos[12], ',','.'));
+			$fact->coutTTC = $loyerTTC;
+			$fact->coutEntrepriseTTC =  $loyerTTC;
+			$fact->TVA= $TTVA[$taux];
+			$fact->coutEntrepriseHT = $loyerHT;
 			$fact->entity =$entity;
 			$fact->fk_fournisseur = $idParcours;
 			$fact->idImport = $idImport;
@@ -167,6 +194,17 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$cptFactureLoyer++;
 				
 				
+		
+			$loyerTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
+			$loyerHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
+		
+			$taux = '19.6';
+			if($typeVehicule == "VU") { null; }
+			else {
+				$taux="0";
+				$loyerHT = $TTC;
+			} 
+			
 				
 			//FACTURE SUR L'ENTRETIEN ET LA GESTION
 			$factEnt = new TRH_Evenement;
@@ -181,10 +219,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 									Gestion TTC :'.floatval(strtr($infos[31], ',','.')).'€';
 			$factEnt->set_date('date_debut', $infos[10]);
 			$factEnt->set_date('date_fin', $infos[1]);
-			$factEnt->coutTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
-			$factEnt->coutEntrepriseTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
-			$factEnt->TVA= $TTVA['19.6'];
-			$factEnt->coutEntrepriseHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
+			$factEnt->coutTTC = $loyerTTC;
+			$factEnt->coutEntrepriseTTC = $loyerTTC;
+			$factEnt->TVA= $TTVA[$taux];
+			$factEnt->coutEntrepriseHT = $loyerHT ;
 			$factEnt->fk_fournisseur = $idParcours;
 			$factEnt->idImport = $idImport;
 			$factEnt->numFacture = $infos[2];

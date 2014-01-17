@@ -96,16 +96,22 @@
                 autoload:true,
                 url: DATA_FEED_URL + "&method=list",  
                 quickAddUrl: DATA_FEED_URL + "&method=add",   
-                quickUpdateUrl: false,
+                quickUpdateUrl:false,  
                 quickDeleteUrl: false   
                 ,method:"GET"
                 ,enableDrag :true 
                 
             };
-            var $dv = $("#calhead");
+           
+           /* var $dv = $("#calhead");
             var _MH = document.documentElement.clientHeight;
             var dvH = $dv.height() + 2;
-            op.height = _MH - dvH;
+            op.height = _MH - dvH;*/
+           
+            op.height = document.documentElement.clientHeight - 450;
+           
+            if(op.height<500)op.height=500;
+           
             op.eventItems =[];
 
             var p = $("#gridcontainer").bcalendar(op).BcalGetOp();

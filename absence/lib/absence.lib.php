@@ -16,6 +16,12 @@ function absencePrepareHead(&$obj, $type='absence') {
 				,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(), 'Calendrier','calendrier')
 			);
 			break;
+		case 'presence':
+			return array(
+				array(DOL_URL_ROOT_ALT.'/absence/presence.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
+				,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(), 'Calendrier','calendrier')
+			);
+			break;
 		case 'absenceCreation':
 			return array(
 				array(DOL_URL_ROOT_ALT.'/absence/absence.php?action=new', 'Fiche','fiche')
@@ -60,7 +66,8 @@ function adminCongesPrepareHead($type='compteur') {
 		case 'compteur':
 			return array(
 				array(DOL_URL_ROOT_ALT.'/absence/adminConges.php', 'Données générales des congés','adminconges')
-				,array(DOL_URL_ROOT_ALT.'/absence/typeAbsence.php', "Types d'absences et de présences",'typeabsence')
+				,array(DOL_URL_ROOT_ALT.'/absence/typeAbsence.php', "Types d'absences",'typeabsence')
+				,array(DOL_URL_ROOT_ALT.'/absence/typePresence.php', "Types de présences",'typepresence')
 			);
 			break;
 	}
