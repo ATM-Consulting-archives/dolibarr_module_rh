@@ -444,7 +444,7 @@ class TRH_Absence extends TObjetStd {
 		while($t_current<=$t_end) {
 			//print date('Y-m-d', $t_current).'<br>';;
 			$current_day = $TJourSemaine[(int)date('w', $t_current)];
-			if(!in_array($current_day, $TJourNonTravailleEntreprise)) {
+			if(!@in_array($current_day, $TJourNonTravailleEntreprise)) {
 				
 			/*	
 				if(date('Y-m-d', $t_current)=='2013-08-13') {
