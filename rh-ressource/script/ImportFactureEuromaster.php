@@ -123,7 +123,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$loyerHT = (double)strtr($infos[10], ',','.');
 			$loyerTTC = strtr($infos[25], ',','.');
 			 
-			$taux = '19.6';
+			$taux = '20';
             if($typeVehicule == "VU") { null; }
             else {
                    $taux="0";
