@@ -57,7 +57,8 @@
 						}
 					}
 				}else{
-					$mesg = '<div class="error">Création impossible : il existe déjà une autre demande d\'absence pendant cette période : '.$existeDeja.'</div>';
+					
+					$popinExisteDeja = '<div class="error">Création impossible : il existe déjà une autre demande d\'absence pendant cette période : '.date('d/m/Y', strtotime($existeDeja[0]) ).' - '.date('d/m/Y',  strtotime($existeDeja[1]) ).'</div>';
 					_fiche($ATMdb, $absence,'edit');
 				}
 				break;
@@ -816,8 +817,33 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	echo $form->end_form();
 	// End of page
 	
-	global $mesg, $error;
+	global $mesg, $error, $popinExisteDeja, $existeDeja;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	
+	if(!empty($popinExisteDeja) && !empty($existeDeja)) {
+		?>
+		<script type="text/javascript">
+		
+		$(document).ready(function() {
+		
+			$('#user-planning-dialog div.content').before( "<?=addslashes($popinExisteDeja) ?>" );
+		
+			$('#user-planning-dialog div.content').load('planningUser.php?fk_user=<?=$existeDeja[2] ?>&date_debut=<?=__get('date_debut') ?>&date_fin=<?=__get('date_fin') ?> #plannings');
+		
+			$('#user-planning-dialog').dialog({
+				title:'Erreur de création'	
+				,width:700
+				,modal:true
+			});
+			
+		});
+		
+		</script>
+		
+		<?php
+	}
+	
+	
 	llxFooter();
 }
 
