@@ -57,7 +57,9 @@
 						}
 					}
 				}else{
-					$mesg = '<div class="error">Création impossible : il existe déjà une autre demande d\'absence pendant cette période : '.$existeDeja.'</div>';
+					//$mesg = '<div class="error">Création impossible : il existe déjà une autre demande d\'absence pendant cette période : '.$existeDeja.'</div>';
+					$mesg = '<div class="error">Création impossible : il existe déjà une autre demande d\'absence pendant cette période : '.date('d/m/Y', strtotime($existeDeja[0]) ).' - '.date('d/m/Y',  strtotime($existeDeja[1]) ).'</div>';
+                                        
 					_fiche($ATMdb, $absence,'edit');
 				}
 				break;
@@ -817,8 +819,11 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	echo $form->end_form();
 	// End of page
 	
-	global $mesg, $error;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	global $mesg, $error, $popinExisteDeja, $existeDeja;
+    dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+       
+      
+
 	llxFooter();
 }
 

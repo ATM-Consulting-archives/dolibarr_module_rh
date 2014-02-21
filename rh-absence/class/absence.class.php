@@ -1496,6 +1496,8 @@ class TRH_Absence extends TObjetStd {
 		$sql="SELECT date_debut, date_fin, ddMoment, dfMoment 
 		FROM ".MAIN_DB_PREFIX."rh_absence 
 		WHERE fk_user=".$absence->fk_user." AND etat IN ('Validee','Avalider')
+		AND date_debut<='".date('Y-m-d 23:59:59', $absence->date_fin)."' 
+        AND date_fin>='".date('Y-m-d 00:00:00', $absence->date_debut)."' 
 		";
 
 		$ATMdb->Execute($sql);
@@ -1523,11 +1525,10 @@ class TRH_Absence extends TObjetStd {
 					
 					/*print date('Y-m-d H:i:s', $date_debut).' - '.date('Y-m-d H:i:s', $date_fin).' - '.date('Y-m-d H:i:s',$dateAbs['date_debut']).' - '
 					.date('Y-m-d H:i:s', $dateAbs['date_fin']).' - 	<br>';*/
-					if(( $date_debut >= $dateAbs['date_debut'] && $date_debut<=$dateAbs['date_fin'])
-						||( $date_fin >= $dateAbs['date_debut'] && $date_fin<=$dateAbs['date_fin']))
+					 if( $date_debut <= $dateAbs['date_fin'] && $date_fin>=$dateAbs['date_debut'])
 					 {
 			/*		 	exit( "non" );*/
-						return date('Y-m-d H:i',$dateAbs['date_debut'])." au ".date('Y-m-d H:i', $dateAbs['date_fin']);
+						return array(date('Y-m-d H:i',$dateAbs['date_debut']),date('Y-m-d H:i', $dateAbs['date_fin']),$absence->fk_user);
 						
 					}
 						/*
