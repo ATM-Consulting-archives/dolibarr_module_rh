@@ -143,7 +143,9 @@
 	if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
 
 		ob_start();
-		select_projects($socid?$socid:-1, $pid, 'projectid', 64);
+		dol_include_once('/core/class/html.formprojet.class.php');
+		$formproject=new FormProjets($db);
+		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 64);
 		$select_project = ob_get_clean();
 	}
 	else{
