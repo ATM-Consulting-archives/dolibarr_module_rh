@@ -5,13 +5,13 @@ function competencePrepareHead(&$obj, $type='competence') {
 	switch ($type) {
 		case 'competence':
 				return array(
-					array(DOL_URL_ROOT_ALT.'/competence/rechercheCompetence.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
+					array(dol_buildpath('/competence/rechercheCompetence.php?id='.$obj->getId()."&action=view",1), 'Fiche','fiche')
 				);
 				break;
 		
 		case 'planFormation':
 				return array(
-					array(DOL_URL_ROOT_ALT.'/competence/planFormation.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
+					array(dol_buildpath('/competence/planFormation.php?id='.$obj->getId()."&action=view",1), 'Fiche','fiche')
 				);
 				break;
 		

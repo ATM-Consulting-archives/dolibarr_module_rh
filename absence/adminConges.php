@@ -53,7 +53,7 @@
 				elseif(!empty($conf->multicompany->enabled)) {
 					$sql.=" AND entity=".$conf->entity;
 				}		
-					
+				
 				$ATMdb->Execute($sql);
 				
 				

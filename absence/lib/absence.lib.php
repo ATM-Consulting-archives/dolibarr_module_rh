@@ -2,7 +2,7 @@
 
 function pointeusePrepareHead() {
 		return array(
-			array(dol_buildpath('/absence/pointeuse.php', 'Pointeuse','fiche'))
+			array(dol_buildpath('/absence/pointeuse.php',1), 'Pointeuse','fiche')
 		);
 }
 
@@ -12,19 +12,19 @@ function absencePrepareHead(&$obj, $type='absence') {
 	switch ($type) {
 		case 'absence':
 			return array(
-				array(DOL_URL_ROOT_ALT.'/absence/absence.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
-				,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(), 'Calendrier','calendrier')
+				array(dol_buildpath('/absence/absence.php?id='.$obj->getId(),1)."&action=view", 'Fiche','fiche')
+				,array(dol_buildpath('/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(),1), 'Calendrier','calendrier')
 			);
 			break;
 		case 'presence':
 			return array(
-				array(DOL_URL_ROOT_ALT.'/absence/presence.php?id='.$obj->getId()."&action=view", 'Fiche','fiche')
-				,array(DOL_URL_ROOT_ALT.'/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(), 'Calendrier','calendrier')
+				array(dol_buildpath('/absence/presence.php?id='.$obj->getId()."&action=view",1), 'Fiche','fiche')
+				,array(dol_buildpath('/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(),1), 'Calendrier','calendrier')
 			);
 			break;
 		case 'absenceCreation':
 			return array(
-				array(DOL_URL_ROOT_ALT.'/absence/absence.php?action=new', 'Fiche','fiche')
+				array(dol_buildpath('/absence/absence.php?action=new',1), 'Fiche','fiche')
 			);
 			break;
 		
@@ -40,8 +40,8 @@ function compteurPrepareHead(&$obj, $type='absence', $nomUser, $prenomUser) {
 		case 'compteur':
 			//eif($user->rights->absence->myactions->modifierParamGlobalConges=="1"){
 			return array(
-			array(DOL_URL_ROOT_ALT.'/absence/compteur.php?action=view', 'Compteur de '.$nomUser." ".$prenomUser,'compteur')
-			//,array(DOL_URL_ROOT_ALT.'/absence/adminCompteur.php?action=view', 'Administration générale congés','adminconges')
+			array(dol_buildpath('/absence/compteur.php?action=view',1), 'Compteur de '.$nomUser." ".$prenomUser,'compteur')
+			//,array(dol_buildpath('/absence/adminCompteur.php?action=view', 'Administration générale congés','adminconges')
 			);
 			break;
 	}
@@ -53,7 +53,7 @@ function adminCompteurPrepareHead(&$obj, $type='compteur') {
 		
 		case 'compteur':
 			return array(
-			array(DOL_URL_ROOT_ALT.'/absence/adminCompteur.php', 'Compteur de congés','compteur')
+			array(dol_buildpath('/absence/adminCompteur.php',1), 'Compteur de congés','compteur')
 			);
 			break;				
 	}
@@ -65,9 +65,9 @@ function adminCongesPrepareHead($type='compteur') {
 		
 		case 'compteur':
 			return array(
-				array(DOL_URL_ROOT_ALT.'/absence/adminConges.php', 'Données générales des congés','adminconges')
-				,array(DOL_URL_ROOT_ALT.'/absence/typeAbsence.php', "Types d'absences",'typeabsence')
-				,array(DOL_URL_ROOT_ALT.'/absence/typePresence.php', "Types de présences",'typepresence')
+				array(dol_buildpath('/absence/adminConges.php',1), 'Données générales des congés','adminconges')
+				,array(dol_buildpath('/absence/typeAbsence.php',1), "Types d'absences",'typeabsence')
+				,array(dol_buildpath('/absence/typePresence.php',1), "Types de présences",'typepresence')
 			);
 			break;
 	}
@@ -79,12 +79,12 @@ function adminRecherchePrepareHead(&$obj, $type='recherche') {
 		
 		case 'recherche':
 			return array(
-				array(DOL_URL_ROOT_ALT.'/absence/rechercheAbsence.php', 'Recherche Absence','recherche')
+				array(dol_buildpath('/absence/rechercheAbsence.php',1), 'Recherche Absence','recherche')
 			);
 			break;
 		case 'planning':
 			return array(
-				array(DOL_URL_ROOT_ALT.'/absence/rechercheAbsence.php', 'Recherche Absence','recherche')
+				array(dol_buildpath('/absence/rechercheAbsence.php',1), 'Recherche Absence','recherche')
 			);
 			break;
 	}
@@ -98,9 +98,9 @@ function edtPrepareHead(&$obj, $type='absence') {
 		case 'emploitemps':
 				
 			return array(
-				array(DOL_URL_ROOT_ALT.'/absence/emploitemps.php?&fk_user='.$user->id, 'Emploi du temps','emploitemps')
-			   ,array(DOL_URL_ROOT_ALT.'/absence/joursferies.php?&fk_user='.$user->id, 'Jours fériés ou non travaillés','joursferies')
-			   //,array(DOL_URL_ROOT_ALT.'/absence/pointage.php?&fk_user='.$user->id, 'Pointage Collaborateurs','pointage')
+				array(dol_buildpath('/absence/emploitemps.php?&fk_user='.$user->id,1), 'Emploi du temps','emploitemps')
+			   ,array(dol_buildpath('/absence/joursferies.php?&fk_user='.$user->id,1), 'Jours fériés ou non travaillés','joursferies')
+			   //,array(dol_buildpath('/absence/pointage.php?&fk_user='.$user->id, 'Pointage Collaborateurs','pointage')
 			);
 			break;
 				
@@ -113,12 +113,12 @@ function reglePrepareHead(&$obj, $type='regle') {
 	switch ($type) {
 		case 'regle':
 			return array(
-				array(DOL_URL_ROOT_ALT.'/absence/regleAbsence.php?fk_user='.$user->id, 'Règles des absences','regle')
+				array(dol_buildpath('/absence/regleAbsence.php?fk_user='.$user->id,1), 'Règles des absences','regle')
 			);
 			break;
 		case 'import':
 			return array(
-				array(DOL_URL_ROOT_ALT.'/ressource/documentRegle.php', 'Fiche','fiche')
+				array(dol_buildpath('/ressource/documentRegle.php',1), 'Fiche','fiche')
 			);
 			break;
 	}

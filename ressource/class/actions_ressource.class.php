@@ -29,7 +29,7 @@ class ActionsRessource
 							datee = $('#f').val();
 							
 							$.ajax({
-								url : '<?=DOL_URL_ROOT_ALT ?>/ressource/script/utilisateur-a-un-vehicule.php?fk_user='+fk_user+'&dates='+dates+'&datee='+datee
+								url : '<?=dol_buildpath('/ressource/script/utilisateur-a-un-vehicule.php',1) ?>?fk_user='+fk_user+'&dates='+dates+'&datee='+datee
 								,dataType: 'json'
 								,data: {
 									json:1
@@ -46,7 +46,7 @@ class ActionsRessource
 						});
 						
 						$.ajax({
-							url : '<?=DOL_URL_ROOT_ALT ?>/ressource/script/utilisateur-a-un-vehicule.php?fk_user='+fk_user+'&dates='+dates+'&datee='+datee
+							url : '<?=dol_buildpath('/ressource/script/utilisateur-a-un-vehicule.php',1) ?>?fk_user='+fk_user+'&dates='+dates+'&datee='+datee
 							,dataType: 'json'
 							,data: {
 								json:1

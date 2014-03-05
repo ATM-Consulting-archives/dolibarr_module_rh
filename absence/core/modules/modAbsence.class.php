@@ -632,10 +632,10 @@ class modAbsence extends DolibarrModules
 		
 		$result=$this->load_tables();
 
-		$url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/absence/script/create-maj-base.php";
+		$url =dol_buildpath("/absence/script/create-maj-base.php",2);
 		file_get_contents($url);
 		
-		$url2 ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/absence/script/create-compteur.php";
+		$url2 =dol_buildpath("/absence/script/create-compteur.php",2);
 		file_get_contents($url2);
 		
 

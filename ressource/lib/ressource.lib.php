@@ -6,42 +6,42 @@ function ressourcePrepareHead(&$obj, $type='type-ressource',&$param=null) {
 	switch ($type) {
 		case 'type-ressource':
 				return array(
-					array(DOL_URL_ROOT_ALT.'/ressource/typeRessource.php?id='.$obj->getId(), 'Fiche','fiche')
-					,array(DOL_URL_ROOT_ALT.'/ressource/typeRessourceField.php?id='.$obj->getId(), 'Champs','field')
-					,($obj->code == 'telephone') ? array(DOL_URL_ROOT_ALT.'/ressource/typeRessourceRegle.php?id='.$obj->getId(), 'Règles','regle'): null
-					,array(DOL_URL_ROOT_ALT.'/ressource/typeRessourceEvenement.php?id='.$obj->getId(), 'Evénements','event')
+					array(dol_buildpath('/ressource/typeRessource.php?id='.$obj->getId(),1), 'Fiche','fiche')
+					,array(dol_buildpath('/ressource/typeRessourceField.php?id='.$obj->getId(),1), 'Champs','field')
+					,($obj->code == 'telephone') ? array(dol_buildpath('/ressource/typeRessourceRegle.php?id='.$obj->getId(),1), 'Règles','regle'): null
+					,array(dol_buildpath('/ressource/typeRessourceEvenement.php?id='.$obj->getId(),1), 'Evénements','event')
 				);
 			
 			break;
 		case 'ressource':
 				return array(
-					array(DOL_URL_ROOT_ALT.'/ressource/ressource.php?id='.$obj->getId(), 'Fiche','fiche')
-					,($obj->fk_rh_ressource == 0)  ? array(DOL_URL_ROOT_ALT.'/ressource/attribution.php?id='.$obj->getId(), 'Attribution','attribution'):null
-					,array(DOL_URL_ROOT_ALT.'/ressource/evenement.php?id='.$obj->getId(), 'Evénement','evenement')
-					,$user->rights->ressource->ressource->viewResourceCalendar?array(DOL_URL_ROOT_ALT.'/ressource/calendrierRessource.php?id='.$obj->getId().'&fiche=true', 'Calendrier','calendrier'):''
-					,array(DOL_URL_ROOT_ALT.'/ressource/document.php?id='.$obj->getId(), 'Fichiers joints','document')
-					,$user->rights->ressource->ressource->viewFilesRestricted?array(DOL_URL_ROOT_ALT.'/ressource/documentConfidentiel.php?id='.$obj->getId(), 'Fichiers confidentiels','documentConfidentiel'):''
-					,array(DOL_URL_ROOT_ALT.'/ressource/contratRessource.php?id='.$obj->getId(), 'Contrats','contrats')
+					array(dol_buildpath('/ressource/ressource.php?id='.$obj->getId(),1), 'Fiche','fiche')
+					,($obj->fk_rh_ressource == 0) ? array(dol_buildpath('/ressource/attribution.php?id='.$obj->getId(),1), 'Attribution','attribution'):null
+					,array(dol_buildpath('/ressource/evenement.php?id='.$obj->getId(),1), 'Evénement','evenement')
+					,$user->rights->ressource->ressource->viewResourceCalendar ? array(dol_buildpath('/ressource/calendrierRessource.php?id='.$obj->getId(),1).'&fiche=true', 'Calendrier','calendrier'):''
+					,array(dol_buildpath('/ressource/document.php?id='.$obj->getId(),1), 'Fichiers joints','document')
+					,$user->rights->ressource->ressource->viewFilesRestricted?array(dol_buildpath('/ressource/documentConfidentiel.php?id='.$obj->getId(),1), 'Fichiers confidentiels','documentConfidentiel'):''
+					,array(dol_buildpath('/ressource/contratRessource.php?id='.$obj->getId(),1), 'Contrats','contrats')
 				);
 			
 			break;
 		case 'contrat':
 				return array(
-					array(DOL_URL_ROOT_ALT.'/ressource/contrat.php?id='.$obj->getId(), 'Fiche','fiche')
-					,array(DOL_URL_ROOT_ALT.'/ressource/documentContrat.php?id='.$obj->getId(), 'Fichiers joints','document')
+					array(dol_buildpath('/ressource/contrat.php?id='.$obj->getId(),1), 'Fiche','fiche')
+					,array(dol_buildpath('/ressource/documentContrat.php?id='.$obj->getId(),1), 'Fichiers joints','document')
 				);
 			
 			break;
 		case 'evenement':
 				return array(
-					array(DOL_URL_ROOT_ALT.'/ressource/evenement.php?id='.$param->getId().'&idEven='.$obj->getId().'&action=view', 'Fiche','fiche')
-					,array(DOL_URL_ROOT_ALT.'/ressource/documentEvenement.php?id='.$param->getId().'&idEven='.$obj->getId(), 'Fichiers joints','document')
+					array(dol_buildpath('/ressource/evenement.php?id='.$param->getId().'&idEven='.$obj->getId().'&action=view',1), 'Fiche','fiche')
+					,array(dol_buildpath('/ressource/documentEvenement.php?id='.$param->getId().'&idEven='.$obj->getId(),1), 'Fichiers joints','document')
 				);
 			
 			break;
 		case 'import':
 				return array(
-					array(DOL_URL_ROOT_ALT.'/ressource/documentSupplier.php', 'Fiche','fiche')
+					array(dol_buildpath('/ressource/documentSupplier.php',1), 'Fiche','fiche')
 				);
 			
 			break;
