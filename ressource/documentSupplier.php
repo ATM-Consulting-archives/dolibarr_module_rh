@@ -182,10 +182,12 @@
 		<?php
 		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
 		
-		$sql = "SELECT idImport as idImport, count(*) as 'Nombre de lignes', rowid as ID, date_cre, '' as Action FROM ".MAIN_DB_PREFIX."rh_evenement
-				WHERE idImport IS NOT NULL AND idImport != ''
-				GROUP BY idImport
-				ORDER BY date_cre DESC";
+		$sql = "SELECT e.idImport as idImport, count(*) as 'Nombre de lignes', e.rowid as ID, e.date_cre, ent.label as 'entity', '' as Action 
+		
+			FROM ".MAIN_DB_PREFIX."rh_evenement e LEFT JOIN ".MAIN_DB_PREFIX."entity ent ON (e.entity=ent.rowid)
+				WHERE e.idImport IS NOT NULL AND e.idImport != ''
+				GROUP BY e.idImport
+				ORDER BY e.date_cre DESC";
 		
 		$l=new TListviewTBS('listImports');
 		
@@ -200,6 +202,7 @@
 			,'title'=>array(
 				'idImport' => 'Intitulé du fichier importé'
 				,'date_cre'=> 'Importé le'
+				,'entity'=>'Entité'
 			)
 			,'type'=>array(
 				'date_cre'=>'date'
@@ -215,6 +218,8 @@
 				,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			)
 		));
+		?>
+		
 		?>
 		
 		<div style="clear:both"></div></div><?
