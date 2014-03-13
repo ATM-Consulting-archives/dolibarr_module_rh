@@ -182,9 +182,10 @@
 		<?php
 		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
 		
-		$sql = "SELECT idImport as idImport, count(*) as 'Nombre de lignes', rowid as ID, '' as Action FROM ".MAIN_DB_PREFIX."rh_evenement
+		$sql = "SELECT idImport as idImport, count(*) as 'Nombre de lignes', rowid as ID, date_cre, '' as Action FROM ".MAIN_DB_PREFIX."rh_evenement
 				WHERE idImport IS NOT NULL AND idImport != ''
-				GROUP BY idImport";
+				GROUP BY idImport
+				ORDER BY date_cre DESC";
 		
 		$l=new TListviewTBS('listImports');
 		
@@ -198,6 +199,10 @@
 			)
 			,'title'=>array(
 				'idImport' => 'Intitulé du fichier importé'
+				,'date_cre'=> 'Importé le'
+			)
+			,'type'=>array(
+				'date_cre'=>'date'
 			)
 			,'hide'=>array('ID')
 			,'liste'=>array(
