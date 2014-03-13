@@ -26,7 +26,16 @@
 					$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
 					$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
 				
-					if($demandeRecevable==1){
+					if(!$user->rights->absence->myactions->creerAbsenceCollaborateur 
+					&& ($absence->date_debut < time() ||$absence->date_fin<time() )) {
+						/*
+							Si ce n'est pas un user avec droit, pas le droit de créer des anciennes absences						
+						*/
+						$mesg = '<div class="error">Attention : seul un utilisateur avec pouvoir peut créer une absence antérieure à maintenant.</div>';
+						_fiche($ATMdb, $absence,'edit');
+					} 
+					
+					else if($demandeRecevable==1){
 						$absence->save($ATMdb);
 						$absence->load($ATMdb, $_REQUEST['id']);
 						if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
