@@ -65,7 +65,10 @@ class TRH_valideur_groupe extends TObjetStd {
 			
 		if($fk_usergroup>0) $sql.=" AND fk_usergroup=".$fk_usergroup;
 		 
-		$sql.=" AND type='Conges' AND pointeur !=1 ";
+		$sql.=" AND type='Conges' ";
+//		$sql.=" AND pointeur !=1 ";
+
+//print $sql;
 		$ATMdb->Execute($sql);
 		
 		$row = $ATMdb->Get_line();

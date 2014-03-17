@@ -75,6 +75,7 @@
 					$sql="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
 					SET date_rttCloture='".date('Y-m-d h:i:s',$compteur->date_rttClotureInit)."', date_congesCloture='".date('Y-m-d h:i:s',$compteur->date_congesClotureInit)."'
 					,nombreCongesAcquisMensuel=".$compteur->congesAcquisMensuelInit." WHERE fk_user=".$fk_user;
+//exit($sql);
 					$ATMdb->Execute($sql);
 				}
 				
