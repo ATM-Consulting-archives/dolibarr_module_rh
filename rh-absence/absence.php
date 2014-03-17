@@ -3,6 +3,8 @@
 	require('./class/absence.class.php');
 	require('./lib/absence.lib.php');
 	
+	dol_include_once('/valideur/class/valideur.class.php');
+	
 	$langs->load('absence@absence');
 	
 	$ATMdb=new Tdb;
