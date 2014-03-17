@@ -28,8 +28,9 @@
 					$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
 					$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
 				
-					if(!$user->rights->absence->myactions->creerAbsenceCollaborateur && !TRH_valideur_groupe::isValideur($ATMdb, $user->id)
-					&& ($absence->date_debut < time() ||$absence->date_fin<time() )) {
+					if (($absence->date_debut < time() ||$absence->date_fin<time() )
+					 && (!$user->rights->absence->myactions->creerAbsenceCollaborateur && !TRH_valideur_groupe::isValideur($ATMdb, $user->id))){
+//print (int)TRH_valideur_groupe::isValideur($ATMdb, $user->id);
 						/*
 							Si ce n'est pas un user avec droit, pas le droit de créer des anciennes absences						
 						*/

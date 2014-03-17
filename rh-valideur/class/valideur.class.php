@@ -57,7 +57,7 @@ class TRH_valideur_groupe extends TObjetStd {
 		parent::save($db);
 	}
 	
-	static function isValideur(&$ATMdb, $fk_user, $fk_usergroup=0) {
+	static function isValideur(&$ATMdb, $fk_user, $fk_usergroup=0, $excludePointeur=false) {
 		
 		$sql=" SELECT count(*) as 'nb'
  			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe`
@@ -66,14 +66,14 @@ class TRH_valideur_groupe extends TObjetStd {
 		if($fk_usergroup>0) $sql.=" AND fk_usergroup=".$fk_usergroup;
 		 
 		$sql.=" AND type='Conges' ";
-//		$sql.=" AND pointeur !=1 ";
+		if($excludePointeur) $sql.=" AND pointeur !=1 ";
 
 //print $sql;
 		$ATMdb->Execute($sql);
 		
-		$row = $ATMdb->Get_line();
+		$ATMdb->Get_line();
 		
-		if($row->nb>0) return true;
+		if($ATMdb->Get_field('nb')>0) return true;
 		else return false;
 			
 		
