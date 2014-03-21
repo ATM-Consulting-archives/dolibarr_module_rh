@@ -29,7 +29,7 @@
 				
 					if(!$user->rights->absence->myactions->creerAbsenceCollaborateur 
 					
-					&& ($absence->date_debut < time() ||$absence->date_fin<time() )) {
+					&& ($absence->date_debut <= strtotime('midnight') ||$absence->date_fin <= strtotime('midnight') )) {
 						/*
 							Si ce n'est pas un user avec droit, pas le droit de créer des anciennes absences						
 						*/
