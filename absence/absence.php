@@ -26,7 +26,7 @@
 					$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
 					
 					// Test de la cohérence des dates
-					if(!$user->rights->absence->myactions->creerAbsenceCollaborateur 
+					if(!$user->rights->absence->myactions->creerAbsenceCollaborateur && !TRH_valideur_groupe::isValideur($ATMdb, $user->id)
 					
 					&& ($absence->date_debut <= strtotime('midnight') ||$absence->date_fin <= strtotime('midnight') )) {
 						/*
@@ -38,7 +38,7 @@
 					} 
 					
 					$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
-					
+				
 					if($demandeRecevable==1){
 						$absence->save($ATMdb);
 						$absence->load($ATMdb, $_REQUEST['id']);
@@ -75,7 +75,7 @@
 					_fiche($ATMdb, $absence,'edit');
 				}
 				break;
-			
+				
 			case 'view':
 				$absence->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $absence,'view');
