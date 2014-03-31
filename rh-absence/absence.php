@@ -30,7 +30,7 @@
 					// Test de la cohérence des dates
 					if(!$user->rights->absence->myactions->creerAbsenceCollaborateur && !TRH_valideur_groupe::isValideur($ATMdb, $user->id)
 					
-					&& ($absence->date_debut <= strtotime('midnight') ||$absence->date_fin <= strtotime('midnight') )) {
+					&& ($absence->date_debut <= strtotime('-1 day') ||$absence->date_fin <= strtotime('-1 day') )) {
 						/*
 							Si ce n'est pas un user avec droit, pas le droit de créer des anciennes absences						
 						*/
