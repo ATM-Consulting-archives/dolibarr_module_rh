@@ -79,16 +79,20 @@ class ActionsValideur
 			                       LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (n.fk_user=g.fk_user))
 			                            LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_valideur_groupe as v ON (g.fk_usergroup=v.fk_usergroup)) 
 			                               
-			WHERE n.entity = ".$object->entity." 
-			AND (n.fk_user IN (".implode(',', $TUser).")
+			WHERE n.entity = ".$object->entity;
+
+            if(!$user->rights->ndfp->allactions->viewall) {
+
+	         $sql.=" AND (n.fk_user IN (".implode(',', $TUser).")
 			               OR (v.type='NDFP' AND v.fk_user = ".$user->id."
 			                       AND (n.statut = 4 OR n.statut = 1)
 			                       AND ((NOW() >= ADDDATE(n.tms, v.nbjours)) OR (n.total_ttc > v.montant) OR v.level=n.alertLevel)
                    )
            	)";
 			
+	    }
 			
-			if ($parameters[0] == 'unpaid')
+		if ($parameters[0] == 'unpaid')
 	        {
 	            $sql.= " AND n.statut = 1";
 	        }
