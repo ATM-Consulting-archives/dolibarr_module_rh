@@ -42,7 +42,7 @@ if(isset($_REQUEST['action'])) {
 			break;
 
 		case 'delete_code':
-			$analytique_user->load($ATMdb, $_REQUEST['id']);
+			$analytique_user->load($ATMdb, __get('id'));
 			$analytique_user->delete($ATMdb);
 			
 			$mesg = '<div class="ok">L\'affectation a bien été supprimée.</div>';
