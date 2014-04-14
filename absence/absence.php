@@ -1,7 +1,8 @@
 <?php
 	require('config.php');
-	require('./class/absence.class.php');
-	require('./lib/absence.lib.php');
+	dol_include_once('/absence/class/absence.class.php');
+	dol_include_once('/absence/lib/absence.lib.php');
+	dol_include_once('/valideur/class/valideur.class.php');
 	
 	$langs->load('absence@absence');
 	
