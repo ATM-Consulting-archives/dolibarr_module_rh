@@ -212,6 +212,11 @@ class modRHHierarchie extends DolibarrModules
 	{
 		$sql = array();
 
+		if(!is_file( dol_buildpath("/hierarchie/config.php" ))) {
+			 $data='<?php require(\'default.config.php\'); /* fichier de conf de base */';	
+			
+			file_put_contents( dol_buildpath("/hierarchie/config.php" ) , $data);
+		}
 
 		return $this->_init($sql, $options);
 	}

@@ -369,6 +369,12 @@ class modCompetence extends DolibarrModules
 	{
 		$sql = array();
 
+		if(!is_file( dol_buildpath("/competence/config.php" ))) {
+			 $data='<?php require(\'default.config.php\'); /* fichier de conf de base */';	
+			
+			file_put_contents( dol_buildpath("/competence/config.php" ) , $data);
+		}
+
 		$url =dol_buildpath("/competence/script/create-maj-base.php",2);
 		file_get_contents($url);
 		

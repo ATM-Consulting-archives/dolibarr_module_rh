@@ -1,29 +1,31 @@
 <?php
 
-	define('ROOT','/var/www/ATM/dolibarr/htdocs/');
-	define('COREROOT','/var/www/ATM/atm-core/');
-	define('COREHTTP','http://127.0.0.1/ATM/atm-core/');
-	define('HTTP','http://127.0.0.1/ATM/dolibarr/');
+	if(is_file('../main.inc.php'))$dir = '../';
+	else  if(is_file('../../../main.inc.php'))$dir = '../../../';
+	else $dir = '../../';
 
-	if(defined('INC_FROM_CRON_SCRIPT')) {
-		include(ROOT."master.inc.php");
+
+	if(!defined('INC_FROM_DOLIBARR') && defined('INC_FROM_CRON_SCRIPT')) {
+		include($dir."master.inc.php");
 	}
-	else {
-		include(ROOT."main.inc.php");
+	elseif(!defined('INC_FROM_DOLIBARR')) {
+		include($dir."main.inc.php");
+	} else {
+		global $dolibarr_main_db_host, $dolibarr_main_db_name, $dolibarr_main_db_user, $dolibarr_main_db_pass;
 	}
 
-	define('DB_HOST',$dolibarr_main_db_host);
-	define('DB_NAME',$dolibarr_main_db_name);
-	define('DB_USER',$dolibarr_main_db_user);
-	define('DB_PASS',$dolibarr_main_db_pass);
-	define('DB_DRIVER','mysqli');
-
-	define('DOL_PACKAGE', true);
-	define('USE_TBS', true);
+	if(!defined('DB_HOST')) {
+		define('DB_HOST',$dolibarr_main_db_host);
+		define('DB_NAME',$dolibarr_main_db_name);
+		define('DB_USER',$dolibarr_main_db_user);
+		define('DB_PASS',$dolibarr_main_db_pass);
+		define('DB_DRIVER',$dolibarr_main_db_type);
+	}
 	
-	require(COREROOT.'inc.core.php');
-	
-	define('DOL_ADMIN_USER', 'admin');
-	define('LIME_DB','limesurvey');
+	dol_include_once('/abricot/inc.core.php');
 
-	define('USER_MAIL_SENDER', 'webmaster@atm-consulting.fr');
+	
+	define('DOL_ADMIN_USER', __val($conf->global->RH_DOL_ADMIN_USER, 'admin') );
+	define('LIME_DB',__val($conf->global->RH_LIME_DB,'limesurvey' ));
+
+	define('USER_MAIL_SENDER', __val($conf->global->RH_USER_MAIL_SENDER,'webmaster@atm-consulting.fr'));

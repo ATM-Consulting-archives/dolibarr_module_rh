@@ -201,6 +201,12 @@ class modValideur extends DolibarrModules
 
 		$result=$this->load_tables();
 
+		if(!is_file( dol_buildpath("/valideur/config.php" ))) {
+			 $data='<?php require(\'default.config.php\'); /* fichier de conf de base */';	
+			
+			file_put_contents( dol_buildpath("/valideur/config.php" ) , $data);
+		}
+
 		$url =dol_buildpath("/valideur/script/create-maj-base.php",2);
 		file_get_contents($url);
 		

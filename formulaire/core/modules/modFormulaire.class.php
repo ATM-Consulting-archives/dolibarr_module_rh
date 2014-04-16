@@ -286,6 +286,12 @@ class modFormulaire extends DolibarrModules
 	{
 		$sql = array();
 
+		if(!is_file( dol_buildpath("/formulaire/config.php" ))) {
+			 $data='<?php require(\'default.config.php\'); /* fichier de conf de base */';	
+			
+			file_put_contents( dol_buildpath("/formulaire/config.php" ) , $data);
+		}
+
 		$url =dol_buildpath("/formulaire/script/create-maj-base.php",2);
 		file_get_contents($url);
 		

@@ -1,18 +1,31 @@
 <?php
-	define('ROOT','/var/www/CPro/dolibarr-rh/htdocs/');
-	define('HTTP','http://127.0.0.1/CPro/dolibarr-rh/htdocs/');
-	define('COREROOT','/var/www/atm-core/');
-	define('COREHTTP','http://srvdolibarr/atm-core/');
+/*
+ * Module spec CPRO
+ * 
+ */
+	if(is_file('../main.inc.php'))$dir = '../';
+	else  if(is_file('../../../main.inc.php'))$dir = '../../../';
+	else $dir = '../../';
 
-	if(defined('INC_FROM_CRON_SCRIPT')) {
-		include(ROOT."master.inc.php");
+
+	if(!defined('INC_FROM_DOLIBARR') && defined('INC_FROM_CRON_SCRIPT')) {
+		include($dir."master.inc.php");
 	}
 	elseif(!defined('INC_FROM_DOLIBARR')) {
-		include(ROOT."main.inc.php");
+		include($dir."main.inc.php");
+	} else {
+		global $dolibarr_main_db_host, $dolibarr_main_db_name, $dolibarr_main_db_user, $dolibarr_main_db_pass;
 	}
 
-
-	require(COREROOT.'inc.core.php');
+	if(!defined('DB_HOST')) {
+		define('DB_HOST',$dolibarr_main_db_host);
+		define('DB_NAME',$dolibarr_main_db_name);
+		define('DB_USER',$dolibarr_main_db_user);
+		define('DB_PASS',$dolibarr_main_db_pass);
+		define('DB_DRIVER',$dolibarr_main_db_type);
+	}
+	
+	dol_include_once('/abricot/inc.core.php');
 
 	define('THEREFORE_READ','http://srvtherefore/TWA/Client/TheGetDoc.aspx?CtgryNo=[categorie]&Id_Dolibarr=[id]');
 	define('THEREFORE_LOADER','//SRVTHEREFORE/Scan/Loader');
