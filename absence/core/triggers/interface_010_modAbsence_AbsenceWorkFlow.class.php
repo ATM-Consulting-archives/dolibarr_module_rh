@@ -78,12 +78,6 @@ class InterfaceAbsenceWorkflow
     function run_trigger($action, $object, $user, $langs, $conf)
     {
         global $db,$langs;
-			
-        $langs->load("other");
-        $langs->load('ndfp@ndfp');
-		
-		//$ATMdb=new Tdb;
-		
 		
 		if ($action == 'USER_CREATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
