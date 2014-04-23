@@ -77,7 +77,7 @@ class InterfaceValideurWorkflow
      */
     function run_trigger($action, $object, $user, $langs, $conf)
     {
-        global $db;
+        global $db,$langs;
 			
         $langs->load("other");
         $langs->load('ndfp@ndfp');
