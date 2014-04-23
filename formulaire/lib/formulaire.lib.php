@@ -32,7 +32,7 @@ function send_mail_formulaire($object)
 	
 		$TBS=new TTemplateTBS();
 		$subject = "Nouveau questionnaire à remplir - ".$titre_form;
-		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/formulaire/tpl/mail.formulaire.invitation.tpl.php'
+		$message = $TBS->render(dol_buildpath('/formulaire/tpl/mail.formulaire.invitation.tpl.php')
 			,array()
 			,array(
 				'formulaire'=>array(

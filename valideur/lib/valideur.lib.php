@@ -37,7 +37,7 @@ function send_mail(&$db, $object, $user, $langs, $statut)
 	$TBS=new TTemplateTBS();
 	if($object->statut==1){
 		$subject = $object->ref." - Acceptée";
-		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.acceptation.tpl.php'
+		$message = $TBS->render(dol_buildpath('/valideur/tpl/mail.validation.acceptation.tpl.php')
 			,array()
 			,array(
 				'validation'=>array(
@@ -50,7 +50,7 @@ function send_mail(&$db, $object, $user, $langs, $statut)
 		);
 	}elseif($object->statut==4){
 		$subject = $object->ref." - Soumis à validation";
-		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.soumission.tpl.php'
+		$message = $TBS->render(dol_buildpath('/valideur/tpl/mail.validation.soumission.tpl.php')
 			,array()
 			,array(
 				'validation'=>array(
@@ -63,7 +63,7 @@ function send_mail(&$db, $object, $user, $langs, $statut)
 		);
 	}elseif($object->statut==3){
 		$subject = $object->ref." - Refusée";
-		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.refus.tpl.php'
+		$message = $TBS->render(dol_buildpath('/valideur/tpl/mail.validation.refus.tpl.php')
 			,array()
 			,array(
 				'validation'=>array(
@@ -77,7 +77,7 @@ function send_mail(&$db, $object, $user, $langs, $statut)
 		);
 	}elseif($object->statut==2){
 		$subject = $object->ref." - Remboursée";
-		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.rembourse.tpl.php'
+		$message = $TBS->render(dol_buildpath('/valideur/tpl/mail.validation.rembourse.tpl.php')
 			,array()
 			,array(
 				'validation'=>array(

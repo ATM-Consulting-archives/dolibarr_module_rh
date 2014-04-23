@@ -281,7 +281,7 @@ function mailConges(&$absence){
 	$TBS=new TTemplateTBS();
 	if($absence->etat=='Avalider'){
 		$subject = "Création d'une demande de congés";
-		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.creation.tpl.php'
+		$message = $TBS->render(dol_buildpath('/absence/tpl/mail.absence.creation.tpl.php')
 			,array()
 			,array(
 				'absence'=>array(
@@ -297,7 +297,7 @@ function mailConges(&$absence){
 		);
 	}else if($absence->etat=='Validee'){
 		$subject = "Acceptation de votre demande de congés";
-		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.acceptation.tpl.php'
+		$message = $TBS->render(dol_buildpath('/absence/tpl/mail.absence.acceptation.tpl.php')
 			,array()
 			,array(
 				'absence'=>array(
@@ -321,7 +321,7 @@ function mailConges(&$absence){
 	}
 	else if($absence->etat=='Refusee'){
 		$subject = "Refus de votre demande de congés";
-		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.refus.tpl.php'
+		$message = $TBS->render(dol_buildpath('/absence/tpl/mail.absence.refus.tpl.php')
 			,array()
 			,array(
 				'absence'=>array(
@@ -406,7 +406,7 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 	$TBS=new TTemplateTBS();
 
 	$subject = "Nouvelle demande d'absence à valider";
-	$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.absence.creationValideur.tpl.php'
+	$message = $TBS->render(dol_buildpath('/absence/tpl/mail.absence.creationValideur.tpl.php')
 		,array()
 		,array(
 			'absence'=>array(
@@ -428,65 +428,6 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 }
 
 
-
-//envoi de mail au valideur
-/*function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
-	global $conf;
-	//LISTE USERS À VALIDER
-	$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
-			WHERE v.fk_user=".$fk_user." 
-			AND v.type='Conges'
-			AND v.pointeur=0
-			AND v.fk_usergroup=u.fk_usergroup
-			AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$fk_user.")";
-		
-	$ATMdb->Execute($sql);
-	$TabUser=array();
-	$k=0;
-	while($ATMdb->Get_line()) {
-				$TabUser[]=$ATMdb->Get_field('fk_user');
-				$k++;
-	}
-	
-	if($k>0)
-	{	$sql="SELECT COUNT(a.rowid) as 'nbrAbsence', a.rowid as 'ID', a.date_cre as 'DateCre',DATE(a.date_debut) as 'date_debut', DATE(a.date_fin) as 'Date Fin', 
-				  a.libelle as 'Type absence',a.fk_user as 'Utilisateur Courant',  CONCAT(u.firstname,' ',u.lastname) as 'Utilisateur',
-				  a.libelleEtat as 'Statut demande', '' as 'Supprimer'
-			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-			WHERE a.fk_user IN(".implode(',', $TabUser).") AND u.rowid=a.fk_user AND a.etat LIKE 'Avalider'";
-	
-	$ATMdb->Execute($sql);
-	$ATMdb->Get_line();
-	$nbrAbsence=$ATMdb->Get_field('nbrAbsence');
-	}
-	
-	
-	if($nbrAbsence>0) {
-		
-		 // S'il y a des demandes d'absence en attente
-		 
-		$from = USER_MAIL_SENDER;
-			
-			$TBS=new TTemplateTBS();
-			$subject = "Alerte - Validation de demandes d'absence en attente (".$nbrAbsence.")";
-			$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/absence/tpl/mail.validation.attente.tpl.php'
-				,array()
-				,array(
-					'validation'=>array(
-						'nom'=>$name
-						,'prenom'=>$firstname
-						,'nbr'=>$nbrAbsence
-					)
-				)
-			);
-			
-			// Send mail
-			$mail = new TReponseMail($from,$sendto,$subject,$message);
-			
-		    (int)$result = $mail->send(true, 'utf-8');		
-	}	
-	return $result;
-}*/
 
 
 

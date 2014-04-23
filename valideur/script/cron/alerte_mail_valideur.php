@@ -68,7 +68,7 @@ function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 			
 			$TBS=new TTemplateTBS();
 			$subject = "Alerte - Validation de notes de frais en attente (".$nbrNdf.")";
-			$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/valideur/tpl/mail.validation.attente.tpl.php'
+			$message = $TBS->render(dol_buildpath('/valideur/tpl/mail.validation.attente.tpl.php')
 				,array()
 				,array(
 					'validation'=>array(

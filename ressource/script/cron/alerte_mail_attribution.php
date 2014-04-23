@@ -44,7 +44,7 @@ function _mail_attribution(&$ATMdb, &$TAttribution) {
 	if(count($TAttribution)>0){
 		$TBS=new TTemplateTBS();
 		$subject = "Alerte - Ressources en fin d'attribution";
-		$message = $TBS->render(DOL_DOCUMENT_ROOT_ALT.'/ressource/tpl/mail.attribution.alerte.tpl.php'
+		$message = $TBS->render(dol_buildpath('/ressource/tpl/mail.attribution.alerte.tpl.php')
 			,array(
 				'attribution'=>$TAttribution
 			)

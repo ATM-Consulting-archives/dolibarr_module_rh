@@ -22,6 +22,7 @@
 		define('DB_DRIVER',$dolibarr_main_db_type);
 	}
 	
+	define('USE_CALENDAR', true);
 	dol_include_once('/abricot/inc.core.php');
 	
 	define('DOL_ADMIN_USER', __val($conf->global->RH_DOL_ADMIN_USER, 'admin') );

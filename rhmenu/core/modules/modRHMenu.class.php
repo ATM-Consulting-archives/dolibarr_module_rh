@@ -85,7 +85,7 @@ class modRHMenu extends DolibarrModules
 		//							'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE')) // Set here all workflow context managed by module
 		//                        );
 		$this->module_parts = array(
-			'menus'=>DOL_DOCUMENT_ROOT_ALT.'rhmenu/core/menus/'
+			'menus'=>1
 			,'hooks' => array('productcard')
 		);
 
