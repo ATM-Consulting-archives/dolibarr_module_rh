@@ -9,7 +9,7 @@
 	
 	
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 
 	$sqlReqUser="SELECT DISTINCT rowid FROM ".MAIN_DB_PREFIX."user WHERE rowid NOT IN ( SELECT fk_user from ".MAIN_DB_PREFIX."rh_compteur)";
 	$ATMdb->Execute($sqlReqUser);

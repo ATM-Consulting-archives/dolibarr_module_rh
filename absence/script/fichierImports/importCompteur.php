@@ -9,7 +9,7 @@ require('../../class/absence.class.php');
 
 global $conf;
 
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 $compteur=new TRH_Compteur;
 
 		

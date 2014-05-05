@@ -9,7 +9,7 @@
 	$langs->load('competence@competence');
 	$langs->load("users");
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$remuneration=new TRH_remuneration;
 
 	if(isset($_REQUEST['action'])) {

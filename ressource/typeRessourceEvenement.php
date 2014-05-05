@@ -7,7 +7,7 @@
 	$langs->load('ressource@ressource');
 	
 	//if (!$user->rights->financement->affaire->read)	{ accessforbidden(); }
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$ressourceType=new TRH_ressource_type;
 	$typeEven = new TRH_Type_Evenement;
 	$mesg = '';

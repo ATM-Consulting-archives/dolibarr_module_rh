@@ -51,7 +51,7 @@ $form = new Form($db);
 
 $arret=0;
 
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 
 llxHeader('', '', '', '', 0, 0, array('/rhlibrary/jquery.jOrgChart.js'));
 

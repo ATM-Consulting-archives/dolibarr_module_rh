@@ -3,7 +3,7 @@
 	require('./class/formation.class.php');
 	$langs->load('competence@competence');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$sessionFormation = new TRH_formation_session;
 	
 	if(isset($_REQUEST['action'])) {

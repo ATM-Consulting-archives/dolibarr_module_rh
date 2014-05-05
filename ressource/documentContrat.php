@@ -12,7 +12,7 @@
 	$langs->load('main');
 	$langs->load('other');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$contrat=new TRH_contrat;
 	
 	if(isset($_REQUEST['id'])) {

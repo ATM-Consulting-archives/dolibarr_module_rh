@@ -13,7 +13,7 @@ print dol_get_fiche_head(array()  , '', 'Enquêtes');
 $title = 'Liste des enquêtes';
 print_fiche_titre($title, '', 'form32.png@formulaire');
 
-$ATMdb = new Tdb;
+$ATMdb = new TPDOdb;
 $TSurvey = array();
 
 $sql = "SELECT fg.fk_usergroup AS groupe, fg.fk_survey AS survey, sl.surveyls_title AS title, fg.date_deb AS date_deb, fg.date_fin AS date_fin
@@ -31,7 +31,7 @@ while($ATMdb->Get_line()){
 	$Tligne = array();
 	if(array_key_exists($user->id,$TGroupUser)){
 			
-		$ATMdb2 = new Tdb;
+		$ATMdb2 = new TPDOdb;
 		$sql = "SELECT tid, token
 				FROM ".LIME_DB.".lime_tokens_".$ATMdb->Get_field('survey')." 
 				WHERE firstname = '".$user->firstname."' AND lastname = '".$user->lastname."' AND email = '".$user->email."'";

@@ -9,7 +9,7 @@ require('../../class/ressource.class.php');
 require('../../lib/ressource.lib.php');
 
 global $conf;
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 // relever le point de départ
 $timestart=microtime(true);
 

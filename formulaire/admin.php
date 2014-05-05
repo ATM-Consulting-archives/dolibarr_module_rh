@@ -9,7 +9,7 @@ require(DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php');
 llxHeader();
 
 global $db;
-$ATMdb = new Tdb;
+$ATMdb = new TPDOdb;
 $form = new Form($db);
 $errdatefin = FALSE;
 $errdatedeb = FALSE;
@@ -69,7 +69,7 @@ print_fiche_titre($title, '', 'form32.png@formulaire');
 			<td>
 				<select name="groupe" id="groupe">
 					<?php
-					$ATMdb = new Tdb;
+					$ATMdb = new TPDOdb;
 					$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."usergroup";
 					$ATMdb->Execute($sql);
 					
@@ -89,7 +89,7 @@ print_fiche_titre($title, '', 'form32.png@formulaire');
 			<td>
 				<select name="survey" id="survey">
 					<?php
-					$ATMdb = new Tdb;
+					$ATMdb = new TPDOdb;
 					$sql = "SELECT s.sid AS id, sl.surveyls_title AS title
 							FROM ".LIME_DB.".lime_surveys AS s
 							LEFT JOIN ".LIME_DB.".lime_surveys_languagesettings AS sl ON sl.surveyls_survey_id = s.sid";

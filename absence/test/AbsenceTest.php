@@ -58,7 +58,7 @@ class AbsenceTest extends PHPUnit_Framework_TestCase
 		
 		
 		
-		$ATMdb=new Tdb;
+		$ATMdb=new TPDOdb;
 		$id = $compteur->load_by_fkuser($ATMdb, $idTestUser);
 		$this->assertNotNull($id);
 		

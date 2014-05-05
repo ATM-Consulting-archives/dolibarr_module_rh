@@ -5,7 +5,7 @@ require('../config.php');
 //Renvoie les congés maladie du collaborateur de l'année précédente
 global $user,$conf;
 
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 	
 $anneeCourante=date('Y');
 $anneePrec=$anneeCourante-1;

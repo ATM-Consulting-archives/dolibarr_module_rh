@@ -5,7 +5,7 @@ require('../class/ressource.class.php');
 
 global $conf;
 
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 $default = 100000; //consideration conso infinie
 		
 //on charge quelques listes pour avoir les clés externes.

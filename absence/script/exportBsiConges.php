@@ -5,7 +5,7 @@ require('../config.php');
 //Renvoie les congés maladie du collaborateur de l'année précédente
 global $user,$conf;
 
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 
 $TUserID=array();
 $sqlReqUser="SELECT rowid, name,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE entity IN (0,".$conf->entity.")";

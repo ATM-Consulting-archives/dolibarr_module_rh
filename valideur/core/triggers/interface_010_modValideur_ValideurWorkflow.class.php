@@ -82,7 +82,7 @@ class InterfaceValideurWorkflow
         $langs->load("other");
         $langs->load('ndfp@ndfp');
 		
-		//$ATMdb=new Tdb;
+		//$ATMdb=new TPDOdb;
 		 define('INC_FROM_DOLIBARR', true);
          dol_include_once('/valideur/config.php');
          dol_include_once('/valideur/lib/valideur.lib.php');

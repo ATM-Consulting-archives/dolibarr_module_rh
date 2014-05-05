@@ -4,7 +4,7 @@
 	require('./lib/competence.lib.php');
 	$langs->load('competence@competence');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$formation = new TRH_formation;
 	$planFormation = new TRH_formation_plan;
 	

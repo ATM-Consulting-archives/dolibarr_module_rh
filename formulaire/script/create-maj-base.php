@@ -8,7 +8,7 @@
 	require('../config.php');
 	require('../class/groupeformulaire.class.php');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$ATMdb->db->debug=true;
 
 	$o=new TGroupeFormulaire;

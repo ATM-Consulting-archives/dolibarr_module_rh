@@ -10,7 +10,7 @@
 	require('../class/formation.class.php');
 	
 
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$ATMdb->db->debug=true;
 	
 	//Competence

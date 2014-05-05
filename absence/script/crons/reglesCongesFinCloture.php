@@ -11,7 +11,7 @@
 	require('../../config.php');
 	require('../../class/absence.class.php');
 
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$ATMdb->db->debug=true;
 
 	$o=new TRH_Compteur;

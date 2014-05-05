@@ -39,7 +39,7 @@ $competence=new TRH_competence_cv;
 $remuneration = new TRH_remuneration;
 $dif = new TRH_dif;
 
-$ATMdb = new Tdb;
+$ATMdb = new TPDOdb;
 
 
 /**

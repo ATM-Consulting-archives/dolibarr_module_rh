@@ -8,7 +8,7 @@ function send_mail_formulaire($object)
 {
 	global $langs;
 	
-	$ATMdb = new Tdb;
+	$ATMdb = new TPDOdb;
 	
 	$langs->load('mails');
 	$from = USER_MAIL_SENDER;

@@ -5,7 +5,7 @@ require('../class/ressource.class.php');
 require('../lib/ressource.lib.php');
 global $conf;
 
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 
 		
 //on charge quelques listes pour avoir les clés externes.

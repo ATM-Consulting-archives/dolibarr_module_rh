@@ -12,7 +12,7 @@
 	require('../class/evenement.class.php');
 	require('../class/regle.class.php');
 
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$ATMdb->db->debug=true;
 
 //Création des types d'évenement par défaut.

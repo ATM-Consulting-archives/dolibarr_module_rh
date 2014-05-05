@@ -13,7 +13,7 @@
 	$langs->load('main');
 	$langs->load('other');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$evenement=new TRH_Evenement;
 	$ressource = new TRH_Ressource;
 	if(isset($_REQUEST['idEven'])) {

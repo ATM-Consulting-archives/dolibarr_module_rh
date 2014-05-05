@@ -36,7 +36,7 @@ global $conf,$user,$langs,$db;
 
 $absence=new TRH_Absence;
 $edt=new TRH_EmploiTemps;
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 
 
 /**

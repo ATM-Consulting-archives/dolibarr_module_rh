@@ -29,7 +29,7 @@
 global $conf,$user,$langs,$db;
 
 $absence=new TRH_Absence;
-$ATMdb=new Tdb;
+$ATMdb=new TPDOdb;
 
 /**
  * Class for PHPUnit tests

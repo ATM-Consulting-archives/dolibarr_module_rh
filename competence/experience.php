@@ -9,7 +9,7 @@
 	$langs->load('competence@competence');
 	$langs->load("users");
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$lignecv=new TRH_ligne_cv;
 	$formation=new TRH_formation_cv;
 	$tagCompetence=new TRH_competence_cv;

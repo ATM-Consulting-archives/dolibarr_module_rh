@@ -6,7 +6,7 @@
  	define('INC_FROM_CRON_SCRIPT', true);
 	require('../config.php');
 		
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$fichier = fopen("./comptaAbsence.txt", "w+"); 
 	$sql="SELECT u.rowid, u.lastname, u.firstname, a.type, a.duree, a.date_debut, a.date_fin, a.ddMoment, a.dfMoment
 	FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."rh_absence as a

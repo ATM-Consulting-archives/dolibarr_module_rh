@@ -6,7 +6,7 @@
 	$langs->load('ressource@ressource');
 	
 	//if (!$user->rights->financement->affaire->read)	{ accessforbidden(); }
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$association = new TRH_Contrat_Ressource;
 	$ressource = new TRH_Ressource;
 	$mesg = '';

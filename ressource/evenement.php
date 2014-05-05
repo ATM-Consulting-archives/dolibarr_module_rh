@@ -5,7 +5,7 @@
 	require('./lib/ressource.lib.php');
 	$langs->load('ressource@ressource');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$evenement=new TRH_Evenement;
 	$ressource = new TRH_Ressource;
 	$mesg = '';

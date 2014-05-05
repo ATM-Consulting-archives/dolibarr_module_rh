@@ -17,7 +17,7 @@
 	$langs->load('main');
 	$langs->load('other');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$ressource = new TRH_Ressource;
 	
 	_fiche($ATMdb, $ressource);
