@@ -331,7 +331,7 @@ class modAbsence extends DolibarrModules
 		// Example to declare a new Top Menu entry and its Left menu entry:
 		$this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
 								'type'=>'top',			                // This is a Top menu entry
-								'titre'=>$langs->trans('Planning'),
+								'titre'=>$langs->trans('Abs./Présence'),
 								'mainmenu'=>'absence',
 								'leftmenu'=>'',
 								'url'=>'/absence/calendrierAbsence.php?',
