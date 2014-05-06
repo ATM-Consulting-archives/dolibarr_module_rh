@@ -211,7 +211,7 @@
 			}
 			function loadRecapCompteur() {
 					if($('#fk_user').length>0) fk_user = $('#fk_user').val();
-					else  fk_user = $('#fk_user_absence').val() ; 
+					else  fk_user = $('#userRecapCompteur').val() ; 
 					
 				
 					$.ajax({
@@ -238,7 +238,7 @@
 			
 			function loadRecapAbsence() {
 					if($('#fk_user').length>0) fk_user = $('#fk_user').val();
-					else  fk_user = $('#fk_user_absence').val() ; 
+					else  fk_user = $('#userRecapCompteur').val() ; 
 					
 					$.ajax({
 						url: 'script/chargerRecapAbsenceUser.php?idUser='+fk_user

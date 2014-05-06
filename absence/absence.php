@@ -546,7 +546,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	echo $form->hidden('id', $absence->getId());
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('userRecapCompteur', isset($_REQUEST['fk_user'])?$_REQUEST['fk_user']:0);
-	echo $form->hidden('userAbsenceCree', isset($absence->fk_user)!=0?$absence->fk_user:0);
+	echo $form->hidden('userAbsenceCree', ($absence->fk_user>0 ) ?$absence->fk_user:0);
 	
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
