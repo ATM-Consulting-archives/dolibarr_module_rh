@@ -482,7 +482,7 @@ function horaireMinuteEnCentieme($horaire){
 function php2Date($phpDate){
     return date("Y-m-d H:i:s", $phpDate);
 }
-function getHistoryCompteurForUser($fk_user,$id_absence,$duree=null, $etat=null) {
+function getHistoryCompteurForUser($fk_user,$id_absence,$duree=null,$type=null, $etat=null) {
 global $compteurCongeResteCurrentUser,$ATMdb;
 
 	if(!isset($ATMdb_getHistoryCompteurForUser)) $ATMdb_getHistoryCompteurForUser=new TPDOdb;
@@ -498,15 +498,16 @@ global $compteurCongeResteCurrentUser,$ATMdb;
 		
 	}
 		
-	if(is_null($duree) || is_null($etat)) {
+	if(is_null($duree) || is_null($etat) || is_null($type)) {
 		$absence = new TRH_Absence;
 		$absence->load($ATMdb_getHistoryCompteurForUser, $id_absence);
 		
 		$duree = $absence->duree;
 		$etat = $absence->etat;
+		$type = $absence->type;
 	}
 		
-	if($etat!='Refusee' && $duree>0) {
+	if($etat!='Refusee' && $duree>0 && ($type=='conges' || $type=='cppartiel')) {
 		$compteurCongeResteCurrentUser+=$duree;
 		return $compteurCongeResteCurrentUser;
 		//return '<div align="right">'.number_format($compteurCongeResteCurrentUser,2,',',' ').'</div>';
