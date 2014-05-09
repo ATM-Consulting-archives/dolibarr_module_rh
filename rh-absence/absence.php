@@ -178,7 +178,7 @@ function _liste(&$ATMdb, &$absence) {
 
 	//LISTE D'ABSENCES DU COLLABORATEUR
 	$sql="SELECT a.rowid as 'ID',  a.fk_user, a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-			a.libelle,a.duree, a.etat, 'Compteur', u.login, u.firstname, u.name,
+			a.libelle,a.duree,a.type, a.etat, 'Compteur', u.login, u.firstname, u.name,
 			 a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user";
@@ -207,7 +207,7 @@ function _liste(&$ATMdb, &$absence) {
 			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
 			,'etat'=>$absence->TEtat
 		)
-		,'hide'=>array('DateCre', 'fk_user', 'ID')
+		,'hide'=>array('DateCre', 'fk_user', 'ID','type')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date', 'duree'=>'number')
 		,'liste'=>array(
 			'titre'=>'Liste de vos absences'
@@ -246,7 +246,7 @@ function _liste(&$ATMdb, &$absence) {
 			'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 			,'etat'=>'_setColorEtat("@val@")'
-			,'Compteur'=>'_historyCompteurInForm(getHistoryCompteurForUser(@fk_user@,@ID@,@duree@,@etat@))'
+			,'Compteur'=>'_historyCompteurInForm(getHistoryCompteurForUser(@fk_user@,@ID@,@duree@,@type@,@etat@))'
 			
 			
 		)
