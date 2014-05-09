@@ -482,4 +482,37 @@ function horaireMinuteEnCentieme($horaire){
 function php2Date($phpDate){
     return date("Y-m-d H:i:s", $phpDate);
 }
+function getHistoryCompteurForUser($fk_user,$id_absence,$duree=null, $etat=null) {
+global $compteurCongeResteCurrentUser,$ATMdb;
 
+	if(!isset($ATMdb_getHistoryCompteurForUser)) $ATMdb_getHistoryCompteurForUser=new TPDOdb;
+
+	if(!isset($compteurCongeResteCurrentUser)) {
+		
+		$compteur =new TRH_Compteur;
+		$compteur->load_by_fkuser($ATMdb_getHistoryCompteurForUser, $fk_user);
+		
+
+		$congePrecTotal=$compteur->acquisExerciceNM1+$compteur->acquisAncienneteNM1+$compteur->acquisHorsPeriodeNM1+$compteur->reportCongesNM1;
+		$compteurCongeResteCurrentUser=$congePrecTotal-$compteur->congesPrisNM1;
+		
+	}
+		
+	if(is_null($duree) || is_null($etat)) {
+		$absence = new TRH_Absence;
+		$absence->load($ATMdb_getHistoryCompteurForUser, $id_absence);
+		
+		$duree = $absence->duree;
+		$etat = $absence->etat;
+	}
+		
+	if($etat!='Refusee' && $duree>0) {
+		$compteurCongeResteCurrentUser+=$duree;
+		return $compteurCongeResteCurrentUser;
+		//return '<div align="right">'.number_format($compteurCongeResteCurrentUser,2,',',' ').'</div>';
+	}
+	else {
+		return 0;
+	}
+	
+}

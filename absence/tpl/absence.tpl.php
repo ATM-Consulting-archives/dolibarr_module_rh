@@ -145,6 +145,8 @@
 					<td><b>Date de début</b></td>
 					<td><b>Date de fin</b></td>
 					<td><b>Type d'absence</b></td>
+					<td><b>Durée décomptée</b></td>
+					<td><b>Congés disponible avant</b></td>
 					<td><b>Etat</b></td>
 				</tr>
 				<tbody id="TRecapAbs">
@@ -252,6 +254,8 @@
 									+"<td>"+liste[i].date_debut+"</td>"
 									+"<td>"+liste[i].date_fin+"</td>"
 									+"<td>"+liste[i].libelle+"</td>"
+									+"<td>"+liste[i].duree+"</td>"
+									+"<td>"+liste[i].congesAvant+"</td>"
 									+"<td>"+liste[i].libelleEtat+"</td>"
 									+"</tr>";
 								$('#TRecapAbs').html($('#TRecapAbs').html()+texte);
