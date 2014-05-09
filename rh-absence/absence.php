@@ -1,13 +1,12 @@
 <?php
 	require('config.php');
-	require('./class/absence.class.php');
-	require('./lib/absence.lib.php');
-	
+	dol_include_once('/absence/class/absence.class.php');
+	dol_include_once('/absence/lib/absence.lib.php');
 	dol_include_once('/valideur/class/valideur.class.php');
 	
 	$langs->load('absence@absence');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$absence=new TRH_Absence;
 
 	if(isset($_REQUEST['action'])) {
@@ -78,7 +77,7 @@
 					_fiche($ATMdb, $absence,'edit');
 				}
 				break;
-			
+				
 			case 'view':
 				$absence->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $absence,'view');
@@ -178,9 +177,9 @@ function _liste(&$ATMdb, &$absence) {
 	$r = new TSSRenderControler($absence);
 
 	//LISTE D'ABSENCES DU COLLABORATEUR
-	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-			a.libelle,a.fk_user,  a.fk_user, u.login, u.firstname, u.name,
-			a.etat, a.avertissement
+	$sql="SELECT a.rowid as 'ID',  a.fk_user, a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
+			a.libelle,a.duree, a.etat, 'Compteur', u.login, u.firstname, u.name,
+			 a.avertissement
 			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
 			WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user";
 	
@@ -209,7 +208,7 @@ function _liste(&$ATMdb, &$absence) {
 			,'etat'=>$absence->TEtat
 		)
 		,'hide'=>array('DateCre', 'fk_user', 'ID')
-		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
+		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date', 'duree'=>'number')
 		,'liste'=>array(
 			'titre'=>'Liste de vos absences'
 			,'image'=>img_picto('','title.png', '', 0)
@@ -231,6 +230,8 @@ function _liste(&$ATMdb, &$absence) {
 			,'name'=>'Nom'
 			,'login'=>'Login'
 			,'etat'=>'Statut demande'
+			,'duree'=>'Durée décomptée en jour'
+			,'Compteur'=>'Congés disponible avant la demande'
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
@@ -245,6 +246,8 @@ function _liste(&$ATMdb, &$absence) {
 			'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
 			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 			,'etat'=>'_setColorEtat("@val@")'
+			,'Compteur'=>'_historyCompteurInForm(getHistoryCompteurForUser(@fk_user@,@ID@,@duree@,@etat@))'
+			
 			
 		)
 		,'orderBy'=>$TOrder
@@ -256,7 +259,12 @@ function _liste(&$ATMdb, &$absence) {
 	
 	llxFooter();
 }	
-
+function _historyCompteurInForm($duree) {
+	
+	if($duree>0) return '<div align="right">'.number_format($duree,2,',',' ').'</div>';
+	else return ''; 
+	
+}
 function _listeAdmin(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Liste de toutes les absences');
@@ -466,10 +474,9 @@ function _listeValidation(&$ATMdb, &$absence) {
  		}
  		$sql.=")";
 	}
-	else {
+ 	else {
 		?><div class="error">Vous n'&ecirc;tes pas valideur de cong&eacute;  </div><?
 	}
- 	
  
 	
 		//LISTE DES ABSENCES À VALIDER
@@ -560,7 +567,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$congePrec=array();
 	$congeCourant=array();
 	$rttCourant=array();
-	while($ATMdb->Get_line()) {
+	while($ATMdb->Get_line()) { // TODO doit être un objet
 				$congePrec['id']=$ATMdb->Get_field('rowid');
 				$congePrec['acquisEx']=$ATMdb->Get_field('acquisExerciceNM1');
 				$congePrec['acquisAnc']=$ATMdb->Get_field('acquisAncienneteNM1');
@@ -608,7 +615,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	}
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
-	while($ATMdb->Get_line()) {
+	while($ATMdb->Get_line()) { // TODO utiliser objet std dolibarr
 				$userCourant=new User($db);
 				$userCourant->firstname=$ATMdb->Get_field('firstname');
 				$userCourant->id=$ATMdb->Get_field('rowid');
@@ -800,8 +807,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'titreNvDemande'=>load_fiche_titre("Nouvelle demande d'absence",'', 'title.png', 0, '')
 				,'titreRecapAbsence'=>load_fiche_titre("Récapitulatif de la demande d'absence",'', 'title.png', 0, '')
 				,'titreJourRestant'=>load_fiche_titre("Jours restants à prendre",'', 'title.png', 0, '')
-				,'titreDerAbsence'=>load_fiche_titre("Vos dernières absences",'', 'title.png', 0, '')
-				,'titreRegle'=>load_fiche_titre("Règles vous concernant",'', 'title.png', 0, '')
+				,'titreDerAbsence'=>load_fiche_titre("Dernières absences",'', 'title.png', 0, '')
+				,'titreRegle'=>load_fiche_titre("Règles applicable",'', 'title.png', 0, '')
 				
 				,'droitSupprimer'=>$droitSupprimer
 				

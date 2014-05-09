@@ -147,19 +147,26 @@
 					<td><b>Type d'absence</b></td>
 					<td><b>Etat</b></td>
 				</tr>
-				<tbody  id="TRecapAbs">
-					<tr>
-						<td>[TRecap.date_debut;block=tr;strconv=no;protect=no]</td>
-						<td>[TRecap.date_fin;block=tr;strconv=no;protect=no]</td>
-						<td>[TRecap.libelle;block=tr;strconv=no;protect=no]</td>
-						<td>[TRecap.libelleEtat;block=tr;strconv=no;protect=no]</td>
-					</tr>
-
+				<tbody id="TRecapAbs">
+					
 				</tbody>
 		</table>
+		
+		<div id="user-planning-dialog">
+			<div class="content">
+			</div>
+		</div>
+		
+		<div id="user-planning">
+				
+		</div>
+		
 		</div>
 		<br>
 		
+		
+		
+
 		
 
 		<script type="text/javascript">
@@ -203,9 +210,9 @@
 					
 			}
 			function loadRecapCompteur() {
-					
 					if($('#fk_user').length>0) fk_user = $('#fk_user').val();
 					else  fk_user = $('#fk_user_absence').val() ; 
+					
 				
 					$.ajax({
 						url: 'script/chargerCompteurDemandeAbsence.php?user='+fk_user
@@ -230,26 +237,32 @@
 			}
 			
 			function loadRecapAbsence() {
-				
 					if($('#fk_user').length>0) fk_user = $('#fk_user').val();
 					else  fk_user = $('#fk_user_absence').val() ; 
-				
+					
 					$.ajax({
 						url: 'script/chargerRecapAbsenceUser.php?idUser='+fk_user
 						,dataType:'json'
 					}).done(function(liste) {
-						$('#TRecapAbs').html('');
-						for (var i=0; i<liste.length; i++){
-							var texte = "<tr>"
-								+"<td>"+liste[i].date_debut+"</td>"
-								+"<td>"+liste[i].date_fin+"</td>"
-								+"<td>"+liste[i].libelle+"</td>"
-								+"<td>"+liste[i].libelleEtat+"</td>"
-								+"</tr>";
-							$('#TRecapAbs').html($('#TRecapAbs').html()+texte);
-						}
+							$('#TRecapAbs').html('');
+							
+						
+							for (var i=0; i<liste.length; i++){
+								var texte = "<tr>"
+									+"<td>"+liste[i].date_debut+"</td>"
+									+"<td>"+liste[i].date_fin+"</td>"
+									+"<td>"+liste[i].libelle+"</td>"
+									+"<td>"+liste[i].duree+"</td>"
+									+"<td>"+liste[i].congesAvant+"</td>"
+									+"<td>"+liste[i].libelleEtat+"</td>"
+									+"</tr>";
+								$('#TRecapAbs').html($('#TRecapAbs').html()+texte);
+							}
+						
+						
 					});
 				
+
 				
 			}
 			
@@ -270,4 +283,7 @@
 				loadRecapAbsence()
 		});
 		</script>
+
+
+
 
