@@ -27,7 +27,7 @@ if(isset($_REQUEST['idUser'])) {
 			
 			$TRecap[$k]['duree']=($duree>0) ? round($duree,2) : '';
 			
-			$TRecap[$k]['congesAvant']=($duree>0 && ($ATMdb->Get_field('type')=='conge' || $ATMdb->Get_field('type')=='cppartiel' )) ? round($congesAvant,2) : '';
+			$TRecap[$k]['congesAvant']=($duree>0 && ($ATMdb->Get_field('type')=='conges' || $ATMdb->Get_field('type')=='cppartiel' )) ? round($congesAvant,2) : '';
 			
 			$k++;
 		}
