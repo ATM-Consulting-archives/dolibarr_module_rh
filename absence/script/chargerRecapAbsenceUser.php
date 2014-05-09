@@ -2,14 +2,14 @@
 require('../config.php');
 require('../lib/absence.lib.php');
 require('../class/absence.class.php');
-global $conf,$user;
+
 
 if(isset($_REQUEST['idUser'])) {
 		
 		$ATMdb =new TPDOdb;
 		global $conf;
 		$sql="SELECT DATE_FORMAT(date_debut, '%d/%m/%Y') as 'dateD', 
-		DATE_FORMAT(date_fin, '%d/%m/%Y')  as 'dateF', libelle, libelleEtat,etat, duree ,rowid
+		DATE_FORMAT(date_fin, '%d/%m/%Y')  as 'dateF', libelle, libelleEtat,etat, duree ,rowid,type
 		FROM `".MAIN_DB_PREFIX."rh_absence` WHERE fk_user=".$_REQUEST['idUser']." 
 		ORDER BY date_debut DESC LIMIT 0,10";
 		
@@ -23,10 +23,11 @@ if(isset($_REQUEST['idUser'])) {
 			$TRecap[$k]['libelleEtat']=$ATMdb->Get_field('libelleEtat');
 			
 			$duree  =$ATMdb->Get_field('duree');
-			$congesAvant = getHistoryCompteurForUser($_REQUEST['idUser'],$ATMdb->Get_field('rowid'), $duree, $ATMdb->Get_field('etat') );
+			$congesAvant = getHistoryCompteurForUser($_REQUEST['idUser'],$ATMdb->Get_field('rowid'), $duree, $ATMdb->Get_field('type'), $ATMdb->Get_field('etat') );
 			
 			$TRecap[$k]['duree']=($duree>0) ? round($duree,2) : '';
-			$TRecap[$k]['congesAvant']=($duree>0) ? round($congesAvant,2) : '';
+			
+			$TRecap[$k]['congesAvant']=($duree>0 && ($ATMdb->Get_field('type')=='conges' || $ATMdb->Get_field('type')=='cppartiel' )) ? round($congesAvant,2) : '';
 			
 			$k++;
 		}
