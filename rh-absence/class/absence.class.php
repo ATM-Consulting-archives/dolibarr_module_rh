@@ -1972,7 +1972,25 @@ class TRH_JoursFeries extends TObjetStd {
 		
 		return 0;
 	}
-	
+	static function estFerie(&$ATMdb, $date) {
+		global $conf;
+		//on récupère toutes les dates de jours fériés existant
+		$sql="SELECT count(*) as 'nb'  FROM ".MAIN_DB_PREFIX."rh_absence_jours_feries
+			 WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")
+			 AND  date_jourOff=".$ATMdb->quote($date);
+			 
+		$ATMdb->Execute($sql);
+		$obj = $ATMdb->Get_line();
+			
+		//on teste si l'un d'eux est égal à celui que l'on veut créer
+		if($obj->nb > 0){
+			return true;	
+		}
+		
+		return false;
+		
+		
+	}
 }
 
 //définition de la classe pour la gestion des règles
