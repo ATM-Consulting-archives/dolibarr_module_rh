@@ -123,7 +123,7 @@ function _conges(&$ATMdb, $userId, $date_debut, $date_fin){
 	FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as a
 		LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user = u.rowid)
 	WHERE a.entity IN (0,".$conf->entity.")
-	AND a.fk_user=".$userId;
+	AND a.fk_user=".$userId." AND a.is_archive!=1";
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
