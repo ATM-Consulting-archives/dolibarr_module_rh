@@ -225,7 +225,7 @@ function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup,
 	$sql="SELECT DISTINCT a.rowid
 			FROM ".MAIN_DB_PREFIX."rh_absence as a INNER JOIN ".MAIN_DB_PREFIX."user  as u ON (u.rowid=a.fk_user)
 					LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (u.rowid=g.fk_user)
-							LEFT JOIN ".MAIN_DB_PREFIX."rh_absence_emploitemps as e ON (e.fk_user=u.rowid)
+							LEFT JOIN ".MAIN_DB_PREFIX."rh_absence_emploitemps as e ON (e.fk_user=u.rowid AND e.is_archive=1)
 			WHERE a.date_debut<='". date("Y-m-d H:i:s", $t_fin_export)."' 
 			AND a.date_fin>='".date("Y-m-d H:i:s", $t_debut_export)."'
 			AND a.etat LIKE 'Validee' AND a.code!=''

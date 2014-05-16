@@ -5,7 +5,7 @@
 	
 	$langs->load('absence@absence');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$emploiTemps=new TRH_EmploiTemps;
 
 	if(isset($_REQUEST['action'])) {
@@ -31,9 +31,46 @@
 				$mesg = '<div class="ok">Demande enregistrée</div>';
 				_fiche($ATMdb, $emploiTemps,'view');
 				break;
+			case 'archive':
+				if(GETPOST('id','int')>0) $emploiTemps->load($ATMdb, GETPOST('id','int'));
+				else $emploiTemps->loadByuser($ATMdb, GETPOST('fk_user','int'));
+				
+				$emploiTempsArchive = clone $emploiTemps;
+				
+				$ATMdb->Execute("SELECT MAX(date_fin) as date_fin 
+					FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps WHERE fk_user=".$emploiTemps->fk_user." AND is_archive=1");
+				$row = $ATMdb->Get_line();
+				if($row) {
+					$emploiTempsArchive->date_debut = strtotime($row->date_fin);
+				}
+				$emploiTempsArchive->date_fin = time();
+				
+				$emploiTempsArchive->rowid=0;
+				$emploiTempsArchive->is_archive=1;
+				
+				$emploiTempsArchive->save($ATMdb);
+				setEventMessage("Emploi du temps archivé");
+				
+				_fiche($ATMdb, $emploiTemps,'view');
+				
+				break;
+			case 'deleteArchive':
+				
+				$emploiTempsArchive=new TRH_EmploiTemps;
+				$emploiTempsArchive->load($ATMdb, GETPOST('idArchive','int'));
+				$emploiTempsArchive->delete($ATMdb);
+				
+				setEventMessage("Archive d'emploi du temps supprimée");
+				
+				if(GETPOST('id','int')>0) $emploiTemps->load($ATMdb, GETPOST('id','int'));
+				else $emploiTemps->loadByuser($ATMdb, GETPOST('fk_user','int'));
+				_fiche($ATMdb, $emploiTemps,'view');
+				
+				break;	
 			
 			case 'view':
-					$emploiTemps->loadByuser($ATMdb, $_REQUEST['fk_user']);
+					if(GETPOST('id','int')>0) $emploiTemps->load($ATMdb, GETPOST('id','int'));
+					else $emploiTemps->loadByuser($ATMdb, GETPOST('fk_user','int'));
 					_fiche($ATMdb, $emploiTemps,'view');
 				break;
 
@@ -44,16 +81,11 @@
 	}
 	else {
 		if($user->rights->absence->myactions->voirTousEdt){
-			$emploiTemps->load($ATMdb, $_REQUEST['fk_user']);
+			$emploiTemps->loadByuser($ATMdb, $_REQUEST['fk_user']);
 			_liste($ATMdb, $emploiTemps);
 		}else{
-			//on récupère les infos de l'edt de l'utilisateur courant
-			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
-			WHERE entity IN (0,".$conf->entity.") AND fk_user=".$user->id;
-			$ATMdb->Execute($sql);
-			if($ATMdb->Get_line()) {
-						$emploiTemps->load($ATMdb, $ATMdb->Get_field('rowid'));
-			}
+
+			$emploiTemps->loadByuser($ATMdb, $user->id);
 			_fiche($ATMdb, $emploiTemps,'view');
 		}
 		
@@ -69,26 +101,12 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	getStandartJS();
 	print dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence');
 	
-	/*$sql=" SELECT DISTINCT u.fk_user FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u 
-			WHERE v.fk_user=".$user->id." 
-			AND v.type='Conges'
-			AND v.fk_usergroup=u.fk_usergroup
-			AND v.entity IN (0,".$conf->entity.")";
-		
-	$ATMdb->Execute($sql);
-	$TabUser=array();
-	$k=0;
-	while($ATMdb->Get_line()) {
-				$TabUser[]=$ATMdb->Get_field('fk_user');
-				$k++;
-	}*/
-	
 	$r = new TSSRenderControler($emploiTemps);
 	$sql="SELECT DISTINCT e.rowid as 'ID', e.date_cre as 'DateCre', 
-	 e.fk_user as 'Id Utilisateur', '' as 'Emploi du temps', u.login,
-	u.firstname, u.name, '' as '','' as ''
+	 e.fk_user as 'Id Utilisateur', '' as 'Emploi du temps', u.login
+	,u.rowid as 'fk_user',u.firstname, u.name
 		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."user as u
-		WHERE e.entity IN (0,".$conf->entity.") AND u.rowid=e.fk_user ";
+		WHERE e.entity IN (0,".$conf->entity.") AND e.is_archive=0 AND u.rowid=e.fk_user ";
 
 	if($user->rights->absence->myactions->voirTousEdt!="1"){
 		$sql.=" AND e.fk_user=".$user->id;
@@ -134,7 +152,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 			,'login'=>true
 		)
 		,'eval'=>array(
-				'name'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+				'name'=>'_getNomUrl(@fk_user@, "@val@")'
 				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		
@@ -142,6 +160,15 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	$form->end();
 	llxFooter();
 }	
+function _getNomUrl($fk_user,$nom) {
+global $db;
+	$user=new User($db);
+	
+	$user->id = $fk_user;
+	$user->lastname=$nom;
+	
+	return $user->getNomUrl(1);
+}
 	
 function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	global $db,$user,$idUserCompt, $idComptEnCours,$conf;
@@ -153,15 +180,9 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	echo $form->hidden('action', 'save');
 	echo $form->hidden('fk_user', $emploiTemps->fk_user);
 
-	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$emploiTemps->fk_user;
-	$ATMdb->Execute($sql);
-	$userCourant=array();
-	while($ATMdb->Get_line()) {
-				
-				$userCourant['firstname']=$ATMdb->Get_field('firstname');
-				$userCourant['name']=$ATMdb->Get_field('name');
-	}
-	
+
+	$userCourant=new User($db);
+	$userCourant->fetch($emploiTemps->fk_user);
 	
 	$TPlanning=array();
 	foreach($emploiTemps->TJour as $jour) {
@@ -173,7 +194,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	$THoraire=array();
 	foreach($emploiTemps->TJour as $jour) {
 		foreach(array('dam','fam','dpm','fpm') as $pm) {
-			$THoraire[$jour.'_heure'.$pm]=$form->texte('','date_'.$jour.'_heure'.$pm, date('H:i',$emploiTemps->{'date_'.$jour.'_heure'.$pm}) ,5,5);
+			$THoraire[$jour.'_heure'.$pm]=$form->timepicker('','date_'.$jour.'_heure'.$pm, date('H:i',$emploiTemps->{'date_'.$jour.'_heure'.$pm}) ,5,5);
 		}
 	} 
 
@@ -181,7 +202,35 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	$TEntity=$emploiTemps->load_entities($ATMdb);
 	//print_r($TEntity);exit;
 	
-	//echo "salut".$user->rights->absence->myactions->modifierSonEdt;
+	$r=new TListviewTBS('listArchive');
+	$listeArchive = $r->render($ATMdb, "SELECT
+	 	rowid as ID, date_debut,date_fin,tempsHebdo, '' as 'Actions'
+	 FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps 
+	 WHERE fk_user=".$userCourant->id." AND is_archive=1 ORDER BY date_debut DESC",array(
+	 
+	 	'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
+		,'translate'=>array(
+			'date_debut'=>array('30/11/-0001'=>'-')
+			,'date_fin'=>array('30/11/-0001'=>'-')
+		)		
+		,'link'=>array(
+			'Actions'=>'
+			<a href="?id=@ID@&action=edit">Modifier</a>
+			<a href="?id='.$emploiTemps->getId().'&idArchive=@ID@&action=deleteArchive">Supprimer</a>'
+		)
+		,'title'=>array(
+			'date_debut'=>'Début'
+			,'date_fin'=>'Fin'
+			,'tempsHebdo'=>'Temps de travail hedmadaire en heure'
+		)
+		
+	 ));
+	
+	$TEmploiTemps = $emploiTemps->get_values();
+	
+	$TEmploiTemps['date_debut'] = $form->calendrier('', 'date_debut', $emploiTemps->get_date('date_debut')  );
+	$TEmploiTemps['date_fin'] = $form->calendrier('', 'date_fin',  $emploiTemps->get_date('date_fin'));
+	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/emploitemps.tpl.php'
 		,array(	
@@ -189,6 +238,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 		,array(
 			'planning'=>$TPlanning
 			,'horaires'=>$THoraire
+			,'emploiTemps'=>$TEmploiTemps
 			,'userCourant'=>array(
 				'id'=>$userCourant->id
 				,'tempsHebdo'=>$emploiTemps->tempsHebdo
@@ -201,7 +251,8 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence')
 				,'compteur_id'=>$emploiTemps->getId()
-				,'titreEdt'=>load_fiche_titre("Emploi du temps de ".htmlentities($userCourant['firstname'], ENT_COMPAT , 'ISO8859-1')." ".htmlentities($userCourant['name'], ENT_COMPAT , 'ISO8859-1'),'', 'title.png', 0, '')
+				,'titreEdt'=>load_fiche_titre("Emploi du temps de ".htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')." ".htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1'),'', 'title.png', 0, '')
+				,'listeArchive'=>$listeArchive
 			)
 			,'droits'=>array(
 				'modifierEdt'=>$user->rights->absence->myactions->modifierEdt
