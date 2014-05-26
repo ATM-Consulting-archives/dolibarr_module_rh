@@ -1750,6 +1750,8 @@ class TRH_EmploiTemps extends TObjetStd {
 		
 		parent::_init_vars();
 		parent::start();	
+
+		$this->is_archive=0;
 	}
 	
 	function loadByuser(&$ATMdb, $id_user) {
