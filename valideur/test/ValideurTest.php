@@ -31,7 +31,8 @@ require('../lib/valideur.lib.php');
 require('../class/valideur.class.php');
 require('../class/analytique_user.class.php');
 require('../class/actions_valideur.class.php');
-require(ROOT.'/custom/ndfp/class/ndfp.class.php');
+
+dol_include_once('/ndfp/class/ndfp.class.php');
 
 $ATMdb=new TPDOdb;
 $valideur=new TRH_valideur_groupe;

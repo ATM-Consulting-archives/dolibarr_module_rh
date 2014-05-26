@@ -4,8 +4,10 @@
  * Script envoyant un mail au validateur chaque jour si besoin pour le notifier des notes de frais à valider
  * 
  */
+ 	chdir(__DIR__);
+ 
  	define('INC_FROM_CRON_SCRIPT', true);
-	require('/var/www/dolibarr-rh/htdocs/custom/valideur/config.php');
+	require('../../config.php');
 	
 	
 	$ATMdb=new TPDOdb;
