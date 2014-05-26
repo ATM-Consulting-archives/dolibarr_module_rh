@@ -84,8 +84,17 @@
 	[onshow;block=begin;when [view.mode]=='edit']
 		<br/><br/>
 		<b style="margin-left:320px;">Veuillez respecter le format HH:MM pour les horaires</b>
+		
+		
+		
 	[onshow;block=end]
-	<br/><br/><br>
+	
+			
+	<br/><br /><div>[onshow;block=div;when [emploiTemps.is_archive]==1]
+			Début : [emploiTemps.date_debut;strconv=no] - Fin : [emploiTemps.date_fin;strconv=no]
+		</div>
+			
+	<br/><br>
 	Temps total de travail hebdomadaire : [userCourant.tempsHebdo;strconv=no;protect=no]h<br>
 	Société : [entity.TEntity;strconv=no;protect=no]
 	
@@ -102,7 +111,13 @@
 			[onshow;block=begin;when [droits.modifierEdt]=='1']
 			<div class="tabsAction" >
 				<a class="butAction"  href="?id=[view.compteur_id]&action=edit">Modifier</a>
+				<a class="butAction"  href="?id=[view.compteur_id]&action=archive">[onshow;block=a;when [emploiTemps.is_archive]==0]Archiver</a>
 			</div>
+			
+			<div>[onshow;block=div;when [emploiTemps.is_archive]==0]
+			[view.listeArchive;strconv=no]
+			</div>
+			
 			[onshow;block=end]
 	[onshow;block=end]
 	

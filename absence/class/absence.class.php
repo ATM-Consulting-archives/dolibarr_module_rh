@@ -743,7 +743,7 @@ class TRH_Absence extends TObjetStd {
 		,CONCAT(HOUR(date_dimanche_heurefpm) ,':' , MINUTE(date_dimanche_heurefpm)) as	date_dimanche_heurefpm	
 		, tempsHebdo
 		FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` 
-		WHERE fk_user=".$absence->fk_user;  
+		WHERE fk_user=".$absence->fk_user." AND is_archive!=1";  
 //print $sql;
 		$ATMdb->Execute($sql);
 		$TTravail = array();
@@ -1744,21 +1744,17 @@ class TRH_EmploiTemps extends TObjetStd {
 		parent::add_champs('fk_user','type=entier;index;');	//utilisateur concerné
 		parent::add_champs('tempsHebdo','type=float;');
 		parent::add_champs('societeRtt','type=chaine;');
-		parent::add_champs('entity','type=int;index;');
+		parent::add_champs('entity,is_archive','type=int;index;');
+		
+		parent::add_champs('date_debut,date_fin', array('type'=>'date'));
 		
 		parent::_init_vars();
 		parent::start();	
 	}
 	
 	function loadByuser(&$ATMdb, $id_user) {
-		$res = TRequeteCore::get_id_from_what_you_want($ATMdb, $this->get_table(), array('fk_user'=> $id_user));
-		if(!empty($res)) {
-			return $this->load($ATMdb, $res[0]);
-			
-		}
-		else {
-			return false;
-		}
+		return $this->load_by_fkuser($ATMdb, $id_user); // TODO remove double
+		
 		
 	}
 
@@ -1864,18 +1860,37 @@ class TRH_EmploiTemps extends TObjetStd {
 	
 
 	//fonction permettant le chargement de l'emploi du temps d'un user si celui-ci existe	
-	function load_by_fkuser(&$ATMdb, $fk_user){
-		global $conf;
-		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
-		WHERE fk_user=".$fk_user;
+	function load_by_fkuser(&$ATMdb, $fk_user, $date=''){
 		
-		$ATMdb->Execute($sql);
 		
-		if($ATMdb->Get_line()) {
-			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		if(!empty($date)) {
+			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
+			WHERE fk_user=".$fk_user." AND is_archive=1 AND DATE_FORMAT(date_debut,'%Y-%m-%d') <='$date' AND DATE_FORMAT(date_fin,'%Y-%m-%d')>='$date'";
+			//print $sql;
+			$ATMdb->Execute($sql);
+			if($row = $ATMdb->Get_line()) {
+				
+				$id = $row->rowid;
+				
+			}
 			
 		}
-		return false;
+		
+		if(empty($date) || empty($id)) {
+			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
+			WHERE fk_user=".$fk_user." AND is_archive!=1";
+			
+			$ATMdb->Execute($sql);
+		
+			if($ATMdb->Get_line()) {
+				$id = $ATMdb->Get_field('rowid');	
+			}
+			
+		}
+				
+		if(!empty($id)) return $this->load($ATMdb, $id);
+		else return false;
+		
 	}
 	
 	function getHeures($date) {
@@ -1897,6 +1912,22 @@ class TRH_EmploiTemps extends TObjetStd {
 		
 		return ($this->{"date_".$current_day."_heuref".$periode} - $this->{"date_".$current_day."_heured".$periode}) / 3600;
 	}	
+	
+	static function estTravaille(&$ATMdb, $id_user, $date) {
+		
+		$e=new TRH_EmploiTemps;
+		$e->load_by_fkuser($ATMdb, $id_user, $date);
+		
+		$iJour = (int)date('N', strtotime($date)) - 1 ; 	
+		
+		$jour = $e->TJour[$iJour];
+		
+		if($e->{$jour.'am'} && $e->{$jour.'pm'})return 'OUI';
+		else if($e->{$jour.'am'}) return 'AM';
+		else if($e->{$jour.'pm'}) return 'PM';
+		else return 'NON';
+		
+	}
 	
 }
 

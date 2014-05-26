@@ -30,7 +30,7 @@ class ActionsAbsence
 			}
 		}
 		// A la création d'un nouvel utilisateur, on lui affecte un compteur initial et un emploi du temps
-		
+		// TODO Object !
 		$sqlcompteur="INSERT INTO ".MAIN_DB_PREFIX."rh_compteur (rowid, date_cre, entity, fk_user, acquisExerciceN, 
 		acquisAncienneteN, acquisHorsPeriodeN, anneeN, acquisExerciceNM1, acquisAncienneteNM1, acquisHorsPeriodeNM1, reportCongesNM1, congesPrisNM1
 		,anneeNM1, rttTypeAcquisition, rttAcquisMensuelInit, rttAcquisAnnuelCumuleInit, rttAcquisAnnuelNonCumuleInit
