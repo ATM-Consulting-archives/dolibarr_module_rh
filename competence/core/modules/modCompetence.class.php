@@ -129,7 +129,7 @@ class modCompetence extends DolibarrModules
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
         $this->tabs = array(
         	'user:+competence:Formations et expériences:competence@competence:/competence/experience.php?fk_user=__ID__'  // To add a new tab identified by code tabname1
-            ,'user:+remuneration:Rémunérations:competence@competence:/competence/remuneration.php?fk_user=__ID__'
+            ,'user:+remuneration:Rémunérations:competence@competence:$user->rights->curriculumvitae->myactions->voirRemuneration:/competence/remuneration.php?fk_user=__ID__'
        	);
 
         // Dictionnaries
@@ -199,6 +199,15 @@ class modCompetence extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'gererDif';
 		$r++;
+	
+		$this->rights[$r][0] = 7956;
+		$this->rights[$r][1] = 'Consulter sa rémunération';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'voirRemuneration';
+		$r++;
+		
+	
 		
 		// Permissions
 		/*$this->rights = array();		// Permission array used by this module
