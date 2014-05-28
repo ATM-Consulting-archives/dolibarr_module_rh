@@ -59,7 +59,7 @@ class modCompetence extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Gestion des expériences, formations et compétences";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';
+		$this->version = '1.0';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -285,7 +285,7 @@ class modCompetence extends DolibarrModules
 					'user'=> 2
         );
 		$r++;
-		
+	/*	
 		$this->menu[$r]=array(
 			            'fk_menu'=>'fk_mainmenu=competence',			// Put 0 if this is a top menu
 			        	'type'=> 'left',			// This is a Top menu entry
@@ -332,7 +332,7 @@ class modCompetence extends DolibarrModules
 						'user'=> 2	// 0=Menu for internal users, 1=external users, 2=both
         );
 		$r++;
-		
+		*/
 
 		// Add here entries to declare new menus
 		//
