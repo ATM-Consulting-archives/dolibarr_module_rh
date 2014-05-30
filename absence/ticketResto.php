@@ -1,0 +1,265 @@
+<?php
+	require('config.php');
+	dol_include_once('/absence/class/absence.class.php');
+	dol_include_once('/absence/class/ticket.class.php');
+	
+	dol_include_once('/absence/lib/absence.lib.php');
+	
+	$langs->load('absence@absence');
+	
+	$ATMdb=new TPDOdb;
+	$absence=new TRH_Absence;
+
+	switch(__get('action')) {
+		case 'GEN_TR' :
+		
+			_generate_ticket_resto($ATMdb, $_POST['TTicket']);
+			
+			break;
+		default:
+		_planningResult($ATMdb,$absence, 'edit');	
+	}
+
+
+	
+	
+	$ATMdb->close();
+	
+	llxFooter();
+	
+function _generate_ticket_resto(&$ATMdb, $Tab) {
+	
+	header('Content-type: application/octet-stream');
+    header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.csv');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+
+	print "Code produit;Code Client;Point de livraison;Niveau 1;Niveau 2;Matricule;Nom Salarié;Edition nom sur couverture;Edition nom sur titre;Valeur faciale en centimes;Part patronale en centimes;Nombre de titre;Raison Sociale;Code Postal;Ville;RS sur carnet;CP et Ville sur carnet;Date de livraison;\n";
+	
+	foreach($Tab as $fk_user=>$row) {
+		
+		print implode(';',array(
+			50
+			,''
+			,''
+			,''
+			,''
+			,''
+			
+		
+		))."\n";
+		
+	}
+	//50;;;;;;;O/N;O/N;700;350;;??;;;O/N;O/N;*/
+	
+}
+	
+function _planningResult(&$ATMdb, &$absence, $mode) {
+	global $langs, $conf, $db, $user;	
+	llxHeader('','Récapitulatif');
+	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Planning');
+
+	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formPlanning','GET');
+	$form->Set_typeaff($mode);
+	/*echo $form->hidden('fk_user', $user->id);
+	echo $form->hidden('entity', $conf->entity);
+	*/
+	$date_debut=time();
+	$date_fin=strtotime('+7day');
+	$idGroupeRecherche=0;
+	$idUserRecherche=0;
+	
+	if(isset($_REQUEST['groupe'])) $idGroupeRecherche=$_REQUEST['idGroupeRecherche'];
+	if(isset($_REQUEST['date_debut'])) $date_debut=$_REQUEST['date_debut'];
+	if(isset($_REQUEST['date_fin'])) $date_fin=$_REQUEST['date_fin'];
+	if(isset($_REQUEST['fk_user'])) $idUserRecherche=$_REQUEST['fk_user'];
+
+	$idGroupeRecherche=$_REQUEST['groupe'];
+	
+	
+	if($idGroupeRecherche!=0){	//	on recherche le nom du groupe
+		$sql="SELECT nom FROM ".MAIN_DB_PREFIX."usergroup
+		WHERE rowid =".$idGroupeRecherche;
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$nomGroupeRecherche=$ATMdb->Get_field('nom');
+		}
+	}else{
+		$nomGroupeRecherche='Tous';
+	}
+
+	$TGroupe  = array();
+	$TGroupe[0]  = 'Tous';
+	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
+	$ATMdb->Execute($sqlReq);
+	while($ATMdb->Get_line()) {
+		$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+	}
+	
+	$TUser=array('Tous');
+	$sql=" SELECT DISTINCT u.rowid, u.lastname, u.firstname 
+			FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON (u.rowid=ug.fk_user)
+			";
+
+	if($idGroupeRecherche>0) {
+		$sql.=" WHERE ug.fk_usergroup=".$idGroupeRecherche;
+	}
+
+	$sql.=" ORDER BY u.lastname, u.firstname";
+	//print $sql;
+	$ATMdb->Execute($sql);
+	while($ATMdb->Get_line()) {
+		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+	}
+	
+	$TStatPlanning=array();
+	
+	$TBS=new TTemplateTBS();
+	print $TBS->render('./tpl/planningUser.tpl.php'
+		,array(
+		)
+		,array(
+			'recherche'=>array(
+				'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche)
+				,'btValider'=>$form->btsubmit('Valider', 'valider')
+				,'TUser'=>$form->combo('','fk_user',$TUser,$idUserRecherche)
+				
+				,'date_debut'=> $form->calendrier('', 'date_debut', $date_debut, 12)
+				,'date_fin'=> $form->calendrier('', 'date_fin', $date_fin, 12)
+				,'titreRecherche'=>load_fiche_titre("Récapitulatif de la recherche",'', 'title.png', 0, '')
+				,'titrePlanning'=>load_fiche_titre("Planning des collaborateurs",'', 'title.png', 0, '')
+			)
+			,'userCourant'=>array(
+				'id'=>$fuser->id
+				,'nom'=>$fuser->lastname
+				,'prenom'=>$fuser->firstname
+				,'droitRecherche'=>$user->rights->absence->myactions->rechercherAbsence?1:0
+			)
+			,'view'=>array(
+				'mode'=>$mode
+				,'head'=>dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Planning')
+			)
+		)	
+	);
+	
+	
+	
+	?>
+	<div id="plannings" style="background-color:#fff">
+		
+	<style type="text/css">
+
+	table.planning tr td.jourTravailleNON {
+			background:url("./img/fond_hachure_01.gif");
+	}
+	table.planning tr td[rel=pm].jourTravailleAM {
+			background:url("./img/fond_hachure_01.gif");
+	}
+	table.planning tr td[rel=am].jourTravaillePM {
+			background:url("./img/fond_hachure_01.gif");
+	}
+
+	table.planning {
+		border-collapse:collapse; border:1px solid #ccc; font-size:9px;
+	}		
+	table.planning td {
+		border:1px solid #ccc;
+	}	
+	
+	table.planning tr:nth-child(even) {
+		background: #ddd;
+	}
+	table.planning tr:nth-child(odd) {
+		background: #fff;
+	}
+	
+	table.planning tr td.rouge{
+			background-color:#C03000;
+	}
+	table.planning tr td.rougeRTT {
+			background-color:#d87a00;
+	}
+	table.planning tr td.jourFerie {
+			background:none;
+			background-color:#666;
+	}
+	
+			
+	</style>
+	
+	<?
+	
+	echo $form->end_form();
+	
+	_ticket($ATMdb);
+	
+	
+	
+	?></div>
+	
+	
+	<?
+	
+	global $mesg, $error;
+	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	llxFooter();
+	
+}	
+
+function _ticket(&$ATMdb) {
+global $db;	
+	
+	$form=new TFormCore('auto', 'formTR', 'POST');
+	echo $form->hidden('action', 'GEN_TR');
+	
+	print '<table class="planning" border="0">';
+	print "<tr class=\"entete\">";
+	
+	$date_debut = date('Y-m-d', Tools::get_time( __get('date_debut' )));
+	$date_fin = date('Y-m-d', Tools::get_time( __get('date_fin' )));
+	
+	
+	
+	$TTicketResto = TRH_TicketResto::getTicketFor($ATMdb, $date_debut, $date_fin, __get('groupe', 0, 'int'), __get('fk_user', 0, 'int'));
+//var_dump($TTicketResto);
+	$first=true;
+
+	foreach($TTicketResto as $idUser=>$stat) {
+		$u=new User($db);
+		$u->fetch($idUser);
+		
+		
+		if($first) {
+			
+			?><tr>
+				<td>Nom</td>
+				<td>Présence (jour complet)</td>
+				<td>Repas passé en NdF (sur jour complet de présence)</td>
+				<td>Nombre de ticket restaurant</td>
+			</tr><?php 
+			
+			$first = false;
+		}
+		
+		?><tr><td>
+			<?php echo $u->getNomUrl() ?>		
+		</td>
+		<td align="right"><?php echo $stat['presence'] ?></td>
+		<td align="right"><?php echo $stat['ndf'] ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?></td>
+		</tr>
+		<?php
+		
+		
+	}
+	
+
+	?></table><br /><?php
+	
+	echo $form->btsubmit('Générer le fichier', 'Générer');
+	
+	$form->end();
+
+}
+
+

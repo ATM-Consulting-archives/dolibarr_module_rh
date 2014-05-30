@@ -1519,8 +1519,53 @@ class TRH_Absence extends TObjetStd {
 		return false;
 	}
 	
+	static function getPlanning(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin){
+			
+			$abs = new TRH_Absence;
+			
+			$t_current = strtotime($date_debut);
+			$t_end = strtotime($date_fin);
+			
+			while($t_current<=$t_end) {
+				/*
+				 * <td>Présence (jour)</td>
+				<td>Absence (jour)</td>
+				<td>Férié (jour)</td>
+				<td>Repas passé en NdF (jour)</td>
+				<td>Nombre de ticket restaurant</td>
+				 * 
+				 */
+				$TPlanning = $abs->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, date('d/m/Y', $t_current), date('d/m/Y', $t_current));
+				
+				
+				list($dt, $TAbsence) = each($TPlanning);
+				
+				foreach($TAbsence as $fk_user=>$ouinon) {
+					
+					$date = date('Y-m-d', $t_current);
+					
+					$estUnJourTravaille = TRH_EmploiTemps::estTravaille($ATMdb, $fk_user, $date);
+					$estFerie = TRH_JoursFeries::estFerie($ATMdb, $date);
+					
+					@$Tab[$fk_user][$date]['presence_jour_entier'] = (int)($estUnJourTravaille=='OUI' && !$estFerie) ;
+					@$Tab[$fk_user][$date]['presence'] = (int)($estUnJourTravaille!='NON' && !$estFerie) ;
+					@$Tab[$fk_user][$date]['absence'] = (int)($ouinon!='non' && !$estFerie) ;
+					@$Tab[$fk_user][$date]['ferie'] = (int)$estFerie ;
+				}
+				
+				$t_current = strtotime('+1day', $t_current);
+				
+			}
+			
+			
+			return $Tab;
+				
+	}
+	
 	//fonction qui va renvoyer la requête sql de recherche pour le planning
 	function requetePlanningAbsence(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin){
+			// TODO cette fonction est une horreur, à recoder
+			
 		global $conf;
 		
 		

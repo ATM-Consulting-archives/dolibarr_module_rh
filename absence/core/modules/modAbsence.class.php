@@ -105,6 +105,9 @@ class modAbsence extends DolibarrModules
 			,array('RH_DATE_RTT_CLOTURE','chaine','28-02-2014','Ajouté par RH',1)
 			,array('RH_DATE_CONGES_CLOTURE','chaine','31-05-2014','Ajouté par RH',1)
 			,array('RH_JOURS_NON_TRAVAILLE','chaine','samedi,dimanche','Ajouté par RH',1)
+			,array('RH_MONTANT_TICKET_RESTO','chaine','7','Valeur de base des tickets restaurant',1)
+			,array('RH_PART_PATRON_TICKET_RESTO','chaine','50','Part patronnale en % des tickets restaurant',1)
+			,array('RH_NDF_TICKET_RESTO','chaine','30','id des dépenses ne donnant pas droit à des ticket resto',1)
 		); 
 
 		// Array to add new pages in new tabs
