@@ -10,14 +10,14 @@
 		<table class="border " style="width:200%;"  >
 				<tr>
 					<td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" > 
-				    Année N-1   </td> </div>
+				    Congés disponible <!-- Année N-1 -->  </td> </div>
 				</tr>
 				<tr>
 					<td>Utilisateur courant</td>
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
 				</tr>	
 				<tr>
-					<td>Acquis exercice</td>
+					<td>Acquis exercice ([congesPrec.dates])</td>
 					<td>[congesPrec.acquisEx;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
@@ -37,17 +37,17 @@
 					<td><b>[congesPrec.total;strconv=no;protect=no] </b></td>
 				</tr>
 				<tr>
-					<td>Congés pris</td>
+					<td>Congés pris et/ou posés</td>
 					<td>[congesPrec.congesPris;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td><b>Reste à prendre</b></td>
+					<td><b>Reste à prendre avant le [congesPrec.dateFin]</b></td>
 					<td><b>[congesPrec.reste;strconv=no;protect=no]</b></td>
 				</tr>
 
 				<tr>
 					<td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" > 
-						Année N    </td> 
+						Congés en cours d'acquisition  <!-- Année N -->   </td> 
 				</tr>
 				<tr>
 					<td>Acquis exercice</td>

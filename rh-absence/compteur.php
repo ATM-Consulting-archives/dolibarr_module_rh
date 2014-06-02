@@ -271,6 +271,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				$congePrec['congesPris']=$ATMdb->Get_field('congesPrisNM1');
 				$congePrec['annee']=$ATMdb->Get_field('anneeNM1');
 				$congePrec['fk_user']=$ATMdb->Get_field('fk_user');
+				$congePrec['date_congesCloture']=strtotime($ATMdb->Get_field('date_congesCloture'));
 				
 				
 				$congeCourant['id']=$ATMdb->Get_field('rowid');
@@ -361,6 +362,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'reste'=>round2Virgule($congePrecReste)
 				,'idUser'=>$congePrec->fk_user
 				,'user'=>$_REQUEST['id']?$_REQUEST['id']:$user->id
+				,'dates'=>date('d/m', strtotime('+1day' ,$congePrec['date_congesCloture']) ).' au '.date('d/m', $congePrec['date_congesCloture'] )
+				,'dateFin'=>date('d/m', $congePrec['date_congesCloture'] )
 			)
 			
 			,'congesCourant'=>array(
