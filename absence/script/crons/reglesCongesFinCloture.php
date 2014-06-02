@@ -37,10 +37,16 @@
 		////// 1er juin, tous les congés de l'année N sont remis à 0, et sont transférés vers le compteur congés N-1
 		$juin=date("dm");
 		if($juin==$dateMD){
-			//on transfère les jours N-1 non pris vers jours report
+			//on transfère les jours N-1 non pris vers jours report 
 			$sqlTransfert="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-				SET reportCongesNM1=acquisExerciceNM1+acquisAncienneteNM1+acquisHorsPeriodeNM1 
+				SET reportCongesNM1=(acquisExerciceNM1+acquisAncienneteNM1+acquisHorsPeriodeNM1-congesPrisNM1)  
 				WHERE fk_user =".$idUser;
+			$ATMdb->Execute($sqlTransfert);
+			
+			// suppression des jours non anticipé mais perdu
+			$sqlTransfert="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
+				SET reportCongesNM1=0, congesPrisNM1=0
+				WHERE fk_user =".$idUser." AND reportCongesNM1>0";
 			$ATMdb->Execute($sqlTransfert);
 			
 			//on transfère les jours acquis N vers N-1

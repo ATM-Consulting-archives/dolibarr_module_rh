@@ -28,6 +28,7 @@
 	llxFooter();
 	
 function _generate_ticket_resto(&$ATMdb, $Tab) {
+global $conf;
 	
 	header('Content-type: application/octet-stream');
     header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.csv');
@@ -38,19 +39,19 @@ function _generate_ticket_resto(&$ATMdb, $Tab) {
 	foreach($Tab as $fk_user=>$row) {
 		
 		print implode(';',array(
-			50
+			$conf->global->RH_CODEPRODUIT_TICKET_RESTO
+			,$conf->global->RH_CODECLIENT_TICKET_RESTO
 			,''
 			,''
 			,''
-			,''
-			,''
-			
+			,$conf->global->RH_MONTANT_TICKET_RESTO
+			,$conf->global->RH_PART_PATRON_TICKET_RESTO
 		
 		))."\n";
 		
 	}
 	//50;;;;;;;O/N;O/N;700;350;;??;;;O/N;O/N;*/
-	
+	exit;
 }
 	
 function _planningResult(&$ATMdb, &$absence, $mode) {
@@ -207,18 +208,24 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 }	
 
 function _ticket(&$ATMdb) {
-global $db;	
+global $db,$conf, $langs;	
 	
 	$form=new TFormCore('auto', 'formTR', 'POST');
 	echo $form->hidden('action', 'GEN_TR');
+
+	$t_debut = Tools::get_time( __get('date_debut',0 ));
+	$t_fin = Tools::get_time( __get('date_fin',0 ));
+	
+	$date_debut = date('Y-m-d', $t_debut);
+	$date_fin = date('Y-m-d', $t_fin);
+	
+	if($t_debut<0) return false;
+	
+	print "Du ".date('d/m/Y', $t_debut)." au ".date('d/m/Y', $t_fin);
+
 	
 	print '<table class="planning" border="0">';
 	print "<tr class=\"entete\">";
-	
-	$date_debut = date('Y-m-d', Tools::get_time( __get('date_debut' )));
-	$date_fin = date('Y-m-d', Tools::get_time( __get('date_fin' )));
-	
-	
 	
 	$TTicketResto = TRH_TicketResto::getTicketFor($ATMdb, $date_debut, $date_fin, __get('groupe', 0, 'int'), __get('fk_user', 0, 'int'));
 //var_dump($TTicketResto);
@@ -232,21 +239,40 @@ global $db;
 		if($first) {
 			
 			?><tr>
-				<td>Nom</td>
+				<td>Nom Salarié</td>
 				<td>Présence (jour complet)</td>
 				<td>Repas passé en NdF (sur jour complet de présence)</td>
-				<td>Nombre de ticket restaurant</td>
+				<td>Nombre de titre</td>
+				<td>Point de livraison</td>
+				<td>Point</td>
+				<td>Niveau 1</td>
+				<td>Niveau 2</td>
+				<td>Matricule</td>
+				<td>Edition nom sur couverture</td>
+				<td>Edition nom sur titre</td>
+				<td>Raison Sociale</td>
+				<td>Code Postal</td>
+				<td>Ville</td>
+				<td>RS sur carnet</td>
+				<td>CP et Ville sur carnet</td>
+				<td>Date de livraison</td>
 			</tr><?php 
 			
 			$first = false;
 		}
 		
 		?><tr><td>
-			<?php echo $u->getNomUrl() ?>		
+			<?php echo $form->texte('', 'TTicket['.$idUser.'][name]', $u->getFullName($langs), 10,255)  ?>		
 		</td>
 		<td align="right"><?php echo $stat['presence'] ?></td>
 		<td align="right"><?php echo $stat['ndf'] ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?> de <?php echo (int)$conf->global->RH_MONTANT_TICKET_RESTO ?> centimes</td>
+		
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', '', 10,255)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', '', 10,255)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', '', 10,255)  ?></td>
+		
+		
 		</tr>
 		<?php
 		
