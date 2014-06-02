@@ -38,15 +38,26 @@ global $conf;
 	
 	foreach($Tab as $fk_user=>$row) {
 		
+			
 		print implode(';',array(
 			$conf->global->RH_CODEPRODUIT_TICKET_RESTO
 			,$conf->global->RH_CODECLIENT_TICKET_RESTO
-			,''
-			,''
-			,''
+			,$row['pointlivraison']
+			,$row['niveau1']
+			,$row['niveau2']
+			,$row['matricule']
+			,$row['name']
+			,$row['nomcouv']
+			,$row['nomtitre']
 			,$conf->global->RH_MONTANT_TICKET_RESTO
-			,$conf->global->RH_PART_PATRON_TICKET_RESTO
-		
+			,($conf->global->RH_MONTANT_TICKET_RESTO * ($conf->global->RH_PART_PATRON_TICKET_RESTO / 100) )
+			,$row['nbTicket']
+			,$row['raisonsociale']
+			,$row['cp']
+			,$row['ville']
+			,$row['rscarnet']
+			,$row['cpcarnet']
+			,$row['date']
 		))."\n";
 		
 	}
@@ -228,8 +239,10 @@ global $db,$conf, $langs;
 	print "<tr class=\"entete\">";
 	
 	$TTicketResto = TRH_TicketResto::getTicketFor($ATMdb, $date_debut, $date_fin, __get('groupe', 0, 'int'), __get('fk_user', 0, 'int'));
-//var_dump($TTicketResto);
+//var_dump($conf);
 	$first=true;
+
+	$TON = array('O'=>'Oui', 'N'=>'Non');
 
 	foreach($TTicketResto as $idUser=>$stat) {
 		$u=new User($db);
@@ -244,7 +257,6 @@ global $db,$conf, $langs;
 				<td>Repas passé en NdF (sur jour complet de présence)</td>
 				<td>Nombre de titre</td>
 				<td>Point de livraison</td>
-				<td>Point</td>
 				<td>Niveau 1</td>
 				<td>Niveau 2</td>
 				<td>Matricule</td>
@@ -262,15 +274,24 @@ global $db,$conf, $langs;
 		}
 		
 		?><tr><td>
-			<?php echo $form->texte('', 'TTicket['.$idUser.'][name]', $u->getFullName($langs), 10,255)  ?>		
+			<?php echo $form->texte('', 'TTicket['.$idUser.'][name]', $u->getFullName($langs), 20,255)  ?>		
 		</td>
 		<td align="right"><?php echo $stat['presence'] ?></td>
 		<td align="right"><?php echo $stat['ndf'] ?></td>
 		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?> de <?php echo (int)$conf->global->RH_MONTANT_TICKET_RESTO ?> centimes</td>
 		
 		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', '', 10,255)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', '', 10,255)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', '', 10,255)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau1]', '', 10,255)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau2]', '', 10,255)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][matricule]', $u->array_options['options_COMPTE_TIERS'], 10,255)  ?></td>
+		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][nomcouv]', $TON , false)  ?></td>
+		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][nomtitre]', $TON , false)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][raisonsociale]', $conf->global->MAIN_INFO_SOCIETE_NOM , 10,255)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][cp]', $conf->global->MAIN_INFO_SOCIETE_ZIP, 5,255)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][ville]',$conf->global->MAIN_INFO_SOCIETE_TOWN, 10,255)  ?></td>
+		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][rscarnet]', $TON , false)  ?></td>
+		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][cpcarnet]', $TON , false)  ?></td>
+		<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date]', strtotime('+15day', $t_fin) )  ?></td>
 		
 		
 		</tr>
