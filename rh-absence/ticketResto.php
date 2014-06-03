@@ -267,7 +267,7 @@ global $db,$conf, $langs;
 	
 	$form=new TFormCore('auto', 'formTR', 'POST');
 	echo $form->hidden('action', 'GEN_TR');
-
+if(__get('date_debut')=='') return false;
 	$t_debut = Tools::get_time( __get('date_debut',0 ));
 	$t_fin = Tools::get_time( __get('date_fin',0 ));
 	
@@ -331,8 +331,8 @@ global $db,$conf, $langs;
 		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][nomcouv]', $TON , false)  ?></td>
 		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][nomtitre]', $TON , false)  ?></td>
 		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][raisonsociale]', $conf->global->MAIN_INFO_SOCIETE_NOM , 10,255)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][cp]', $conf->global->MAIN_INFO_SOCIETE_ZIP, 5,255)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][ville]',$conf->global->MAIN_INFO_SOCIETE_TOWN, 10,255)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][cp]', $conf->global->MAIN_INFO_SOCIETE_CP, 5,255)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][ville]',$conf->global->MAIN_INFO_SOCIETE_VILLE, 10,255)  ?></td>
 		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][rscarnet]', $TON , false)  ?></td>
 		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][cpcarnet]', $TON , false)  ?></td>
 		<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date_distribution]', strtotime('+15day', $t_fin) )  ?></td>
