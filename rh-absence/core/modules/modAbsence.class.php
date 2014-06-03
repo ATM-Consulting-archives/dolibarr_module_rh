@@ -85,7 +85,7 @@ class modAbsence extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
-		//$this->config_page_url = array("setuppage.php@absence");
+		$this->config_page_url = array("admin.php@absence");
 
 		// Dependencies
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
@@ -99,7 +99,19 @@ class modAbsence extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0)
 		// );
-		$this->const = array(); 
+		$this->const = array(
+			array('RH_DOL_ADMIN_USER','chaine','admin','Ajouté par RH',1)
+			,array('RH_USER_MAIL_SENDER','chaine','webmaster@atm-consulting.fr','Ajouté par RH',1)
+			,array('RH_DATE_RTT_CLOTURE','chaine','28-02-2014','Ajouté par RH',1)
+			,array('RH_DATE_CONGES_CLOTURE','chaine','31-05-2014','Ajouté par RH',1)
+			,array('RH_JOURS_NON_TRAVAILLE','chaine','samedi,dimanche','Ajouté par RH',1)
+			,array('RH_MONTANT_TICKET_RESTO','chaine','7','Valeur de base des tickets restaurant en centime',1)
+			,array('RH_PART_PATRON_TICKET_RESTO','chaine','50','Part patronnale en % des tickets restaurant',1)
+			,array('RH_NDF_TICKET_RESTO','chaine','30','id des dépenses ne donnant pas droit à des ticket resto',1)
+			,array('RH_CODEPRODUIT_TICKET_RESTO','chaine','789456','Code produit',1)
+			,array('RH_CODECLIENT_TICKET_RESTO','chaine','123456','Code Client',1)
+			
+		); 
 
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  // To add a new tab identified by code tabname1
@@ -299,6 +311,15 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'voirAbsenceRefusee';
 		
+		$r++;
+		$this->rights[$r][0] = 7121;
+		$this->rights[$r][1] = 'Gérer les tickets restaurants';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+		$this->rights[$r][5] = 'gererTicketRestaurant';
+		
+		
+		
 		
 		
 
@@ -436,7 +457,7 @@ class modAbsence extends DolibarrModules
 		        	'titre'=> $langs->trans('Pointeuse'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/pointeuse',
+					'url'=> '/absence/pointeuse.php',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 103,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -579,7 +600,21 @@ class modAbsence extends DolibarrModules
         );
 		
 		$r++;
-
+		$this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('Tickets resto'),
+		        	'mainmenu'=> '',
+		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/absence/ticketResto.php',
+					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 110,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '$user->rights->absence->myactions->gererTicketRestaurant',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
+		
 
 
 

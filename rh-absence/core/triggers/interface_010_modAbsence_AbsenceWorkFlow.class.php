@@ -78,19 +78,13 @@ class InterfaceAbsenceWorkflow
     function run_trigger($action, $object, $user, $langs, $conf)
     {
         global $db;
-			
-        $langs->load("other");
-        $langs->load('ndfp@ndfp');
-		
-		//$ATMdb=new Tdb;
-		 define('INC_FROM_DOLIBARR', true);
-         dol_include_once('/valideur/config.php');
-         dol_include_once('/valideur/lib/valideur.lib.php');
-		
-		
 		
 		if ($action == 'USER_CREATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
+			
+			 define('INC_FROM_DOLIBARR', true);
+	         dol_include_once('/valideur/config.php');
+	         dol_include_once('/valideur/lib/valideur.lib.php');
 			
 			/*$url = DOL_MAIN_URL_ROOT_ALT.'/absence/script/init-compteur.php';
 			file_get_contents( $url ); // création des compteur par défaut
