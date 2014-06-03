@@ -145,7 +145,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	}
 	
 	$TUser=array('Tous');
-	$sql=" SELECT DISTINCT u.rowid, u.lastname, u.firstname 
+	$sql=" SELECT DISTINCT u.rowid, u.name as lastname, u.firstname 
 			FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON (u.rowid=ug.fk_user)
 			";
 
@@ -153,7 +153,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		$sql.=" WHERE ug.fk_usergroup=".$idGroupeRecherche;
 	}
 
-	$sql.=" ORDER BY u.lastname, u.firstname";
+	$sql.=" ORDER BY u.name, u.firstname";
 	//print $sql;
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
@@ -179,7 +179,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id
-				,'nom'=>$fuser->lastname
+				,'nom'=>$fuser->name
 				,'prenom'=>$fuser->firstname
 				,'droitRecherche'=>$user->rights->absence->myactions->rechercherAbsence?1:0
 			)
@@ -283,7 +283,6 @@ global $db,$conf, $langs;
 	print '<tr class="entete">';
 	
 	$TTicketResto = TRH_TicketResto::getTicketFor($ATMdb, $date_debut, $date_fin, __get('groupe', 0, 'int'), __get('fk_user', 0, 'int'));
-
 	$first=true;
 
 	$TON = array('O'=>'Oui', 'N'=>'Non');
