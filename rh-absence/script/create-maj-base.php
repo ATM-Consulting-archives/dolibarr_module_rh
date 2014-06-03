@@ -8,6 +8,7 @@
 	require('../config.php');
 	require('../class/absence.class.php');
 	require('../class/pointeuse.class.php');
+	require('../class/ticket.class.php');
 	
 	$ATMdb=new Tdb;
 	$ATMdb->db->debug=true;
@@ -16,7 +17,9 @@
 	$o=new TRH_Pointeuse;
 	$o->init_db_by_vars($ATMdb);
 
-
+	$o=new TRH_TicketResto;
+	$o->init_db_by_vars($ATMdb);
+	
 	$o=new TRH_Compteur;
 	$o->init_db_by_vars($ATMdb);
 	
