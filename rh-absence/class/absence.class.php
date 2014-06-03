@@ -1757,6 +1757,8 @@ class TRH_EmploiTemps extends TObjetStd {
 		
 		parent::_init_vars();
 		parent::start();	
+
+		$this->is_archive=0;
 	}
 	
 	function loadByuser(&$ATMdb, $id_user) {
@@ -1900,6 +1902,21 @@ class TRH_EmploiTemps extends TObjetStd {
 		
 	}
 	
+	function getHeures($date) {
+				
+		$iJour = (int)date('N', strtotime($date)) - 1 ; 	
+		
+		$jour = $this->TJour[$iJour];
+	//	exit($date.' '.$iJour.' '.$jour);
+		return array(
+			$this->{"date_".$jour."_heuredam"}
+			,$this->{"date_".$jour."_heurefam"}
+			,$this->{"date_".$jour."_heuredpm"}
+			,$this->{"date_".$jour."_heurefpm"}
+		);
+		
+	}
+	
 	function getHeurePeriode($current_day,$periode){
 		
 		return ($this->{"date_".$current_day."_heuref".$periode} - $this->{"date_".$current_day."_heured".$periode}) / 3600;
@@ -1939,6 +1956,8 @@ class TRH_JoursFeries extends TObjetStd {
 		
 		$this->TFerie=array();
 		$this->TMoment=array('allday'=>'Toute La journée', 'matin'=>'Matin', 'apresmidi'=>'Après-midi');
+		
+		$this->moment = 'allday'; 		
 	}
 	
 	
