@@ -13,14 +13,22 @@
 	switch(__get('action')) {
 		case 'GEN_TR' :
 		
-			_generate_ticket_resto($ATMdb, $_POST['TTicket']);
+			if(isset($_POST['Archive'])) {
+				_archive_ticket_resto($ATMdb, $_POST['TTicket']);
+			}
+			else{
+				_generate_ticket_resto($ATMdb, $_POST['TTicket']);	
+			}
+			
 			
 			break;
-		default:
-		_planningResult($ATMdb,$absence, 'edit');	
+	
+		
 	}
 
 
+	_planningResult($ATMdb,$absence, 'edit');	
+	
 	
 	
 	$ATMdb->close();
@@ -57,14 +65,42 @@ global $conf;
 			,$row['ville']
 			,$row['rscarnet']
 			,$row['cpcarnet']
-			,$row['date']
+			,$row['date_distribution']
 		))."\n";
 		
 	}
+
 	//50;;;;;;;O/N;O/N;700;350;;??;;;O/N;O/N;*/
 	exit;
 }
 	
+function _archive_ticket_resto(&$ATMdb, $Tab) {
+global $conf;
+	
+		foreach($Tab as $fk_user=>$row) {
+		
+				$t=new TRH_TicketResto;
+				
+				$t->loadByUserDate($ATMdb, $fk_user, date('Y-m-d', Tools::get_time( $row['date_distribution'] )) );
+				
+				$t->set_values($row);
+				$t->fk_user=$fk_user;
+				
+				$t->montant=$conf->global->RH_MONTANT_TICKET_RESTO;
+				$t->partpatron=($conf->global->RH_MONTANT_TICKET_RESTO * ($conf->global->RH_PART_PATRON_TICKET_RESTO / 100) );
+				$t->entity = $conf->entity;
+				
+				$t->code_produit = $conf->global->RH_CODEPRODUIT_TICKET_RESTO;
+				$t->code_client = $conf->global->RH_CODECLIENT_TICKET_RESTO;
+				
+				$t->save($ATMdb);
+		
+		}
+
+	setEventMessage("Envoi ticket archivé");
+
+}
+		
 function _planningResult(&$ATMdb, &$absence, $mode) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('','Récapitulatif');
@@ -203,7 +239,15 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	
 	echo $form->end_form();
 	
-	_ticket($ATMdb);
+	switch(__get('action')) {
+		
+		case 'HISTORY':
+			_show_history($ATMdb, __get('fk_user'));
+			
+			break;
+		default:
+			_ticket($ATMdb);			
+	}
 	
 	
 	
@@ -236,10 +280,10 @@ global $db,$conf, $langs;
 
 	
 	print '<table class="planning" border="0">';
-	print "<tr class=\"entete\">";
+	print '<tr class="entete">';
 	
 	$TTicketResto = TRH_TicketResto::getTicketFor($ATMdb, $date_debut, $date_fin, __get('groupe', 0, 'int'), __get('fk_user', 0, 'int'));
-//var_dump($conf);
+
 	$first=true;
 
 	$TON = array('O'=>'Oui', 'N'=>'Non');
@@ -273,9 +317,10 @@ global $db,$conf, $langs;
 			$first = false;
 		}
 		
-		?><tr><td>
-			<?php echo $form->texte('', 'TTicket['.$idUser.'][name]', $u->getFullName($langs), 20,255)  ?>		
-		</td>
+		?><tr>
+		<td nowrap="nowrap"><?php echo $form->texte('', 'TTicket['.$idUser.'][name]', $u->getFullName($langs), 20,255)
+			.'<a href="?action=HISTORY&fk_user='.$idUser.'">'.img_picto("Voir les envoi précédent de cet utilisateur", 'history.png').'</a>';  
+		?></td>
 		<td align="right"><?php echo $stat['presence'] ?></td>
 		<td align="right"><?php echo $stat['ndf'] ?></td>
 		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?> de <?php echo (int)$conf->global->RH_MONTANT_TICKET_RESTO ?> centimes</td>
@@ -291,22 +336,84 @@ global $db,$conf, $langs;
 		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][ville]',$conf->global->MAIN_INFO_SOCIETE_TOWN, 10,255)  ?></td>
 		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][rscarnet]', $TON , false)  ?></td>
 		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][cpcarnet]', $TON , false)  ?></td>
-		<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date]', strtotime('+15day', $t_fin) )  ?></td>
-		
-		
+		<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date_distribution]', strtotime('+15day', $t_fin) )  ?></td>
 		</tr>
 		<?php
-		
-		
+
 	}
 	
 
 	?></table><br /><?php
 	
-	echo $form->btsubmit('Générer le fichier', 'Générer');
+	echo $form->btsubmit('Générer le fichier', 'Generer');
+	echo ' puis ';
+	echo $form->btsubmit('Archiver cet envoi', 'Archive');
 	
 	$form->end();
 
 }
+function _show_history(&$ATMdb, $fk_user) {
+global $db,$conf;
 
+	$THistory = TRH_TicketResto::getHistory($ATMdb, $fk_user);
+	
+	$u=new User($db);
+	$u->fetch($fk_user);
+	print $u->getNomUrl(1);
+	
+	
+	print '<table class="planning" border="0">';
+	print '<tr class="entete">';
+	
+	$first=true;
+
+	$TON = array('O'=>'Oui', 'N'=>'Non');
+
+	foreach($THistory as $t) {
+		
+		if($first) {
+			
+			?><tr>
+				<td>Nombre de titre</td>
+				<td>Point de livraison</td>
+				<td>Niveau 1</td>
+				<td>Niveau 2</td>
+				<td>Matricule</td>
+				<td>Edition nom sur couverture</td>
+				<td>Edition nom sur titre</td>
+				<td>Raison Sociale</td>
+				<td>Code Postal</td>
+				<td>Ville</td>
+				<td>RS sur carnet</td>
+				<td>CP et Ville sur carnet</td>
+				<td>Date de livraison</td>
+			</tr><?php 
+			
+			$first = false;
+		}
+		
+		?><td align="right"><?php echo $t->nbTicket ?></td>
+		
+		<td align="right"><?php echo  $t->pointlivraison ?></td>
+		<td align="right"><?php echo  $t->niveau1 ?></td>
+		<td align="right"><?php echo  $t->niveau2 ?></td>
+		<td align="right"><?php echo  $t->matricule ?></td>
+		<td align="right"><?php echo $t->nomcouv ?></td>
+		<td align="right"><?php echo $t->nomtitre ?></td>
+		<td align="right"><?php echo $t->raisonsociale ?></td>
+		<td align="right"><?php echo $t->cp ?></td>
+		<td align="right"><?php echo $t->ville ?></td>
+		<td align="right"><?php echo $t->rscarnet  ?></td>
+		<td align="right"><?php echo $t->cpcarnet  ?></td>
+		<td align="right"><?php echo $t->get_date('date_distribution');  ?></td>
+		</tr>
+		<?php
+
+	}
+	
+
+	?></table><br /><?php
+	
+	
+}
 

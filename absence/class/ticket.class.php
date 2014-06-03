@@ -3,11 +3,12 @@
 class TRH_TicketResto extends TObjetStd {
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_ticketresto');
-		parent::add_champs('nombre','type=int;');
+		parent::add_champs('nbTicket','type=entier;');
 		parent::add_champs('date_distribution','type=date;index');
-		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
-		parent::add_champs('entity','type=int;');
+		parent::add_champs('montant,partpatron','type=entier;');	//utilisateur concerné
+		parent::add_champs('entity,fk_user','type=entier;index;');
 		
+		parent::add_champs('code_produit,code_client,pointlivraison,niveau1,niveau2,matricule,nomcouv,nomtitre,raisonsociale,cp,ville,rscarnet,cpcarnet','type=chaine;');
 		
 		parent::_init_vars();
 		parent::start();	
@@ -21,6 +22,18 @@ class TRH_TicketResto extends TObjetStd {
 			,'group'=>'Groupe'
 			,'user'=>'Utilisateur'
 		);
+	}
+	
+	function loadByUserDate(&$ATMdb, $fk_user, $date_distribution) {
+		
+		$ATMdb->Execute("SELECT rowid FROM ".$this->get_table()." WHERE fk_user=".$fk_user." AND date_distribution='".$date_distribution."'"  );
+		if($obj=$ATMdb->Get_line()) {
+			return $this->load($ATMdb, $obj->rowid);
+		}
+		else {
+			return false;
+		}
+		
 	}
 	
 	static function isNDFforDay(&$ATMdb, $date, $fk_user) {
@@ -67,5 +80,20 @@ class TRH_TicketResto extends TObjetStd {
 		return $Tab;
 		
 	}
-	
+	static function getHistory(&$ATMdb, $fk_user) {
+		$Tab=array();
+			
+		$TId = $ATMdb->ExecuteAsArray("SELECT rowid FROM ".MAIN_DB_PREFIX.'rh_ticketresto WHERE fk_user='.$fk_user." ORDER BY date_distribution DESC");
+		
+		foreach($TId as $row) {
+			
+			$t=new TRH_TicketResto;
+			$t->load($ATMdb, $row->rowid);
+			
+			$Tab[] = $t;
+		}
+			
+			
+		return $Tab;
+	}
 }
