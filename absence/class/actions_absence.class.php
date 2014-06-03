@@ -29,6 +29,11 @@ class ActionsAbsence
 				$date_rttClotureInit =$obj->date_rttClotureInit;
 			}
 		}
+		
+	/*	$compteur = new TRH_Compteur;
+		$compteur->initCompteur($ATMdb, $idUser)
+		*/
+		
 		// A la création d'un nouvel utilisateur, on lui affecte un compteur initial et un emploi du temps
 		// TODO Object !
 		$sqlcompteur="INSERT INTO ".MAIN_DB_PREFIX."rh_compteur (rowid, date_cre, entity, fk_user, acquisExerciceN, 

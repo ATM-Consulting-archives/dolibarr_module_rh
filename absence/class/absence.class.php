@@ -21,6 +21,7 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('acquisHorsPeriodeNM1','type=float;');				
 		parent::add_champs('reportCongesNM1','type=float;');				
 		parent::add_champs('congesPrisNM1','type=float;');			
+		parent::add_champs('congesPrisN','type=float;');			
 		parent::add_champs('congesTotalNM1','type=float;');	
 		parent::add_champs('congesResteNM1','type=float;');
 		parent::add_champs('anneeNM1','type=int;');					
@@ -92,6 +93,7 @@ class TRH_Compteur extends TObjetStd {
 		$this->acquisHorsPeriodeNM1=0;
 		$this->reportCongesNM1=0;
 		$this->congesPrisNM1=0;
+		$this->congesPrisN=0;
 		$this->anneeNM1=$anneePrec;
 		$this->rttTypeAcquisition='Annuel';
 		
@@ -111,11 +113,11 @@ class TRH_Compteur extends TObjetStd {
 		$this->rttNonCumuleTotal=$this->rttNonCumuleAcquis+$this->rttNonCumuleReportNM1-$this->rttNonCumulePris;
 		
 		
-		$this->rttMetier='noncadre37cpro';
+		$this->rttMetier='none';
 		$this->rttannee=$annee;
 		$this->nombreCongesAcquisMensuel=2.08;
-		$this->date_rttCloture=strtotime(DATE_RTT_CLOTURE); // AA Ne devrait pas être en dur mais en config
-		$this->date_congesCloture=strtotime(DATE_CONGES_CLOTURE);
+		$this->date_rttCloture=strtotime($conf->global->RH_DATE_RTT_CLOTURE); 
+		$this->date_congesCloture=strtotime($conf->global->RH_DATE_CONGES_CLOTURE);
 		$this->reportRtt=0;
 	}
 	
