@@ -17,7 +17,7 @@
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
 				</tr>	
 				<tr>
-					<td>Acquis exercice ([congesPrec.dates])</td>
+					<td>Acquis sur exercice ([congesPrec.dates])</td>
 					<td>[congesPrec.acquisEx;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
