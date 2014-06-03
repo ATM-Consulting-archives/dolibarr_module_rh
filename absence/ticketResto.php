@@ -127,7 +127,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	$TStatPlanning=array();
 	
 	$TBS=new TTemplateTBS();
-	print $TBS->render('./tpl/planningUser.tpl.php'
+	print $TBS->render('./tpl/ticketresto.tpl.php'
 		,array(
 		)
 		,array(
@@ -138,7 +138,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 				
 				,'date_debut'=> $form->calendrier('', 'date_debut', $date_debut, 12)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $date_fin, 12)
-				,'titreRecherche'=>load_fiche_titre("Récapitulatif de la recherche",'', 'title.png', 0, '')
+				,'titreRecherche'=>load_fiche_titre("Export des tickets restaurant",'', 'title.png', 0, '')
 				,'titrePlanning'=>load_fiche_titre("Planning des collaborateurs",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
