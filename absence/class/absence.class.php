@@ -1549,8 +1549,8 @@ class TRH_Absence extends TObjetStd {
 					$estUnJourTravaille = TRH_EmploiTemps::estTravaille($ATMdb, $fk_user, $date);
 					$estFerie = TRH_JoursFeries::estFerie($ATMdb, $date);
 					
-					@$Tab[$fk_user][$date]['presence_jour_entier'] = (int)($estUnJourTravaille=='OUI' && !$estFerie) ;
-					@$Tab[$fk_user][$date]['presence'] = (int)($estUnJourTravaille!='NON' && !$estFerie) ;
+					@$Tab[$fk_user][$date]['presence_jour_entier'] = (int)($estUnJourTravaille=='OUI' && $ouinon=='non' && !$estFerie) ;
+					@$Tab[$fk_user][$date]['presence'] = (int)($estUnJourTravaille!='NON' && $ouinon=='non' && !$estFerie) ;
 					@$Tab[$fk_user][$date]['absence'] = (int)($ouinon!='non' && !$estFerie) ;
 					@$Tab[$fk_user][$date]['ferie'] = (int)$estFerie ;
 				}

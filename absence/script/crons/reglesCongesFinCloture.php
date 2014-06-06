@@ -18,6 +18,7 @@
 	$o->init_db_by_vars($ATMdb);
 	
 	
+	//TODO AA mettre dans l'objet compteur !
 	
 	//on récupère la date de fin de cloture des congés
 	$k=0;
@@ -52,14 +53,14 @@
 			//on transfère les jours acquis N vers N-1
 			$sqlTransfert2="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
 			SET acquisExerciceNM1=CEILING(acquisExerciceN), acquisAncienneteNM1=acquisAncienneteN,
-			acquisHorsPeriodeNM1=acquisHorsPeriodeN 
+			acquisHorsPeriodeNM1=acquisHorsPeriodeN
 			WHERE fk_user =".$idUser;
 			$ATMdb->Execute($sqlTransfert2);
 			
 			//on remet à 0 les jours année courante
 			//L'ancienneté devra normalement être gérée manuellement. 
 			$sqlRaz="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-			SET acquisExerciceN=0, acquisHorsPeriodeN=0 WHERE fk_user =".$idUser;
+			SET acquisExerciceN=0, acquisHorsPeriodeN=0 ,date_congesCloture='".date('Y-m-d', strtotime('+1 year',$date) )."' WHERE fk_user =".$idUser;
 			$ATMdb->Execute($sqlRaz);
 			
 		}
