@@ -61,6 +61,12 @@
 					<td>Acquis hors-période</td>
 					<td>[congesCourant.acquisHorsPer;strconv=no;protect=no]</td>
 				</tr>
+				
+				<tr>
+					<td>Congés pris</td>
+					<td>[congesCourant.congesPris;strconv=no;protect=no]</td>
+				</tr>
+				
 				<tr>
 					<td>Nombre de jours acquis par mois</td>
 					<td> [congesCourant.nombreCongesAcquisMensuel;strconv=no;protect=no]</td>

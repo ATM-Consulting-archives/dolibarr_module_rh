@@ -5,7 +5,7 @@
 	
 	$langs->load('absence@absence');
 	
-	$ATMdb=new Tdb;
+	$ATMdb=new TPDOdb;
 	$compteur=new TRH_Compteur;
 
 
@@ -278,6 +278,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				$congeCourant['acquisEx']=$ATMdb->Get_field('acquisExerciceN');
 				$congeCourant['acquisAnc']=$ATMdb->Get_field('acquisAncienneteN');
 				$congeCourant['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeN');
+				$congeCourant['congesPris']=$ATMdb->Get_field('congesPrisN');
 				$congeCourant['annee']=$ATMdb->Get_field('anneeN');
 				$congeCourant['fk_user']=$ATMdb->Get_field('fk_user');
 				$congeCourant['nombreCongesAcquisMensuel']=$ATMdb->Get_field('nombreCongesAcquisMensuel');
@@ -372,6 +373,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'acquisAnc'=>$form->texte('','acquisAncienneteN',round2Virgule($congeCourant['acquisAnc']),10,50,'',$class="text", $default='')
 				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeN',round2Virgule($congeCourant['acquisHorsPer']),10,50,'',$class="text", $default='')
 				,'anneeCourante'=>$form->texte('','anneeN',round2Virgule($anneeCourante),10,50,'',$class="text", $default='')
+				,'congesPris'=>$form->texte('','congesPrisN',round2Virgule($congeCourant['congesPris']),10,50)
 				,'total'=>round2Virgule($congeCourantTotal)
 				,'idUser'=>$congeCourant->fk_user
 				,'date_congesCloture'=>date("d/m/Y",strtotime($rttCourant['dateConges']))
