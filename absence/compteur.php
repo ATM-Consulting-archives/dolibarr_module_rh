@@ -277,6 +277,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				$congeCourant['acquisEx']=$ATMdb->Get_field('acquisExerciceN');
 				$congeCourant['acquisAnc']=$ATMdb->Get_field('acquisAncienneteN');
 				$congeCourant['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeN');
+				$congeCourant['congesPris']=$ATMdb->Get_field('congesPrisN');
 				$congeCourant['annee']=$ATMdb->Get_field('anneeN');
 				$congeCourant['fk_user']=$ATMdb->Get_field('fk_user');
 				$congeCourant['nombreCongesAcquisMensuel']=$ATMdb->Get_field('nombreCongesAcquisMensuel');
@@ -331,18 +332,6 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	
 	$rttCourantReste=$rttCourant['acquis']-$rttCourant['pris'];
 	
-
-	//récupération des informations globales du compteur
-	/*$sqlReq="SELECT * FROM `".MAIN_DB_PREFIX."rh_admin_compteur`";	
-	$ATMdb->Execute($sqlReq);
-	while($ATMdb->Get_line()) {
-				$compteurGlobal=new User($db);
-				$compteurGlobal->rowid=$ATMdb->Get_field('rowid');
-				$compteurGlobal->congesAcquisMensuelInit=$ATMdb->Get_field('congesAcquisMensuelInit');
-				$compteurGlobal->date_rttClotureInit=$ATMdb->Get_field('date_rttClotureInit');
-				$compteurGlobal->date_congesClotureInit=$ATMdb->Get_field('date_congesClotureInit');
-				break;
-	}*/
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/compteur.tpl.php'
@@ -369,6 +358,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'acquisAnc'=>$form->texte('','acquisAncienneteN',round2Virgule($congeCourant['acquisAnc']),10,50,'',$class="text", $default='')
 				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeN',round2Virgule($congeCourant['acquisHorsPer']),10,50,'',$class="text", $default='')
 				,'anneeCourante'=>$form->texte('','anneeN',round2Virgule($anneeCourante),10,50,'',$class="text", $default='')
+				,'congesPris'=>$form->texte('','congesPrisN',round2Virgule($congeCourant['congesPris']),10,50)
 				,'total'=>round2Virgule($congeCourantTotal)
 				,'idUser'=>$congeCourant->fk_user
 				,'date_congesCloture'=>date("d/m/Y",strtotime($rttCourant['dateConges']))

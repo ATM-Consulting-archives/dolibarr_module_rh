@@ -46,7 +46,7 @@
 			
 			// suppression des jours non anticipé mais perdu
 			$sqlTransfert="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-				SET reportCongesNM1=0, congesPrisNM1=0
+				SET reportCongesNM1=0, congesPrisNM1=congesPrisN
 				WHERE fk_user =".$idUser." AND reportCongesNM1>0";
 			$ATMdb->Execute($sqlTransfert);
 			
@@ -60,7 +60,7 @@
 			//on remet à 0 les jours année courante
 			//L'ancienneté devra normalement être gérée manuellement. 
 			$sqlRaz="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-			SET acquisExerciceN=0, acquisHorsPeriodeN=0 ,date_congesCloture='".date('Y-m-d', strtotime('+1 year',$date) )."' WHERE fk_user =".$idUser;
+			SET acquisExerciceN=0, acquisHorsPeriodeN=0, congesPrisN=0 ,date_congesCloture='".date('Y-m-d', strtotime('+1 year',$date) )."' WHERE fk_user =".$idUser;
 			$ATMdb->Execute($sqlRaz);
 			
 		}

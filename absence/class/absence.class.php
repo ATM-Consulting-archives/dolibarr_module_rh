@@ -155,7 +155,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('date_debut,date_fin, date_validation','type=date;index;');	//dates debut fin de congés
 		parent::add_champs('date_hourStart,date_hourEnd','type=date;');	//dates debut fin de congés
 		parent::add_champs('ddMoment, dfMoment','type=chaine;');		//moment (matin ou après midi)
-		parent::add_champs('duree','type=float;');	
+		parent::add_champs('duree,congesPrisNM1,congesPrisN','type=float;');	
 		parent::add_champs('dureeHeure','type=chaine;');	
 		parent::add_champs('dureeHeurePaie','type=chaine;');
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
@@ -194,6 +194,8 @@ class TRH_Absence extends TObjetStd {
 		
 		$this->date_validation=0;
 		
+		$this->congesPrisNM1 = 0; // lors du comptage d'une absence pour alimenter le compteur
+		$this->congesPrisN = 0; // lors du comptage d'une absence pour alimenter le compteur
 	}
 
 	//renvoie le tableau des utilisateurs
@@ -270,21 +272,18 @@ class TRH_Absence extends TObjetStd {
 	
 
 	function testDemande(&$db, $userConcerne, &$absence){
-		$ATMdb=new TPDOdb;
+		$ATMdb=new TPDOdb; // TODO doublon $db... :/ à vérifier mais je pense bien
 		global $conf, $user;
 		$this->entity = $conf->entity;
 		
 		
 		
 		//on calcule la duree de l'absence, en décomptant jours fériés et jours non travaillés par le collaborateur
-		/*$dureeAbsenceCourante=$this->calculDureeAbsence($db, $this->date_debut, $this->date_fin, $absence);
-		$dureeJourConge=$this->calculJoursFeries($db, 0, $this->date_debut, $this->date_fin, $absence);
+
+		$compteur =new TRH_Compteur;
+		$compteur->load_by_fkuser($ATMdb, $userConcerne);
 		
-		$dureeJourNonTravaille=$this->calculJoursTravailles($db, 0, $this->date_debut, $this->date_fin, $absence); 
-		
-		$dureeAbsenceCourante += ($dureeJourConge + $dureeJourNonTravaille) ;
-		*/
-		$dureeAbsenceCourante = $this->calculDureeAbsenceParAddition($db);
+		$dureeAbsenceCourante = $this->calculDureeAbsenceParAddition($db, $compteur->date_congesCloture);
 		
 		//autres paramètes à sauvegarder
 		$this->libelle=saveLibelle($this->type);
@@ -301,33 +300,8 @@ class TRH_Absence extends TObjetStd {
 			return 0;
 		}
 		
-		
-			//print "$dureeAbsenceCourante = ($dureeJourConge + $dureeJourNonTravaille) ".$this->type ;
-		
-	
-		//on teste si c'est une demande de jours non cumulés, 
-		//si les jours N-1 début absence et N+1 fin absence sont travaillés
-		//////////////////// FINALEMENT AUCUNE REGLES SUR LES RTT NON CUMULES : LAISSER PLACE AUX EXCEPTIONS
-		/*if($this->type=='rttnoncumule'){
-			$absenceAutoriseeDebut=$this->isWorkingDayPrevious($ATMdb, $this->date_debut);// AA plus simple 1fct -> isWorkingDay($ATMdb, strtotime( '-1day', $this->date_debut) )
-			$absenceAutoriseeFin=$this->isWorkingDayNext($ATMdb, $this->date_fin);// AA plus simple 1fct -> isWorkingDay($ATMdb, strtotime( '+1day', $this->date_fin) )
-			if($absenceAutoriseeDebut==0||$absenceAutoriseeFin==0){
-				return 3; //etat pour le message d'erreur lié aux rtt non cumulés
-			}
-
-		}*/
-		
-		
-		//on récupère la méthode d'acquisition des jours de l'utilisateur en cours : si par mois ou annuel
-		$sqlMethode="SELECT rttTypeAcquisition FROM `".MAIN_DB_PREFIX."rh_compteur` 
-		WHERE fk_user=".$userConcerne;
-		$ATMdb->Execute($sqlMethode);
-		while($ATMdb->Get_line()) {
-			$methode= $ATMdb->Get_field('rttTypeAcquisition');
-		}
-		
 		///////décompte des congés
-		if($this->type=="rttcumule"){//&&$methode=="Annuel"){
+		if($this->type=="rttcumule"){
 			
 			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
 				SET rttCumulePris=0+rttCumulePris+".$dureeAbsenceCourante.", rttCumuleTotal=rttCumuleTotal-".$dureeAbsenceCourante." 
@@ -337,7 +311,7 @@ class TRH_Absence extends TObjetStd {
 			//$this->rttCumulePris=$this->rttCumulePris+$dureeAbsenceCourante;
 			
 		}
-		else if($this->type=="rttnoncumule"){//&&$methode=="Annuel"){
+		else if($this->type=="rttnoncumule"){
 			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
 				SET rttNonCumulePris=rttNonCumulePris+".$dureeAbsenceCourante.", rttNonCumuleTotal=rttNonCumuleTotal-".$dureeAbsenceCourante." 
 				WHERE fk_user=".$userConcerne;
@@ -345,13 +319,11 @@ class TRH_Absence extends TObjetStd {
 			//$this->rttNonCumulePris=$this->rttNonCumulePris-$dureeAbsenceCourante;
 		}
 		else if($this->type=="conges"||$this->type=="cppartiel"){	//autre que RTT : décompte les congés
-		
+		//var_dump($this->congesPrisNM1, $this->congesPrisN);exit;
 			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
-				SET congesPrisNM1=congesPrisNM1+".$dureeAbsenceCourante." 
+				SET congesPrisNM1=congesPrisNM1+".$this->congesPrisNM1.", congesPrisN=congesPrisN+".$this->congesPrisN." 
 				WHERE fk_user=".$userConcerne;
-		/*	print $sqlDecompte;	
-				
-				exit("  $dureeAbsenceCourante $userConcerne");*/
+	
 			$db->Execute($sqlDecompte);
 			$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 		}
@@ -396,13 +368,11 @@ class TRH_Absence extends TObjetStd {
 		}
 		return $Tab;
 	}
-	function calculDureeAbsenceParAddition(&$ATMdb) {
+	function calculDureeAbsenceParAddition(&$ATMdb, $dateN=0) {
 		global $TJourNonTravailleEntreprise, $langs;
 		
 		$TJourSemaine = array('dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi');
 		$TJourFerie = $this->getJourFerie($ATMdb);	
-		
-	//	print_r($TJourFerie);
 		
 		$duree = 0;
 		
@@ -424,21 +394,17 @@ class TRH_Absence extends TObjetStd {
 			$current_day = $TJourSemaine[(int)date('w', $t_current)];
 			if(!@in_array($current_day, $TJourNonTravailleEntreprise)) {
 				
-			/*	
-				if(date('Y-m-d', $t_current)=='2013-08-13') {
-					print "$t_current==$t_start {$this->ddMoment} {$this->dfMoment}";
-				//	print_r( debug_backtrace() );
-				}
-				*/
+				$dureeJour=0;
+				
 				if( ($t_current==$t_start && $this->ddMoment=='matin') || $t_current>$t_start  ) {
 					if(!isset($TJourFerie[ date('Y-m-d', $t_current) ]['am'])) {
 	
 						if($emploiTemps->{$current_day.'am'}==1 ) {
-							$duree+=.5;
+							$dureeJour+=.5;
 							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"am");
 						}		
 						else if($typeAbs->decompteNormal=='non' && $emploiTemps->{$current_day.'am'}==0 ) {
-							$duree+=.5;
+							$dureeJour+=.5;
 							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"am");
 						}
 						
@@ -452,18 +418,27 @@ class TRH_Absence extends TObjetStd {
 					if(!isset($TJourFerie[ date('Y-m-d', $t_current) ]['pm'])) {
 	
 						if($emploiTemps->{$current_day.'pm'}==1 ) {
-							$duree+=.5;
+							$dureeJour+=.5;
 							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"pm");
 						}		
 						else if($typeAbs->decompteNormal=='non' && $emploiTemps->{$current_day.'pm'}==0 ) {
-							$duree+=.5;
+							$dureeJour+=.5;
 							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"pm");
 						}
 						
 					}
 				
 				}
-				//print "$current_day<br>";
+				
+				if(!empty($dateN)) {
+					// distrib sur conges N ou N+1
+					
+					if($t_current<=$dateN) $this->congesPrisNM1+=$dureeJour;
+					else $this->congesPrisN+=$dureeJour;
+					
+				}
+				
+				$duree+=$dureeJour;
 
 			}
 			
@@ -1192,7 +1167,7 @@ class TRH_Absence extends TObjetStd {
 				case 'conges':
 				case 'cppartiel':
 					$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
-					SET congesPrisNM1=congesPrisNM1-".$this->duree."  
+					SET congesPrisNM1=congesPrisNM1-".$this->congesPrisNM1.",congesPrisN=congesPrisN-".$this->congesPrisN."  
 					where fk_user=".$this->fk_user;
 					$ATMdb->Execute($sqlRecredit);
 				break;
