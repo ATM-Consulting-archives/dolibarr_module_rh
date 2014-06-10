@@ -17,7 +17,7 @@
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
 				</tr>	
 				<tr>
-					<td>Acquis exercice</td>
+					<td>Acquis sur exercice ([congesPrec.dates])</td>
 					<td>[congesPrec.acquisEx;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
@@ -37,11 +37,11 @@
 					<td><b>[congesPrec.total;strconv=no;protect=no] </b></td>
 				</tr>
 				<tr>
-					<td>Congés pris</td>
+					<td>Congés pris et/ou posés</td>
 					<td>[congesPrec.congesPris;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td><b>Reste à prendre</b></td>
+					<td><b>Reste à prendre avant le [congesPrec.dateFin]</b></td>
 					<td><b>[congesPrec.reste;strconv=no;protect=no]</b></td>
 				</tr>
 
