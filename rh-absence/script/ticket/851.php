@@ -15,13 +15,16 @@ ini_set('display_errors',1);
 		
 		$cp = $row[4];
 		
-		$cpreport_reel = abs(strtr($row[5],',','.'));
+		$cpreport_reel = strtr($row[5],',','.');
 		
 		
 		$fk_user = _get_fk_user($ATMdb, $nom, $prenom);
+	
+		$nb_conges = _get_conges($ATMdb, $fk_user);
+
 		
 		$sql=" UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-				SET congesPrisNM1 = congesPrisNM1 - (reportCongesNM1 + $cpreport_reel), reportCongesNM1=".(-$cpreport_reel)."
+				SET congesPrisNM1 = $nb_conges, reportCongesNM1=".$cpreport_reel."
 				WHERE fk_user=$fk_user;
 		";
 	
@@ -51,4 +54,14 @@ return -1;
 	else {
 		return $Tab[0]->rowid;
 	}
+}
+function _get_conges(&$ATMdb, $fk_user) {
+
+	$sql="SELECT SUM(duree) as nb FROM llx_rh_absence WHERE fk_user=$fk_user AND type IN ('conges','cppartiel') AND date_debut>='2014-06-01' AND etat!='Refusee' ";
+
+	$ATMdb->Execute($sql);
+	$ATMdb->Get_line();
+
+	return (float)$ATMdb->Get_field('nb');
+
 }
