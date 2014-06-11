@@ -1581,8 +1581,45 @@ class TRH_Absence extends TObjetStd {
 					
 					@$Tab[$fk_user][$date]['presence_jour_entier'] = (int)($estUnJourTravaille=='OUI' && $ouinon=='non' && !$estFerie) ;
 					@$Tab[$fk_user][$date]['presence'] = (int)($estUnJourTravaille!='NON' && $ouinon=='non' && !$estFerie) ;
+					
+					if($Tab[$fk_user][$date]['presence_jour_entier']==1)@$Tab[$fk_user][$date]['nb_jour_presence'] = 1;
+					else if($Tab[$fk_user][$date]['presence_jour_entier']==0 && $Tab[$fk_user][$date]['presence']==1)@$Tab[$fk_user][$date]['nb_jour_presence'] = 0.5;
+					else @$Tab[$fk_user][$date]['nb_jour_presence'] = 0;
+					 
+					 
+					$TTime = TRH_EmploiTemps::getWorkingTimeForDayUser($ATMdb, $fk_user,$date);
+					$t_am = $TTime['am'];
+					$t_pm = $TTime['pm'];
+					
+					$Tab[$fk_user][$date]['t_am'] = $t_am;
+					$Tab[$fk_user][$date]['t_pm'] = $t_pm;
+					
+					if($Tab[$fk_user][$date]['nb_jour_presence']==1)$Tab[$fk_user][$date]['nb_heure_presence'] = $t_am + $t_pm;
+					else if($Tab[$fk_user][$date]['nb_jour_presence']==0.5 && $estUnJourTravaille=='AM')$Tab[$fk_user][$date]['nb_heure_presence'] = $t_am; 
+					else if($Tab[$fk_user][$date]['nb_jour_presence']==0.5 && $estUnJourTravaille=='PM')$Tab[$fk_user][$date]['nb_heure_presence'] = $t_pm; 
+					else $Tab[$fk_user][$date]['nb_heure_presence'] = 0;
+					
 					@$Tab[$fk_user][$date]['absence'] = (int)($ouinon!='non' && !$estFerie) ;
+					
+					if($Tab[$fk_user][$date]['absence']==1 && $estUnJourTravaille=='OUI')@$Tab[$fk_user][$date]['nb_jour_absence'] = 1;
+					else if($Tab[$fk_user][$date]['absence']==1 && $estUnJourTravaille!='NON')@$Tab[$fk_user][$date]['nb_jour_absence'] = 0.5;
+					else $Tab[$fk_user][$date]['nb_jour_absence'] = 0;
+				
+					if($Tab[$fk_user][$date]['nb_jour_absence']==1)$Tab[$fk_user][$date]['nb_heure_absence'] = $t_am + $t_pm;
+					else if($Tab[$fk_user][$date]['nb_jour_absence']==0.5 && $estUnJourTravaille=='AM')$Tab[$fk_user][$date]['nb_heure_absence'] = $t_am; 
+					else if($Tab[$fk_user][$date]['nb_jour_absence']==0.5 && $estUnJourTravaille=='PM')$Tab[$fk_user][$date]['nb_heure_absence'] = $t_pm; 
+					else $Tab[$fk_user][$date]['nb_heure_absence'] = 0;
+					
+				
+				
+					
 					@$Tab[$fk_user][$date]['ferie'] = (int)$estFerie ;
+					
+					$Tab[$fk_user][$date]['nb_jour_ferie'] = ($Tab[$fk_user][$date]['ferie'] && $estUnJourTravaille!='NON') ? 1:0;
+					
+					$Tab[$fk_user][$date]['estUnJourTravaille'] = $estUnJourTravaille;
+					$Tab[$fk_user][$date]['typeAbsence'] = $ouinon;
+					
 				}
 				
 				$t_current = strtotime('+1day', $t_current);
@@ -1602,10 +1639,9 @@ class TRH_Absence extends TObjetStd {
 	
 			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.name,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment
-				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
-				WHERE a.fk_user=u.rowid 
-				AND  g.fk_user=u.rowid
-				AND u.rowid=".$idUserRecherche."
+				FROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
+				LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (g.fk_user=u.rowid)
+				WHERE a.fk_user=".$idUserRecherche."
 				AND a.etat!='Refusee'
 				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
@@ -1617,10 +1653,9 @@ class TRH_Absence extends TObjetStd {
 		else if($idGroupeRecherche>0){	//on recherche un groupe précis
 			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.name,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment
-				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
-				WHERE a.fk_user=u.rowid 
-				AND  g.fk_user=u.rowid
-				AND g.fk_usergroup=".$idGroupeRecherche."
+				FFROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
+				LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (g.fk_user=u.rowid)
+				WHERE g.fk_usergroup=".$idGroupeRecherche."
 				AND a.etat!='Refusee'
 				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
@@ -1633,7 +1668,8 @@ class TRH_Absence extends TObjetStd {
 			$sql="SELECT a.rowid as 'ID',  u.rowid as 'idUser', u.login, u.name, u.firstname, 
 				DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, a.ddMoment, a.dfMoment,
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat
-				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
+				FROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
+				LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (g.fk_user=u.rowid)
 				WHERE a.fk_user=u.rowid 
 				AND a.etat!='Refusee'
 				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
@@ -1773,6 +1809,19 @@ class TRH_AdminCompteur extends TObjetStd {
 		
 		parent::save($db);
 	}
+	function loadCompteur(&$db) {
+	global $conf;
+		
+		$sql="SELECT rowid FROM ".$this->get_table()." 
+		WHERE entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+		$db->Execute($sql);
+		
+		$db->Get_line();
+		
+		$this->load($db, $db->Get_field('rowid'));
+		
+	}
+	
 }
 
 //définition de la classe pour l'emploi du temps des salariés
@@ -1983,6 +2032,26 @@ class TRH_EmploiTemps extends TObjetStd {
 		else if($e->{$jour.'pm'}) return 'PM';
 		else return 'NON';
 		
+	}
+	
+	static function getWorkingTimeForDayUser($ATMdb, $fk_user, $date) {
+				
+			
+			$emploiTemps = new TRH_EmploiTemps;
+			$emploiTemps->load_by_fkuser($ATMdb, $fk_user,$date);
+			
+			$iJour = (int)date('N', strtotime($date)) - 1 ; 	
+		
+			$jour = $emploiTemps->TJour[$iJour];	
+				
+			$ret =  array(
+				'am' => $emploiTemps->getHeurePeriode($jour, 'am')
+				,'pm' => $emploiTemps->getHeurePeriode($jour, 'pm')
+			
+			);
+			
+			return $ret;
+			
 	}
 	
 }
