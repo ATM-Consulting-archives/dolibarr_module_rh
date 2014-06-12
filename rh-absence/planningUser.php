@@ -13,7 +13,7 @@
 	
 	$ATMdb->close();
 	
-	llxFooter();
+	
 	
 	
 	
@@ -40,6 +40,8 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 
 	$idGroupeRecherche=$_REQUEST['groupe'];
 	
+	$date_debut_recherche = $date_debut;
+	$date_fin_recherche = $date_fin;
 	
 	if($idGroupeRecherche!=0){	//	on recherche le nom du groupe
 		$sql="SELECT nom FROM ".MAIN_DB_PREFIX."usergroup
@@ -191,7 +193,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			
 			if($annee!=$annee_old) print '<p style="text-align:left;font-weight:bold">'.$annee.'</strong><br />';
 			
-			_planning($ATMdb, $absence, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin,$TStatPlanning );
+			_planning($ATMdb, $absence, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin, $TStatPlanning );
 		
 			$annee_old = $annee;
 		
@@ -200,7 +202,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		}
 	}
 	
-	_recap_abs($TStatPlanning);
+	_recap_abs($ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut_recherche, $date_fin_recherche);
 	
 	echo $form->end_form();
 	
@@ -215,16 +217,20 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	
 }	
 
-function _recap_abs($TStatPlanning) {
+function _recap_abs(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin) {
 global $db;	
 	
 	print '<table class="planning" border="0">';
 	print "<tr class=\"entete\">";
 	
-
+	$date_debut = date('Y-m-d', Tools::get_time($date_debut));
+	$date_fin = date('Y-m-d', Tools::get_time($date_fin));
+	
+	$TStatPlanning = TRH_Absence::getPlanning($ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin);
+//var_dump($TStatPlanning);
 	$first=true;
 
-	foreach($TStatPlanning as $idUser=>$stat) {
+	foreach($TStatPlanning as $idUser=>$TStat) {
 		$u=new User($db);
 		$u->fetch($idUser);
 		
@@ -234,10 +240,12 @@ global $db;
 			print '<tr>
 				<td>Nom</td>
 				<td>Présence (jour)</td>
-				<td>Absence</td>
-				<td>Présence+Férié</td>
-				<td>Absence+Férié</td>
-				<td>Férié</td>
+				<td>Présence (heure)</td>
+				<td>Absence (jour)</td>
+				<td>Absence (heure)</td>
+				<td>Présence+Férié (jour)</td>
+				<td>Absence+Férié (jour)</td>
+				<td>Férié (jour)</td>
 				
 				
 			</tr>';
@@ -245,10 +253,25 @@ global $db;
 			$first = false;
 		}
 		
+		$stat=array();
+		
+		foreach($TStat as $date=>$row) {
+		
+			@$stat['presence']+=$row['nb_jour_presence'];
+			@$stat['presence_heure']+=$row['nb_heure_presence'];
+			@$stat['absence']+=$row['nb_jour_absence'];
+			@$stat['absence_heure']+=$row['nb_heure_absence'];
+			@$stat['presence+ferie']+=$row['nb_jour_presence'] + $row['nb_jour_ferie'];
+			@$stat['absence+ferie']+=$row['nb_jour_absence'] + $row['nb_jour_ferie'] ;
+			@$stat['ferie']+=$row['nb_jour_ferie'] ;
+		}
+		
 		print '<tr><td>'.$u->getNomUrl().'</td>';
 		
 		print '<td>'.$stat['presence'].'</td>';
+		print '<td>'.$stat['presence_heure'].'</td>';
 		print '<td>'.$stat['absence'].'</td>';
+		print '<td>'.$stat['absence_heure'].'</td>';
 		print '<td>'.$stat['presence+ferie'].'</td>';
 		print '<td>'.$stat['absence+ferie'].'</td>';
 		print '<td>'.$stat['ferie'].'</td></tr>';

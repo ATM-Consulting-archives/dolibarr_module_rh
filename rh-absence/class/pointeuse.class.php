@@ -37,3 +37,24 @@ class TRH_Pointeuse extends TObjetStd {
 	
 	}
 }
+
+class TRH_declarationTemps extends TObjetStd {
+	function __construct() { /* declaration */
+		$this->set_table(MAIN_DB_PREFIX.'rh_declaration_temps');
+		
+		$this->add_champs('date_ref','type=date;');
+		$this->add_champs('nb_hour', 'type=float;');
+		$this->add_champs('fk_user','type=entier;index;');
+		
+		$this->_init_vars();
+		
+		$this->start();
+		
+	}
+	function load_by_date(&$ATMdb, $date_ref) {
+		
+		return $this->loadBy($ATMdb, $date_ref, 'date_ref');
+		
+	}	
+}
+	
