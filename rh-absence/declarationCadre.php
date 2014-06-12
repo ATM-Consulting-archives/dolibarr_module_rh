@@ -167,7 +167,7 @@ global $db,$langs,$conf;
 			
 			$TBS=new TTemplateTBS();
 			
-			$TBS->render('./tpl/feuille-temps-cadre.odt'
+			$TBS->render('./tpl/feuille-temps-cadre.docx'
 				,array(
 					'ligne'=>$TLigne
 				)
@@ -176,7 +176,7 @@ global $db,$langs,$conf;
 						'username'=>$u->getFullName($langs)
 						,'date'=>date('d/m/Y')
 						,'dateMY'=>date('m/Y', $t_debut)
-						,'town'=>$conf->mycompany->town
+						,'ville'=>$conf->mycompany->ville
 					)
 				)
 			);
