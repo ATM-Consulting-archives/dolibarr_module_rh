@@ -119,7 +119,7 @@ global $db,$langs,$conf;
 		
 		}
 		
-		?>demande
+		?>
 		<tr>
 			<th>Total</th>
 			<th align="right"><?=convertSecondToTime( $total * 3600, 'allhourmin' ) ?></th>
