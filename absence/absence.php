@@ -200,16 +200,16 @@ function _liste(&$ATMdb, &$absence) {
 			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array('Statut demande'=>array(
-			'Refusée'=>'<b style="color:#A72947">Refusée</b>',
-			'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
-			'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
-			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
+			'Refusée'=>'<b style="color:#A72947">'.$langs->trans('Refused').'</b>',
+			'En attente de validation'=>'<b style="color:#5691F9">'.$langs->trans('WaitingValidation').'</b>' , 
+			'Acceptée'=>'<b style="color:#30B300">'.$langs->trans('Accepted').'</b>')
+			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="'.$langs->trans('DoNotRespectRules').'" />')
 			,'etat'=>$absence->TEtat
 		)
 		,'hide'=>array('DateCre', 'fk_user','type', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date', 'duree'=>'number')
 		,'liste'=>array(
-			'titre'=>'Liste de vos absences'
+			'titre'=>$langs->trans('ListOfAbsence')
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)

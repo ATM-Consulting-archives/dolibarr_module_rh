@@ -2,3 +2,8 @@
 Absence=Absence
 compteurConges=Consulter son compteur de congés
 saisirConges=Faire une demande de congés
+DoNotRespectRules=Ne respecte pas les règles en vigueur
+WaitingValidation=En attente de validation
+Refused=Refusée
+Accepted=Acceptée
+ListOfAbsence=Liste de vos absences
