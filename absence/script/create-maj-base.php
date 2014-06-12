@@ -13,9 +13,12 @@
 	$ATMdb=new TPDOdb;
 	$ATMdb->db->debug=true;
 
+	$o=new TRH_declarationTemps;
+	$o->init_db_by_vars($ATMdb);
 
 	$o=new TRH_Pointeuse;
 	$o->init_db_by_vars($ATMdb);
+	
 	$o=new TRH_TicketResto;
 	$o->init_db_by_vars($ATMdb);
 
