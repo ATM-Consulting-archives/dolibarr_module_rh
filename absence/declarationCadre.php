@@ -133,7 +133,7 @@ global $db,$langs,$conf;
 		echo '<p align="right">';
 		echo $form->bt('Signer ces temps', 'bt_sign', 'onclick="signFeuille()"');
 		echo $form->btsubmit('Télécharger', 'bt_gen');
-		echo '</p>';
+		echo '</p><br />';
 		
 	
 		$l=new TListviewTBS('listDeclaration');
@@ -147,8 +147,12 @@ global $db,$langs,$conf;
 					)
 					,'eval'=>array(
 						'date_ref'=>' date("m/Y", strtotime("@val@"))'
+						,'nb_hour'=>' convertSecondToTime( @val@ * 3600, "allhourmin" ) '
 					)
-								
+					,'liste'=>array(
+						'titre'=>"Liste des heures déclarées"
+						
+					)			
 				)) ;
 	
 	}
