@@ -42,7 +42,7 @@
 	
 function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 		
-	$sql = "SELECT COUNT(n.rowid) as 'nbrNdf'
+	$sql = "SELECT COUNT(DISTINCT n.rowid) as 'nbrNdf'
 	FROM (((((".MAIN_DB_PREFIX."ndfp as n 
 		LEFT JOIN ".MAIN_DB_PREFIX."ndfp_pay_det as p ON (p.fk_ndfp = n.rowid))
 		       LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (n.fk_user = u.rowid))
