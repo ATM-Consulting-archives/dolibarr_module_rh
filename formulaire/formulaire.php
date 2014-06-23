@@ -54,7 +54,7 @@ $title = 'Questionnaire';
 print_fiche_titre($title, '', 'form32.png@formulaire');
 ?>
 <?php
-$r = new TListviewTBS('liste_ventilation_caisse', ROOT.'custom/formulaire/tpl/html.list.tbs.php');
+$r = new TListviewTBS('liste_ventilation_caisse', './tpl/html.list.tbs.php');
 	
 print $r->renderArray($ATMdb, $TSurvey, array(
 	'limit'=>array('nbLine'=>1000)
