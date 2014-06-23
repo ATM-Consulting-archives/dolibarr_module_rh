@@ -97,8 +97,11 @@ class InterfaceAbsenceWorkflow
 			
 			if($object->id>0) {
 				$compteur=new TRH_Compteur;
-				$compteur->load_by_fkuser($ATMdb, $object->id);
-				$compteur->fk_user = $object->id;
+				if(!$compteur->load_by_fkuser($ATMdb, $object->id)) {
+							
+						$compteur->initCompteur($ATMdb,$object->id );
+					
+				}
 				$compteur->save($ATMdb);
 				
 			}
@@ -115,8 +118,12 @@ class InterfaceAbsenceWorkflow
 			$ATMdb=new TPDOdb;
 			if($object->id>0) {
 				$compteur=new TRH_Compteur;
-				$compteur->load_by_fkuser($ATMdb, $object->id);
-				$compteur->fk_user = $object->id;
+				if(!$compteur->load_by_fkuser($ATMdb, $object->id)) {
+							
+						$compteur->initCompteur($ATMdb,$object->id );
+					
+				}
+				
 				$compteur->save($ATMdb);
 			
 			}			
