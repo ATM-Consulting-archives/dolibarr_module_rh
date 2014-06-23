@@ -91,9 +91,24 @@ class InterfaceAbsenceWorkflow
 			*/
 			
 			
+			$ATMdb=new TPDOdb;
+			
+			$compteur=new TRH_Compteur;
+			$compteur->load_by_fkuser($ATMdb, $object->id);
+			$compteur->save($ATMdb);
+			
+			
 			return 0;
 		}
-	
+		else if ($action == 'USER_MODIFY') {
+			$ATMdb=new TPDOdb;
+			
+			$compteur=new TRH_Compteur;
+			$compteur->load_by_fkuser($ATMdb, $object->id);
+			$compteur->save($ATMdb);
+			
+			
+		}
 		
 		
 		return 0;
