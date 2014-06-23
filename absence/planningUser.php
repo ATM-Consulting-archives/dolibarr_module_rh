@@ -221,15 +221,19 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 function _recap_abs(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin) {
 global $db;	
 	
-	print '<table class="planning" border="0">';
-	print "<tr class=\"entete\">";
-	
 	$date_debut = date('Y-m-d', Tools::get_time($date_debut));
 	$date_fin = date('Y-m-d', Tools::get_time($date_fin));
 	
 	$TStatPlanning = TRH_Absence::getPlanning($ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin);
 //var_dump($TStatPlanning);
 	$first=true;
+
+	if(empty($TStatPlanning)) return false;
+
+	print '<table class="planning" border="0">';
+	print "<tr class=\"entete\">";
+	
+	
 
 	foreach($TStatPlanning as $idUser=>$TStat) {
 		$u=new User($db);
