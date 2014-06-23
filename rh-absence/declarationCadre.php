@@ -82,7 +82,7 @@ global $db,$langs,$conf;
 		<?
 		
 		$total=0;
-		//var_dump($TStat);
+//var_dump($TStat);
 		foreach($TStat as $date=>$stat) {
 			
 			$total+=$stat['nb_heure_presence'];
@@ -122,7 +122,7 @@ global $db,$langs,$conf;
 		?>
 		<tr>
 			<th>Total</th>
-			<th align="right"><?=convertSecondToTime( $total * 3600, 'allhourmin' ) ?></th>
+			<th align="right"><?=$total  ?></th>
 			<th>  </th>
 		</tr>
 		</table>
@@ -147,7 +147,6 @@ global $db,$langs,$conf;
 					)
 					,'eval'=>array(
 						'date_ref'=>' date("m/Y", strtotime("@val@"))'
-						,'nb_hour'=>' convertSecondToTime( @val@ * 3600, "allhourmin" ) '
 					)
 					,'liste'=>array(
 						'titre'=>"Liste des heures déclarées"
