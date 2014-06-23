@@ -200,9 +200,12 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			
 			$t_current=strtotime('+1 month', $t_current);
 		}
+		
+		
+		_recap_abs($ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut_recherche, $date_fin_recherche);
+	
 	}
 	
-	_recap_abs($ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut_recherche, $date_fin_recherche);
 	
 	echo $form->end_form();
 	
