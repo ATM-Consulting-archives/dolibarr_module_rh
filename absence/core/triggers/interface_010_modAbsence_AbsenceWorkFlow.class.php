@@ -95,9 +95,14 @@ class InterfaceAbsenceWorkflow
 			
 			$ATMdb=new TPDOdb;
 			
-			$compteur=new TRH_Compteur;
-			$compteur->load_by_fkuser($ATMdb, $object->id);
-			$compteur->save($ATMdb);
+			if($object->id>0) {
+				$compteur=new TRH_Compteur;
+				$compteur->load_by_fkuser($ATMdb, $object->id);
+				$compteur->fk_user = $object->id;
+				$compteur->save($ATMdb);
+				
+			}
+			
 			
 			
 			return 0;
@@ -108,10 +113,13 @@ class InterfaceAbsenceWorkflow
 			dol_include_once('/absence/class/absence.class.php');
 
 			$ATMdb=new TPDOdb;
+			if($object->id>0) {
+				$compteur=new TRH_Compteur;
+				$compteur->load_by_fkuser($ATMdb, $object->id);
+				$compteur->fk_user = $object->id;
+				$compteur->save($ATMdb);
 			
-			$compteur=new TRH_Compteur;
-			$compteur->load_by_fkuser($ATMdb, $object->id);
-			$compteur->save($ATMdb);
+			}			
 			
 			
 		}
