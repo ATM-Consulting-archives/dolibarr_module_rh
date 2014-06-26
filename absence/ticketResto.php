@@ -282,16 +282,47 @@ global $db,$conf, $langs;
 	print '<table class="planning" border="0">';
 	print '<tr class="entete">';
 	
+	$idGroup = __get('groupe', 0, 'int');
+
 	$TTicketResto = TRH_TicketResto::getTicketFor($ATMdb, $date_debut, $date_fin, __get('groupe', 0, 'int'), __get('fk_user', 0, 'int'));
 
 	$first=true;
 
 	$TON = array('O'=>'Oui', 'N'=>'Non');
 
+	dol_include_once('/user/class/usergroup.class.php');
+
+	$group = new UserGroup($db);
+	$group->fetch($idGroup);
+	
+	if(!empty($group->note)) {
+		
+		$var = explode("\n", $group->note);
+		
+		$rs =  $var[0];
+		$cp = $var[1];
+		$ville = $var[2];
+	
+		
+	}
+	else{
+		
+		$rs =  $conf->global->MAIN_INFO_SOCIETE_NOM;
+		$cp = conf->global->MAIN_INFO_SOCIETE_ZIP;
+		$ville = $conf->global->MAIN_INFO_SOCIETE_TOWN;
+	
+		
+	}
+	
+
+	dol_include_once('/core/class/extrafields.class.php');
+    $extrafields = new ExtraFields($db);
+    $optionsArray = $extrafields->fetch_name_optionals_label('user');
+
 	foreach($TTicketResto as $idUser=>$stat) {
 		$u=new User($db);
 		$u->fetch($idUser);
-		
+		$u->fetch_optionals($u->id, $optionsArray);
 		
 		if($first) {
 			
@@ -331,9 +362,9 @@ global $db,$conf, $langs;
 		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][matricule]', $u->array_options['options_COMPTE_TIERS'], 10,255)  ?></td>
 		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][nomcouv]', $TON , false)  ?></td>
 		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][nomtitre]', $TON , false)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][raisonsociale]', $conf->global->MAIN_INFO_SOCIETE_NOM , 10,255)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][cp]', $conf->global->MAIN_INFO_SOCIETE_ZIP, 5,255)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][ville]',$conf->global->MAIN_INFO_SOCIETE_TOWN, 10,255)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][raisonsociale]', $rs , 10,255)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][cp]', $cp, 5,255)  ?></td>
+		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][ville]',$ville, 10,255)  ?></td>
 		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][rscarnet]', $TON , false)  ?></td>
 		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][cpcarnet]', $TON , false)  ?></td>
 		<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date_distribution]', strtotime('+15day', $t_fin) )  ?></td>
