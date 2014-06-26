@@ -370,7 +370,6 @@ if(__get('date_debut')=='') return false;
 			<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][rscarnet]', $TON , false)  ?></td>
 			<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][cpcarnet]', $TON , false)  ?></td>
 			<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date_distribution]', strtotime('+15day', $t_fin) )  ?></td>
-			</tr>
 			<?php
 			
 		}
@@ -382,6 +381,7 @@ if(__get('date_debut')=='') return false;
 				
 		}
 		
+		?></tr><?
 
 	}
 	
