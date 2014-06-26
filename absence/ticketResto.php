@@ -351,25 +351,38 @@ global $db,$conf, $langs;
 		?><tr>
 		<td nowrap="nowrap"><?php echo $form->texte('', 'TTicket['.$idUser.'][name]', $u->getFullName($langs), 20,255)
 			.'<a href="?action=HISTORY&fk_user='.$idUser.'">'.img_picto("Voir les envoi précédent de cet utilisateur", 'history.png').'</a>';  
-		?></td>
-		<td align="right"><?php echo $stat['presence'] ?></td>
-		<td align="right"><?php echo $stat['ndf'] ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?> de <?php echo (int)$conf->global->RH_MONTANT_TICKET_RESTO ?> centimes</td>
+		?></td><?php
 		
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', '', 10,255)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau1]', '', 10,255)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau2]', '', 10,255)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][matricule]', $u->array_options['options_COMPTE_TIERS'], 10,255)  ?></td>
-		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][nomcouv]', $TON , false)  ?></td>
-		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][nomtitre]', $TON , false)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][raisonsociale]', $rs , 10,255)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][cp]', $cp, 5,255)  ?></td>
-		<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][ville]',$ville, 10,255)  ?></td>
-		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][rscarnet]', $TON , false)  ?></td>
-		<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][cpcarnet]', $TON , false)  ?></td>
-		<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date_distribution]', strtotime('+15day', $t_fin) )  ?></td>
-		</tr>
-		<?php
+		if($u->array_options['options_ticketresto_ok']==1) {
+			
+			?><td align="right"><?php echo $stat['presence'] ?></td>
+			<td align="right"><?php echo $stat['ndf'] ?></td>
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?> de <?php echo (int)$conf->global->RH_MONTANT_TICKET_RESTO ?> centimes</td>
+		
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', '', 10,255)  ?></td>
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau1]', '', 10,255)  ?></td>
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau2]', '', 10,255)  ?></td>
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][matricule]', $u->array_options['options_COMPTE_TIERS'], 10,255)  ?></td>
+			<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][nomcouv]', $TON , false)  ?></td>
+			<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][nomtitre]', $TON , false)  ?></td>
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][raisonsociale]', $rs , 10,255)  ?></td>
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][cp]', $cp, 5,255)  ?></td>
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][ville]',$ville, 10,255)  ?></td>
+			<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][rscarnet]', $TON , false)  ?></td>
+			<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][cpcarnet]', $TON , false)  ?></td>
+			<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date_distribution]', strtotime('+15day', $t_fin) )  ?></td>
+			<?php
+
+		}
+		else{
+			
+			?>
+			<td colspan="15">Cet utilisateur n'a pas choisi les tickets restaurant</td>
+			<?php
+				
+		}
+		
+		?></tr><?
 
 	}
 	
