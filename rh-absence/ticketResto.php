@@ -39,7 +39,7 @@ function _generate_ticket_resto(&$ATMdb, $Tab) {
 global $conf;
 	
 	header('Content-type: application/octet-stream');
-    header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.csv');
+    header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.txt');
     header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 
 	print "Code produit;Code Client;Point de livraison;Niveau 1;Niveau 2;Matricule;Nom Salarié;Edition nom sur couverture;Edition nom sur titre;Valeur faciale en centimes;Part patronale en centimes;Nombre de titre;Raison Sociale;Code Postal;Ville;RS sur carnet;CP et Ville sur carnet;Date de livraison;\n";
