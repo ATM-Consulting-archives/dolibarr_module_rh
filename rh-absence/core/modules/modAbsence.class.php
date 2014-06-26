@@ -678,6 +678,10 @@ class modAbsence extends DolibarrModules
 		$url2 ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/absence/script/create-compteur.php";
 		file_get_contents($url2);
 		
+		dol_include_once('/core/class/extrafields.class.php');
+        $extrafields=new ExtraFields($this->db);
+		$res = $extrafields->addExtraField('ticketresto_ok', 'A choisir les tickets restaurants ?', 'boolean', 0, '', 'user');
+		
 
 		return $this->_init($sql, $options);
 	}
