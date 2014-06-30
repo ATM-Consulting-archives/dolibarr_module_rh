@@ -38,6 +38,25 @@
 function _generate_ticket_resto(&$ATMdb, $Tab) {
 global $conf;
 	
+	
+	if(isset($_REQUEST['bt_sage'])) {
+	header('Content-type: application/octet-stream');
+    header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.txt');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+
+		foreach($Tab as $fk_user=>$row) {
+
+                if($row['nbTicket'] > 0) {
+			print "VM"
+			.str_pad((int)substr($row['matricule'],3) ,10, ' ', STR_PAD_LEFT)
+			."255"
+			.str_pad("CL06",10,' ',STR_PAD_LEFT)
+			.str_pad($row['nbTicket'],12,' ', STR_PAD_LEFT);
+		}
+
+		}
+	}
+	else {
 	header('Content-type: application/octet-stream');
     header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.csv');
     header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -73,7 +92,7 @@ global $conf;
 			
 		
 	}
-
+	}
 	//50;;;;;;;O/N;O/N;700;350;;??;;;O/N;O/N;*/
 	exit;
 }
@@ -393,6 +412,7 @@ if(__get('date_debut')=='') return false;
 	?></table><br /><?php
 	
 	echo $form->btsubmit('Générer le fichier', 'Generer');
+	echo $form->btsubmit('Générer le fichier Sage', 'bt_sage');
 	echo ' puis ';
 	echo $form->btsubmit('Archiver cet envoi', 'Archive');
 	
