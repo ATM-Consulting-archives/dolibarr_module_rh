@@ -625,7 +625,7 @@ class modAbsence extends DolibarrModules
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
 					'perms'=> '$user->rights->report->exports->generateAbsenceExport',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
-					'user'=> 2supprimerMonAbsence
+					'user'=> 2
         );
 		
 		$r++;
