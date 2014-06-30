@@ -46,31 +46,34 @@ global $conf;
 	
 	foreach($Tab as $fk_user=>$row) {
 		
+		if($row['nbTicket'] > 0) {
+
+			print implode(';',array(
+				$conf->global->RH_CODEPRODUIT_TICKET_RESTO
+				,$conf->global->RH_CODECLIENT_TICKET_RESTO
+				,$row['pointlivraison']
+				,$row['niveau1']
+				,$row['niveau2']
+				,$row['matricule']
+				,$row['name']
+				,$row['nomcouv']
+				,$row['nomtitre']
+				,$conf->global->RH_MONTANT_TICKET_RESTO
+				,($conf->global->RH_MONTANT_TICKET_RESTO * ($conf->global->RH_PART_PATRON_TICKET_RESTO / 100) )
+				,$row['nbTicket']
+				,$row['raisonsociale']
+				,$row['cp']
+				,$row['ville']
+				,$row['rscarnet']
+				,$row['cpcarnet']
+				,$row['date_distribution']
+			))."\n";
 			
-		print implode(';',array(
-			$conf->global->RH_CODEPRODUIT_TICKET_RESTO
-			,$conf->global->RH_CODECLIENT_TICKET_RESTO
-			,$row['pointlivraison']
-			,$row['niveau1']
-			,$row['niveau2']
-			,$row['matricule']
-			,$row['name']
-			,$row['nomcouv']
-			,$row['nomtitre']
-			,$conf->global->RH_MONTANT_TICKET_RESTO
-			,($conf->global->RH_MONTANT_TICKET_RESTO * ($conf->global->RH_PART_PATRON_TICKET_RESTO / 100) )
-			,$row['nbTicket']
-			,$row['raisonsociale']
-			,$row['cp']
-			,$row['ville']
-			,$row['rscarnet']
-			,$row['cpcarnet']
-			,$row['date_distribution']
-		))."\n";
+		}
+			
 		
 	}
 
-	//50;;;;;;;O/N;O/N;700;350;;??;;;O/N;O/N;*/
 	exit;
 }
 	
@@ -308,7 +311,7 @@ global $db,$conf, $langs;
 	else{
 		
 		$rs =  $conf->global->MAIN_INFO_SOCIETE_NOM;
-		$cp = conf->global->MAIN_INFO_SOCIETE_ZIP;
+		$cp = $conf->global->MAIN_INFO_SOCIETE_ZIP;
 		$ville = $conf->global->MAIN_INFO_SOCIETE_TOWN;
 	
 		
