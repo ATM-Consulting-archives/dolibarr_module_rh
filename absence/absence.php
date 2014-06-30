@@ -725,7 +725,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$diff=strtotime('+0day',$absence->date_debut)-time();
 	$duree=intval($diff/3600/24);
 
-	if($duree>0&&$absence->fk_user==$user->id/* && $absence->etat!='Validee'*/){
+	if($duree>0 && $absence->fk_user==$user->id && ($absence->etat!='Validee' || $user->rights->absence->myactions->supprimerMonAbsence)){
 		$droitSupprimer=1;
 	}
 	elseif($user->rights->absence->myactions->creerAbsenceCollaborateur){

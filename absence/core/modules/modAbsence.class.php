@@ -326,6 +326,13 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'declarationCadre';
 		
+		$r++;
+		$this->rights[$r][0] = 7123;
+		$this->rights[$r][1] = 'Supprimer son absence une fois déclarée';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+		$this->rights[$r][5] = 'supprimerMonAbsence';
+		
 		
 		
 		
@@ -431,7 +438,7 @@ class modAbsence extends DolibarrModules
 		        	'titre'=> $langs->trans('Présences'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/presence.php?action=new',
+					'url'=> '/absence/presence.php?action=nsupprimerMonAbsenceew',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 102,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
@@ -618,7 +625,7 @@ class modAbsence extends DolibarrModules
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
 					'perms'=> '$user->rights->report->exports->generateAbsenceExport',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
-					'user'=> 2
+					'user'=> 2supprimerMonAbsence
         );
 		
 		$r++;
@@ -713,7 +720,7 @@ class modAbsence extends DolibarrModules
 	 *		Data directories are not deleted
 	 *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+	 *      @return     int             	1 if OK, 0 if KOsupprimerMonAbsence
 	 */
 	function remove($options='')
 	{
