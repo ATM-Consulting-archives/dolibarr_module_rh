@@ -48,10 +48,10 @@ global $conf;
 
                 if($row['nbTicket'] > 0) {
 			print "VM"
-			.str_pad((int)substr($row['matricule'],3) ,10, ' ', STR_PAD_LEFT)
-			."255"
-			.str_pad("CL06",10,' ',STR_PAD_LEFT)
-			.str_pad($row['nbTicket'],12,' ', STR_PAD_LEFT);
+				.str_pad((int)substr($row['matricule'],3) ,10, ' ')
+				."255"
+				.str_pad("CL06",10,' ')
+				.str_pad( number_format( $row['nbTicket'], 4, ',','' ),12,' ', STR_PAD_LEFT)."\r\n";
 		}
 
 		}
@@ -395,7 +395,7 @@ if(__get('date_debut')=='') return false;
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][ville]',$ville, 10,255)  ?></td>
 			<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][rscarnet]', $TON , false)  ?></td>
 			<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][cpcarnet]', $TON , false)  ?></td>
-			<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date_distribution]', strtotime('+15day', $t_fin) )  ?></td>
+			<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date_distribution]', strtotime('+7day', $t_fin) )  ?></td>
 			<?php
 			
 		}
