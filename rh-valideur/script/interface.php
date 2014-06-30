@@ -255,6 +255,8 @@ function _ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity){
 		$ref			=	$ATMdb->Get_field('ref');
 		$compte_tiers	=	$ATMdb->Get_field('compte_tiers');
 		
+		if(empty($compte_tiers))$compte_tiers = $conf->global->NDF_EXPORT_DEFAULT_CPT_TIERS;
+
 		if(isset($_REQUEST['withLogin'])) {
 			$compte_tiers.=" (".$ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('lastname').")";
 		}
