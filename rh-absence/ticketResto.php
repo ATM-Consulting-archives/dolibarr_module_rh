@@ -322,14 +322,17 @@ if(__get('date_debut')=='') return false;
 		$var = explode("\n", $group->note);
 		
 		$rs =  $var[0];
-		$cp = $var[1];
-		$ville = $var[2];
+		$address = $var[1];
+		$cp = $var[2];
+		$ville = $var[3];
 	
 		
 	}
 	else{
 		
 		$rs =  $conf->global->MAIN_INFO_SOCIETE_NOM;
+		$address =  $conf->global->MAIN_INFO_SOCIETE_ADRESSE;
+
 		$cp = $conf->global->MAIN_INFO_SOCIETE_CP;
 		$ville = $conf->global->MAIN_INFO_SOCIETE_VILLE;
 	
@@ -381,7 +384,7 @@ if(__get('date_debut')=='') return false;
 			<td align="right"><?php echo $stat['ndf'] ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?> de <?php echo (int)$conf->global->RH_MONTANT_TICKET_RESTO ?> centimes</td>
 			
-			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', '', 10,255)  ?></td>
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', $rs.' '.$address.' '.$cp.' '.$ville, 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau1]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau2]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][matricule]', $u->array_options['options_COMPTE_TIERS'], 10,255)  ?></td>
