@@ -11,12 +11,7 @@
 	require('../../config.php');
 	require('../../class/absence.class.php');
 
-	$ATMdb=new Tdb;
-	$ATMdb->db->debug=true;
-
-	$o=new TRH_Compteur;
-	$o->init_db_by_vars($ATMdb);
-	
+	$ATMdb=new TPDOdb;
 	
 	/////chaque mois, les congés année N sont incrémentés de 2,08
 	$jour=date("d");
@@ -32,10 +27,21 @@
 		foreach($Tab as $idUser => $nombreConges )
 		{
 		    //on incrémente chaque mois les jours de congés
-			$sqlIncr="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-				SET acquisExerciceN=acquisExerciceN+".$nombreConges." 
-				WHERE fk_user=".$idUser;
-			$ATMdb->Execute($sqlIncr);
+			
+			$c=new TRH_Compteur;
+			if($c->load_by_fkuser($ATMdb, $idUser)) {
+					
+				$c->acquisExerciceN+=$c->nombreCongesAcquisMensuel;
+				$c->save($ATMdb);
+				
+			}
+			else{
+				print "Impossible de charger le compteur de $idUser \n";
+			}
+			
+			
+			
+			
 		}
 		
 	}
