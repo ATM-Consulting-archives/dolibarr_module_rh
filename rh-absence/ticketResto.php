@@ -38,6 +38,25 @@
 function _generate_ticket_resto(&$ATMdb, $Tab) {
 global $conf;
 	
+	
+	if(isset($_REQUEST['bt_sage'])) {
+	header('Content-type: application/octet-stream');
+    header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.txt');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+
+		foreach($Tab as $fk_user=>$row) {
+
+                if($row['nbTicket'] > 0) {
+			print "VM"
+				.str_pad((int)substr($row['matricule'],3) ,10, ' ')
+				."255"
+				.str_pad("CL06",10,' ')
+				.str_pad( number_format( $row['nbTicket'], 4, ',','' ),12,' ', STR_PAD_LEFT)."\r\n";
+		}
+
+		}
+	}
+	else {
 	header('Content-type: application/octet-stream');
     header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.csv');
     header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -73,7 +92,7 @@ global $conf;
 			
 		
 	}
-
+	}
 	//50;;;;;;;O/N;O/N;700;350;;??;;;O/N;O/N;*/
 	exit;
 }
@@ -303,14 +322,17 @@ if(__get('date_debut')=='') return false;
 		$var = explode("\n", $group->note);
 		
 		$rs =  $var[0];
-		$cp = $var[1];
-		$ville = $var[2];
+		$address = $var[1];
+		$cp = $var[2];
+		$ville = $var[3];
 	
 		
 	}
 	else{
 		
 		$rs =  $conf->global->MAIN_INFO_SOCIETE_NOM;
+		$address =  $conf->global->MAIN_INFO_SOCIETE_ADRESSE;
+
 		$cp = $conf->global->MAIN_INFO_SOCIETE_CP;
 		$ville = $conf->global->MAIN_INFO_SOCIETE_VILLE;
 	
@@ -362,7 +384,7 @@ if(__get('date_debut')=='') return false;
 			<td align="right"><?php echo $stat['ndf'] ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?> de <?php echo (int)$conf->global->RH_MONTANT_TICKET_RESTO ?> centimes</td>
 			
-			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', '', 10,255)  ?></td>
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', $rs.' '.$address.' '.$cp.' '.$ville, 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau1]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau2]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][matricule]', $u->array_options['options_COMPTE_TIERS'], 10,255)  ?></td>
@@ -373,7 +395,7 @@ if(__get('date_debut')=='') return false;
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][ville]',$ville, 10,255)  ?></td>
 			<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][rscarnet]', $TON , false)  ?></td>
 			<td align="right"><?php echo $form->combo('', 'TTicket['.$idUser.'][cpcarnet]', $TON , false)  ?></td>
-			<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date_distribution]', strtotime('+15day', $t_fin) )  ?></td>
+			<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date_distribution]', strtotime('+7day', $t_fin) )  ?></td>
 			<?php
 			
 		}
@@ -393,6 +415,7 @@ if(__get('date_debut')=='') return false;
 	?></table><br /><?php
 	
 	echo $form->btsubmit('Générer le fichier', 'Generer');
+	echo $form->btsubmit('Générer le fichier Sage', 'bt_sage');
 	echo ' puis ';
 	echo $form->btsubmit('Archiver cet envoi', 'Archive');
 	
