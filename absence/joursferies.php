@@ -13,7 +13,30 @@
 		switch($_REQUEST['action']) {
 			case 'sync':
 				
-				TRH_JoursFeries::syncronizeFromURL($ATMdb, 'http://www.google.com/calendar/feeds/fr.french%23holiday%40group.v.calendar.google.com/public/basic');
+				if(!empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+					list($id_country, $code_country) = explode(':', $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
+					
+					if($code_country=='FR') {
+						$url='http://www.google.com/calendar/feeds/fr.french%23holiday%40group.v.calendar.google.com/public/basic';
+					}
+					else{
+						$url = '';	
+					}
+					
+				}
+				
+				
+				if(!empty($conf->global->ABSENCE_SYNC_CALENDAR)) {
+					$url = $conf->global->ABSENCE_SYNC_CALENDAR;
+				}
+				
+				if(empty($url)) {
+					setEventMessage("Impossible de trouver l'url de calendrier à appeler. Ajoutez la conf : ABSENCE_SYNC_CALENDAR dans configuration > divers", 'errors');
+				}
+				else{
+					TRH_JoursFeries::syncronizeFromURL($ATMdb, $url);	
+				}
+				
 				
 				_liste($ATMdb, $feries , $emploiTemps);
 				
