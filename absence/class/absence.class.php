@@ -336,6 +336,17 @@ class TRH_Absence extends TObjetStd {
 
 		global $conf, $user;
 		$this->entity = $conf->entity;
+		
+		if(empty($this->code) || empty($this->libelle)) {
+			
+			$ta = new TRH_TypeAbsence;
+			$ta->load_by_type($db, $this->type);
+		
+			$this->code=$ta->codeAbsence;
+			$this->libelle=$ta->libelleAbsence;
+			
+		}
+		
 		parent::save($db);
 	}
 
@@ -1547,8 +1558,6 @@ class TRH_Absence extends TObjetStd {
 					else if($Tab[$fk_user][$date]['nb_jour_absence']==0.5 && $estUnJourTravaille=='AM')$Tab[$fk_user][$date]['nb_heure_absence'] = $t_am; 
 					else if($Tab[$fk_user][$date]['nb_jour_absence']==0.5 && $estUnJourTravaille=='PM')$Tab[$fk_user][$date]['nb_heure_absence'] = $t_pm; 
 					else $Tab[$fk_user][$date]['nb_heure_absence'] = 0;
-					
-				
 				
 					
 					@$Tab[$fk_user][$date]['ferie'] = (int)$estFerie ;
@@ -1579,8 +1588,9 @@ class TRH_Absence extends TObjetStd {
 		if($idUserRecherche>0){	//on recherche une  personne précis
 	
 			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.lastname,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
-				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment
+				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment,ta.isPresence
 				FROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
+				LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_type_absence as ta ON (a.type=ta.typeAbsence)
 				LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (g.fk_user=u.rowid)
 				WHERE a.fk_user=".$idUserRecherche."
 				AND a.etat!='Refusee'
@@ -1593,8 +1603,9 @@ class TRH_Absence extends TObjetStd {
 
 		else if($idGroupeRecherche>0){	//on recherche un groupe précis
 			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.lastname,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
-				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment
-				FFROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
+				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment,ta.isPresence
+				FROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
+				LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_type_absence as ta ON (a.type=ta.typeAbsence)
 				LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (g.fk_user=u.rowid)
 				WHERE g.fk_usergroup=".$idGroupeRecherche."
 				AND a.etat!='Refusee'
@@ -1608,8 +1619,9 @@ class TRH_Absence extends TObjetStd {
 		{	//on recherche pour tous les utilisateurs
 			$sql="SELECT a.rowid as 'ID',  u.rowid as 'idUser', u.login, u.lastname, u.firstname, 
 				DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, a.ddMoment, a.dfMoment,
-				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat
+				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat,ta.isPresence
 				FROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
+				LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_type_absence as ta ON (a.type=ta.typeAbsence)
 				LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (g.fk_user=u.rowid)
 				WHERE a.fk_user=u.rowid 
 				AND a.etat!='Refusee'
@@ -1631,6 +1643,7 @@ class TRH_Absence extends TObjetStd {
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['type']=$ATMdb->Get_field('libelle');
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['ddMoment']=$ATMdb->Get_field('ddMoment');
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['dfMoment']=$ATMdb->Get_field('dfMoment');
+			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['isPresence']=$ATMdb->Get_field('isPresence');
 			
 			
 			$k++;
@@ -1697,7 +1710,9 @@ class TRH_Absence extends TObjetStd {
 												$moment=" : FAM";
 											}else $moment=" : FPM";
 										}
-										$TRetour[date('d/m/Y',$jourDebut)][$id]=$value['type'].$moment;
+										
+										if($value['isPresence']>0) $TRetour[date('d/m/Y',$jourDebut)][$id]='[Présence] '.$value['type'].$moment;
+										else $TRetour[date('d/m/Y',$jourDebut)][$id]=$value['type'].$moment; 
 									}else{
 										
 										$TRetour[date('d/m/Y',$jourDebut)][$id]="non";

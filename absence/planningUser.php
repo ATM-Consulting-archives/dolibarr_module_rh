@@ -141,6 +141,9 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	table.planning tr td.rouge{
 			background-color:#C03000;
 	}
+	table.planning tr td.vert{
+			background-color:#86ce86;
+	}
 	table.planning tr td.rougeRTT {
 			background-color:#d87a00;
 	}
@@ -349,7 +352,17 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 				
 				$labelAbs = substr($ouinon,0,-5);
 				
-				$class .= (strpos($ouinon, 'RTT')!==false) ? ' rougeRTT' : ' rouge';
+				if(strpos($ouinon, 'RTT')!==false) {
+					$class .= ' rougeRTT';
+				}
+				else if(strpos($ouinon, '[Présence]')!==false) {
+					$class .= ' vert';
+				}
+				else {
+					$class .= 'rouge';	
+				}
+				
+				
 				if(!empty($class))$class.= ' classfortooltip';
 				
 				if(strpos($ouinon,'DAM')!==false){

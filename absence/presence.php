@@ -22,8 +22,9 @@
 				$absence->set_values($_REQUEST);
 				$existeDeja=$absence->testExisteDeja($ATMdb, $absence);
 				if($existeDeja===false){
-						$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
-				
+					
+						if($user->rights->absence->myactions->presenceAutoValidate)$absence->etat='Validee';
+						
 						$absence->save($ATMdb);
 						$mesg = 'Présence enregistrée';
 						_fiche($ATMdb, $absence,'view');

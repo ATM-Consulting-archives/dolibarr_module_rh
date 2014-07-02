@@ -806,7 +806,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'titreNvDemande'=>load_fiche_titre("Nouvelle demande d'absence",'', 'title.png', 0, '')
 				,'titreRecapAbsence'=>load_fiche_titre("Récapitulatif de la demande d'absence",'', 'title.png', 0, '')
 				,'titreJourRestant'=>load_fiche_titre("Jours restants à prendre",'', 'title.png', 0, '')
-				,'titreDerAbsence'=>load_fiche_titre("Dernières absences",'', 'title.png', 0, '')
+				,'titreDerAbsence'=>load_fiche_titre("Dernières abs./présences",'', 'title.png', 0, '')
 				,'titreRegle'=>load_fiche_titre("Règles applicable",'', 'title.png', 0, '')
 				
 				,'droitSupprimer'=>$droitSupprimer

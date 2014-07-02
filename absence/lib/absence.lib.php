@@ -125,7 +125,7 @@ function reglePrepareHead(&$obj, $type='regle') {
 }
 
 //fonction qui permet d'enregistrer le libellé d'une absence suivant son type
-function saveLibelle($type){
+function saveLibelle($type){ //TODO deprecated
 	switch($type){
 		case 'rttcumule':
 			return "RTT cumulé";
@@ -214,13 +214,11 @@ function saveLibelle($type){
 }
 
 //fonction qui permet de renvoyer le code de l'absence
-function saveCodeTypeAbsence(&$ATMdb, $type){
-	global $conf;
-	$sql="SELECT codeAbsence FROM `".MAIN_DB_PREFIX."rh_type_absence` WHERE typeAbsence LIKE '".$type."'";
-	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		return $ATMdb->Get_field('codeAbsence');
-	}	
+function saveCodeTypeAbsence(&$ATMdb, $type){ // TODO deprecated
+	$ta = new TRH_TypeAbsence;
+	$ta->load_by_type($ATMdb, $type);
+	
+	return $ta->codeAbsence;					
 }
 
 //fonction permettant de retourner le libelle de l'état de l'absence (à Valider...)
