@@ -38,42 +38,62 @@
 function _generate_ticket_resto(&$ATMdb, $Tab) {
 global $conf;
 	
-	header('Content-type: application/octet-stream');
-    header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.csv');
-    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-
-	print "Code produit;Code Client;Point de livraison;Niveau 1;Niveau 2;Matricule;Nom Salarié;Edition nom sur couverture;Edition nom sur titre;Valeur faciale en centimes;Part patronale en centimes;Nombre de titre;Raison Sociale;Code Postal;Ville;RS sur carnet;CP et Ville sur carnet;Date de livraison;\n";
 	
-	foreach($Tab as $fk_user=>$row) {
-		
-		if($row['nbTicket'] > 0) {
+	if(isset($_REQUEST['bt_sage'])) {
+		header('Content-type: application/octet-stream');
+	    header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.txt');
+	    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 
-			print implode(';',array(
-				$conf->global->RH_CODEPRODUIT_TICKET_RESTO
-				,$conf->global->RH_CODECLIENT_TICKET_RESTO
-				,$row['pointlivraison']
-				,$row['niveau1']
-				,$row['niveau2']
-				,$row['matricule']
-				,$row['name']
-				,$row['nomcouv']
-				,$row['nomtitre']
-				,$conf->global->RH_MONTANT_TICKET_RESTO
-				,($conf->global->RH_MONTANT_TICKET_RESTO * ($conf->global->RH_PART_PATRON_TICKET_RESTO / 100) )
-				,$row['nbTicket']
-				,$row['raisonsociale']
-				,$row['cp']
-				,$row['ville']
-				,$row['rscarnet']
-				,$row['cpcarnet']
-				,$row['date_distribution']
-			))."\n";
+		foreach($Tab as $fk_user=>$row) {
+
+                if($row['nbTicket'] > 0) {
+					print "VM"
+					.str_pad((int)substr($row['matricule'],3) ,10, ' ')
+					."255"
+					.str_pad("CL06",10,' ')
+					.str_pad( number_format( $row['nbTicket'], 4, ',','' ),12,' ', STR_PAD_LEFT)."\r\n";
+				}
+		}
+
+	}
+	else {
+		header('Content-type: application/octet-stream');
+	    header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.csv');
+	    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	
+		print "Code produit;Code Client;Point de livraison;Niveau 1;Niveau 2;Matricule;Nom Salarié;Edition nom sur couverture;Edition nom sur titre;Valeur faciale en centimes;Part patronale en centimes;Nombre de titre;Raison Sociale;Code Postal;Ville;RS sur carnet;CP et Ville sur carnet;Date de livraison;\n";
+		
+		foreach($Tab as $fk_user=>$row) {
+			
+			if($row['nbTicket'] > 0) {
+	
+				print implode(';',array(
+					$conf->global->RH_CODEPRODUIT_TICKET_RESTO
+					,$conf->global->RH_CODECLIENT_TICKET_RESTO
+					,$row['pointlivraison']
+					,$row['niveau1']
+					,$row['niveau2']
+					,$row['matricule']
+					,$row['name']
+					,$row['nomcouv']
+					,$row['nomtitre']
+					,$conf->global->RH_MONTANT_TICKET_RESTO
+					,($conf->global->RH_MONTANT_TICKET_RESTO * ($conf->global->RH_PART_PATRON_TICKET_RESTO / 100) )
+					,$row['nbTicket']
+					,$row['raisonsociale']
+					,$row['cp']
+					,$row['ville']
+					,$row['rscarnet']
+					,$row['cpcarnet']
+					,$row['date_distribution']
+				))."\n";
+				
+			}
+				
 			
 		}
-			
-		
 	}
-
+	//50;;;;;;;O/N;O/N;700;350;;??;;;O/N;O/N;*/
 	exit;
 }
 	
@@ -270,7 +290,7 @@ global $db,$conf, $langs;
 	
 	$form=new TFormCore('auto', 'formTR', 'POST');
 	echo $form->hidden('action', 'GEN_TR');
-
+	
 	$t_debut = Tools::get_time( __get('date_debut',0 ));
 	$t_fin = Tools::get_time( __get('date_fin',0 ));
 	
@@ -303,14 +323,16 @@ global $db,$conf, $langs;
 		$var = explode("\n", $group->note);
 		
 		$rs =  $var[0];
-		$cp = $var[1];
-		$ville = $var[2];
+		$address = $var[1];
+		$cp = $var[2];
+		$ville = $var[3];
 	
 		
 	}
 	else{
 		
 		$rs =  $conf->global->MAIN_INFO_SOCIETE_NOM;
+		$address =  $conf->global->MAIN_INFO_SOCIETE_ADDRESS;
 		$cp = $conf->global->MAIN_INFO_SOCIETE_ZIP;
 		$ville = $conf->global->MAIN_INFO_SOCIETE_TOWN;
 	
@@ -333,6 +355,7 @@ global $db,$conf, $langs;
 				<td>Nom Salarié</td>
 				<td>Présence (jour complet)</td>
 				<td>Repas passé en NdF (sur jour complet de présence)</td>
+				<td title="non décompté par défaut.">Repas passé en NdF (déclaration suspecte sur la période pour une date antérieure)</td>
 				<td>Nombre de titre</td>
 				<td>Point de livraison</td>
 				<td>Niveau 1</td>
@@ -360,9 +383,10 @@ global $db,$conf, $langs;
 			
 			?><td align="right"><?php echo $stat['presence'] ?></td>
 			<td align="right"><?php echo $stat['ndf'] ?></td>
+			<td align="right"><?php echo !empty($stat['ndf_suspicious']) ? '<strong style="color:red;">'.$stat['ndf_suspicious'].'</strong>' : '' ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?> de <?php echo (int)$conf->global->RH_MONTANT_TICKET_RESTO ?> centimes</td>
-		
-			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', '', 10,255)  ?></td>
+			
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', $rs.' '.$address.' '.$cp.' '.$ville, 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau1]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau2]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][matricule]', $u->array_options['options_COMPTE_TIERS'], 10,255)  ?></td>
@@ -380,7 +404,7 @@ global $db,$conf, $langs;
 		else{
 			
 			?>
-			<td colspan="15">Cet utilisateur n'a pas choisi les tickets restaurant</td>
+			<td colspan="16">Cet utilisateur n'a pas choisi les tickets restaurant</td>
 			<?php
 				
 		}
@@ -393,6 +417,7 @@ global $db,$conf, $langs;
 	?></table><br /><?php
 	
 	echo $form->btsubmit('Générer le fichier', 'Generer');
+	//echo $form->btsubmit('Générer le fichier Sage', 'bt_sage');
 	echo ' puis ';
 	echo $form->btsubmit('Archiver cet envoi', 'Archive');
 	

@@ -32,7 +32,7 @@
 	foreach($Tab as $idUser => $dateCloture )
 	{
 	   	//echo $idUser." ".$dateCloture. "<br/>";
-		$date=strtotime($dateCloture);
+		$date=strtotime('+1day',strtotime($dateCloture));
 		$dateMD=date("dm",$date);
 	
 		////// 1er juin, tous les congés de l'année N sont remis à 0, et sont transférés vers le compteur congés N-1
