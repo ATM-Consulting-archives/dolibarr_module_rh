@@ -404,7 +404,7 @@ if(__get('date_debut')=='') return false;
 		else{
 			
 			?>
-			<td colspan="15">Cet utilisateur n'a pas choisi les tickets restaurant</td>
+			<td colspan="16">Cet utilisateur n'a pas choisi les tickets restaurant</td>
 			<?php
 				
 		}
