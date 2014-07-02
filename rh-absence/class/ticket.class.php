@@ -36,12 +36,21 @@ class TRH_TicketResto extends TObjetStd {
 		
 	}
 	
-	static function isNDFforDay(&$ATMdb, $date, $fk_user) {
+	static function isNDFforDay(&$ATMdb, $date, $fk_user, $withSuspicisous=false) {
 		global $conf;
 		
-		$ATMdb->Execute("SELECT count(*) as nb 
+		$sql = "SELECT count(*) as nb 
 		FROM ".MAIN_DB_PREFIX."ndfp_det nd LEFT JOIN ".MAIN_DB_PREFIX."ndfp n ON (nd.fk_ndfp=n.rowid)
-		WHERE n.fk_user=".$fk_user." AND nd.fk_exp IN (".$conf->global->RH_NDF_TICKET_RESTO.") AND nd.dated<='".$date."' AND nd.datef>='".$date."'");
+		WHERE n.fk_user=".$fk_user." AND nd.fk_exp IN (".$conf->global->RH_NDF_TICKET_RESTO.") ";
+		
+		if($withSuspicisous) {
+			$sql .= " AND ((nd.dated<='".$date."' AND nd.datef>='".$date."') OR (nd.datec LIKE '".$date."%') ) ";
+		}
+		else{
+			$sql .= " AND nd.dated<='".$date."' AND nd.datef>='".$date."'";
+		}
+		
+		$ATMdb->Execute($sql);
 		$obj = $ATMdb->Get_line();
 		
 		return ($obj->nb!=0);
@@ -64,6 +73,7 @@ class TRH_TicketResto extends TObjetStd {
 					
 					$ndf+=	TRH_TicketResto::isNDFforDay($ATMdb, $date, $fk_user);
 					
+					$ndf_with_suspicious+=TRH_TicketResto::isNDFforDay($ATMdb, $date, $fk_user, true);
 				}
 				
 				
@@ -73,6 +83,7 @@ class TRH_TicketResto extends TObjetStd {
 			$Tab[$fk_user]=array(
 				'presence'=>$presence
 				,'ndf'=>$ndf
+				,'ndf_suspicious'=>$ndf_with_suspicious - $ndf
 			);
 		}
 		
