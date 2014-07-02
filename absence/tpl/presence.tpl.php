@@ -36,19 +36,11 @@
 				</tr>
 				<tr>
 					<td>Date début</td>
-			 		<td>[absenceCourante.date_debut;strconv=no;protect=no]</td>
+			 		<td>[absenceCourante.date_debut;strconv=no;protect=no]&nbsp; &nbsp;[absenceCourante.ddMoment;strconv=no;protect=no]&nbsp; &nbsp;[absenceCourante.hourStart;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>Date fin</td>
-			 		<td>[absenceCourante.date_fin;strconv=no;protect=no]</td>
-				</tr>
-				<tr>
-					<td>Heure de début</td>
-			 		<td>[absenceCourante.hourStart;strconv=no;protect=no]</td>
-				</tr>
-				<tr>
-					<td>Heure de fin</td>
-			 		<td>[absenceCourante.hourEnd;strconv=no;protect=no]</td>
+			 		<td>[absenceCourante.date_fin;strconv=no;protect=no]&nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]&nbsp; &nbsp;[absenceCourante.hourEnd;strconv=no;protect=no]</td>
 				</tr>
 				
 				<tr>

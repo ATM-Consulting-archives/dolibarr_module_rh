@@ -22,16 +22,14 @@
 				$absence->set_values($_REQUEST);
 				$existeDeja=$absence->testExisteDeja($ATMdb, $absence);
 				if($existeDeja===false){
-					$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
-				
-						$absence->etat='Validee';
+						$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
 				
 						$absence->save($ATMdb);
 						$mesg = 'Présence enregistrée';
 						_fiche($ATMdb, $absence,'view');
 				
 				}else{
-					$mesg = '<div class="error">Création impossible : il existe déjà une autre présence pendant cette période : '.$existeDeja.'</div>';
+					$mesg = '<div class="error">Création impossible : il existe déjà une autre présence/absence pendant cette période : '.$existeDeja.'</div>';
 					_fiche($ATMdb, $absence,'edit');
 				}
 				break;
@@ -576,6 +574,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'titreJourRestant'=>load_fiche_titre("Jours restants à prendre",'', 'title.png', 0, '')
 				,'titreDerAbsence'=>load_fiche_titre("Vos dernières présences/absences",'', 'title.png', 0, '')
 				,'titreRegle'=>load_fiche_titre("Règles vous concernant",'', 'title.png', 0, '')
+				
+				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
+				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
 				
 				,'droitSupprimer'=>$droitSupprimer
 				

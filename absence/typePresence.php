@@ -82,8 +82,8 @@
 			,'codeAbsence'=>$form->texte('', 'TTypeAbsenceNew[codeAbsence]', '', 6,10)
 			
 			,'unite'=>$form->combo('', 'TTypeAbsenceNew[unite]', $absenceTypeDummy->TUnite , null)
-			,'hourStart'=>$form->timepicker('', 'TTypeAbsenceNew[hourStart]', '8:00', 5,10)
-			,'hourEnd'=>$form->timepicker('', 'TTypeAbsenceNew[hourEnd]', '18:00', 5,10)
+			,'hourStart'=>$form->timepicker('', 'TTypeAbsenceNew[date_hourStart]', '8:00', 5,10)
+			,'hourEnd'=>$form->timepicker('', 'TTypeAbsenceNew[date_hourEnd]', '18:00', 5,10)
 			,'decompteNormal'=>$form->hidden('TTypeAbsenceNew[decompteNormal]', 'oui')
 			,'isPresence'=>$form->hidden('TTypeAbsenceNew[isPresence]', 1)
 			,'admin'=>$form->combo('', 'TTypeAbsenceNew[admin]', $absenceTypeDummy->TForAdmin , null)
