@@ -131,7 +131,7 @@ class TRH_Compteur extends TObjetStd {
 		$ATMdb->Execute($sql);
 		if ($ATMdb->Get_line()) {
 			
-			$this->load($ATMdb, $ATMdb->Get_field('rowid'));
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
 			
 		}
 		return false;
