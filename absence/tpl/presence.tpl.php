@@ -15,7 +15,7 @@
            		[absenceCourante.titreRecapAbsence;strconv=no;protect=no]                   
 			[onshow;block=end]
 
-
+			[absenceCourante.fk_user_absence;strconv=no;protect=no]
 			<table class="border" style="width:40%">
 				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='1']
 				<tr>
