@@ -76,7 +76,7 @@
 					<td><b>[congesCourant.total;strconv=no;protect=no]</b></td>
 				</tr>
 				<tr>
-					<td><b>Dernière clôture congés</b></td>
+					<td><b>Clôture congés</b></td>
 					<td>[congesCourant.date_congesCloture;strconv=no;protect=no]</td>
 				</tr>
 		</table>
@@ -167,7 +167,7 @@
 					<td>[rttCourant.reportRtt;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td><b> Dernière clôture RTT</b></td>
+					<td><b> Clôture RTT</b></td>
 					<td>[rttCourant.date_rttCloture;strconv=no;protect=no]</td>
 				</tr>	
 		</table>
