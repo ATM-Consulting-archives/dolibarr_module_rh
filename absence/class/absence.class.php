@@ -10,7 +10,7 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('acquisExerciceN','type=float;');				
 		parent::add_champs('acquisAncienneteN','type=float;');				
 		parent::add_champs('acquisHorsPeriodeN','type=float;');											
-		parent::add_champs('anneeN','type=int;');					
+		parent::add_champs('anneeN','type=entier;');					
 		parent::add_champs('dureeN','type=entier;');
 		parent::add_champs('date_congesCloture','type=date;');	//date de clôture période rtt
 		parent::add_champs('nombreCongesAcquisMensuel','type=float;');
@@ -24,7 +24,7 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('congesPrisN','type=float;');			
 		parent::add_champs('congesTotalNM1','type=float;');	
 		parent::add_champs('congesResteNM1','type=float;');
-		parent::add_champs('anneeNM1','type=int;');					
+		parent::add_champs('anneeNM1','type=entier;');					
 		parent::add_champs('dureeNM1','type=entier;');				
 		
 		//RTT cumulés 
@@ -51,14 +51,14 @@ class TRH_Compteur extends TObjetStd {
 		
 		parent::add_champs('rttTypeAcquisition','type=chaine;');				//annuel, mensuel...
 		parent::add_champs('fk_user','type=entier;index;');			//utilisateur concerné
-		parent::add_champs('rttannee','type=int;');	
+		parent::add_champs('rttannee','type=entier;');	
 		parent::add_champs('rttMetier','type=chaine;');		
 		parent::add_champs('date_rttCloture','type=date;');	//date de clôture période rtt
 		
-		parent::add_champs('reportRtt','type=int;');	//entier (0 ou 1) pour savoir si l'on reporte les RTT d'une année à l'autre
+		parent::add_champs('reportRtt','type=entier;');	//entier (0 ou 1) pour savoir si l'on reporte les RTT d'une année à l'autre
 		
 
-		parent::add_champs('entity','type=int;');					
+		parent::add_champs('entity','type=entier;');					
 	
 		
 		parent::_init_vars();
@@ -161,12 +161,12 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
 		parent::add_champs('commentaireValideur','type=chaine;');		//commentaire
 		parent::add_champs('etat','type=chaine;index;');			//état (à valider, validé...)
-		parent::add_champs('avertissement','type=int;');	
+		parent::add_champs('avertissement','type=entier;');	
 		parent::add_champs('libelleEtat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('niveauValidation','type=entier;');	//niveau de validation
 		parent::add_champs('idAbsImport','type=entier;index;');	//niveau de validation
 		parent::add_champs('fk_user, fk_user_valideur','type=entier;index;');	//utilisateur concerné
-		parent::add_champs('entity','type=int;');	
+		parent::add_champs('entity','type=entier;');	
 		
 		parent::_init_vars();
 		parent::start();
@@ -1808,7 +1808,7 @@ class TRH_EmploiTemps extends TObjetStd {
 		parent::add_champs('fk_user','type=entier;index;');	//utilisateur concerné
 		parent::add_champs('tempsHebdo','type=float;');
 		parent::add_champs('societeRtt','type=chaine;');
-		parent::add_champs('entity,is_archive','type=int;index;');
+		parent::add_champs('entity,is_archive','type=entier;index;');
 		
 		parent::add_champs('date_debut,date_fin', array('type'=>'date'));
 		
@@ -2025,7 +2025,7 @@ class TRH_JoursFeries extends TObjetStd {
 		parent::add_champs('date_jourOff','type=date;');
 		parent::add_champs('moment','type=chaine;');
 		parent::add_champs('commentaire','type=chaine;');
-		parent::add_champs('entity','type=int;');
+		parent::add_champs('entity','type=entier;');
 		
 		
 		parent::_init_vars();
@@ -2218,9 +2218,9 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::add_champs('typeAbsence','type=chaine;index;');
 		parent::add_champs('libelleAbsence','type=chaine;');
 		parent::add_champs('codeAbsence','type=chaine;index;');
-		parent::add_champs('admin','type=int;');
+		parent::add_champs('admin','type=entier;');
 		parent::add_champs('unite','type=chaine;');
-		parent::add_champs('entity,isPresence,colorId','type=int;index;');
+		parent::add_champs('entity,isPresence,colorId','type=entier;index;');
 		
 		parent::add_champs('decompteNormal','type=chaine;');
 		
