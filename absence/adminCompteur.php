@@ -38,13 +38,8 @@
 					$compteur->load($ATMdb, $_REQUEST['id']);
 					_fiche($ATMdb, $compteur,'view');
 				}else{
-					//récupération compteur en cours
-					$sqlReqUser="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$user->id;
-					$ATMdb->Execute($sqlReqUser);
-					while($ATMdb->Get_line()) {
-								$idComptEnCours=$ATMdb->Get_field('rowid');
-					}
-					$compteur->load($ATMdb, $idComptEnCours);
+					
+					$compteur->load_by_fkuser($ATMdb, $user->id);
 					_fiche($ATMdb, $compteur,'view');
 					
 				}

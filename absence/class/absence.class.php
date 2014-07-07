@@ -303,30 +303,28 @@ class TRH_Absence extends TObjetStd {
 		
 		///////décompte des congés
 		if($this->type=="rttcumule"){
+			$compteur->rttCumulePris += $dureeAbsenceCourante;
+			$compteur->rttCumuleTotal -= $dureeAbsenceCourante; 
 			
-			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
-				SET rttCumulePris=0+rttCumulePris+".$dureeAbsenceCourante.", rttCumuleTotal=rttCumuleTotal-".$dureeAbsenceCourante." 
-				WHERE fk_user=".$userConcerne;
-			
-			$db->Execute($sqlDecompte);
-			//$this->rttCumulePris=$this->rttCumulePris+$dureeAbsenceCourante;
+			$compteur->save($ATMdb);
 			
 		}
 		else if($this->type=="rttnoncumule"){
-			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
-				SET rttNonCumulePris=rttNonCumulePris+".$dureeAbsenceCourante.", rttNonCumuleTotal=rttNonCumuleTotal-".$dureeAbsenceCourante." 
-				WHERE fk_user=".$userConcerne;
-			$db->Execute($sqlDecompte);
-			//$this->rttNonCumulePris=$this->rttNonCumulePris-$dureeAbsenceCourante;
+			
+			$compteur->rttNonCumulePris += $dureeAbsenceCourante;
+			$compteur->rttNonCumuleTotal -= $dureeAbsenceCourante; 
+			
+			$compteur->save($ATMdb);
 		}
 		else if($this->type=="conges"||$this->type=="cppartiel"){	//autre que RTT : décompte les congés
-		//var_dump($this->congesPrisNM1, $this->congesPrisN);exit;
-			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
-				SET congesPrisNM1=congesPrisNM1+".$this->congesPrisNM1.", congesPrisN=congesPrisN+".$this->congesPrisN." 
-				WHERE fk_user=".$userConcerne;
-	
-			$db->Execute($sqlDecompte);
+					
+			$compteur->congesPrisNM1 += $this->congesPrisNM1;
+			$compteur->congesPrisN += $this->congesPrisN; 
+			
+			$compteur->save($ATMdb);
+			
 			$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
+			
 		}
 		
 		return $dureeAbsenceRecevable;
@@ -1163,25 +1161,33 @@ class TRH_Absence extends TObjetStd {
 		
 		if($this->etat!='Refusee'){
 			
+			$compteur=new TRH_Compteur;
+			$compteur->load_by_fkuser($ATMdb, $this->fk_user);
+			
 			switch($this->type){
 				case "rttcumule" : 
-						$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-						SET rttCumulePris=rttCumulePris-".$this->duree.", rttCumuleTotal=rttCumuleTotal+".$this->duree." 
-						where fk_user=".$this->fk_user;
-						$ATMdb->Execute($sqlRecredit);	
+						$compteur->rttCumulePris-=$this->duree;
+						$compteur->rttCumuleTotal+=$this->duree;
+
+						$compteur->save($ATMdb);						
+						
 				break;
 				case "rttnoncumule" : 
-						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
-						SET rttNonCumulePris=rttNonCumulePris-".$this->duree.", rttNonCumuleTotal=rttNonCumuleTotal+".$this->duree."  
-						where fk_user=".$this->fk_user;
-						$ATMdb->Execute($sqlRecredit);
+						
+						$compteur->rttNonCumulePris-=$this->duree;
+						$compteur->rttNonCumuleTotal+=$this->duree;
+
+						$compteur->save($ATMdb);
+						
 				break;
 				case 'conges':
 				case 'cppartiel':
-					$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
-					SET congesPrisNM1=congesPrisNM1-".$this->congesPrisNM1.",congesPrisN=congesPrisN-".$this->congesPrisN."  
-					where fk_user=".$this->fk_user;
-					$ATMdb->Execute($sqlRecredit);
+					
+					$compteur->congesPrisNM1-=$this->congesPrisNM1;
+					$compteur->congesPrisN-=$this->congesPrisN;
+
+					$compteur->save($ATMdb);
+					
 				break;
 			}
 		}
