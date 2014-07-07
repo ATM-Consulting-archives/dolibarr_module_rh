@@ -152,7 +152,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('code','type=varchar;index;');				//code  congé
 		parent::add_champs('type','type=varchar;index;');				//type de congé
 		parent::add_champs('libelle','type=varchar;');				//type de congé
-		parent::add_champs('date_debut,date_fin, date_validation','type=date;index;');	//dates debut fin de congés
+		parent::add_champs('date_debut,date_fin,date_validation','type=date;index;');	//dates debut fin de congés
 		parent::add_champs('date_hourStart,date_hourEnd','type=date;');	//dates debut fin de congés
 		parent::add_champs('ddMoment, dfMoment','type=chaine;');		//moment (matin ou après midi)
 		parent::add_champs('duree,congesPrisNM1,congesPrisN','type=float;');	
@@ -160,7 +160,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('dureeHeurePaie','type=chaine;');
 		parent::add_champs('commentaire','type=chaine;');		//commentaire
 		parent::add_champs('commentaireValideur','type=chaine;');		//commentaire
-		parent::add_champs('etat','type=chaine;');			//état (à valider, validé...)
+		parent::add_champs('etat','type=chaine;index;');			//état (à valider, validé...)
 		parent::add_champs('avertissement','type=int;');	
 		parent::add_champs('libelleEtat','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('niveauValidation','type=entier;');	//niveau de validation
@@ -2215,7 +2215,7 @@ class TRH_RegleAbsence extends TObjetStd {
 class TRH_TypeAbsence extends TObjetStd {
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_type_absence');
-		parent::add_champs('typeAbsence','type=chaine;');
+		parent::add_champs('typeAbsence','type=chaine;index;');
 		parent::add_champs('libelleAbsence','type=chaine;');
 		parent::add_champs('codeAbsence','type=chaine;index;');
 		parent::add_champs('admin','type=int;');

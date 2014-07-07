@@ -105,8 +105,8 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	$sql="SELECT DISTINCT e.rowid as 'ID', e.date_cre as 'DateCre', 
 	 e.fk_user as 'Id Utilisateur', '' as 'Emploi du temps', u.login
 	,u.rowid as 'fk_user',u.firstname, u.lastname
-		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e, ".MAIN_DB_PREFIX."user as u
-		WHERE e.entity IN (0,".$conf->entity.") AND e.is_archive=0 AND u.rowid=e.fk_user ";
+		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e INNER JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
+		WHERE e.entity IN (0,".$conf->entity.") AND e.is_archive=0 ";
 
 	if($user->rights->absence->myactions->voirTousEdt!="1"){
 		$sql.=" AND e.fk_user=".$user->id;
