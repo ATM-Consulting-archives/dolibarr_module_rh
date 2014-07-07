@@ -2022,10 +2022,10 @@ class TRH_EmploiTemps extends TObjetStd {
 class TRH_JoursFeries extends TObjetStd {
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_jours_feries');
-		parent::add_champs('date_jourOff','type=date;');
-		parent::add_champs('moment','type=chaine;');
+		parent::add_champs('date_jourOff','type=date;index;');
+		parent::add_champs('moment','type=chaine;index;');
 		parent::add_champs('commentaire','type=chaine;');
-		parent::add_champs('entity','type=entier;');
+		parent::add_champs('entity','type=entier;index;');
 		
 		
 		parent::_init_vars();
