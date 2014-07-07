@@ -301,6 +301,8 @@ class TRH_Absence extends TObjetStd {
 
 	function testDemande(&$db, $userConcerne, &$absence){
 		$ATMdb=new TPDOdb;
+//		$ATMdb->debug = true;
+
 		global $conf, $user;
 		$this->entity = $conf->entity;
 		
