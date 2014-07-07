@@ -222,10 +222,10 @@ class TRH_Absence extends TObjetStd {
 		
 		$sql="SELECT DISTINCT r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, 
 		r.fk_user, r.fk_usergroup, r.choixApplication
-		FROM ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."rh_absence_regle as r
-		WHERE r.choixApplication Like 'user' AND r.fk_user=".$fk_user."
-		OR (r.choixApplication Like 'all')
-		OR (r.choixApplication Like 'group' AND r.fk_usergroup=g.fk_usergroup AND g.fk_user=".$fk_user.") 
+		FROM ".MAIN_DB_PREFIX."rh_absence_regle as r INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (r.fk_usergroup=g.fk_usergroup)
+		WHERE r.choixApplication LIKE 'user' AND r.fk_user=".$fk_user."
+		OR (r.choixApplication LIKE 'all')
+		OR (r.choixApplication LIKE 'group' AND g.fk_user=".$fk_user.") 
 		ORDER BY r.nbJourCumulable";
 
 		$ATMdb->Execute($sql);
@@ -2143,11 +2143,11 @@ class TRH_RegleAbsence extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_regle');
 		parent::add_champs('typeAbsence','type=chaine;');
 		parent::add_champs('choixApplication','type=chaine;');
-		parent::add_champs('nbJourCumulable','type=int;');
+		parent::add_champs('nbJourCumulable','type=entier;index;');
 		parent::add_champs('restrictif','type=entier;');
-		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
-		parent::add_champs('fk_usergroup','type=entier;');	//utilisateur concerné
-		parent::add_champs('entity','type=int;');
+		parent::add_champs('fk_user','type=entier;index;');	//utilisateur concerné
+		parent::add_champs('fk_usergroup','type=entier;index;');	//utilisateur concerné
+		parent::add_champs('entity','type=entier;index;');
 		
 		
 		parent::_init_vars();
