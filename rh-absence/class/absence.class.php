@@ -10,7 +10,7 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('acquisExerciceN','type=float;');				
 		parent::add_champs('acquisAncienneteN','type=float;');				
 		parent::add_champs('acquisHorsPeriodeN','type=float;');											
-		parent::add_champs('anneeN','type=int;');					
+		parent::add_champs('anneeN','type=entier;');					
 		parent::add_champs('dureeN','type=entier;');
 		parent::add_champs('date_congesCloture','type=date;');	//date de clôture période rtt
 		parent::add_champs('nombreCongesAcquisMensuel','type=float;');
@@ -24,7 +24,7 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('congesPrisN','type=float;');			
 		parent::add_champs('congesTotalNM1','type=float;');	
 		parent::add_champs('congesResteNM1','type=float;');
-		parent::add_champs('anneeNM1','type=int;');					
+		parent::add_champs('anneeNM1','type=entier;');					
 		parent::add_champs('dureeNM1','type=entier;');				
 		
 		//RTT cumulés 
@@ -51,14 +51,14 @@ class TRH_Compteur extends TObjetStd {
 		
 		parent::add_champs('rttTypeAcquisition','type=chaine;');				//annuel, mensuel...
 		parent::add_champs('fk_user','type=entier;index;');			//utilisateur concerné
-		parent::add_champs('rttannee','type=int;');	
+		parent::add_champs('rttannee','type=entier;');	
 		parent::add_champs('rttMetier','type=chaine;');		
 		parent::add_champs('date_rttCloture','type=date;');	//date de clôture période rtt
 		
-		parent::add_champs('reportRtt','type=int;');	//entier (0 ou 1) pour savoir si l'on reporte les RTT d'une année à l'autre
+		parent::add_champs('reportRtt','type=entier;');	//entier (0 ou 1) pour savoir si l'on reporte les RTT d'une année à l'autre
 		
 
-		parent::add_champs('entity','type=int;');					
+		parent::add_champs('entity','type=entier;');					
 	
 		
 		parent::_init_vars();
@@ -122,6 +122,8 @@ class TRH_Compteur extends TObjetStd {
 		$this->date_rttCloture=strtotime(DATE_RTT_CLOTURE); // AA Ne devrait pas être en dur mais en config
 		$this->date_congesCloture=strtotime(DATE_CONGES_CLOTURE);
 		$this->reportRtt=0;
+		
+		$this->is_archive=0;
 	}
 	
 
@@ -129,12 +131,11 @@ class TRH_Compteur extends TObjetStd {
 	function load_by_fkuser(&$ATMdb, $fk_user){
 
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur 
-		WHERE fk_user=".$fk_user;
+		WHERE fk_user=".(int)$fk_user;
 
 		$ATMdb->Execute($sql);
-		if ($ATMdb->Get_line()) {
-			
-			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		if ($obj = $ATMdb->Get_line()) {
+			return $this->load($ATMdb, $obj->rowid);
 			
 		}
 		return false;
@@ -353,32 +354,27 @@ class TRH_Absence extends TObjetStd {
 		}
 		
 		///////décompte des congés
-		if($this->type=="rttcumule"){//&&$methode=="Annuel"){
+		if($this->type=="rttcumule"){
+			$compteur->rttCumulePris += $dureeAbsenceCourante;
+			$compteur->rttCumuleTotal -= $dureeAbsenceCourante; 
 			
-			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
-				SET rttCumulePris=0+rttCumulePris+".$dureeAbsenceCourante.", rttCumuleTotal=rttCumuleTotal-".$dureeAbsenceCourante." 
-				WHERE fk_user=".$userConcerne;
-			
-			$db->Execute($sqlDecompte);
-			//$this->rttCumulePris=$this->rttCumulePris+$dureeAbsenceCourante;
+			$compteur->save($ATMdb);
 			
 		}
-		else if($this->type=="rttnoncumule"){//&&$methode=="Annuel"){
-			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
-				SET rttNonCumulePris=rttNonCumulePris+".$dureeAbsenceCourante.", rttNonCumuleTotal=rttNonCumuleTotal-".$dureeAbsenceCourante." 
-				WHERE fk_user=".$userConcerne;
-			$db->Execute($sqlDecompte);
-			//$this->rttNonCumulePris=$this->rttNonCumulePris-$dureeAbsenceCourante;
+		else if($this->type=="rttnoncumule"){
+			
+			$compteur->rttNonCumulePris += $dureeAbsenceCourante;
+			$compteur->rttNonCumuleTotal -= $dureeAbsenceCourante; 
+			
+			$compteur->save($ATMdb);
 		}
 		else if($this->type=="conges"||$this->type=="cppartiel"){	//autre que RTT : décompte les congés
-		
-			$sqlDecompte="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
-				SET congesPrisNM1=congesPrisNM1+".$this->congesPrisNM1.", congesPrisN=congesPrisN+".$this->congesPrisN." 
-				WHERE fk_user=".$userConcerne;
-		/*	print $sqlDecompte;	
-				
-				exit("  $dureeAbsenceCourante $userConcerne");*/
-			$db->Execute($sqlDecompte);
+					
+			$compteur->congesPrisNM1 += $this->congesPrisNM1;
+			$compteur->congesPrisN += $this->congesPrisN; 
+			
+			$compteur->save($ATMdb);
+			
 			$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 		}
 		
@@ -1207,25 +1203,33 @@ class TRH_Absence extends TObjetStd {
 		
 		if($this->etat!='Refusee'){
 			
+			$compteur=new TRH_Compteur;
+			$compteur->load_by_fkuser($ATMdb, $this->fk_user);
+			
 			switch($this->type){
 				case "rttcumule" : 
-						$sqlRecredit="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-						SET rttCumulePris=rttCumulePris-".$this->duree.", rttCumuleTotal=rttCumuleTotal+".$this->duree." 
-						where fk_user=".$this->fk_user;
-						$ATMdb->Execute($sqlRecredit);	
+						$compteur->rttCumulePris-=$this->duree;
+						$compteur->rttCumuleTotal+=$this->duree;
+
+						$compteur->save($ATMdb);						
+						
 				break;
 				case "rttnoncumule" : 
-						$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
-						SET rttNonCumulePris=rttNonCumulePris-".$this->duree.", rttNonCumuleTotal=rttNonCumuleTotal+".$this->duree."  
-						where fk_user=".$this->fk_user;
-						$ATMdb->Execute($sqlRecredit);
+						
+						$compteur->rttNonCumulePris-=$this->duree;
+						$compteur->rttNonCumuleTotal+=$this->duree;
+
+						$compteur->save($ATMdb);
+						
 				break;
 				case 'conges':
 				case 'cppartiel':
-					$sqlRecredit="UPDATE `".MAIN_DB_PREFIX."rh_compteur` 
-					SET congesPrisNM1=congesPrisNM1-".$this->congesPrisNM1.",congesPrisN=congesPrisN-".$this->congesPrisN."  
-					where fk_user=".$this->fk_user;
-					$ATMdb->Execute($sqlRecredit);
+					
+					$compteur->congesPrisNM1-=$this->congesPrisNM1;
+					$compteur->congesPrisN-=$this->congesPrisN;
+
+					$compteur->save($ATMdb);
+					
 				break;
 			}
 		}
@@ -1971,7 +1975,7 @@ class TRH_EmploiTemps extends TObjetStd {
 		
 		if(!empty($date)) {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
-			WHERE fk_user=".$fk_user." AND is_archive=1 AND DATE_FORMAT(date_debut,'%Y-%m-%d') <='$date' AND DATE_FORMAT(date_fin,'%Y-%m-%d')>='$date'";
+			WHERE fk_user=".(int)$fk_user." AND is_archive=1 AND DATE_FORMAT(date_debut,'%Y-%m-%d') <='$date' AND DATE_FORMAT(date_fin,'%Y-%m-%d')>='$date'";
 			//print $sql;
 			$ATMdb->Execute($sql);
 			if($row = $ATMdb->Get_line()) {
@@ -1984,7 +1988,7 @@ class TRH_EmploiTemps extends TObjetStd {
 		
 		if(empty($date) || empty($id)) {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
-			WHERE fk_user=".$fk_user." AND is_archive!=1";
+			WHERE fk_user=".(int)$fk_user." AND is_archive!=1";
 			
 			$ATMdb->Execute($sql);
 		
@@ -2062,10 +2066,10 @@ class TRH_EmploiTemps extends TObjetStd {
 class TRH_JoursFeries extends TObjetStd {
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_jours_feries');
-		parent::add_champs('date_jourOff','type=date;');
-		parent::add_champs('moment','type=chaine;');
+		parent::add_champs('date_jourOff','type=date;index;');
+		parent::add_champs('moment','type=chaine;index;');
 		parent::add_champs('commentaire','type=chaine;');
-		parent::add_champs('entity','type=int;');
+		parent::add_champs('entity','type=entier;index;');
 		
 		
 		parent::_init_vars();
