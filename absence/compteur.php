@@ -87,8 +87,8 @@ function _liste(&$ATMdb, &$compteur) {
 		CAST(r.acquisExerciceNM1 as DECIMAL(16,1)) as 'Conges Acquis N-1', 
 		CAST(r.congesPrisNM1 as DECIMAL(16,1)) as 'Conges Pris N-1',
 		CAST(r.rttPris as DECIMAL(16,1))  as 'RttPris'
-		FROM ".MAIN_DB_PREFIX."rh_compteur as r, ".MAIN_DB_PREFIX."user as c 
-		WHERE r.entity IN (0,".$conf->entity.") AND r.fk_user=c.rowid";
+		FROM ".MAIN_DB_PREFIX."rh_compteur as r INNER JOIN ".MAIN_DB_PREFIX."user as c ON ( r.fk_user=c.rowid ) 
+		WHERE r.entity IN (0,".$conf->entity.")";
 		
 	
 	$TOrder = array('DateCre'=>'ASC');
@@ -150,8 +150,8 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 		CAST(r.acquisAncienneteN as DECIMAL(16,1)) as 'Congés Ancienneté', 
 		CAST(r.acquisExerciceNM1 as DECIMAL(16,1)) as 'Conges Acquis N-1', 
 		CAST(r.congesPrisNM1 as DECIMAL(16,1)) as 'Conges Pris N-1'
-		FROM ".MAIN_DB_PREFIX."rh_compteur as r, ".MAIN_DB_PREFIX."user as c 
-		WHERE r.fk_user=c.rowid";
+		FROM ".MAIN_DB_PREFIX."rh_compteur as r INNER JOIN ".MAIN_DB_PREFIX."user as c ON (r.fk_user=c.rowid) 
+		WHERE 1 ";
 	
 	
 	$TOrder = array('lastname'=>'ASC');
