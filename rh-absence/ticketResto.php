@@ -61,7 +61,7 @@ global $conf;
 	    header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.csv');
 	    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 	
-		print "Code produit;Code Client;Point de livraison;Niveau 1;Niveau 2;Matricule;Nom Salarié;Edition nom sur couverture;Edition nom sur titre;Valeur faciale en centimes;Part patronale en centimes;Nombre de titre;Raison Sociale;Code Postal;Ville;RS sur carnet;CP et Ville sur carnet;Date de livraison;\n";
+//		print "Code produit;Code Client;Point de livraison;Niveau 1;Niveau 2;Matricule;Nom Salarié;Edition nom sur couverture;Edition nom sur titre;Valeur faciale en centimes;Part patronale en centimes;Nombre de titre;Raison Sociale;Code Postal;Ville;RS sur carnet;CP et Ville sur carnet;Date de livraison;\n";
 		
 		foreach($Tab as $fk_user=>$row) {
 			
@@ -325,8 +325,8 @@ if(__get('date_debut')=='') return false;
 		$address = $var[1];
 		$cp = $var[2];
 		$ville = $var[3];
-	
 		
+		$pointlivraison = $var[4];	
 	}
 	else{
 		
@@ -339,6 +339,7 @@ if(__get('date_debut')=='') return false;
 		
 	}
 	
+	if(empty($pointlivraison)) $pointlivraison= $rs.' '.$address.' '.$cp.' '.$ville;
 
 	dol_include_once('/core/class/extrafields.class.php');
     $extrafields = new ExtraFields($db);
@@ -386,7 +387,7 @@ if(__get('date_debut')=='') return false;
 			<td align="right"><?php echo !empty($stat['ndf_suspicious']) ? '<strong style="color:red;">'.$stat['ndf_suspicious'].'</strong>' : '' ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?> de <?php echo (int)$conf->global->RH_MONTANT_TICKET_RESTO ?> centimes</td>
 			
-			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', $rs.' '.$address.' '.$cp.' '.$ville, 10,255)  ?></td>
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]',$pointlivraison, 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau1]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau2]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][matricule]', $u->array_options['options_COMPTE_TIERS'], 10,255)  ?></td>
