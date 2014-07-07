@@ -119,6 +119,8 @@ class TRH_Compteur extends TObjetStd {
 		$this->date_rttCloture=strtotime($conf->global->RH_DATE_RTT_CLOTURE); 
 		$this->date_congesCloture=strtotime($conf->global->RH_DATE_CONGES_CLOTURE);
 		$this->reportRtt=0;
+		
+		$this->is_archive=0;
 	}
 	
 
@@ -126,12 +128,11 @@ class TRH_Compteur extends TObjetStd {
 	function load_by_fkuser(&$ATMdb, $fk_user){
 
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur 
-		WHERE fk_user=".$fk_user;
+		WHERE fk_user=".(int)$fk_user;
 
 		$ATMdb->Execute($sql);
-		if ($ATMdb->Get_line()) {
-			
-			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		if ($obj = $ATMdb->Get_line()) {
+			return $this->load($ATMdb, $obj->rowid);
 			
 		}
 		return false;
@@ -1931,7 +1932,7 @@ class TRH_EmploiTemps extends TObjetStd {
 		
 		if(!empty($date)) {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
-			WHERE fk_user=".$fk_user." AND is_archive=1 AND DATE_FORMAT(date_debut,'%Y-%m-%d') <='$date' AND DATE_FORMAT(date_fin,'%Y-%m-%d')>='$date'";
+			WHERE fk_user=".(int)$fk_user." AND is_archive=1 AND DATE_FORMAT(date_debut,'%Y-%m-%d') <='$date' AND DATE_FORMAT(date_fin,'%Y-%m-%d')>='$date'";
 			//print $sql;
 			$ATMdb->Execute($sql);
 			if($row = $ATMdb->Get_line()) {
@@ -1944,7 +1945,7 @@ class TRH_EmploiTemps extends TObjetStd {
 		
 		if(empty($date) || empty($id)) {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
-			WHERE fk_user=".$fk_user." AND is_archive!=1";
+			WHERE fk_user=".(int)$fk_user." AND is_archive!=1";
 			
 			$ATMdb->Execute($sql);
 		

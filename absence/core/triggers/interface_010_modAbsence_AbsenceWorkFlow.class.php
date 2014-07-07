@@ -79,55 +79,39 @@ class InterfaceAbsenceWorkflow
     {
         global $db,$langs;
 		
-		if ($action == 'USER_CREATE') {
+		if ($action === 'USER_CREATE' || $action === 'USER_MODIFY') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->rowid);
 			
 			define('INC_FROM_DOLIBARR', true);
-	         	dol_include_once('/absence/config.php');
-		        dol_include_once('/valideur/lib/valideur.lib.php');
+	        dol_include_once('/absence/config.php');
+		    dol_include_once('/valideur/lib/valideur.lib.php');
 			dol_include_once('/absence/class/absence.class.php');
 			
-			
-			/*$url = DOL_MAIN_URL_ROOT_ALT.'/absence/script/init-compteur.php';
-			file_get_contents( $url ); // création des compteur par défaut
-			*/
-			
-			
+				
 			$ATMdb=new TPDOdb;
 			
 			if($object->id>0) {
 				$compteur=new TRH_Compteur;
 				if(!$compteur->load_by_fkuser($ATMdb, $object->id)) {
-							
+					
 						$compteur->initCompteur($ATMdb,$object->id );
 					
+						$compteur->save($ATMdb);
+					
 				}
-				$compteur->save($ATMdb);
+				
+				$emploi = new TRH_EmploiTemps;
+				
+				if(!$emploi->load_by_fkuser($ATMdb, $object->id)) {
+					
+						$emploi->initCompteurHoraire($ATMdb,$object->id );
+					
+						$emploi->save($ATMdb);
+					
+				}
+				
 				
 			}
-			
-			
-			
-			return 0;
-		}
-		else if ($action == 'USER_MODIFY') {
-			define('INC_FROM_DOLIBARR', true);
-	         	dol_include_once('/absence/config.php');
-			dol_include_once('/absence/class/absence.class.php');
-
-			$ATMdb=new TPDOdb;
-			if($object->id>0) {
-				$compteur=new TRH_Compteur;
-				if(!$compteur->load_by_fkuser($ATMdb, $object->id)) {
-							
-						$compteur->initCompteur($ATMdb,$object->id );
-					
-				}
-				
-				$compteur->save($ATMdb);
-			
-			}			
-			
 			
 		}
 		
