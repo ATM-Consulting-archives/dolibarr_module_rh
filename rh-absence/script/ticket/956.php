@@ -8,16 +8,17 @@
 	
 	ini_set('display_errors',1);
 
+	$ATMdb2=new TPDOdb;
 	
 	$ATMdb=new TPDOdb;
 	
-	$ATMdb->Execute("SELECT rowid, fk_user FROM llx_rh_compteur ");
+	$ATMdb->Execute("SELECT rowid, fk_user FROM llx_rh_compteur WHERE fk_user>0");
 	
 	while($obj = $ATMdb->Get_line()) {
 		
-		$nb_conges = _get_conges($ATMdb, $obj->fk_user);
-		$nb_rtt = _get_conges($ATMdb, $obj->fk_user,"'rttcumule'");
-		$nb_rttnon = _get_conges($ATMdb, $obj->fk_user,"'rttnoncumule'");
+		$nb_conges = _get_conges($ATMdb2, $obj->fk_user);
+		$nb_rtt = _get_conges($ATMdb2, $obj->fk_user,"'rttcumule'");
+		$nb_rttnon = _get_conges($ATMdb2, $obj->fk_user,"'rttnoncumule'");
 
 		
 		$sql=" UPDATE ".MAIN_DB_PREFIX."rh_compteur 
