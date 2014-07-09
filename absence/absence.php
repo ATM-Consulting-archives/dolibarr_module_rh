@@ -417,7 +417,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 	}else if($k>1){		//on a plusieurs groupes de validation
 		$sql=" SELECT DISTINCT u.fk_user, 
 				a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
-			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.lastname
+			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.lastname,
 			 	a.libelleEtat as 'Statut demande', a.avertissement
 				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
 				".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as s
