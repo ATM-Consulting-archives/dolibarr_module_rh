@@ -2223,9 +2223,9 @@ class TRH_TypeAbsence extends TObjetStd {
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_type_absence');
 		parent::add_champs('typeAbsence','type=chaine;index;');
-		parent::add_champs('libelleAbsence','type=chaine;');
+		parent::add_champs('libelleAbsence','type=chaine;index;');
 		parent::add_champs('codeAbsence','type=chaine;index;');
-		parent::add_champs('admin','type=entier;');
+		parent::add_champs('admin','type=entier;index;');
 		parent::add_champs('unite','type=chaine;');
 		parent::add_champs('entity,isPresence,colorId','type=entier;index;');
 		
