@@ -215,7 +215,9 @@
 					if($('#fk_user').length>0) fk_user = $('#fk_user').val();
 					else  fk_user = $('#userRecapCompteur').val() ; 
 					
+					if(fk_user<=0) return false;
 				
+
 					$.ajax({
 						url: 'script/chargerCompteurDemandeAbsence.php?user='+fk_user
 						,dataType:'json'
@@ -242,6 +244,8 @@
 					if($('#fk_user').length>0) fk_user = $('#fk_user').val();
 					else  fk_user = $('#userRecapCompteur').val() ; 
 					
+					if(fk_user<=0) return false;
+
 					$.ajax({
 						url: 'script/chargerRecapAbsenceUser.php?idUser='+fk_user
 						,dataType:'json'
