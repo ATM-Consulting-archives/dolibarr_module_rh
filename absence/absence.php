@@ -125,12 +125,12 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->recrediterHeure($ATMdb);
 				$absence->load($ATMdb, $_REQUEST['id']);
-				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
-					SET etat='Refusee', libelleEtat='Refusée' 
-					WHERE fk_user=".$absence->fk_user. " AND rowid=".$absence->getId();
-				//print $sqlEtat;
-				$ATMdb->Execute($sqlEtat);
-				$absence->load($ATMdb, $_REQUEST['id']);
+
+				$absence->etat='Refusee';
+
+				$absence->save($ATMdb);
+
+				//$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
 				$mesg = '<div class="error">Demande d\'absence refusée</div>';
 				_ficheCommentaire($ATMdb, $absence,'edit');

@@ -33,14 +33,19 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	$idUserRecherche=0;
 	
 	if(isset($_REQUEST['groupe'])) $idGroupeRecherche=$_REQUEST['idGroupeRecherche'];
-	if(isset($_REQUEST['date_debut'])) $date_debut=$_REQUEST['date_debut'];
-	if(isset($_REQUEST['date_fin'])) $date_fin=$_REQUEST['date_fin'];
+	if(isset($_REQUEST['date_debut'])) {
+		 $date_debut=$_REQUEST['date_debut'];
+		 $date_debut_recherche = $date_debut;
+	}
+	if(isset($_REQUEST['date_fin'])) {
+		$date_fin=$_REQUEST['date_fin'];
+		$date_fin_recherche = $date_fin;
+
+	}
 	if(isset($_REQUEST['fk_user'])) $idUserRecherche=$_REQUEST['fk_user'];
 
 	$idGroupeRecherche=$_REQUEST['groupe'];
 	
-	$date_debut_recherche = $date_debut;
-	$date_fin_recherche = $date_fin;
 	
 	if($idGroupeRecherche!=0){	//	on recherche le nom du groupe
 		$sql="SELECT nom FROM ".MAIN_DB_PREFIX."usergroup
@@ -224,6 +229,8 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 function _recap_abs(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin) {
 global $db;	
 	
+	if(empty($date_debut)) return false;
+
 	$date_debut = date('Y-m-d', Tools::get_time($date_debut));
 	$date_fin = date('Y-m-d', Tools::get_time($date_fin));
 	
