@@ -786,9 +786,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'id'=>$absence->getId()
 				,'commentaire'=>$form->zonetexte('','commentaire',$absence->commentaire, 30,3,'','','-')
-				,'date_debut'=> ($mode) ? dol_print_date($absence->date_debut, $langs->trans('FormatDateShort')) : $formDoli->select_date($absence->date_debut, 'date_debut',0, 0, 0, "", 1, 0, 1)  //$form->calendrier('', 'date_debut', $absence->date_debut,12)
+				,'date_debut'=> $form->doliCalendar('date_debut', $absence->date_debut) 
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
-				,'date_fin'=> ($mode) ? dol_print_date($absence->date_fin, $langs->trans('FormatDateShort')) : $formDoli->select_date($absence->date_fin, 'date_fin',0, 0, 0, "", 1, 0, 1) //$form->calendrier('', 'date_fin', $absence->date_fin, 12)
+				,'date_fin'=> $form->doliCalendar('date_fin', $absence->date_fin)
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
 				,'idUser'=>$user->id
 				,'comboType'=>$form->combo('','type',$typeAbsenceCreable,$absence->type)

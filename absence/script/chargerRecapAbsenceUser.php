@@ -8,8 +8,8 @@ if(isset($_REQUEST['idUser'])) {
 		
 		$ATMdb =new TPDOdb;
 		global $conf;
-		$sql="SELECT DATE_FORMAT(date_debut, '%d/%m/%Y') as 'dateD', 
-		DATE_FORMAT(date_fin, '%d/%m/%Y')  as 'dateF', libelle, libelleEtat,etat, duree ,rowid,type
+		$sql="SELECT DATE_FORMAT(date_debut, '".$langs->trans("FormatDateShort")."') as 'dateD', 
+		DATE_FORMAT(date_fin, '".$langs->trans("FormatDateShort")."')  as 'dateF', libelle, libelleEtat,etat, duree ,rowid,type
 		FROM `".MAIN_DB_PREFIX."rh_absence` WHERE fk_user=".$_REQUEST['idUser']." 
 		ORDER BY date_debut DESC LIMIT 0,10";
 		
