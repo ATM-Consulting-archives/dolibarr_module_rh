@@ -258,7 +258,8 @@ function php2dmy($phpDate){
 
 //fonction permettant l'envoi de mail
 function mailConges(&$absence){
-		
+global $db;		
+
 	$from = USER_MAIL_SENDER;
 	
 
@@ -267,13 +268,12 @@ function mailConges(&$absence){
 	/*
 	 * Mail destinataire
 	 */
-	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$absence->fk_user;
-	$ATMdb->Execute($sql);
-	if($ATMdb->Get_line()){
-		$sendto=$ATMdb->Get_field('email');
-		$name=$ATMdb->Get_field('lastname');
-		$firstname=$ATMdb->Get_field('firstname');
-	}
+	$user = new User($db);	
+	$user->fetch($absence->fk_user);
+
+	$sendto=$user->email;
+	$name=$user->lastname;
+	$firstname=$user->firstname;
 		
 
 	$TBS=new TTemplateTBS();
@@ -343,7 +343,9 @@ function mailConges(&$absence){
 	
 	
 	$mail = new TReponseMail($from,$sendto,$subject,$message);
-    (int)$result = $mail->send(true, 'utf-8');
+	
+	$result = $mail->send(true, 'utf-8');
+	
 	return 1;	
 }
 
@@ -379,28 +381,28 @@ function mailCongesValideur(&$ATMdb, &$absence){
 
 //fonction permettant l'envoi de mail aux valideurs de la demande d'absence
 function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
+global $db;
 		
 	$from = USER_MAIL_SENDER;
 
-	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$absence->fk_user;
-	$ATMdb->Execute($sql);
-	if($ATMdb->Get_line()){
-		$name=$ATMdb->Get_field('lastname');
-		$firstname=$ATMdb->Get_field('firstname');
-	}
+	$user = new User($db);  
+        $user->fetch($absence->fk_user);
+
+        $name=$user->lastname;
+        $firstname=$user->firstname;
+
 		
 	/*
 	 * Mail destinataire
 	 */
-	$sql="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$idValideur;
-	$ATMdb->Execute($sql);
-	if($ATMdb->Get_line()){
-		$nameValideur=$ATMdb->Get_field('lastname');
-		$firstnameValideur=$ATMdb->Get_field('firstname');
-		$sendto=$ATMdb->Get_field('email');
-	}	
 
-		
+	$userV = new User($db);  
+        $userV->fetch($idValideur);
+
+        $nameValideur=$userV->lastname;
+        $firstnameValideur=$userV->firstname;
+	$sendto = $userV->email;
+
 	$TBS=new TTemplateTBS();
 
 	$subject = "Nouvelle demande d'absence à valider";
@@ -421,7 +423,9 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
 	);
 	
 	$mail = new TReponseMail($from,$sendto,$subject,$message);
-    (int)$result = $mail->send(true, 'utf-8');
+    	
+	$result = $mail->send(true, 'utf-8');
+	
 	return 1;
 }
 
