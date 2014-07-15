@@ -341,6 +341,13 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'presenceAutoValidate';
 		
+		$r++;
+		$this->rights[$r][0] = 7125;
+		$this->rights[$r][1] = 'Peut déclarer une absence dans le passé';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+		$this->rights[$r][5] = 'declarePastAbsence';
+		
 		
 		
 		
