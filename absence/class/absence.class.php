@@ -1213,21 +1213,39 @@ class TRH_Absence extends TObjetStd {
 		$avertissement=0;
 		$TRegle=$this->recuperationRegleUser($ATMdb,$this->fk_user);
 		if(!empty($TRegle)){
+				
 			foreach($TRegle as $TR){
+				
 				if($TR['typeAbsence']==$this->type){
-					if($this->duree>$TR['nbJourCumulable']){
+					
+					/*if($TR['periode']==='MONTH') $nb_jour_cumule_mois = TRH_Absence::getNBJourAbsence($ATMdb, $this->type, $this->get_date('date_debut','Y-m-01'), $this->get_date('date_fin','Y-m-t'));
+					if($TR['periode']==='YEAR') $nb_jour_cumule_mois = TRH_Absence::getNBJourAbsence($ATMdb, $this->type, $this->get_date('date_debut','Y-m-d'), $this->get_date('date_fin','Y-m-d'));
+					*/
+					if($TR['periode']==='ONE' && $this->duree>$TR['nbJourCumulable']){ //TODO ajouter regle par mois et année
 						if($TR['restrictif']==1){
 								 return 0;
 						}
 						else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
 					}
+					/*else if($TR['periode']==='MONTH' || $TR['periode']==='YEAR') {
+							
+						$t_current = $this->date_debut;
+							
+							
+						//&& $this->duree + $nb_jour_cumule_mois >$TR['nbJourCumulable']){
+					
+					}*/ // TODO faire fonctionner cette merde sans tout péter !
+					
+					
 				}
+				
 			}
 		}
 		
 		if($avertissement==0){
 			return 1;
 		}
+		
 		return $avertissement;
 	}
 	
@@ -2146,10 +2164,18 @@ class TRH_JoursFeries extends TObjetStd {
 
 //définition de la classe pour la gestion des règles
 class TRH_RegleAbsence extends TObjetStd {
+	
+	static $TPeriode =array(
+			'ONE'=>'Pour chaque plage'
+			,'MONTH'=>'Mois'
+			,'YEAR'=>"Année"
+			
+		);
+	
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_regle');
 		parent::add_champs('typeAbsence','type=chaine;');
-		parent::add_champs('choixApplication','type=chaine;');
+		parent::add_champs('choixApplication,periode','type=chaine;index;');
 		parent::add_champs('nbJourCumulable','type=entier;index;');
 		parent::add_champs('restrictif','type=entier;');
 		parent::add_champs('fk_user','type=entier;index;');	//utilisateur concerné
@@ -2169,6 +2195,9 @@ class TRH_RegleAbsence extends TObjetStd {
 			,'group'=>'Groupe'
 			,'user'=>'Utilisateur'
 		);
+		
+		$this->periode ='ONE';
+		
 	}
 	
 	function save(&$ATMdb) {

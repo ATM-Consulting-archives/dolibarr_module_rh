@@ -13,19 +13,19 @@
 			case 'add':
 			case 'new':
 				//$ATMdb->db->debug=true;
-				$regle->load($ATMdb, $_REQUEST['id']);
+				$regle->load($ATMdb, GETPOST('id','integer'));
 				_fiche($ATMdb,$regle,'edit');
 				
 				break;	
 			case 'edit'	:
 				//$ATMdb->db->debug=true;
-				$regle->load($ATMdb, $_REQUEST['id']);
+				$regle->load($ATMdb, GETPOST('id','integer'));
 				_fiche($ATMdb,  $regle, 'edit');
 				break;
 				
 			case 'save':
-				//$ATMdb->db->debug=true;
-				$regle->load($ATMdb, $_REQUEST['id']);
+				$ATMdb->db->debug=true;
+				$regle->load($ATMdb, GETPOST('id','integer'));
 				$regle->restrictif=0;
 				$regle->set_values($_REQUEST);				
 				$regle->save($ATMdb);
@@ -34,12 +34,12 @@
 				break;
 			
 			case 'view':
-				$regle->load($ATMdb, $_REQUEST['id']);
+				$regle->load($ATMdb, GETPOST('id','integer'));
 				_fiche($ATMdb,  $regle,'view');
 				break;
 		
 			case 'delete':
-				$regle->load($ATMdb, $_REQUEST['id']);
+				$regle->load($ATMdb, GETPOST('id','integer'));
 				$regle->delete($ATMdb);
 				$mesg = '<div class="ok">La règle a bien été supprimée</div>';
 				_liste($ATMdb, $regle);
@@ -66,7 +66,7 @@ function _liste(&$ATMdb, $regle) {
 	print dol_get_fiche_head(reglePrepareHead($regle,'regle')  , 'regle', 'Règles');
 		
 	$r = new TSSRenderControler($regle);
-	$sql="SELECT DISTINCT r.rowid as 'ID', CONCAT(u.firstname,' ',u.lastname) as 'Utilisateur', g.nom as 'Groupe',
+	$sql="SELECT DISTINCT r.rowid as 'ID',r.periode, CONCAT(u.firstname,' ',u.lastname) as 'Utilisateur', g.nom as 'Groupe',
 		r.typeAbsence, r.nbJourCumulable , r.restrictif as 'Restrictif', '' as 'Supprimer'
 		FROM ".MAIN_DB_PREFIX."rh_absence_regle as r
 		LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (r.fk_user = u.rowid)
@@ -100,10 +100,10 @@ function _liste(&$ATMdb, $regle) {
 		'mitempstherapeutique'=>'Mi-temps thérapeutique')
 			,'Restrictif'=>array('1'=>'Oui', '0'=>'Non')
 		)
-		,'hide'=>array()
+		,'hide'=>array('periode')
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste des règles sur les demandes d\'absence'
+			'titre'=>'Liste des règles sur les demandes d\'abs./présence'
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
@@ -114,11 +114,13 @@ function _liste(&$ATMdb, $regle) {
 			
 		)
 		,'title'=>array(
-			'typeAbsence'=>'Type d\'absence concerné'
+			'typeAbsence'=>'Type d\'abs./présence concernée'
 			,'nbJourCumulable'=>'Nombre de jours contigus possible'
 		)
-		,'eval'=>array('Utilisateur'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
-		,'Groupe'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+		,'eval'=>array(
+			'Utilisateur'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+			,'Groupe'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+			,'nbJourCumulable'=>'_periode("@val@", "@periode@")'
 		)
 		,'orderBy'=>$TOrder
 		
@@ -128,7 +130,15 @@ function _liste(&$ATMdb, $regle) {
 	$form->end();
 	llxFooter();
 }	
+
+function _periode($nbJourCumulable, $periode) {
 	
+	
+	if($periode=='ONE')return $nbJourCumulable;
+	else return $nbJourCumulable.' / '.TRH_RegleAbsence::$TPeriode[$periode] ;
+	
+}
+
 function _fiche(&$ATMdb, $regle, $mode) {
 	llxHeader('','Règle sur les Absences', '', '', 0, 0);
 	
@@ -141,17 +151,7 @@ function _fiche(&$ATMdb, $regle, $mode) {
 	
 	$regle->load_liste($ATMdb);
 	
-
-	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id." AND entity IN (0,".$conf->entity.")";
-	$ATMdb->Execute($sqlReqUser);
-	$Tab=array();
-	while($ATMdb->Get_line()) {
-				$userCourant=new User($ATMdb);
-				$userCourant->firstname=$ATMdb->Get_field('firstname');
-				$userCourant->id=$ATMdb->Get_field('rowid');
-				$userCourant->lastname=$ATMdb->Get_field('lastname');
-	}
-	
+	$TTypeAbsence = array_merge(TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin'), TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin', true));
 	
 	$TBS=new TTemplateTBS();
 	$regle->load_liste($ATMdb);
@@ -165,16 +165,17 @@ function _fiche(&$ATMdb, $regle, $mode) {
 				,'fk_user'=>$form->combo('', 'fk_user',$regle->TUser, $regle->fk_user)
 				,'fk_group'=>$form->combo('', 'fk_usergroup',$regle->TGroup, $regle->fk_usergroup)
 				,'nbJourCumulable'=>$form->texte('', 'nbJourCumulable', $regle->nbJourCumulable,30 ,255,'','','')
-				,'typeAbsence'=>$form->combo('', 'typeAbsence',TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin'), $regle->typeAbsence)
+				,'typeAbsence'=>$form->combo('', 'typeAbsence',$TTypeAbsence, $regle->typeAbsence)
+				,'periode'=>$form->combo('', 'periode',TRH_RegleAbsence::$TPeriode, $regle->periode)
 				,'restrictif'=>$form->checkbox1('','restrictif','1',$regle->restrictif==1?true:false)
-				,'titreRegle'=>load_fiche_titre("Règle sur les demandes d'absence",'', 'title.png', 0, '')
+				,'titreRegle'=>load_fiche_titre("Règle sur les demandes d'abs./présence",'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
-				'id'=>$userCourant->id
-				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
-				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
-				,'valideurConges'=>$user->rights->absence->myactions->valideurConges&&$estValideur
-				,'enregistrerPaieAbsences'=>$user->rights->absence->myactions->enregistrerPaieAbsences&&$estValideur	
+				'id'=>$user->id
+				,'lastname'=>htmlentities($user->lastname, ENT_COMPAT , 'ISO8859-1')
+				,'firstname'=>htmlentities($user->firstname, ENT_COMPAT , 'ISO8859-1')
+				,'valideurConges'=>($user->rights->absence->myactions->valideurConges && $estValideur)
+				,'enregistrerPaieAbsences'=>($user->rights->absence->myactions->enregistrerPaieAbsences && $estValideur)	
 			)
 			,'view'=>array(
 				'mode'=>$mode

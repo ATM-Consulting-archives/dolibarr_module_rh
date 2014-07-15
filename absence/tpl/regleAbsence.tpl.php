@@ -60,6 +60,10 @@
 		<td>[newRule.nbJourCumulable;strconv=no]</td>
 	</tr>
 	<tr>
+		<td>Période d'application</td>
+		<td>[newRule.periode;strconv=no]</td>
+	</tr>
+	<tr>
 		<td>Mode restrictif</td>
 		<td>[newRule.restrictif;strconv=no]</td>
 	</tr>
