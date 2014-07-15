@@ -173,7 +173,10 @@
 
 		<script type="text/javascript">
 			function comparerDates(){
-					
+				
+					dpChangeDay("date_debut","[view.dateFormat;strconv=no]");
+					dpChangeDay("date_fin","[view.dateFormat;strconv=no]");	
+						
 					jd = $("#date_debutday").val();
 					md = $("#date_debutmonth").val();
 					ad = $("#date_debutyear").val();
@@ -181,8 +184,8 @@
 					mf = $("#date_finmonth").val();
 					af = $("#date_finyear").val();
 
-					var dFin = new Date(af, mf, jf, 0,0,0,0,0); 
-					var dDeb = new Date(ad, md, jd, 0,0,0,0,0); 
+					var dFin = new Date(af, mf-1, jf, 0,0,0,0,0); 
+					var dDeb = new Date(ad, md-1, jd, 0,0,0,0,0); 
 
 					if(dDeb>dFin) {
 						dFin = dDeb;
@@ -190,12 +193,11 @@
 						$("#date_debut").val( formatDate( dDeb,"[view.dateFormat;strconv=no]" ) ) ;
 	 					$("#date_fin").val( formatDate( dFin,"[view.dateFormat;strconv=no]" ) ) ;	
 	 						
+						
 						dpChangeDay("date_debut","[view.dateFormat;strconv=no]");
-						dpChangeDay("date_fin","[view.dateFormat;strconv=no]");	
-							
+						dpChangeDay("date_fin","[view.dateFormat;strconv=no]");		
 					}
- 					alert([dDeb,dFin]);	
- 						
+ 				
  					
 					
 			}
@@ -263,8 +265,12 @@
 			//	script vérifiant que la date de début ne dépasse pas celle de fin
 			$(document).ready( function(){
 				$("#dfMoment").val('apresmidi');
-				$("#date_debut").change(comparerDates);
-				$("#date_fin").change(comparerDates);
+				/*$("#date_debut").change(comparerDates);
+				$("#date_fin").change(comparerDates);*/
+				
+				$("#date_debut").attr('onchange', $("#date_debut").attr('onchange')+" ; comparerDates();" );
+				$("#date_fin").attr('onchange', $("#date_fin").attr('onchange')+" ; comparerDates();" );
+				
 				$("#ddMoment").change(comparerDates);
 				$("#dfMoment").change(comparerDates);
 				
