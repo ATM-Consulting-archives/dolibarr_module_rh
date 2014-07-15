@@ -173,42 +173,30 @@
 
 		<script type="text/javascript">
 			function comparerDates(){
-			/* TODO AA réécrire,  à chier  */
-					var t1 = $("#date_debut").val().split('/');
-					var t2 = $("#date_fin").val().split('/');
-					jd = t1[0];
-					md = t1[1];
-					ad = t1[2];
-					jf = t2[0];
-					mf = t2[1];
-					af = t2[2];
-
-					if(af<ad){
-						$("#date_fin").val($("#date_debut").val());
-						return;
-					}
-					else if(af==ad){
-						
-						if(mf<md){
-							$("#date_fin").val($("#date_debut").val());
-							return;}
-							
-						else if(mf==md){
-							
-							if(jf<jd){
-								$("#date_fin").val($("#date_debut").val());
-								return;}
-							else if(jf=jd){
-								
-								return;
-							}
-							else{return;}
-							
-						}
-						else{return;}
-					}
-					else{return;}
 					
+					jd = $("#date_debutday").val();
+					md = $("#date_debutmonth").val();
+					ad = $("#date_debutyear").val();
+					jf = $("#date_finday").val();
+					mf = $("#date_finmonth").val();
+					af = $("#date_finyear").val();
+
+					var dFin = new Date(af, mf, jf, 0,0,0,0,0); 
+					var dDeb = new Date(ad, md, jd, 0,0,0,0,0); 
+
+					if(dDeb>dFin) {
+						dFin = dDeb;
+							
+						$("#date_debut").val( formatDate( dDeb,"[view.dateFormat;strconv=no]" ) ) ;
+	 					$("#date_fin").val( formatDate( dFin,"[view.dateFormat;strconv=no]" ) ) ;	
+	 						
+						dpChangeDay("date_debut","[view.dateFormat;strconv=no]");
+						dpChangeDay("date_fin","[view.dateFormat;strconv=no]");	
+							
+					}
+ 					alert([dDeb,dFin]);	
+ 						
+ 					
 					
 			}
 			function loadRecapCompteur() {

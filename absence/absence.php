@@ -546,7 +546,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 }	
 
 function _fiche(&$ATMdb, &$absence, $mode) {
-	global $db,$user,$conf;
+	global $db,$user,$conf,$langs;
 	llxHeader('','Demande d\'absence');
 	//echo $_REQUEST['validation'];
 	
@@ -739,6 +739,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	if(isset($_REQUEST['calcul'])) {
 		$absence->duree = $absence->calculDureeAbsenceParAddition($ATMdb);
 	}
+	
+	$formDoli = new Form($db);
 		
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/absence.tpl.php'
@@ -780,9 +782,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
 				'id'=>$absence->getId()
 				,'commentaire'=>$form->zonetexte('','commentaire',$absence->commentaire, 30,3,'','','-')
-				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->date_debut,12)
+				,'date_debut'=> $formDoli->select_date($absence->date_debut, 'date_debut',0, 0, 0, "", 1, 0, 1)  //$form->calendrier('', 'date_debut', $absence->date_debut,12)
 				,'ddMoment'=>$form->combo('','ddMoment',$absence->TddMoment,$absence->ddMoment)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
+				,'date_fin'=> $formDoli->select_date($absence->date_fin, 'date_fin',0, 0, 0, "", 1, 0, 1) //$form->calendrier('', 'date_fin', $absence->date_fin, 12)
 				,'dfMoment'=>$form->combo('','dfMoment',$absence->TdfMoment,$absence->dfMoment)
 				,'idUser'=>$user->id
 				,'comboType'=>$form->combo('','type',$typeAbsenceCreable,$absence->type)
@@ -828,7 +830,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'fiche', 'Absence')
 				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence')
-				
+				,'dateFormat'=>$langs->trans("FormatDateShortJavaInput")
 				
 			)
 			
