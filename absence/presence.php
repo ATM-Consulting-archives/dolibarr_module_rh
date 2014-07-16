@@ -24,7 +24,7 @@
 				if($existeDeja===false){
 					
 						if($user->rights->absence->myactions->presenceAutoValidate)$absence->etat='Validee';
-						else $absence->etat='AValider';
+						else $absence->etat='Avalider';
 						
 						$absence->save($ATMdb);
 						$mesg = 'Présence enregistrée';
