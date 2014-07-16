@@ -2113,7 +2113,7 @@ class TRH_JoursFeries extends TObjetStd {
 	
 	static function syncronizeFromURL(&$ATMdb, $url) {
 		
-		$iCal = new ICalReader( 'http://www.google.com/calendar/ical/fr.french%23holiday%40group.v.calendar.google.com/public/basic.ics' );
+		$iCal = new ICalReader( $url );
 		
 		foreach($iCal->cal['VEVENT'] as $event) {
 		
