@@ -24,6 +24,7 @@
 				if($existeDeja===false){
 					
 						if($user->rights->absence->myactions->presenceAutoValidate)$absence->etat='Validee';
+						else $absence->etat='AValider';
 						
 						$absence->save($ATMdb);
 						$mesg = 'Présence enregistrée';
@@ -498,7 +499,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user',true);
 	}
 	else {
-		$droitsCreation=2; //on n'a pas les droits de création
+		$droitsCreation=2; //on n'a pas les droits de créationadmin/modules.php?id=7100&action=set&value=modAbsence&mode=common
 	}
 	
 	if($droitsCreation==1){
