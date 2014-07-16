@@ -265,10 +265,11 @@ function _liste(&$ATMdb, $lignecv, $formation, $dif) {
 	
 	////////////AFFICHAGE DES LIGNES DE CV 
 	$r = new TSSRenderControler($lignecv);
-	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
-			  date_debut, date_fin, libelleExperience, descriptionExperience,lieuExperience, fk_user, '' as 'Supprimer'
-		FROM   ".MAIN_DB_PREFIX."rh_ligne_cv
-		WHERE fk_user=".$_REQUEST['fk_user']." AND entity=".$conf->entity;
+	$sql="SELECT cv.rowid as 'ID', cv.date_cre as 'DateCre', 
+			  cv.date_debut, cv.date_fin, cv.libelleExperience, cv.descriptionExperience, GROUP_CONCAT(tag.libelleCompetence) as 'Compétences' ,cv.lieuExperience, cv.fk_user, '' as 'Supprimer'
+		FROM   ".MAIN_DB_PREFIX."rh_ligne_cv cv LEFT JOIN  ".MAIN_DB_PREFIX."rh_competence_cv tag ON (tag.fk_user_lignecv = cv.rowid) 
+		WHERE cv.fk_user=".$_REQUEST['fk_user']." AND cv.entity=".$conf->entity
+		." GROUP BY cv.rowid";
 
 	$TOrder = array('date_fin'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -327,14 +328,14 @@ function _liste(&$ATMdb, $lignecv, $formation, $dif) {
 	
 	////////////AFFICHAGE DES  FORMATIONS
 	$r = new TSSRenderControler($formation);
-	$sql="SELECT rowid as 'ID', date_cre as 'DateCre', 
-			  date_debut, date_fin, libelleFormation,  commentaireFormation,lieuFormation
-			  , CONCAT(CAST(coutFormation as DECIMAL(16,2)),' €') as 'Coût total'
-			  , CONCAT(CAST(montantOrganisme as DECIMAL(16,2)),' €') as 'Pris en charge par l\'organisme'
-			  , CONCAT(CAST(montantEntreprise as DECIMAL(16,2)),' €') as 'Pris pris en charge par l\'entreprise'
-			  , fk_user, '' as 'Supprimer'
-		FROM   ".MAIN_DB_PREFIX."rh_formation_cv
-		WHERE fk_user=".$_REQUEST['fk_user']." AND entity=".$conf->entity;
+	$sql="SELECT cv.rowid as 'ID', cv.date_cre as 'DateCre', 
+			  cv.date_debut, date_fin, cv.libelleFormation,  GROUP_CONCAT(tag.libelleCompetence) as 'Compétences', cv.commentaireFormation,cv.lieuFormation
+			  , CONCAT(CAST(cv.coutFormation as DECIMAL(16,2)),' €') as 'Coût total'
+			  , CONCAT(CAST(cv.montantOrganisme as DECIMAL(16,2)),' €') as 'Pris en charge par l\'organisme'
+			  , CONCAT(CAST(cv.montantEntreprise as DECIMAL(16,2)),' €') as 'Pris pris en charge par l\'entreprise'
+			  , cv.fk_user, '' as 'Supprimer'
+		FROM   ".MAIN_DB_PREFIX."rh_formation_cv cv  LEFT JOIN  ".MAIN_DB_PREFIX."rh_competence_cv tag ON (tag.fk_user_formation = cv.rowid) 
+		WHERE cv.fk_user=".$_REQUEST['fk_user']." AND cv.entity=".$conf->entity;
 
 	$TOrder = array('ID'=>'DESC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');

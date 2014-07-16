@@ -71,7 +71,7 @@ class TRH_competence_cv extends TObjetStd {
 		parent::add_champs('libelleCompetence','type=chaine;');	
 		parent::add_champs('niveauCompetence','type=chaine;');			
 		parent::add_champs('fk_user_formation','type=entier;');	
-		parent::add_champs('fk_user_lignecv','type=entier;');	
+		parent::add_champs('fk_user_lignecv,fk_soc,fk_contact','type=entier;');	
 		parent::add_champs('fk_user','type=entier;');	//utilisateur concerné
 		parent::add_champs('entity','type=entier;');
 		parent::_init_vars();

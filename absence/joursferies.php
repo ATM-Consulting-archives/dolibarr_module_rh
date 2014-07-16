@@ -17,7 +17,7 @@
 					list($id_country, $code_country) = explode(':', $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 					
 					if($code_country=='FR') {
-						$url='http://www.google.com/calendar/feeds/fr.french%23holiday%40group.v.calendar.google.com/public/basic';
+						$url='http://www.google.com/calendar/feeds/fr.french%23holiday%40group.v.calendar.google.com/public/basic.ics';
 					}
 					else{
 						$url = '';	
