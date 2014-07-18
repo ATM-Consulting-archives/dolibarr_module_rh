@@ -613,7 +613,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> 'Documents règles absence',
+		        	'titre'=> 'Documents règles abs./présence',
 		        	'mainmenu'=> 'absence',
 		        	'leftmenu'=> 'test',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/documentRegle.php',
