@@ -26,6 +26,8 @@
 						if($user->rights->absence->myactions->presenceAutoValidate)$absence->etat='Validee';
 						else $absence->etat='Avalider';
 						
+						$absence->niveauValidation=1;
+						
 						$absence->save($ATMdb);
 						$mesg = 'Présence enregistrée';
 						_fiche($ATMdb, $absence,'view');

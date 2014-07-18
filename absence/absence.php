@@ -221,7 +221,7 @@ function _liste(&$ATMdb, &$absence) {
 			,'messageNothing'=>"Il n'y a aucune absence à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
-			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			/*,'picto_search'=>'<img src="../../theme/rh/img/search.png">'*/
 			
 		)
 		,'title'=>array(
@@ -317,7 +317,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			,'messageNothing'=>"Il n'y a aucune absence à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
-			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+		/*	,'picto_search'=>'<img src="../../theme/rh/img/search.png">'*/
 			,'etat'=>$absence->TEtat
 			
 		)
@@ -519,7 +519,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				,'messageNothing'=>"Il n'y a aucune absence à afficher"
 				,'order_down'=>img_picto('','1downarrow.png', '', 0)
 				,'order_up'=>img_picto('','1uparrow.png', '', 0)
-				,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+				/*,'picto_search'=>'<img src="../../theme/rh/img/search.png">'*/
 				
 			)
 			,'title'=>array(
