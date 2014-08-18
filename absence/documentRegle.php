@@ -85,7 +85,7 @@
 			$upload_dir = DOL_DATA_ROOT.'/regle';
 		
 			$file = $upload_dir . '/' . $_REQUEST['urlfile'];
-			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $object);
+			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $absence);
 		
 			$message = $langs->trans("FileHasBeenRemoved");
 		}
@@ -110,7 +110,7 @@
 		
 		$upload_dir = DOL_DATA_ROOT.'/regle';
 		
-		$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+		$filearray = dol_dir_list($upload_dir, "all", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$totalsize = 0;
 		foreach($filearray as $key => $file)
 		{
@@ -133,8 +133,12 @@
 		if($user->rights->absence->myactions->uploadFilesRegle){
 			$formfile->form_attach_new_file($_SERVER["PHP_SELF"], '', '', 0, $can_upload);
 			$formfile->list_of_documents($filearray, $absence, 'absence', '',0,'regle/',1);
+			//List of links
+			$formfile->listOfLinks($absence, $permission, $action, GETPOST('linkid', 'int'), $param);
 		}else{
 			$formfile->list_of_documents($filearray, $absence, 'absence', '',0,'regle/',0);
+			//List of links
+			$formfile->listOfLinks($absence, $permission, $action, GETPOST('linkid', 'int'), $param);
 		}
 		
 		dol_fiche_end();
