@@ -46,7 +46,7 @@
 		
 		$modulepart = 'absence';
 
-		$premission  = $user->rights->absence->myactions->uploadFilesRegle;
+		$permission  = $user->rights->absence->myactions->uploadFilesRegle;
 		$param = '&id=' . $object->id;
 		
 		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
