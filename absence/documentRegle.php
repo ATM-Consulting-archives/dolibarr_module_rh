@@ -31,7 +31,7 @@
 		$message = false;
 		$formconfirm = false;
 		
-		$html = new Form($db);
+		$form = new Form($db);
 		$formfile = new FormFile($db);
 		
 		$upload_dir = DOL_DATA_ROOT.'/regle';
