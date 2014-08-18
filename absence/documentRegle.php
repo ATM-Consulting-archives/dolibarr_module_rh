@@ -34,7 +34,7 @@
 		$html = new Form($db);
 		$formfile = new FormFile($db);
 		
-		$upload_dir = DOL_DATA_ROOT.'/absence/regle';
+		$upload_dir = DOL_DATA_ROOT.'/regle';
 		
 		if ($_REQUEST["sendit"])
 		{		
@@ -88,6 +88,21 @@
 			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $absence);
 		
 			$message = $langs->trans("FileHasBeenRemoved");
+		}
+		
+		if ($action == 'delete')
+		{
+			$langs->load("companies");	// Need for string DeleteFile+ConfirmDeleteFiles
+			$ret = $form->form_confirm(
+					$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int') . (empty($param)?'':$param),
+					$langs->trans('DeleteFile'),
+					$langs->trans('ConfirmDeleteFile'),
+					'confirm_deletefile',
+					'',
+					0,
+					1
+			);
+			if ($ret == 'html') print '<br>';
 		}
 		
 		// Get all files
