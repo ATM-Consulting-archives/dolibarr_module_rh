@@ -34,7 +34,7 @@
 		$html = new Form($db);
 		$formfile = new FormFile($db);
 		
-		$upload_dir = DOL_DATA_ROOT.'/regle';
+		$upload_dir = DOL_DATA_ROOT.'/absence/regle';
 		
 		if ($_REQUEST["sendit"])
 		{		
