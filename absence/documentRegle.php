@@ -24,8 +24,12 @@
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers joints');
 		
-		$confirm = $_REQUEST['confirm'];
-		$action = $_REQUEST['action'];
+		$id = GETPOST('id', 'int');
+		$ref = GETPOST('ref', 'alpha');
+		$action=GETPOST('action','alpha');
+		$confirm=GETPOST('confirm','alpha');
+		$sortfield = GETPOST("sortfield",'alpha');
+		$sortorder = GETPOST("sortorder",'alpha');
 		
 		$error = false;
 		$message = false;
@@ -39,8 +43,12 @@
 		
 		$absence->id = 0;
 		$absence->element = "regle";
+		
+		$modulepart = 'absence';
+
 		$premission  = $user->rights->absence->myactions->uploadFilesRegle;
 		$param = '&id=' . $object->id;
+		
 		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 		
 		dol_fiche_end();
