@@ -137,11 +137,11 @@
 			$formfile->form_attach_new_file($_SERVER["PHP_SELF"], '', '', 0, $can_upload,50,$absence);
 			$formfile->list_of_documents($filearray, $absence, 'absence', '',0,'regle/',1);
 			//List of links
-			$formfile->listOfLinks($absence, $permission, $action, GETPOST('linkid', 'int'), $param);
+			$formfile->listOfLinks($absence, 1, $action, GETPOST('linkid', 'int'), $param);
 		}else{
 			$formfile->list_of_documents($filearray, $absence, 'absence', '',0,'regle/',0);
 			//List of links
-			$formfile->listOfLinks($absence, $permission, $action, GETPOST('linkid', 'int'), $param);
+			$formfile->listOfLinks($absence, 1, $action, GETPOST('linkid', 'int'), $param);
 		}
 		
 		dol_fiche_end();
