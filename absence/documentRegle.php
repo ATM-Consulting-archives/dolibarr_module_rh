@@ -69,16 +69,14 @@
 		
 		}
 		elseif ($_REQUEST["linkit"]){
-			if ($object->id) {
-		        $link = GETPOST('link', 'alpha');
-		        if ($link)
-		        {
-		            if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://') {
-		                $link = 'http://' . $link;
-		            }
-		            dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link);
-		        }
-		    }
+	        $link = GETPOST('link', 'alpha');
+	        if ($link)
+	        {
+	            if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://') {
+	                $link = 'http://' . $link;
+	            }
+	            dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link);
+	        }
 		}
 		
 		// Delete
