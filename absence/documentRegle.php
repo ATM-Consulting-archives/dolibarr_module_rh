@@ -34,10 +34,10 @@
 		$html = new Form($db);
 		$formfile = new FormFile($db);
 		
-		if ($_REQUEST["sendit"])
-		{
-			$upload_dir = DOL_DATA_ROOT.'/regle';
+		$upload_dir = DOL_DATA_ROOT.'/regle';
 		
+		if ($_REQUEST["sendit"])
+		{		
 			if (dol_mkdir($upload_dir) >= 0)
 			{
 				
@@ -67,6 +67,18 @@
 				}
 			}
 		
+		}
+		elseif ($_REQUEST["linkit"]){
+			if ($object->id) {
+		        $link = GETPOST('link', 'alpha');
+		        if ($link)
+		        {
+		            if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://') {
+		                $link = 'http://' . $link;
+		            }
+		            dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link);
+		        }
+		    }
 		}
 		
 		// Delete
