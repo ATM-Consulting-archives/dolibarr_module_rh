@@ -93,7 +93,7 @@
 		if ($action == 'delete')
 		{
 			$langs->load("companies");	// Need for string DeleteFile+ConfirmDeleteFiles
-			$ret = $form->form_confirm(
+			$ret = $html->form_confirm(
 					$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int') . (empty($param)?'':$param),
 					$langs->trans('DeleteFile'),
 					$langs->trans('ConfirmDeleteFile'),
