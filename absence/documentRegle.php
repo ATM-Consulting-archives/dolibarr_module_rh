@@ -43,6 +43,7 @@
 		
 		$absence->id = 0;
 		$absence->element = "regle";
+		$object = $absence;
 		
 		$modulepart = 'absence';
 
