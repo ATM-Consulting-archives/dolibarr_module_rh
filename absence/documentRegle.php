@@ -35,10 +35,12 @@
 		$formfile = new FormFile($db);
 		
 		$upload_dir = DOL_DATA_ROOT.'/regle';
-
+		
+		
 		$absence->id = 0;
 		$absence->element = "regle";
-		
+		$premission  = $user->rights->absence->myactions->uploadFilesRegle;
+		$param = '&id=' . $object->id;
 		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 		
 		dol_fiche_end();
