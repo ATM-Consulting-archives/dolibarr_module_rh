@@ -130,6 +130,7 @@
 
 		echo ($formconfirm ? $formconfirm : '');
 		
+		$absence->id = 0;
 		$absence->element = "regle";
 		
 		if($user->rights->absence->myactions->uploadFilesRegle){
