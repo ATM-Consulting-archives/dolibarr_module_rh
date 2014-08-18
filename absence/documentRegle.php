@@ -79,22 +79,11 @@
 	        }
 		}
 		
-		// Delete
-		if ($action == 'confirm_deletefile' && $confirm == 'yes')
-		{
-			$upload_dir = DOL_DATA_ROOT.'/regle';
-		
-			$file = $upload_dir . '/' . $_REQUEST['urlfile'];
-			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $absence);
-		
-			$message = $langs->trans("FileHasBeenRemoved");
-		}
-		
-		if ($action == 'delete')
+		/*if ($action == 'delete')
 		{
 			$langs->load("companies");	// Need for string DeleteFile+ConfirmDeleteFiles
 			$ret = $html->form_confirm(
-					$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int') . (empty($param)?'':$param),
+					$_SERVER["PHP_SELF"] . '?id=0&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int') . (empty($param)?'':$param),
 					$langs->trans('DeleteFile'),
 					$langs->trans('ConfirmDeleteFile'),
 					'confirm_deletefile',
@@ -103,7 +92,18 @@
 					1
 			);
 			if ($ret == 'html') print '<br>';
-		}
+		}*/
+		
+		// Delete
+		/*if ($action == 'confirm_deletefile' && $confirm == 'yes')
+		
+			$upload_dir = DOL_DATA_ROOT.'/regle';
+		
+			$file = $upload_dir . '/' . $_REQUEST['urlfile'];
+			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $absence);
+		
+			$message = $langs->trans("FileHasBeenRemoved");
+		}*/
 		
 		// Get all files
 		$sortfield  = GETPOST("sortfield", 'alpha');
@@ -132,10 +132,10 @@
 			$totalsize += $file['size'];
 		}
 		
-		if ($action == 'delete')
+		/*if ($action == 'delete')
 		{
 			$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"].'?urlfile='.urldecode($_REQUEST['urlfile']), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 0);
-		}
+		}*/
 		
 		$can_upload = 1;
 		
