@@ -75,7 +75,7 @@
 	            if (substr($link, 0, 7) != 'http://' && substr($link, 0, 8) != 'https://') {
 	                $link = 'http://' . $link;
 	            }
-	            dol_add_file_process($upload_dir, 0, 1, 'userfile', null, $link);
+	            dol_add_file_process($upload_dir, 0, 1, 'regle', null, $link);
 	        }
 		}
 		
