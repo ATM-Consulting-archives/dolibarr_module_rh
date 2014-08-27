@@ -180,11 +180,11 @@ function _liste(&$ATMdb, &$absence) {
 	$r = new TSSRenderControler($absence);
 
 	//LISTE D'ABSENCES DU COLLABORATEUR
-	$sql="SELECT a.rowid as 'ID',  a.fk_user, a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
+	$sql="SELECT a.rowid as 'ID', IF(ta.isPresence = 0, 'absence', 'presence') as isPresence, a.fk_user, a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
 			a.libelle,a.duree, a.etat,a.type, 'Compteur', u.login, u.firstname, u.lastname,
 			 a.avertissement
-			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-			WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user";
+			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."rh_type_absence as ta
+			WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user AND ta.typeAbsence = a.type";
 	
 	
 	$TOrder = array('date_debut'=>'DESC');
@@ -195,13 +195,16 @@ function _liste(&$ATMdb, &$absence) {
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');		
 	//print $page;
 	//echo $form->hidden('action', 'listeValidation');
+	
+	//echo $sql;exit;
+	
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'libelle'=>'<a href="@isPresence@.php?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array('Statut demande'=>array(
 			'Refusée'=>'<b style="color:#A72947">'.$langs->trans('Refused').'</b>',
@@ -279,11 +282,11 @@ function _listeAdmin(&$ATMdb, &$absence) {
 	
 	//droits d'admin : accès à toutes les absences sur la liste
 
-	$sql="SELECT a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
+	$sql="SELECT a.rowid as 'ID', IF(ta.isPresence = 0, 'absence', 'presence') as isPresence, a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
 		 	a.libelle, ROUND(a.duree ,1) as 'duree', a.fk_user,  a.fk_user, u.login, u.firstname, u.lastname,
 		  	a.etat, a.avertissement
-			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-			WHERE u.rowid=a.fk_user";
+			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."rh_type_absence as ta
+			WHERE u.rowid=a.fk_user AND ta.typeAbsence = a.type";
 	
 	
 	$TOrder = array('date_debut'=>'DESC');
@@ -294,13 +297,16 @@ function _listeAdmin(&$ATMdb, &$absence) {
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');		
 	echo $form->hidden('action', 'listeAdmin');
 	//print $page;
+	
+	//echo $sql;exit;
+	
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'libelle'=>'<a href="?id=@ID@&action=view">@val@</a>'
+			'libelle'=>'<a href="@isPresence@.php?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array(
 			'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
