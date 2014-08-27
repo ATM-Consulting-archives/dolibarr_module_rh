@@ -28,8 +28,9 @@
 						
 						$absence->niveauValidation=1;
 						
-						$absence->save($ATMdb);
+						$absence->duree = $absence->calculDureeAbsenceParAddition($ATMdb);
 						
+						$absence->save($ATMdb);
 						$absence->load($ATMdb, $_REQUEST['id']);
 						if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
 							mailConges($absence,true);

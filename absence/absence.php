@@ -213,7 +213,7 @@ function _liste(&$ATMdb, &$absence) {
 			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="'.$langs->trans('DoNotRespectRules').'" />')
 			,'etat'=>$absence->TEtat
 		)
-		,'hide'=>array('DateCre', 'fk_user','type', 'ID')
+		,'hide'=>array('isPresence','DateCre', 'fk_user','type', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date', 'duree'=>'number')
 		,'liste'=>array(
 			'titre'=>$langs->trans('ListOfAbsence')
@@ -312,7 +312,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
 			,'etat'=>$absence->TEtat
 		)
-		,'hide'=>array('DateCre', 'fk_user', 'ID')
+		,'hide'=>array('isPresence','DateCre', 'fk_user', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
 			'titre'=>'Liste de toutes les absences des collaborateurs'
