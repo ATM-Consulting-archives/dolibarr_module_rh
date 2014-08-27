@@ -257,7 +257,7 @@ function php2dmy($phpDate){
 
 
 //fonction permettant l'envoi de mail
-function mailConges(&$absence){
+function mailConges(&$absence,$presence=false){
 global $db;		
 
 	$from = USER_MAIL_SENDER;
@@ -278,8 +278,17 @@ global $db;
 
 	$TBS=new TTemplateTBS();
 	if($absence->etat=='Avalider'){
-		$subject = "Création d'une demande de congés";
-		$message = $TBS->render(dol_buildpath('/absence/tpl/mail.absence.creation.tpl.php')
+		
+		if(!$presence){
+			$subject = "Création d'une demande de congés";
+			$tpl = dol_buildpath('/absence/tpl/mail.absence.creation.tpl.php');
+		}
+		else{
+			$subject = "Création d'une demande de présence";
+			$tpl = dol_buildpath('/absence/tpl/mail.presence.creation.tpl.php');
+		}
+		
+		$message = $TBS->render($tpl
 			,array()
 			,array(
 				'absence'=>array(
@@ -294,8 +303,16 @@ global $db;
 				)
 		);
 	}else if($absence->etat=='Validee'){
-		$subject = "Acceptation de votre demande de congés";
-		$message = $TBS->render(dol_buildpath('/absence/tpl/mail.absence.acceptation.tpl.php')
+		if(!$presence){
+			$subject = "Acceptation de votre demande de congés";
+			$tpl = dol_buildpath('/absence/tpl/mail.absence.acceptation.tpl.php');
+		}
+		else{
+			$subject = "Acceptation de votre demande de présence";
+			$tpl = dol_buildpath('/absence/tpl/mail.presence.acceptation.tpl.php');
+		}
+		
+		$message = $TBS->render($tpl
 			,array()
 			,array(
 				'absence'=>array(
@@ -318,8 +335,17 @@ global $db;
 		);
 	}
 	else if($absence->etat=='Refusee'){
-		$subject = "Refus de votre demande de congés";
-		$message = $TBS->render(dol_buildpath('/absence/tpl/mail.absence.refus.tpl.php')
+		
+		if(!$presence){
+			$subject = "Refus de votre demande de congés";
+			$tpl = dol_buildpath('/absence/tpl/mail.absence.refus.tpl.php');
+		}
+		else{
+			$subject = "Refus de votre demande de présence";
+			$tpl = dol_buildpath('/absence/tpl/mail.presence.refus.tpl.php');
+		}
+		
+		$message = $TBS->render($tpl
 			,array()
 			,array(
 				'absence'=>array(
@@ -350,7 +376,7 @@ global $db;
 }
 
 //fonction permettant la récupération
-function mailCongesValideur(&$ATMdb, &$absence){
+function mailCongesValideur(&$ATMdb, &$absence,$presence=false){
 	//on récupèreles ids des groupes auxquels appartient l'utilisateur
 	$sql="SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."usergroup_user 
 	WHERE fk_user= ".$absence->fk_user;
@@ -372,7 +398,7 @@ function mailCongesValideur(&$ATMdb, &$absence){
 	
 	if(!empty($TValideur)){
 		foreach($TValideur as $idVal){
-			envoieMailValideur($ATMdb, $absence, $idVal);
+			envoieMailValideur($ATMdb, $absence, $idVal,$presence);
 		}
 	}
 	
@@ -380,7 +406,7 @@ function mailCongesValideur(&$ATMdb, &$absence){
 
 
 //fonction permettant l'envoi de mail aux valideurs de la demande d'absence
-function envoieMailValideur(&$ATMdb, &$absence, $idValideur){
+function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
 global $db;
 		
 	$from = USER_MAIL_SENDER;
@@ -404,9 +430,17 @@ global $db;
 	$sendto = $userV->email;
 
 	$TBS=new TTemplateTBS();
-
-	$subject = "Nouvelle demande d'absence à valider";
-	$message = $TBS->render(dol_buildpath('/absence/tpl/mail.absence.creationValideur.tpl.php')
+	
+	if(!$presence){
+		$subject = "Nouvelle demande d'absence à valider";
+		$tpl = dol_buildpath('/absence/tpl/mail.absence.creationValideur.tpl.php');
+	}
+	else{
+		$subject = "Nouvelle demande de présence à valider";
+		$tpl = dol_buildpath('/absence/tpl/mail.presence.creationValideur.tpl.php');
+	}
+	
+	$message = $TBS->render($tpl
 		,array()
 		,array(
 			'absence'=>array(
