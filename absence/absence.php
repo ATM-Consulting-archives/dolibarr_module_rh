@@ -183,8 +183,10 @@ function _liste(&$ATMdb, &$absence) {
 	$sql="SELECT a.rowid as 'ID', IF(ta.isPresence = 0, 'absence', 'presence') as isPresence, a.fk_user, a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
 			a.libelle,a.duree, a.etat,a.type, 'Compteur', u.login, u.firstname, u.lastname,
 			 a.avertissement
-			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."rh_type_absence as ta
-			WHERE a.fk_user=".$user->id." AND u.rowid=a.fk_user AND ta.typeAbsence = a.type";
+			FROM ".MAIN_DB_PREFIX."rh_absence as a
+				LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=a.fk_user)
+				LEFT JOIN ".MAIN_DB_PREFIX."rh_type_absence as ta ON (ta.typeAbsence = a.type)
+			WHERE a.fk_user=".$user->id;
 	
 	
 	$TOrder = array('date_debut'=>'DESC');
@@ -285,8 +287,10 @@ function _listeAdmin(&$ATMdb, &$absence) {
 	$sql="SELECT a.rowid as 'ID', IF(ta.isPresence = 0, 'absence', 'presence') as isPresence, a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
 		 	a.libelle, ROUND(a.duree ,1) as 'duree', a.fk_user,  a.fk_user, u.login, u.firstname, u.lastname,
 		  	a.etat, a.avertissement
-			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."rh_type_absence as ta
-			WHERE u.rowid=a.fk_user AND ta.typeAbsence = a.type";
+			FROM ".MAIN_DB_PREFIX."rh_absence as a
+				LEFT JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=a.fk_user)
+				LEFT JOIN ".MAIN_DB_PREFIX."rh_type_absence as ta ON (ta.typeAbsence = a.type)
+			WHERE 1";
 	
 	
 	$TOrder = array('date_debut'=>'DESC');
