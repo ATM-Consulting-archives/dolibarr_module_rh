@@ -65,6 +65,8 @@ class TRH_Compteur extends TObjetStd {
 		parent::start();
 		
 		$this->TTypeAcquisition = array('Annuel'=>'Annuel','Mensuel'=>'Mensuel');
+		$this->TDureeAbsenceUser = array();
+		$this->TDureeAllAbsenceUser = array();
 		
 		
 	}
@@ -381,6 +383,9 @@ class TRH_Absence extends TObjetStd {
 	function calculDureeAbsenceParAddition(&$ATMdb, $dateN=0) {
 		global $TJourNonTravailleEntreprise, $langs;
 		
+		//exit($this->rechercheAbsenceUser($ATMdb,$this->fk_user, date("Y-m-d H:i:s", $this->date_debut), date("Y-m-d H:i:s", $this->date_fin), 'Tous'));
+		//pre($this, true);exit;
+		
 		$TJourSemaine = array('dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi');
 		$TJourFerie = $this->getJourFerie($ATMdb);	
 		
@@ -449,13 +454,15 @@ class TRH_Absence extends TObjetStd {
 				}
 				
 				$duree+=$dureeJour;
+				
+				$this->TDureeAbsenceUser[date('Y', $t_current)][date('m', $t_current)] += $dureeJour;
 
 			}
 			
-			
 			$t_current = strtotime("+1day",$t_current);
 		}
-		
+		//echo $duree.'<br />';
+		//pre($this->TDureeAbsenceUser, true);exit;
 		if($emploiTemps->tempsHebdo > 35){
 			$this->dureeHeurePaie=7*$duree;
 		}

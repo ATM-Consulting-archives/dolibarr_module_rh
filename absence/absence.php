@@ -25,6 +25,16 @@
 				$absence->set_date('date_debut', GETPOST('date_debutday').'/'.GETPOST('date_debutmonth').'/'.GETPOST('date_debutyear') );
 				$absence->set_date('date_fin', GETPOST('date_finday').'/'.GETPOST('date_finmonth').'/'.GETPOST('date_finyear') );
 				
+				if (! $notrigger)
+				{
+					// Appel des triggers
+					dol_include_once('/core/class/interfaces.class.php');
+					$interface = new Interfaces($db);
+					$result = $interface->run_triggers('ABSENCE_CREATE',$absence,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
+				}
+				
 				$absence->niveauValidation=1;
 				$existeDeja=$absence->testExisteDeja($ATMdb, $absence);
 				if($existeDeja===false){

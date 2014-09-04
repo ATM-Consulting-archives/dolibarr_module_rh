@@ -75,7 +75,7 @@ class InterfaceAbsenceWorkflow
      *      @param      conf        Object conf
      *      @return     int         <0 if KO, 0 if no action are done, >0 if OK
      */
-    function run_trigger($action, $object, $user, $langs, $conf)
+    function run_trigger($action, &$object, $user, $langs, $conf)
     {
         global $db,$langs;
 		
@@ -113,11 +113,116 @@ class InterfaceAbsenceWorkflow
 				
 			}
 			
+		} elseif ($action === 'ABSENCE_CREATE') {
+				
+			global $user, $db;
+				
+			$ATMdb=new TPDOdb;
+			$object->calculDureeAbsenceParAddition($ATMdb);
+			$object->TDureeAllAbsenceUser = $object->TDureeAbsenceUser;
+			
+			$this->_loadDureeAllAbsenceUser($ATMdb, $object);
+			
+			$this->_absenceEstValide($ATMdb, $object);
+			
 		}
 		
 		
 		return 0;
     }
+
+	function _loadDureeAllAbsenceUser(&$ATMdb, &$object) {
+		
+		global $db;
+		
+		// On récupère toutes les absences contenues dans le ou les mois sur le(s)quel(s) se trouve la plage de congés
+		$sql = $object->rechercheAbsenceUser($ATMdb,$this->fk_user, date("Y-m-01 H:i:s", $object->date_debut), date("Y-m-".date("t", date("m", $object->date_fin))." H:i:s", $object->date_fin), 'Tous');
+
+		$resql = $db->query($sql);
+		//$this->_nbJoursConsecutifsInferieurATrois($ATMdb, $object);
+		while($res = $db->fetch_object($resql)) {
+			
+			$abs = new TRH_Absence;
+			$abs->load($ATMdb, $res->ID);
+			$abs->calculDureeAbsenceParAddition($ATMdb);
+			
+			foreach($abs->TDureeAbsenceUser as $annee => $tabMonth) {
+				foreach($tabMonth as $month => $duree) {
+					@$object->TDureeAllAbsenceUser[$annee][$month] += $duree;
+				}
+			}
+			
+		}
+		
+	}
+	
+	function _absenceEstValide(&$ATMdb, &$object) {
+		
+		if($this->_nbJoursTotalInferieureNbJoursMax($object->TDureeAllAbsenceUser) && $this->_nbJoursConsecutifsInferieurNbMax($ATMdb, $object))
+			return true;
+		else 
+			return false;
+		
+	}
+	
+	function _nbJoursTotalInferieureNbJoursMax($TDureeAllAbsenceUser) {
+
+		foreach($TDureeAllAbsenceUser as $annee => $tabMonth) {
+			foreach($tabMonth as $duree) {
+				if($duree > 2) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
+
+	}
+	
+	function _nbJoursConsecutifsInferieurNbMax(&$ATMdb, &$object) {
+		
+		global $TJourNonTravailleEntreprise, $langs;
+		
+		$TTradJoursSemaine = array(
+						"Mon"=>"lundi"
+						,"Tue"=>"mardi"
+						,"Wed"=>"mercredi"
+						,"Thu"=>"jeudi"
+						,"Fri"=>"vendredi"
+						,"Sat"=>"samedi"
+						,"Sun"=>"dimanche"
+					);
+		
+		$t_start = $object->date_debut;
+		$t_end = $object->date_fin;
+		$t_current = $t_start;
+		
+		$TJoursFeries = $object->getJourFerie($ATMdb);
+
+		$nbJoursConsecutifs = 0;
+		$nbJoursConsecutifsMax = 0;
+		
+		while($t_current<=$t_end) {
+			//echo isset($TJoursFeries[date('Y-m-d', $t_current)]);
+			if(!in_array($TTradJoursSemaine[date('D', $t_current)], $TJourNonTravailleEntreprise) && !isset($TJoursFeries[date('Y-m-d', $t_current)])){
+				$nbJoursConsecutifs++;
+				if($nbJoursConsecutifs > $nbJoursConsecutifsMax) {
+					$nbJoursConsecutifsMax = $nbJoursConsecutifs;
+				}
+			}
+			else
+				$nbJoursConsecutifs = 0;
+			
+			$t_current = strtotime("+1day",$t_current);
+			
+		}
+		
+		if($nbJoursConsecutifsMax < 3)
+			return true;
+		else
+			return false;
+		
+	}
 
 }
 ?>
