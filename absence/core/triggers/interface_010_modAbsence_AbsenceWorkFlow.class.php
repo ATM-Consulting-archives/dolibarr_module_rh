@@ -131,6 +131,10 @@ class InterfaceAbsenceWorkflow
 		return 0;
     }
 
+	/**
+	 * Charge l'attribut TDureeAllAbsenceUser de l'objet absence associant à chaque mois de chaque année une durée total de congés pris ou demandés
+	 * @param object $objet : objet absence
+	 */
 	function _loadDureeAllAbsenceUser(&$ATMdb, &$object) {
 		
 		global $db;
@@ -156,8 +160,13 @@ class InterfaceAbsenceWorkflow
 		
 	}
 	
+	/**
+	 * Vérifie si une absence est valide en fonction du nombre de jours demandé et du nombre de jours consécutifs
+	 * @param object $objet objet absence
+	 * @return bool 1 ok, 0 ko
+	 */
 	function _absenceEstValide(&$ATMdb, &$object) {
-		
+		$this->getReglesHomeOffice();
 		if($this->_nbJoursTotalInferieureNbJoursMax($object->TDureeAllAbsenceUser) && $this->_nbJoursConsecutifsInferieurNbMax($ATMdb, $object))
 			return true;
 		else 
@@ -165,6 +174,43 @@ class InterfaceAbsenceWorkflow
 		
 	}
 	
+	/**
+	 * Retourne un tableau contenant les règles sur le Home office qui concernent l'utilisateur courant
+	 * @return array $tabRegles tableau de règles sur le home Office par lesquelles l'utilisateur courant est concerné
+	 */
+	function getReglesHomeOffice() {
+			
+		global $db, $user;
+		
+		$tabRegles = array();
+		
+		$user_group = new UserGroup($db);
+		$TGroups_of_user = $user_group->listGroupsForUser($user->id);
+		if(count($TGroups_of_user) > 0) $TGroups_of_user = array_keys($TGroups_of_user);
+		
+		$sql = "SELECT rowid, nbJourCumulable, restrictif, periode";
+		$sql.= " FROM ".MAIN_DB_PREFIX.'rh_absence_regle';
+		$sql.= " WHERE (fk_user = ".$user->id;
+		if(count($TGroups_of_user) > 0) $sql.= " OR fk_usergroup IN (".implode(",", $TGroups_of_user).")";
+		$sql.= ")";
+		$sql.= ' AND typeAbsence = "HomeOffice"';
+		
+		$resql = $db->query($sql);
+		if($resql->num_rows > 0) {
+			while($res = $db->fetch_object($resql)) {
+				$tabRegles[] = $res;
+			}
+		}
+		//echo $sql;exit;
+		return $tabRegles;
+		
+	}
+	
+	/**
+	 * Vérifie si le nombre de jours total de congés de l'utilisateur est inférieure au nombre total de jours autorisé par les règles sur le home office
+	 * @param array $TDureeAllAbsenceUser Tableau de l'objet absence qui associe à chaque mois de chaque année une durée total de congés pris ou demandés
+	 * @param bool 1 ok, 0 ko
+	 */
 	function _nbJoursTotalInferieureNbJoursMax($TDureeAllAbsenceUser) {
 
 		foreach($TDureeAllAbsenceUser as $annee => $tabMonth) {
@@ -179,6 +225,11 @@ class InterfaceAbsenceWorkflow
 
 	}
 	
+	/**
+	 * Vérifie si le nombre de jours de congés consécutifs maximum de l'utilisateur est inférieure au nombre total de jours consécutifs maximal autorisé par les règles sur le home office
+	 * @param object $object objet absence
+	 * @param bool 1 ok, 0 ko
+	 */
 	function _nbJoursConsecutifsInferieurNbMax(&$ATMdb, &$object) {
 		
 		global $TJourNonTravailleEntreprise, $langs;
