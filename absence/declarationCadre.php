@@ -75,9 +75,9 @@ global $db,$langs,$conf;
 		
 		<table class="border" width="100%">
 			<tr>
-				<th>Date</th>
-				<th>Jour travaillé</th>
-				<th>Jour de repos</th>
+				<th><?php echo $langs->trans('Date'); ?></th>
+				<th><?php echo $langs->trans('WorkedDays'); ?></th>
+				<th><?php echo $langs->trans('RestDays'); ?></th>
 			</tr>
 		<?
 		
@@ -90,13 +90,13 @@ global $db,$langs,$conf;
 			$heure_ligne = convertSecondToTime( $stat['nb_heure_presence'] * 3600 );
 			
 			if($stat['nb_jour_ferie']>0) {
-				$raison = 'Férié';
+				$raison = $langs->trans('PublicHoliday');
 			}
 			else if($stat['estUnJourTravaille']=='NON') {
-				$raison = 'Jour non travaillé';
+				$raison = $langs->trans('NoWorkedDays');
 			}
 			else if($stat['estUnJourTravaille']!='OUI' && $stat['estUnJourTravaille']!='NON' && $stat['absence']==0) {
-				$raison = 'Demi-journée travaillée';
+				$raison = $langs->trans('WorkedHalfDay');
 			}
 			else if($stat['typeAbsence']=='non') {
 				$raison = '-';
@@ -131,7 +131,7 @@ global $db,$langs,$conf;
 		echo $form->hidden('nb_hour', $total);
 		
 		echo '<p align="right">';
-		echo $form->bt('Signer ces temps', 'bt_sign', 'onclick="signFeuille()"');
+		echo $form->bt($langs->trans('NoteTheseTimes'), 'bt_sign', 'onclick="signFeuille()"');
 		echo $form->btsubmit('Télécharger', 'bt_gen');
 		echo '</p><br />';
 		
@@ -142,15 +142,15 @@ global $db,$langs,$conf;
 								FROM ".MAIN_DB_PREFIX."rh_declaration_temps
 								WHERE fk_user=".$fk_user." ORDER BY date_ref DESC",array(
 					'title'=>array(
-						'nb_hour'=>"Nombre d'heures déclarées"
-						,'date_ref'=>'Mois déclaré' 
+						'nb_hour'=> $langs->trans('NbDeclaredHours')
+						,'date_ref'=> $langs->trans('DeclaredMonth') 
 					)
 					,'eval'=>array(
 						'date_ref'=>' date("m/Y", strtotime("@val@"))'
 						,'nb_hour'=>' convertSecondToTime( @val@ * 3600, "allhourmin" ) '
 					)
 					,'liste'=>array(
-						'titre'=>"Liste des heures déclarées"
+						'titre'=> $langs->trans('DeclaredHoursList')
 						
 					)			
 				)) ;

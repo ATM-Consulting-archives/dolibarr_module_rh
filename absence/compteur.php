@@ -33,7 +33,7 @@
 				$compteur->set_values($_REQUEST);
 				$compteur->save($ATMdb);
 				$compteur->load($ATMdb, $_REQUEST['id']);
-				$mesg = '<div class="ok">Modifications effectuées</div>';
+				$mesg = '<div class="ok">' . $langs->trans('ChangesMade') . '</div>';
 				_fiche($ATMdb, $compteur,'view');
 			
 				break;
@@ -73,9 +73,9 @@
 function _liste(&$ATMdb, &$compteur) {
 	global $langs, $conf, $db, $user, $listeGlobale;	
 	$listeGlobale='normale';
-	llxHeader('','Liste des compteurs de congés des collaborateurs');
+	llxHeader('', $langs->trans('HolidaysCollabCounterList'));
 	getStandartJS();
-	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Administration des congés');
+	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur')  , 'compteur', $langs->trans('HolidaysAdministration'));
 	$r = new TSSRenderControler($compteur);
 	$sql="SELECT  r.rowid as 'ID', c.login, c.firstname, c.lastname, anneeN as 'annee', 
 		r.date_cre as 'DateCre', CAST(r.acquisExerciceN as DECIMAL(16,1)) as 'Congés acquis N', 
@@ -106,19 +106,19 @@ function _liste(&$ATMdb, &$compteur) {
 		,'hide'=>array('DateCre')
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste des compteurs de congés des collaborateurs'
+			'titre'=> $langs->trans('HolidaysCollabCounterList')
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucun jour acquis à afficher"
+			,'messageNothing'=> $langs->trans('NoAcquiredDaysToShow')
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			
 		)
 		,'title'=>array(
-			'lastname'=>'Nom'
-			,'firstname'=>'Prénom'
+			'lastname'=> $langs->trans('LastName')
+			,'firstname'=> $langs->trans('FirstName')
 		)
 		,'orderBy'=>$TOrder
 		,'eval'=>array(
@@ -137,9 +137,9 @@ function _liste(&$ATMdb, &$compteur) {
 function _listeAdmin(&$ATMdb, &$compteur) {
 	global $langs, $conf, $db, $user,$listeGlobale;	
 	$listeGlobale='admin';
-	llxHeader('','Liste des compteurs de congés des collaborateurs');
+	llxHeader('', $langs->trans('HolidaysCollabCounterList'));
 	getStandartJS();
-	print dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Administration des congés');
+	print dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', $langs->trans('HolidaysAdministration'));
 	$r = new TSSRenderControler($compteur);
 	$sql="SELECT  r.rowid as 'ID', login, firstname, lastname, '' as 'Compteur',
 		r.date_cre as 'DateCre', CAST(r.acquisExerciceN as DECIMAL(16,1)) as 'Congés acquis N', 
@@ -165,7 +165,7 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Compteur'=>'<a href="?id=@ID@&action=view">Compteur</a>'
+			'Compteur'=>'<a href="?id=@ID@&action=view">'. $langs->trans('Counter') . '</a>'
 			,'ID'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			
 		)
@@ -173,21 +173,21 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 		,'hide'=>array('DateCre','ID')
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste des compteurs de congés des collaborateurs'
+			'titre'=> $langs->trans('HolidaysCollabCounterList')
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucun jour acquis à afficher"
+			,'messageNothing'=> $langs->trans('NoAcquiredDaysToShow')
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 			
 		)
 		,'title'=>array(
-			'firstname'=>'Prénom'
-			,'lastname'=>'Nom'
-			,'login'=>'Login'
+			'firstname'=> $langs->trans('FirstName')
+			,'lastname'=> $langs->trans('LastName')
+			,'login'=> $langs->trans('Login')
 		)
 		,'search'=>array(
 			'firstname'=>true
@@ -363,7 +363,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'date_congesCloture'=>date("d/m/Y",strtotime($rttCourant['dateConges']))
 				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',round2Virgule($rttCourant['nombreCongesAcquisMensuel']),10,50,'',$class="text", $default='')	
 				
-				,'titreConges'=>load_fiche_titre("Congés payés",'', 'title.png', 0, '')
+				,'titreConges'=>load_fiche_titre($langs->trans('HolidaysPaid'),'', 'title.png', 0, '')
 
 				
 			)
@@ -403,7 +403,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'nonCumuleTotal'=>$form->texte('','rttNonCumuleTotal',round2Virgule($rttCourant['nonCumuleTotal']),10,50,'',$class="text", $default='')
 
 				
-				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')
+				,'titreRtt'=>load_fiche_titre($langs->trans('DayOff'),'', 'title.png', 0, '')
 
 			)
 			
@@ -416,7 +416,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 			
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur', htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1'), htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'))  , 'compteur', 'Absence')
+				,'head'=>dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur', htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1'), htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'))  , 'compteur', $langs->trans('Absence'))
 			)
 		)	
 		

@@ -4,6 +4,7 @@
 //classe pour la définition d'une absence 
 class TRH_Compteur extends TObjetStd {
 	function __construct() { /* declaration */
+		global $langs;
 		
 		//conges N
 		parent::set_table(MAIN_DB_PREFIX.'rh_compteur');
@@ -64,7 +65,7 @@ class TRH_Compteur extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		
-		$this->TTypeAcquisition = array('Annuel'=>'Annuel','Mensuel'=>'Mensuel');
+		$this->TTypeAcquisition = array('Annuel'=> $langs->trans('TypeAcquisitionYearly'), 'Mensuel'=> $langs->trans('TypeAcquisitionMonthly'));
 		
 		
 	}
@@ -172,24 +173,38 @@ class TRH_Absence extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		
-		$this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
-		$this->Tjoursem = array('dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'); 
+		$this->TJour = array(
+			$langs->trans('AbsenceMonday'), 
+			$langs->trans('AbsenceTuesday'), 
+			$langs->trans('AbsenceWednesday'), 
+			$langs->trans('AbsenceThursday'), 
+			$langs->trans('AbsenceFriday'), 
+			$langs->trans('AbsenceSaturday'), 
+			$langs->trans('AbsenceSunday')
+		);
 		
+		$this->Tjoursem = array(
+			$langs->trans('AbsenceSunday'), 
+			$langs->trans('AbsenceMonday'), 
+			$langs->trans('AbsenceTuesday'), 
+			$langs->trans('AbsenceWednesday'), 
+			$langs->trans('AbsenceThursday'), 
+			$langs->trans('AbsenceFriday'), 
+			$langs->trans('AbsenceSaturday')
+		);
 		
 		$ATMdb=new TPDOdb;
-		
-		
-		
+				
 		//combo pour le choix de matin ou après midi 
-		$this->TddMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date début
-		$this->TdfMoment = array('matin'=>'Matin','apresmidi'=>'Après-midi');	//moment de date fin
+		$this->TddMoment = array('matin'=> $langs->trans('AbsenceMorning'),'apresmidi'=> $langs->trans('AbsenceAfternoon'));	//moment de date début
+		$this->TdfMoment = array('matin'=> $langs->trans('AbsenceMorning'),'apresmidi'=> $langs->trans('AbsenceAfternoon'));	//moment de date fin
 		
 		//on crée un tableau des utilisateurs pour l'afficher en combo box, et ensuite sélectionner quelles absences afficher
 		
 		$this->TEtat=array(
-			'Validee'=>'Acceptée'
-			,'Refusee'=>'Refusée'
-			,'Avalider'=>'En attente de validation'
+			'Validee'=> $langs->trans('Accepted')
+			,'Refusee'=> $langs->trans('Refused')
+			,'Avalider'=> $langs->trans('WaitingValidation')
 		
 		);
 		
@@ -381,7 +396,16 @@ class TRH_Absence extends TObjetStd {
 	function calculDureeAbsenceParAddition(&$ATMdb, $dateN=0) {
 		global $TJourNonTravailleEntreprise, $langs;
 		
-		$TJourSemaine = array('dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi');
+		$TJourSemaine = array(
+			$langs->trans('AbsenceSunday'), 
+			$langs->trans('AbsenceMonday'), 
+			$langs->trans('AbsenceTuesday'), 
+			$langs->trans('AbsenceWednesday'), 
+			$langs->trans('AbsenceThursday'), 
+			$langs->trans('AbsenceFriday'), 
+			$langs->trans('AbsenceSaturday')
+		); 
+		
 		$TJourFerie = $this->getJourFerie($ATMdb);	
 		
 		$duree = 0;
@@ -2045,7 +2069,9 @@ class TRH_EmploiTemps extends TObjetStd {
 
 //définition de la classe pour l'administration des compteurs
 class TRH_JoursFeries extends TObjetStd {
-	function __construct() { 
+	function __construct() {
+		global $langs;
+		 
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_jours_feries');
 		parent::add_champs('date_jourOff','type=date;index;');
 		parent::add_champs('moment','type=chaine;index;');
@@ -2057,7 +2083,11 @@ class TRH_JoursFeries extends TObjetStd {
 		parent::start();	
 		
 		$this->TFerie=array();
-		$this->TMoment=array('allday'=>'Toute La journée', 'matin'=>'Matin', 'apresmidi'=>'Après-midi');
+		$this->TMoment=array(
+			'allday'=> $langs->trans('AbsenceAllDay'),
+			'matin'=> $langs->trans('AbsenceMorning'),
+			'apresmidi'=> $langs->trans('AbsenceAfternoon')
+		);
 		
 		$this->moment = 'allday'; 		
 	}
@@ -2163,16 +2193,16 @@ class TRH_JoursFeries extends TObjetStd {
 }
 
 //définition de la classe pour la gestion des règles
-class TRH_RegleAbsence extends TObjetStd {
-	
+class TRH_RegleAbsence extends TObjetStd {	
 	static $TPeriode =array(
-			'ONE'=>'Pour chaque plage'
-			,'MONTH'=>'Mois'
-			,'YEAR'=>"Année"
-			
-		);
+		'ONE'=>'Pour chaque plage'
+		,'MONTH'=>'Mois'
+		,'YEAR'=>"Année"
+	);
 	
-	function __construct() { 
+	function __construct() {
+		global $langs;
+		 
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_regle');
 		parent::add_champs('typeAbsence','type=chaine;');
 		parent::add_champs('choixApplication,periode','type=chaine;index;');
@@ -2191,9 +2221,9 @@ class TRH_RegleAbsence extends TObjetStd {
 		$this->TUser = array();
 		$this->TGroup  = array();
 		$this->TChoixApplication = array(
-			'all'=>'Tous'
-			,'group'=>'Groupe'
-			,'user'=>'Utilisateur'
+			'all'=> $langs->trans('ApplicationChoiceAll')
+			,'group'=> $langs->trans('ApplicationChoiceGroup')
+			,'user'=> $langs->trans('ApplicationChoiceUser')
 		);
 		
 		$this->periode ='ONE';
@@ -2249,7 +2279,9 @@ class TRH_RegleAbsence extends TObjetStd {
 
 //définition de la classe pour la gestion des règles
 class TRH_TypeAbsence extends TObjetStd {
-	function __construct() { 
+	function __construct() {
+		global $langs;
+		
 		parent::set_table(MAIN_DB_PREFIX.'rh_type_absence');
 		parent::add_champs('typeAbsence','type=chaine;index;');
 		parent::add_champs('libelleAbsence','type=chaine;index;');
@@ -2266,23 +2298,23 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::start();
 		
 		$this->TIsPresence=array(
-			0=>'Absence'
-			,1=>'Présence'
+			0=> $lang->trans('Absence')
+			,1=> $lang->trans('Presence')
 		);
 		
 		$this->TDecompteNormal=array(
-			'oui'=>'Oui'
-			,'non'=>'Non'
+			'oui'=> $langs->trans('Yes')
+			,'non'=> $langs->trans('No')
 		);
 		
 		$this->TForAdmin=array(
-			0=>'Non'
-			,1=>'Oui'
+			0=> $langs->trans('No')
+			,1=> $langs->trans('Yes')
 		);
 	
 		$this->TUnite=array(
-			'jour'=>'Jour'
-			,'heure'=>'Heure'
+			'jour'=> $langs->trans('Day')
+			,'heure'=> $langs->trans('Hour')
 		);
 		
 		$this->TColorId=array(

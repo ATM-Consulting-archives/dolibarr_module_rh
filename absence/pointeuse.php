@@ -9,7 +9,7 @@
 	$ATMdb=new TPDOdb;
 	
 	$pointeuse=new TRH_Pointeuse;
-	llxHeader('','Pointage');
+	llxHeader('', $langs->trans('Clocking'));
 	switch(__get('action','list') ) {
 			case 'new':
 				$pointeuse->set_values($_REQUEST);
@@ -124,7 +124,7 @@
 function _liste(&$ATMdb, &$pointeuse) {
 	global $langs, $conf, $db, $user;	
 	
-	print dol_get_fiche_head(pointeusePrepareHead()  , '', 'Pointeuse');
+	print dol_get_fiche_head(pointeusePrepareHead()  , '', $langs->trans('TimeClock'));
 
 	$r = new TSSRenderControler($pointeuse);
 
@@ -143,9 +143,9 @@ function _liste(&$ATMdb, &$pointeuse) {
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
 	
 	?><div style="text-align: right">
-		<a class="butAction" href="?action=imcomming">J'arrive</a>
-		<a class="butAction" href="?action=imleaving">Je pars</a>
-		<a class="butAction" href="?id=<?=$pointeuse->getId()?>&action=new">Nouveau pointage</a><div style="clear:both"></div>
+		<a class="butAction" href="?action=imcomming"><?php echo $langs->trans('ImComing'); ?></a>
+		<a class="butAction" href="?action=imleaving"><?php echo $langs->trans('ImLeaving'); ?></a>
+		<a class="butAction" href="?id=<?=$pointeuse->getId()?>&action=new"><?php echo $langs->trans('NewClocking'); ?></a><div style="clear:both"></div>
 	</div><?
 	
 	$r->liste($ATMdb, $sql, array(
@@ -160,23 +160,23 @@ function _liste(&$ATMdb, &$pointeuse) {
 		,'hide'=>array()
 		,'type'=>array('date_deb_am'=>'hour', 'date_fin_am'=>'hour', 'date_deb_pm'=>'hour', 'date_fin_pm'=>'hour', 'date_jour'=>'date')
 		,'liste'=>array(
-			'titre'=>'Liste de vos absences'
+			'titre'=> $langs->trans('ListOfAbsence')
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucune absence à afficher"
+			,'messageNothing'=> $langs->trans('MessageNothingAbsence')
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 			
 		)
 		,'title'=>array(
-			'date_deb_am'=>'Arrivée le matin'
-			, 'date_fin_am'=>'Départ le matin'
-			, 'date_deb_pm'=>'Arrivée l\'après-midi'
-			, 'date_fin_pm'=>'Départ l\'après-midi'
-			, 'date_jour'=>'Jour'
+			'date_deb_am'=> $langs->trans('MorningArrival')
+			, 'date_fin_am'=> $langs->trans('MorningLeaving')
+			, 'date_deb_pm'=> $langs->trans('AfternoonArrival')
+			, 'date_fin_pm'=> $langs->trans('AfternoonLeaving')
+			, 'date_jour'=> $langs->trans('Day')
 		)
 		,'search'=>array(
 			'date_jour'=>array('recherche'=>'calendar')
@@ -224,7 +224,7 @@ function _fiche(&$ATMdb, &$pointeuse, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(pointeusePrepareHead(), 'fiche', 'Pointage')
+				,'head'=>dol_get_fiche_head(pointeusePrepareHead(), 'fiche', $langs->trans('Clocking'))
 			)
 		)	
 	);

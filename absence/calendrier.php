@@ -3,6 +3,7 @@
 	require('./class/absence.class.php');
 	require('./lib/absence.lib.php');
 	
+	$langs->load('absence@absence');
 	/*
 	 * Inclusion Agenda
 	 */
@@ -48,7 +49,7 @@
 	$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=="0"?'':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
 		
 //print_r(get_defined_vars());	
-	llxHeader('','Calendrier des absences', '', '', 0,0,
+	llxHeader('', $langs->trans('AbsencesCalendar'), '', '', 0,0,
 		array(//"/library/wdCalendar/src/jquery.js"   
 			"/rhlibrary/wdCalendar/src/Plugins/Common.js"    
 			,"/rhlibrary/wdCalendar/src/Plugins/datepicker_lang_FR.js" 
@@ -164,7 +165,7 @@
 				//,'TUser'=>$user->rights->absence->myactions->voirToutesAbsences?$formATM->combo('', 'rowid', $absence->TUser,  $absence->TUser):$formATM->combo('', 'rowid',$TabUser,  $TabUser)
 				,'TUser'=>$formATM->combo('', 'idUtilisateur', $TabUser,  $idUser)
 				,'droits'=>$user->rights->absence->myactions->voirToutesAbsences?1:0
-				,'btValider'=>$formATM->btsubmit('Valider', 'valider')
+				,'btValider'=>$formATM->btsubmit($langs->trans('Submit'), 'valider')
 				//,'idAfficher'=>$_REQUEST['rowid']? $_REQUEST['rowid']:0
 				,'date_debut'=> $formATM->calendrier('', 'date_debut', $absence->date_debut, 12)
 				,'date_fin'=> $formATM->calendrier('', 'date_fin', $absence->date_fin, 12)
@@ -180,9 +181,9 @@
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'calendrier', 'Absence')
-				,'head3'=>dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', 'Absence')
-				,'titreCalendar'=>load_fiche_titre("Mon planning",'', 'title.png', 0, '')
+				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'calendrier', $langs->trans('Absence'))
+				,'head3'=>dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', $langs->trans('Absence'))
+				,'titreCalendar'=>load_fiche_titre($langs->trans('MySchedule'),'', 'title.png', 0, '')
 				,'agendaEnabled'=>(int)$conf->agenda->enabled
 				
 				,'projectid'=>$pid

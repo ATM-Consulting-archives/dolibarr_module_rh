@@ -57,10 +57,10 @@ if($action=='save') {
 
 
 
-llxHeader('','Gestion de la caisse, à propos','');
+llxHeader('', $langs->trans('FundManagementAbout'),'');
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre('Gestion module absence',$linkback,'setup');
+print_fiche_titre($langs->trans('AbsenceManagement'), $linkback, 'setup');
 
 $form=new TFormCore;
 
@@ -121,11 +121,11 @@ function showParameters(&$form) {
 
 <table width="100%" class="noborder">
 	<tr class="liste_titre">
-		<td>A propos</td>
+		<td><?php echo $langs->trans('AboutAbsence'); ?></td>
 		<td align="center">&nbsp;</td>
 		</tr>
 		<tr class="impair">
-			<td valign="top">Module développé par </td>
+			<td valign="top"><?php echo $langs->trans('ModuleBy'); ?></td>
 			<td align="center">
 				<a href="http://www.atm-consulting.fr/" target="_blank">ATM Consulting</a>
 			</td>

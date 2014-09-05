@@ -8,6 +8,7 @@
 	require_once(DOL_DOCUMENT_ROOT."/core/class/fileupload.class.php");
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 	
+	$langs->load('absence@absence');
 	$langs->load('ressource@ressource');
 	$langs->load('main');
 	$langs->load('other');
@@ -22,7 +23,7 @@
 	
 	function _fiche(&$ATMdb, &$absence) {
 		global $db,$user,$conf,$langs;
-		llxHeader('','Fichiers joints');
+		llxHeader('', $langs->trans('Documents'));
 		
 		$id = GETPOST('id', 'int');
 		$ref = GETPOST('ref', 'alpha');

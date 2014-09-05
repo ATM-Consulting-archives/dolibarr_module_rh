@@ -18,28 +18,27 @@
 		
 		print "test de $login ({$user->id})...";
 		
-		
 		$c=new TRH_Compteur;
 		$c->load_by_fkuser($ATMdb, $user->id);
 		
-		$rtt=(double)strtr($row[3],',','.');
-		$congeRestant=(double)strtr($row[4],',','.');
-		$congeAcquis=(double)strtr($row[5],',','.');
+		$rtt = (double)strtr($row[3],',','.');
+		$congeRestant = (double)strtr($row[4],',','.');
+		$congeAcquis = (double)strtr($row[5],',','.');
 		
 		//print "(RTT $rtt, Conge restant $congeRestant, Conge Acquis $congeAcquis)";
 		//print "{$c->acquisExerciceNM1} + {$c->acquisAncienneteN}+{$c->acquisHorsPeriodeNM1} + {$c->reportCongesNM1} - {$c->congesPrisNM1}";
 		
-		$congePrecTotal=$c->acquisExerciceNM1 + $c->acquisAncienneteN+$c->acquisHorsPeriodeNM1 + $c->reportCongesNM1;
-		$congePrecReste=$congePrecTotal-$c->congesPrisNM1;
+		$congePrecTotal = $c->acquisExerciceNM1 + $c->acquisAncienneteN+$c->acquisHorsPeriodeNM1 + $c->reportCongesNM1;
+		$congePrecReste = $congePrecTotal - $c->congesPrisNM1;
 		
 		$rttC = $c->rttCumuleTotal;
 		
-		if($congePrecReste!=$congeRestant) {
+		if($congePrecReste != $congeRestant) {
 			
 			
 			$ATMdb->Execute("SELECT rowid FROM llx_rh_absence WHERE fk_user=".$user->id." AND type='conges' AND date_fin>'2013-08-20' ");
 			$TAbs = $ATMdb->Get_All();
-			$dureePlus=0;
+			$dureePlus = 0;
 			foreach($TAbs as $abs) {
 				
 				$absence = new TRH_Absence;
@@ -54,10 +53,7 @@
 		
 			
 			if($congePrecReste+$dureePlus!=$congeRestant) {
-				print '<span style="color:red;'.($dureePlus==0?'font-weight:bold;':'').'">CP restant '.($congePrecReste+$dureePlus).' au lieu de '.$congeRestant.'</span>';
-				
-				
-				
+				print '<span style="color:red;'.($dureePlus==0?'font-weight:bold;':'').'">'. $langs->trans('RemainingHolidays') . ' ' . ($congePrecReste+$dureePlus). ' ' . $langs->trans('InsteadOf') . ' ' .$congeRestant.'</span>';	
 			}
 			
 		}
@@ -80,7 +76,7 @@
 			
 			
 			if($rttC+$dureePlus!=$rtt) {
-				print ' <span style="color:orange;">RTT restant '.($rttC+$dureePlus).' au lieu de '.$rtt.'</span>';	
+				print ' <span style="color:orange;">' . $langs->trans('RemainingDayOff') . ' ' .($rttC+$dureePlus). ' ' . $langs->trans('InsteadOf') . ' ' .$rtt.'</span>';	
 			}
 			
 			

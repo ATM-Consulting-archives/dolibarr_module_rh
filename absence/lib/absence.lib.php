@@ -1,30 +1,33 @@
 <?php
 
 function pointeusePrepareHead() {
-		return array(
-			array(dol_buildpath('/absence/pointeuse.php',1), 'Pointeuse','fiche')
-		);
+	global $langs;
+	
+	return array(
+		array(dol_buildpath('/absence/pointeuse.php',1), $langs->trans('PunchClock'),'fiche')
+	);
 }
 
 
 function absencePrepareHead(&$obj, $type='absence') {
-	global $user;
+	global $user, $langs;
+	
 	switch ($type) {
 		case 'absence':
 			return array(
-				array(dol_buildpath('/absence/absence.php?id='.$obj->getId(),1)."&action=view", 'Fiche','fiche')
-				,array(dol_buildpath('/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(),1), 'Calendrier','calendrier')
+				array(dol_buildpath('/absence/absence.php?id='.$obj->getId(),1)."&action=view", $langs->trans('Card'),'fiche')
+				,array(dol_buildpath('/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(),1), $langs->trans('Calendar'),'calendrier')
 			);
 			break;
 		case 'presence':
 			return array(
-				array(dol_buildpath('/absence/presence.php?id='.$obj->getId()."&action=view",1), 'Fiche','fiche')
-				,array(dol_buildpath('/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(),1), 'Calendrier','calendrier')
+				array(dol_buildpath('/absence/presence.php?id='.$obj->getId()."&action=view",1), $langs->trans('Card'),'fiche')
+				,array(dol_buildpath('/absence/calendrierAbsence.php?idUser='.$user->id.'&id='.$obj->getId(),1), $langs->trans('Calendar'),'calendrier')
 			);
 			break;
 		case 'absenceCreation':
 			return array(
-				array(dol_buildpath('/absence/absence.php?action=new',1), 'Fiche','fiche')
+				array(dol_buildpath('/absence/absence.php?action=new',1), $langs->trans('Card'),'fiche')
 			);
 			break;
 		
@@ -34,13 +37,14 @@ function absencePrepareHead(&$obj, $type='absence') {
 
 
 function compteurPrepareHead(&$obj, $type='absence', $nomUser, $prenomUser) {
-	global $user;
+	global $user, $langs;
+	
 	switch ($type) {
 		
 		case 'compteur':
 			//eif($user->rights->absence->myactions->modifierParamGlobalConges=="1"){
 			return array(
-			array(dol_buildpath('/absence/compteur.php?action=view',1), 'Compteur de '.$nomUser." ".$prenomUser,'compteur')
+			array(dol_buildpath('/absence/compteur.php?action=view',1), $langs->trans('CounterOf') . ' ' . $nomUser . ' ' . $prenomUser, 'compteur')
 			//,array(dol_buildpath('/absence/adminCompteur.php?action=view', 'Administration générale congés','adminconges')
 			);
 			break;
@@ -48,12 +52,12 @@ function compteurPrepareHead(&$obj, $type='absence', $nomUser, $prenomUser) {
 }
 
 function adminCompteurPrepareHead(&$obj, $type='compteur') {
-	global $user;
+	global $user, $langs;
 	switch ($type) {
 		
 		case 'compteur':
 			return array(
-			array(dol_buildpath('/absence/adminCompteur.php',1), 'Compteur de congés','compteur')
+			array(dol_buildpath('/absence/adminCompteur.php',1), $langs->trans('HolidayCounter'), 'compteur')
 			);
 			break;				
 	}
@@ -65,9 +69,9 @@ function adminCongesPrepareHead($type='compteur') {
 		
 		case 'compteur':
 			return array(
-				array(dol_buildpath('/absence/adminConges.php',1), 'Données générales des congés','adminconges')
-				,array(dol_buildpath('/absence/typeAbsence.php',1), "Types d'absences",'typeabsence')
-				,array(dol_buildpath('/absence/typePresence.php',1), "Types de présences",'typepresence')
+				array(dol_buildpath('/absence/adminConges.php',1), $langs->trans('GlobalHolidaysData'),'adminconges')
+				,array(dol_buildpath('/absence/typeAbsence.php',1), $langs->trans('AbsencesTypes'),'typeabsence')
+				,array(dol_buildpath('/absence/typePresence.php',1), $langs->trans('PresencesTypes'),'typepresence')
 			);
 			break;
 	}
@@ -79,12 +83,12 @@ function adminRecherchePrepareHead(&$obj, $type='recherche') {
 		
 		case 'recherche':
 			return array(
-				array(dol_buildpath('/absence/rechercheAbsence.php',1), 'Recherche Absence','recherche')
+				array(dol_buildpath('/absence/rechercheAbsence.php',1), $langs->trans('SearchAbsence'),'recherche')
 			);
 			break;
 		case 'planning':
 			return array(
-				array(dol_buildpath('/absence/rechercheAbsence.php',1), 'Recherche Absence','recherche')
+				array(dol_buildpath('/absence/rechercheAbsence.php',1), $langs->trans('SearchAbsence'),'recherche')
 			);
 			break;
 	}
@@ -98,8 +102,8 @@ function edtPrepareHead(&$obj, $type='absence') {
 		case 'emploitemps':
 				
 			return array(
-				array(dol_buildpath('/absence/emploitemps.php?&fk_user='.$user->id,1), 'Emploi du temps','emploitemps')
-			   ,array(dol_buildpath('/absence/joursferies.php?&fk_user='.$user->id,1), 'Jours fériés ou non travaillés','joursferies')
+				array(dol_buildpath('/absence/emploitemps.php?&fk_user='.$user->id,1), $langs->trans('Schedule'),'emploitemps')
+			   ,array(dol_buildpath('/absence/joursferies.php?&fk_user='.$user->id,1), $langs->trans('HolidaysOrNoWorkingDays'),'joursferies')
 			   //,array(dol_buildpath('/absence/pointage.php?&fk_user='.$user->id, 'Pointage Collaborateurs','pointage')
 			);
 			break;
@@ -113,12 +117,12 @@ function reglePrepareHead(&$obj, $type='regle') {
 	switch ($type) {
 		case 'regle':
 			return array(
-				array(dol_buildpath('/absence/regleAbsence.php?fk_user='.$user->id,1), 'Règles des absences','regle')
+				array(dol_buildpath('/absence/regleAbsence.php?fk_user='.$user->id,1), $langs->trans('AbsencesRules'),'regle')
 			);
 			break;
 		case 'import':
 			return array(
-				array(dol_buildpath('/ressource/documentRegle.php',1), 'Fiche','fiche')
+				array(dol_buildpath('/ressource/documentRegle.php',1), $langs->trans('Card'),'fiche')
 			);
 			break;
 	}
@@ -126,88 +130,86 @@ function reglePrepareHead(&$obj, $type='regle') {
 
 //fonction qui permet d'enregistrer le libellé d'une absence suivant son type
 function saveLibelle($type){ //TODO deprecated
+	global $langs;
+	
 	switch($type){
 		case 'rttcumule':
-			return "RTT cumulé";
+			return $langs->trans('CumulatedDayOff');
 		break;
 		case 'rttnoncumule':
-			return "RTT non cumulé";
+			return $langs->trans('NonCumulatedDayOff');
 		break;
 		case 'conges':
-			return "Absence congés";
+			return $langs->trans('HolidaysAbsence');
 		break;
 		case 'maladiemaintenue':
-			return "Absence maladie maintenue";
+			return $langs->trans('SicknessAbsenceMaintained');
 		break;
 		case 'maladienonmaintenue':
-			return "Absence maladie non maintenue";
+			return $langs->trans('SicknessAbsenceNonMaintained');
 		break;
 		case 'maternite':
-			return "Absence maternité";
+			return $langs->trans('MaternityAbsence');
 		break;
 		case 'pathologie':
-			return "Absence pathologie";
+			return $langs->trans('PathologyAbsence');
 		break;
-		
 		case 'paternite':
-			return "Absence paternité";
+			return $langs->trans('PaternityAbsence');
 		break;
 		case 'chomagepartiel':
-			return "Absence Chômage partiel";
+			return $langs->trans('PartialUnemploymentAbsence');
 		break;
 		case 'nonremuneree':
-			return "Absence congés sans solde";
+			return $langs->trans('HolidayAbsenceWithoutBalance');
 		break;
 		case 'accidentdetravail':
-			return "Absence accident du travail";
+			return $langs->trans('WorkAccidentAbsence');
 		break;
 		case 'maladieprofessionnelle':
-			return "Absence maladie Professionnelle";
+			return $langs->trans('ProSicknessAbsence');
 		break;
 		case 'congeparental':
-			return "Absence Congés parental";
+			return $langs->trans('HolidayParentalAbsence');
 		break;
 		case 'accidentdetrajet':
-			return "Absence Accident trajet";
+			return $langs->trans('RoadAccidentAbsence');
 		break;
 		case 'mitempstherapeutique':
-			return "Absence Mi-temps thérapeutique";
+			return $langs->trans('TherapeuticMidTimeAbsence');
 		break;
 		case 'mariage':
-			return "Mariage";
+			return $langs->trans('Mariage');
 		break;
 		case 'deuil':
-			return "Deuil";
+			return $langs->trans('Mourning');
 		break;
 		case 'naissanceadoption':
-			return "Naissance ou adoption";
+			return $langs->trans('BornOrAdoption');
 		break;
 		case 'enfantmalade':
-			return "Enfant malade";
+			return $langs->trans('SickChild');
 		break;
 		case 'demenagement':
-			return "Déménagement";
+			return $langs->trans('Moving');
 		break;
 		case 'cours':
-			return "Cours";
+			return $langs->trans('SessionAbsence');
 		break;
 		case 'preavis':
-			return "Absence préavis";
-		break;
-		case 'demenagement':
-			return "Déménagement";
+			return $langs->trans('PreparedAbsence');
 		break;
 		case 'rechercheemploi':
-			return "Absence recherche emploi";
+			return $langs->trans('SearchJobAbsence');
 		break;
 		case 'miseapied':
-			return "Absence mise à pied";
+			return $langs->trans('WarningAbsence');
 		break;
 		case 'nonjustifiee':
-			return "Absence non justifiée";
+			return $langs->trans('NoJustifiedAbsence');
 		break;
 		case 'cppartiel':
-			return "CP à temps partiel";
+			return $langs->trans('HolidayPartialTime');
 		break;
 		
 	}
@@ -225,13 +227,13 @@ function saveCodeTypeAbsence(&$ATMdb, $type){ // TODO deprecated
 function saveLibelleEtat($etat){
 	switch($etat){
 		case 'Avalider':
-			return "En attente de validation";
+			return $langs->trans('WaitingValidation');
 		break;
 		case 'Validee':
-			return "Acceptée";
+			return $langs->trans('Accepted');
 		break;
 		case 'Refusee':
-			return "Refusée";
+			return $langs->trans('Refused');
 		break;
 
 	}
@@ -258,7 +260,7 @@ function php2dmy($phpDate){
 
 //fonction permettant l'envoi de mail
 function mailConges(&$absence,$presence=false){
-global $db;		
+	global $db, $lang;		
 
 	$from = USER_MAIL_SENDER;
 	
@@ -280,11 +282,11 @@ global $db;
 	if($absence->etat=='Avalider'){
 		
 		if(!$presence){
-			$subject = "Création d'une demande de congés";
+			$subject = $langs->trans('HolidayRequestCreation');
 			$tpl = dol_buildpath('/absence/tpl/mail.absence.creation.tpl.php');
 		}
 		else{
-			$subject = "Création d'une demande de présence";
+			$subject = $langs->trans('PresenceRequestCreation');
 			$tpl = dol_buildpath('/absence/tpl/mail.presence.creation.tpl.php');
 		}
 		
@@ -304,11 +306,11 @@ global $db;
 		);
 	}else if($absence->etat=='Validee'){
 		if(!$presence){
-			$subject = "Acceptation de votre demande de congés";
+			$subject = $langs->trans('HolidayRequestAcceptance');
 			$tpl = dol_buildpath('/absence/tpl/mail.absence.acceptation.tpl.php');
 		}
 		else{
-			$subject = "Acceptation de votre demande de présence";
+			$subject = $langs->trans('PresenceRequestAcceptance');
 			$tpl = dol_buildpath('/absence/tpl/mail.presence.acceptation.tpl.php');
 		}
 		
@@ -335,13 +337,12 @@ global $db;
 		);
 	}
 	else if($absence->etat=='Refusee'){
-		
 		if(!$presence){
-			$subject = "Refus de votre demande de congés";
+			$subject = $langs->trans('HolidayRequestDenied');
 			$tpl = dol_buildpath('/absence/tpl/mail.absence.refus.tpl.php');
 		}
 		else{
-			$subject = "Refus de votre demande de présence";
+			$subject = $langs->trans('PresenceRequestDenied');
 			$tpl = dol_buildpath('/absence/tpl/mail.presence.refus.tpl.php');
 		}
 		
@@ -363,7 +364,7 @@ global $db;
                                         ,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 					,'commentaireValideur'=>utf8_encode($absence->commentaireValideur)
 				)
-				)
+			)
 		);
 	}
 	
@@ -407,17 +408,16 @@ function mailCongesValideur(&$ATMdb, &$absence,$presence=false){
 
 //fonction permettant l'envoi de mail aux valideurs de la demande d'absence
 function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
-global $db;
+	global $db, $langs;
 		
 	$from = USER_MAIL_SENDER;
 
 	$user = new User($db);  
-        $user->fetch($absence->fk_user);
+    $user->fetch($absence->fk_user);
 
-        $name=$user->lastname;
-        $firstname=$user->firstname;
+    $name=$user->lastname;
+    $firstname=$user->firstname;
 
-		
 	/*
 	 * Mail destinataire
 	 */
@@ -432,11 +432,11 @@ global $db;
 	$TBS=new TTemplateTBS();
 	
 	if(!$presence){
-		$subject = "Nouvelle demande d'absence à valider";
+		$subject = $langs->trans('NewAbsenceRequestWaitingValidation');
 		$tpl = dol_buildpath('/absence/tpl/mail.absence.creationValideur.tpl.php');
 	}
 	else{
-		$subject = "Nouvelle demande de présence à valider";
+		$subject = $langs->trans('NewPresenceRequestWaitingValidation');
 		$tpl = dol_buildpath('/absence/tpl/mail.presence.creationValideur.tpl.php');
 	}
 	
@@ -463,16 +463,11 @@ global $db;
 	return 1;
 }
 
-
-
-
-
 function supprimerAccent($chaine){
 	$chaine = strtr($chaine,"ÀÂÄÇÈÉÊËÌÎÏÑÒÔÕÖÙÛÜ","AAACEEEEIIINOOOOUUU");
 	$chaine = strtr($chaine,"àáâãäåçèéêëìíîïñòóôõöùúûüýÿ","aaaaaaceeeeiiiinooooouuuuyy");
 	return $chaine;
 }
-
 
 //permet d'additionner deux heures ensemble
 function additionnerHeure($dureeTotale, $dureeDiff){
@@ -527,10 +522,9 @@ global $compteurCongeResteCurrentUser,$ATMdb;
 		
 		$compteur =new TRH_Compteur;
 		$compteur->load_by_fkuser($ATMdb_getHistoryCompteurForUser, $fk_user);
-		
 
-		$congePrecTotal=$compteur->acquisExerciceNM1+$compteur->acquisAncienneteNM1+$compteur->acquisHorsPeriodeNM1+$compteur->reportCongesNM1;
-		$compteurCongeResteCurrentUser=$congePrecTotal-$compteur->congesPrisNM1;
+		$congePrecTotal = $compteur->acquisExerciceNM1 + $compteur->acquisAncienneteNM1 + $compteur->acquisHorsPeriodeNM1 + $compteur->reportCongesNM1;
+		$compteurCongeResteCurrentUser = $congePrecTotal - $compteur->congesPrisNM1;
 		
 	}
 		

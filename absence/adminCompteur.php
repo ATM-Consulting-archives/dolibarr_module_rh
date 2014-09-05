@@ -28,7 +28,7 @@
 				$compteur->set_values($_REQUEST);
 				$compteur->save($ATMdb);
 				$compteur->load($ATMdb, $_REQUEST['id']);
-				$mesg = '<div class="ok">Modifications effectuées</div>';
+				$mesg = '<div class="ok">' . $langs->trans('ChangesMade') . '</div>';
 				_fiche($ATMdb, $compteur,'view');
 			
 				break;
@@ -65,9 +65,9 @@
 	
 function _liste(&$ATMdb, &$compteur) {
 	global $langs, $conf, $db, $user;	
-	llxHeader('','Liste des compteurs de congés des collaborateurs');
+	llxHeader('', $langs->trans('HolidaysCollabCounterList'));
 	getStandartJS();
-	print dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Administration des congés');
+	print dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', $langs->trans('HolidaysAdministration'));
 	$r = new TSSRenderControler($compteur);
 	$sql="SELECT  r.rowid as 'ID', firstname, lastname, '' as 'Compteur',
 		r.date_cre as 'DateCre', CAST(r.acquisExerciceN as DECIMAL(16,1)) as 'Congés acquis N', 
@@ -91,7 +91,7 @@ function _liste(&$ATMdb, &$compteur) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Compteur'=>'<a href="?id=@ID@&action=view">Compteur</a>'
+			'Compteur'=>'<a href="?id=@ID@&action=view">' . $langs->trans('Counter') . '</a>'
 			,'ID'=>'<a href="?id=@ID@&action=view">@val@</a>'
 			
 		)
@@ -99,20 +99,20 @@ function _liste(&$ATMdb, &$compteur) {
 		,'hide'=>array('DateCre','ID')
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste des compteurs de congés des collaborateurs'
+			'titre'=> $langs->trans('HolidaysCollabCounterList')
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucun jour acquis à afficher"
+			,'messageNothing'=> $langs->trans('NoAcquiredDaysToShow')
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 			
 		)
 		,'title'=>array(
-			'firstname'=>'Nom'
-			,'lastname'=>'Prénom'
+			'firstname'=> $langs->trans('FirstName')
+			,'lastname'=> $langs->trans('LastName')
 		)
 		,'search'=>array(
 			'firstname'=>true
@@ -132,7 +132,7 @@ function _liste(&$ATMdb, &$compteur) {
 }	
 	
 function _fiche(&$ATMdb, &$compteur, $mode) {
-	global $db,$user,$conf,$TTypeMetier;
+	global $db,$user,$conf,$TTypeMetier, $langs;
 	llxHeader('');
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
@@ -156,10 +156,10 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
 	while($ATMdb->Get_line()) {
-				$userCourant=new User($db);
-				$userCourant->firstname=$ATMdb->Get_field('firstname');
-				$userCourant->id=$ATMdb->Get_field('rowid');
-				$userCourant->lastname=$ATMdb->Get_field('lastname');
+		$userCourant=new User($db);
+		$userCourant->firstname=$ATMdb->Get_field('firstname');
+		$userCourant->id=$ATMdb->Get_field('rowid');
+		$userCourant->lastname=$ATMdb->Get_field('lastname');
 	}
 	
 	
@@ -270,9 +270,9 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'date_congesCloture'=>date("d/m/Y",strtotime($compteurGlobal->date_congesClotureInit))
 				,'nombreCongesAcquisMensuel'=>$form->texte('','nombreCongesAcquisMensuel',round2Virgule($compteurGlobal->congesAcquisMensuelInit),10,50,'',$class="text", $default='')	
 				
-				,'titreConges'=>load_fiche_titre("Congés payés",'', 'title.png', 0, '')
-				,'titreCongesNM'=>load_fiche_titre("Année N-1",'', '', 0, '')
-				,'titreCongesN'=>load_fiche_titre("Année N",'', '', 0, '')
+				,'titreConges'=>load_fiche_titre($langs->trans('HolidaysPaid'),'', 'title.png', 0, '')
+				,'titreCongesNM'=>load_fiche_titre($langs->trans('Year') . ' N-1','', '', 0, '')
+				,'titreCongesN'=>load_fiche_titre($langs->trans('Year') . ' N','', '', 0, '')
 				
 			)
 			
@@ -296,9 +296,9 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'id'=>$compteur->getId()
 				,'reportRtt'=>$form->checkbox1('','reportRtt','1',$compteur->reportRtt)
 				
-				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')
-				,'titreRttCompteur'=>load_fiche_titre("Compteur de RTT",'', '', 0, '')
-				,'titreRttMethode'=>load_fiche_titre("Méthode d'acquisition des jours",'', '', 0, '')
+				,'titreRtt'=>load_fiche_titre($langs->trans('DayOff'),'', 'title.png', 0, '')
+				,'titreRttCompteur'=>load_fiche_titre($langs->trans('DayOffCounter'),'', '', 0, '')
+				,'titreRttMethode'=>load_fiche_titre($langs->trans('DaysAcquisitionMethod'),'', '', 0, '')
 				
 			)
 			
@@ -311,7 +311,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 			
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', 'Absence')
+				,'head'=>dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', $langs->trans('Absence'))
 			)
 		)	
 		

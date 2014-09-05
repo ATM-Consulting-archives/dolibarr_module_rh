@@ -25,7 +25,7 @@ while($ATMdb->Get_line()) {
 }
 
 foreach($TAbsence as $idAbs){
-	$sql="UDATE ".MAIN_DB_PREFIX."rh_absence SET niveauValidation=niveauValidation+1 WHERE rowid=".$idAbs;
+	$sql="UPDATE ".MAIN_DB_PREFIX."rh_absence SET niveauValidation=niveauValidation+1 WHERE rowid=".$idAbs;
 	echo $sql;exit;
 	$ATMdb->Execute($sql);
 }

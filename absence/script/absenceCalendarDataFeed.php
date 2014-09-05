@@ -219,16 +219,10 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 		        ,$row->fk_user
 		      );
 	        
-	        
-		}
-		
-		
+		}	
 		
 	  }  
-	  
-	
-      
-	  
+	    
 	if($conf->agenda->enabled && $_REQUEST['withAgenda']==1) {
 	    $TAgenda=getAgendaEvent($ATMdb, $date_start, $date_end);
 		$ret['events'] = array_merge($ret['events'], $TAgenda); 
@@ -248,7 +242,7 @@ function _justDate($date,$frm = 'm/d/Y H:i') {
 }
 
 function getJourFerie(&$ATMdb, $date_start, $date_end) {
-global $conf;	
+	global $conf, $langs;	
 	
 	$Tab=array();
 
@@ -257,13 +251,13 @@ global $conf;
 	foreach($TJF as $row) {
 		  switch($row->moment){
 			case 'apresmidi' : 
-				$moment="Fermé l'après-midi";
+				$moment= $langs->trans('ClosedTheAfternoon');
 				break;
 			case 'matin':
-				$moment="Fermé le matin";
+				$moment= $langs->trans('ClosedTheMorning');
 				break;
 			case 'allday':
-				$moment="Jour férié";
+				$moment= $langs->trans('PublicHoliday');
 				break;
     		}
 		  

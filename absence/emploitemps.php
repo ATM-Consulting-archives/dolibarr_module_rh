@@ -28,7 +28,7 @@
 				
 				$emploiTemps->save($ATMdb);
 				
-				$mesg = '<div class="ok">Demande enregistrée</div>';
+				$mesg = '<div class="ok">' . $langs->trans('RegistedRequest') . '</div>';
 				_fiche($ATMdb, $emploiTemps,'view');
 				break;
 			case 'archive':
@@ -49,7 +49,7 @@
 				$emploiTempsArchive->is_archive=1;
 				
 				$emploiTempsArchive->save($ATMdb);
-				setEventMessage("Emploi du temps archivé");
+				setEventMessage($langs->trans('ArchivedSchedule'));
 				
 				_fiche($ATMdb, $emploiTemps,'view');
 				
@@ -60,7 +60,7 @@
 				$emploiTempsArchive->load($ATMdb, GETPOST('idArchive','int'));
 				$emploiTempsArchive->delete($ATMdb);
 				
-				setEventMessage("Archive d'emploi du temps supprimée");
+				setEventMessage($langs->trans('ScheduleArchiveDeleted'));
 				
 				if(GETPOST('id','int')>0) $emploiTemps->load($ATMdb, GETPOST('id','int'));
 				else $emploiTemps->loadByuser($ATMdb, GETPOST('fk_user','int'));
@@ -97,9 +97,9 @@
 	
 function _liste(&$ATMdb, &$emploiTemps) {
 	global $langs, $conf, $db, $user;	
-	llxHeader('','Liste de vos absences');
+	llxHeader('', $langs->trans('ListOfAbsence'));
 	getStandartJS();
-	print dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence');
+	print dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', $langs->trans('Absence'));
 	
 	$r = new TSSRenderControler($emploiTemps);
 	$sql="SELECT DISTINCT e.rowid as 'ID', e.date_cre as 'DateCre', 
@@ -124,23 +124,23 @@ function _liste(&$ATMdb, &$emploiTemps) {
 		)
 		,'link'=>array(
 			'ID'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'">@val@</a>'
-			, 'Emploi du temps'=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'"<a>Emploi du temps</a>'
+			, $langs->trans('Schedule')=>'<a href="?id=@ID@&action=view&fk_user='.$user->id.'"<a>' . $langs->trans('Schedule') . '</a>'
 		)
 		,'title'=>array(
-			'firstname'=>'Prénom'
-			,'lastname'=>'Nom'
-			,'login'=>'Login'
+			'firstname'=> $langs->trans('FirstName')
+			,'lastname'=> $langs->trans('LastName')
+			,'login'=> $langs->trans('Login')
 		)
 		,'translate'=>array()
 		,'hide'=>array('DateCre','ID', 'Id Utilisateur')
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Liste des emplois du temps des collaborateurs'
+			'titre'=> $langs->trans('CollabScheduleList')
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucun emploi du temps à afficher"
+			,'messageNothing'=> $langs->trans('NoScheduleToShow')
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
@@ -171,8 +171,8 @@ global $db;
 }
 	
 function _fiche(&$ATMdb, &$emploiTemps, $mode) {
-	global $db,$user,$idUserCompt, $idComptEnCours,$conf;
-	llxHeader('','Emploi du temps');
+	global $db, $user,$idUserCompt, $idComptEnCours,$conf, $langs;
+	llxHeader('', $langs->trans('Schedule'));
 	$emploiTemps->load($ATMdb, $_REQUEST['id']);
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
@@ -214,13 +214,13 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 		)		
 		,'link'=>array(
 			'Actions'=>'
-			<a href="?id=@ID@&action=edit">Modifier</a>
-			<a href="?id='.$emploiTemps->getId().'&idArchive=@ID@&action=deleteArchive">Supprimer</a>'
+			<a href="?id=@ID@&action=edit">' . $langs->trans('Update') . '</a>
+			<a href="?id='.$emploiTemps->getId().'&idArchive=@ID@&action=deleteArchive">' . $langs->trans('Delete') . '</a>'
 		)
 		,'title'=>array(
-			'date_debut'=>'Début'
-			,'date_fin'=>'Fin'
-			,'tempsHebdo'=>'Temps de travail hedmadaire en heure'
+			'date_debut'=> $langs->trans('StartDate')
+			,'date_fin'=> $langs->trans('EndDate')
+			,'tempsHebdo'=> $langs->trans('WeeklyWorkingTimeInHour')
 		)
 		
 	 ));
@@ -248,9 +248,9 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', 'Absence')
+				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', $langs->trans('Absence'))
 				,'compteur_id'=>$emploiTemps->getId()
-				,'titreEdt'=>load_fiche_titre("Emploi du temps de ".htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')." ".htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1'),'', 'title.png', 0, '')
+				,'titreEdt'=>load_fiche_titre($langs->trans('ScheduleOf', htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'), htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')),'', 'title.png', 0, '')
 				,'listeArchive'=>$listeArchive
 			)
 			,'droits'=>array(

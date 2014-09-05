@@ -279,7 +279,7 @@ function _conges(&$ATMdb, $userId, $date_debut, $date_fin){
 		    			case "conges":
 							$nb_jours_conges+=0.5;
 							break;
-						case "parternite":
+						case "paternite":
 						case "mariage":
 						case "deuil":
 						case "naissanceadoption":
@@ -301,7 +301,7 @@ function _conges(&$ATMdb, $userId, $date_debut, $date_fin){
 		    			case "conges":
 							$nb_jours_conges+=0.5;
 							break;
-						case "parternite":
+						case "paternite":
 						case "mariage":
 						case "deuil":
 						case "naissanceadoption":

@@ -2,8 +2,11 @@
 	require('config.php');
 	require('./class/absence.class.php');
 	require('./lib/absence.lib.php');
+	
+	$langs->load('absence@absence');
+	
 //print_r(get_defined_vars());	
-	llxHeader('','Calendrier des absences/présences', '', '', 0,0,
+	llxHeader('', $langs->trans('AbsencesPresencesCalendar'), '', '', 0,0,
 		array(//"/library/wdCalendar/src/jquery.js"   
 			"/rhlibrary/wdCalendar/src/Plugins/Common.js"    
 			,"/rhlibrary/wdCalendar/src/Plugins/datepicker_lang_FR.js" 
@@ -104,15 +107,15 @@
 				,'TUser'=>$form->combo('', 'idUtilisateur', $TabUser,  $idUser)
 				,'TTypeAbsence'=>$form->combo('', 'typeAbsence', $TTypeAbsence,  $typeAbsence)
 				,'droits'=>$user->rights->absence->myactions->voirToutesAbsences?1:0
-				,'btValider'=>$form->btsubmit('Valider', 'valider')
+				,'btValider'=>$form->btsubmit($langs->trans('Submit'), 'valider')
 				//,'idAfficher'=>$_REQUEST['rowid']? $_REQUEST['rowid']:0
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->date_debut, 12)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'calendrier', 'Absence')
-				,'head3'=>dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', 'Absence')
+				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'calendrier', $langs->trans('Absence'))
+				,'head3'=>dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', $langs->trans('Absence'))
 				,'titreCalendar'=>load_fiche_titre("Agenda des absences/présences",'', 'title.png', 0, '')
 				,'agendaEnabled'=>0
 			)

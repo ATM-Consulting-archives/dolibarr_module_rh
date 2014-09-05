@@ -57,7 +57,7 @@ class modAbsence extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-		$this->description = "Gestion des absences";
+		$this->description = $langs->trans('ModuleAbsenceDesc');
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = '1.0';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -100,16 +100,16 @@ class modAbsence extends DolibarrModules
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0)
 		// );
 		$this->const = array(
-			array('RH_DOL_ADMIN_USER','chaine','admin','Ajouté par RH',1)
-			,array('RH_USER_MAIL_SENDER','chaine','webmaster@atm-consulting.fr','Ajouté par RH',1)
-			,array('RH_DATE_RTT_CLOTURE','chaine','28-02-2014','Ajouté par RH',1)
-			,array('RH_DATE_CONGES_CLOTURE','chaine','31-05-2014','Ajouté par RH',1)
-			,array('RH_JOURS_NON_TRAVAILLE','chaine','samedi,dimanche','Ajouté par RH',1)
-			,array('RH_MONTANT_TICKET_RESTO','chaine','7','Valeur de base des tickets restaurant en centime',1)
-			,array('RH_PART_PATRON_TICKET_RESTO','chaine','50','Part patronnale en % des tickets restaurant',1)
-			,array('RH_NDF_TICKET_RESTO','chaine','30','id des dépenses ne donnant pas droit à des ticket resto',1)
-			,array('RH_CODEPRODUIT_TICKET_RESTO','chaine','789456','Code produit',1)
-			,array('RH_CODECLIENT_TICKET_RESTO','chaine','123456','Code Client',1)
+			array('RH_DOL_ADMIN_USER','chaine','admin', $langs->trans('ConstAddedByRH'),1)
+			,array('RH_USER_MAIL_SENDER','chaine','webmaster@atm-consulting.fr', $langs->trans('ConstAddedByRH'),1)
+			,array('RH_DATE_RTT_CLOTURE','chaine','28-02-2014', $langs->trans('ConstAddedByRH'),1)
+			,array('RH_DATE_CONGES_CLOTURE','chaine','31-05-2014', $langs->trans('ConstAddedByRH'),1)
+			,array('RH_JOURS_NON_TRAVAILLE','chaine','samedi,dimanche', $langs->trans('ConstAddedByRH'),1)
+			,array('RH_MONTANT_TICKET_RESTO','chaine','7', $langs->trans('ConstValueBaseTicketsInCents'),1)
+			,array('RH_PART_PATRON_TICKET_RESTO','chaine','50', $langs->trans('ConstEmployerContributionTickets'),1)
+			,array('RH_NDF_TICKET_RESTO','chaine','30', $langs->trans('ConstIdSpendingNoTickets'),1)
+			,array('RH_CODEPRODUIT_TICKET_RESTO','chaine','789456', $langs->trans('ProductCode'),1)
+			,array('RH_CODECLIENT_TICKET_RESTO','chaine','123456', $langs->trans('ClientCode'),1)
 			
 		); 
 
@@ -173,119 +173,119 @@ class modAbsence extends DolibarrModules
 
 		
 		$this->rights[$r][0] = 7101;
-		$this->rights[$r][1] = 'Valider ou refuser une demande de congés';
+		$this->rights[$r][1] = $langs->trans('ValidOrRefuseHolidayRequest');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'valideurConges';
 		$r++;
 		
 		$this->rights[$r][0] = 7102;
-		$this->rights[$r][1] = 'Visualiser le compteur de congés d\'un collaborateur';
+		$this->rights[$r][1] = $langs->trans('ConsultCollabHolidayCounter');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'visualiserCompteur';
 		$r++;
 		
 		$this->rights[$r][0] = 7103;
-		$this->rights[$r][1] = 'Modifier le compteur de congés d\'un collaborateur';
+		$this->rights[$r][1] = $langs->trans('ModifyCollabHolidayCounter');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierCompteur';
 		$r++;
 		
 		$this->rights[$r][0] = 7104;
-		$this->rights[$r][1] = 'Modifier les paramètres globaux des congés';
+		$this->rights[$r][1] = $langs->trans('ModifyGlobalHolidayParams');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierParamGlobalConges';
 		$r++;
 		
 		$this->rights[$r][0] = 7105;
-		$this->rights[$r][1] = 'Ajouter/Supprimer des jours non travaillés';
+		$this->rights[$r][1] = $langs->trans('AddRemoveNoWorkingDays');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'ajoutJourOff';
 		$r++;
 		
 		$this->rights[$r][0] = 7106;
-		$this->rights[$r][1] = 'Visualiser l\'emploi du temps des collaborateurs';
+		$this->rights[$r][1] = $langs->trans('ConsultCollabSchedule');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirTousEdt';
 		$r++;
 		
 		$this->rights[$r][0] = 7118;
-		$this->rights[$r][1] = 'Visualiser son emploi du temps';
+		$this->rights[$r][1] = $langs->trans('ConsultSchedule');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirSonEdt';
 		$r++;
 		
 		$this->rights[$r][0] = 7107;
-		$this->rights[$r][1] = 'Modifier l\'emploi du temps des collaborateurs';
+		$this->rights[$r][1] = $langs->trans('ModifyCollabSchedule');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'modifierEdt';
 		$r++;
 
 		$this->rights[$r][0] = 7108;
-		$this->rights[$r][1] = 'Voir toutes les absences ou présences sur la liste des absences';
+		$this->rights[$r][1] = $langs->trans('ConsultAllAbsencesPresencesOnList');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirToutesAbsencesListe';
 		$r++;
 		
 		$this->rights[$r][0] = 7109;
-		$this->rights[$r][1] = 'Voir toutes les absences ou présences des collaborateurs sur le calendrier';
+		$this->rights[$r][1] = $langs->trans('ConsultAllCollabAbsencesPresencesOnSchedule');
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirToutesAbsences';
 		$r++;
 		
 		$this->rights[$r][0] = 7110;
-		$this->rights[$r][1] = 'Rajouter des règles sur les demandes d\'absences';
+		$this->rights[$r][1] = $langs->trans('AddRulesAbsencesRequests');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'rajouterRegle';
 		$r++;
 		
 		$this->rights[$r][0] = 7111;
-		$this->rights[$r][1] = 'Créer une absence ou présence pour un collaborateur';
+		$this->rights[$r][1] = $langs->trans('CreateCollabAbsencePresence');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'creerAbsenceCollaborateur';
 		$r++;
 		
 		$this->rights[$r][0] = 7112;
-		$this->rights[$r][1] = 'Créer une absence ou présence pour un collaborateur de son groupe';
+		$this->rights[$r][1] = $langs->trans('AddGroupCollabAbsencePresence');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'creerAbsenceCollaborateurGroupe';
 		$r++;
 		
 		$this->rights[$r][0] = 7113;
-		$this->rights[$r][1] = 'Uploader des fichiers joints sur les règles';
+		$this->rights[$r][1] = $langs->trans('UploadLinkedFilesOnRules');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'uploadFilesRegle';
 		
 		$r++;
 		$this->rights[$r][0] = 7114;
-		$this->rights[$r][1] = 'Effectuer une recherche sur les absences ou présence des collaborateurs';
+		$this->rights[$r][1] = $langs->trans('SearchOnCollabAbsencesPresences');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'rechercherAbsence';
 
 		$r++;
 		$this->rights[$r][0] = 7115;
-		$this->rights[$r][1] = 'Visualiser le planning par utilisateur';
+		$this->rights[$r][1] = $langs->trans('ConsultScheduleEachUsers');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'voirPlanningUser';
 		
 		$r++;
 		$this->rights[$r][0] = 7116;
-		$this->rights[$r][1] = 'Voir l\'onglet des absences/présences';
+		$this->rights[$r][1] = $langs->trans('ConsultAbsencesPresencesTab');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'voirOngletAbsence';
@@ -293,13 +293,13 @@ class modAbsence extends DolibarrModules
 		
 		$r++;
 		$this->rights[$r][0] = 7117;
-		$this->rights[$r][1] = 'Visualiser les fichiers des absences';
+		$this->rights[$r][1] = $langs->trans('ConsultAbsencesFiles');
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'read';
 		
 		$r++;
 		$this->rights[$r][0] = 7119;
-		$this->rights[$r][1] = 'Pointage à l\'entrée et sortie de l\'entreprise';
+		$this->rights[$r][1] = $langs->trans('AppointmentEntranceExit');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'pointeuse';
@@ -307,28 +307,28 @@ class modAbsence extends DolibarrModules
 		
 		$r++;
 		$this->rights[$r][0] = 7120;
-		$this->rights[$r][1] = 'Voir les absences refusee sur le planning';
+		$this->rights[$r][1] = $langs->trans('ShowRefusedAbsencesOnSchedule');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'voirAbsenceRefusee';
 		
 		$r++;
 		$this->rights[$r][0] = 7121;
-		$this->rights[$r][1] = 'Gérer les tickets restaurants';
+		$this->rights[$r][1] = $langs->trans('ManageTickets');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'gererTicketRestaurant';
 		
 		$r++;
 		$this->rights[$r][0] = 7122;
-		$this->rights[$r][1] = 'Fiche de déclaration temps cadres';
+		$this->rights[$r][1] = $langs->trans('DeclarationFormTimesManag');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'declarationCadre';
 		
 		$r++;
 		$this->rights[$r][0] = 7123;
-		$this->rights[$r][1] = 'Supprimer son absence une fois déclarée';
+		$this->rights[$r][1] = $langs->trans('DeleteOwnAbsenceOnceReported');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'supprimerMonAbsence';
@@ -336,14 +336,14 @@ class modAbsence extends DolibarrModules
 		
 		$r++;
 		$this->rights[$r][0] = 7124;
-		$this->rights[$r][1] = 'Présence déclarée automatiquement validée';
+		$this->rights[$r][1] = $langs->trans('AutoValidatedReportedPresence');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'presenceAutoValidate';
 		
 		$r++;
 		$this->rights[$r][0] = 7125;
-		$this->rights[$r][1] = 'Peut déclarer une absence dans le passé';
+		$this->rights[$r][1] = $langs->trans('CanReportAbsenceInPast');
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'declarePastAbsence';
@@ -705,6 +705,8 @@ class modAbsence extends DolibarrModules
 	 */
 	function init($options='')
 	{
+		global $langs;
+		
 		$sql = array();
 		
 		$result=$this->load_tables();
@@ -723,7 +725,7 @@ class modAbsence extends DolibarrModules
 		
 		dol_include_once('/core/class/extrafields.class.php');
         $extrafields=new ExtraFields($this->db);
-		$res = $extrafields->addExtraField('ticketresto_ok', 'A choisi les tickets restaurants ?', 'boolean', 0, '', 'user');
+		$res = $extrafields->addExtraField('ticketresto_ok', $langs->trans('HaveChooseTickets'), 'boolean', 0, '', 'user');
 		
 
 		return $this->_init($sql, $options);

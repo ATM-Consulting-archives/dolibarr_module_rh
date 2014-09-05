@@ -5,6 +5,8 @@
 	require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
 	dol_include_once("/valideur/class/valideur.class.php");
 	
+	global $langs;
+	
 	$ATMdb=new TPDOdb;
 	
 	$ATMdb->Execute("SELECT DISTINCT u.rowid FROM
@@ -19,17 +21,17 @@ WHERE u.rowid IN (SELECT fk_user FROM llx_user) AND uvg.rowid IS NULL");
 		$fuser=new User($db);
 		$fuser->fetch($fk_user); 
 		
-		$groupname =  'Groupe de validation congés (hiérarchique) de '.$fuser->login;
+		$groupname =  $langs->trans('ValidationGroupOf', $fuser->login);
 		
 		$group = new UserGroup($db);
 		if($group->fetch('',$groupname)) {
 			$idGroup=(int)$group->id;
 		}
 		else {
-			exit('impossible de charger le groupe');
+			exit($langs->trans('UnableToLoadTheGroup'));
 		}
 		
-		print "Ajout du droit validation congé de  ".$fuser->login." dans (".$idGroup.")".$groupname."<br>";
+		print $langs->trans('AddValidationRightOfSmbdInGroup', $fuser->login, $idGroup, $groupname) . '<br>';
 		
 		$v=new TRH_valideur_groupe;
 		$v->type = 'Conges';

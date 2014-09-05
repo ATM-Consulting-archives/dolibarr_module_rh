@@ -36,12 +36,9 @@
 				
 			}
 			else{
-				print "Impossible de charger le compteur de $idUser \n";
+				print $langs->trans('ErrImpossibleLoadCounter') . ' ' . $idUser . '\n';
 			}
-			
-			
-			
-			
+
 		}
 		
 	}

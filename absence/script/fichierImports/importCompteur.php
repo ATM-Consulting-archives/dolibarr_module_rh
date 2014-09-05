@@ -7,7 +7,7 @@ require('../../config.php');
 require('../../class/absence.class.php');
 
 
-global $conf;
+global $conf, $langs;
 
 $ATMdb=new TPDOdb;
 $compteur=new TRH_Compteur;
@@ -40,7 +40,7 @@ while($ATMdb->Get_line()) {
 
 //----------------DEBUT DU TRAITEMENT DES LIGNES D'APPELS----------------------------------------------------------
 $nomFichier = "./ImportsCompteurs.csv";
-echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
+echo $langs->trans('FileProcessing', $nomFichier) . ' : <br><br>';
 
 //début du parsing
 $numLigne = 0;
@@ -55,10 +55,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$infos = explode(';', $data[0]);
 
 			if (empty( $TUser[strtolower($infos[3])])){
-				echo 'Erreur : Utilisateur '.strtolower($infos[3]).' inexistant ';
+				echo $langs->trans('ErrNonExistentUser', strtolower($infos[3]));
 			}else{
 				$compteur=new TRH_Compteur;	
-				echo 'Ligne traitée : '.strtolower($infos[3]).'';
+				echo $langs->trans('CheckedLines', strtolower($infos[3]));
 				$ResteConges=$infos[11]-$infos[12];
 				
 				$resteRttTotal=$infos[15]-$infos[16];
@@ -220,7 +220,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	}
 }
 
-echo 'Fin du traitement. '.($numLigne).' lignes rajoutés à la table.<br><br>';	
+echo $langs->trans('EndOfProcessing') . ' ' . $langs->trans('AddedLines', $numLigne) . '<br><br>';	
 
 $ATMdb->close();
 

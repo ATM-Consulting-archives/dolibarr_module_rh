@@ -58,7 +58,7 @@
 				
 				
 				
-				$mesg = '<div class="ok">Modifications effectuées</div>';
+				$mesg = '<div class="ok">' . $langs->trans('ChangesMade') . '</div>';
 				_fiche($ATMdb, $compteur,'view');
 			
 				break;
@@ -107,8 +107,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'rttCumuleInitCadreCpro'=>$form->texte('','rttCumuleInitCadreCpro',round2Virgule($compteur->rttCumuleInit),10,50)	
 				/*,'rttCumuleInitCadreCproInfo'=>$form->texte('','rttCumuleInitCadreCproInfo',round2Virgule($compteur->rttCumuleInitCadreCproInfo),10,50)*/	
 				
-				,'titreConges'=>load_fiche_titre("Congés payés",'', 'title.png', 0, '')
-				,'titreRtt'=>load_fiche_titre("RTT",'', 'title.png', 0, '')	
+				,'titreConges'=>load_fiche_titre($langs->trans('HolidaysPaid'),'', 'title.png', 0, '')
+				,'titreRtt'=>load_fiche_titre($langs->trans('DayOff'),'', 'title.png', 0, '')	
 			)
 			
 			,'userCourant'=>array(
@@ -120,7 +120,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 			
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(adminCongesPrepareHead( 'compteur')  , 'adminconges', 'Administration des congés')
+				,'head'=>dol_get_fiche_head(adminCongesPrepareHead( 'compteur')  , 'adminconges', $langs->trans('HolidaysAdministration'))
 			)
 			
 			

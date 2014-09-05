@@ -8,7 +8,7 @@ require('../../class/absence.class.php');
 require('../../lib/absence.lib.php');
 
 
-global $conf;
+global $conf, $langs;
 
 $ATMdb=new TPDOdb;
 
@@ -49,9 +49,7 @@ while($ATMdb->Get_line()) {
 
 //----------------DEBUT DU TRAITEMENT DES LIGNES D'APPELS----------------------------------------------------------
 $nomFichier = "./autresAbsences.csv";
-echo 'Traitement du fichier '.$nomFichier.' : <br><br>';
-   
-   
+echo $langs->trans('FileProcessing', $nomFichier) . ' : <br><br>';
    
    
 
@@ -69,15 +67,16 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			//echo $infos[4].$TUserEdt[$TUser[strtolower($infos[4])]]."<br>";
 			if(!isset( $TUser[$login] )){	//si le login n'existe pas, on ne traite pas la ligne
-				echo 'pas de '.strtolower($infos[4]).'<br>';}
+				echo $langs->trans('ErrNot', strtolower($infos[4])) . '<br>';
+			}
 			else {
 				echo $TUser[$login].'<br>';
 				if ( !isset($TUserEdt[$TUser[$login]] )){	//si le login n'existe pas, on ne traite pas la ligne
-					echo 'Erreur : Utilisateur '.$login.' inexistant <br>';
+					echo $langs->trans('ErrNonExistentUser', $login) . '<br>';
 					//null;
 				}
 				else{
-					echo 'Traitement de la ligne '.$numLigne.'...';
+					echo $langs->trans('LineProcessing', $numLigne) . '...';
 					echo $infos[4];
 					//echo '<br/>';
 					$absence=new TRH_Absence;
@@ -158,8 +157,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 							break;
 					}
 					
-					$absence->libelle=saveLibelle($absence->type);
-					$absence->libelleEtat='Acceptée';
+					$absence->libelle = saveLibelle($absence->type);
+					$absence->libelleEtat = $langs->trans('Accepted');
 					
 					
 					//on teste si le début de la demande d'absence et sa fin est le matin ou l'pm
@@ -211,7 +210,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 					$cpt++;
 			}
 			
-			}	
+			}
 			}
 			$numLigne++;	
 			
@@ -222,11 +221,11 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 //------------FIN DU TRAITEMENT DES LIGNES----------------------------------------------------------
 
 
-echo 'Fin du traitement. '.($cpt).' lignes rajoutées à la table.<br><br>';	
+echo $langs->trans('EndOfProcessing') . ' ' . $langs->trans('AddedLines', $cpt) . '<br><br>';	
 //Fin du code PHP : Afficher le temps d'éxecution
 $timeend=microtime(true);
 $page_load_time = number_format($timeend-$timestart, 3);
-echo 'Fin du traitement. Durée : '.$page_load_time . " sec.<br><br>";
+echo $langs->trans('EndOfProcessing') . ' ' . $langs->trans('ExecutionTime', $page_load_time) . '<br><br>';
 $ATMdb->close();
 
 

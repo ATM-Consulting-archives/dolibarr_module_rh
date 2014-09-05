@@ -18,8 +18,8 @@
 	
 function _planningResult(&$ATMdb, &$absence, $mode) {
 	global $langs, $conf, $db, $user;	
-	llxHeader('','Récapitulatif');
-	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Planning');
+	llxHeader('', $langs->trans('Summary'));
+	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', $langs->trans('Schedule'));
 
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formPlanning','GET');
@@ -91,13 +91,13 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		,array(
 			'recherche'=>array(
 				'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche)
-				,'btValider'=>$form->btsubmit('Valider', 'valider')
+				,'btValider'=>$form->btsubmit($langs->trans('Submit'), 'valider')
 				,'TUser'=>$form->combo('','fk_user',$TUser,$idUserRecherche)
 				
 				,'date_debut'=> $form->calendrier('', 'date_debut', $date_debut, 12)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $date_fin, 12)
-				,'titreRecherche'=>load_fiche_titre("Récapitulatif de la recherche",'', 'title.png', 0, '')
-				,'titrePlanning'=>load_fiche_titre("Planning des collaborateurs",'', 'title.png', 0, '')
+				,'titreRecherche'=>load_fiche_titre($langs->trans('SearchSummary'),'', 'title.png', 0, '')
+				,'titrePlanning'=>load_fiche_titre($langs->trans('CollabsSchedule'),'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
 				'id'=>$fuser->id
@@ -107,7 +107,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Planning')
+				,'head'=>dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', $langs->trans('Schedule'))
 			)
 		)	
 	);
@@ -227,7 +227,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 }	
 
 function _recap_abs(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin) {
-global $db;	
+	global $db, $langs;	
 	
 	if(empty($date_debut)) return false;
 
@@ -253,14 +253,14 @@ global $db;
 		if($first) {
 			
 			print '<tr>
-				<td>Nom</td>
-				<td>Présence (jour)</td>
-				<td>Présence (heure)</td>
-				<td>Absence (jour)</td>
-				<td>Absence (heure)</td>
-				<td>Présence+Férié (jour)</td>
-				<td>Absence+Férié (jour)</td>
-				<td>Férié (jour)</td>
+				<td>' . $langs->trans('LastName') . '</td>
+				<td>' . $langs->trans('PresenceDay') . '</td>
+				<td>' . $langs->trans('PresenceHour') . '</td>
+				<td>' . $langs->trans('AbsenceDay') . '</td>
+				<td>' . $langs->trans('AbsenceHour') . '</td>
+				<td>' . $langs->trans('Presence') . ' + ' . $langs->trans('PublicHolidayDay') . '</td>
+				<td>' . $langs->trans('Absence') . ' + ' . $langs->trans('PublicHolidayDay') . '</td>
+				<td>' . $langs->trans('PublicHolidayDay') . '</td>
 				
 				
 			</tr>';

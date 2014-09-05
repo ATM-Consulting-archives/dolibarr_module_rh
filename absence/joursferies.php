@@ -31,7 +31,7 @@
 				}
 				
 				if(empty($url)) {
-					setEventMessage("Impossible de trouver l'url de calendrier à appeler. Ajoutez la conf : ABSENCE_SYNC_CALENDAR dans configuration > divers", 'errors');
+					setEventMessage($langs->trans('ErrCalendarURLNotFound'), 'errors');
 				}
 				else{
 					TRH_JoursFeries::syncronizeFromURL($ATMdb, $url);	
@@ -66,7 +66,7 @@
 					$feries->save($ATMdb);
 					_liste($ATMdb, $feries , $emploiTemps);
 				}else{
-					$mesg = '<div class="error">Création impossible : il existe déjà un jour non travaillé à cette date</div>';
+					$mesg = '<div class="error">' . $langs->trans('ErrNoWorkedDayAlreadyExist') . '</div>';
 					_fiche($ATMdb, $feries , $emploiTemps,'edit');
 				}
 				
@@ -86,7 +86,7 @@
 				$emploiTemps->load($ATMdb, $_REQUEST['id']);
 				$feries->load($ATMdb, $_REQUEST['idJour']);
 				$feries->delete($ATMdb, $_REQUEST['idJour']);
-				$mesg = '<div class="ok">Le jour a bien été supprimé</div>';
+				$mesg = '<div class="ok">' . $langs->trans('DayDeleted') . '</div>';
 				$mode = 'edit';
 				_liste($ATMdb, $feries , $emploiTemps);
 				break;
@@ -112,9 +112,9 @@
 	
 function _liste(&$ATMdb, $feries, $emploiTemps ) {
 	global $langs, $conf, $db, $user;	
-	llxHeader('','Liste de vos absences');
+	llxHeader('', $langs->trans('ListOfAbsence'));
 	
-	print dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'joursferies', 'Absence');
+	print dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'joursferies', $langs->trans('Absence'));
 	//getStandartJS();	
 	
 	$r = new TSSRenderControler($feries);
@@ -139,15 +139,15 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 		)
 		,'link'=>array(
 			'date_jourOff'=>'<a href="?idJour=@ID@&fk_user='.$user->id.'&action=view">@val@</a>'
-			,'Supprimer'=>$user->rights->absence->myactions->ajoutJourOff?"<a onclick=\"if (window.confirm('Voulez-vous vraiment supprimer le jour férié ?')){href='?idJour=@ID@&fk_user=".$user->id."&action=delete'};\"><img src='./img/delete.png'></a>":''
+			,'Supprimer'=>$user->rights->absence->myactions->ajoutJourOff?"<a onclick=\"if (window.confirm('" . $langs->trans('DoYouReallyWantDeletePublicHoliday') . "')){href='?idJour=@ID@&fk_user=".$user->id."&action=delete'};\"><img src='./img/delete.png'></a>":''
 		) 
 		,'translate'=>array(
-			'Période'=>array('matin'=>'Matin','apresmidi'=>'Après-midi','allday'=>'Toute la journée')
+			'Période'=>array('matin'=> $langs->trans('AbsenceMorning'),'apresmidi'=> $langs->trans('AbsenceAfternoon'),'allday'=> $langs->trans('AbsenceAllDay'))
 		)
 		,'hide'=>array('DateCre')
 		,'type'=>array('date_jourOff'=>'date')
 		,'liste'=>array(
-			'titre'=>'Liste des jours fériés ou non travaillés'
+			'titre'=> $langs->trans('PublicHolidayNonWorkedDaysList')
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
@@ -159,7 +159,7 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 			
 		)//theme/rh/img/search.png
 		,'title'=>array(
-			'date_jourOff'=>'Jour non travaillé'
+			'date_jourOff'=> $langs->trans('NoWorkedDays')
 		)
 		,'search'=>array(
 			'date_jourOff'=>array('recherche'=>'calendar')
@@ -170,9 +170,9 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 	));
 	if($user->rights->absence->myactions->ajoutJourOff=="1"){
 		?>
-		<a class="butAction" href="?fk_user=<?=$user->id?>&action=new">Nouveau</a>
+		<a class="butAction" href="?fk_user=<?=$user->id?>&action=new"><?php echo $langs->trans('New'); ?></a>
 		&nbsp;
-		<a class="butAction" href="?action=sync">Syncronisation en ligne</a>
+		<a class="butAction" href="?action=sync"><?php echo $langs->trans('OnlineSynchronization'); ?></a>
 		<div style="clear:both"></div>
 		<?
 	}
@@ -182,8 +182,8 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 }	
 	
 function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
-	global $db,$user,$idUserCompt, $idComptEnCours;
-	llxHeader('','Emploi du temps');
+	global $db,$user,$idUserCompt, $idComptEnCours, $langs;
+	llxHeader('', $langs->trans('Schedule'));
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
@@ -203,9 +203,9 @@ function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 				,'date_jourOff'=>$form->calendrier('', 'date_jourOff', $feries->date_jourOff, 12)
 				,'moment'=>$form->combo('','moment',$feries->TMoment,$feries->moment)
 				,'commentaire'=>$form->zonetexte('','commentaire',$feries->commentaire, 40,3,'','','-')
-				,'titreCreate'=>load_fiche_titre("Nouveau jour férié",'', 'title.png', 0, '')
+				,'titreCreate'=>load_fiche_titre($langs->trans('NewPublicHoliday'),'', 'title.png', 0, '')
 				,'titreAction'=>$_GET['action']
-				,'titreVisu'=>load_fiche_titre("Visualisation du jour férié",'', 'title.png', 0, '')
+				,'titreVisu'=>load_fiche_titre($langs->trans('PublicHolidayVisualization'),'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
 				'id'=>$user->id
@@ -213,7 +213,7 @@ function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'joursferies', 'Absence')
+				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'joursferies', $langs->trans('Absence'))
 			)
 		)	
 	);
