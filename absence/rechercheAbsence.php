@@ -40,7 +40,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 	global $db,$user, $langs, $conf;
 	llxHeader('','Recherche Absences');
 
-	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Recherche');
+	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', $langs->trans('Search'));
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
@@ -94,11 +94,11 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 				'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche)
 				,'TUser'=>$form->combo('','user',$TUser,$idUserRecherche)
 				,'TTypeAbsence'=>$form->combo('','typeAbsence',$TTypeAbsence,$typeRecherche)
-				,'btValider'=>$form->btsubmit('Valider', 'valider')
+				,'btValider'=>$form->btsubmit($langs->trans('Submit'), 'valider')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->date_debut, 12)
 				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
 				,'horsConges'=>$form->checkbox1('','horsConges','1','')
-				,'titreRecherche'=>load_fiche_titre("Recherche des absences des collaborateurs",'', 'title.png', 0, '')
+				,'titreRecherche'=>load_fiche_titre($langs->trans('SearchCollabsAbsences'),'', 'title.png', 0, '')
 				
 			)
 			,'userCourant'=>array(
@@ -109,7 +109,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Recherche')
+				,'head'=>dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', $langs->trans('Search'))
 			)
 		)	
 	);
@@ -124,8 +124,8 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 	
 function _listeResult(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
-	llxHeader('','Récapitulatif');
-	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', 'Recherche');
+	llxHeader('', $langs->trans('Summary'));
+	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', $langs->trans('Search'));
 	
 	$r = new TSSRenderControler($absence);
 	
@@ -178,40 +178,40 @@ function _listeResult(&$ATMdb, &$absence) {
 	
 	$horsConges=$_REQUEST['horsConges']==1?'1':'0';
 	if($horsConges==1){
-		$typeRecherche='Ceux qui n\'ont pas pris de congés pendant cette période';
-	}else $typeRecherche='Absences durant cette période';
+		$typeRecherche= $langs->trans('ThoseNotTakeHolidaysDuringPeriod');
+	}else $typeRecherche= $langs->trans('AbsencesDuringThisPeriod');
 		
 	
-	print load_fiche_titre("Mots clés utilisés",'', 'title.png', 0, '');
+	print load_fiche_titre($langs->trans('KeywordsUsed'),'', 'title.png', 0, '');
 	?>
 	<div>			
 		<br/>
 		<table class="border" style="width:100%">	
 			<tr>
-				<td colspan="2"><b>Mots clés utilisés</b></td>	
+				<td colspan="2"><b><?php echo $langs->trans('KeywordsUsed'); ?></b></td>	
 			</tr>
 			<tr>
-				<td style="width:30%"> Date début </td>
+				<td style="width:30%"><?php echo $langs->trans('StartDate'); ?></td>
 				<td ><? echo $_REQUEST['date_debut'];?></td>
 			</tr>
 			<tr>
-				<td style="width:30%"> Date Fin </td>
+				<td style="width:30%"><?php echo $langs->trans('EndDate'); ?></td>
 				<td><? echo $_REQUEST['date_fin'];  ?></td>
 			</tr>
 			<tr>
-				<td style="width:30%"> Groupe </td>
+				<td style="width:30%"><?php echo $langs->trans('Group'); ?></td>
 				<td><?echo $nomGroupeRecherche;?></td>
 			</tr> 
 			<tr>
-				<td style="width:30%"> Utilisateur </td>
+				<td style="width:30%"><?php echo $langs->trans('User'); ?></td>
 				<td><?echo $nomUserRecherche;?></td>
 			</tr> 
 			<tr>
-				<td style="width:30%"> Type d'absence</td>
+				<td style="width:30%"><?php echo $langs->trans('AbsenceType'); ?></td>
 				<td><?echo $typeAbsenceVisu;?></td>
 			</tr> 
 			<tr>
-				<td style="width:30%"> Type de recherche</td>
+				<td style="width:30%"><?php echo $langs->trans('SearchType'); ?></td>
 				<td><?echo $typeRecherche;?></td>
 			</tr> 
 			
@@ -247,33 +247,33 @@ function _listeResult(&$ATMdb, &$absence) {
 			'libelle'=>'<a href="absence.php?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array('libelleEtat'=>array(
-			'Refusée'=>'<b style="color:#A72947">Refusée</b>',
-			'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
-			'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
-			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
+			'Refusée'=>'<b style="color:#A72947">' . $langs->trans('Refused') . '</b>',
+			'En attente de validation'=>'<b style="color:#5691F9">' . $langs->trans('WaitingValidation') . '</b>' , 
+			'Acceptée'=>'<b style="color:#30B300">' . $langs->trans('Accepted') . '</b>')
+			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="' . $langs->trans('DoNotRespectRules') . '"></img>')
 		)
 		,'hide'=>array('fk_user', 'ID')
 		,'type'=>array()
 		,'liste'=>array(
-			'titre'=>'Résultat de votre recherche'
+			'titre'=> $langs->trans('SearchResult')
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucune absence à afficher"
+			,'messageNothing'=> $langs->trans('MessageNothingAbsence')
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 			
 		)
 		,'title'=>array(
-			'date_debut'=>'Date début'
-			,'date_fin'=>'Date fin'
-			,'libelle'=>'Type d\'absence'
-			,'firstname'=>'Prénom'
-			,'lastname'=>'Nom'
-			,'login'=>'Login'
-			,'libelleEtat'=>'Statut demande'
+			'date_debut'=> $langs->trans('StartDate')
+			,'date_fin'=> $langs->trans('EndDate')
+			,'libelle'=>$langs->trans('AbsenceType')
+			,'firstname'=> $langs->trans('FirstName')
+			,'lastname'=> $langs->trans('LastName')
+			,'login'=> $langs->trans('Login')
+			,'libelleEtat'=> $langs->trans('RequestStatus')
 		)
 		,'search'=>array(
 			'login'=>true
@@ -289,7 +289,7 @@ function _listeResult(&$ATMdb, &$absence) {
 	));
 	
 	$form->end();
-	?><a class="butAction" href="?action=view">Retour</a><div style="clear:both"></div><?
+	?><a class="butAction" href="?action=view"><?php echo $langs->trans('Back'); ?></a><div style="clear:both"></div><?
 	
 	llxFooter();
 }	

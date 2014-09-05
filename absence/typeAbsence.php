@@ -90,7 +90,7 @@
 		,array(
 			'typeAbsenceNew'=>$TFormAbsenceTypeNew
 			,'view'=>array(
-				'head'=>dol_get_fiche_head(adminCongesPrepareHead('compteur')  , 'typeabsence', 'Administration des absences et présences')
+				'head'=>dol_get_fiche_head(adminCongesPrepareHead('compteur')  , 'typeabsence', $langs->trans('AbsencesPresencesAdministration'))
 			)
 		)	
 		

@@ -5,6 +5,7 @@
 	dol_include_once('/core/class/extrafields.class.php');
 	
 	$langs->load('report@report');
+	$langs->load('absence@absence');
 	
 	$ATMdb=new TPDOdb;
 	$absence=new TRH_Absence;
@@ -21,9 +22,9 @@
 
 function _fiche(&$ATMdb) {
 	global $db, $user, $langs, $conf;
-	llxHeader('', 'Exports Absences');
+	llxHeader('', $langs->trans('AbsenceExports'));
 	
-	print dol_get_fiche_head(array()  , '', 'Statistiques sur les absences');
+	print dol_get_fiche_head(array()  , '', $langs->trans('AbsenceStats'));
 	
 	$title = $langs->trans('GenerateStatsAbsenceExports');
 	print_fiche_titre($title, '', 'report.png@report');
