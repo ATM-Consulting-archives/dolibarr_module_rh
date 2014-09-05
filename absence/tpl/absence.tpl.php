@@ -142,12 +142,12 @@
 		[absenceCourante.titreDerAbsence;strconv=no;protect=no] 
 		<table  class="liste formdoc noborder" style="width:100%">
 				<tr class="liste_titre">
-					<td><b>Date de début</b></td>
-					<td><b>Date de fin</b></td>
-					<td><b>Type d'absence</b></td>
-					<td><b>Durée décomptée</b></td>
-					<td><b>Congés disponible avant</b></td>
-					<td><b>Etat</b></td>
+					<td><b>[absenceCourante.lib_date_debut;strconv=no;protect=no]</b></td>
+					<td><b>[absenceCourante.lib_date_fin;strconv=no;protect=no]</b></td>
+					<td><b>[absenceCourante.lib_type_absence;strconv=no;protect=no]</b></td>
+					<td><b>[absenceCourante.lib_duree_decompte;strconv=no;protect=no]</b></td>
+					<td><b>[absenceCourante.lib_conges_dispo_avant;strconv=no;protect=no]</b></td>
+					<td><b>[absenceCourante.lib_etat;strconv=no;protect=no]</b></td>
 				</tr>
 				<tbody id="TRecapAbs">
 					

@@ -151,6 +151,8 @@ function _periode($nbJourCumulable, $periode) {
 }
 
 function _fiche(&$ATMdb, $regle, $mode) {
+	global $langs;
+	
 	llxHeader('', $langs->trans('AbsenceRule'), '', '', 0, 0);
 	
 	global $user,$conf;

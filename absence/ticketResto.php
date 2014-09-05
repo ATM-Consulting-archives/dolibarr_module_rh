@@ -267,7 +267,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			
 	</style>
 	
-	<?
+	<?php
 	
 	echo $form->end_form();
 	
@@ -426,7 +426,7 @@ function _ticket(&$ATMdb) {
 	
 	echo $form->btsubmit($langs->trans('GenerateFile'), 'Generer');
 	//echo $form->btsubmit('Générer le fichier Sage', 'bt_sage');
-	echo ' puis ';
+	echo $langs->trans('Then');
 	echo $form->btsubmit($langs->trans('ArchiveThisSending'), 'Archive');
 	
 	$form->end();

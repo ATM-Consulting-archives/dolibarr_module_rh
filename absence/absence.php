@@ -829,8 +829,12 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'titreRegle'=>load_fiche_titre($langs->trans('RelevantRules'),'', 'title.png', 0, '')
 				
 				,'droitSupprimer'=>$droitSupprimer
-				
-				
+				,'lib_date_debut' => $langs->trans('StartDate')
+				,'lib_date_fin' => $langs->trans('EndDate')
+				,'lib_type_absence' => $langs->trans('AbsenceType')
+				,'lib_duree_decompte' => $langs->trans('CountedDuration')
+				,'lib_conges_dispo_avant' => $langs->trans('AvailableHolidayBefore')
+				,'lib_etat' => $langs->trans('State')
 				
 				
 			)	
