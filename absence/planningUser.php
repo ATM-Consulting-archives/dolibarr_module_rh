@@ -160,7 +160,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			
 	</style>
 	
-	<?
+	<?php
 	
 	if(!empty( $_REQUEST['date_debut'] ) || $idUserRecherche>0) {
 		
@@ -217,7 +217,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	?></div>
 	
 	
-	<?
+	<?php
 	
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
@@ -443,5 +443,3 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 	print '</table><p>&nbsp;</p>';
 	
 }
-
-

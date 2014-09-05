@@ -107,7 +107,7 @@
 				<script language="javascript">
 					document.location.href="?delete_ok=1";					
 				</script>
-				<?
+				<?php
 				break;
 
 			case 'list' : 
@@ -146,7 +146,7 @@ function _liste(&$ATMdb, &$pointeuse) {
 		<a class="butAction" href="?action=imcomming"><?php echo $langs->trans('ImComing'); ?></a>
 		<a class="butAction" href="?action=imleaving"><?php echo $langs->trans('ImLeaving'); ?></a>
 		<a class="butAction" href="?id=<?=$pointeuse->getId()?>&action=new"><?php echo $langs->trans('NewClocking'); ?></a><div style="clear:both"></div>
-	</div><?
+	</div><?php
 	
 	$r->liste($ATMdb, $sql, array(
 		'limit'=>array(

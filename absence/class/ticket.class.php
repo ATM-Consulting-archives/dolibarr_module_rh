@@ -1,7 +1,9 @@
 <?php
 
 class TRH_TicketResto extends TObjetStd {
-	function __construct() { 
+	function __construct() {
+		global $langs;
+		
 		parent::set_table(MAIN_DB_PREFIX.'rh_ticketresto');
 		parent::add_champs('nbTicket','type=entier;');
 		parent::add_champs('date_distribution','type=date;index');

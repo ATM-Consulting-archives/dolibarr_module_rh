@@ -148,8 +148,8 @@ class TRH_Compteur extends TObjetStd {
 //classe pour la définition d'une absence 
 class TRH_Absence extends TObjetStd {
 	function __construct() { /* declaration */
+		global $user,$conf, $langs;
 		
-		global $user,$conf;
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence');
 		parent::add_champs('code','type=varchar;index;');				//code  congé
 		parent::add_champs('type','type=varchar;index;');				//type de congé
@@ -2298,8 +2298,8 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::start();
 		
 		$this->TIsPresence=array(
-			0=> $lang->trans('Absence')
-			,1=> $lang->trans('Presence')
+			0=> $langs->trans('Absence')
+			,1=> $langs->trans('Presence')
 		);
 		
 		$this->TDecompteNormal=array(

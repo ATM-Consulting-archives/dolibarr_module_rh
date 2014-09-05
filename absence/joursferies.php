@@ -174,7 +174,7 @@ function _liste(&$ATMdb, $feries, $emploiTemps ) {
 		&nbsp;
 		<a class="butAction" href="?action=sync"><?php echo $langs->trans('OnlineSynchronization'); ?></a>
 		<div style="clear:both"></div>
-		<?
+		<?php
 	}
 	$form->end();
 	
@@ -224,8 +224,5 @@ function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
-}
-
-
-	
-	
+} 
+?>

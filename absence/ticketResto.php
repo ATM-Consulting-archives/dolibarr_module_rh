@@ -286,7 +286,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	?></div>
 	
 	
-	<?
+	<?php
 	
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
@@ -337,8 +337,7 @@ function _ticket(&$ATMdb) {
 		$ville = $var[3];
 	
 		
-	}
-	else{
+	} else {
 		
 		$rs =  $conf->global->MAIN_INFO_SOCIETE_NOM;
 		$address =  $conf->global->MAIN_INFO_SOCIETE_ADDRESS;
@@ -409,8 +408,7 @@ function _ticket(&$ATMdb) {
 			<td align="right"><?php echo $form->calendrier('', 'TTicket['.$idUser.'][date_distribution]', strtotime('+15day', $t_fin) )  ?></td>
 			<?php
 
-		}
-		else{
+		} else {
 			
 			?>
 			<td colspan="16"><?php echo $langs->trans('UserNotSelectedTickets'); ?></td>
@@ -418,10 +416,11 @@ function _ticket(&$ATMdb) {
 				
 		}
 		
-		?></tr><?
-
-	}
+		?>
+		</tr>
+		<?php
 	
+	}
 
 	?></table><br /><?php
 	
@@ -433,6 +432,7 @@ function _ticket(&$ATMdb) {
 	$form->end();
 
 }
+
 function _show_history(&$ATMdb, $fk_user) {
 	global $db, $conf, $langs;
 

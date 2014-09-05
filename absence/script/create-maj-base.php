@@ -9,8 +9,10 @@
 	require('../class/absence.class.php');
 	require('../class/pointeuse.class.php');
 	require('../class/ticket.class.php');
-	
+	 
 	global $langs;
+	
+	$langs->load('absence@absence');
 	
 	$ATMdb=new TPDOdb;
 	$ATMdb->db->debug=true;

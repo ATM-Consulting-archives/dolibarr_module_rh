@@ -99,24 +99,37 @@
 		,array()
 		,array(
 			'absence'=>array(
-				'idUser' =>$idUser
-				,'idGroupe'=>$idGroupe
-				,'typeAbsence'=>$typeAbsence
-				,'TGroupe'=>$form->combo('', 'groupe', $TabGroupe,  $idGroupe)
+				'groupe' 			=> $langs->trans('Group')
+				,'utilisateur'  	=> $langs->trans('User')
+				,'type' 			=> $langs->trans('AbsenceType')
+				,'idUser' 			=> $idUser
+				,'idGroupe'			=> $idGroupe
+				,'typeAbsence'		=> $typeAbsence
+				,'TGroupe'			=> $form->combo('', 'groupe', $TabGroupe,  $idGroupe)
 				//,'TUser'=>$user->rights->absence->myactions->voirToutesAbsences?$form->combo('', 'rowid', $absence->TUser,  $absence->TUser):$form->combo('', 'rowid',$TabUser,  $TabUser)
-				,'TUser'=>$form->combo('', 'idUtilisateur', $TabUser,  $idUser)
-				,'TTypeAbsence'=>$form->combo('', 'typeAbsence', $TTypeAbsence,  $typeAbsence)
-				,'droits'=>$user->rights->absence->myactions->voirToutesAbsences?1:0
-				,'btValider'=>$form->btsubmit($langs->trans('Submit'), 'valider')
+				,'TUser'			=> $form->combo('', 'idUtilisateur', $TabUser,  $idUser)
+				,'TTypeAbsence'		=> $form->combo('', 'typeAbsence', $TTypeAbsence,  $typeAbsence)
+				,'droits'			=> $user->rights->absence->myactions->voirToutesAbsences?1:0
+				,'btValider'		=> $form->btsubmit($langs->trans('Submit'), 'valider')
 				//,'idAfficher'=>$_REQUEST['rowid']? $_REQUEST['rowid']:0
-				,'date_debut'=> $form->calendrier('', 'date_debut', $absence->date_debut, 12)
-				,'date_fin'=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
+				,'confirm_delete' 	=> $langs->trans('ConfirmDeleteEvent')
+				,'confirm' 			=> $langs->trans('Confirm')
+				,'date_debut'		=> $form->calendrier('', 'date_debut', $absence->date_debut, 12)
+				,'date_fin'			=> $form->calendrier('', 'date_fin', $absence->date_fin, 12)
+				,'loading' 			=> $langs->trans('Loading')
+				,'err_load_data' 	=> $langs->trans('ErrImpossibleLoadData')
+				,'new_event' 		=> $langs->trans('NewEvent')
+				,'today' 			=> $langs->trans('Today')
+				,'day' 				=> $langs->trans('Day')
+				,'week' 			=> $langs->trans('Week')
+				,'month' 			=> $langs->trans('Month')
+				,'refresh' 			=> $langs->trans('Refresh')
 			)
 			,'view'=>array(
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'calendrier', $langs->trans('Absence'))
 				,'head3'=>dol_get_fiche_head(absencePrepareHead($absence, 'index')  , 'calendrier', $langs->trans('Absence'))
-				,'titreCalendar'=>load_fiche_titre("Agenda des absences/présences",'', 'title.png', 0, '')
+				,'titreCalendar'=>load_fiche_titre($langs->trans('AbsencesPresencesDiary'),'', 'title.png', 0, '')
 				,'agendaEnabled'=>0
 			)
 			

@@ -84,7 +84,7 @@
 
 	
 function _fiche(&$ATMdb, &$compteur, $mode) {
-	global $db,$user;
+	global $db,$user, $langs;
 	llxHeader('');
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');

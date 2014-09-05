@@ -64,7 +64,7 @@ function adminCompteurPrepareHead(&$obj, $type='compteur') {
 }
 
 function adminCongesPrepareHead($type='compteur') {
-	global $user;
+	global $user, $langs;
 	switch ($type) {
 		
 		case 'compteur':
@@ -95,7 +95,7 @@ function adminRecherchePrepareHead(&$obj, $type='recherche') {
 }
 
 function edtPrepareHead(&$obj, $type='absence') {
-	global $user;
+	global $user, $langs;
 
 	switch ($type) {
 		
@@ -112,7 +112,7 @@ function edtPrepareHead(&$obj, $type='absence') {
 }
 
 function reglePrepareHead(&$obj, $type='regle') {
-	global $user;
+	global $user, $langs;
 
 	switch ($type) {
 		case 'regle':
@@ -225,6 +225,8 @@ function saveCodeTypeAbsence(&$ATMdb, $type){ // TODO deprecated
 
 //fonction permettant de retourner le libelle de l'état de l'absence (à Valider...)
 function saveLibelleEtat($etat){
+	global $langs;
+	
 	switch($etat){
 		case 'Avalider':
 			return $langs->trans('WaitingValidation');
@@ -260,7 +262,7 @@ function php2dmy($phpDate){
 
 //fonction permettant l'envoi de mail
 function mailConges(&$absence,$presence=false){
-	global $db, $lang;		
+	global $db, $langs;		
 
 	$from = USER_MAIL_SENDER;
 	

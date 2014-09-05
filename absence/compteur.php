@@ -209,7 +209,7 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 	
 	
 function _fiche(&$ATMdb, &$compteur, $mode) {
-	global $db,$user,$conf,$TTypeMetier;
+	global $db,$user,$conf,$TTypeMetier, $langs;
 	llxHeader('');
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');

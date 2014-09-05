@@ -5,16 +5,16 @@
 		[onshow;block=begin;when [absence.droits]=='1']
 			<table class="liste border" style="width:100%">			
 				<tr>
-					<td >Groupe</td>
+					<td>[absence.groupe;strconv=no;protect=no]</td>
 					<td>[absence.TGroupe;strconv=no;protect=no]</td>
 				<tr/>
 				<tr>
-					<td>Utilisateur</td>
+					<td>[absence.utilisateur;strconv=no;protect=no]</td>
 					<td>[absence.TUser;strconv=no;protect=no]</td>
 				<tr/>
 				<tr>
-					<td>Type</td>
-					<td> [absence.TTypeAbsence;strconv=no;protect=no]</td>
+					<td>[absence.type;strconv=no;protect=no]</td>
+					<td>[absence.TTypeAbsence;strconv=no;protect=no]</td>
 				<tr/>
 				<tr>
 					<td></td>
@@ -132,7 +132,7 @@
                 
                 $.alerts.okButton="Ok";  
                 $.alerts.cancelButton="Cancel";  
-                hiConfirm("Voulez vous supprimer cet événement ? ", 'Confirmez',function(r){ r && callback(0);});           
+                hiConfirm([absence.confirm_delete;strconv=no;protect=no], [absence.confirm;strconv=no;protect=no],function(r){ r && callback(0);});           
             }
             function wtd(p)
             {
@@ -224,8 +224,8 @@
     <div>
     
       <div id="calhead" style="padding-left:1px;padding-right:1px;">          
-            <div id="loadingpannel" class="ptogtitle loadicon" style="display: none;">Chargement...</div>
-             <div id="errorpannel" class="ptogtitle loaderror" style="display: none;">Impossible de charger les données.</div>
+            <div id="loadingpannel" class="ptogtitle loadicon" style="display: none;">[absence.loading;strconv=no;protect=no]</div>
+             <div id="errorpannel" class="ptogtitle loaderror" style="display: none;">[absence.err_load_data;strconv=no;protect=no]</div>
             </div>          
             
             <div id="caltoolbar" class="ctoolbar">
@@ -234,31 +234,31 @@
 	            <div id="faddbtn" class="fbutton">
 	                <div><span title='Click to Create New Event' class="addcal">
 	
-	                Nouvel Evénement                
+	                [absence.new_event;strconv=no;protect=no]               
 	                </span></div>
 	            </div>
 	            <div class="btnseparator"></div>
             </div>
              <div id="showtodaybtn" class="fbutton">
                 <div><span title='Click to back to today ' class="showtoday">
-                Aujourd'hui</span></div>
+                [absence.today;strconv=no;protect=no]</span></div>
             </div>
               <div class="btnseparator"></div>
 
            <div id="showdaybtn" class="fbutton">
            	[onshow; block=div; when [view.agendaEnabled]==1]
-                <div><span title='Day' class="showdayview">Jour</span></div>
+                <div><span title='Day' class="showdayview">[absence.day;strconv=no;protect=no]</span></div>
             </div>
               <div  id="showweekbtn" class="fbutton">
-                <div><span title='Week' class="showweekview">Semaine</span></div>
+                <div><span title='Week' class="showweekview">[absence.week;strconv=no;protect=no]</span></div>
             </div>
               <div  id="showmonthbtn" class="fbutton fcurrent">
-                <div><span title='Month' class="showmonthview">Mois</span></div>
+                <div><span title='Month' class="showmonthview">[absence.month;strconv=no;protect=no]</span></div>
 
             </div>
             <div class="btnseparator"></div>
               <div  id="showreflashbtn" class="fbutton">
-                <div><span title='Refresh view' class="showdayflash">Rafraîchir</span></div>
+                <div><span title='Refresh view' class="showdayflash">[absence.refresh;strconv=no;protect=no]</span></div>
                 </div>
              <div class="btnseparator"></div>
             <div id="sfprevbtn" title="Prev"  class="fbutton">
@@ -271,7 +271,7 @@
             <div class="fshowdatep fbutton">
                     <div>
                         <input type="hidden" name="txtshow" id="hdtxtshow" />
-                        <span id="txtdatetimeshow">Chargement</span>
+                        <span id="txtdatetimeshow">[absence.loading;strconv=no;protect=no]</span>
 
                     </div>
             </div>

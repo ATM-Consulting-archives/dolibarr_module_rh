@@ -192,32 +192,32 @@ function _listeResult(&$ATMdb, &$absence) {
 			</tr>
 			<tr>
 				<td style="width:30%"><?php echo $langs->trans('StartDate'); ?></td>
-				<td ><? echo $_REQUEST['date_debut'];?></td>
+				<td ><?php echo $_REQUEST['date_debut'];?></td>
 			</tr>
 			<tr>
 				<td style="width:30%"><?php echo $langs->trans('EndDate'); ?></td>
-				<td><? echo $_REQUEST['date_fin'];  ?></td>
+				<td><?php echo $_REQUEST['date_fin'];  ?></td>
 			</tr>
 			<tr>
 				<td style="width:30%"><?php echo $langs->trans('Group'); ?></td>
-				<td><?echo $nomGroupeRecherche;?></td>
+				<td><?php echo $nomGroupeRecherche;?></td>
 			</tr> 
 			<tr>
 				<td style="width:30%"><?php echo $langs->trans('User'); ?></td>
-				<td><?echo $nomUserRecherche;?></td>
+				<td><?php echo $nomUserRecherche;?></td>
 			</tr> 
 			<tr>
 				<td style="width:30%"><?php echo $langs->trans('AbsenceType'); ?></td>
-				<td><?echo $typeAbsenceVisu;?></td>
+				<td><?php echo $typeAbsenceVisu;?></td>
 			</tr> 
 			<tr>
 				<td style="width:30%"><?php echo $langs->trans('SearchType'); ?></td>
-				<td><?echo $typeRecherche;?></td>
+				<td><?php echo $typeRecherche;?></td>
 			</tr> 
 			
 		</table>	
 	</div><br/><br/>
-	<?
+	<?php
 
 	
 	//on va obtenir la requête correspondant à la recherche désirée
@@ -289,7 +289,7 @@ function _listeResult(&$ATMdb, &$absence) {
 	));
 	
 	$form->end();
-	?><a class="butAction" href="?action=view"><?php echo $langs->trans('Back'); ?></a><div style="clear:both"></div><?
+	?><a class="butAction" href="?action=view"><?php echo $langs->trans('Back'); ?></a><div style="clear:both"></div><?php
 	
 	llxFooter();
 }	

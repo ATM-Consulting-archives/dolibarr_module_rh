@@ -99,7 +99,7 @@
 				<script language="javascript">
 					document.location.href="?delete_ok=1";					
 				</script>
-				<?
+				<?php
 				break;
 				
 			case 'accept':
@@ -211,8 +211,8 @@ function _liste(&$ATMdb, &$absence) {
 		)
 		,'translate'=>array('Statut demande'=>array(
 			'Refusée'=>'<b style="color:#A72947">'.$langs->trans('Refused').'</b>',
-			'En attente de validation'=>'<b style="color:#5691F9">'.$langs->trans('WaitingValidation').'</b>' , 
-			'Acceptée'=>'<b style="color:#30B300">'.$langs->trans('Accepted').'</b>')
+			'En attente de validation'=>'<b style="color:#5691F9">'.$langs->trans('WaitingValidation').'</b>'
+			,'Acceptée'=>'<b style="color:#30B300">'.$langs->trans('Accepted').'</b>')
 			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="'.$langs->trans('DoNotRespectRules').'" />')
 			,'etat'=>$absence->TEtat
 		)
@@ -262,7 +262,7 @@ function _liste(&$ATMdb, &$absence) {
 		,'orderBy'=>$TOrder
 		
 	));
-	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new"><?php echo $langs->trans('NewRequest'); ?></a><div style="clear:both"></div><?
+	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new"><?php echo $langs->trans('NewRequest'); ?></a><div style="clear:both"></div><?php
 	$form->end();
 	
 	
@@ -360,13 +360,15 @@ function _listeAdmin(&$ATMdb, &$absence) {
 		,'orderBy'=>$TOrder
 		
 	));
-	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new"><?php echo $langs->trans('NewRequest'); ?></a><div style="clear:both"></div><?
+	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new"><?php echo $langs->trans('NewRequest'); ?></a><div style="clear:both"></div><?php
 	$form->end();
 	
 	
 	llxFooter();
 }	
 function _setColorEtat($val) {
+	global $langs;
+	
 	return strtr($val,array(
 				$langs->trans('Refused') => '<b style="color:#A72947">' . $langs->trans('Refused') . '</b>',
 				$langs->trans('WaitingValidation') =>'<b style="color:#5691F9">' . $langs->trans('WaitingValidation') . '</b>' , 
@@ -489,7 +491,7 @@ function _listeValidation(&$ATMdb, &$absence) {
  		$sql.=")";
 	}
  	else {
-		?><div class="error">Vous n'&ecirc;tes pas valideur de cong&eacute;  </div><?
+		?><div class="error">Vous n'&ecirc;tes pas valideur de cong&eacute;  </div><?php
 	}
  
 	
@@ -907,7 +909,7 @@ function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
 	<INPUT class="button" TYPE="button" id="newAsk" VALUE="<?php echo $langs->trans('NewRequestOnSameUser'); ?>" onclick="document.location.href='absence.php?action=new&fk_user=<?=$absence->fk_user ?>'">	
 	<br><br>
 
-	<?
+	<?php
 	
 	echo $form->end_form();
 	// End of page

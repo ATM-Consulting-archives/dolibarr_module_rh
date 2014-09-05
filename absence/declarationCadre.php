@@ -79,7 +79,7 @@ global $db,$langs,$conf;
 				<th><?php echo $langs->trans('WorkedDays'); ?></th>
 				<th><?php echo $langs->trans('RestDays'); ?></th>
 			</tr>
-		<?
+		<?php
 		
 		$total=0;
 		//var_dump($TStat);
@@ -112,10 +112,10 @@ global $db,$langs,$conf;
 			)
 	
 			?><tr>
-				<td><?	echo date('d', strtotime($date)).' '.$date_ligne; ?></td>
-				<td align="right"><? echo $heure_ligne ?></td>
-				<td><? echo $raison; ?></td>
-			</tr><?
+				<td><?php	echo date('d', strtotime($date)).' '.$date_ligne; ?></td>
+				<td align="right"><?php echo $heure_ligne ?></td>
+				<td><?php echo $raison; ?></td>
+			</tr><?php
 		
 		}
 		
@@ -126,7 +126,7 @@ global $db,$langs,$conf;
 			<th>  </th>
 		</tr>
 		</table>
-		<?
+		<?php
 		
 		echo $form->hidden('nb_hour', $total);
 		

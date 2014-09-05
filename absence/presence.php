@@ -63,7 +63,7 @@
 				<script language="javascript">
 					document.location.href="?delete_ok=1";					
 				</script>
-				<?
+				<?php
 				break;
 				
 			case 'listeValidation' : 
@@ -170,7 +170,7 @@ function _liste(&$ATMdb, &$absence) {
 		,'orderBy'=>$TOrder
 		
 	));
-	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new"><?php echo $langs->trans('NewRequest'); ?></a><div style="clear:both"></div><?
+	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new"><?php echo $langs->trans('NewRequest'); ?></a><div style="clear:both"></div><?php
 	$form->end();
 	
 	
@@ -258,7 +258,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 		,'orderBy'=>$TOrder
 		
 	));
-	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new"><?php echo $langs->trans('NewRequest'); ?></a><div style="clear:both"></div><?
+	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new"><?php echo $langs->trans('NewRequest'); ?></a><div style="clear:both"></div><?php
 	$form->end();
 	
 	
@@ -388,7 +388,7 @@ function _listeValidation(&$ATMdb, &$absence) {
  		$sql.=")";
 	}
  	else {
-		?><div class="error"><?php echo $langs->trans('ErrYouReNotHolidayValidator'); ?></div><?
+		?><div class="error"><?php echo $langs->trans('ErrYouReNotHolidayValidator'); ?></div><?php
 	}
  
 	
