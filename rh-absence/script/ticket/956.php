@@ -17,8 +17,8 @@
 	while($obj = $ATMdb->Get_line()) {
 		
 		$nb_conges = _get_conges($ATMdb2, $obj->fk_user);
-		$nb_rtt = _get_conges($ATMdb2, $obj->fk_user,"'rttcumule'");
-		$nb_rttnon = _get_conges($ATMdb2, $obj->fk_user,"'rttnoncumule'");
+		$nb_rtt = _get_conges($ATMdb2, $obj->fk_user,"'rttcumule'",'2014-01-01');
+		$nb_rttnon = _get_conges($ATMdb2, $obj->fk_user,"'rttnoncumule'",'2014-01-01');
 
 		
 		$sql=" UPDATE ".MAIN_DB_PREFIX."rh_compteur 
@@ -30,9 +30,9 @@
 		
 	}
 
-function _get_conges(&$ATMdb, $fk_user, $type="'conges','cppartiel'") {
+function _get_conges(&$ATMdb, $fk_user, $type="'conges','cppartiel'", $date= '2014-06-01') {
 
-	$sql="SELECT SUM(duree) as nb FROM llx_rh_absence WHERE fk_user=$fk_user AND type IN ($type) AND date_debut>='2014-06-01' AND etat!='Refusee' ";
+	$sql="SELECT SUM(duree) as nb FROM llx_rh_absence WHERE fk_user=$fk_user AND type IN ($type) AND date_debut>='$date' AND etat!='Refusee' ";
 
 	$ATMdb->Execute($sql);
 	$ATMdb->Get_line();
