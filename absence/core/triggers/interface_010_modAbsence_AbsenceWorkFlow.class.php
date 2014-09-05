@@ -166,7 +166,7 @@ class InterfaceAbsenceWorkflow
 	 * @return bool 1 ok, 0 ko
 	 */
 	function _absenceEstValide(&$ATMdb, &$object) {
-		$this->getReglesHomeOffice();
+		
 		if($this->_nbJoursTotalInferieureNbJoursMax($object->TDureeAllAbsenceUser) && $this->_nbJoursConsecutifsInferieurNbMax($ATMdb, $object))
 			return true;
 		else 
@@ -178,7 +178,7 @@ class InterfaceAbsenceWorkflow
 	 * Retourne un tableau contenant les règles sur le Home office qui concernent l'utilisateur courant
 	 * @return array $tabRegles tableau de règles sur le home Office par lesquelles l'utilisateur courant est concerné
 	 */
-	function getReglesHomeOffice() {
+	function _getReglesHomeOffice() {
 			
 		global $db, $user;
 		
@@ -213,9 +213,45 @@ class InterfaceAbsenceWorkflow
 	 */
 	function _nbJoursTotalInferieureNbJoursMax($TDureeAllAbsenceUser) {
 
-		foreach($TDureeAllAbsenceUser as $annee => $tabMonth) {
-			foreach($tabMonth as $duree) {
-				if($duree > 2) {
+		// On charge les règles de HomeOffice
+		$tabReglesHomeOffice = $this->_getReglesHomeOffice();
+		// On récupère la règle qui concerne les jours consécutifs
+		$regle_existe = false;
+		if(is_array($tabReglesHomeOffice) && count($tabReglesHomeOffice) > 0) {
+			foreach($tabReglesHomeOffice as $obj_sql_regle) {
+				if($obj_sql_regle->periode === "MONTH") {
+					$typePlage = "MONTH";
+					$nbJoursAutorises = $obj_sql_regle->nbHourCumulable;
+					$regle_existe = true;
+				} else if($obj_sql_regle->periode === "YEAR") {
+					$typePlage = "YEAR";
+					$nbJoursAutorises = $obj_sql_regle->nbHourCumulable;
+					$regle_existe = true;
+				}
+			}
+		}
+		
+		// Si aucune règle existe, on ne fait aucun traitement
+		if(!$regle_existe) return false;
+
+		if($typePlage === "MONTH") {
+			foreach($TDureeAllAbsenceUser as $annee => $tabMonth) {
+				foreach($tabMonth as $duree) {
+					if($duree > $nbJoursAutorises) {
+						return false;
+					}
+				}
+			}
+		} else if($typePlage === "YEAR") {
+			foreach($TDureeAllAbsenceUser as $annee => $tabMonth) {
+				
+				// On calcule le nombre de jour total par an
+				$dureeTotale = 0;
+				foreach($tabMonth as $duree) {
+					$dureeTotale += $duree;
+				}
+				// Si le nombre de jours total par an est supérieur au nb autorisé, on retourn false
+				if($dureeTotale > $nbJoursAutorises) {
 					return false;
 				}
 			}
@@ -233,6 +269,22 @@ class InterfaceAbsenceWorkflow
 	function _nbJoursConsecutifsInferieurNbMax(&$ATMdb, &$object) {
 		
 		global $TJourNonTravailleEntreprise, $langs;
+		
+		// On charge les règles de HomeOffice
+		$tabReglesHomeOffice = $this->_getReglesHomeOffice();
+		// On récupère la règle qui concerne les jours consécutifs
+		$regle_existe = false;
+		if(is_array($tabReglesHomeOffice) && count($tabReglesHomeOffice) > 0) {
+			foreach($tabReglesHomeOffice as $obj_sql_regle) {
+				if($obj_sql_regle->periode === "ONE") {
+					$nbJoursConsecutifsAutorises = $obj_sql_regle->nbHourCumulable;
+					$regle_existe = true;
+				}
+			}
+		}
+		
+		// Si aucune règle existe, on ne fait aucun traitement
+		if(!$regle_existe) return false;
 		
 		$TTradJoursSemaine = array(
 						"Mon"=>"lundi"
@@ -268,7 +320,7 @@ class InterfaceAbsenceWorkflow
 			
 		}
 		
-		if($nbJoursConsecutifsMax < 3)
+		if($nbJoursConsecutifsMax < $nbJoursConsecutifsAutorises)
 			return true;
 		else
 			return false;
