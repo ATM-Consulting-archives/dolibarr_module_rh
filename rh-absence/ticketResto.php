@@ -339,7 +339,12 @@ if(__get('date_debut')=='') return false;
 		
 	}
 	
-	if(empty($pointlivraison)) $pointlivraison= $rs.' '.$address.' '.$cp.' '.$ville;
+	
+	$autoPL = false;
+	if(empty($pointlivraison)) {
+		$pointlivraison= $rs.' '.$address.' '.$cp.' '.$ville;
+		$autoPL = true;
+	}
 
 	dol_include_once('/core/class/extrafields.class.php');
     $extrafields = new ExtraFields($db);
@@ -349,7 +354,7 @@ if(__get('date_debut')=='') return false;
 		$u=new User($db);
 		$u->fetch($idUser);
 		$u->fetch_optionals($u->id, $optionsArray);
-		
+		//
 		if($first) {
 			
 			?><tr>
@@ -382,11 +387,12 @@ if(__get('date_debut')=='') return false;
 		
 		if($u->array_options['options_ticketresto_ok']==1) {
 			
+			if(!empty($u->array_options['options_ticketresto_pointlivraison'])) $pointlivraison = $u->array_options['options_ticketresto_pointlivraison'];
+			
 			?><td align="right"><?php echo $stat['presence'] ?></td>
 			<td align="right"><?php echo $stat['ndf'] ?></td>
 			<td align="right"><?php echo !empty($stat['ndf_suspicious']) ? '<strong style="color:red;">'.$stat['ndf_suspicious'].'</strong>' : '' ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?> de <?php echo (int)$conf->global->RH_MONTANT_TICKET_RESTO ?> centimes</td>
-			
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]',$pointlivraison, 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau1]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau2]', '', 10,255)  ?></td>
