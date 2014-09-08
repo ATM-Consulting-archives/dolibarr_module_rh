@@ -10,7 +10,7 @@
 		<table class="border " style="width:200%;"  >
 				<tr>
 					<td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" > 
-				    Année N-1   </td> </div>
+				    [translate.Year;strconv=no;protect=no] N-1   </td> </div>
 				</tr>
 				<tr>
 					<td>Utilisateur courant</td>

@@ -195,7 +195,31 @@
 				,'status'=>$status
 				
 			)
-			
+			,'translate' => array(
+				'Absences' => $langs->trans('Absences'),
+				'Group' => $langs->trans('Group'),
+				'User' => $langs->trans('User'),
+				'Diary' => $langs->trans('Diary'),
+				'EventsRegisteredBy' => $langs->trans('EventsRegisteredBy'),
+				'Or' => $langs->trans('Or'),
+				'EventsAffectedTo' => $langs->trans('EventsAffectedTo'),
+				'EventsMadeBy' => $langs->trans('EventsMadeBy'),
+				'Type' => $langs->trans('Type'),
+				'Project' => $langs->trans('Project'),
+				'Loading' => $langs->trans('Loading'),
+				'ErrImpossibleLoadData' => $langs->trans('ErrImpossibleLoadData'),
+				'NewEvent' => $langs->trans('NewEvent'),
+				'ClickToCreateNewEvent' => $langs->trans('ClickToCreateNewEvent'),
+				'Today' => $langs->trans('Today'),
+				'ClickToBackToToday' => $langs->trans('ClickToBackToToday'),
+				'Day' => $langs->trans('Day'),
+				'Week' => $langs->trans('Week'),
+				'Month' => $langs->trans('Month'),
+				'Refresh' => $langs->trans('Refresh'),
+				'RefreshView' => $langs->trans('RefreshView'),
+				'Previous' => $langs->trans('Previous'),
+				'Next' => $langs->trans('Next')
+			)
 			
 		)	
 		

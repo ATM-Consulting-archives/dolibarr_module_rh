@@ -19,71 +19,71 @@
 			<table class="border" style="width:40%">
 				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='1']
 				<tr>
-					<td>Utilisateur</td>
+					<td>[translate.User;strconv=no;protect=no]</td>
 					<td>[absenceCourante.userAbsence;strconv=no;protect=no]</td>
 				</tr>	
 				[onshow;block=end]
 				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='0']
 				<tr>
-					<td>Utilisateur Courant</td>
+					<td>[translate.CurrentUser;strconv=no;protect=no]</td>
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
 					[absenceCourante.userAbsenceCourant;strconv=no;protect=no]
 				</tr>
 				[onshow;block=end]	
 				<tr>
-					<td>Type d'absence</td>
+					<td>[translate.AbsenceType;strconv=no;protect=no]</td>
 					<td>[absenceCourante.comboType;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Date début</td>
+					<td>[translate.StartDate;strconv=no;protect=no]</td>
 			 		<td>[absenceCourante.date_debut;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.ddMoment;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Date fin</td>
+					<td>[translate.EndDate;strconv=no;protect=no]</td>
 			 		<td>[absenceCourante.date_fin;strconv=no;protect=no]  &nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]</td>
 				</tr>
 				[onshow;block=begin;when [view.mode]!='edit']
 					<tr>
-						<td>Durée (en journées)</td>
+						<td>[translate.DurationInDays;strconv=no;protect=no]</td>
 						<td>[absenceCourante.duree;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
-						<td>Durée (en heures)</td>
+						<td>[translate.DurationInHours;strconv=no;protect=no]</td>
 						<td>[absenceCourante.dureeHeure;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
-						<td>Durée comptabilisée (en heures)</td>
+						<td>[translate.CountedDurationInHours;strconv=no;protect=no]</td>
 						<td>[absenceCourante.dureeHeurePaie;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
-						<td>Etat</td>
+						<td>[translate.State;strconv=no;protect=no]</td>
 						<td>[absenceCourante.libelleEtat;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
-						<td>Avertissement</td>
+						<td>[translate.Warning;strconv=no;protect=no]</td>
 						<td>[absenceCourante.avertissement;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
-						<td>Niveau de validation</td>
+						<td>[translate.ValidationLevel;strconv=no;protect=no]</td>
 						<td>[absenceCourante.niveauValidation;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
-						<td>Commentaire du valideur</td>
+						<td>[translate.ValidatorComment;strconv=no;protect=no]</td>
 						<td>[absenceCourante.commentaireValideur;strconv=no;protect=no]</td>
 					</tr>
 					[onshow;block=end]
 					<tr>
-						<td>Commentaire</td>
+						<td>[translate.Comment;strconv=no;protect=no]</td>
 						<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
-						<td>Créée le </td>
+						<td>[translate.CreatedThe;strconv=no;protect=no]</td>
 						<td>[absenceCourante.dt_cre;strconv=no;protect=no]</td>
 					</tr>
 					[onshow;block=begin;when [absenceCourante.time_validation]+-0 ]
 					<tr>
-						<td>Validée le </td>
-						<td>[absenceCourante.date_validation;strconv=no;protect=no] par [absenceCourante.userValidation]</td>
+						<td>[translate.ValidatedThe;strconv=no;protect=no]</td>
+						<td>[absenceCourante.date_validation;strconv=no;protect=no] [translate.By;strconv=no;protect=no] [absenceCourante.userValidation]</td>
 					</tr>
 					[onshow;block=end]
 				
@@ -93,15 +93,15 @@
      	[absenceCourante.titreJourRestant;strconv=no;protect=no] 			
             <table class="border" style="width:40%">
 				<tr>
-					<td>Congés payés</td>
+					<td>[translate.HolidaysPaid;strconv=no;protect=no]</td>
 					<td id='reste'>[congesPrec.reste;strconv=no;protect=no]</td>
 				</tr>	
 				<tr>
-					<td>RTT cumulés</td>
+					<td>[translate.CumulatedDayOff;strconv=no;protect=no]</td>
 					<td id='cumule'>[rttCourant.cumuleReste;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>RTT non cumulés</td>
+					<td>[translate.NonCumulatedDayOff;strconv=no;protect=no]</td>
 					<td id='noncumule'>[rttCourant.nonCumuleReste;strconv=no;protect=no]</td>
 				</tr>
 			</table>
@@ -111,16 +111,16 @@
 			
 				[onshow;block=begin;when [view.mode]=='edit']
 					<br>
-					<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
+					<input type="submit" value="[translate.Register;strconv=no;protect=no]" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
 				[onshow;block=end]
 				
 				
 				[onshow;block=begin;when [view.mode]!='edit']
 					[onshow;block=begin;when [userCourant.valideurConges]=='1']
 					
-						<a class="butAction" id="action-update"  onclick="if (window.confirm('Voulez-vous vraiment accepter la demande d\'absence ?')){document.location.href='?action=accept&id=[absenceCourante.id]'};">Accepter</a>	
-						<span class="butActionDelete" id="action-delete"  onclick="if (window.confirm('Voulez-vous vraiment refuser la demande d\'absence ?')){document.location.href='?action=refuse&id=[absenceCourante.id]'};">Refuser</span>
-						<a style='width:30%' class="butAction" id="action-update"  onclick="if (window.confirm('Voulez-vous vraiment envoyer la demande d\'absence au valideur supérieur ?')){document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'};">Envoyer au valideur supérieur</a>	
+						<a class="butAction" id="action-update"  onclick="if (window.confirm('[translate.ConfirmAcceptAbsenceRequest;strconv=no;protect=no]')){document.location.href='?action=accept&id=[absenceCourante.id]'};">[translate.Accept;strconv=no;protect=no]</a>	
+						<span class="butActionDelete" id="action-delete"  onclick="if (window.confirm('[translate.ConfirmRefuseAbsenceRequest;strconv=no;protect=no]')){document.location.href='?action=refuse&id=[absenceCourante.id]'};">[translate.Refuse;strconv=no;protect=no]</span>
+						<a style='width:30%' class="butAction" id="action-update"  onclick="if (window.confirm('[translate.ConfirmSendToSuperiorAbsenceRequest;strconv=no;protect=no]')){document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'};">[translate.SendToSuperiorValidator;strconv=no;protect=no]</a>	
 									
 					[onshow;block=end]
 				[onshow;block=end]
@@ -130,7 +130,7 @@
 
 		[onshow;block=begin;when [view.mode]!='edit']
 				[onshow;block=begin;when [absenceCourante.droitSupprimer]==1]
-						<span class="butActionDelete" id="action-delete"  onclick="if (window.confirm('Voulez-vous vraiment supprimer la demande d\'absence ?')){document.location.href='?action=delete&id=[absenceCourante.id]'};">Supprimer</span>
+						<span class="butActionDelete" id="action-delete"  onclick="if (window.confirm('[translate.ConfirmDeleteAbsenceRequest;strconv=no;protect=no]')){document.location.href='?action=delete&id=[absenceCourante.id]'};">[translate.Delete;strconv=no;protect=no]</span>
 				[onshow;block=end]			
 		[onshow;block=end]
 		<div style="clear:both;"></div>

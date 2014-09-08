@@ -81,16 +81,16 @@
             
             $("#hdtxtshow").datepicker({ picker: "#txtdatetimeshow", showtarget: $("#txtdatetimeshow"),
             onReturn:function(r){                          
-                            var p = $("#gridcontainer").gotoDate(r).BcalGetOp();
-                            if (p && p.datestrshow) {
-                                $("#txtdatetimeshow").text(p.datestrshow);
-                            }
-                     } 
+                    var p = $("#gridcontainer").gotoDate(r).BcalGetOp();
+                    if (p && p.datestrshow) {
+                        $("#txtdatetimeshow").text(p.datestrshow);
+                    }
+	             } 
             });
             function cal_beforerequest(type)
             {
                 $("#errorpannel").hide();
-                $("#loadingpannel").show();    
+                $("#loadingpannel").show();
             }
             function cal_afterrequest(type)
             {

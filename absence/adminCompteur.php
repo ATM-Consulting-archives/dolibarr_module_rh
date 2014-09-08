@@ -313,6 +313,9 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', $langs->trans('Absence'))
 			)
+			,'translate' => array(
+				'Year' => $langs->trans('Year')
+			)
 		)	
 		
 	);

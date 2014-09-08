@@ -10,14 +10,14 @@
 					[onshow;block=begin;when [absence.droits]=='1']
 					<table class="nobordernopadding" style="width:100%">	
 						<tr>
-							<th colspan="2">Absences</th>
+							<th colspan="2">[translate.Absences;strconv=no;protect=no]</th>
 						</tr>		
 						<tr>
-							<td >Groupe</td>
+							<td>[translate.Group;strconv=no;protect=no]</td>
 							<td>[absence.TGroupe;strconv=no;protect=no]</td>
 						<tr/>
 						<tr>
-							<td>Utilisateur</td>
+							<td>[translate.User;strconv=no;protect=no]</td>
 							<td>[absence.TUser;strconv=no;protect=no]</td>
 						<tr/>
 						
@@ -29,21 +29,21 @@
 		 					 			
 				 	<table class="nobordernopadding">
 				 		<tr>
-							<th colspan="2">Agenda</th>
+							<th colspan="2">[translate.Diary;strconv=no;protect=no]</th>
 						</tr>		
 				 			<tr>
-				 				<td>Événements enregistrés par &nbsp;</td>
+				 				<td>[translate.EventsRegisteredBy;strconv=no;protect=no] &nbsp;</td>
 				 				<td>[agenda.userasked;strconv=no]</td>
 				 			</tr>
-				 			<tr><td class="nowrap">ou Événements affectés à &nbsp;</td>
+				 			<tr><td class="nowrap">[translate.Or;strconv=no;protect=no] [translate.EventsAffectedTo;strconv=no;protect=no] &nbsp;</td>
 				 				<td class="nowrap">[agenda.usertodo;strconv=no]
 							</td></tr>
-							<tr><td class="nowrap">ou Événements réalisés par &nbsp;</td>
+							<tr><td class="nowrap">[translate.Or;strconv=no;protect=no] [translate.EventsMadeBy;strconv=no;protect=no] &nbsp;</td>
 							<td class="nowrap">[agenda.userdone;strconv=no]</td></tr>
-							<tr><td class="nowrap">Type &nbsp;</td><td class="nowrap">
+							<tr><td class="nowrap">[translate.Type;strconv=no;protect=no] &nbsp;</td><td class="nowrap">
 								[agenda.actioncode;strconv=no]
 							</td></tr>
-							<tr>[onshow;block=tr;when [agenda.projectEnabled]==1 ]<td class="nowrap">Projet &nbsp; </td>
+							<tr>[onshow;block=tr;when [agenda.projectEnabled]==1 ]<td class="nowrap">[translate.Project;strconv=no;protect=no] &nbsp; </td>
 							<td class="nowrap">[agenda.projectid;strconv=no]</td>
 						</tr>
 					</table>
@@ -272,54 +272,54 @@
     <div>
 
       <div id="calhead" style="padding-left:1px;padding-right:1px;">          
-            <div id="loadingpannel" class="ptogtitle loadicon" style="display: none;">Chargement...</div>
-             <div id="errorpannel" class="ptogtitle loaderror" style="display: none;">Impossible de charger les données.</div>
+            <div id="loadingpannel" class="ptogtitle loadicon" style="display: none;">[translate.Loading;strconv=no;protect=no].</div>
+             <div id="errorpannel" class="ptogtitle loaderror" style="display: none;">[translate.ErrImpossibleLoadData;strconv=no;protect=no]</div>
             </div>          
             
             <div id="caltoolbar" class="ctoolbar">
             <div>
             	[onshow; block=div; when [view.agendaEnabled]==1]
 	            <div id="faddbtn" class="fbutton">
-	                <div><span title="Cliquez pour créer un nouvel événement" class="addcal">
+	                <div><span title="[translate.ClickToCreateNewEvent;strconv=no;protect=no]" class="addcal">
 	
-	                Nouvel Evénement                
+	                [translate.NewEvent;strconv=no;protect=no]                
 	                </span></div>
 	            </div>
 	            <div class="btnseparator"></div>
             </div>
              <div id="showtodaybtn" class="fbutton">
-                <div><span title='Click to back to today ' class="showtoday">
-                Aujourd'hui</span></div>
+                <div><span title='[translate.ClickToBackToToday;strconv=no;protect=no]' class="showtoday">
+                [translate.Today;strconv=no;protect=no]</span></div>
             </div>
               <div class="btnseparator"></div>
 
            <div id="showdaybtn" class="fbutton">
            	[onshow; block=div; when [view.agendaEnabled]==1]
-                <div><span title='Day' class="showdayview">Jour</span></div>
+                <div><span title='[translate.Day;strconv=no;protect=no]' class="showdayview">[translate.Day;strconv=no;protect=no]</span></div>
             </div>
               <div  id="showweekbtn" class="fbutton fcurrent">
-                <div><span title='Week' class="showweekview">Semaine</span></div>
+                <div><span title='[translate.Week;strconv=no;protect=no]' class="showweekview">[translate.Week;strconv=no;protect=no]</span></div>
             </div>
               <div  id="showmonthbtn" class="fbutton">
-                <div><span title='Month' class="showmonthview">Mois</span></div>
+                <div><span title='[translate.Month;strconv=no;protect=no]' class="showmonthview">[translate.Month;strconv=no;protect=no]</span></div>
 
             </div>
             <div class="btnseparator"></div>
               <div  id="showreflashbtn" class="fbutton">
-                <div><span title='Refresh view' class="showdayflash">Rafraîchir</span></div>
+                <div><span title='[translate.RefreshView;strconv=no;protect=no]' class="showdayflash">[translate.Refresh;strconv=no;protect=no]</span></div>
                 </div>
              <div class="btnseparator"></div>
-            <div id="sfprevbtn" title="Prev"  class="fbutton">
+            <div id="sfprevbtn" title="[translate.Previous;strconv=no;protect=no]"  class="fbutton">
               <span class="fprev"></span>
 
             </div>
-            <div id="sfnextbtn" title="Next" class="fbutton">
+            <div id="sfnextbtn" title="[translate.Next;strconv=no;protect=no]" class="fbutton">
                 <span class="fnext"></span>
             </div>
             <div class="fshowdatep fbutton">
                     <div>
                         <input type="hidden" name="txtshow" id="hdtxtshow" />
-                        <span id="txtdatetimeshow">Chargement</span>
+                        <span id="txtdatetimeshow">[translate.Loading;strconv=no;protect=no]</span>
 
                     </div>
             </div>
