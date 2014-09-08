@@ -122,7 +122,15 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(adminCongesPrepareHead( 'compteur')  , 'adminconges', $langs->trans('HolidaysAdministration'))
 			)
-			
+			,'translate' => array(
+				'NbDaysAcquiredByMonth' => $langs->trans('NbDaysAcquiredByMonth'),
+				'ClosingHolidayDate' => $langs->trans('ClosingHolidayDate'),
+				'NbDayOffAcquiredByManagers' => $langs->trans('NbDayOffAcquiredByManagers'),
+				'ClosingDateDayOff' => $langs->trans('ClosingDateDayOff'),
+				'Register' => $langs->trans('Register'),
+				'Cancel' => $langs->trans('Cancel'),
+				'Modify' => $langs->trans('Modify')
+			)
 			
 		)	
 		

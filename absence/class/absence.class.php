@@ -216,9 +216,9 @@ class TRH_Absence extends TObjetStd {
 
 	//renvoie le tableau des utilisateurs
 	function recupererTUser(&$ATMdb){
-		global $conf;
+		global $conf, $langs;
 		$TUser=array();
-		$TUser[0] = 'Tous';	
+		$TUser[0] = $langs->trans('All');	
 		$sqlReqUser="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` 
 						ORDER BY lastname";
 		$ATMdb->Execute($sqlReqUser);
@@ -1356,7 +1356,7 @@ class TRH_Absence extends TObjetStd {
 	
 	//requete avec groupe de collaborateurs précis
 	function rechercheAbsenceGroupe(&$ATMdb, $idGroupeRecherche, $date_debut, $date_fin, $typeAbsence){ 
-			global $conf;
+			global $conf, $langs;
 			
 			//on recherche les absences d'un groupe pendant la période
 			$sql="SELECT  a.rowid as 'ID', u.login, u.lastname,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
@@ -1370,7 +1370,7 @@ class TRH_Absence extends TObjetStd {
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)";
 			
-			if($typeAbsence!='Tous'){
+			if($typeAbsence!= $langs->trans('All')){
 				$sql.=" AND a.type LIKE '".$typeAbsence."'";
 			}
 			
@@ -1379,7 +1379,7 @@ class TRH_Absence extends TObjetStd {
 	
 	//requete renvoyant les utilisateurs n'ayant pas pris de congés pendant une période
 	function rechercheAucunConges(&$ATMdb, $idGroupeRecherche,$idUserRecherche, $date_debut, $date_fin, $typeAbsence){ 
-			global $conf;
+			global $conf, $langs;
 
 			if($idUserRecherche!=0){
 				
@@ -1394,7 +1394,7 @@ class TRH_Absence extends TObjetStd {
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)
 							";
-				if($typeAbsence!='Tous'){
+				if($typeAbsence!= $langs->trans('All')){
 					$sql.=" AND a.type LIKE '".$typeAbsence."' ";
 				}
 				$sql.=")";
@@ -1412,7 +1412,7 @@ class TRH_Absence extends TObjetStd {
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)
 							";
-				if($typeAbsence!='Tous'){
+				if($typeAbsence!= $langs->trans('All')){
 					$sql.=" AND a.type LIKE '".$typeAbsence."' ";
 				}
 				$sql.=")";
@@ -1436,7 +1436,7 @@ class TRH_Absence extends TObjetStd {
 							OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)";
-				if($typeAbsence!='Tous'){
+				if($typeAbsence!= $langs->trans('All')){
 					$sql.=" AND a.type LIKE '".$typeAbsence."' ";
 				}
 				$sql.=")";
@@ -1447,7 +1447,7 @@ class TRH_Absence extends TObjetStd {
 
 	//requete avec un collaborateur précis
 	function rechercheAbsenceUser(&$ATMdb,$idUserRecherche, $date_debut, $date_fin, $typeAbsence){
-			global $conf;
+			global $conf, $langs;
 
 			//on recherche les absences d'un utilisateur pendant la période
 			$sql="SELECT a.rowid as 'ID',  u.login, u.lastname, u.firstname, 
@@ -1464,7 +1464,7 @@ class TRH_Absence extends TObjetStd {
 			if($idUserRecherche!=0){
 				$sql.=" AND a.fk_user=".$idUserRecherche;
 			}
-			if($typeAbsence!='Tous'){
+			if($typeAbsence!= $langs->trans('All')){
 				$sql.=" AND a.type LIKE '".$typeAbsence."'";
 			}
 			
@@ -2221,7 +2221,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		$this->TUser = array();
 		$this->TGroup  = array();
 		$this->TChoixApplication = array(
-			'all'=> $langs->trans('ApplicationChoiceAll')
+			'all'=> $langs->trans('All')
 			,'group'=> $langs->trans('ApplicationChoiceGroup')
 			,'user'=> $langs->trans('ApplicationChoiceUser')
 		);

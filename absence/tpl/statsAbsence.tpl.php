@@ -19,7 +19,7 @@
 		<td>[exports.date_fin;strconv=no;protect=no]</td>
 	</tr>
 	<tr>
-		<td colspan="2"><a href="#" onclick="$('input[type=checkbox]').removeAttr('checked')">Décocher tous les types</a> / <a href="#" onclick="$('input[type=checkbox]').attr('checked','checked')">Cocher tous les types</a>  </td>
+		<td colspan="2"><a href="#" onclick="$('input[type=checkbox]').removeAttr('checked')">[translate.UnCheckAllTypes;strconv=no;protect=no]</a> / <a href="#" onclick="$('input[type=checkbox]').attr('checked','checked')">[translate.CheckAllTypes;strconv=no;protect=no]</a>  </td>
 	
 	</tr>
 	<tr>
@@ -28,7 +28,7 @@
 	</tr>
 	<tr>
 		<td></td>
-		<td><input type="submit" class="button" value="Générer" /></td>
+		<td><input type="submit" class="button" value="[translate.Generate;strconv=no;protect=no]" /></td>
 	</tr>
 </table>
 
@@ -39,15 +39,15 @@
 <br />
 <table class="liste formdoc noborder" style="width:100%">
 		<tr class="liste_titre">
-			<th>Incidents/Evènements</th>
-			<th>Date de début</th>
-			<th>Date de fin</th>
-			<th>Durée réelle (Jours)</th>
-			<th>Durée réelle (Heures)</th>
-			<th>Date de début sur la plage</th>
-			<th>Date de fin sur la plage</th>
-			<th>Durée sur la plage (Jours)</th>
-			<th>Durée sur la plage (Heures)</th>
+			<th>[translate.IncidentsAndEvents;strconv=no;protect=no]</th>
+			<th>[translate.StartDate;strconv=no;protect=no]</th>
+			<th>[translate.EndDate;strconv=no;protect=no]</th>
+			<th>[translate.RealDurationInDays;strconv=no;protect=no]</th>
+			<th>[translate.RealDurationInHours;strconv=no;protect=no]</th>
+			<th>[translate.StartDateOnSlot;strconv=no;protect=no]</th>
+			<th>[translate.EndDateOnSlot;strconv=no;protect=no]</th>
+			<th>[translate.DurationOnSlotInDays;strconv=no;protect=no]</th>
+			<th>[translate.DurationOnSlotInHours;strconv=no;protect=no]</th>
 			
 		</tr>
 	

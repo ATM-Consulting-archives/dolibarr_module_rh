@@ -64,9 +64,11 @@ global $db, $user;
 }
 
 
-function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGroupe=0, $typeAbsence='Tous'){
-
-  global $conf,$user;
+function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGroupe=0, $typeAbsence){
+  global $conf,$user, $langs;
+  
+  $typeAbsence = (!empty($typeAbsence)) ? $typeAbsence : $langs->trans('All');
+  
   $ret = array();
   $ret['events'] = array();
   $ret["issort"] =true;
@@ -100,7 +102,7 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 			  		WHERE r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
 		}
 
-		if($typeAbsence!='Tous'){
+		if($typeAbsence!= $langs->trans('All')){
   			$sql1.=" AND r.type LIKE '".$typeAbsence."' ";
   		}
 	  	
@@ -111,7 +113,7 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r LEFT JOIN `".MAIN_DB_PREFIX."user` as u ON (r.fk_user=u.rowid)
 	  						LEFT JOIN `".MAIN_DB_PREFIX."rh_type_absence` t ON (r.type=t.typeAbsence) 
 	  		WHERE u.rowid=".$user->id." AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
-			if($typeAbsence!='Tous'){
+			if($typeAbsence!= $langs->trans('All')){
 	  			$sql1.=" AND r.type LIKE '".$typeAbsence."' ";
 	  		}
 			//" AND (date_debut <= '".php2MySqlTime($ed)."' AND date_fin >='". php2MySqlTime($sd)."' )";

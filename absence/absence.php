@@ -224,7 +224,7 @@ function _liste(&$ATMdb, &$absence) {
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>$langs->trans('MessageNothingAbsence')
+			,'messageNothing'=> $langs->trans('MessageNothingAbsence')
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			/*,'picto_search'=>'<img src="../../theme/rh/img/search.png">'*/
@@ -854,7 +854,35 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'dateFormat'=>$langs->trans("FormatDateShortJavaInput")
 				
 			)
-			
+			,'translate' => array(
+				'User' => $langs->trans('User'),
+				'CurrentUser' => $langs->trans('CurrentUser'),
+				'AbsenceType' => $langs->trans('AbsenceType'),
+				'StartDate' => $langs->trans('StartDate'),
+				'EndDate' => $langs->trans('EndDate'),
+				'DurationInDays' => $langs->trans('DurationInDays'),
+				'DurationInHours' => $langs->trans('DurationInHours'),
+				'CountedDurationInHours' => $langs->trans('CountedDurationInHours'),
+				'State' => $langs->trans('State'),
+				'Warning' => $langs->trans('Warning'),
+				'ValidationLevel' => $langs->trans('ValidationLevel'),
+				'ValidatorComment' => $langs->trans('ValidatorComment'),
+				'Comment' => $langs->trans('Comment'),
+				'CreatedThe' => $langs->trans('CreatedThe'),
+				'ValidatedThe' => $langs->trans('ValidatedThe'),
+				'HolidaysPaid' => $langs->trans('HolidaysPaid'),
+				'CumulatedDayOff' => $langs->trans('CumulatedDayOff'),
+				'NonCumulatedDayOff' => $langs->trans('NonCumulatedDayOff'),
+				'Register' => $langs->trans('Register'),
+				'ConfirmAcceptAbsenceRequest' => $langs->trans('ConfirmAcceptAbsenceRequest'),
+				'Accept' => $langs->trans('Accept'),
+				'Refuse' => $langs->trans('Refuse'),
+				'ConfirmRefuseAbsenceRequest' => $langs->trans('ConfirmRefuseAbsenceRequest'),
+				'ConfirmSendToSuperiorAbsenceRequest' => $langs->trans('ConfirmSendToSuperiorAbsenceRequest'),
+				'SendToSuperiorValidator' => $langs->trans('SendToSuperiorValidator'),
+				'ConfirmDeleteAbsenceRequest' => $langs->trans('ConfirmDeleteAbsenceRequest'),
+				'Delete' => $langs->trans('Delete')
+			)
 			
 		)	
 		

@@ -194,6 +194,11 @@ function _fiche(&$ATMdb, $regle, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(reglePrepareHead($regle)  , 'regle', $langs->trans('Rules'))
 			)
+			,'trad' => array(
+				'user' => $langs->trans('User'),
+				'group' => $langs->trans('Group'),
+				'all' => $langs->trans('All')
+			)
 		)	
 	);
 	

@@ -93,6 +93,20 @@ function _fiche(&$ATMdb) {
 			,'view'=>array(
 				'showStat'=>(int)isset($_REQUEST['showStat'])
 			)
+			,'translate' => array(
+				'UnCheckAllTypes' => $langs->trans('UncheckAllTypes'),
+				'CheckAllTypes' => $langs->trans('CheckAllTypes'),
+				'Generate' => $langs->trans('Generate'),
+				'IncidentsAndEvents' => $langs->trans('IncidentsAndEvents'),
+				'StartDate' => $langs->trans('StartDate'),
+				'EndDate' => $langs->trans('EndDate'),
+				'RealDurationInDays' => $langs->trans('RealDurationInDays'),
+				'RealDurationInHours' => $langs->trans('RealDurationInHours'),
+				'StartDateOnSlot' => $langs->trans('StartDateOnSlot'),
+				'EndDateOnSlot' => $langs->trans('EndDateOnSlot'),
+				'DurationOnSlotInDays' => $langs->trans('DurationOnSlotInDays'),
+				'DurationOnSlotInHours' => $langs->trans('DurationOnSlotInHours')
+			)
 		)
 	);
 	
