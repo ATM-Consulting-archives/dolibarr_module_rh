@@ -123,11 +123,10 @@ class InterfaceAbsenceWorkflow
 			
 			$this->_loadDureeAllAbsenceUser($ATMdb, $object);
 			
-			$this->_absenceEstValide($ATMdb, $object);
+			$object->code_validite = $this->_absenceEstValide($ATMdb, $object);
 			
 		}
-		
-		
+
 		return 0;
     }
 
@@ -170,11 +169,11 @@ class InterfaceAbsenceWorkflow
 		$codeRetour_totalInfNbJourMax = $this->_nbJoursTotalInferieureNbJoursMax($object->TDureeAllAbsenceUser);
 		$codeRetour_consecutifsInfNbJourMax = $this->_nbJoursConsecutifsInferieurNbMax($ATMdb, $object);
 		
-		if($codeRetour_totalInfNbJourMax && $codeRetour_consecutifsInfNbJourMax)
+		if($codeRetour_totalInfNbJourMax > 1 && $codeRetour_consecutifsInfNbJourMax)
 			return true;
 		else if($codeRetour_totalInfNbJourMax == 0)
 			return false;
-		else if(!$codeRetour_totalInfNbJourMax == -1)
+		else if($codeRetour_totalInfNbJourMax == -1)
 			return -1;
 		else if(!$codeRetour_consecutifsInfNbJourMax)
 			return -2;

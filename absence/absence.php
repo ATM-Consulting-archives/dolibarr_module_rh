@@ -53,35 +53,61 @@
 					} 
 					
 					$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
-				
-					if($demandeRecevable==1){
-						$absence->save($ATMdb);
-						$absence->load($ATMdb, $_REQUEST['id']);
-						if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
-							mailConges($absence);
-							mailCongesValideur($ATMdb,$absence);
-						}
+					
+					// On teste la validité de l'absence selon les règles de Home Office				
+					if($absence->type == "HomeOffice") {
 						
-						$mesg = 'Demande enregistrée';
-						_fiche($ATMdb, $absence,'view');
-					}else{
-						if($demandeRecevable==0){
-							$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur</div>';
-							_fiche($ATMdb, $absence,'edit');
-						}else if($demandeRecevable==2){
-							$absence->avertissement=1;
+						if($absence->code_validite == 1) {
+							$mesg = 'Demande enregistrée';
 							$absence->save($ATMdb);
 							$absence->load($ATMdb, $_REQUEST['id']);
 							if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
 								mailConges($absence);
 								mailCongesValideur($ATMdb,$absence);
 							}
-							$mesg = '<div class="error">Attention : La durée de l\'absence dépasse la règle en vigueur</div>';
+							$mesg = 'Demande enregistrée';
 							_fiche($ATMdb, $absence,'view');
-						}
-						else if($demandeRecevable==3){		// demande rtt non cumulés acollée à un congé, ou rtt ou jour férié
-							$mesg = '<div class="error">Demande refusée à cause des règles sur les RTT non cumulés</div>';
+						} else if($absence->code_validite == 0) {
+							$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la limite annuelle</div>';
 							_fiche($ATMdb, $absence,'edit');
+						} else if($absence->code_validite == -1) {
+							$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la limite mensuelle</div>';
+							_fiche($ATMdb, $absence,'edit');
+						} else if($absence->code_validite == -2) {
+							$mesg = '<div class="error">Demande refusée : Votre demande d\'absence dépasse le seuil autorisé de jours consécutifs</div>';
+							_fiche($ATMdb, $absence,'edit');
+						}
+					}else {
+					
+						if($demandeRecevable==1){
+							$absence->save($ATMdb);
+							$absence->load($ATMdb, $_REQUEST['id']);
+							if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
+								mailConges($absence);
+								mailCongesValideur($ATMdb,$absence);
+							}
+							
+							$mesg = 'Demande enregistrée';
+							_fiche($ATMdb, $absence,'view');
+						}else{
+							if($demandeRecevable==0){
+								$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur</div>';
+								_fiche($ATMdb, $absence,'edit');
+							}else if($demandeRecevable==2){
+								$absence->avertissement=1;
+								$absence->save($ATMdb);
+								$absence->load($ATMdb, $_REQUEST['id']);
+								if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
+									mailConges($absence);
+									mailCongesValideur($ATMdb,$absence);
+								}
+								$mesg = '<div class="error">Attention : La durée de l\'absence dépasse la règle en vigueur</div>';
+								_fiche($ATMdb, $absence,'view');
+							}
+							else if($demandeRecevable==3){		// demande rtt non cumulés acollée à un congé, ou rtt ou jour férié
+								$mesg = '<div class="error">Demande refusée à cause des règles sur les RTT non cumulés</div>';
+								_fiche($ATMdb, $absence,'edit');
+							}
 						}
 					}
 				}else{
@@ -677,7 +703,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 		$comboAbsence=2;
-		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin');
+		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin', 1);
 		$droitAdmin=1;
 //print "admin";
 //print_r( $typeAbsenceCreable);
