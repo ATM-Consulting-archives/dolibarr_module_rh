@@ -13,70 +13,70 @@
 				    [translate.Year;strconv=no;protect=no] N-1   </td> </div>
 				</tr>
 				<tr>
-					<td>Utilisateur courant</td>
+					<td>[translate.CurrentUser;strconv=no;protect=no]</td>
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
 				</tr>	
 				<tr>
-					<td>Acquis sur exercice ([congesPrec.dates])</td>
+					<td>[translate.AcquiredOnExercise;strconv=no;protect=no] ([congesPrec.dates])</td>
 					<td>[congesPrec.acquisEx;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Acquis ancienneté</td>
+					<td>[translate.AcquiredSeniority;strconv=no;protect=no]</td>
 					<td> [congesPrec.acquisAnc;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Acquis hors-période</td>
+					<td>[translate.AcquiredOutOfPeriod;strconv=no;protect=no]</td>
 					<td>[congesPrec.acquisHorsPer;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Report congés non soldés</td>
+					<td>[translate.OpenPostponement;strconv=no;protect=no]</td>
 					<td>[congesPrec.reportConges;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td><b>Total congés</b></td>
+					<td><b>[translate.TotalHolidays;strconv=no;protect=no]</b></td>
 					<td><b>[congesPrec.total;strconv=no;protect=no] </b></td>
 				</tr>
 				<tr>
-					<td>Congés pris et/ou posés</td>
+					<td>[translate.HolidaysTaken;strconv=no;protect=no]</td>
 					<td>[congesPrec.congesPris;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td><b>Reste à prendre avant le [congesPrec.dateFin]</b></td>
+					<td><b>[translate.RemainingBefore;strconv=no;protect=no] [congesPrec.dateFin]</b></td>
 					<td><b>[congesPrec.reste;strconv=no;protect=no]</b></td>
 				</tr>
 
 				<tr>
 					<td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" > 
-						Année N    </td> 
+						[translate.Year;strconv=no;protect=no] N    </td> 
 				</tr>
 				<tr>
-					<td>Acquis exercice</td>
+					<td>[translate.AcquiredExercise;strconv=no;protect=no]</td>
 					<td>[congesCourant.acquisEx;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Acquis ancienneté</td>
+					<td>[translate.AcquiredSeniority;strconv=no;protect=no]</td>
 					<td>[congesCourant.acquisAnc;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
-					<td>Acquis hors-période</td>
+					<td>[translate.AcquiredOutOfPeriod;strconv=no;protect=no]</td>
 					<td>[congesCourant.acquisHorsPer;strconv=no;protect=no]</td>
 				</tr>
 				
 				<tr>
-					<td>Congés pris</td>
+					<td>[translate.HolidaysTaken;strconv=no;protect=no]</td>
 					<td>[congesCourant.congesPris;strconv=no;protect=no]</td>
 				</tr>
 				
 				<tr>
-					<td>Nombre de jours acquis par mois</td>
+					<td>[translate.NbDaysAcquiredByMonth;strconv=no;protect=no]</td>
 					<td> [congesCourant.nombreCongesAcquisMensuel;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td><b>Total</b></td>
+					<td><b>[translate.Total;strconv=no;protect=no]</b></td>
 					<td><b>[congesCourant.total;strconv=no;protect=no]</b></td>
 				</tr>
 				<tr>
-					<td><b>Dernière clôture congés</b></td>
+					<td><b>[translate.LastClosingHoliday;strconv=no;protect=no]</b></td>
 					<td>[congesCourant.date_congesCloture;strconv=no;protect=no]</td>
 				</tr>
 		</table>
@@ -90,57 +90,57 @@
 		<table class="border" style="width:200%">
 				<tr>
 					 <td  colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" >
-					 	Compteur de RTT cumulés </td>
+					 	[translate.CounterCumulatedDayOff;strconv=no;protect=no] </td>
 				</tr>
 
 				<tr>
-					<td style="width:65%;">Jours RTT cumulés acquis</td>
+					<td style="width:65%;">[translate.CumulatedDayOffAcquired;strconv=no;protect=no]</td>
 					<td>[rttCourant.cumuleAcquis;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Jours RTT cumulés pris</td>
+					<td>[translate.CumulatedDayOffTaken;strconv=no;protect=no]</td>
 					<td>[rttCourant.cumulePris;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
-					<td>Jours RTT cumulés reportés N-1</td>
+					<td>[translate.PostponedCumulatedDayOff;strconv=no;protect=no] N-1</td>
 					<td>[rttCourant.cumuleReport;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
-					<td><b>Jours RTT cumulés à prendre</b></td>
+					<td><b>[translate.CumulatedDayOffToTake;strconv=no;protect=no]</b></td>
 					<td>[rttCourant.cumuleTotal;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					 <td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" >
-					 	Compteur de RTT non cumulés</td>
+					 	[translate.CounterNonCumulatedDayOff;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Jours RTT non cumulés acquis</td>
+					<td>[translate.NonCumulatedDayOffAcquired;strconv=no;protect=no]</td>
 					<td>[rttCourant.nonCumuleAcquis;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Jours RTT non cumulés pris</td>
+					<td>[translate.NonCumulatedDayOffTaken;strconv=no;protect=no]</td>
 					<td>[rttCourant.nonCumulePris;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
-					<td>Jours RTT non cumulés reportés N-1</td>
+					<td>[translate.PostponedNonCumulatedDayOff;strconv=no;protect=no] N-1</td>
 					<td>[rttCourant.nonCumuleReport;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
-					<td><b>Jours RTT non cumulés à prendre</b></td>
+					<td><b>[translate.NonCumulatedDaysOffToTake;strconv=no;protect=no]</b></td>
 					<td>[rttCourant.nonCumuleTotal;strconv=no;protect=no]</td>
 				</tr>
 
 		             
 				<tr>
 					  <td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" >
-					 	Méthode d'acquisition des jours</h2></td>
+					 	[translate.AcquisitionMethodOfDays;strconv=no;protect=no]</h2></td>
 				</tr>
 				<tr>
-					<td>Métier collaborateur</td>
+					<td>[translate.CollabJob;strconv=no;protect=no]</td>
 					<td>[rttCourant.rttMetier;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Type acquisition</td>
+					<td>[translate.AcquisitionType;strconv=no;protect=no]</td>
 					
 					<td>[onshow;block=begin;when [view.mode]=='edit'] 
 							[rttCourant.typeAcquisition;strconv=no;protect=no]
@@ -151,23 +151,23 @@
 					 </td>
 				</tr>
 				<tr>
-					<td>Jours RTT acquis par mois</td>
+					<td>[translate.AcquiredDaysOffPerMonth;strconv=no;protect=no]</td>
 					<td>[rttCourant.mensuelInit;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
-					<td>Jours RTT cumulés annuels</td>
+					<td>[translate.YearlyCumulatedDaysOff;strconv=no;protect=no]</td>
 					<td>[rttCourant.cumuleAcquisInit;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Jours RTT non cumulés annuels</td>
+					<td>[translate.YearlyNonCumulatedDaysOff;strconv=no;protect=no]</td>
 					<td>[rttCourant.nonCumuleAcquisInit;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Report des RTT</td>
+					<td>[translate.DaysOffPostponement;strconv=no;protect=no]</td>
 					<td>[rttCourant.reportRtt;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td><b> Dernière clôture RTT</b></td>
+					<td><b>[translate.LastClosingDayOff;strconv=no;protect=no]</b></td>
 					<td>[rttCourant.date_rttCloture;strconv=no;protect=no]</td>
 				</tr>	
 		</table>
@@ -179,15 +179,15 @@
 		
 		[onshow;block=begin;when [view.mode]=='edit']
 			<div class="tabsAction" >
-			<input type="submit" value="Enregistrer" name="save" class="button"  onclick="document.location.href='?id=[rttCourant.id]&action=view'">
-			&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[rttCourant.id]&action=view'">
+			<input type="submit" value="[translate.Register;strconv=no;protect=no]" name="save" class="button"  onclick="document.location.href='?id=[rttCourant.id]&action=view'">
+			&nbsp; &nbsp; <input type="button" value="[translate.Cancel;strconv=no;protect=no]" name="cancel" class="button" onclick="document.location.href='?id=[rttCourant.id]&action=view'">
 			</div>
 		[onshow;block=end]
 		
 		[onshow;block=begin;when [view.mode]!='edit']
 			[onshow;block=begin;when [userCourant.modifierCompteur]=='1']
 			<div class="tabsAction" >
-				<a class="butAction"  href="?id=[rttCourant.id]&action=edit">Modifier</a>
+				<a class="butAction"  href="?id=[rttCourant.id]&action=edit">[translate.Modify;strconv=no;protect=no]</a>
 			</div>
 			[onshow;block=end]
 		[onshow;block=end]

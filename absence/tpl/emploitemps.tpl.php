@@ -7,15 +7,15 @@
 		<table class="border" style="width:130%;" >	
 				<tr>
 					<td>       </td>
-					<td style="text-align:center;"><b>Matin</b></td>
-					<td style="text-align:center;"><b>Après-midi</b></td>
-					<td style="text-align:center;"><b>Matin</b></td>
-					<td style="text-align:center;"><b>Midi</b></td>
-					<td style="text-align:center;"><b>Après-midi</b></td>
-					<td style="text-align:center;"><b>Soir</b></td>
+					<td style="text-align:center;"><b>[translate.Morning;strconv=no;protect=no]</b></td>
+					<td style="text-align:center;"><b>[translate.Afternoon;strconv=no;protect=no]</b></td>
+					<td style="text-align:center;"><b>[translate.Morning;strconv=no;protect=no]</b></td>
+					<td style="text-align:center;"><b>[translate.Midday;strconv=no;protect=no]</b></td>
+					<td style="text-align:center;"><b>[translate.Afternoon;strconv=no;protect=no]</b></td>
+					<td style="text-align:center;"><b>[translate.Evening;strconv=no;protect=no]</b></td>
 				</tr>
 				<tr>
-					<td style="text-align:center;"><b>Lundi</b></td>
+					<td style="text-align:center;"><b>[translate.Monday;strconv=no;protect=no]</b></td>
 					
 					<td style="text-align:center;">[planning.lundiam;strconv=no;protect=no]</td>
 					<td style="text-align:center;">[planning.lundipm;strconv=no;protect=no]</td>
@@ -25,7 +25,7 @@
 					<td style="text-align:center;"> [horaires.lundi_heurefpm;strconv=no;protect=no]    </td>
 				</tr>
 				<tr>
-					<td style="text-align:center;"><b>Mardi</b></td>
+					<td style="text-align:center;"><b>[translate.Tuesday;strconv=no;protect=no]</b></td>
 					<td style="text-align:center;">[planning.mardiam;strconv=no;protect=no]</td>
 					<td style="text-align:center;">[planning.mardipm;strconv=no;protect=no]</td>
 					<td style="text-align:center;"> [horaires.mardi_heuredam;strconv=no;protect=no]      </td>
@@ -34,7 +34,7 @@
 					<td style="text-align:center;"> [horaires.mardi_heurefpm;strconv=no;protect=no]    </td>
 				</tr>
 				<tr>
-					<td style="text-align:center;"><b>Mercredi</b></td>
+					<td style="text-align:center;"><b>[translate.Wednesday;strconv=no;protect=no]</b></td>
 					<td style="text-align:center;">[planning.mercrediam;strconv=no;protect=no]</td>
 					<td style="text-align:center;">[planning.mercredipm;strconv=no;protect=no]</td>
 					<td style="text-align:center;"> [horaires.mercredi_heuredam;strconv=no;protect=no]      </td>
@@ -43,7 +43,7 @@
 					<td style="text-align:center;"> [horaires.mercredi_heurefpm;strconv=no;protect=no]    </td>
 				</tr>
 				<tr>
-					<td style="text-align:center;"><b>Jeudi</b></td>
+					<td style="text-align:center;"><b>[translate.Thursday;strconv=no;protect=no]</b></td>
 					<td style="text-align:center;">[planning.jeudiam;strconv=no;protect=no]</td>
 					<td style="text-align:center;">[planning.jeudipm;strconv=no;protect=no]</td>
 					<td style="text-align:center;"> [horaires.jeudi_heuredam;strconv=no;protect=no]      </td>
@@ -52,7 +52,7 @@
 					<td style="text-align:center;"> [horaires.jeudi_heurefpm;strconv=no;protect=no]    </td>
 				</tr>
 				<tr>
-					<td style="text-align:center;"><b>Vendredi</b></td>
+					<td style="text-align:center;"><b>[translate.Friday;strconv=no;protect=no]</b></td>
 					<td style="text-align:center;">[planning.vendrediam;strconv=no;protect=no]</td>
 					<td style="text-align:center;">[planning.vendredipm;strconv=no;protect=no]</td>
 					<td style="text-align:center;"> [horaires.vendredi_heuredam;strconv=no;protect=no]      </td>
@@ -61,7 +61,7 @@
 					<td style="text-align:center;"> [horaires.vendredi_heurefpm;strconv=no;protect=no]    </td>
 				</tr>
 				<tr>
-					<td style="text-align:center;"><b>Samedi</b></td>
+					<td style="text-align:center;"><b>[translate.Saturday;strconv=no;protect=no]</b></td>
 					<td style="text-align:center;">[planning.samediam;strconv=no;protect=no]</td>
 					<td style="text-align:center;">[planning.samedipm;strconv=no;protect=no]</td>
 					<td style="text-align:center;"> [horaires.samedi_heuredam;strconv=no;protect=no]      </td>
@@ -70,7 +70,7 @@
 					<td style="text-align:center;"> [horaires.samedi_heurefpm;strconv=no;protect=no]    </td>
 				</tr>
 				<tr>
-					<td style="text-align:center;"><b>Dimanche</b></td>
+					<td style="text-align:center;"><b>[translate.Sunday;strconv=no;protect=no]</b></td>
 					<td style="text-align:center;">[planning.dimancheam;strconv=no;protect=no]</td>
 					<td style="text-align:center;">[planning.dimanchepm;strconv=no;protect=no]</td>
 					<td style="text-align:center;"> [horaires.dimanche_heuredam;strconv=no;protect=no]      </td>
@@ -83,7 +83,7 @@
 		</div>
 	[onshow;block=begin;when [view.mode]=='edit']
 		<br/><br/>
-		<b style="margin-left:320px;">Veuillez respecter le format HH:MM pour les horaires</b>
+		<b style="margin-left:320px;">[translate.MayRespectHourFormat;strconv=no;protect=no]</b>
 		
 		
 		
@@ -91,27 +91,27 @@
 	
 			
 	<br/><br /><div>[onshow;block=div;when [emploiTemps.is_archive]==1]
-			Début : [emploiTemps.date_debut;strconv=no] - Fin : [emploiTemps.date_fin;strconv=no]
+			[translate.Beginning;strconv=no;protect=no] : [emploiTemps.date_debut;strconv=no] - [translate.End;strconv=no;protect=no] : [emploiTemps.date_fin;strconv=no]
 		</div>
 			
 	<br/><br>
-	Temps total de travail hebdomadaire : [userCourant.tempsHebdo;strconv=no;protect=no]h<br>
-	Société : [entity.TEntity;strconv=no;protect=no]
+	[translate.TotalTimeWeeklyWork;strconv=no;protect=no] : [userCourant.tempsHebdo;strconv=no;protect=no]h<br>
+	[translate.Company;strconv=no;protect=no] : [entity.TEntity;strconv=no;protect=no]
 	
 	
 	
 	[onshow;block=begin;when [view.mode]=='edit']
 		<div class="tabsAction" >
-		<input type="submit" value="Enregistrer" name="save" class="button"  onclick="document.location.href='?id=[view.compteur_id]&action=view'">
-		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[view.compteur_id]&action=view'">
+		<input type="submit" value="[translate.Register;strconv=no;protect=no]" name="save" class="button"  onclick="document.location.href='?id=[view.compteur_id]&action=view'">
+		&nbsp; &nbsp; <input type="button" value="[translate.Cancel;strconv=no;protect=no]" name="cancel" class="button" onclick="document.location.href='?id=[view.compteur_id]&action=view'">
 		</div>
 	[onshow;block=end]
 	
 	[onshow;block=begin;when [view.mode]!='edit']
 			[onshow;block=begin;when [droits.modifierEdt]=='1']
 			<div class="tabsAction" >
-				<a class="butAction"  href="?id=[view.compteur_id]&action=edit">Modifier</a>
-				<a class="butAction"  href="?id=[view.compteur_id]&action=archive">[onshow;block=a;when [emploiTemps.is_archive]==0]Archiver</a>
+				<a class="butAction"  href="?id=[view.compteur_id]&action=edit">[translate.Modify;strconv=no;protect=no]</a>
+				<a class="butAction"  href="?id=[view.compteur_id]&action=archive">[onshow;block=a;when [emploiTemps.is_archive]==0][translate.Archive;strconv=no;protect=no]</a>
 			</div>
 			
 			<div>[onshow;block=div;when [emploiTemps.is_archive]==0]

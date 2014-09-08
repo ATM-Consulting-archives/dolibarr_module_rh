@@ -111,6 +111,16 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', $langs->trans('Search'))
 			)
+			,'translate' => array(
+				'InformSearchAbsencesParameters' => $langs->trans('InformSearchAbsencesParameters'),
+				'StartDate' => $langs->trans('StartDate'),
+				'EndDate' => $langs->trans('EndDate'),
+				'Group' => $langs->trans('Group'),
+				'User' => $langs->trans('User'),
+				'Type' => $langs->trans('Type'),
+				'NoHolidays' => $langs->trans('NoHolidays'),
+				'NoRightsForSearchCollabAbsences' => $langs->trans('NoRightsForSearchCollabAbsences')
+			)
 		)	
 	);
 	

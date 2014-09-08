@@ -92,6 +92,16 @@
 			,'view'=>array(
 				'head'=>dol_get_fiche_head(adminCongesPrepareHead('compteur')  , 'typeabsence', $langs->trans('AbsencesPresencesAdministration'))
 			)
+			,'translate' => array(
+				'Code' => $langs->trans('Code'),
+				'Wording' => $langs->trans('Wording'),
+				'Unit' => $langs->trans('Unit'),
+				'AccountingOfficerCode' => $langs->trans('AccountingOfficerCode'),
+				'AskReservedAdmin' => $langs->trans('AskReservedAdmin'),
+				'OnlyCountBusinessDay' => $langs->trans('OnlyCountBusinessDay'),
+				'New' => $langs->trans('New'),
+				'Register' => $langs->trans('Register')
+			)
 		)	
 		
 	);

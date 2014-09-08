@@ -256,7 +256,28 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 			,'droits'=>array(
 				'modifierEdt'=>$user->rights->absence->myactions->modifierEdt
 			)
-			
+			,'translate' => array(
+				'Morning' 				=> $langs->trans('Morning'),
+				'Afternoon' 			=> $langs->trans('Afternoon'),
+				'Midday' 				=> $langs->trans('Midday'),
+				'Evening' 				=> $langs->trans('Evening'),
+				'Monday' 				=> $langs->trans('Monday'),
+				'Tuesday' 				=> $langs->trans('Tuesday'),
+				'Wednesday' 			=> $langs->trans('Wednesday'),
+				'Thursday' 				=> $langs->trans('Thursday'),
+				'Friday' 				=> $langs->trans('Friday'),
+				'Saturday' 				=> $langs->trans('Saturday'),
+				'Sunday' 				=> $langs->trans('Sunday'),
+				'Beginning' 			=> $langs->trans('Beginning'),
+				'End' 					=> $langs->trans('End'),
+				'MayRespectHourFormat' 	=> $langs->trans('MayRespectHourFormat'),
+				'TotalTimeWeeklyWork' 	=> $langs->trans('TotalTimeWeeklyWork'),
+				'Company' 				=> $langs->trans('Company'),
+				'Register' 				=> $langs->trans('Register'),
+				'Cancel' 				=> $langs->trans('Cancel'),
+				'Modify' 				=> $langs->trans('Modify'),
+				'Archive' 				=> $langs->trans('Archive')
+			)
 			
 		)	
 		

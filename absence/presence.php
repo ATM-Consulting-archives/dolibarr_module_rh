@@ -610,10 +610,27 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'presence')  , 'fiche', $langs->trans('Presence'))
 				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'presence')  , 'fiche', $langs->trans('Presence'))
-				
-				
 			)
-			
+			,'translate' => array(
+				'User' => $langs->trans('User'),
+				'CurrentUser' => $langs->trans('CurrentUser'),
+				'PresenceType' => $langs->trans('PresenceType'),
+				'StartDate' => $langs->trans('StartDate'),
+				'EndDate' => $langs->trans('EndDate'),
+				'Comment' => $langs->trans('Comment'),
+				'CreatedThe' => $langs->trans('CreatedThe'),
+				'ValidatedThe' => $langs->trans('ValidatedThe'),
+				'Register' => $langs->trans('Register'),
+				'ConfirmAcceptAbsenceRequest' => $langs->trans('ConfirmAcceptAbsenceRequest'),
+				'ConfirmRefuseAbsenceRequest' => $langs->trans('ConfirmRefuseAbsenceRequest'),
+				'Accept' => $langs->trans('Accept'),
+				'Refuse' => $langs->trans('Refuse'),
+				'ConfirmSendToSuperiorAbsenceRequest' => $langs->trans('ConfirmSendToSuperiorAbsenceRequest'),
+				'ConfirmDeleteAbsenceRequest' => $langs->trans('ConfirmDeleteAbsenceRequest'),
+				'Delete' => $langs->trans('Delete'),
+				'AbsenceType' => $langs->trans('AbsenceType'),
+				'State' => $langs->trans('State')
+			)
 			
 		)	
 		

@@ -178,6 +178,22 @@ global $db,$langs,$conf;
 						,'dateMY'=>date('m/Y', $t_debut)
 						,'town'=>$conf->mycompany->town
 					)
+					,'translate' => array(
+						'MonthlyStatementAboutCountingWorkedDaysAndTakingDaysOff' => $langs->trans('MonthlyStatementAboutCountingWorkedDaysAndTakingDaysOff'),
+						'ManagersInDayPlan' => $langs->trans('ManagersInDayPlan'),
+						'EmployeeName' => $langs->trans('EmployeeName'),
+						'ConcernedMonthMY' => $langs->trans('ConcernedMonthMY'),
+						'Date' => $langs->trans('Date'),
+						'WorkedDays' => $langs->trans('WorkedDays'),
+						'RestDays' => $langs->trans('RestDays'),
+						'Eventually' => $langs->trans('Eventually'),
+						'Whether' => $langs->trans('Whether'),
+						'PossibleObservations' => $langs->trans('PossibleObservations'),
+						'RespectGivenDatasInDeclaration' => $langs->trans('RespectGivenDatasInDeclaration'),
+						'To' => $langs->trans('To'),
+						'The' => $langs->trans('The'),
+						'Signature' => $langs->trans('Signature')
+					)
 				)
 			);
 			

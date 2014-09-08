@@ -215,6 +215,17 @@ function _fiche(&$ATMdb, $feries, $emploiTemps, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'joursferies', $langs->trans('Absence'))
 			)
+			,'translate' => array(
+				'NoWorkedDays' => $langs->trans('NoWorkedDays'),
+				'Period' => $langs->trans('Period'),
+				'Comment' => $langs->trans('Comment'),
+				'ConfirmDeletePublicHoliday' => $langs->trans('ConfirmDeletePublicHoliday'),
+				'Delete' => $langs->trans('Delete'),
+				'Modify' => $langs->trans('Modify'),
+				'Back' => $langs->trans('Back'),
+				'Register' => $langs->trans('Register'),
+				'Cancel' => $langs->trans('Cancel')
+			)
 		)	
 	);
 	

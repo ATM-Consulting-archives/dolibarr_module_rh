@@ -2,20 +2,20 @@
 
 <table class="liste formdoc noborder">
 	<tr>
-		<td><b>Groupes</b> </td>
+		<td><b>[translate.Groups;strconv=no]</b> </td>
 		<td>[exports.fk_group; strconv=no]</td>
 	</tr>
 	<tr>
-		<td><b>Utilisateurs</b> </td>
+		<td><b>[translate.Users;strconv=no]</b> </td>
 		<td>[exports.fk_user; strconv=no]</td>
 	</tr>
 
 	<tr>
-		<td><b>Date de début</b></td> 
+		<td><b>[translate.StartDate;strconv=no]</b></td> 
 		<td>[exports.date_debut;strconv=no;protect=no]</td>
 	</tr>
 	<tr>
-		<td><b>Date de fin</b> </td>
+		<td><b>[translate.EndDate;strconv=no]</b> </td>
 		<td>[exports.date_fin;strconv=no;protect=no]</td>
 	</tr>
 	<tr>

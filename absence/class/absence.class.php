@@ -1370,7 +1370,7 @@ class TRH_Absence extends TObjetStd {
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)";
 			
-			if($typeAbsence!= $langs->trans('All')){
+			if($typeAbsence!= 'Tous'){
 				$sql.=" AND a.type LIKE '".$typeAbsence."'";
 			}
 			
@@ -1394,7 +1394,7 @@ class TRH_Absence extends TObjetStd {
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)
 							";
-				if($typeAbsence!= $langs->trans('All')){
+				if($typeAbsence!= 'Tous'){
 					$sql.=" AND a.type LIKE '".$typeAbsence."' ";
 				}
 				$sql.=")";
@@ -1412,7 +1412,7 @@ class TRH_Absence extends TObjetStd {
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)
 							";
-				if($typeAbsence!= $langs->trans('All')){
+				if($typeAbsence!= 'Tous'){
 					$sql.=" AND a.type LIKE '".$typeAbsence."' ";
 				}
 				$sql.=")";
@@ -1436,7 +1436,7 @@ class TRH_Absence extends TObjetStd {
 							OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)";
-				if($typeAbsence!= $langs->trans('All')){
+				if($typeAbsence!= 'Tous'){
 					$sql.=" AND a.type LIKE '".$typeAbsence."' ";
 				}
 				$sql.=")";
@@ -1464,7 +1464,7 @@ class TRH_Absence extends TObjetStd {
 			if($idUserRecherche!=0){
 				$sql.=" AND a.fk_user=".$idUserRecherche;
 			}
-			if($typeAbsence!= $langs->trans('All')){
+			if($typeAbsence!= 'Tous'){
 				$sql.=" AND a.type LIKE '".$typeAbsence."'";
 			}
 			

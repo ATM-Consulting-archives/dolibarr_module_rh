@@ -16,13 +16,13 @@
 		</td>
 		<script>
 			$(document).ready(function(){
-				[onshow;block=begin;when [newRule.choixApplicationViewMode]== [trad.user]]
+				[onshow;block=begin;when [newRule.choixApplicationViewMode]== '[trad.user]']
 					$('#group').hide();
 				[onshow;block=end]
-				[onshow;block=begin;when [newRule.choixApplicationViewMode]== [trad.group]]
+				[onshow;block=begin;when [newRule.choixApplicationViewMode]== '[trad.group]']
 					$('#user').hide();
 				[onshow;block=end]
-				[onshow;block=begin;when [newRule.choixApplicationViewMode]== [trad.all]]
+				[onshow;block=begin;when [newRule.choixApplicationViewMode]== '[trad.all]']
 					$('#user, #group').hide();
 				[onshow;block=end]
 				

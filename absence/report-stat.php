@@ -94,6 +94,10 @@ function _fiche(&$ATMdb) {
 				'showStat'=>(int)isset($_REQUEST['showStat'])
 			)
 			,'translate' => array(
+				'Groups' => $langs->trans('Groups'),
+				'Users' => $langs->trans('Users'),
+				'StartDate' => $langs->trans('StartDate'),
+				'EndDate' => $langs->trans('EndDate'),
 				'UnCheckAllTypes' => $langs->trans('UncheckAllTypes'),
 				'CheckAllTypes' => $langs->trans('CheckAllTypes'),
 				'Generate' => $langs->trans('Generate'),

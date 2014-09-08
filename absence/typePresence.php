@@ -104,6 +104,18 @@
 			,'view'=>array(
 				'head'=>dol_get_fiche_head(adminCongesPrepareHead('compteur')  , 'typepresence', $langs->trans('AbsencesPresencesAdministration'))
 			)
+			,'translate' => array(
+				'Code' => $langs->trans('Code'),
+				'Wording' => $langs->trans('Wording'),
+				'Unit' => $langs->trans('Unit'),
+				'StartHour' => $langs->trans('StartHour'),
+				'EndHour' => $langs->trans('EndHour'),
+				'AccountingOfficerCode' => $langs->trans('AccountingOfficerCode'),
+				'ColorCode' => $langs->trans('ColorCode'),
+				'AskReservedAdmin' => $langs->trans('AskReservedAdmin'),
+				'AskDelete' => $langs->trans('AskDelete'),
+				'Register' => $langs->trans('Register')
+			)
 		)	
 		
 	);

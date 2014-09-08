@@ -5,13 +5,13 @@
 	<table class="border" style="width:100%;" >	
 			<thead>
 			<tr>
-				<th>Code</th>
-				<th>Libellé</th>
-				<th>unité</th>
-				<th>Code Comptable</th>
-				<th>Réservé Admin ?</th>
-				<th>Décompte uniquement<br />les jours ouvrés</th>
-				<th>Supprimer ?</th>
+				<th>[translate.Code]</th>
+				<th>[translate.Wording]</th>
+				<th>[translate.Unit]</th>
+				<th>[translate.AccountingOfficerCode]</th>
+				<th>[translate.AskReservedAdmin]</th>
+				<th>[translate.OnlyCountBusinessDay]</th>
+				<th>[translate.AskDelete]</th>
 				
 			</tr>
 			</thead>
@@ -35,11 +35,11 @@
 				<td>[typeAbsenceNew.admin; strconv=no]</td>
 				<td>[typeAbsenceNew.decompteNormal; strconv=no][typeAbsenceNew.isPresence; strconv=no]</td>
 				
-				<td>Nouveau</td>
+				<td>[translate.New]</td>
 			</tr>
 			</tfoot>
 	</table>
 	
 		<div class="tabsAction" >
-			<input type="submit" value="Enregistrer" name="save" class="button"  onclick="document.location.href='?id=[compteurGlobal.rowid]&action=view'">
+			<input type="submit" value="[translate.Register]" name="save" class="button"  onclick="document.location.href='?id=[compteurGlobal.rowid]&action=view'">
 		</div>	

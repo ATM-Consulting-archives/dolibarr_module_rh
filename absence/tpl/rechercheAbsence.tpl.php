@@ -4,26 +4,26 @@
 		<br/>
 		<table class="border" style="width:60%">	
 			<tr >
-				<td colspan="2"><b>Veuillez renseigner les paramètres pour la recherche des absences</b></td>	
+				<td colspan="2"><b>[translate.InformSearchAbsencesParameters;strconv=no]</b></td>	
 			</tr>
 			<tr >
-				<td> Date début</td> <td> [recherche.date_debut;block=tr;strconv=no;protect=no]</td>
+				<td> [translate.StartDate;strconv=no]</td> <td> [recherche.date_debut;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
-				<td> Date fin</td> <td> [recherche.date_fin;block=tr;strconv=no;protect=no]</td>
+				<td> [translate.EndDate;strconv=no]</td> <td> [recherche.date_fin;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			
 			<tr >
-				<td> Groupe</td> <td> [recherche.TGroupe;block=tr;strconv=no;protect=no]</td>
+				<td> [translate.Group;strconv=no]</td> <td> [recherche.TGroupe;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
-				<td> 	Utilisateur </td><td> [recherche.TUser;block=tr;strconv=no;protect=no]</td>
+				<td> [translate.User;strconv=no] </td><td> [recherche.TUser;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
-				<td> 	Type </td><td> [recherche.TTypeAbsence;block=tr;strconv=no;protect=no]</td>
+				<td> [translate.Type;strconv=no] </td><td> [recherche.TTypeAbsence;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
-				<td> Aucun congés</td> <td> [recherche.horsConges;block=tr;strconv=no;protect=no]</td>
+				<td> [translate.NoHolidays;strconv=no]</td> <td> [recherche.horsConges;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
 				<td colspan="2" style="text-align:center"> [recherche.btValider;block=tr;strconv=no;protect=no]</td>
@@ -33,7 +33,7 @@
 
 
 [onshow;block=begin;when [userCourant.droitRecherche]!=1]
-		Vous ne possédez pas les droits pour effectuer une recherche sur les absences des collaborateurs
+		[translate.NoRightsForSearchCollabAbsences;strconv=no]
 [onshow;block=end]
 
 

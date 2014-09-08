@@ -5,16 +5,16 @@
 	<table class="border" style="width:100%;" >	
 			<thead>
 			<tr>
-				<th>Code</th>
-				<th>Libellé</th>
-				<th>unité</th>
-				<th>heure de début</th>
-				<th>heure de fin</th>
+				<th>[translate.Code]</th>
+				<th>[translate.Wording]</th>
+				<th>[translate.Unit]</th>
+				<th>[translate.StartHour]</th>
+				<th>[translate.EndHour]</th>
 				
-				<th>Code Comptable</th>
-				<th>Code couleur</th>
-				<th>Réservé Admin ?</th>
-				<th>Supprimer ?</th>
+				<th>[translate.AccountingOfficerCode]</th>
+				<th>[translate.ColorCode]</th>
+				<th>[translate.AskReservedAdmin]</th>
+				<th>[translate.AskDelete]</th>
 				
 			</tr>
 			</thead>
@@ -50,5 +50,5 @@
 	</table>
 	
 		<div class="tabsAction" >
-			<input type="submit" value="Enregistrer" name="save" class="button"  onclick="document.location.href='?id=[compteurGlobal.rowid]&action=view'">
+			<input type="submit" value="[translate.Register]" name="save" class="button"  onclick="document.location.href='?id=[compteurGlobal.rowid]&action=view'">
 		</div>	

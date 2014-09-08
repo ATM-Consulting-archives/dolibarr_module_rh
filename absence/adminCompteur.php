@@ -314,7 +314,39 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'head'=>dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', $langs->trans('Absence'))
 			)
 			,'translate' => array(
-				'Year' => $langs->trans('Year')
+				'Year' 							=> $langs->trans('Year'),
+				'CurrentUser' 					=> $langs->trans('CurrentUser'),
+				'AcquiredOnExercise' 			=> $langs->trans('AcquiredOnExercise'),
+				'AcquiredSeniority' 			=> $langs->trans('AcquiredSeniority'),
+				'AcquiredOutOfPeriod' 			=> $langs->trans('AcquiredOutOfPeriod'),
+				'OpenPostponement' 				=> $langs->trans('OpenPostponement'),
+				'TotalHolidays' 				=> $langs->trans('TotalHolidays'),
+				'HolidaysTaken' 				=> $langs->trans('HolidaysTaken'),
+				'RemainingBefore' 				=> $langs->trans('RemainingBefore'),
+				'AcquiredExercise' 				=> $langs->trans('AcquiredExercise'),
+				'HolidaysTaken' 				=> $langs->trans('HolidaysTaken'),
+				'NbDaysAcquiredByMonth' 		=> $langs->trans('NbDaysAcquiredByMonth'),
+				'LastClosingHoliday' 			=> $langs->trans('LastClosingHoliday'),
+				'CounterCumulatedDayOff' 		=> $langs->trans('CounterCumulatedDayOff'),
+				'CumulatedDayOffAcquired' 		=> $langs->trans('CumulatedDayOffAcquired'),
+				'CumulatedDayOffTaken' 			=> $langs->trans('CumulatedDayOffTaken'),
+				'PostponedCumulatedDayOff' 		=> $langs->trans('PostponedCumulatedDayOff'),
+				'CumulatedDayOffToTake' 		=> $langs->trans('CumulatedDayOffToTake'),
+				'CounterNonCumulatedDayOff' 	=> $langs->trans('CounterNonCumulatedDayOff'),
+				'NonCumulatedDayOffAcquired' 	=> $langs->trans('NonCumulatedDayOffAcquired'),
+				'NonCumulatedDayOffTaken' 		=> $langs->trans('NonCumulatedDayOffTaken'),
+				'PostponedNonCumulatedDayOff' 	=> $langs->trans('PostponedNonCumulatedDayOff'),
+				'AcquisitionMethodOfDays' 		=> $langs->trans('AcquisitionMethodOfDays'),
+				'CollabJob' 					=> $langs->trans('CollabJob'),
+				'AcquisitionType' 				=> $langs->trans('AcquisitionType'),
+				'AcquiredDaysOffPerMonth' 		=> $langs->trans('AcquiredDaysOffPerMonth'),
+				'YearlyCumulatedDaysOff' 		=> $langs->trans('YearlyCumulatedDaysOff'),
+				'YearlyNonCumulatedDaysOff' 	=> $langs->trans('YearlyNonCumulatedDaysOff'),
+				'DaysOffPostponement' 			=> $langs->trans('DaysOffPostponement'),
+				'LastClosingDayOff' 			=> $langs->trans('LastClosingDayOff'),
+				'Register' 						=> $langs->trans('Register'),
+				'Cancel' 						=> $langs->trans('Cancel'),
+				'Modify' 						=> $langs->trans('Modify')
 			)
 		)	
 		

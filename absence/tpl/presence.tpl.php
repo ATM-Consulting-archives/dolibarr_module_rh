@@ -19,41 +19,41 @@
 			<table class="border" style="width:40%">
 				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='1']
 				<tr>
-					<td>Utilisateur</td>
+					<td>[translate.User;strconv=no]</td>
 					<td>[absenceCourante.userAbsence;strconv=no;protect=no]</td>
 				</tr>	
 				[onshow;block=end]
 				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='0']
 				<tr>
-					<td>Utilisateur Courant</td>
+					<td>[translate.CurrentUser;strconv=no]</td>
 					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
 					[absenceCourante.userAbsenceCourant;strconv=no;protect=no]
 				</tr>
 				[onshow;block=end]	
 				<tr>
-					<td>Type de présence</td>
+					<td>[translate.PresenceType;strconv=no]</td>
 					<td>[absenceCourante.comboType;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Date début</td>
+					<td>[translate.StartDate;strconv=no]</td>
 			 		<td>[absenceCourante.date_debut;strconv=no;protect=no]&nbsp; &nbsp;[absenceCourante.ddMoment;strconv=no;protect=no]&nbsp; &nbsp;[absenceCourante.hourStart;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>Date fin</td>
+					<td>[translate.EndDate;strconv=no]</td>
 			 		<td>[absenceCourante.date_fin;strconv=no;protect=no]&nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]&nbsp; &nbsp;[absenceCourante.hourEnd;strconv=no;protect=no]</td>
 				</tr>
 				
 				<tr>
-					<td>Commentaire</td>
+					<td>[translate.Comment;strconv=no]</td>
 					<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
 				</tr>
 					<tr>
-						<td>Créée le </td>
+						<td>[translate.CreatedThe;strconv=no] </td>
 						<td>[absenceCourante.dt_cre;strconv=no;protect=no]</td>
 					</tr>
 					[onshow;block=begin;when [absenceCourante.time_validation]+-0 ]
 					<tr>
-						<td>Validée le </td>
+						<td>[translate.ValidatedThe;strconv=no] </td>
 						<td>[absenceCourante.date_validation;strconv=no;protect=no] par [absenceCourante.userValidation]</td>
 					</tr>
 					[onshow;block=end]
@@ -65,16 +65,16 @@
 			
 				[onshow;block=begin;when [view.mode]=='edit']
 					<br>
-					<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
+					<input type="submit" value="[translate.Register;strconv=no]" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
 				[onshow;block=end]
 				
 				
 				[onshow;block=begin;when [view.mode]!='edit']
 					[onshow;block=begin;when [userCourant.valideurConges]=='1']
 					
-						<a class="butAction" id="action-update"  onclick="if (window.confirm('Voulez-vous vraiment accepter la demande d\'absence ?')){document.location.href='?action=accept&id=[absenceCourante.id]'};">Accepter</a>	
-						<span class="butActionDelete" id="action-delete"  onclick="if (window.confirm('Voulez-vous vraiment refuser la demande d\'absence ?')){document.location.href='?action=refuse&id=[absenceCourante.id]'};">Refuser</span>
-						<a style='width:30%' class="butAction" id="action-update"  onclick="if (window.confirm('Voulez-vous vraiment envoyer la demande d\'absence au valideur supérieur ?')){document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'};">Envoyer au valideur supérieur</a>	
+						<a class="butAction" id="action-update"  onclick="if (window.confirm('[translate.ConfirmAcceptAbsenceRequest;strconv=no]')){document.location.href='?action=accept&id=[absenceCourante.id]'};">[translate.Accept;strconv=no]</a>	
+						<span class="butActionDelete" id="action-delete"  onclick="if (window.confirm('[translate.ConfirmRefuseAbsenceRequest;strconv=no]')){document.location.href='?action=refuse&id=[absenceCourante.id]'};">[translate.Refuse;strconv=no]</span>
+						<a style='width:30%' class="butAction" id="action-update"  onclick="if (window.confirm('[translate.ConfirmSendToSuperiorAbsenceRequest;strconv=no]')){document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'};">[translate.ConfirmSendToSuperiorAbsenceRequest;strconv=no]</a>	
 									
 					[onshow;block=end]
 				[onshow;block=end]
@@ -84,7 +84,7 @@
 
 		[onshow;block=begin;when [view.mode]!='edit']
 				[onshow;block=begin;when [absenceCourante.droitSupprimer]==1]
-						<span class="butActionDelete" id="action-delete"  onclick="if (window.confirm('Voulez-vous vraiment supprimer la demande d\'absence ?')){document.location.href='?action=delete&id=[absenceCourante.id]'};">Supprimer</span>
+						<span class="butActionDelete" id="action-delete"  onclick="if (window.confirm('[translate.ConfirmDeleteAbsenceRequest;strconv=no]')){document.location.href='?action=delete&id=[absenceCourante.id]'};">[translate.Delete;strconv=no]</span>
 				[onshow;block=end]			
 		[onshow;block=end]
 		<div style="clear:both;"></div>
@@ -96,10 +96,10 @@
 		[absenceCourante.titreDerAbsence;strconv=no;protect=no] 
 		<table  class="liste formdoc noborder" style="width:100%">
 				<tr class="liste_titre">
-					<td><b>Date de début</b></td>
-					<td><b>Date de fin</b></td>
-					<td><b>Type d'absence</b></td>
-					<td><b>Etat</b></td>
+					<td><b>[translate.StartDate;strconv=no]</b></td>
+					<td><b>[translate.EndDate;strconv=no]</b></td>
+					<td><b>[translate.AbsenceType;strconv=no]</b></td>
+					<td><b>[translate.State;strconv=no]</b></td>
 				</tr>
 				<tbody id="TRecapAbs">
 					
