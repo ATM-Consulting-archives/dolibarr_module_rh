@@ -123,7 +123,7 @@ class InterfaceAbsenceWorkflow
 			
 			$this->_loadDureeAllAbsenceUser($ATMdb, $object);
 			
-			echo $this->_absenceEstValide($ATMdb, $object);exit;
+			$this->_absenceEstValide($ATMdb, $object);
 			
 		}
 		
