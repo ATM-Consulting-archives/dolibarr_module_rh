@@ -78,6 +78,10 @@ function _mail_valideur(&$ATMdb, $fk_user, $firstname,$name, $sendto) {
 						,'prenom'=>$firstname
 						,'nbr'=>$nbrNdf
 					)
+					,'translate' => array(
+						'Hello' => $langs->trans('Hello'),
+						'NbAbsencesRequestWaitingValidation' => $langs->trans('NbAbsencesRequestWaitingValidation', $nbrNdF)
+					)
 				)
 			);
 			

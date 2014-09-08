@@ -1,6 +1,5 @@
-
 <hr>
 
-<p>Bonjour [validation.prenom;strconv=no;protect=no] [validation.nom;strconv=no;protect=no].</p>
+<p>[translate.Hello;strconv=no] [validation.prenom;strconv=no;protect=no] [validation.nom;strconv=no;protect=no].</p>
 
-<p>Vous avez <strong>[validation.nbr;strconv=no;protect=no]</strong> demandes d'absence en attente de validation.</p>
+<p>[translate.NbAbsencesRequestWaitingValidation;strconv=no]</p>

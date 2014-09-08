@@ -4,19 +4,19 @@
 		<br/>
 		<table class="border" style="width:60%">	
 			<tr >
-				<td colspan="2"><b>Veuillez renseigner les paramètres pour la recherche des absences</b></td>	
+				<td colspan="2"><b>[translate.InformSearchAbsencesParameters;strconv=no]</b></td>	
 			</tr>
 			<tr >
-				<td> Date début</td> <td> [recherche.date_debut;block=tr;strconv=no;protect=no]</td>
+				<td> [translate.StartDate;strconv=no]</td> <td> [recherche.date_debut;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
-				<td> Date fin</td> <td> [recherche.date_fin;block=tr;strconv=no;protect=no]</td>
+				<td> [translate.EndDate;strconv=no]</td> <td> [recherche.date_fin;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
-				<td> Groupe</td> <td> [recherche.TGroupe;block=tr;strconv=no;protect=no]</td>
+				<td> [translate.Group;strconv=no]</td> <td> [recherche.TGroupe;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
-				<td>Ou Utilisateur</td> <td> [recherche.TUser;block=tr;strconv=no;protect=no]</td>
+				<td>[translate.Or;strconv=no] [translate.User;strconv=no]</td> <td> [recherche.TUser;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr >
 				<td colspan="2" style="text-align:center"> [recherche.btValider;block=tr;strconv=no;protect=no]</td>

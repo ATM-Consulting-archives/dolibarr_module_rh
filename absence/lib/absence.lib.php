@@ -304,7 +304,14 @@ function mailConges(&$absence,$presence=false){
 					,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 					
 				)
+				,'translate' => array(
+					'Hello' => $langs->trans('Hello'),
+					'MailYourRequestOf' => $langs->trans('MailYourRequestOf'),
+					'DateInterval' => $langs->trans('DateInterval', php2dmy($absence->date_debut), php2dmy($absence->date_fin)),
+					'MailActionCreate' => $langs->trans('MailActionCreate'),
+					'MailStateIsNow' => $langs->trans('MailStateIsNow')
 				)
+			)
 		);
 	}else if($absence->etat=='Validee'){
 		if(!$presence){
@@ -326,16 +333,23 @@ function mailConges(&$absence,$presence=false){
 					,'date_debut'=>php2dmy($absence->date_debut)
 					,'date_fin'=>php2dmy($absence->date_fin)
 					,'libelle'=>utf8_encode($absence->libelle)
-					,'libelleEtat'=>utf8_encode($absence->libelleEtat)
-					*/'nom'=> htmlentities($name, ENT_COMPAT | ENT_HTML401, 'ISO-8859-1')
-                                        ,'prenom'=> htmlentities($firstname, ENT_COMPAT | ENT_HTML401, 'ISO-8859-1')
-                                        ,'date_debut'=> php2dmy($absence->date_debut)
-                                        ,'date_fin'=>php2dmy($absence->date_fin)
-                                        ,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
-                                        ,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+					,'libelleEtat'=>utf8_encode($absence->libelleEtat)*/
+					'nom'=> htmlentities($name, ENT_COMPAT | ENT_HTML401, 'ISO-8859-1')
+	                ,'prenom'=> htmlentities($firstname, ENT_COMPAT | ENT_HTML401, 'ISO-8859-1')
+	                ,'date_debut'=> php2dmy($absence->date_debut)
+	                ,'date_fin'=>php2dmy($absence->date_fin)
+	                ,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+	                ,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 					,'commentaireValideur'=>utf8_encode($absence->commentaireValideur)
 				)
+				,'translate' => array(
+					'Hello' => $langs->trans('Hello'),
+					'SuperiorComment' => $langs->trans('SuperiorComment'),
+					'MailYourRequestOf' => $langs->trans('MailYourRequestOf'),
+					'DateInterval' => $langs->trans('DateInterval', php2dmy($absence->date_debut), php2dmy($absence->date_fin)),
+					'MailActionChange' => $langs->trans('MailActionChange', htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8'))
 				)
+			)
 		);
 	}
 	else if($absence->etat=='Refusee'){
@@ -365,6 +379,13 @@ function mailConges(&$absence,$presence=false){
                                         ,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
                                         ,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 					,'commentaireValideur'=>utf8_encode($absence->commentaireValideur)
+				)
+				,'translate' => array(
+					'Hello' => $langs->trans('Hello'),
+					'MailYourRequestOf' => $langs->trans('MailYourRequestOf'),
+					'DateInterval' => $langs->trans('DateInterval', php2dmy($absence->date_debut), php2dmy($absence->date_fin)),
+					'MailActionChange' => $langs->trans('MailActionChange', htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')),
+					'ValidatorCommentRequestDenied' => $langs->trans('ValidatorCommentRequestDenied')
 				)
 			)
 		);
@@ -454,6 +475,14 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
 				,'date_fin'=>php2dmy($absence->date_fin)
 				,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 				,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+			)
+			,'translate' => array(
+				'Hello' => $langs->trans('Hello'),
+				'MailNewRequest' => $langs->trans('MailNewRequest'),
+				'DateInterval' => $langs->trans('DateInterval', php2dmy($absence->date_debut), php2dmy($absence->date_fin)),
+				'MailActionCreate' => $langs->trans('MailActionCreate'),
+				'By' => $langs->trans('By'),
+				'ValidatorMustWatchIt' => $langs->trans('ValidatorMustWatchIt')
 			)
 		)
 	);

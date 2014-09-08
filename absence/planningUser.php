@@ -109,6 +109,14 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', $langs->trans('Schedule'))
 			)
+			,'translate' => array(
+				'InformSearchAbsencesParameters' => $langs->trans('InformSearchAbsencesParameters'),
+				'StartDate' => $langs->trans('StartDate'),
+				'EndDate' => $langs->trans('EndDate'),
+				'Group' => $langs->trans('Group'),
+				'Or' => $langs->trans('Or'),
+				'User' => $langs->trans('User')
+			)
 		)	
 	);
 	

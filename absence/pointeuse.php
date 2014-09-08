@@ -226,6 +226,19 @@ function _fiche(&$ATMdb, &$pointeuse, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(pointeusePrepareHead(), 'fiche', $langs->trans('Clocking'))
 			)
+			,'translate' => array(
+				'MorningHourOfArrival' => $langs->trans('MorningHourOfArrival'),
+				'MorningDepartureTime' => $langs->trans('MorningDepartureTime'),
+				'AfternoonHourOfArrival' => $langs->trans('AfternoonHourOfArrival'),
+				'AfternoonDepartureTime' => $langs->trans('AfternoonDepartureTime'),
+				'PresenceTimeNoted' => $langs->trans('PresenceTimeNoted'),
+				'Day' => $langs->trans('Day'),
+				'Cancel' => $langs->trans('Cancel'),
+				'Register' => $langs->trans('Register'),
+				'Modify' => $langs->trans('Modify'),
+				'Delete' => $langs->trans('Delete'),
+				'ConfirmDeleteScore' => $langs->trans('ConfirmDeleteScore')
+			)
 		)	
 	);
 	

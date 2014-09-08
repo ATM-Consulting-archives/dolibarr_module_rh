@@ -1,5 +1,5 @@
-<p>Bonjour [absence.prenom;strconv=no;protect=no] [absence.nom;strconv=no;protect=no],</p>
+<p>[translate.Hello;strconv=no] [absence.prenom;strconv=no;protect=no] [absence.nom;strconv=no;protect=no],</p>
 
-<p>Votre demande de <strong>[absence.libelle;strconv=no;protect=no]</strong> du [absence.date_debut;strconv=no;protect=no] au [absence.date_fin;strconv=no;protect=no] vient d'&ecirc;tre cr&eacute;&eacute;e.</p>
+<p>[translate.MailYourRequestOf;strconv=no] <strong>[absence.libelle;strconv=no;protect=no]</strong> [translate.DateInterval;strconv=no] [translate.MailActionCreate;strconv=no].</p>
 
-<p>Son 	&eacute;tat est d&eacute;sormais <strong>[absence.libelleEtat;strconv=no;protect=no]</strong></p>
+<p>[translate.MailStateIsNow;strconv=no] <strong>[absence.libelleEtat;strconv=no;protect=no]</strong></p>
