@@ -43,7 +43,7 @@
 		
 			<div id="agenda">
 				 <script type="text/javascript">
-        $(document).ready(function() {     
+        $(document).ready(function() {
             var view="month";          
            
            var DATA_FEED_URL = "./script/absenceCalendarDataFeed.php?idUser=[absence.idUser;strconv=no;protect=no]&idGroupe=[absence.idGroupe;strconv=no;protect=no]&typeAbsence=[absence.typeAbsence;strconv=no;protect=no]&withAgenda=[view.agendaEnabled]"
@@ -67,7 +67,7 @@
                 ,enableDrag :false   
                 /*,height:false*/ 
             };
-            
+                        
             op.height = document.documentElement.clientHeight - 400;
 			if(op.height<500)op.height=500;
 
@@ -132,7 +132,7 @@
                 
                 $.alerts.okButton="Ok";  
                 $.alerts.cancelButton="Cancel";  
-                hiConfirm([absence.confirm_delete;strconv=no;protect=no], [absence.confirm;strconv=no;protect=no],function(r){ r && callback(0);});           
+                hiConfirm('[absence.confirm_delete;strconv=no;protect=no]', '[absence.confirm;strconv=no;protect=no]',function(r){ r && callback(0);});           
             }
             function wtd(p)
             {
