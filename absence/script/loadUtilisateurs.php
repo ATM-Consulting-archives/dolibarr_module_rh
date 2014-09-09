@@ -7,7 +7,7 @@ if(isset($_REQUEST['groupe'])) {
 		//echo $_REQUEST['type'];
 		$TUser = array();
 		$ATMdb =new TPDOdb;
-		$TUser[0] = $langs->trans('All');	
+		$TUser[0] = $langs->trans('AllThis');	
 		if($_REQUEST['groupe']==0){
 			$sqlReq="SELECT u.rowid,u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u";
 		}else{

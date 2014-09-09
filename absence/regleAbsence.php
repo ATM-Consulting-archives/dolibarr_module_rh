@@ -197,7 +197,7 @@ function _fiche(&$ATMdb, $regle, $mode) {
 			,'trad' => array(
 				'user' => $langs->trans('User'),
 				'group' => $langs->trans('Group'),
-				'all' => $langs->trans('All')
+				'all' => $langs->trans('AllThis')
 			)
 		)	
 	);

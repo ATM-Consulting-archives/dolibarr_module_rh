@@ -373,7 +373,7 @@ class modAbsence extends DolibarrModules
 		// Example to declare a new Top Menu entry and its Left menu entry:
 		$this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
 								'type'=>'top',			                // This is a Top menu entry
-								'titre'=>$langs->trans('Abs./Présence'),
+								'titre'=>$langs->trans('TitleAbsPresence'),
 								'mainmenu'=>'absence',
 								'leftmenu'=>'',
 								'url'=>'/absence/calendrierAbsence.php?',
@@ -403,7 +403,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Planning utilisateurs'),
+		        	'titre'=> $langs->trans('UserPlanning'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/planningUser.php?action=view',
@@ -419,7 +419,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Emplois du temps'),
+		        	'titre'=> $langs->trans('Schedules'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/emploitemps.php',
@@ -435,7 +435,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Demande d\'absence'),
+		        	'titre'=> $langs->trans('AbsenceRequest'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/absence.php?action=new',
@@ -450,7 +450,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Signalement de présences'),
+		        	'titre'=> $langs->trans('PresencesReport'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/presence.php?action=new',
@@ -465,7 +465,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Vos abs./présence'),
+		        	'titre'=> $langs->trans('YourAbsPresences'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/absence.php',
@@ -483,7 +483,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Abs./Presence à valider'),
+		        	'titre'=> $langs->trans('AbsPresencesWaitingValidation'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/absence.php?action=listeValidation',
@@ -499,7 +499,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Pointeuse'),
+		        	'titre'=> $langs->trans('PunchClock'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/pointeuse.php',
@@ -514,7 +514,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Toutes les abs./présences'),
+		        	'titre'=> $langs->trans('AllAbsPresences'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/absence.php?action=listeAdmin',
@@ -530,7 +530,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Compteurs jours acquis'),
+		        	'titre'=> $langs->trans('CounterAcquiredDays'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/compteur.php?action=view',
@@ -548,7 +548,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Administration compteurs'),
+		        	'titre'=> $langs->trans('CountersAdministration'),
 		        	'mainmenu'=> 'absence',
 		        	'leftmenu'=> 'admin',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/compteur.php?action=compteurAdmin',
@@ -564,7 +564,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=admin',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Administration générale des congés'),
+		        	'titre'=> $langs->trans('GlobalHolidayAdministration'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> '',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/adminConges.php?action=view',
@@ -579,7 +579,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=admin',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Recherche absences'),
+		        	'titre'=> $langs->trans('SeekAbsences'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> '',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/rechercheAbsence.php?action=view',
@@ -596,7 +596,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Règles abs./présences'),
+		        	'titre'=> $langs->trans('AbsPresencesRules'),
 		        	'mainmenu'=> 'absence',
 		        	'leftmenu'=> 'regle',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/regleAbsence.php',
@@ -613,7 +613,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> 'Documents règles abs./présence',
+		        	'titre'=> $langs->trans('AbsPresencesRulesDocuments'),
 		        	'mainmenu'=> 'absence',
 		        	'leftmenu'=> 'test',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/documentRegle.php',
@@ -631,7 +631,7 @@ class modAbsence extends DolibarrModules
 		 $this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=report,fk_leftmenu=exports',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Statistiques absences découpé'),
+		        	'titre'=> $langs->trans('AbsencesStatsDetailled'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> '',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/report-stat.php',
@@ -647,7 +647,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Tickets resto'),
+		        	'titre'=> $langs->trans('RestaurantTickets'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/ticketResto.php',
@@ -663,7 +663,7 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('Temps travaillés'),
+		        	'titre'=> $langs->trans('WorkedTimes'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/declarationCadre.php',

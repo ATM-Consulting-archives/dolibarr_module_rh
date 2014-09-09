@@ -56,14 +56,14 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	}
 
 	$TGroupe  = array();
-	$TGroupe[0]  = $langs->trans('All');
+	$TGroupe[0]  = $langs->trans('AllThis');
 	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
 		$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 	}
 	
-	$TUser=array('Tous');
+	$TUser=array($langs->trans('AllThis'));
 	$sql=" SELECT DISTINCT u.rowid, u.lastname, u.firstname 
 			FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON (u.rowid=ug.fk_user)
 			";
