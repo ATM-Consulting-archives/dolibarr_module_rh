@@ -191,7 +191,7 @@ global $db,$langs,$conf;
 						'PossibleObservations' => $langs->trans('PossibleObservations'),
 						'RespectGivenDatasInDeclaration' => $langs->trans('RespectGivenDatasInDeclaration'),
 						'To' => $langs->trans('To'),
-						'The' => $langs->trans('The'),
+						'MadeTheDate' => $langs->trans('MadeTheDate', date('d/m/Y')),
 						'Signature' => $langs->trans('Signature')
 					)
 				)

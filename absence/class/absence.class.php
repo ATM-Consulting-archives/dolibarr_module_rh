@@ -218,7 +218,7 @@ class TRH_Absence extends TObjetStd {
 	function recupererTUser(&$ATMdb){
 		global $conf, $langs;
 		$TUser=array();
-		$TUser[0] = $langs->trans('All');	
+		$TUser[0] = $langs->trans('AllThis');	
 		$sqlReqUser="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` 
 						ORDER BY lastname";
 		$ATMdb->Execute($sqlReqUser);
@@ -2221,7 +2221,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		$this->TUser = array();
 		$this->TGroup  = array();
 		$this->TChoixApplication = array(
-			'all'=> $langs->trans('All')
+			'all'=> $langs->trans('AllThis')
 			,'group'=> $langs->trans('ApplicationChoiceGroup')
 			,'user'=> $langs->trans('ApplicationChoiceUser')
 		);

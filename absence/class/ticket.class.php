@@ -20,7 +20,7 @@ class TRH_TicketResto extends TObjetStd {
 		$this->TUser = array();
 		$this->TGroup  = array();
 		$this->TChoixApplication = array(
-			'all'=> $langs->trans('All')
+			'all'=> $langs->trans('AllThis')
 			,'group'=> $langs->trans('ApplicationChoiceGroup')
 			,'user'=> $langs->trans('ApplicationChoiceUser')
 		);

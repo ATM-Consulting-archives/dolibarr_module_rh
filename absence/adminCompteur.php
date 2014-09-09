@@ -346,7 +346,9 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				'LastClosingDayOff' 			=> $langs->trans('LastClosingDayOff'),
 				'Register' 						=> $langs->trans('Register'),
 				'Cancel' 						=> $langs->trans('Cancel'),
-				'Modify' 						=> $langs->trans('Modify')
+				'Modify' 						=> $langs->trans('Modify'),
+				'Total'							=> $langs->trans('Total'),
+				'NonCumulatedDaysOffToTake'		=> $langs->trans('NonCumulatedDaysOffToTake')
 			)
 		)	
 		

@@ -100,7 +100,8 @@
 				'AskReservedAdmin' => $langs->trans('AskReservedAdmin'),
 				'OnlyCountBusinessDay' => $langs->trans('OnlyCountBusinessDay'),
 				'New' => $langs->trans('New'),
-				'Register' => $langs->trans('Register')
+				'Register' => $langs->trans('Register'),
+				'AskDelete' => $langs->trans('AskDelete')
 			)
 		)	
 		
