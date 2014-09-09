@@ -173,7 +173,7 @@ class TRH_Absence extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		
-		this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
+		$this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
 		$this->Tjoursem = array('dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'); 
 		
 		$ATMdb=new TPDOdb;

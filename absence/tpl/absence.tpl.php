@@ -83,7 +83,7 @@
 					[onshow;block=begin;when [absenceCourante.time_validation]+-0 ]
 					<tr>
 						<td>[translate.ValidatedThe;strconv=no;protect=no]</td>
-						<td>[absenceCourante.date_validation;strconv=no;protect=no] [translate.By;strconv=no;protect=no] [absenceCourante.userValidation]</td>
+						<td>[absenceCourante.date_validation;strconv=no;protect=no] [translate.AbsenceBy;strconv=no;protect=no] [absenceCourante.userValidation]</td>
 					</tr>
 					[onshow;block=end]
 				

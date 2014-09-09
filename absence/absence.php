@@ -882,6 +882,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'SendToSuperiorValidator' => $langs->trans('SendToSuperiorValidator'),
 				'ConfirmDeleteAbsenceRequest' => $langs->trans('ConfirmDeleteAbsenceRequest'),
 				'Delete' => $langs->trans('Delete')
+				,'AbsenceBy' => $langs->trans('AbsenceBy')
 			)
 			
 		)	
