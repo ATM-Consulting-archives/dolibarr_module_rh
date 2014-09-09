@@ -324,7 +324,7 @@ function _ticket(&$ATMdb) {
 	
 	$idGroup = __get('groupe', 0, 'int');
 
-	$TTicketResto = TRH_TicketResto::getTicketFor($ATMdb, $date_debut, $date_fin, __get('groupe', 0, 'int'), __get('fk_user', 0, 'int'));
+	$TTicketResto = TRH_TicketResto::getTicketFor($ATMdb, $date_debut, $date_fin, $idGroup, __get('fk_user', 0, 'int'));
 
 	$first=true;
 
@@ -345,7 +345,9 @@ function _ticket(&$ATMdb) {
 		$ville = $var[3];
 	
 		
-	} else {
+		$pointlivraison = $var[4];	
+	}
+	else{
 		
 		$rs =  $conf->global->MAIN_INFO_SOCIETE_NOM;
 		$address =  $conf->global->MAIN_INFO_SOCIETE_ADDRESS;
@@ -355,6 +357,12 @@ function _ticket(&$ATMdb) {
 		
 	}
 	
+	
+	$autoPL = false;
+	if(empty($pointlivraison)) {
+		$pointlivraison= $rs.' '.$address.' '.$cp.' '.$ville;
+		$autoPL = true;
+	}
 
 	dol_include_once('/core/class/extrafields.class.php');
     $extrafields = new ExtraFields($db);
@@ -397,12 +405,13 @@ function _ticket(&$ATMdb) {
 		
 		if($u->array_options['options_ticketresto_ok']==1) {
 			
+			if(!empty($u->array_options['options_ticketresto_pointlivraison'])) $pointlivraison = $u->array_options['options_ticketresto_pointlivraison'];
+			
 			?><td align="right"><?php echo $stat['presence'] ?></td>
 			<td align="right"><?php echo $stat['ndf'] ?></td>
 			<td align="right"><?php echo !empty($stat['ndf_suspicious']) ? '<strong style="color:red;">'.$stat['ndf_suspicious'].'</strong>' : '' ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?> de <?php echo (int)$conf->global->RH_MONTANT_TICKET_RESTO ?> centimes</td>
-			
-			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]', $rs.' '.$address.' '.$cp.' '.$ville, 10,255)  ?></td>
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]',$pointlivraison, 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau1]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau2]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][matricule]', $u->array_options['options_COMPTE_TIERS'], 10,255)  ?></td>

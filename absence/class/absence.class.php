@@ -173,25 +173,8 @@ class TRH_Absence extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 		
-		$this->TJour = array(
-			$langs->trans('AbsenceMonday'), 
-			$langs->trans('AbsenceTuesday'), 
-			$langs->trans('AbsenceWednesday'), 
-			$langs->trans('AbsenceThursday'), 
-			$langs->trans('AbsenceFriday'), 
-			$langs->trans('AbsenceSaturday'), 
-			$langs->trans('AbsenceSunday')
-		);
-		
-		$this->Tjoursem = array(
-			$langs->trans('AbsenceSunday'), 
-			$langs->trans('AbsenceMonday'), 
-			$langs->trans('AbsenceTuesday'), 
-			$langs->trans('AbsenceWednesday'), 
-			$langs->trans('AbsenceThursday'), 
-			$langs->trans('AbsenceFriday'), 
-			$langs->trans('AbsenceSaturday')
-		);
+		this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
+		$this->Tjoursem = array('dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'); 
 		
 		$ATMdb=new TPDOdb;
 				
@@ -396,16 +379,7 @@ class TRH_Absence extends TObjetStd {
 	function calculDureeAbsenceParAddition(&$ATMdb, $dateN=0) {
 		global $TJourNonTravailleEntreprise, $langs;
 		
-		$TJourSemaine = array(
-			$langs->trans('AbsenceSunday'), 
-			$langs->trans('AbsenceMonday'), 
-			$langs->trans('AbsenceTuesday'), 
-			$langs->trans('AbsenceWednesday'), 
-			$langs->trans('AbsenceThursday'), 
-			$langs->trans('AbsenceFriday'), 
-			$langs->trans('AbsenceSaturday')
-		); 
-		
+		$TJourSemaine = array('dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi');
 		$TJourFerie = $this->getJourFerie($ATMdb);	
 		
 		$duree = 0;
