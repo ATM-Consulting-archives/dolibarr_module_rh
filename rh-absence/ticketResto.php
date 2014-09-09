@@ -258,7 +258,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			
 	</style>
 	
-	<?
+	<?php
 	
 	echo $form->end_form();
 	
@@ -277,7 +277,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	?></div>
 	
 	
-	<?
+	<?php
 	
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));

@@ -53,7 +53,27 @@ class TRH_TicketResto extends TObjetStd {
 		$ATMdb->Execute($sql);
 		$obj = $ATMdb->Get_line();
 		
-		return ($obj->nb!=0);
+		if($obj->nb>0) return true;
+		
+		
+		$sql = "SELECT count(*) as nb 
+		FROM ".MAIN_DB_PREFIX."ndfp_det nd 
+				INNER JOIN ".MAIN_DB_PREFIX."ndfp_det_link_user ndl ON (nd.rowid=ndl.fk_ndfpdet)
+		WHERE ndl.fk_user=".$fk_user." AND nd.fk_exp IN (".$conf->global->RH_NDF_TICKET_RESTO.") ";
+		
+		if($withSuspicisous) {
+			$sql .= " AND ((nd.dated<='".$date."' AND nd.datef>='".$date."') OR (nd.datec LIKE '".$date."%') ) ";
+		}
+		else{
+			$sql .= " AND nd.dated<='".$date."' AND nd.datef>='".$date."'";
+		}
+		
+		$ATMdb->Execute($sql);
+		$obj = $ATMdb->Get_line();
+		
+		if($obj->nb>0) return true;
+		
+		return false;
 		
 	}
 	
