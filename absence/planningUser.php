@@ -13,9 +13,6 @@
 	$ATMdb->close();
 	
 	
-	
-	
-	
 function _planningResult(&$ATMdb, &$absence, $mode) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('', $langs->trans('Summary'));
@@ -59,7 +56,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	}
 
 	$TGroupe  = array();
-	$TGroupe[0]  = 'Tous';
+	$TGroupe[0]  = $langs->trans('All');
 	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
