@@ -58,7 +58,8 @@ class TRH_TicketResto extends TObjetStd {
 		
 		$sql = "SELECT count(*) as nb 
 		FROM ".MAIN_DB_PREFIX."ndfp_det nd 
-				INNER JOIN ".MAIN_DB_PREFIX."ndfp_det_link_user ndl ON (nd.rowid=ndl.fk_ndfpdet)
+			INNER JOIN ".MAIN_DB_PREFIX."ndfp n ON (nd.fk_ndfp=n.rowid)
+			INNER JOIN ".MAIN_DB_PREFIX."ndfp_det_link_user ndl ON (nd.rowid=ndl.fk_ndfpdet)
 		WHERE ndl.fk_user=".$fk_user." AND nd.fk_exp IN (".$conf->global->RH_NDF_TICKET_RESTO.") ";
 		
 		if($withSuspicisous) {
@@ -67,7 +68,7 @@ class TRH_TicketResto extends TObjetStd {
 		else{
 			$sql .= " AND nd.dated<='".$date."' AND nd.datef>='".$date."'";
 		}
-		
+//var_dump($sql);	print '<br/>';
 		$ATMdb->Execute($sql);
 		$obj = $ATMdb->Get_line();
 		
