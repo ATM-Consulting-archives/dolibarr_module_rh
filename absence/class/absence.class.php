@@ -139,8 +139,81 @@ class TRH_Compteur extends TObjetStd {
 		return false;
 	}
 	
+	
+	function add(&$ATMdb, $type, $duree, $motif) {
+		
+		if($type=="rttcumule"){
+			$this->rttCumulePris += $duree;
+			$this->rttCumuleTotal -= $duree; 
+			
+			$this->save($ATMdb);
+			
+			TRH_CompteurLog::log($ATMdb, $this->getId(), $type, $duree, $motif);
+			
+		}
+		else if($type=='rttnoncumule') {
+			$this->rttNonCumulePris += $duree;
+			$this->rttNonCumuleTotal -= $duree; 
+			
+			$this->save($ATMdb);
+			
+			TRH_CompteurLog::log($ATMdb, $this->getId(), $type, $duree, $motif);
+		}
+		else if($type=="conges"||$type=="cppartiel"){	//autre que RTT : décompte les congés
+					
+			list($congesPrisNM1, $congesPrisN) = $duree;		
+					
+			$this->congesPrisNM1 += $congesPrisNM1;
+			$this->congesPrisN += $congesPrisN; 
+			
+			$this->save($ATMdb);
+			
+			TRH_CompteurLog::log($ATMdb, $this->getId(), $type, $congesPrisNM1, $motif . 'NM1');
+			TRH_CompteurLog::log($ATMdb, $this->getId(), $type, $congesPrisN, $motif . 'N');
+			
+		
+		}
+		
+	}
+	
 }
 
+
+class TRH_CompteurLog extends TObjetStd {
+	function __construct() { /* declaration */
+		global $langs;
+		
+		//conges N
+		parent::set_table(MAIN_DB_PREFIX.'rh_compteur_log');
+		parent::add_champs('fk_compteur','type=entier;index;');			//utilisateur concerné
+		parent::add_champs('nb','type=float;');	
+		parent::add_champs('type','type=chaine;index;');		
+		parent::add_champs('motif','type=chaine;');		
+	
+		
+		parent::_init_vars();
+		parent::start();
+		
+	}
+	
+	static function log(&$ATMdb, $fk_compteur,$type, $nb, $motif = '') {
+		
+		if($nb!=0) {
+			$l=new TRH_CompteurLog;
+			
+			$l->fk_compteur = $fk_compteur;
+			$l->type = $type;
+			$l->nb=$nb;
+			$l->motif = $motif;
+			
+			$l->save($ATMdb);
+			
+			
+		}
+		
+	}
+	
+}
 
 
 
@@ -301,27 +374,23 @@ class TRH_Absence extends TObjetStd {
 		
 		///////décompte des congés
 		if($this->type=="rttcumule"){
-			$compteur->rttCumulePris += $dureeAbsenceCourante;
-			$compteur->rttCumuleTotal -= $dureeAbsenceCourante; 
-			
-			$compteur->save($ATMdb);
+			$compteur->add($ATMdb, $this->type, $dureeAbsenceCourante, 'Prise de RTT');
 			
 		}
 		else if($this->type=="rttnoncumule"){
 			
-			$compteur->rttNonCumulePris += $dureeAbsenceCourante;
-			$compteur->rttNonCumuleTotal -= $dureeAbsenceCourante; 
 			
-			$compteur->save($ATMdb);
+			$compteur->add($ATMdb, $this->type, $dureeAbsenceCourante, 'Prise de RTT non cumulé');
+			
 		}
 		else if($this->type=="conges"||$this->type=="cppartiel"){	//autre que RTT : décompte les congés
 					
-			$compteur->congesPrisNM1 += $this->congesPrisNM1;
-			$compteur->congesPrisN += $this->congesPrisN; 
 			
-			$compteur->save($ATMdb);
+			$compteur->add($ATMdb, $this->type, array($this->congesPrisNM1,  $this->congesPrisN), 'Prise de congé');
 			
 			$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
+			
+			
 			
 		}
 		
@@ -1164,27 +1233,19 @@ class TRH_Absence extends TObjetStd {
 			
 			switch($this->type){
 				case "rttcumule" : 
-						$compteur->rttCumulePris-=$this->duree;
-						$compteur->rttCumuleTotal+=$this->duree;
 
-						$compteur->save($ATMdb);						
+						$compteur->add($ATMdb, $this->type, -$this->duree, 'Refus rtt cumulé');						
 						
 				break;
 				case "rttnoncumule" : 
 						
-						$compteur->rttNonCumulePris-=$this->duree;
-						$compteur->rttNonCumuleTotal+=$this->duree;
-
-						$compteur->save($ATMdb);
+						$compteur->add($ATMdb, $this->type, -$this->duree, 'Refus rtt non cumulé');		
 						
 				break;
 				case 'conges':
 				case 'cppartiel':
 					
-					$compteur->congesPrisNM1-=$this->congesPrisNM1;
-					$compteur->congesPrisN-=$this->congesPrisN;
-
-					$compteur->save($ATMdb);
+					$compteur->add($ATMdb, $this->type, array(-$this->congesPrisNM1, -$this->congesPrisN), 'Refus congé');		
 					
 				break;
 			}

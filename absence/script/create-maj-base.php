@@ -30,6 +30,9 @@
 	$o=new TRH_Compteur;
 	$o->init_db_by_vars($ATMdb);
 	
+	$o=new TRH_CompteurLog;
+	$o->init_db_by_vars($ATMdb);
+	
 	$sqlReqUser="SELECT DISTINCT rowid FROM ".MAIN_DB_PREFIX."user WHERE rowid NOT IN ( SELECT fk_user from ".MAIN_DB_PREFIX."rh_compteur)";
 	$ATMdb->Execute($sqlReqUser);
 	$Tab=array();
