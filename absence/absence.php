@@ -4,8 +4,6 @@
 	dol_include_once('/absence/lib/absence.lib.php');
 	dol_include_once('/valideur/class/valideur.class.php');
 	
-	global $langs;
-	
 	$langs->load('absence@absence');
 	
 	$ATMdb=new TPDOdb;
@@ -26,6 +24,16 @@
 				
 				$absence->set_date('date_debut', GETPOST('date_debutday').'/'.GETPOST('date_debutmonth').'/'.GETPOST('date_debutyear') );
 				$absence->set_date('date_fin', GETPOST('date_finday').'/'.GETPOST('date_finmonth').'/'.GETPOST('date_finyear') );
+				
+				if (! $notrigger)
+				{
+					// Appel des triggers
+					dol_include_once('/core/class/interfaces.class.php');
+					$interface = new Interfaces($db);
+					$result = $interface->run_triggers('ABSENCE_CREATE',$absence,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
+				}
 				
 				$absence->niveauValidation=1;
 				$existeDeja=$absence->testExisteDeja($ATMdb, $absence);
@@ -54,11 +62,11 @@
 							mailCongesValideur($ATMdb,$absence);
 						}
 						
-						$mesg = $langs->trans('RegistedRequest');
+						$mesg = 'Demande enregistrée';
 						_fiche($ATMdb, $absence,'view');
 					}else{
 						if($demandeRecevable==0){
-							$mesg = '<div class="error">' . $langs->trans('DeniedRequest') . ' : ' . $langs->trans('ErrExcessAbsenceTime') . '</div>';
+							$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur</div>';
 							_fiche($ATMdb, $absence,'edit');
 						}else if($demandeRecevable==2){
 							$absence->avertissement=1;
@@ -491,7 +499,7 @@ function _listeValidation(&$ATMdb, &$absence) {
  		$sql.=")";
 	}
  	else {
-		?><div class="error">Vous n'&ecirc;tes pas valideur de cong&eacute;  </div><?php
+		?><div class="error">Vous n'&ecirc;tes pas valideur de cong&eacute;  </div><?
 	}
  
 	
@@ -670,7 +678,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 		$comboAbsence=2;
-		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin');
+		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin', 1);
 		$droitAdmin=1;
 //print "admin";
 //print_r( $typeAbsenceCreable);

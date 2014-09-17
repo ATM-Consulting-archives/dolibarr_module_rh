@@ -66,6 +66,9 @@ class TRH_Compteur extends TObjetStd {
 		parent::start();
 		
 		$this->TTypeAcquisition = array('Annuel'=> $langs->trans('TypeAcquisitionYearly'), 'Mensuel'=> $langs->trans('TypeAcquisitionMonthly'));
+
+		$this->TDureeAbsenceUser = array();
+		$this->TDureeAllAbsenceUser = array();
 		
 		
 	}
@@ -249,8 +252,11 @@ class TRH_Absence extends TObjetStd {
 		$this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
 		$this->Tjoursem = array('dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'); 
 		
+		
 		$ATMdb=new TPDOdb;
-				
+		
+		
+		
 		//combo pour le choix de matin ou après midi 
 		$this->TddMoment = array('matin'=> $langs->trans('AbsenceMorning'),'apresmidi'=> $langs->trans('AbsenceAfternoon'));	//moment de date début
 		$this->TdfMoment = array('matin'=> $langs->trans('AbsenceMorning'),'apresmidi'=> $langs->trans('AbsenceAfternoon'));	//moment de date fin
@@ -379,18 +385,13 @@ class TRH_Absence extends TObjetStd {
 		}
 		else if($this->type=="rttnoncumule"){
 			
-			
 			$compteur->add($ATMdb, $this->type, $dureeAbsenceCourante, 'Prise de RTT non cumulé');
 			
 		}
 		else if($this->type=="conges"||$this->type=="cppartiel"){	//autre que RTT : décompte les congés
-					
-			
 			$compteur->add($ATMdb, $this->type, array($this->congesPrisNM1,  $this->congesPrisN), 'Prise de congé');
 			
 			$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
-			
-			
 			
 		}
 		
@@ -516,6 +517,8 @@ class TRH_Absence extends TObjetStd {
 				}
 				
 				$duree+=$dureeJour;
+				
+				$this->TDureeAbsenceUser[date('Y', $t_current)][date('m', $t_current)] += $dureeJour;
 
 			}
 			
@@ -1391,7 +1394,7 @@ class TRH_Absence extends TObjetStd {
 	
 	//requete avec groupe de collaborateurs précis
 	function rechercheAbsenceGroupe(&$ATMdb, $idGroupeRecherche, $date_debut, $date_fin, $typeAbsence){ 
-			global $conf, $langs;
+			global $conf;
 			
 			//on recherche les absences d'un groupe pendant la période
 			$sql="SELECT  a.rowid as 'ID', u.login, u.lastname,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
@@ -1405,7 +1408,7 @@ class TRH_Absence extends TObjetStd {
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)";
 			
-			if($typeAbsence!= 'Tous'){
+			if($typeAbsence!='Tous'){
 				$sql.=" AND a.type LIKE '".$typeAbsence."'";
 			}
 			
@@ -1414,7 +1417,7 @@ class TRH_Absence extends TObjetStd {
 	
 	//requete renvoyant les utilisateurs n'ayant pas pris de congés pendant une période
 	function rechercheAucunConges(&$ATMdb, $idGroupeRecherche,$idUserRecherche, $date_debut, $date_fin, $typeAbsence){ 
-			global $conf, $langs;
+			global $conf;
 
 			if($idUserRecherche!=0){
 				
@@ -1429,7 +1432,7 @@ class TRH_Absence extends TObjetStd {
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)
 							";
-				if($typeAbsence!= 'Tous'){
+				if($typeAbsence!='Tous'){
 					$sql.=" AND a.type LIKE '".$typeAbsence."' ";
 				}
 				$sql.=")";
@@ -1447,7 +1450,7 @@ class TRH_Absence extends TObjetStd {
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)
 							";
-				if($typeAbsence!= 'Tous'){
+				if($typeAbsence!='Tous'){
 					$sql.=" AND a.type LIKE '".$typeAbsence."' ";
 				}
 				$sql.=")";
@@ -1471,7 +1474,7 @@ class TRH_Absence extends TObjetStd {
 							OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)";
-				if($typeAbsence!= 'Tous'){
+				if($typeAbsence!='Tous'){
 					$sql.=" AND a.type LIKE '".$typeAbsence."' ";
 				}
 				$sql.=")";
@@ -1482,7 +1485,7 @@ class TRH_Absence extends TObjetStd {
 
 	//requete avec un collaborateur précis
 	function rechercheAbsenceUser(&$ATMdb,$idUserRecherche, $date_debut, $date_fin, $typeAbsence){
-			global $conf, $langs;
+			global $conf;
 
 			//on recherche les absences d'un utilisateur pendant la période
 			$sql="SELECT a.rowid as 'ID',  u.login, u.lastname, u.firstname, 
@@ -1499,7 +1502,7 @@ class TRH_Absence extends TObjetStd {
 			if($idUserRecherche!=0){
 				$sql.=" AND a.fk_user=".$idUserRecherche;
 			}
-			if($typeAbsence!= 'Tous'){
+			if($typeAbsence!='Tous'){
 				$sql.=" AND a.type LIKE '".$typeAbsence."'";
 			}
 			
@@ -2104,9 +2107,7 @@ class TRH_EmploiTemps extends TObjetStd {
 
 //définition de la classe pour l'administration des compteurs
 class TRH_JoursFeries extends TObjetStd {
-	function __construct() {
-		global $langs;
-		 
+	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_jours_feries');
 		parent::add_champs('date_jourOff','type=date;index;');
 		parent::add_champs('moment','type=chaine;index;');
@@ -2118,11 +2119,7 @@ class TRH_JoursFeries extends TObjetStd {
 		parent::start();	
 		
 		$this->TFerie=array();
-		$this->TMoment=array(
-			'allday'=> $langs->trans('AbsenceAllDay'),
-			'matin'=> $langs->trans('AbsenceMorning'),
-			'apresmidi'=> $langs->trans('AbsenceAfternoon')
-		);
+		$this->TMoment=array('allday'=>'Toute La journée', 'matin'=>'Matin', 'apresmidi'=>'Après-midi');
 		
 		$this->moment = 'allday'; 		
 	}
@@ -2228,16 +2225,16 @@ class TRH_JoursFeries extends TObjetStd {
 }
 
 //définition de la classe pour la gestion des règles
-class TRH_RegleAbsence extends TObjetStd {	
-	static $TPeriode =array(
-		'ONE'=>'Pour chaque plage'
-		,'MONTH'=>'Mois'
-		,'YEAR'=>"Année"
-	);
+class TRH_RegleAbsence extends TObjetStd {
 	
-	function __construct() {
-		global $langs;
-		 
+	static $TPeriode =array(
+			'ONE'=>'Pour chaque plage'
+			,'MONTH'=>'Mois'
+			,'YEAR'=>"Année"
+			
+		);
+	
+	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_regle');
 		parent::add_champs('typeAbsence','type=chaine;');
 		parent::add_champs('choixApplication,periode','type=chaine;index;');
@@ -2256,9 +2253,9 @@ class TRH_RegleAbsence extends TObjetStd {
 		$this->TUser = array();
 		$this->TGroup  = array();
 		$this->TChoixApplication = array(
-			'all'=> $langs->trans('AllThis')
-			,'group'=> $langs->trans('ApplicationChoiceGroup')
-			,'user'=> $langs->trans('ApplicationChoiceUser')
+			'all'=>'Tous'
+			,'group'=>'Groupe'
+			,'user'=>'Utilisateur'
 		);
 		
 		$this->periode ='ONE';
@@ -2314,9 +2311,7 @@ class TRH_RegleAbsence extends TObjetStd {
 
 //définition de la classe pour la gestion des règles
 class TRH_TypeAbsence extends TObjetStd {
-	function __construct() {
-		global $langs;
-		
+	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_type_absence');
 		parent::add_champs('typeAbsence','type=chaine;index;');
 		parent::add_champs('libelleAbsence','type=chaine;index;');
@@ -2333,23 +2328,23 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::start();
 		
 		$this->TIsPresence=array(
-			0=> $langs->trans('Absence')
-			,1=> $langs->trans('Presence')
+			0=>'Absence'
+			,1=>'Présence'
 		);
 		
 		$this->TDecompteNormal=array(
-			'oui'=> $langs->trans('Yes')
-			,'non'=> $langs->trans('No')
+			'oui'=>'Oui'
+			,'non'=>'Non'
 		);
 		
 		$this->TForAdmin=array(
-			0=> $langs->trans('No')
-			,1=> $langs->trans('Yes')
+			0=>'Non'
+			,1=>'Oui'
 		);
 	
 		$this->TUnite=array(
-			'jour'=> $langs->trans('Day')
-			,'heure'=> $langs->trans('Hour')
+			'jour'=>'Jour'
+			,'heure'=>'Heure'
 		);
 		
 		$this->TColorId=array(
