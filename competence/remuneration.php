@@ -141,6 +141,64 @@ function _liste(&$ATMdb, $remuneration) {
 		
 		<?
 		}
+
+	$r = new TSSRenderControler($remuneration);
+	$sql="SELECT r.rowid as 'ID', r.date_prime as 'DateCre', DATE_FORMAT(r.date_debutRemuneration, '%d/%m/%Y') as 'Date début', DATE_FORMAT(r.date_finRemuneration, '%d/%m/%Y') as 'Date fin', 
+			CONCAT(u.firstname,' ',u.lastname) as 'Utilisateur' ,
+			  CONCAT( ROUND(r.bruteAnnuelle,2),' €') as 'Rémunération brute annuelle',  
+			  CONCAT( ROUND(r.salaireMensuel,2),' €') as 'Salaire mensuel', r.fk_user, '' as 'Supprimer'
+		FROM   ".MAIN_DB_PREFIX."rh_remuneration as r, ".MAIN_DB_PREFIX."user as u
+		WHERE r.fk_user=".$_REQUEST['fk_user']." AND r.entity=".$conf->entity." AND u.rowid=r.fk_user";
+	
+	$TOrder = array('date_prime'=>'ASC');
+	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+				
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
+	
+	$r->liste($ATMdb, $sql, array(
+		'limit'=>array(
+			'page'=>$page
+			,'nbLine'=>'30'
+		)
+		,'link'=>array(
+			'Rémunération brute annuelle'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
+			,'Date prime'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
+			,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
+		)
+		,'translate'=>array(
+			
+		)
+		,'hide'=>array('DateCre', 'fk_user')
+		,'type'=>array()
+		,'liste'=>array(
+			'titre'=>'Visualisation de vos primes'
+			,'image'=>img_picto('','title.png', '', 0)
+			,'picto_precedent'=>img_picto('','back.png', '', 0)
+			,'picto_suivant'=>img_picto('','next.png', '', 0)
+			,'noheader'=> (int)isset($_REQUEST['socid'])
+			,'messageNothing'=>"Aucune prime enregistrée"
+			,'order_down'=>img_picto('','1downarrow.png', '', 0)
+			,'order_up'=>img_picto('','1uparrow.png', '', 0)
+			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+		)
+		,'title'=>array(
+			'date_debutRemuneration'=>'Date début'
+		)
+		,'search'=>array(
+		)
+		,'orderBy'=>$TOrder
+		
+	));
+		if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
+		?>
+		<a class="butAction" href="?&action=new&fk_user=<?=$fuser->id?>">Ajouter une prime</a><div style="clear:both"></div>
+		
+		<?
+		}
+
+
 	$form->end();
 	
 	llxFooter();

@@ -444,6 +444,41 @@ class TRH_remuneration extends TObjetStd {
 
 }
 
+
+//TRH_REMUNERATION
+//définition de la classe pour rentrer les compétences d'un utilisateur
+class TRH_remunerationPrime extends TObjetStd {
+	function __construct() { 
+		
+		parent::set_table(MAIN_DB_PREFIX.'rh_remuneration_prime');
+		parent::add_champs('date_prime','type=date;');
+		parent::add_champs('montant','type=float;');
+		
+		parent::add_champs('motif');
+		
+		
+		parent::add_champs('fk_user','type=entier;');
+		parent::add_champs('entity','type=entier;');
+		
+		parent::_init_vars();
+		parent::start();
+	}
+
+
+	function load_by_user_and_dates(&$ATMdb, $fk_user, $date){
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_remuneration_prime 
+		WHERE date_prime = '".date("Y-m-d",$debut)."'
+		AND fk_user=".$fk_user;
+		$ATMdb->Execute($sql);
+		if ($ATMdb->Get_line()) {
+			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		}
+		return false;
+		
+	}
+
+}
+
 //TRH_DIF
 //définition de la classe décrivant les lignes de CV d'un utilisateur
 class TRH_dif extends TObjetStd {
