@@ -27,11 +27,17 @@ $res = @include("../../main.inc.php"); // From htdocs directory
 if (! $res) {
     $res = @include("../../../main.inc.php"); // From "custom" directory
 }
+if (! $res) {
+    $res = @include("../../../../main.inc.php"); // From "custom" directory
+}
+if (! $res) {
+    $res = @include("../../../../../main.inc.php"); // From "custom" directory
+}
 
 global $db;
 
 // Libraries
-dol_include_once('core/lib/admin.lib.php');
+dol_include_once('/core/lib/admin.lib.php');
 //require_once "../class/myclass.class.php";
 // Translations
 $langs->load("ressource@ressource");

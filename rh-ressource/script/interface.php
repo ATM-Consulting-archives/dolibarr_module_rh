@@ -428,7 +428,7 @@ function _exportOrangeCSV(){
 	 * A laquelle on associe l'évènement detype "emprunt"
 	 * Auquel on associe l'utilisateur ayant fait cet emprunt (le user a qui est attribué ce téléphone)
 	 */
-	$sql = "SELECT u.rowid, u.email, u.firstname, u.lastname, ue.COMPTE_TIERS as compte_tiers, au.code, au.pourcentage, r1.fk_rh_ressource, ea.num_gsm, ea.montant_euros_ht";
+	$sql = "SELECT u.rowid, u.email, u.firstname, u.name, ue.COMPTE_TIERS as compte_tiers, au.code, au.pourcentage, r1.fk_rh_ressource, ea.num_gsm, ea.montant_euros_ht";
 	$sql.= " FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource r1 on (ea.num_gsm = r1.numerotel)";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource r2 on (r1.fk_rh_ressource = r2.rowid)";
@@ -453,9 +453,11 @@ function _exportOrangeCSV(){
 
 		$non_facture = false;
 
-		// Si le numéro de la ligne de facture fait partie du tableau TNumerosSpeciaux, on passe à la ligne suivante (on facture pas) 
-		foreach ($TNumerosSpeciaux as $num) {
-			if($num == $res->num_gsm) $non_facture = true;
+		// Si le numéro de la ligne de facture fait partie du tableau TNumerosSpeciaux, on passe à la ligne suivante (on facture pas)
+		if(is_array($TNumerosSpeciaux) && count($TNumerosSpeciaux) > 0) {
+			foreach ($TNumerosSpeciaux as $num) {
+				if($num == $res->num_gsm) $non_facture = true;
+			}
 		}
 		
 		if($non_facture) continue;
@@ -464,7 +466,7 @@ function _exportOrangeCSV(){
 		 * On crée un tableau qui associe à chaque user la liste de ses codes analytiques
 		 * A chaque code analytique est associé la ligne qui sera exportée
 		 */
-		$TabLigne[$res->lastname." ".$res->firstname][$res->code] = array($res->lastname." ".$res->firstname
+		$TabLigne[$res->lastname." ".$res->firstname][$res->code] = array($res->name." ".$res->firstname
 																		,$res->num_gsm
 																		,$res->email
 																		,$res->compte_tiers

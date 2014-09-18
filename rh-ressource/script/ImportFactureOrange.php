@@ -104,7 +104,7 @@ $TDonnees = array();
 //début du parsing
 $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
-	while(($data = fgetcsv($handle)) != false){
+	while(($data = fgetcsv($handle, "", ";")) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'... ';
 		if ($numLigne >=3){
 			
@@ -300,7 +300,7 @@ function _saveFactureIntoTable(&$ATMdb, &$TDonnees, $num_ligne, $num_import) {
 			$TRH_event_appel->volume_reel = $TArrayLine[9];
 			$TRH_event_appel->volume_facture = $TArrayLine[10];
 			$TRH_event_appel->type_appel = $TArrayLine[11];
-			$TRH_event_appel->montant_euros_ht = $TArrayLine[12];
+			$TRH_event_appel->montant_euros_ht = price2num($TArrayLine[12]);
 			
 			$TRH_event_appel->save($ATMdb);
 		

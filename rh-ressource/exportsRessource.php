@@ -52,8 +52,9 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		else {$TIdRessource[$row->rowid] = $idVoiture;}
 	}
 	
-	$url ='http://'.$_SERVER['SERVER_NAME'].DOL_URL_ROOT_ALT.'/ressource/script/loadListeFactures.php?fk_fournisseur='.$type.'&mode_retour=autre';	
+	$url ='http://'.$_SERVER['SERVER_NAME'].dol_buildpath("/ressource/script/loadListeFactures.php", 1).'?fk_fournisseur='.$type.'&mode_retour=autre';	
 	if(isset($_REQUEST['DEBUG'])) { print $url.'<br>'; }
+	//echo $url;exit;
 	$result = file_get_contents($url);
 	$TIdFacture = unserialize($result);  
 	
@@ -63,13 +64,44 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 	
 	if($boutonGenerer){	
 		// ---- Exports
-		$url ='http://'.$_SERVER['SERVER_NAME']. DOL_URL_ROOT_ALT."/ressource/script/interface.php?date_debut=".$date_debut."&date_fin=".$date_fin."&get=".$TType[$type]."&fk_fournisseur=".$type."&idTypeRessource=".$TIdRessource[$type]."&entity=".$conf->entity;
+		$url ='http://'.$_SERVER['SERVER_NAME']. dol_buildpath("/ressource/script/interface.php", 1)."?date_debut=".$date_debut."&date_fin=".$date_fin."&get=".$TType[$type]."&fk_fournisseur=".$type."&idTypeRessource=".$TIdRessource[$type]."&entity=".$conf->entity;
 
 		if(!empty($_REQUEST['idImport'])) $url.='&idImport='.$_REQUEST['idImport'];
 		
 		if(isset($_REQUEST['DEBUG'])) { print $url."&withLogin=1"; }
 		$result = file_get_contents($url."&withLogin=1");
-		$TLignes = unserialize($result); 
+		$TLignes = unserialize($result);
+		//var_dump($TLignes);exit; 
+		$file = fopen(dol_buildpath("/ressource/export/export_orange.csv"), "w");
+		
+		/**********************************************************************************************
+		 ********************************Gestion export facture orange*********************************
+		 *********************************************************************************************/
+		
+		$TLines = array();
+		if(is_array($TLignes) && count($TLignes) > 0){
+			foreach($TLignes as $line) {
+				foreach($line as $line_niveau2)
+					$TLines[] = $line_niveau2;
+			}
+		}
+
+		fputcsv($file, array("Affectation", "GSM", "Email", "Code compta", "Agence", "Code Analytique", "Pourcentage", "Dépassement Tél. du M-2/Mois en cours", "Total"), ";");
+		if(is_array($TLines) && count($TLines) > 0){
+			foreach($TLines as $linee){
+				fputcsv($file, explode(";", $linee), ";");
+			}
+		}
+		?>
+		<script>
+			document.location.href="<?php echo dol_buildpath("/ressource/export/export_orange.csv", 1)?>";
+		</script>
+		<?
+		
+		/**********************************************************************************************
+		 *****************************Fin Gestion export facture orange*******************************
+		 *********************************************************************************************/
+		
 		if(isset($_REQUEST['DEBUG'])) { print_r($TLignes); }
 		//print $url.'<br>';
 		 

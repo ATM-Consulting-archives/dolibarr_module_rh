@@ -38,5 +38,8 @@
 	$p=new TRH_Type_Evenement;
 	$p->init_db_by_vars($ATMdb);
 	
+	$p=new TRH_Evenement_appel;
+	$p->init_db_by_vars($ATMdb);
+	
 	$p=new TRH_Ressource_Regle;
 	$p->init_db_by_vars($ATMdb);
