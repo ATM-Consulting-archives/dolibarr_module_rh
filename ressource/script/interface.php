@@ -449,13 +449,17 @@ function _exportOrangeCSV(){
 	$TNumerosSpeciaux = unserialize(dolibarr_get_const($db, "RESSOURCE_ARRAY_NUMEROS_SPECIAUX"));
 	
 	while($res = $db->fetch_object($resql)) {
-		
+			
 		$total[$res->code] += $res->montant_euros_ht;
-		
+
+		$non_facture = false;
+
 		// Si le numéro de la ligne de facture fait partie du tableau TNumerosSpeciaux, on passe à la ligne suivante (on facture pas) 
 		foreach ($TNumerosSpeciaux as $num) {
-			if($num == $res->num_gsm) continue;
+			if($num == $res->num_gsm) $non_facture = true;
 		}
+		
+		if($non_facture) continue;
 		
 		/*
 		 * On crée un tableau qui associe à chaque user la liste de ses codes analytiques
@@ -478,6 +482,7 @@ function _exportOrangeCSV(){
 	 * Pour chaque ligne du tableau $TabLigne, si certains user ont plusieurs codes analytiques,
 	 * on dispatch le montant à facturer en fonction du pourcentage correspondant au code analytique
 	 */
+	 
 	$TabLigne = _dispatchTarifsParCodeAnalytique($TabLigne);
 	_getFormattedArray($TabLigne);
 	

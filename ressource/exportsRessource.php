@@ -76,7 +76,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		/**********************************************************************************************
 		 ********************************Gestion export facture orange*********************************
 		 *********************************************************************************************/
-		//var_dump($TLignes);exit;
+		
 		$TLines = array();
 		
 		foreach($TLignes as $line) {
@@ -85,8 +85,10 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		}
 
 		fputcsv($file, array("Affectation", "GSM", "Email", "Code compta", "Agence", "Code Analytique", "Pourcentage", "Dépassement Tél. du M-2/Mois en cours", "Total"), ";");
-		foreach($TLines as $linee){
-			fputcsv($file, explode(";", $linee), ";");
+		if(is_array($TLines) && count($TLines) > 0){
+			foreach($TLines as $linee){
+				fputcsv($file, explode(";", $linee), ";");
+			}
 		}
 		?>
 		<script>
