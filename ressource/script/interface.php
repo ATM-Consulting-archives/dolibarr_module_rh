@@ -454,9 +454,11 @@ function _exportOrangeCSV(){
 
 		$non_facture = false;
 
-		// Si le numéro de la ligne de facture fait partie du tableau TNumerosSpeciaux, on passe à la ligne suivante (on facture pas) 
-		foreach ($TNumerosSpeciaux as $num) {
-			if($num == $res->num_gsm) $non_facture = true;
+		// Si le numéro de la ligne de facture fait partie du tableau TNumerosSpeciaux, on passe à la ligne suivante (on facture pas)
+		if(is_array($TNumerosSpeciaux) && count($TNumerosSpeciaux) > 0) { 
+			foreach ($TNumerosSpeciaux as $num) {
+				if($num == $res->num_gsm) $non_facture = true;
+			}
 		}
 		
 		if($non_facture) continue;
