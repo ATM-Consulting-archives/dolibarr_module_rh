@@ -285,22 +285,27 @@ function _saveFactureIntoTable(&$ATMdb, &$TDonnees, $num_ligne, $num_import) {
 	//var_dump($TDonnees);exit;
 	
 	foreach($TDonnees as $TArrayLine){
-		$TRH_event_appel = new TRH_Evenement_appel;
-		$TRH_event_appel->num_import = $num_import;
-		$TRH_event_appel->compte_facture = $TArrayLine[0];
-		$TRH_event_appel->num_gsm = "33".$TArrayLine[1];
-		$TRH_event_appel->nom_abonne = $TArrayLine[2];
-		$TRH_event_appel->num_facture = $TArrayLine[3];
-		$TRH_event_appel->date_facture = $TArrayLine[4];
-		$TRH_event_appel->num_abonne = $TArrayLine[5];
-		$TRH_event_appel->date_appel = $TArrayLine[6]." ".$TArrayLine[7];
-		$TRH_event_appel->num_appele = $TArrayLine[8];
-		$TRH_event_appel->volume_reel = $TArrayLine[9];
-		$TRH_event_appel->volume_facture = $TArrayLine[10];
-		$TRH_event_appel->type_appel = $TArrayLine[11];
-		$TRH_event_appel->montant_euros_ht = $TArrayLine[12];
 		
-		$TRH_event_appel->save($ATMdb);
+		if("33".$TArrayLine[1] == $num_ligne){
+
+			$TRH_event_appel = new TRH_Evenement_appel;
+			$TRH_event_appel->num_import = $num_import;
+			$TRH_event_appel->compte_facture = $TArrayLine[0];
+			$TRH_event_appel->num_gsm = "33".$TArrayLine[1];
+			$TRH_event_appel->nom_abonne = $TArrayLine[2];
+			$TRH_event_appel->num_facture = $TArrayLine[3];
+			$TRH_event_appel->date_facture = $TArrayLine[4];
+			$TRH_event_appel->num_abonne = $TArrayLine[5];
+			$TRH_event_appel->date_appel = $TArrayLine[6]." ".$TArrayLine[7];
+			$TRH_event_appel->num_appele = $TArrayLine[8];
+			$TRH_event_appel->volume_reel = $TArrayLine[9];
+			$TRH_event_appel->volume_facture = $TArrayLine[10];
+			$TRH_event_appel->type_appel = $TArrayLine[11];
+			$TRH_event_appel->montant_euros_ht = $TArrayLine[12];
+			
+			$TRH_event_appel->save($ATMdb);
+		
+		}
 	}
 	
 }
@@ -314,7 +319,7 @@ function _getNextNumeroImport() {
 	$resql = $db->query($sql);
 	
 	while($res = $db->fetch_object($resql)) {
-		return $res->num_libre;
+		return $res->num_libre+1;
 	}
 	
 	return 1;
