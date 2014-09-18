@@ -18,7 +18,8 @@ function _get(&$ATMdb, $case) {
 			__out( _emprunt($ATMdb, $_REQUEST['fk_user'], $_REQUEST['date_debut'], $_REQUEST['date_fin']));
 			break;
 		case 'orange':
-			__out(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
+			//__out(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
+			__out(_exportOrangeCSV());
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
 		case 'autocomplete':
@@ -412,6 +413,104 @@ function _exportOrange(&$ATMdb, $date_debut, $date_fin, $entity){
 	return $TabLigne;
 }
 
+
+function _exportOrangeCSV(){
+	
+	global $db;
+	
+	dol_include_once("/core/lib/admin.lib.php");
+	
+	$TabLigne = array();
+	
+	/*
+	 * Requete pour récupérer les lignes de la dernière facture
+	 * Auxquelles on associe la ressource correspondante (numero de telephone de la ligne facture correspondant au numero de tel d'une ressource)
+	 * A laquelle on associe la ressource utilisatrice (Le téléphone qui utilise la carte SIM et donc le numéro de téléphone)
+	 * A laquelle on associe l'évènement detype "emprunt"
+	 * Auquel on associe l'utilisateur ayant fait cet emprunt (le user a qui est attribué ce téléphone)
+	 */
+	$sql = "SELECT u.rowid, u.email, u.firstname, u.lastname, ue.COMPTE_TIERS as compte_tiers, au.code, au.pourcentage, r1.fk_rh_ressource, ea.num_gsm, ea.montant_euros_ht";
+	$sql.= " FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource r1 on (ea.num_gsm = r1.numerotel)";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource r2 on (r1.fk_rh_ressource = r2.rowid)";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement e on (r2.rowid = e.fk_rh_ressource)";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user u on (e.fk_user = u.rowid)";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields ue on (u.rowid = ue.fk_object)";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user au on (u.rowid = au.fk_user)";
+	$sql.= " WHERE ea.num_import = (SELECT MAX(ea.num_import) FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea)";
+	$sql.= ' AND type="emprunt"';
+	$sql.= " GROUP BY au.code, au.pourcentage, montant_euros_ht";
+	
+	$resql = $db->query($sql);
+	
+	$total = array();
+	
+	// On récupère le tableau des numéros spéciaux (ceux à ne pas facturer)
+	$TNumerosSpeciaux = unserialize(dolibarr_get_const($db, "RESSOURCE_ARRAY_NUMEROS_SPECIAUX"));
+	
+	while($res = $db->fetch_object($resql)) {
+		
+		$total[$res->code] += $res->montant_euros_ht;
+		
+		// Si le numéro de la ligne de facture fait partie du tableau TNumerosSpeciaux, on passe à la ligne suivante (on facture pas) 
+		foreach ($TNumerosSpeciaux as $num) {
+			if($num == $res->num_gsm) continue;
+		}
+		
+		/*
+		 * On crée un tableau qui associe à chaque user la liste de ses codes analytiques
+		 * A chaque code analytique est associé la ligne qui sera exportée
+		 */
+		$TabLigne[$res->lastname." ".$res->firstname][$res->code] = array($res->lastname." ".$res->firstname
+																		,$res->num_gsm
+																		,$res->email
+																		,$res->compte_tiers
+																		,mb_strimwidth($res->compte_tiers, 0, 3)
+																		,$res->code
+																		,$res->pourcentage
+																		,$total[$res->code] // Total qui va être calculé en fonction du pourcentage
+																		,$total[$res->code] // Vrai total
+																	);
+		
+	}
+	
+	/*
+	 * Pour chaque ligne du tableau $TabLigne, si certains user ont plusieurs codes analytiques,
+	 * on dispatch le montant à facturer en fonction du pourcentage correspondant au code analytique
+	 */
+	$TabLigne = _dispatchTarifsParCodeAnalytique($TabLigne);
+	_getFormattedArray($TabLigne);
+	
+	return $TabLigne;
+}
+
+function _dispatchTarifsParCodeAnalytique(&$TabLigne) {
+	
+	$tab = array();
+	
+	foreach($TabLigne as $user_name => $TCodesAnalytiques) {
+		if(count($TCodesAnalytiques) > 1) {
+			foreach($TCodesAnalytiques as $code => $TArrayLines) {
+				$tab[$user_name][$code] = $TArrayLines;
+				$tab[$user_name][$code][count($TArrayLines)-2] = ($tab[$user_name][$code][count($TArrayLines)-2] * ($tab[$user_name][$code][count($TArrayLines)-3] / 100));
+			}
+		} else {
+			$tab[$user_name] = $TCodesAnalytiques;
+		}
+	}
+	
+	return $tab;
+	
+}
+
+function _getFormattedArray(&$TabLine) {
+	
+	foreach($TabLine as $user_name => $TCodesAnalytiques) {
+		foreach($TCodesAnalytiques as $code => $line)
+			$TabLine[$user_name][$code] = implode(";", $line);
+	}
+	
+}
 
 function _emprunt(&$ATMdb, $userId, $date_debut, $date_fin){
 	global $user, $conf;
