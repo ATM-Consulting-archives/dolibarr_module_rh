@@ -256,8 +256,23 @@ class TRH_Type_Evenement  extends TObjetStd {
 }
 
 
-
+class TRH_Evenement_appel  extends TObjetStd {
+	
+	function __construct(){
 		
+		parent::set_table(MAIN_DB_PREFIX.'rh_evenement_appel');
+		parent::add_champs('num_import','type=entier;index;');
+		parent::add_champs('compte_facture,num_gsm,nom_abonne,num_facture','type=chaine;');
+		parent::add_champs('date_facture','type=date;');
+		parent::add_champs('num_abonne','type=chaine;');
+		parent::add_champs('date_appel','type=date;');
+		parent::add_champs('num_appele','type=chaine;');
+		parent::add_champs('volume_facture,volume_reel','type=datetime;');
+		parent::add_champs('type_appel','type=chaine;');
+		parent::add_champs('montant_euros_ht','type=float;');
 		
+		parent::_init_vars();
+		parent::start();
 		
-		
+	}
+}
