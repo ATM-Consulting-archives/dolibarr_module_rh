@@ -96,16 +96,24 @@ exit();*/
 if (empty($nomFichier)){$nomFichier = "./fichierImports/detail_appels10.csv";}
 $message .= 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
-$idImport = _url_format(basename($nomFichier), false, true);
+$idImport = Tools::url_format(basename($nomFichier));
 $ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement WHERE idImport='$idImport'");
+
+$TDonnees = array();
 
 //début du parsing
 $numLigne = 0;
 if (($handle = fopen($nomFichier, "r")) !== FALSE) {
-	while(($data = fgetcsv($handle)) != false){
+	while(($data = fgetcsv($handle, "", ";")) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'... ';
 		if ($numLigne >=3){
+			
 			$infos = explode(';', $data[0]);
+			$infos = $data;
+			
+			$TDonnees[] = $infos;
+			
+			//var_dump($infos);
 			$mois = substr($infos[4],3,7);
 			
 			$num = $infos[1];
@@ -187,6 +195,7 @@ foreach ($TUser as $nom => $id) {
 	
 	//echo $nom.' '.$TCompteurs[$id]['num']; print_r($TCompteurs[$id]);echo '.<br>';
 	if ( !empty($TCompteurs[$id] )){
+		
 		//Sauvegarde de la facture : une facture par personne et par mois.
 		$fact = new TRH_Evenement;
 		
@@ -265,8 +274,50 @@ foreach ($TUser as $nom => $id) {
 		$fact->save($ATMdb);		
 		$cptFacture++;
 		
+		$num_import = _getNextNumeroImport();
+		_saveFactureIntoTable($ATMdb, $TDonnees, $TCompteurs[$id]['num'], $num_import);
 		
 		}
+	
+}
+
+function _saveFactureIntoTable(&$ATMdb, &$TDonnees, $num_ligne, $num_import) {
+	//var_dump($TDonnees);exit;
+	
+	foreach($TDonnees as $TArrayLine){
+		$TRH_event_appel = new TRH_Evenement_appel;
+		$TRH_event_appel->num_import = $num_import;
+		$TRH_event_appel->compte_facture = $TArrayLine[0];
+		$TRH_event_appel->num_gsm = "33".$TArrayLine[1];
+		$TRH_event_appel->nom_abonne = $TArrayLine[2];
+		$TRH_event_appel->num_facture = $TArrayLine[3];
+		$TRH_event_appel->date_facture = $TArrayLine[4];
+		$TRH_event_appel->num_abonne = $TArrayLine[5];
+		$TRH_event_appel->date_appel = $TArrayLine[6]." ".$TArrayLine[7];
+		$TRH_event_appel->num_appele = $TArrayLine[8];
+		$TRH_event_appel->volume_reel = $TArrayLine[9];
+		$TRH_event_appel->volume_facture = $TArrayLine[10];
+		$TRH_event_appel->type_appel = $TArrayLine[11];
+		$TRH_event_appel->montant_euros_ht = $TArrayLine[12];
+		
+		$TRH_event_appel->save($ATMdb);
+	}
+	
+}
+
+function _getNextNumeroImport() {
+	
+	global $db;
+	
+	$sql = "SELECT MAX(num_import) as num_libre";
+	$sql.= " FROM ".MAIN_DB_PREFIX."rh_evenement_appel";
+	$resql = $db->query($sql);
+	
+	while($res = $db->fetch_object($resql)) {
+		return $res->num_libre;
+	}
+	
+	return 1;
 	
 }
 
