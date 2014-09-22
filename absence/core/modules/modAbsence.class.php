@@ -707,6 +707,8 @@ class modAbsence extends DolibarrModules
 	{
 		global $langs;
 		
+		$langs->load('absence@absence');
+		
 		$sql = array();
 		
 		$result=$this->load_tables();
@@ -726,6 +728,9 @@ class modAbsence extends DolibarrModules
 		dol_include_once('/core/class/extrafields.class.php');
         $extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('ticketresto_ok', $langs->trans('HaveChooseTickets'), 'boolean', 0, '', 'user');
+		
+       $extrafields=new ExtraFields($this->db);
+		$res = $extrafields->addExtraField('number_min', $langs->trans('NumberOfMinimumPeople'), 'int', 0, '', 'usergroup');
 		
 
 		return $this->_init($sql, $options);
