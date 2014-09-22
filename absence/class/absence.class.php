@@ -1270,9 +1270,63 @@ class TRH_Absence extends TObjetStd {
 		return (($hf[0]-$hd[0]).":".($hf[1]-$hd[1]).":".($hf[2]-$hd[2]));
 	}
 
+	function testMinEffectifGroupeOk(&$ATMdb, $idGroup, $nb_min) {
+		
+		$t_current=$this->date_debut;
+		
+		while($t_current <= $this->date_fin) {
+		
+			$date =date('Y-m-d', $t_current);
+			
+			$sql = $this->rechercheAucunConges($ATMdb, $idGroup,0,$date,$date);
+			$Tab = $ATMdb->ExecuteAsArray($sql);
+			$nb_user = count($Tab);
+			
+			if($nb_user<=$nb_min) return false;
+			
+			$t_current = strtotime('+1day', $t_current);
+		}
+		
+		return true;
+		
+	}
+
+	function testEffectifGroupe(&$ATMdb) {
+		global $db;
+		
+		$user =new User($db);
+		$user->fetch($this->fk_user);
+		
+		if($user->id>0) {
+			
+			$g=new UserGroup($db);
+			$TGroup = $g->listGroupsForUser($user->id);
+			
+			foreach($TGroup as $group) {
+				
+				$nb_min = (int)$group->array_options['options_number_min'];
+				
+				if(!$this->testMinEffectifGroupeOk($ATMdb, $group->id, $nb_min)) {
+					return false;
+				}
+				
+			}		
+		
+			return true;
+		
+		}		
+		
+		return false;
+	}
+
 	
 	function dureeAbsenceRecevable(&$ATMdb){
 		$avertissement=0;
+		
+		if(!$this->testEffectifGroupe($ATMdb)) {
+			$avertissement = 3;
+		}
+		
 		$TRegle=$this->recuperationRegleUser($ATMdb,$this->fk_user);
 		if(!empty($TRegle)){
 				
@@ -1393,7 +1447,7 @@ class TRH_Absence extends TObjetStd {
 	}
 	
 	//requete avec groupe de collaborateurs précis
-	function rechercheAbsenceGroupe(&$ATMdb, $idGroupeRecherche, $date_debut, $date_fin, $typeAbsence){ 
+	function rechercheAbsenceGroupe(&$ATMdb, $idGroupeRecherche, $date_debut, $date_fin, $typeAbsence='Tous'){ 
 			global $conf;
 			
 			//on recherche les absences d'un groupe pendant la période
@@ -1416,7 +1470,7 @@ class TRH_Absence extends TObjetStd {
 	}
 	
 	//requete renvoyant les utilisateurs n'ayant pas pris de congés pendant une période
-	function rechercheAucunConges(&$ATMdb, $idGroupeRecherche,$idUserRecherche, $date_debut, $date_fin, $typeAbsence){ 
+	function rechercheAucunConges(&$ATMdb, $idGroupeRecherche,$idUserRecherche, $date_debut, $date_fin, $typeAbsence='Tous'){ 
 			global $conf;
 
 			if($idUserRecherche!=0){
