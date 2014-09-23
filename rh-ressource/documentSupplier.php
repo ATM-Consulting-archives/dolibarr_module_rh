@@ -1,6 +1,7 @@
 <?php
 	require('config.php');
 	set_time_limit(0);
+	ini_set("memory_limit", "128M");
 	require('./class/ressource.class.php');
 	require('./class/evenement.class.php');
 	require('./class/contrat.class.php');
@@ -42,7 +43,7 @@
 		if ($_REQUEST["sendit"])
 		{
 			
-			$upload_dir = DIR_DOC_OUTPUT.'import_fournisseurs';
+			$upload_dir = DOL_DATA_ROOT.'/import_fournisseurs';
 		
 			dol_mkdir($upload_dir);
 			
