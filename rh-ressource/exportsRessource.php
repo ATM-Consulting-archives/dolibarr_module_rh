@@ -71,37 +71,42 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		if(isset($_REQUEST['DEBUG'])) { print $url."&withLogin=1"; }
 		$result = file_get_contents($url."&withLogin=1");
 		$TLignes = unserialize($result);
-		var_dump($TLignes);exit; 
-		$file = fopen(dol_buildpath("/ressource/export/export_orange.csv"), "w");
-		
-		/**********************************************************************************************
-		 ********************************Gestion export facture orange*********************************
-		 *********************************************************************************************/
-		
-		$TLines = array();
-		if(is_array($TLignes) && count($TLignes) > 0){
-			foreach($TLignes as $line) {
-				foreach($line as $line_niveau2)
-					$TLines[] = $line_niveau2;
+		//echo$TLignes;exit;
+
+		if($TType[$type] === "Orange") {
+
+			/**********************************************************************************************
+			 ********************************Gestion export facture orange*********************************
+			 *********************************************************************************************/
+			 
+			$file = fopen(dol_buildpath("/ressource/export/export_orange.csv"), "w");
+			
+			$TLines = array();
+			if(is_array($TLignes) && count($TLignes) > 0){
+				foreach($TLignes as $line) {
+					foreach($line as $line_niveau2)
+						$TLines[] = $line_niveau2;
+				}
 			}
+	
+			fputcsv($file, array("Affectation", "GSM", "Email", "Code compta", "Agence", "Code Analytique", "Pourcentage", "Dépassement Tél. du M-2/Mois en cours", "Total"), ";");
+			if(is_array($TLines) && count($TLines) > 0){
+				foreach($TLines as $linee){
+					fputcsv($file, explode(";", $linee), ";");
+				}
+			}
+			?>
+			<script>
+				document.location.href="<?php echo dol_buildpath("/ressource/export/export_orange.csv", 1)?>";
+			</script>
+			<?
+			
+			/**********************************************************************************************
+			 *****************************Fin Gestion export facture orange*******************************
+			 *********************************************************************************************/
+			 
 		}
 
-		fputcsv($file, array("Affectation", "GSM", "Email", "Code compta", "Agence", "Code Analytique", "Pourcentage", "Dépassement Tél. du M-2/Mois en cours", "Total"), ";");
-		if(is_array($TLines) && count($TLines) > 0){
-			foreach($TLines as $linee){
-				fputcsv($file, explode(";", $linee), ";");
-			}
-		}
-		?>
-		<script>
-			document.location.href="<?php echo dol_buildpath("/ressource/export/export_orange.csv", 1)?>";
-		</script>
-		<?
-		
-		/**********************************************************************************************
-		 *****************************Fin Gestion export facture orange*******************************
-		 *********************************************************************************************/
-		
 		if(isset($_REQUEST['DEBUG'])) { print_r($TLignes); }
 		//print $url.'<br>';
 		 
