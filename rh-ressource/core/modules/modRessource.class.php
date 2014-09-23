@@ -294,6 +294,12 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'ressource';
 		$this->rights[$r][5] = 'readEvenementConfidentiel';
+		$r++;
+		$this->rights[$r][0] = 7023;
+		$this->rights[$r][1] = 'Accéder au menu de gestion des numéros spéciaux';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'accessSpecialNumbers';
 		
 
 		// Main menu entries

@@ -34,7 +34,7 @@ if (! $res) {
     $res = @include("../../../../../main.inc.php"); // From "custom" directory
 }
 */
-global $db;
+global $db,$user;
 
 // Libraries
 require('config.php');
@@ -50,6 +50,9 @@ $ATMdb = new TPDOdb;
 if (! $user->admin) {
     accessforbidden();
 }
+
+if(!$user->rights->ressource->ressource->accessSpecialNumbers)
+	accessforbidden();
 
 // Parameters
 $action = GETPOST('action', 'alpha');
@@ -95,9 +98,6 @@ $TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
 $page_name = "NumerosSpeciauxSetup";
 llxHeader('', $langs->trans($page_name));
 
-// Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
-    . $langs->trans("BackToModuleList") . '</a>';
 print_fiche_titre($langs->trans($page_name), $linkback);
 
 // Setup page goes here
@@ -164,7 +164,7 @@ if(is_array($TNumerosSpeciaux) && count($TNumerosSpeciaux) > 0) {
 		
 		print '<tr>';
 		print '<td><input type="text" name="TNumerosSpeciaux[]" value="'.$numero.'" /></td>';
-		print '<td><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?number='.$numero.'&action=delete" />delete</a></td>';
+		print '<td><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?number='.$numero.'&action=delete" />Supprimer numéro</a></td>';
 		print '</tr>';
 		
 	}	
