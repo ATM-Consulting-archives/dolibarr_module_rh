@@ -19,7 +19,7 @@ function _get(&$ATMdb, $case) {
 			break;
 		case 'orange':
 			//__out(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
-			__out(_exportOrangeCSV($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
+			__out(_exportOrangeCSV($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity'], $_REQUEST['idImport']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
 		case 'autocomplete':
@@ -413,7 +413,7 @@ function _exportOrange(&$ATMdb, $date_debut, $date_fin, $entity){
 }
 
 
-function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity){
+function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	
 	global $db;
 	
@@ -426,7 +426,7 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity){
 	$date_deb = date("Y-m-d", $date_deb);
 	
 	$date_end = Tools::get_time($date_fin);
-	$date_end = date("Y-m-d", $date_fin);
+	$date_end = date("Y-m-d", $date_end);
 	
 	$TabLigne = array();
 	
@@ -445,11 +445,12 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity){
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user u on (e.fk_user = u.rowid)";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields ue on (u.rowid = ue.fk_object)";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user au on (u.rowid = au.fk_user)";
-	$sql.= " WHERE ea.num_import = (SELECT MAX(ea.num_import) FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea)";
+	//$sql.= " WHERE ea.num_import = (SELECT MAX(ea.num_import) FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea)";
+	$sql.= ' WHERE ea.idImport = "'.$idImport.'"';
 	$sql.= ' AND type="emprunt"';
 	$sql.= ' AND date_appel BETWEEN "'.$date_deb.'" AND "'.$date_end.'"';
 	$sql.= " GROUP BY au.code, au.pourcentage, montant_euros_ht";
-	//return $sql;
+	
 	$resql = $db->query($sql);
 	
 	$total = array();
