@@ -23,7 +23,7 @@
  * 				Put some comments here
  */
 // Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
+/*$res = @include("../../main.inc.php"); // From htdocs directory
 if (! $res) {
     $res = @include("../../../main.inc.php"); // From "custom" directory
 }
@@ -33,14 +33,18 @@ if (! $res) {
 if (! $res) {
     $res = @include("../../../../../main.inc.php"); // From "custom" directory
 }
-
+*/
 global $db;
 
 // Libraries
+require('config.php');
 dol_include_once('/core/lib/admin.lib.php');
+dol_include_once('/ressource/class/numeros_speciaux.class.php');
 //require_once "../class/myclass.class.php";
 // Translations
 $langs->load("ressource@ressource");
+
+$ATMdb = new TPDOdb;
 
 // Access control
 if (! $user->admin) {
@@ -66,12 +70,16 @@ switch ($action) {
 		
 		$TNumerosSpeciaux = $_REQUEST['TNumerosSpeciaux'];
 		
-		if(_saveNumerosSpeciaux($db, $TNumerosSpeciaux)) {
+		if(_saveNumerosSpeciaux($ATMdb, $TNumerosSpeciaux)) {
 			
 			setEventMessage($langs->trans('NumerosSpeciauxSaved'));
 			
 		}
 		break;
+	
+	case 'delete':
+	
+		TRH_Numero_special::deleteNumber($db, $_REQUEST['number']);
 	
 	default:
 		
@@ -81,8 +89,7 @@ switch ($action) {
 /*
  * View
  */ 
-
-$TNumerosSpeciaux = unserialize(dolibarr_get_const($db, 'RESSOURCE_ARRAY_NUMEROS_SPECIAUX'));
+$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
 //print_r($TFraisDePort);
  
 $page_name = "NumerosSpeciauxSetup";
@@ -96,18 +103,22 @@ print_fiche_titre($langs->trans($page_name), $linkback);
 // Setup page goes here
 //echo $langs->trans("FraisDePortSetup");
 
-function _saveNumerosSpeciaux(&$db, $TNumerosSpeciaux) {
+function _saveNumerosSpeciaux(&$ATMdb, $TNumerosSpeciaux) {
+		
+	global $db;
 	
 	$TNums = array();
 	
 	foreach($TNumerosSpeciaux as $num) {
 		$num = _returnCleanedPhoneNumber($num);
-		if(!empty($num)){
-			$TNums[] = $num;
+		if(!empty($num) && !TRH_Numero_special::existeNumber($db, $num)){
+			$number = new TRH_Numero_special;
+			$number->numero = $num;
+			$number->save($ATMdb);
 		}
 	}
 	
-	return dolibarr_set_const($db, 'RESSOURCE_ARRAY_NUMEROS_SPECIAUX', serialize($TNums));
+	return 1;
 	
 }
 
@@ -138,7 +149,7 @@ function _returnCleanedPhoneNumber($num) {
 	
 }
 
-print '<form name="formFraisDePortLevel" method="POST" action="'.dol_buildpath('/ressource/admin/admin_ressource.php', 2).'" />';
+print '<form name="formNumerosSpeciaux" method="POST" action="'.dol_buildpath('/ressource/special_numbers.php', 2).'" />';
 print '<table class="noborder" width="100%">';
 	
 print '<tr class="liste_titre">';
@@ -153,6 +164,7 @@ if(is_array($TNumerosSpeciaux) && count($TNumerosSpeciaux) > 0) {
 		
 		print '<tr>';
 		print '<td><input type="text" name="TNumerosSpeciaux[]" value="'.$numero.'" /></td>';
+		print '<td><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?number='.$numero.'&action=delete" />delete</a></td>';
 		print '</tr>';
 		
 	}	
