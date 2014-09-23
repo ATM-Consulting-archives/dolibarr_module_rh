@@ -49,6 +49,8 @@ class TRH_TicketResto extends TObjetStd {
 		else{
 			$sql .= " AND nd.dated<='".$date."' AND nd.datef>='".$date."'";
 		}
+
+//var_dump($sql);       print '<br/>';
 		
 		$ATMdb->Execute($sql);
 		$obj = $ATMdb->Get_line();

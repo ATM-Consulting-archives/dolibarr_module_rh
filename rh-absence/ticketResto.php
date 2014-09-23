@@ -319,7 +319,7 @@ if(__get('date_debut')=='') return false;
 	
 	if(!empty($group->note)) {
 		
-		$var = explode("\n", $group->note);
+		$var = explode(",", $group->note);
 		
 		$rs =  $var[0];
 		$address = $var[1];
