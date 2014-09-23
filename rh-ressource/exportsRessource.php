@@ -71,7 +71,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		if(isset($_REQUEST['DEBUG'])) { print $url."&withLogin=1"; }
 		$result = file_get_contents($url."&withLogin=1");
 		$TLignes = unserialize($result);
-		//var_dump($TLignes);exit; 
+		var_dump($TLignes);exit; 
 		$file = fopen(dol_buildpath("/ressource/export/export_orange.csv"), "w");
 		
 		/**********************************************************************************************
@@ -128,7 +128,8 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 				'date_debut'=>$form->calendrier('Date de début', 'date_debut', $date_debut,12, 10)
 				,'date_fin'=>$form->calendrier('Date de fin', 'date_fin', $date_fin, 12,10)
 				,'type'=>$form->combo('Fournisseur', 'type',$TType, $type)
-				,'urlFacture'=>$form->hidden('urlFacture', 'http://'.$_SERVER['SERVER_NAME'].DOL_URL_ROOT_ALT.'/ressource/script/loadListeFactures.php?fk_fournisseur=')
+				//,'urlFacture'=>$form->hidden('urlFacture', 'http://'.$_SERVER['SERVER_NAME'].DOL_URL_ROOT_ALT.'/ressource/script/loadListeFactures.php?fk_fournisseur=')
+				,'urlFacture'=>$form->hidden('urlFacture', dol_buildpath('/ressource/script/loadListeFactures.php?fk_fournisseur=', 2))
 				,'idImport'=>$form->combo('Facture', 'idImport',$TIdFacture, $idImport)
 				,'action'=>$form->hidden('action','save')
 				,'typeDirect'=>$TType[$type]

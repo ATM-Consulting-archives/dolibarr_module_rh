@@ -418,6 +418,7 @@ function _exportOrangeCSV(){
 	global $db;
 	
 	dol_include_once("/core/lib/admin.lib.php");
+	dol_include_once("/ressource/class/numeros_speciaux.class.php");
 	
 	$TabLigne = array();
 	
@@ -445,7 +446,8 @@ function _exportOrangeCSV(){
 	$total = array();
 	
 	// On récupère le tableau des numéros spéciaux (ceux à ne pas facturer)
-	$TNumerosSpeciaux = unserialize(dolibarr_get_const($db, "RESSOURCE_ARRAY_NUMEROS_SPECIAUX"));
+	//$TNumerosSpeciaux = unserialize(dolibarr_get_const($db, "RESSOURCE_ARRAY_NUMEROS_SPECIAUX"));
+	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
 	
 	while($res = $db->fetch_object($resql)) {
 			

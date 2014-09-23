@@ -273,14 +273,14 @@ foreach ($TUser as $nom => $id) {
 		$fact->save($ATMdb);		
 		$cptFacture++;
 		
-		$num_import = _getNextNumeroImport();
-		_saveFactureIntoTable($ATMdb, $TDonnees, $TCompteurs[$id]['num'], $num_import);
+		//$num_import = _getNextNumeroImport();
+		_saveFactureIntoTable($ATMdb, $TDonnees, $TCompteurs[$id]['num'], $idImport);
 		
 		}
 	
 }
 
-function _saveFactureIntoTable(&$ATMdb, &$TDonnees, $num_ligne, $num_import) {
+function _saveFactureIntoTable(&$ATMdb, &$TDonnees, $num_ligne, $idImport) {
 	//var_dump($TDonnees);exit;
 	
 	foreach($TDonnees as $TArrayLine){
@@ -288,14 +288,17 @@ function _saveFactureIntoTable(&$ATMdb, &$TDonnees, $num_ligne, $num_import) {
 		if("33".$TArrayLine[1] == $num_ligne){
 
 			$TRH_event_appel = new TRH_Evenement_appel;
-			$TRH_event_appel->num_import = $num_import;
+			//$TRH_event_appel->num_import = $num_import;
+			$TRH_event_appel->idImport = $idImport;
 			$TRH_event_appel->compte_facture = $TArrayLine[0];
 			$TRH_event_appel->num_gsm = "33".$TArrayLine[1];
 			$TRH_event_appel->nom_abonne = $TArrayLine[2];
 			$TRH_event_appel->num_facture = $TArrayLine[3];
-			$TRH_event_appel->date_facture = $TArrayLine[4];
+			$timestamp = strtotime(str_replace('/', '-', $TArrayLine[4]));
+			$TRH_event_appel->date_facture = $timestamp;
 			$TRH_event_appel->num_abonne = $TArrayLine[5];
-			$TRH_event_appel->date_appel = $TArrayLine[6]." ".$TArrayLine[7];
+			$timestamp = strtotime(str_replace('/', '-', $TArrayLine[6]));
+			$TRH_event_appel->date_appel = $timestamp;
 			$TRH_event_appel->num_appele = $TArrayLine[8];
 			$TRH_event_appel->volume_reel = $TArrayLine[9];
 			$TRH_event_appel->volume_facture = $TArrayLine[10];

@@ -261,7 +261,7 @@ class TRH_Evenement_appel  extends TObjetStd {
 	function __construct(){
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_evenement_appel');
-		parent::add_champs('num_import','type=entier;index;');
+		parent::add_champs('idImport','type=chaine;index;');
 		parent::add_champs('compte_facture,num_gsm,nom_abonne,num_facture','type=chaine;');
 		parent::add_champs('date_facture','type=date;');
 		parent::add_champs('num_abonne','type=chaine;');
