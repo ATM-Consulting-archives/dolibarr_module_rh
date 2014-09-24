@@ -54,7 +54,17 @@
 					
 					$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
 				
-					if($demandeRecevable==1){
+					if($demandeRecevable>0){
+						$mesg = 'Demande enregistrée';
+						
+						if(!empty($absence->error)) {
+							$absence->avertissement=1;
+							$absence->avertissementInfo=$absence->error;
+							$warning=1;
+							$mesg.=" - ".$absence->error;
+						}
+						
+						
 						$absence->save($ATMdb);
 						$absence->load($ATMdb, $_REQUEST['id']);
 						if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
@@ -62,28 +72,13 @@
 							mailCongesValideur($ATMdb,$absence);
 						}
 						
-						$mesg = 'Demande enregistrée';
 						_fiche($ATMdb, $absence,'view');
-					}else{
-						if($demandeRecevable==0){
+					}
+					else if($demandeRecevable==0){
 							$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur</div>';
 							_fiche($ATMdb, $absence,'edit');
-						}else if($demandeRecevable==2){
-							$absence->avertissement=1;
-							$absence->save($ATMdb);
-							$absence->load($ATMdb, $_REQUEST['id']);
-							if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
-								mailConges($absence);
-								mailCongesValideur($ATMdb,$absence);
-							}
-							$mesg = '<div class="error">' . $langs->trans('Warning') . ' : ' . $langs->trans('ErrExcessAbsenceTime') . '</div>';
-							_fiche($ATMdb, $absence,'view');
-						}
-						else if($demandeRecevable==3){		// demande rtt non cumulés acollée à un congé, ou rtt ou jour férié
-							$mesg = '<div class="error">' . $langs->trans('DeniedRequestNonCumulatedDayOffRules') . '</div>';
-							_fiche($ATMdb, $absence,'edit');
-						}
 					}
+					
 				}else{
 					$popinExisteDeja = '<div class="error">' . $langs->trans('ImpossibleCreation') . ' : ' . $langs->trans('ErrExistingRequestInPeriod', date('d/m/Y', strtotime($existeDeja[0])), date('d/m/Y',  strtotime($existeDeja[1]))) . '</div>';
 					_fiche($ATMdb, $absence,'edit');
@@ -818,7 +813,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
 				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')
 				,'dureeHeurePaie'=>$form->texte('','dureeHeurePaie',$absence->dureeHeurePaie,5,10,'',$class="text", $default='')
-				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png">' . $langs->trans('DoNotRespectRules') . '</img>': $langs->trans('None')
+				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png" />' . $langs->trans('DoNotRespectRules') . ' : '.$absence->avertissementInfo : $langs->trans('None')
 				,'fk_user'=>$absence->fk_user
 				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$absence->fk_user):''
 				,'userAbsenceCourant'=>$droitsCreation==1?'':$form->hidden('fk_user', $user->id)
@@ -900,8 +895,13 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	echo $form->end_form();
 	// End of page
 	
-	global $mesg, $error, $popinExisteDeja, $existeDeja;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	global $mesg, $error, $warning, $popinExisteDeja, $existeDeja;
+	
+	if($warning)$typeMesg = 'warning';
+	elseif($error)$typeMesg = 'error';
+	else $typeMesg='ok';
+	
+	dol_htmloutput_mesg($mesg, '', $typeMesg);
 	
 	if(!empty($popinExisteDeja) && !empty($existeDeja)) {
 		?>

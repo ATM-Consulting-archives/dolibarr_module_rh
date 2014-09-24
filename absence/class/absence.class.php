@@ -240,7 +240,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('commentaireValideur','type=chaine;');		//commentaire
 		parent::add_champs('etat','type=chaine;index;');			//état (à valider, validé...)
 		parent::add_champs('avertissement','type=entier;');	
-		parent::add_champs('libelleEtat','type=chaine;');			//état (à valider, validé...)
+		parent::add_champs('libelleEtat,avertissementInfo','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('niveauValidation','type=entier;');	//niveau de validation
 		parent::add_champs('idAbsImport','type=entier;index;');	//niveau de validation
 		parent::add_champs('fk_user, fk_user_valideur','type=entier;index;');	//utilisateur concerné
@@ -1321,10 +1321,13 @@ class TRH_Absence extends TObjetStd {
 
 	
 	function dureeAbsenceRecevable(&$ATMdb){
+		global $langs;
+		
 		$avertissement=0;
 		
 		if(!$this->testEffectifGroupe($ATMdb)) {
 			$avertissement = 3;
+			$this->error = $langs->trans('ErrInsuffisanteNumberOfPerson');
 		}
 		
 		$TRegle=$this->recuperationRegleUser($ATMdb,$this->fk_user);
@@ -1339,9 +1342,13 @@ class TRH_Absence extends TObjetStd {
 					*/
 					if($TR['periode']==='ONE' && $this->duree>$TR['nbJourCumulable']){ //TODO ajouter regle par mois et année
 						if($TR['restrictif']==1){
-								 return 0;
+							$this->error = $langs->trans('ErrAbsenceNotAllowedDueToRules');
+							 return 0;
 						}
-						else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
+						else {
+							$this->error = $langs->trans('ErrExcessAbsenceTime');
+							$avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
+						}
 					}
 					/*else if($TR['periode']==='MONTH' || $TR['periode']==='YEAR') {
 							
