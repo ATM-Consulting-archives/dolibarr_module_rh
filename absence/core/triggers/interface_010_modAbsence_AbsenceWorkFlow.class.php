@@ -113,17 +113,37 @@ class InterfaceAbsenceWorkflow
 				
 			}
 			
-		} elseif ($action === 'ABSENCE_CREATE') {
+		} elseif ($action === 'ABSENCE_BEFORECREATE') {
 				
 			global $user, $db;
 				
 			$ATMdb=new TPDOdb;
-			$object->calculDureeAbsenceParAddition($ATMdb);
-			$object->TDureeAllAbsenceUser = $object->TDureeAbsenceUser;
 			
-			$this->_loadDureeAllAbsenceUser($ATMdb, $object);
 			
-			$object->code_validite = $this->_absenceEstValide($ATMdb, $object);
+			$demandeRecevable=$object->testDemande($ATMdb, $object->fk_user, $object);
+			if($demandeRecevable==1 || $demandeRecevable==2){
+						
+				if($demandeRecevable==2) {
+					$object->avertissementInfo='Attention : La durée de l\'absence dépasse la règle en vigueur';
+					$object->avertissement=1;
+				}	
+				
+				/*$object->calculDureeAbsenceParAddition($ATMdb);
+				$object->TDureeAllAbsenceUser = $object->TDureeAbsenceUser;
+				
+				$this->_loadDureeAllAbsenceUser($ATMdb, $object);
+				
+				$object->code_validite = $this->_absenceEstValide($ATMdb, $object);*/
+				
+				return 1;
+			}
+			else{
+				
+				$this->error = 'Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur';
+				
+				return -1;
+			}
+			
 			
 		}
 

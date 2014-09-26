@@ -25,16 +25,6 @@
 				$absence->set_date('date_debut', GETPOST('date_debutday').'/'.GETPOST('date_debutmonth').'/'.GETPOST('date_debutyear') );
 				$absence->set_date('date_fin', GETPOST('date_finday').'/'.GETPOST('date_finmonth').'/'.GETPOST('date_finyear') );
 				
-				if (! $notrigger)
-				{
-					// Appel des triggers
-					dol_include_once('/core/class/interfaces.class.php');
-					$interface = new Interfaces($db);
-					$result = $interface->run_triggers('ABSENCE_CREATE',$absence,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
-				}
-				
 				$absence->niveauValidation=1;
 				$existeDeja=$absence->testExisteDeja($ATMdb, $absence);
 				if($existeDeja===false){
@@ -52,6 +42,26 @@
 						break;
 					} 
 					
+					if($absence->save($ATMdb)) {
+						
+							if($absence->avertissementInfo) setEventMessage($absence->avertissementInfo, 'warnings');
+						
+							$absence->load($ATMdb, $_REQUEST['id']);
+							if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
+								mailConges($absence);
+								mailCongesValideur($ATMdb,$absence);
+							}
+							$mesg = 'Demande enregistrée';
+							_fiche($ATMdb, $absence,'view');
+					}
+					else{
+						$errors='';
+						foreach($absence->errors as $err) $errors.=$err.'<br />';
+						$mesg = '<div class="error">'.$errors.'</div>';
+						_fiche($ATMdb, $absence,'edit');
+						
+					}
+					/*
 					$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
 					
 					// On teste la validité de l'absence selon les règles de Home Office				
@@ -109,7 +119,7 @@
 								_fiche($ATMdb, $absence,'edit');
 							}
 						}
-					}
+					}*/
 				}else{
 					
 					$popinExisteDeja = '<div class="error">Création impossible : il existe déjà une autre demande d\'absence pendant cette période : '.date('d/m/Y', strtotime($existeDeja[0]) ).' - '.date('d/m/Y',  strtotime($existeDeja[1]) ).'</div>';

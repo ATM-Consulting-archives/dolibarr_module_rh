@@ -224,7 +224,7 @@ class TRH_Absence extends TObjetStd {
 		
 		
 		$sql="SELECT DISTINCT r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, 
-		r.fk_user, r.fk_usergroup, r.choixApplication
+		r.fk_user, r.fk_usergroup, r.choixApplication, r.periode
 		FROM ".MAIN_DB_PREFIX."rh_absence_regle as r INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (r.fk_usergroup=g.fk_usergroup)
 		WHERE r.choixApplication LIKE 'user' AND r.fk_user=".$fk_user."
 		OR (r.choixApplication LIKE 'all')
@@ -242,6 +242,7 @@ class TRH_Absence extends TObjetStd {
 			$TRegle[$k]['fk_user']= $ATMdb->Get_field('fk_user');
 			$TRegle[$k]['fk_usergroup']= $ATMdb->Get_field('fk_usergroup');
 			$TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
+			$TRegle[$k]['periode']= $ATMdb->Get_field('periode');
 			$k++;
 		}
 
@@ -348,7 +349,22 @@ class TRH_Absence extends TObjetStd {
 			
 		}
 		
-		parent::save($db);
+		// Appel des triggers
+		dol_include_once('/core/class/interfaces.class.php');
+		$interface = new Interfaces($db);
+		$result = $interface->run_triggers('ABSENCE_BEFORECREATE',$this,$user,$langs,$conf);
+		if ($result < 0) {
+			//var_dump($result,$interface);
+			 $error++; $this->errors=$interface->errors;
+			return false; 
+		}
+		// Fin appel triggers
+		else {
+			parent::save($db);
+			return true;	
+		}	
+		
+		
 	}
 
 	/*
@@ -456,6 +472,7 @@ class TRH_Absence extends TObjetStd {
 				$duree+=$dureeJour;
 				
 				$this->TDureeAbsenceUser[date('Y', $t_current)][date('m', $t_current)] += $dureeJour;
+				$this->TDureeAllAbsenceUser[date('Y', $t_current)][date('m', $t_current)] += $dureeJour;
 
 			}
 			
@@ -1219,105 +1236,165 @@ class TRH_Absence extends TObjetStd {
 	function dureeAbsenceRecevable(&$ATMdb){
 		$avertissement=0;
 		$TRegle=$this->recuperationRegleUser($ATMdb,$this->fk_user);
-		if(!empty($TRegle)){
+		//var_dump($TRegle);exit;
+		$this->loadDureeAllAbsenceUser($ATMdb);
+		//var_dump($this);exit;
+		$avertissement = $this->nbJoursTotalRegle($this->TDureeAllAbsenceUser, $TRegle);
+		//echo $avertissement;exit;
+		//echo $avertissement;exit;
+		
+		/*if($avertissement==0){
+			return 1;
+		}*/
+		
+		return $avertissement;
+	}
+
+	/**
+	 * Charge l'attribut TDureeAllAbsenceUser de l'objet absence associant à chaque mois de chaque année une durée total de congés pris ou demandés
+	 * @param object $objet : objet absence
+	 */
+	function loadDureeAllAbsenceUser(&$ATMdb) {
+		
+		global $db;
+		
+		// On récupère toutes les absences contenues dans le ou les mois sur le(s)quel(s) se trouve la plage de congés
+		$sql = $this->rechercheAbsenceUser($ATMdb,$this->fk_user, date("Y-m-01 H:i:s", $this->date_debut), date("Y-m-".date("t", date("m", $this->date_fin))." H:i:s", $this->date_fin), 'Tous');
+
+		$resql = $db->query($sql);
+		//$this->_nbJoursConsecutifsInferieurATrois($ATMdb, $object);
+		while($res = $db->fetch_object($resql)) {
+			
+			$abs = new TRH_Absence;
+			$abs->load($ATMdb, $res->ID);
+			$abs->calculDureeAbsenceParAddition($ATMdb);
+			
+			foreach($abs->TDureeAbsenceUser as $annee => $tabMonth) {
+				foreach($tabMonth as $month => $duree) {
+					@$this->TDureeAllAbsenceUser[$annee][$month] += $duree;
+				}
+			}
+			
+		}
+		
+	}
+	
+	/**
+	 * Vérifie si le nombre de jours total de congés de l'utilisateur est inférieure au nombre total de jours autorisé par les règles en vigueur
+	 * @param array $TDureeAllAbsenceUser Tableau de l'objet absence qui associe à chaque mois de chaque année une durée total de congés pris ou demandés
+	 * @param int $avertissement 0=refusé restrictif, 1=accepté, 2=refusé non restrictif
+	 */
+	function nbJoursTotalRegle($TDureeAllAbsenceUser, $TRegles) {
+
+		//var_dump($tabReglesHomeOffice);
+		// On récupère la règle qui concerne le nombre de jours à ne pas dépasser
+
+		if(is_array($TRegles) && count($TRegles) > 0) {
+			foreach($TRegles as $TLineRegle) {
 				
-			foreach($TRegle as $TR){
+				if($TLineRegle['typeAbsence']==$this->type) {
 				
-				if($TR['typeAbsence']==$this->type){
+					$nbJoursAutorises = $TLineRegle['nbJourCumulable'];
 					
-					/*if($TR['periode']==='MONTH') $nb_jour_cumule_mois = TRH_Absence::getNBJourAbsence($ATMdb, $this->type, $this->get_date('date_debut','Y-m-01'), $this->get_date('date_fin','Y-m-t'));
-					if($TR['periode']==='YEAR') $nb_jour_cumule_mois = TRH_Absence::getNBJourAbsence($ATMdb, $this->type, $this->get_date('date_debut','Y-m-d'), $this->get_date('date_fin','Y-m-d'));
-					*/
-					if($TR['periode']==='ONE' && $this->duree>$TR['nbJourCumulable']){ //TODO ajouter regle par mois et année
-						if($TR['restrictif']==1){
+					if($TLineRegle['periode'] === "YEAR") {
+	
+						foreach($TDureeAllAbsenceUser as $annee => $tabMonth) {
+							
+							// On calcule le nombre de jour total par an
+							$dureeTotale = 0;
+							foreach($tabMonth as $duree) {
+								$dureeTotale += $duree;
+							}
+							// Si le nombre de jours total par an est supérieur au nb autorisé, on retourn false
+							if($dureeTotale > $nbJoursAutorises) {
+								if($TLineRegle['restrictif']==1){
+										 return 0;
+								}
+								else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
+							}
+						}
+						
+					} else if($TLineRegle['periode'] === "MONTH") {
+						
+						foreach($TDureeAllAbsenceUser as $annee => $tabMonth) {
+							foreach($tabMonth as $duree) {
+								if($duree > $nbJoursAutorises) {
+									if($TLineRegle['restrictif']==1){
+											 return 0;
+									}
+									else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
+								}
+							}
+						}
+						
+					} elseif($TLineRegle['periode']==='ONE' && $this->duree>$TR['nbJourCumulable']){ //TODO ajouter regle par mois et année
+						if($TLineRegle['restrictif']==1){
 								 return 0;
 						}
 						else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
 					}
-					/*else if($TR['periode']==='MONTH' || $TR['periode']==='YEAR') {
-							
-						$t_current = $this->date_debut;
-							
-							
-						//&& $this->duree + $nb_jour_cumule_mois >$TR['nbJourCumulable']){
-					
-					}*/ // TODO faire fonctionner cette merde sans tout péter !
-					
 					
 				}
-				
+					
 			}
 		}
-		
-		if($avertissement==0){
-			return 1;
-		}
-		
+
 		return $avertissement;
+
+	}
+
+	/**
+	 * Retourne un tableau contenant les règles sur le Home office qui concernent l'utilisateur courant
+	 * @return array $tabRegles tableau de règles sur le home Office par lesquelles l'utilisateur courant est concerné
+	 */
+	function _getReglesHomeOffice() {
+			
+		global $db, $user;
+		
+		$tabRegles = array();
+		
+		$user_group = new UserGroup($db);
+		$TGroups_of_user = $user_group->listGroupsForUser($user->id);
+		if(count($TGroups_of_user) > 0) $TGroups_of_user = array_keys($TGroups_of_user);
+		
+		$sql = "SELECT rowid, nbJourCumulable, restrictif, periode";
+		$sql.= " FROM ".MAIN_DB_PREFIX.'rh_absence_regle';
+		$sql.= " WHERE (fk_user = ".$user->id;
+		if(count($TGroups_of_user) > 0) $sql.= " OR fk_usergroup IN (".implode(",", $TGroups_of_user).")";
+		$sql.= ")";
+		$sql.= ' AND typeAbsence = "HomeOffice"';
+		
+		$resql = $db->query($sql);
+		if($resql->num_rows > 0) {
+			while($res = $db->fetch_object($resql)) {
+				$tabRegles[] = $res;
+			}
+		}
+		//echo $sql;exit;
+		return $tabRegles;
+		
 	}
 	
-	/*function isWorkingDayNext(&$ATMdb, $dateTest){
+	function isWorkingDayNext(&$ATMdb, &$date){ // regarde x/x emploi du temps
 
-		$dateNext=strtotime('+1day',$dateTest); // +3600*24; // AA cf mon autre comm, quand l'horloge change d'heure ceci fonctionne mal
-		//$jourNext=$this->jourSemaine($dateNext);
-		
-		//on teste si c'est un jour férié
-		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries`";
-		
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			if($this->php2Date($dateNext)==$ATMdb->Get_field('date_jourOff')&&$ATMdb->Get_field('date_jourOff')!='apresmidi'){
-				return 0;
-			}
-		}
-		
-		//on teste si le jour suivant est un rtt cumulé ou un congés ce qui est interdit
-		$sql="SELECT rowid, date_debut, dfMoment FROM ".MAIN_DB_PREFIX."rh_absence 
-		WHERE date_debut LIKE '".$this->php2Date($dateNext)."'
-		AND (type LIKE 'rttcumule' OR type LIKE 'conges') 
-		AND etat <> 'refusee'"; 
-		$ATMdb->Execute($sql);
+		$date=strtotime('+1day',$dateTest); 
 
-		while($ATMdb->Get_line()) {
-			//echo $this->php2Date($dateNext);
-			if($this->php2Date($dateNext)==$ATMdb->Get_field('date_debut')&&$ATMdb->Get_field('date_debut')!='apresmidi'){
-				return 0;
-			}
-		}
-		return 1;
+		$res= (TRH_EmploiTemps::estTravaille($ATMdb, $fk_user, date('Y-m-d',$date))!='NON');
+		if($res) $res = TRH_JoursFeries::estFerie($ATMdb, $date);
+		
+		return $res;
+				
 	}
 	
-	function isWorkingDayPrevious(&$ATMdb, $dateTest){
+	function isWorkingDayPrevious(&$ATMdb, &$date){
 
-		$datePrec=$dateTest-3600*24;
-		//$jourPrec=$this->jourSemaine($datePrec);
-		
-		//on teste si c'est un jour férié
-		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries` WHERE date_jourOff between '"
-		.$jourPrec."' and '". $this->php2Date($this->date_debut)."'"; 
-		
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			if($this->php2Date($dateTest)==$ATMdb->Get_field('date_jourOff')){
-				return 0;
-			}
-		}
-		
-		//on teste si le jour précédent est un rtt cumulé ou un congés ce qui est interdit
-		$sql="SELECT rowid, date_debut, dfMoment FROM ".MAIN_DB_PREFIX."rh_absence 
-		WHERE date_fin LIKE '".$this->php2Date($datePrec)."'
-		AND (type LIKE 'rttcumule' OR type LIKE 'conges')
-		AND etat <> 'refusee'"; 
-		$ATMdb->Execute($sql);
+		$date=strtotime('-1day',$dateTest); 
 
-		while($ATMdb->Get_line()) {
-			//echo $this->php2Date($datePrec);
-			if($this->php2Date($datePrec)==$ATMdb->Get_field('date_fin')&&$ATMdb->Get_field('date_fin')!='matin'){
-				return 0;
-			}
-		}
-		return 1;
-	}*/
+		$res= (TRH_EmploiTemps::estTravaille($ATMdb, $fk_user, date('Y-m-d',$date))!='NON');
+		if($res) $res = TRH_JoursFeries::estFerie($ATMdb, $date);
+		
+		return $res;
+	}
 
 
 	///////////////FONCTIONS pour le fichier rechercheAbsence\\\\\\\\\\\\\\\\\\\\\\\\\\\
