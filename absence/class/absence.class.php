@@ -1288,15 +1288,22 @@ class TRH_Absence extends TObjetStd {
 
 		//var_dump($tabReglesHomeOffice);
 		// On récupère la règle qui concerne le nombre de jours à ne pas dépasser
-
+		
+		$avertissement=1;
+		
 		if(is_array($TRegles) && count($TRegles) > 0) {
 			foreach($TRegles as $TLineRegle) {
 				
 				if($TLineRegle['typeAbsence']==$this->type) {
 				
 					$nbJoursAutorises = $TLineRegle['nbJourCumulable'];
-					
-					if($TLineRegle['periode'] === "YEAR") {
+					//echo $this->duree;exit;
+					if($TLineRegle['periode']==='ONE' && $this->duree>$TLineRegle['nbJourCumulable']){ //TODO ajouter regle par mois et année
+						if($TLineRegle['restrictif']==1){
+								 return 0;
+						}
+						else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
+					} elseif($TLineRegle['periode'] === "YEAR") {
 	
 						foreach($TDureeAllAbsenceUser as $annee => $tabMonth) {
 							
@@ -1327,11 +1334,6 @@ class TRH_Absence extends TObjetStd {
 							}
 						}
 						
-					} elseif($TLineRegle['periode']==='ONE' && $this->duree>$TR['nbJourCumulable']){ //TODO ajouter regle par mois et année
-						if($TLineRegle['restrictif']==1){
-								 return 0;
-						}
-						else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
 					}
 					
 				}
