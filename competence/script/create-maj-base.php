@@ -26,6 +26,9 @@
 	$r=new TRH_remuneration;
 	$r->init_db_by_vars($ATMdb);
 	
+	$r=new TRH_remunerationPrime;
+	$r->init_db_by_vars($ATMdb);
+	
 	$r=new TRH_dif;
 	$r->init_db_by_vars($ATMdb);
 	

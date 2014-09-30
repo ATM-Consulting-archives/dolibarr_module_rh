@@ -11,14 +11,23 @@
 	
 	$ATMdb=new TPDOdb;
 	$remuneration=new TRH_remuneration;
+	$remunerationPrime=new TRH_remunerationPrime;
 
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'new':
 				//$ATMdb->db->debug=true;
-				$remuneration->set_values($_REQUEST);
-				_fiche($ATMdb, $remuneration, 'edit');
+				$type = $_REQUEST['type'];
+				
+				if($type === "remuneration") {
+					$remuneration->set_values($_REQUEST);
+					_fiche($ATMdb, $remuneration, 'edit');
+				}
+				elseif($type === "prime") {
+					$remunerationPrime->set_values($_REQUEST);
+					_fichePrime($ATMdb, $remunerationPrime, 'edit');
+				}
 				break;
 				
 			case 'edit'	:
@@ -28,17 +37,28 @@
 				break;
 				
 			case 'save':
-				$remuneration->load($ATMdb, $_REQUEST['id']);
-				$remuneration->set_values($_REQUEST);
-				$mesg = '<div class="ok">La ligne de rémunération a bien été enregistrée</div>';
-				$remuneration->save($ATMdb);
-				$remuneration->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $remuneration, 'view');
+				if($_REQUEST['type'] !== 'prime'){
+					
+					$remuneration->load($ATMdb, $_REQUEST['id']);
+					$remuneration->set_values($_REQUEST);
+					$mesg = '<div class="ok">La ligne de rémunération a bien été enregistrée</div>';
+					$remuneration->save($ATMdb);
+					$remuneration->load($ATMdb, $_REQUEST['id']);
+					_fiche($ATMdb, $remuneration, 'view');
+					
+				} else {
+					$remunerationPrime->load($ATMdb, $_REQUEST['id']);
+					$remunerationPrime->set_values($_REQUEST);
+					$mesg = '<div class="ok">La ligne de rémunération a bien été enregistrée</div>';
+					$remunerationPrime->save($ATMdb);
+					$remunerationPrime->load($ATMdb, $_REQUEST['id']);
+					_fiche($ATMdb, $remunerationPrime, 'view');
+				}
 				break;
 				
 			case 'view':
 				$remuneration->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $remuneration, 'view');
+				_fichePrime($ATMdb, $remunerationPrime, 'view');
 				break;
 				
 			case 'delete':
@@ -137,7 +157,7 @@ function _liste(&$ATMdb, $remuneration) {
 	));
 		if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
 		?>
-		<a class="butAction" href="?&action=new&fk_user=<?=$fuser->id?>">Ajouter une rémunération</a><div style="clear:both"></div>
+		<a class="butAction" href="?&action=new&type=remuneration&fk_user=<?=$fuser->id?>">Ajouter une rémunération</a><div style="clear:both"></div>
 		
 		<?
 		}
@@ -193,7 +213,7 @@ function _liste(&$ATMdb, $remuneration) {
 	));
 		if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
 		?>
-		<a class="butAction" href="?&action=new&fk_user=<?=$fuser->id?>">Ajouter une prime</a><div style="clear:both"></div>
+		<a class="butAction" href="?&action=new&type=prime&fk_user=<?=$fuser->id?>">Ajouter une prime</a><div style="clear:both"></div>
 		
 		<?
 		}
@@ -278,4 +298,82 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
+}	
+
+	
+function _fichePrime(&$ATMdb, $remunerationPrime,  $mode) {
+	global $db,$user,$langs,$conf;
+	llxHeader('','Vos Rémunérations');
+	
+	$fuser = new User($db);
+	$fuser->fetch(isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : $remunerationPrime->fk_user);
+	$fuser->getrights();
+	
+	$head = user_prepare_head($fuser);
+	$current_head = 'remuneration';
+	dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
+	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
+	$form->Set_typeaff($mode);
+	echo $form->hidden('id', $remunerationPrime->getId());
+	echo $form->hidden('fk_user', $_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id);
+	echo $form->hidden('entity', $conf->entity);
+	echo $form->hidden('type', $_REQUEST['type']);
+	echo $form->hidden('action', 'save');
+	
+	$TBS=new TTemplateTBS();
+	print $TBS->render('./tpl/remuneration_prime.tpl.php'
+		,array(
+		)
+		,array(
+			'remunerationPrime'=>array(
+				'id'=>$remunerationPrime->getId()
+				,'date_prime'=>$form->calendrier('', 'date_prime', $remunerationPrime->date_prime, 12)
+				,'fk_user_list'=>$form->combo('', 'fk_user', _getUsers(), -1)
+				,'montant_prime'=>$form->texte('','montant',$remunerationPrime->montant, 30,100,'','','-')
+				,'motif'=>$form->texte('','motif',$remunerationPrime->motif, 30,100,'','','-')
+			)
+			,'userCourant'=>array(
+				'id'=>$_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id
+				,'ajoutRem'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration
+			)
+			,'user'=>array(
+				'id'=>$fuser->id
+				,'lastname'=>$fuser->lastname
+				,'firstname'=>$fuser->firstname
+			)
+			,'view'=>array(
+				'type'=>$_REQUEST['type']
+				,'mode'=>$mode
+			)
+		)	
+	);
+	
+	echo $form->end_form();
+	
+	global $mesg, $error;
+	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	llxFooter();
+}
+
+/**
+ * Retourne un tableau associatif avec en clef id et en valeur nom prenom de tous les user actifs dans dolibarr
+ */
+function _getUsers() {
+	
+	global $db;
+	
+	$TUsers = array();
+	
+	$sql = "SELECT rowid, lastname, firstname";
+	$sql.= " FROM ".MAIN_DB_PREFIX."user";
+	$sql.= " WHERE statut=1";
+	$resql = $db->query($sql);
+	
+	while($res = $db->fetch_object($resql)) {
+		$TUsers[$res->rowid] = $res->lastname." ".$res->firstname;
+	}
+	
+	return $TUsers;
+	
 }
