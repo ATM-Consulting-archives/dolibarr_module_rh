@@ -31,9 +31,17 @@
 				break;
 				
 			case 'edit'	:
-				//$ATMdb->db->debug=true;
-				$remuneration->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $remuneration,'edit');
+				if($_REQUEST['type'] !== 'prime'){
+					
+					$remuneration->load($ATMdb, $_REQUEST['id']);
+					_fiche($ATMdb, $remuneration,'edit');
+					
+				} else {
+					
+					$remunerationPrime->load($ATMdb, $_REQUEST['id']);
+					_fichePrime($ATMdb, $remunerationPrime,'edit');					
+					
+				}
 				break;
 				
 			case 'save':
@@ -52,7 +60,7 @@
 					$mesg = '<div class="ok">La ligne de rémunération a bien été enregistrée</div>';
 					$remunerationPrime->save($ATMdb);
 					$remunerationPrime->load($ATMdb, $_REQUEST['id']);
-					_fiche($ATMdb, $remunerationPrime, 'view');
+					_fichePrime($ATMdb, $remunerationPrime, 'view');
 				}
 				break;
 				
@@ -343,8 +351,8 @@ function _fichePrime(&$ATMdb, $remunerationPrime,  $mode) {
 				,'firstname'=>$fuser->firstname
 			)
 			,'view'=>array(
-				'type'=>$_REQUEST['type']
-				,'mode'=>$mode
+				//'type'=>$_REQUEST['type']
+				'mode'=>$mode
 			)
 		)	
 	);
