@@ -27,6 +27,7 @@
 				$ATMdb->db->debug=true;
 				$regle->load($ATMdb, GETPOST('id','integer'));
 				$regle->restrictif=0;
+				$regle->contigue=0;
 				$regle->set_values($_REQUEST);				
 				$regle->save($ATMdb);
 				$mesg = '<div class="ok">' . $langs->trans('ChangesMade') . '</div>';
@@ -181,6 +182,7 @@ function _fiche(&$ATMdb, $regle, $mode) {
 				,'typeAbsence'=>$form->combo('', 'typeAbsence',$TTypeAbsence, $regle->typeAbsence)
 				,'periode'=>$form->combo('', 'periode',TRH_RegleAbsence::$TPeriode, $regle->periode)
 				,'restrictif'=>$form->checkbox1('','restrictif','1',$regle->restrictif==1?true:false)
+				,'contigue'=>$form->checkbox1('','contigue','1',$regle->contigue==1?true:false)
 				,'titreRegle'=>load_fiche_titre($langs->trans('AbsencePresenceRule'),'', 'title.png', 0, '')
 			)
 			,'userCourant'=>array(
