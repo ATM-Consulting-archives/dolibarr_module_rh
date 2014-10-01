@@ -37,7 +37,7 @@
 						/*
 							Si ce n'est pas un user avec droit, pas le droit de créer des anciennes absences						
 						*/
-						$mesg = '<div class="error">Attention : seul un utilisateur avec pouvoir peut créer une absence antérieure à maintenant.</div>';
+						$mesg = '<div class="error">' . $langs->trans('ErrOnlyUserWithPowerCanCreatePastAbsence') . '</div>';
 						_fiche($ATMdb, $absence,'edit');
 						break;
 					} 
@@ -86,19 +86,19 @@
 				<script language="javascript">
 					document.location.href="?delete_ok=1";					
 				</script>
-				<?
+				<?php
 				break;
 				
 			case 'accept':
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
-					SET etat='Validee', libelleEtat='Acceptée', date_validation='".date('Y-m-d')."', fk_user_valideur=".$user->id." 
+					SET etat='Validee', libelleEtat='" . $langs->trans('Accepted') . "', date_validation='".date('Y-m-d')."', fk_user_valideur=".$user->id." 
 					WHERE fk_user=".$absence->fk_user. " 
 					AND rowid=".$absence->getId();
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="error">Demande d\'absence acceptée</div>';
+				$mesg = '<div class="error">' . $langs->trans('AbsenceRequestAccepted') . '</div>';
 				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
 				
@@ -109,7 +109,7 @@
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="error">Demande d\'absence envoyée au valideur supérieur</div>';
+				$mesg = '<div class="error">' . $langs->trans('AbsenceRequestSentToSuperior') . '</div>';
 				_fiche($ATMdb, $absence,'view');
 				break;
 				
@@ -124,7 +124,7 @@
 
 				//$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="error">Demande d\'absence refusée</div>';
+				$mesg = '<div class="error">' . $langs->trans('DeniedAbsenceRequest') . '</div>';
 				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
 				
@@ -160,8 +160,8 @@
 	
 function _liste(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
-	llxHeader('','Liste de vos absences');
-	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
+	llxHeader('', $langs->trans('ListOfAbsence'));
+	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', $langs->trans('Absence'));
 
 	//getStandartJS();
 	
@@ -198,8 +198,8 @@ function _liste(&$ATMdb, &$absence) {
 		)
 		,'translate'=>array('Statut demande'=>array(
 			'Refusée'=>'<b style="color:#A72947">'.$langs->trans('Refused').'</b>',
-			'En attente de validation'=>'<b style="color:#5691F9">'.$langs->trans('WaitingValidation').'</b>' , 
-			'Acceptée'=>'<b style="color:#30B300">'.$langs->trans('Accepted').'</b>')
+			'En attente de validation'=>'<b style="color:#5691F9">'.$langs->trans('WaitingValidation').'</b>'
+			,'Acceptée'=>'<b style="color:#30B300">'.$langs->trans('Accepted').'</b>')
 			,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="'.$langs->trans('DoNotRespectRules').'" />')
 			,'etat'=>$absence->TEtat
 		)
@@ -211,23 +211,23 @@ function _liste(&$ATMdb, &$absence) {
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucune absence à afficher"
+			,'messageNothing'=> $langs->trans('MessageNothingAbsence')
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			/*,'picto_search'=>'<img src="../../theme/rh/img/search.png">'*/
 			
 		)
 		,'title'=>array(
-			'date_debut'=>'Date début'
-			,'date_fin'=>'Date fin'
-			,'avertissement'=>'Règle'
-			,'libelle'=>'Type d\'absence'
-			,'firstname'=>'Prénom'
-			,'lastname'=>'Nom'
-			,'login'=>'Login'
-			,'etat'=>'Statut demande'
-			,'duree'=>'Durée décomptée en jour'
-			,'Compteur'=>'Congés disponible avant la demande'
+			'date_debut' 	 => $langs->trans('StartDate')
+			,'date_fin'  	 => $langs->trans('EndDate')
+			,'avertissement' => $langs->trans('Rules')
+			,'libelle'	 	 => $langs->trans('AbsenceType')
+			,'firstname' 	 => $langs->trans('FirstName')
+			,'lastname'	 	 => $langs->trans('Name')
+			,'login'	 	 => $langs->trans('Login')
+			,'etat'		 	 => $langs->trans('RequestStatus')
+			,'duree' 	 	 => $langs->trans('CountedInDaysDuration')
+			,'Compteur'		 => $langs->trans('AvailableHolidayBeforeRequest')
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
@@ -249,7 +249,7 @@ function _liste(&$ATMdb, &$absence) {
 		,'orderBy'=>$TOrder
 		
 	));
-	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new">Nouvelle demande</a><div style="clear:both"></div><?
+	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new"><?php echo $langs->trans('NewRequest'); ?></a><div style="clear:both"></div><?php
 	$form->end();
 	
 	
@@ -263,8 +263,8 @@ function _historyCompteurInForm($duree) {
 }
 function _listeAdmin(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
-	llxHeader('','Liste de toutes les absences');
-	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
+	llxHeader('', $langs->trans('ListeAllAbsences'));
+	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', $langs->trans('Absence'));
 	//getStandartJS();
 
 	
@@ -301,18 +301,18 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			'libelle'=>'<a href="@isPresence@.php?id=@ID@&action=view">@val@</a>'
 		)
 		,'translate'=>array(
-			'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
+			'avertissement'=>array('1'=>'<img src="./img/warning.png" title="' . $langs->trans('DoNotRespectRules') . '"></img>')
 			,'etat'=>$absence->TEtat
 		)
 		,'hide'=>array('isPresence','DateCre', 'fk_user', 'ID')
 		,'type'=>array('date_debut'=>'date', 'date_fin'=>'date')
 		,'liste'=>array(
-			'titre'=>'Liste de toutes les absences des collaborateurs'
+			'titre'=> $langs->trans('ListeAllCollabAbsences')
 			,'image'=>img_picto('','title.png', '', 0)
 			,'picto_precedent'=>img_picto('','previous.png', '', 0)
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
-			,'messageNothing'=>"Il n'y a aucune absence à afficher"
+			,'messageNothing'=> $langs->trans('MessageNothingAbsence')
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
 		/*	,'picto_search'=>'<img src="../../theme/rh/img/search.png">'*/
@@ -320,15 +320,15 @@ function _listeAdmin(&$ATMdb, &$absence) {
 			
 		)
 		,'title'=>array(
-			'date_debut'=>'Date début'
-			,'date_fin'=>'Date fin'
-			,'avertissement'=>'Règle'
-			,'libelle'=>'Type d\'absence'
-			,'firstname'=>'Prénom'
-			,'lastname'=>'Nom'
-			,'login'=>'Login'
-			,'duree'=>'Durée (en jour)'
-			,'etat'=>'Statut demande'
+			'date_debut'=> $langs->trans('StartDate')
+			,'date_fin'=> $langs->trans('EndDate')
+			,'avertissement'=> $langs->trans('Rules')
+			,'libelle'=> $langs->trans('AbsenceType')
+			,'firstname'=> $langs->trans('FirstName')
+			,'lastname'=> $langs->trans('Name')
+			,'login'=> $langs->trans('Login')
+			,'duree'=> $langs->trans('DurationInDays')
+			,'etat'=> $langs->trans('RequestStatus')
 		)
 		,'search'=>array(
 			'date_debut'=>array('recherche'=>'calendar')
@@ -347,24 +347,26 @@ function _listeAdmin(&$ATMdb, &$absence) {
 		,'orderBy'=>$TOrder
 		
 	));
-	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new">Nouvelle demande</a><div style="clear:both"></div><?
+	?><a class="butAction" href="?id=<?=$absence->getId()?>&action=new"><?php echo $langs->trans('NewRequest'); ?></a><div style="clear:both"></div><?php
 	$form->end();
 	
 	
 	llxFooter();
 }	
 function _setColorEtat($val) {
+	global $langs;
+	
 	return strtr($val,array(
-				'Refusée'=>'<b style="color:#A72947">Refusée</b>',
-				'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
-				'Acceptée'=>'<b style="color:#30B300">Acceptée</b>'
+				$langs->trans('Refused') => '<b style="color:#A72947">' . $langs->trans('Refused') . '</b>',
+				$langs->trans('WaitingValidation') =>'<b style="color:#5691F9">' . $langs->trans('WaitingValidation') . '</b>' , 
+				$langs->trans('Accepted') =>'<b style="color:#30B300">' . $langs->trans('Accepted') . '</b>'
 	));
 }
 	
 function _listeValidation(&$ATMdb, &$absence) {
 	global $langs, $conf, $db, $user;	
-	llxHeader('','Liste de vos absences');
-	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', 'Absence');
+	llxHeader('', $langs->trans('ListOfAbsence'));
+	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', $langs->trans('Absence'));
 	//getStandartJS();
  
  
@@ -476,7 +478,7 @@ function _listeValidation(&$ATMdb, &$absence) {
  		$sql.=")";
 	}
  	else {
-		?><div class="error">Vous n'&ecirc;tes pas valideur de cong&eacute;  </div><?
+		?><div class="error">Vous n'&ecirc;tes pas valideur de cong&eacute;  </div><?php
 	}
  
 	
@@ -501,31 +503,31 @@ function _listeValidation(&$ATMdb, &$absence) {
 				'Type absence'=>'<a href="?id=@ID@&action=view&validation=ok">@val@</a>'
 			)
 			,'translate'=>array('Statut demande'=>array(
-				'Refusée'=>'<b style="color:#A72947">Refusée</b>',
-				'En attente de validation'=>'<b style="color:#5691F9">	En attente de validation</b>' , 
-				'Acceptée'=>'<b style="color:#30B300">Acceptée</b>')
-				,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="Ne respecte pas les règles en vigueur"></img>')
-			)			
+				$langs->trans('Refused') => '<b style="color:#A72947">' . $langs->trans('Refused') . '</b>',
+				$langs->trans('WaitingValidation') =>'<b style="color:#5691F9">' . $langs->trans('WaitingValidation') . '</b>' , 
+				$langs->trans('Accepted')=>'<b style="color:#30B300">' . $langs->trans('Accepted') . '</b>')
+				,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="' . $langs->trans('DoNotRespectRules') . '"></img>')
+			)		
 			,'hide'=>array('date_cre','fk_user','ID', 'DateCre')
 			,'type'=>array('date_debut'=>'date','date_fin'=>'date')
 			,'liste'=>array(
-				'titre'=>'Liste des absences à valider'
+				'titre'=> $langs->trans('ListeAbsencesWaitingValidation')
 				,'image'=>img_picto('','title.png', '', 0)
 				,'picto_precedent'=>img_picto('','previous.png', '', 0)
 				,'picto_suivant'=>img_picto('','next.png', '', 0)
 				,'noheader'=> (int)isset($_REQUEST['socid'])
-				,'messageNothing'=>"Il n'y a aucune absence à afficher"
+				,'messageNothing'=> $langs->trans('MessageNothingAbsence')
 				,'order_down'=>img_picto('','1downarrow.png', '', 0)
 				,'order_up'=>img_picto('','1uparrow.png', '', 0)
 				/*,'picto_search'=>'<img src="../../theme/rh/img/search.png">'*/
 				
 			)
 			,'title'=>array(
-				'date_debut'=>'Date début'
-				,'date_fin'=>'Date fin'
-				,'avertissement'=>'Règle'
-				,'firstname'=>'Prénom'
-				,'lastname'=>'Nom'
+				'date_debut'=> $langs->trans('StartDate')
+				,'date_fin'=> $langs->trans('EndDate')
+				,'avertissement'=> $langs->trans('Rules')
+				,'firstname'=> $langs->trans('FirstName')
+				,'lastname'=> $langs->trans('LastName')
 				
 			)
 			,'search'=>array(
@@ -549,7 +551,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 
 function _fiche(&$ATMdb, &$absence, $mode) {
 	global $db,$user,$conf,$langs;
-	llxHeader('','Demande d\'absence');
+	llxHeader('', $langs->trans('AbsenceRequest'));
 	//echo $_REQUEST['validation'];
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
@@ -647,7 +649,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	if($ATMdb->Get_line()){
 		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 	}
-	$typeAbsenceCreable= TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user');
+	$typeAbsenceCreable= TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user', 0);
 
 	$droitAdmin=0;
 
@@ -655,7 +657,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 		$comboAbsence=2;
-		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin', 1);
+		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin', 0);
 		$droitAdmin=1;
 //print "admin";
 //print_r( $typeAbsenceCreable);
@@ -668,7 +670,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			$comboAbsence=1;
 			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
-		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user');
+		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user', 0);
 	}
 	else $droitsCreation=2; //on n'a pas les droits de création
 	
@@ -795,7 +797,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
 				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')
 				,'dureeHeurePaie'=>$form->texte('','dureeHeurePaie',$absence->dureeHeurePaie,5,10,'',$class="text", $default='')
-				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png">  Ne respecte pas les règles en vigueur</img>':'Aucun'
+				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png">' . $langs->trans('DoNotRespectRules') . '</img>': $langs->trans('None')
 				,'fk_user'=>$absence->fk_user
 				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$absence->fk_user):''
 				,'userAbsenceCourant'=>$droitsCreation==1?'':$form->hidden('fk_user', $user->id)
@@ -807,15 +809,19 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'date_validation'=>$absence->get_date('date_validation')
 				,'userValidation'=>$userValidation->firstname.' '.$userValidation->lastname
 				
-				,'titreNvDemande'=>load_fiche_titre("Nouvelle demande d'absence",'', 'title.png', 0, '')
-				,'titreRecapAbsence'=>load_fiche_titre("Récapitulatif de la demande d'absence",'', 'title.png', 0, '')
-				,'titreJourRestant'=>load_fiche_titre("Jours restants à prendre",'', 'title.png', 0, '')
-				,'titreDerAbsence'=>load_fiche_titre("Dernières abs./présences",'', 'title.png', 0, '')
-				,'titreRegle'=>load_fiche_titre("Règles applicable",'', 'title.png', 0, '')
+				,'titreNvDemande'=>load_fiche_titre($langs->trans('NewAbsenceRequest'),'', 'title.png', 0, '')
+				,'titreRecapAbsence'=>load_fiche_titre($langs->trans('AbsenceRequestSummary'),'', 'title.png', 0, '')
+				,'titreJourRestant'=>load_fiche_titre($langs->trans('RemainingDays'),'', 'title.png', 0, '')
+				,'titreDerAbsence'=>load_fiche_titre($langs->trans('LastAbsencePresence'),'', 'title.png', 0, '')
+				,'titreRegle'=>load_fiche_titre($langs->trans('RelevantRules'),'', 'title.png', 0, '')
 				
 				,'droitSupprimer'=>$droitSupprimer
-				
-				
+				,'lib_date_debut' => $langs->trans('StartDate')
+				,'lib_date_fin' => $langs->trans('EndDate')
+				,'lib_type_absence' => $langs->trans('AbsenceType')
+				,'lib_duree_decompte' => $langs->trans('CountedDuration')
+				,'lib_conges_dispo_avant' => $langs->trans('AvailableHolidayBefore')
+				,'lib_etat' => $langs->trans('State')
 				
 				
 			)	
@@ -830,12 +836,41 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			)
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'fiche', 'Absence')
-				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence')
+				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'fiche', $langs->trans('Absence'))
+				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', $langs->trans('Absence'))
 				,'dateFormat'=>$langs->trans("FormatDateShortJavaInput")
 				
 			)
-			
+			,'translate' => array(
+				'User' => $langs->trans('User'),
+				'CurrentUser' => $langs->trans('CurrentUser'),
+				'AbsenceType' => $langs->trans('AbsenceType'),
+				'StartDate' => $langs->trans('StartDate'),
+				'EndDate' => $langs->trans('EndDate'),
+				'DurationInDays' => $langs->trans('DurationInDays'),
+				'DurationInHours' => $langs->trans('DurationInHours'),
+				'CountedDurationInHours' => $langs->trans('CountedDurationInHours'),
+				'State' => $langs->trans('State'),
+				'Warning' => $langs->trans('Warning'),
+				'ValidationLevel' => $langs->trans('ValidationLevel'),
+				'ValidatorComment' => $langs->trans('ValidatorComment'),
+				'Comment' => $langs->trans('Comment'),
+				'CreatedThe' => $langs->trans('CreatedThe'),
+				'ValidatedThe' => $langs->trans('ValidatedThe'),
+				'HolidaysPaid' => $langs->trans('HolidaysPaid'),
+				'CumulatedDayOff' => $langs->trans('CumulatedDayOff'),
+				'NonCumulatedDayOff' => $langs->trans('NonCumulatedDayOff'),
+				'Register' => $langs->trans('Register'),
+				'ConfirmAcceptAbsenceRequest' => $langs->trans('ConfirmAcceptAbsenceRequest'),
+				'Accept' => $langs->trans('Accept'),
+				'Refuse' => $langs->trans('Refuse'),
+				'ConfirmRefuseAbsenceRequest' => $langs->trans('ConfirmRefuseAbsenceRequest'),
+				'ConfirmSendToSuperiorAbsenceRequest' => $langs->trans('ConfirmSendToSuperiorAbsenceRequest'),
+				'SendToSuperiorValidator' => $langs->trans('SendToSuperiorValidator'),
+				'ConfirmDeleteAbsenceRequest' => $langs->trans('ConfirmDeleteAbsenceRequest'),
+				'Delete' => $langs->trans('Delete')
+				,'AbsenceBy' => $langs->trans('AbsenceBy')
+			)
 			
 		)	
 		
@@ -858,7 +893,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			$('#user-planning-dialog div.content').load('planningUser.php?fk_user=<?=$existeDeja[2] ?>&date_debut=<?=__get('date_debut') ?>&date_fin=<?=__get('date_fin') ?> #plannings');
 		
 			$('#user-planning-dialog').dialog({
-				title:'Erreur de création'	
+				title: <?php echo $langs->trans('CreationError'); ?>	
 				,width:700
 				,modal:true
 			});
@@ -875,26 +910,26 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 }
 
 function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
-	global $db,$user,$conf;
-	llxHeader('','Demande d\'absence');
+	global $db,$user,$conf, $langs;
+	llxHeader('', $langs->trans('AbsenceRequest'));
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $absence->getId());
 	echo $form->hidden('action', 'saveComment');
 	
-	print dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', 'Absence');
+	print dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', $langs->trans('Absence'));
 	
 	?> 
 	<br><t style='color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica;font-weight: bold;text-decoration: none;text-shadow: 1px 1px 2px #CFCFCF;'>
-    Vous pouvez ajouter un commentaire pour justifier votre choix </t><br/><br/><br/>
+    <?php echo $langs->trans('AddComment') ?> </t><br/><br/><br/>
 	<textarea name="commentValid" rows="3" cols="40"></textarea><br><br>
-	<INPUT class="button" TYPE="submit"   id="commentaire" VALUE="Continuer">
+	<INPUT class="button" TYPE="submit"   id="commentaire" VALUE="<?php echo $langs->trans('Continue'); ?>">
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
-	<INPUT class="button" TYPE="button" id="newAsk" VALUE="Nouvelle demande sur le même utilisateur" onclick="document.location.href='absence.php?action=new&fk_user=<?=$absence->fk_user ?>'">	
+	<INPUT class="button" TYPE="button" id="newAsk" VALUE="<?php echo $langs->trans('NewRequestOnSameUser'); ?>" onclick="document.location.href='absence.php?action=new&fk_user=<?=$absence->fk_user ?>'">	
 	<br><br>
 
-	<?
+	<?php
 	
 	echo $form->end_form();
 	// End of page

@@ -5,13 +5,13 @@
 	<table class="border" style="width:100%;" >	
 			<thead>
 			<tr>
-				<th>[translate.Code]</th>
-				<th>[translate.Wording]</th>
-				<th>[translate.Unit]</th>
-				<th>[translate.AccountingOfficerCode]</th>
-				<th>[translate.AskReservedAdmin]</th>
-				<th>[translate.OnlyCountBusinessDay]</th>
-				<th>[translate.AskDelete]</th>
+				<th>[translate.Code;strconv=no]</th>
+				<th>[translate.Wording;strconv=no]</th>
+				<th>[translate.Unit;strconv=no]</th>
+				<th>[translate.AccountingOfficerCode;strconv=no]</th>
+				<th>[translate.AskReservedAdmin;strconv=no]</th>
+				<th>[translate.OnlyCountBusinessDay;strconv=no]</th>
+				<th>[translate.AskDelete;strconv=no]</th>
 				
 			</tr>
 			</thead>

@@ -106,8 +106,13 @@
 				</tbody>
 		</table>
 		
+		<div id="user-planning-dialog">
+			<div class="content">
+			</div>
+		</div>
+		
 		<div id="user-planning">
-			
+				
 		</div>
 		
 		</div>
