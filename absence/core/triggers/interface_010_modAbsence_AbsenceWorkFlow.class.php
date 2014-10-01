@@ -115,16 +115,18 @@ class InterfaceAbsenceWorkflow
 			
 		} elseif ($action === 'ABSENCE_BEFORECREATE') {
 				
-			global $user, $db;
+			global $user, $db,$langs;
 				
+			define('INC_FROM_DOLIBARR', true);
+	        dol_include_once('/absence/config.php');	
+			
 			$ATMdb=new TPDOdb;
-			
-			
 			$demandeRecevable=$object->testDemande($ATMdb, $object->fk_user, $object);
+
 			if($demandeRecevable==1 || $demandeRecevable==2){
 						
 				if($demandeRecevable==2) {
-					$object->avertissementInfo='Attention : La durée de l\'absence dépasse la règle en vigueur';
+					$object->avertissementInfo.=$langs->trans('AbsencesPresencesRequestRulesMaxTimeOut');
 					$object->avertissement=1;
 				}	
 				
@@ -139,7 +141,7 @@ class InterfaceAbsenceWorkflow
 			}
 			else{
 				
-				$this->error = 'Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur';
+				$this->error =$langs->trans('AbsencesPresencesRequestRulesMaxTimeOutRestrictif');;
 				
 				return -1;
 			}

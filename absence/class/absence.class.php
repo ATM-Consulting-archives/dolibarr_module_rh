@@ -294,9 +294,10 @@ class TRH_Absence extends TObjetStd {
 		global $conf;
 		
 		
-		$sql="SELECT DISTINCT r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, 
+		$sql="SELECT DISTINCT r.rowid,r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, 
 		r.fk_user, r.fk_usergroup, r.choixApplication, r.periode
-		FROM ".MAIN_DB_PREFIX."rh_absence_regle as r INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (r.fk_usergroup=g.fk_usergroup)
+		FROM ".MAIN_DB_PREFIX."rh_absence_regle as r 
+			LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (r.fk_usergroup=g.fk_usergroup)
 		WHERE r.choixApplication LIKE 'user' AND r.fk_user=".$fk_user."
 		OR (r.choixApplication LIKE 'all')
 		OR (r.choixApplication LIKE 'group' AND g.fk_user=".$fk_user.") 
@@ -314,6 +315,7 @@ class TRH_Absence extends TObjetStd {
 			$TRegle[$k]['fk_usergroup']= $ATMdb->Get_field('fk_usergroup');
 			$TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
 			$TRegle[$k]['periode']= $ATMdb->Get_field('periode');
+			$TRegle[$k]['id']= $ATMdb->Get_field('rowid');
 			$k++;
 		}
 
@@ -346,8 +348,7 @@ class TRH_Absence extends TObjetStd {
 	}
 	
 
-	function testDemande(&$db, $userConcerne, &$absence){
-		$ATMdb=new TPDOdb; // TODO doublon $db... :/ à vérifier mais je pense bien
+	function testDemande(&$ATMdb, $userConcerne, &$absence){
 		global $conf, $user;
 		$this->entity = $conf->entity;
 		
@@ -358,7 +359,7 @@ class TRH_Absence extends TObjetStd {
 		$compteur =new TRH_Compteur;
 		$compteur->load_by_fkuser($ATMdb, $userConcerne);
 		
-		$dureeAbsenceCourante = $this->calculDureeAbsenceParAddition($db, $compteur->date_congesCloture);
+		$dureeAbsenceCourante = $this->calculDureeAbsenceParAddition($ATMdb, $compteur->date_congesCloture);
 		
 		//autres paramètes à sauvegarder
 		$this->libelle=saveLibelle($this->type);
@@ -1289,39 +1290,31 @@ class TRH_Absence extends TObjetStd {
 
 	
 	function dureeAbsenceRecevable(&$ATMdb){
-		$avertissement=0;
+		$dureeAbsenceRecevable=0;
 		$TRegle=$this->recuperationRegleUser($ATMdb,$this->fk_user);
-		//var_dump($TRegle);exit;
-		$this->loadDureeAllAbsenceUser($ATMdb);
-		//var_dump($this);exit;
-		$avertissement = $this->nbJoursTotalRegle($this->TDureeAllAbsenceUser, $TRegle);
-		//echo $avertissement;exit;
-		//echo $avertissement;exit;
+		//var_dump($TRegle);
+		$this->loadDureeAllAbsenceUser($ATMdb, $this->type);
+		$dureeAbsenceRecevable = $this->nbJoursTotalRegle($this->TDureeAllAbsenceUser, $TRegle);
 		
-		/*if($avertissement==0){
-			return 1;
-		}*/
-		
-		return $avertissement;
+	
+		return $dureeAbsenceRecevable;
 	}
 
 	/**
 	 * Charge l'attribut TDureeAllAbsenceUser de l'objet absence associant à chaque mois de chaque année une durée total de congés pris ou demandés
 	 * @param object $objet : objet absence
 	 */
-	function loadDureeAllAbsenceUser(&$ATMdb) {
-		
-		global $db;
+	function loadDureeAllAbsenceUser(&$ATMdb, $typeAbsence='Tous') {
+		$this->TDureeAllAbsenceUser=array();
 		
 		// On récupère toutes les absences contenues dans le ou les mois sur le(s)quel(s) se trouve la plage de congés
-		$sql = $this->rechercheAbsenceUser($ATMdb,$this->fk_user, date("Y-m-01 H:i:s", $this->date_debut), date("Y-m-".date("t", date("m", $this->date_fin))." H:i:s", $this->date_fin), 'Tous');
+		$sql = $this->rechercheAbsenceUser($ATMdb,$this->fk_user, date("Y-m-01 H:i:s", $this->date_debut), date("Y-m-".date("t", date("m", $this->date_fin))." H:i:s", $this->date_fin), $typeAbsence);
 
-		$resql = $db->query($sql);
-		//$this->_nbJoursConsecutifsInferieurATrois($ATMdb, $object);
-		while($res = $db->fetch_object($resql)) {
+		$Tab = $ATMdb->ExecuteAsArray($sql);
+		foreach($Tab as $row) {
 			
 			$abs = new TRH_Absence;
-			$abs->load($ATMdb, $res->ID);
+			$abs->load($ATMdb, $row->ID);
 			$abs->calculDureeAbsenceParAddition($ATMdb);
 			
 			foreach($abs->TDureeAbsenceUser as $annee => $tabMonth) {
@@ -1344,20 +1337,25 @@ class TRH_Absence extends TObjetStd {
 		//var_dump($tabReglesHomeOffice);
 		// On récupère la règle qui concerne le nombre de jours à ne pas dépasser
 		
-		$avertissement=1;
+		$pas_avertissement=1;
 		
 		if(is_array($TRegles) && count($TRegles) > 0) {
 			foreach($TRegles as $TLineRegle) {
 				
 				if($TLineRegle['typeAbsence']==$this->type) {
-				
+						
 					$nbJoursAutorises = $TLineRegle['nbJourCumulable'];
 					//echo $this->duree;exit;
-					if($TLineRegle['periode']==='ONE' && $this->duree>$TLineRegle['nbJourCumulable']){ //TODO ajouter regle par mois et année
+					if($TLineRegle['periode']==='ONE' && $this->duree>$TLineRegle['nbJourCumulable']){
 						if($TLineRegle['restrictif']==1){
 								 return 0;
 						}
-						else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
+						else {
+							$pas_avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
+							if(!empty($this->avertissementInfo))$this->avertissementInfo.=', ';
+							$this->avertissementInfo = 'Règle '.$TLineRegle['id'];
+						}
+						
 					} elseif($TLineRegle['periode'] === "YEAR") {
 	
 						foreach($TDureeAllAbsenceUser as $annee => $tabMonth) {
@@ -1368,23 +1366,32 @@ class TRH_Absence extends TObjetStd {
 								$dureeTotale += $duree;
 							}
 							// Si le nombre de jours total par an est supérieur au nb autorisé, on retourn false
-							if($dureeTotale > $nbJoursAutorises) {
+							if($dureeTotale+$this->duree > $nbJoursAutorises) {
 								if($TLineRegle['restrictif']==1){
 										 return 0;
 								}
-								else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
+								else {
+									$pas_avertissement=2;
+									if(!empty($this->avertissementInfo))$this->avertissementInfo.=', ';
+									$this->avertissementInfo = 'Règle '.$TLineRegle['id'];
+								 } //"Attention, le nombre de jours dépasse la règle"
 							}
 						}
 						
 					} else if($TLineRegle['periode'] === "MONTH") {
 						
+						
 						foreach($TDureeAllAbsenceUser as $annee => $tabMonth) {
 							foreach($tabMonth as $duree) {
-								if($duree > $nbJoursAutorises) {
+								if($duree+$this->duree > $nbJoursAutorises) {
 									if($TLineRegle['restrictif']==1){
 											 return 0;
 									}
-									else $avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
+									else{
+										$pas_avertissement=2;  //"Attention, le nombre de jours dépasse la règle"
+										if(!empty($this->avertissementInfo))$this->avertissementInfo.=', ';
+										$this->avertissementInfo = 'Règle '.$TLineRegle['id'];
+									} 
 								}
 							}
 						}
@@ -1396,7 +1403,7 @@ class TRH_Absence extends TObjetStd {
 			}
 		}
 
-		return $avertissement;
+		return $pas_avertissement;
 
 	}
 	
