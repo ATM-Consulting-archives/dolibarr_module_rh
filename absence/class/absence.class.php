@@ -500,7 +500,7 @@ class TRH_Absence extends TObjetStd {
 			}
 			
 		 }
-		 
+	
 	}
 	
 	function calculDureeAbsenceParAddition(&$ATMdb, $dateN=0) {
@@ -1394,7 +1394,7 @@ class TRH_Absence extends TObjetStd {
 					
 					$dureeTest = $TLineRegle['contigue']==1 ? $this->dureeContigue : $this->duree;
 					
-						
+						 
 					$nbJoursAutorises = $TLineRegle['nbJourCumulable'];
 					//echo $this->duree;exit;
 					if($TLineRegle['periode']==='ONE' && $dureeTest>$TLineRegle['nbJourCumulable']){
@@ -1493,10 +1493,9 @@ class TRH_Absence extends TObjetStd {
 	function isWorkingDayNext(&$ATMdb, $dateTest){ // regarde x/x emploi du temps
 
 		$date=strtotime('+1day',$dateTest); 
-
 		$res= (TRH_EmploiTemps::estTravaille($ATMdb, $this->fk_user, date('Y-m-d',$date))!='NON');
-		if($res) $res = !TRH_JoursFeries::estFerie($ATMdb, $date);
-		if($res) $res = $this->isNotAbsenceDay($ATMdb, $date);
+		if($res) $res = !(TRH_JoursFeries::estFerie($ATMdb, date('Y-m-d',$date)));
+		if($res) $res = $this->isNotAbsenceDay($ATMdb, date('Y-m-d',$date));
 		
 		return $res;
 				
@@ -1507,15 +1506,15 @@ class TRH_Absence extends TObjetStd {
 		$date=strtotime('-1day',$dateTest); 
 
 		$res= (TRH_EmploiTemps::estTravaille($ATMdb, $this->fk_user, date('Y-m-d',$date))!='NON');
-		if($res) $res = !TRH_JoursFeries::estFerie($ATMdb, $date);
-		if($res) $res = $this->isNotAbsenceDay($ATMdb, $date);
+		if($res) $res = !TRH_JoursFeries::estFerie($ATMdb, date('Y-m-d',$date));
+		if($res) $res = $this->isNotAbsenceDay($ATMdb, date('Y-m-d',$date));
 		
 		return $res;
 	}
 
 	function isNotAbsenceDay(&$ATMdb, $date) {
 		
-		$sql = $this->rechercheAbsenceUser($ATMdb, $this->fk_user,date('Y-m-d', $date), date('Y-m-d', $date));
+		$sql = $this->rechercheAbsenceUser($ATMdb, $this->fk_user, $date, $date);
 		$Tab = $ATMdb->ExecuteAsArray($sql);
 		
 		return (count($Tab) == 0);
