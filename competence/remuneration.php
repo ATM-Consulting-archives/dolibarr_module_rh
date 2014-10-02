@@ -57,7 +57,7 @@
 				} else {
 					$remunerationPrime->load($ATMdb, $_REQUEST['id']);
 					$remunerationPrime->set_values($_REQUEST);
-					$mesg = '<div class="ok">La ligne de rémunération a bien été enregistrée</div>';
+					$mesg = '<div class="ok">La ligne de prime a bien été enregistrée</div>';
 					$remunerationPrime->save($ATMdb);
 					$remunerationPrime->load($ATMdb, $_REQUEST['id']);
 					_fichePrime($ATMdb, $remunerationPrime, 'view');
@@ -65,16 +65,28 @@
 				break;
 				
 			case 'view':
-				$remuneration->load($ATMdb, $_REQUEST['id']);
-				_fichePrime($ATMdb, $remunerationPrime, 'view');
+				if($_REQUEST['type'] !== 'prime'){
+					$remuneration->load($ATMdb, $_REQUEST['id']);
+					_fiche($ATMdb, $remuneration, 'view');
+				} else {
+					$remunerationPrime->load($ATMdb, $_REQUEST['id']);
+					_fichePrime($ATMdb, $remunerationPrime, 'view');					
+				}
 				break;
 				
 			case 'delete':
 				//$ATMdb->db->debug=true;
-				$remuneration->load($ATMdb, $_REQUEST['id']);
-				$remuneration->delete($ATMdb, $_REQUEST['id']);
-				$mesg = '<div class="ok">La ligne de rémunération a bien été supprimée</div>';
-				_liste($ATMdb, $remuneration);
+				if($_REQUEST['type'] !== 'prime'){
+					$remuneration->load($ATMdb, $_REQUEST['id']);
+					$remuneration->delete($ATMdb, $_REQUEST['id']);
+					$mesg = '<div class="ok">La ligne de rémunération a bien été supprimée</div>';
+					_liste($ATMdb, $remuneration);
+				} else {
+					$remunerationPrime->load($ATMdb, $_REQUEST['id']);
+					$remunerationPrime->delete($ATMdb, $_REQUEST['id']);
+					$mesg = '<div class="ok">La ligne de prime a bien été supprimée</div>';
+					_liste($ATMdb, $remuneration);					
+				}
 				break;
 				
 		}
@@ -171,11 +183,9 @@ function _liste(&$ATMdb, $remuneration) {
 		}
 
 	$r = new TSSRenderControler($remuneration);
-	$sql="SELECT r.rowid as 'ID', r.date_prime as 'DateCre', DATE_FORMAT(r.date_debutRemuneration, '%d/%m/%Y') as 'Date début', DATE_FORMAT(r.date_finRemuneration, '%d/%m/%Y') as 'Date fin', 
-			CONCAT(u.firstname,' ',u.lastname) as 'Utilisateur' ,
-			  CONCAT( ROUND(r.bruteAnnuelle,2),' €') as 'Rémunération brute annuelle',  
-			  CONCAT( ROUND(r.salaireMensuel,2),' €') as 'Salaire mensuel', r.fk_user, '' as 'Supprimer'
-		FROM   ".MAIN_DB_PREFIX."rh_remuneration as r, ".MAIN_DB_PREFIX."user as u
+	$sql="SELECT r.rowid as 'ID', r.fk_user as 'fk_user', DATE_FORMAT(r.date_prime, '%d/%m/%Y') as 'Date prime', 
+			CONCAT(u.firstname,' ',u.lastname) as 'Utilisateur' , CONCAT(r.montant, ' €') as Montant, '' as 'Supprimer'
+		FROM   ".MAIN_DB_PREFIX."rh_remuneration_prime as r, ".MAIN_DB_PREFIX."user as u
 		WHERE r.fk_user=".$_REQUEST['fk_user']." AND r.entity=".$conf->entity." AND u.rowid=r.fk_user";
 	
 	$TOrder = array('date_prime'=>'ASC');
@@ -191,9 +201,9 @@ function _liste(&$ATMdb, $remuneration) {
 			,'nbLine'=>'30'
 		)
 		,'link'=>array(
-			'Rémunération brute annuelle'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
-			,'Date prime'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
-			,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
+			'Date prime'=>'<a href="?id=@ID@&action=view&type=prime&fk_user='.$fuser->id.'">@val@</a>'
+			,'Utilisateur'=>'<a href="'.dol_buildpath('/user/fiche.php?id=@fk_user@', 2).'">@val@</a>'
+			,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&type=prime&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
 		)
 		,'translate'=>array(
 			
@@ -212,7 +222,6 @@ function _liste(&$ATMdb, $remuneration) {
 			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 		)
 		,'title'=>array(
-			'date_debutRemuneration'=>'Date début'
 		)
 		,'search'=>array(
 		)
@@ -338,6 +347,7 @@ function _fichePrime(&$ATMdb, $remunerationPrime,  $mode) {
 				'id'=>$remunerationPrime->getId()
 				,'date_prime'=>$form->calendrier('', 'date_prime', $remunerationPrime->date_prime, 12)
 				,'fk_user_list'=>$form->combo('', 'fk_user', _getUsers(), -1)
+				,'user_name'=>$fuser->lastname." ".$fuser->firstname
 				,'montant_prime'=>$form->texte('','montant',$remunerationPrime->montant, 30,100,'','','-')
 				,'motif'=>$form->texte('','motif',$remunerationPrime->motif, 30,100,'','','-')
 			)
