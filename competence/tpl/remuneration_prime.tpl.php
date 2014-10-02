@@ -12,12 +12,7 @@
 			<table width="100%" class="border">
 				<tr>
 					<td>Date prime</td>
-					[onshow;block=begin;when [view.mode]=='edit']
-						<td>[remunerationPrime.date_prime;block=tr;strconv=no;protect=no]</td>
-					[onshow;block=end]
-					[onshow;block=begin;when [view.mode]=='view']
-						<td>[remunerationPrime.date_prime;block=tr;strconv=no;protect=no]</td>
-					[onshow;block=end]
+					<td>[remunerationPrime.date_prime;block=tr;strconv=no;protect=no]</td>
 				</tr>
 					<td>Montant prime</td>
 					<td>[remunerationPrime.montant_prime;block=tr;strconv=no;protect=no] €</td>
