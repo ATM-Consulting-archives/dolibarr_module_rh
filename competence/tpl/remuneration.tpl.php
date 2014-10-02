@@ -95,7 +95,7 @@
 				<a style="text-align:center;width:20%;" class="butAction" href="?fk_user=[userCourant.id]">Retour</a>
 				[onshow;block=begin;when [userCourant.ajoutRem]=='1']
 					<a style="text-align:center;width:20%;" class="butAction" href="?fk_user=[userCourant.id]&action=edit&id=[remuneration.id;block=tr;strconv=no;protect=no]">Modifier</a>
-					<a  style="text-align:center;width:20%;" class="butActionDelete" id="action-delete" onclick="document.location.href='?fk_user=[userCourant.id]&id=[remuneration.id;block=tr;strconv=no;protect=no]&action=delete'">Supprimer</a>
+					<a  style="text-align:center;width:20%;" class="butActionDelete" id="action-delete" onclick="if (window.confirm('Voulez vous supprimer l\'élément ?'))document.location.href='?fk_user=[userCourant.id]&id=[remuneration.id;block=tr;strconv=no;protect=no]&action=delete'">Supprimer</a>
 				[onshow;block=end]
 				[onshow;block=end]	
 			</table>

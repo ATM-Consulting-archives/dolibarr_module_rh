@@ -149,7 +149,8 @@ function _liste(&$ATMdb, $remuneration) {
 		,'link'=>array(
 			'Rémunération brute annuelle'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
 			,'Date début'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
-			,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
+			//,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
+			,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?"<a onclick=\"if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?fk_user=@fk_user@&id=@ID@&action=delete'}\"><img src=\"./img/delete.png\"></a>":''
 		)
 		,'translate'=>array(
 			
@@ -203,7 +204,9 @@ function _liste(&$ATMdb, $remuneration) {
 		,'link'=>array(
 			'Date prime'=>'<a href="?id=@ID@&action=view&type=prime&fk_user='.$fuser->id.'">@val@</a>'
 			,'Utilisateur'=>'<a href="'.dol_buildpath('/user/fiche.php?id=@fk_user@', 2).'">@val@</a>'
-			,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&type=prime&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
+			//,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&type=prime&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
+			//,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?"<a href=\"?id=@ID@&action=delete&type=prime&fk_user=$fuser->id\"><img src=\"./img/delete.png\"></a>":''
+			,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?"<a onclick=\"if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?fk_user=@fk_user@&id=@ID@&type=prime&action=delete'}\"><img src=\"./img/delete.png\"></a>":''
 		)
 		,'translate'=>array(
 			
