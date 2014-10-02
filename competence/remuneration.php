@@ -350,7 +350,6 @@ function _fichePrime(&$ATMdb, $remunerationPrime,  $mode) {
 				'id'=>$remunerationPrime->getId()
 				,'date_prime'=>$form->calendrier('', 'date_prime', $remunerationPrime->date_prime, 12)
 				,'fk_user_list'=>$form->combo('', 'fk_user', _getUsers(), -1)
-				,'user_name'=>$fuser->lastname." ".$fuser->firstname
 				,'montant_prime'=>$form->texte('','montant',$remunerationPrime->montant, 30,100,'','','-')
 				,'motif'=>$form->texte('','motif',$remunerationPrime->motif, 30,100,'','','-')
 			)
