@@ -223,6 +223,38 @@ class modFormulaire extends DolibarrModules
 					'target'=> '',
 					'user'=> 2
         );
+		
+		$r++;
+        $this->menu[$r]=array(
+			            'fk_menu'=>'fk_mainmenu=competence',			// Put 0 if this is a top menu
+			        	'type'=> 'left',			// This is a Top menu entry
+			        	'titre'=>$langs->trans('typePoste'),
+			        	'mainmenu'=> 'competence',
+			        	'leftmenu'=> 'type_poste',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+						'url'=> '/formulaire/liste_types_postes.php',
+						'langs'=> 'formulaire@formulaire',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+						'position'=> 103,
+						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+						'perms'=> '$user->rights->formulaire->formulaire->read',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						'target'=> '',
+						'user'=> 2	// 0=Menu for internal users, 1=external users, 2=both
+        );
+
+		$r++;
+        $this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=competence,fk_leftmenu=type_poste',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('createPoste'),
+		        	'mainmenu'=> 'competence',
+		        	'leftmenu'=> 'formulaires',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/formulaire/fiche_type_poste.php?action=new',
+					'langs'=> 'formulaire@formulaire',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 104,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '$user->rights->formulaire->formulaire->write',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
 	
 		
 		
