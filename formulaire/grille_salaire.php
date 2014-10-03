@@ -70,7 +70,7 @@
 		echo $form->hidden('fk_type_poste', $_REQUEST['fk_type_poste']);
 
 		$TBS=new TTemplateTBS();
-		
+
 		print $TBS->render('./tpl/grille_salaire.tpl.php'
 			,array()
 			,array(
@@ -78,12 +78,13 @@
 					'id'=>$grille_salaire->getId()
 					,'nb_annees_anciennete'=>$form->texte('', 'nb_annees_anciennete', $grille_salaire->nb_annees_anciennete, 20,255,'','','à saisir')
 					,'montant'=>$form->texte('', 'montant', $grille_salaire->montant, 20,255,'','','à saisir')
-					,'id_fiche_poste'=>$grille_salaire->fk_type_poste
+					,'id_fiche_poste'=>!empty($grille_salaire->fk_type_poste)?$grille_salaire->fk_type_poste:$_REQUEST['fk_type_poste']
 					//,'supprimable'=>$form->hidden('supprimable', 1)
 				)
 				,'view'=>array(
 					'mode'=>$mode
 					,'head'=>dol_get_fiche_head(array()  , '', 'Création d\'un type de poste')
+					,'action'=>$_REQUEST['action']
 				)
 				
 			)	

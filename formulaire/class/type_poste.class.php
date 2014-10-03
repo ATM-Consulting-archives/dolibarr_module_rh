@@ -11,6 +11,9 @@ class TRH_fichePoste extends TObjetStd {
 		
 		parent::_init_vars();
 		parent::start();
+		
+		$this->setChild('TRH_grilleSalaire','fk_type_poste');
+		
 	}
 
 }

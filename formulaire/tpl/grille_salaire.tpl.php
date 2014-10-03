@@ -36,8 +36,18 @@
 
 [onshow;block=begin;when [view.mode]=='edit']
 <div class="tabsAction"  style="text-align:center">
-	<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[grille_salaire.id;block=tr;strconv=no;protect=no]&action=view'">
-	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[grille_salaire.id]&action=view'">
+<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[grille_salaire.id;block=tr;strconv=no;protect=no]&action=view'">
+&nbsp; &nbsp;
+[onshow;block=begin;when [view.action]=='new']
+	
+<input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='fiche_type_poste.php?id=[grille_salaire.id_fiche_poste]&action=view'">
+
+[onshow;block=end]
+[onshow;block=begin;when [view.action]=='edit']
+
+<input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[grille_salaire.id]&action=view'">
+
+[onshow;block=end]
 </div>
 [onshow;block=end]
 

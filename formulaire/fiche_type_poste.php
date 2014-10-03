@@ -22,7 +22,7 @@
 				$mesg = '<div class="ok">Type de poste enregistré avec succès</div>';
 				
 				$fiche_poste->save($ATMdb);
-				$fiche_poste->load($ATMdb, $_REQUEST['id']);
+				//$fiche_poste->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $fiche_poste, 'view');
 				break;
 			
@@ -83,6 +83,7 @@
 				,'view'=>array(
 					'mode'=>$mode
 					,'head'=>dol_get_fiche_head(array()  , '', 'Création d\'un type de poste')
+					,'action'=>$_REQUEST['action']
 				)
 				
 			)	
@@ -91,11 +92,11 @@
 		
 		$grille_salaire = new TRH_grilleSalaire;
 		$grille_salaire->fk_type_poste = $fiche_poste->getId();
-		if($mode === 'view') _listeGrillesSalaire($ATMdb, $grille_salaire);
+		if($mode === 'view') _listeGrillesSalaire($ATMdb, $grille_salaire, $fiche_poste->rowid);
 		
 	}
 
-	function _listeGrillesSalaire(&$ATMdb, $grille_salaire) {
+	function _listeGrillesSalaire(&$ATMdb, $grille_salaire, $id_fiche_poste) {
 		global $langs, $conf, $db, $user;	
 		
 		$fuser = new User($db);
@@ -132,7 +133,7 @@
 			,'hide'=>array('DateCre', 'fk_user')
 			,'type'=>array()
 			,'liste'=>array(
-				'titre'=>'Visualisation des grilles de salaire'
+				'titre'=>'Grille de salaires associée'
 				,'image'=>img_picto('','title.png', '', 0)
 				,'picto_precedent'=>img_picto('','back.png', '', 0)
 				,'picto_suivant'=>img_picto('','next.png', '', 0)
@@ -153,7 +154,7 @@
 		));
 			if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
 			?>
-			<a class="butAction" href="grille_salaire.php?action=new&fk_type_poste=<?php echo $_REQUEST['id'] ?>">Ajouter une grille de salaire</a><div style="clear:both"></div>
+			<a class="butAction" href="grille_salaire.php?action=new&fk_type_poste=<?php echo $id_fiche_poste ?>">Ajouter une grille de salaire</a><div style="clear:both"></div>
 			
 			<?
 			}
