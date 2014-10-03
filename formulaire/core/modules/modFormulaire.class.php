@@ -331,7 +331,7 @@ class modFormulaire extends DolibarrModules
 		global $db;
 		dol_include_once('/core/class/extrafields.class.php');
 		$e = new Extrafields($db);
-		$e->addExtraField("type_poste", "Type de poste", "sellist", 0, $size, "societe", 0, 0, '', array('options'=>array("rh_fiche_poste:type_poste"=>null)));
+		$e->addExtraField("type_poste", "Type de poste", "sellist", 0, $size, "user", 0, 0, '', array('options'=>array("rh_fiche_poste:type_poste"=>null)));
 		
 		return $this->_init($sql, $options);
 	}
