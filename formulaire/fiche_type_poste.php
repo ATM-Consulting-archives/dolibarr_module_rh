@@ -26,9 +26,27 @@
 				_fiche($ATMdb, $fiche_poste, 'view');
 				break;
 			
+			case 'delete':
+				$fiche_poste->load($ATMdb, $_REQUEST['id']);
+				$fiche_poste->delete($ATMdb, $_REQUEST['id']);
+				$mesg = '<div class="ok">Type de poste enregistré avec succès</div>';
+				
+				$fiche_poste->save($ATMdb);
+				?>
+					<script>
+						document.location.href='liste_types_postes.php';
+					</script>
+				<?php
+				break;
+			
 			case 'view':
 				$fiche_poste->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $fiche_poste, 'view');
+				break;
+			
+			case 'edit':
+				$fiche_poste->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $fiche_poste);
 				break;
 			
 			default:
@@ -41,7 +59,7 @@
 	
 	function _fiche(&$ATMdb, $fiche_poste, $mode="edit") {
 		
-		global $db,$user,$langs,$conf;
+		global $db,$user,$langs,$conf,$grille_salaire;
 		llxHeader('','Types de postes');
 		
 		$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
@@ -71,4 +89,77 @@
 			
 		);
 		
+		$grille_salaire = new TRH_grilleSalaire;
+		$grille_salaire->fk_type_poste = $fiche_poste->getId();
+		if($mode === 'view') _listeGrillesSalaire($ATMdb, $grille_salaire);
+		
+	}
+
+	function _listeGrillesSalaire(&$ATMdb, $grille_salaire) {
+		global $langs, $conf, $db, $user;	
+		
+		$fuser = new User($db);
+		$fuser->fetch($_REQUEST['fk_user']);
+		$fuser->getrights();
+		
+		////////////AFFICHAGE DES LIGNES DE REMUNERATION
+		$r = new TSSRenderControler($grille_salaire);
+		$sql = "SELECT rowid as 'ID', nb_annees_anciennete as 'Années d\'ancienneté', montant as 'Montant'";
+		$sql.= " FROM ".MAIN_DB_PREFIX."rh_grille_salaire";
+		$sql.= " WHERE fk_type_poste = ".$grille_salaire->fk_type_poste;
+		
+		$TOrder = array('rowid'=>'ASC');
+		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+					
+		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
+		$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
+		
+		$r->liste($ATMdb, $sql, array(
+			'limit'=>array(
+				'page'=>$page
+				,'nbLine'=>'30'
+			)
+			,'link'=>array(
+				//'Rémunération brute annuelle'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
+				'ID'=>'<a href="'.dol_buildpath("/formulaire/grille_salaire.php?id=@ID@&action=view", 2).'">@val@</a>'
+				//,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
+				//,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?"<a onclick=\"if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?fk_user=@fk_user@&id=@ID@&action=delete'}\"><img src=\"./img/delete.png\"></a>":''
+			)
+			,'translate'=>array(
+				
+			)
+			,'hide'=>array('DateCre', 'fk_user')
+			,'type'=>array()
+			,'liste'=>array(
+				'titre'=>'Visualisation des grilles de salaire'
+				,'image'=>img_picto('','title.png', '', 0)
+				,'picto_precedent'=>img_picto('','back.png', '', 0)
+				,'picto_suivant'=>img_picto('','next.png', '', 0)
+				,'noheader'=> (int)isset($_REQUEST['socid'])
+				,'messageNothing'=>"Aucune grille de salaire"
+				,'order_down'=>img_picto('','1downarrow.png', '', 0)
+				,'order_up'=>img_picto('','1uparrow.png', '', 0)
+				,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			)
+			,'title'=>array(
+				'nb_annees_anciennete'=>"Années d'ancienneté"
+				,'montant'=>'Montant'
+			)
+			,'search'=>array(
+			)
+			,'orderBy'=>$TOrder
+			
+		));
+			if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
+			?>
+			<a class="butAction" href="grille_salaire.php?action=new">Ajouter une grille de salaire</a><div style="clear:both"></div>
+			
+			<?
+			}
+	
+	
+		$form->end();
+		
+		llxFooter();
 	}

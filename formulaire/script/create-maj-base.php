@@ -17,3 +17,6 @@
 	
 	$o=new TRH_fichePoste;
 	$o->init_db_by_vars($ATMdb);
+	
+	$o=new TRH_grilleSalaire;
+	$o->init_db_by_vars($ATMdb);
