@@ -78,6 +78,10 @@
 					'id'=>$grille_salaire->getId()
 					,'nb_annees_anciennete'=>$form->texte('', 'nb_annees_anciennete', $grille_salaire->nb_annees_anciennete, 20,255,'','','à saisir')
 					,'montant'=>$form->texte('', 'montant', $grille_salaire->montant, 20,255,'','','à saisir')
+					,'salaire_min'=>$form->texte('', 'salaire_min', $grille_salaire->salaire_min, 20,255,'','','à saisir')
+					,'salaire_max'=>$form->texte('', 'salaire_max', $grille_salaire->salaire_max, 20,255,'','','à saisir')
+					,'salaire_conventionnel'=>$form->texte('', 'salaire_conventionnel', $grille_salaire->salaire_conventionnel, 20,255,'','','à saisir')
+					,'salaire_constate'=>$form->texte('', 'salaire_constate', $grille_salaire->salaire_constate, 20,255,'','','à saisir')
 					,'id_fiche_poste'=>!empty($grille_salaire->fk_type_poste)?$grille_salaire->fk_type_poste:$_REQUEST['fk_type_poste']
 					//,'supprimable'=>$form->hidden('supprimable', 1)
 				)

@@ -16,6 +16,22 @@
 						<td>Montant</td>
 						<td>[grille_salaire.montant;block=tr;strconv=no;protect=no]</td>
 					</tr>
+					<tr>
+						<td>Salaire minimum</td>
+						<td>[grille_salaire.salaire_min;block=tr;strconv=no;protect=no]</td>
+					</tr>
+					<tr>
+						<td>Salaire maximum</td>
+						<td>[grille_salaire.salaire_max;block=tr;strconv=no;protect=no]</td>
+					</tr>
+					<tr>
+						<td>Salaire conventionnel</td>
+						<td>[grille_salaire.salaire_conventionnel;block=tr;strconv=no;protect=no]</td>
+					</tr>
+					<tr>
+						<td>Salaire constaté</td>
+						<td>[grille_salaire.salaire_constate;block=tr;strconv=no;protect=no]</td>
+					</tr>
 				</table>
 				<br/><br/>
 				

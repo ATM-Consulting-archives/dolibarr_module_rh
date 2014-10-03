@@ -23,7 +23,7 @@ class TRH_grilleSalaire extends TObjetStd {
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_grille_salaire');
 		parent::add_champs('nb_annees_anciennete,fk_type_poste','type=chaine');
-		parent::add_champs('montant','type=chaine');
+		parent::add_champs('montant,salaire_min,salaire_max,salaire_conventionnel,salaire_constate','type=chaine');
 		
 		parent::add_champs('entity','type=entier;');
 		
