@@ -8,6 +8,7 @@
 	require('../config.php');
 	require('../class/competence.class.php');
 	require('../class/formation.class.php');
+	require('../class/productivite.class.php');
 	
 
 	$ATMdb=new TPDOdb;
@@ -30,6 +31,16 @@
 	$r->init_db_by_vars($ATMdb);
 	
 	$r=new TRH_dif;
+	$r->init_db_by_vars($ATMdb);
+	
+	// Productivité
+	$r=new TRH_productivite;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_productiviteUser;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_productiviteIndice;
 	$r->init_db_by_vars($ATMdb);
 	
 	
