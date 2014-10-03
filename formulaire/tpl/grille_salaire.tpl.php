@@ -24,8 +24,8 @@
 				<table class="border" style="width:100%;">
 					[onshow;block=begin;when [view.mode]=='view']
 					<a style="text-align:center;width:20%;" class="butAction" href="fiche_type_poste.php?action=view&id=[grille_salaire.id_fiche_poste;block=tr;strconv=no;protect=no]">Retour</a>
-						<a style="text-align:center;width:20%;" class="butAction" href="?action=edit&id=[grille_salaire.id;block=tr;strconv=no;protect=no]">Modifier</a>
-						<a  style="text-align:center;width:20%;" class="butActionDelete" id="action-delete" onclick="if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=[grille_salaire.id;block=tr;strconv=no;protect=no]&action=delete'}">Supprimer</a>
+						<a style="text-align:center;width:20%;" class="butAction" href="?action=edit&id=[grille_salaire.id;block=tr;strconv=no;protect=no]&fk_type_poste=[grille_salaire.id_fiche_poste;block=tr;strconv=no;protect=no]">Modifier</a>
+						<a  style="text-align:center;width:20%;" class="butActionDelete" id="action-delete" onclick="if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?id=[grille_salaire.id;block=tr;strconv=no;protect=no]&action=delete&fk_type_poste=[grille_salaire.id_fiche_poste;block=tr;strconv=no;protect=no]'}">Supprimer</a>
 					[onshow;block=end]	
 				</table>
 			</div>

@@ -34,7 +34,7 @@
 				$grille_salaire->save($ATMdb);
 				?>
 					<script>
-						document.location.href='liste_types_postes.php';
+						document.location.href='fiche_type_poste.php?id=<?php echo $_REQUEST['fk_type_poste'] ?>&action=view';
 					</script>
 				<?php
 				break;
@@ -67,6 +67,7 @@
 		
 		echo $form->hidden('id', $grille_salaire->getId());
 		echo $form->hidden('action', 'save');
+		echo $form->hidden('fk_type_poste', $_REQUEST['fk_type_poste']);
 
 		$TBS=new TTemplateTBS();
 		
