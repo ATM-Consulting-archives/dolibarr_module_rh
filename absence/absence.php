@@ -25,16 +25,6 @@
 				$absence->set_date('date_debut', GETPOST('date_debutday').'/'.GETPOST('date_debutmonth').'/'.GETPOST('date_debutyear') );
 				$absence->set_date('date_fin', GETPOST('date_finday').'/'.GETPOST('date_finmonth').'/'.GETPOST('date_finyear') );
 				
-				if (! $notrigger)
-				{
-					// Appel des triggers
-					dol_include_once('/core/class/interfaces.class.php');
-					$interface = new Interfaces($db);
-					$result = $interface->run_triggers('ABSENCE_CREATE',$absence,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
-				}
-				
 				$absence->niveauValidation=1;
 				$existeDeja=$absence->testExisteDeja($ATMdb, $absence);
 				if($existeDeja===false){
@@ -52,32 +42,26 @@
 						break;
 					} 
 					
-					$demandeRecevable=$absence->testDemande($ATMdb, $_REQUEST['fk_user'], $absence);
-				
-					if($demandeRecevable>0){
-						$mesg = 'Demande enregistrée';
+					if($absence->save($ATMdb)) {
 						
-						if(!empty($absence->error)) {
-							$absence->avertissement=1;
-							$absence->avertissementInfo=$absence->error;
-							$warning=1;
-							$mesg.=" - ".$absence->error;
-						}
+							if($absence->avertissementInfo) setEventMessage($absence->avertissementInfo, 'warnings');
 						
-						
-						$absence->save($ATMdb);
-						$absence->load($ATMdb, $_REQUEST['id']);
-						if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
-							mailConges($absence);
-							mailCongesValideur($ATMdb,$absence);
-						}
-						
-						_fiche($ATMdb, $absence,'view');
+							$absence->load($ATMdb, $_REQUEST['id']);
+							if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
+								mailConges($absence);
+								mailCongesValideur($ATMdb,$absence);
+							}
+							$mesg = $langs->trans('RegistedRequest');
+							_fiche($ATMdb, $absence,'view');
 					}
-					else if($demandeRecevable==0){
-							$mesg = '<div class="error">Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur</div>';
-							_fiche($ATMdb, $absence,'edit');
+					else{
+						$errors='';
+						foreach($absence->errors as $err) $errors.=$err.'<br />';
+						$mesg = '<div class="error">'.$errors.'</div>';
+						_fiche($ATMdb, $absence,'edit');
+						
 					}
+					
 					
 				}else{
 					$popinExisteDeja = '<div class="error">' . $langs->trans('ImpossibleCreation') . ' : ' . $langs->trans('ErrExistingRequestInPeriod', date('d/m/Y', strtotime($existeDeja[0])), date('d/m/Y',  strtotime($existeDeja[1]))) . '</div>';
@@ -494,7 +478,7 @@ function _listeValidation(&$ATMdb, &$absence) {
  		$sql.=")";
 	}
  	else {
-		?><div class="error">Vous n'&ecirc;tes pas valideur de cong&eacute;  </div><?
+		?><div class="error">Vous n'&ecirc;tes pas valideur de cong&eacute;  </div><?php
 	}
  
 	
@@ -523,7 +507,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				$langs->trans('WaitingValidation') =>'<b style="color:#5691F9">' . $langs->trans('WaitingValidation') . '</b>' , 
 				$langs->trans('Accepted')=>'<b style="color:#30B300">' . $langs->trans('Accepted') . '</b>')
 				,'avertissement'=>array('1'=>'<img src="./img/warning.png" title="' . $langs->trans('DoNotRespectRules') . '"></img>')
-			)			
+			)		
 			,'hide'=>array('date_cre','fk_user','ID', 'DateCre')
 			,'type'=>array('date_debut'=>'date','date_fin'=>'date')
 			,'liste'=>array(
@@ -665,7 +649,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	if($ATMdb->Get_line()){
 		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 	}
-	$typeAbsenceCreable= TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user');
+	$typeAbsenceCreable= TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user', 0);
 
 	$droitAdmin=0;
 
@@ -673,7 +657,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 		$comboAbsence=2;
-		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin', 1);
+		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin', 0);
 		$droitAdmin=1;
 //print "admin";
 //print_r( $typeAbsenceCreable);
@@ -686,7 +670,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			$comboAbsence=1;
 			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
-		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user');
+		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user', 0);
 	}
 	else $droitsCreation=2; //on n'a pas les droits de création
 	
@@ -813,7 +797,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
 				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')
 				,'dureeHeurePaie'=>$form->texte('','dureeHeurePaie',$absence->dureeHeurePaie,5,10,'',$class="text", $default='')
-				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png" />' . $langs->trans('DoNotRespectRules') . ' : '.$absence->avertissementInfo : $langs->trans('None')
+				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png" />' . $langs->trans('DoNotRespectRules') . ' : '.$absence->avertissementInfo: $langs->trans('None')
 				,'fk_user'=>$absence->fk_user
 				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$absence->fk_user):''
 				,'userAbsenceCourant'=>$droitsCreation==1?'':$form->hidden('fk_user', $user->id)

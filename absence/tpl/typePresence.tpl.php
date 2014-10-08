@@ -5,11 +5,11 @@
 	<table class="border" style="width:100%;" >	
 			<thead>
 			<tr>
-				<th>[translate.Code]</th>
-				<th>[translate.Wording]</th>
-				<th>[translate.Unit]</th>
-				<th>[translate.StartHour]</th>
-				<th>[translate.EndHour]</th>
+				<th>[translate.Code;strconv=no]</th>
+				<th>[translate.Wording;strconv=no]</th>
+				<th>[translate.Unit;strconv=no]</th>
+				<th>[translate.StartHour;strconv=no]</th>
+				<th>[translate.EndHour;strconv=no]</th>
 				
 				<th>[translate.AccountingOfficerCode]</th>
 				<th>[translate.ColorCode]</th>

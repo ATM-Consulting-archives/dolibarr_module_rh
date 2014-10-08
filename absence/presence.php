@@ -30,18 +30,29 @@
 						
 						$absence->duree = $absence->calculDureeAbsenceParAddition($ATMdb);
 						
-						$absence->save($ATMdb);
-						$absence->load($ATMdb, $_REQUEST['id']);
-						if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
-							mailConges($absence,true);
-							mailCongesValideur($ATMdb,$absence,true);
+						if($absence->save($ATMdb)) {
+							if($absence->avertissementInfo) setEventMessage($absence->avertissementInfo, 'warnings');
+							
+							$absence->load($ATMdb, $_REQUEST['id']);
+							if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
+								mailConges($absence,true);
+								mailCongesValideur($ATMdb,$absence,true);
+							}
+							
+							$mesg = $langs->trans('RegisteredPresence');
+							_fiche($ATMdb, $absence,'view');	
 						}
-						
-						$mesg = $langs->trans('RegisteredPresence');
-						_fiche($ATMdb, $absence,'view');
+						else{
+							$errors='';
+							foreach($absence->errors as $err) $errors.=$err.'<br />';
+							$mesg = '<div class="error">'.$errors.'</div>';
+							_fiche($ATMdb, $absence,'edit');
+							
+						}
 				
 				}else{
-					$mesg = '<div class="error">' . $langs->trans('PresenceAbsenceAlreadyExistDuringThisPeriod') . ' : '.$existeDeja.'</div>';
+					$popinExisteDeja = '<div class="error">' . $langs->trans('ImpossibleCreation') . ' : ' . $langs->trans('PresenceAbsenceAlreadyExistDuringThisPeriod', date('d/m/Y', strtotime($existeDeja[0])), date('d/m/Y',  strtotime($existeDeja[1]))) . '</div>';
+					
 					_fiche($ATMdb, $absence,'edit');
 				}
 				break;
@@ -570,7 +581,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
 				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')
 				,'dureeHeurePaie'=>$form->texte('','dureeHeurePaie',$absence->dureeHeurePaie,5,10,'',$class="text", $default='')
-				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png">  Ne respecte pas les règles en vigueur</img>':'Aucun'
+				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png" />' . $langs->trans('DoNotRespectRules') . ' : '.$absence->avertissementInfo: $langs->trans('None')
 				,'fk_user'=>$absence->fk_user
 				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$absence->fk_user):''
 				,'userAbsenceCourant'=>$droitsCreation==1?'':$form->hidden('fk_user', $user->id)
@@ -629,7 +640,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'ConfirmDeleteAbsenceRequest' => $langs->trans('ConfirmDeleteAbsenceRequest'),
 				'Delete' => $langs->trans('Delete'),
 				'AbsenceType' => $langs->trans('AbsenceType'),
-				'State' => $langs->trans('State')
+				'State' => $langs->trans('State'),
+				'Warning' => $langs->trans('Warning')
 			)
 			
 		)	
@@ -638,10 +650,32 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	echo $form->end_form();
 	// End of page
-	
-	global $mesg, $error;
+	global $mesg, $error, $popinExisteDeja, $existeDeja;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
-	llxFooter();
+	
+	if(!empty($popinExisteDeja) && !empty($existeDeja)) {
+		?>
+		<script type="text/javascript">
+		
+		$(document).ready(function() {
+		
+			$('#user-planning-dialog div.content').before( "<?=addslashes($popinExisteDeja) ?>" );
+		
+			$('#user-planning-dialog div.content').load('planningUser.php?fk_user=<?=$existeDeja[2] ?>&date_debut=<?=__get('date_debut') ?>&date_fin=<?=__get('date_fin') ?> #plannings');
+		
+			$('#user-planning-dialog').dialog({
+				title: "<?php echo $langs->trans('CreationError'); ?>"	
+				,width:700
+				,modal:true
+			});
+			
+		});
+		
+		</script>
+		
+		<?php
+	}
+
 }
 
 	

@@ -42,7 +42,10 @@
 					<td>[translate.EndDate;strconv=no]</td>
 			 		<td>[absenceCourante.date_fin;strconv=no;protect=no]&nbsp; &nbsp;[absenceCourante.dfMoment;strconv=no;protect=no]&nbsp; &nbsp;[absenceCourante.hourEnd;strconv=no;protect=no]</td>
 				</tr>
-				
+				<tr>
+					<td>[translate.Warning;strconv=no;protect=no]</td>
+					<td>[absenceCourante.avertissement;strconv=no;protect=no]</td>
+				</tr>
 				<tr>
 					<td>[translate.Comment;strconv=no]</td>
 					<td>[absenceCourante.commentaire;strconv=no;protect=no]</td>
@@ -106,8 +109,13 @@
 				</tbody>
 		</table>
 		
+		<div id="user-planning-dialog">
+			<div class="content">
+			</div>
+		</div>
+		
 		<div id="user-planning">
-			
+				
 		</div>
 		
 		</div>
