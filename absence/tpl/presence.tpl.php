@@ -218,7 +218,7 @@
 					});
 				
 
-					$('#user-planning').load('planningUser.php?fk_user='+fk_user+' #plannings');
+					$('#user-planning').load('planningUser.php?fk_user='+fk_user+'&no-link #plannings');
 			}
 			
 			function loadDefaultTimes() {

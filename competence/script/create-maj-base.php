@@ -44,7 +44,7 @@
 	$r->init_db_by_vars($ATMdb);
 	
 	
-	//Formation
+/*	//Formation
 	$r=new TRH_formation_plan;
 	$r->init_db_by_vars($ATMdb);
 	
@@ -64,4 +64,4 @@
 	$r->init_db_by_vars($ATMdb);
 	
 	$r=new TRH_formation_participant_statut;
-	$r->init_db_by_vars($ATMdb);
+	$r->init_db_by_vars($ATMdb);*/
