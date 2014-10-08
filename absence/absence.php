@@ -554,12 +554,15 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	llxHeader('', $langs->trans('AbsenceRequest'));
 	//echo $_REQUEST['validation'];
 	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
+	$form=new TFormCore;
+	
+	$form_start = $form->begin_form($_SERVER['PHP_SELF'],'form1','POST');
+	
 	$form->Set_typeaff($mode);
-	echo $form->hidden('id', $absence->getId());
-	echo $form->hidden('action', 'save');
-	echo $form->hidden('userRecapCompteur', isset($_REQUEST['fk_user'])?$_REQUEST['fk_user']:$absence->fk_user);
-	echo $form->hidden('userAbsenceCree', ($absence->fk_user>0 ) ?$absence->fk_user:0);
+	$form_start.=$form->hidden('id', $absence->getId());
+	$form_start.=$form->hidden('action', 'save');
+	$form_start.=$form->hidden('userRecapCompteur', isset($_REQUEST['fk_user'])?$_REQUEST['fk_user']:$absence->fk_user);
+	$form_start.=$form->hidden('userAbsenceCree', ($absence->fk_user>0 ) ?$absence->fk_user:0);
 	
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
@@ -839,7 +842,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'fiche', $langs->trans('Absence'))
 				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', $langs->trans('Absence'))
 				,'dateFormat'=>$langs->trans("FormatDateShortJavaInput")
-				
+				,'form_start'=>$form_start
+				,'form_end'=>$form->end_form()
 			)
 			,'translate' => array(
 				'User' => $langs->trans('User'),
@@ -876,7 +880,6 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		
 	);
 	
-	echo $form->end_form();
 	// End of page
 	
 	global $mesg, $error, $warning, $popinExisteDeja, $existeDeja;

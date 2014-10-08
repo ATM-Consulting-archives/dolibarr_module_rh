@@ -1332,19 +1332,24 @@ class TRH_Absence extends TObjetStd {
 	}
 	function testMinEffectifGroupeOk(&$ATMdb, $idGroup, $nb_min) {
 		
-		$t_current=$this->date_debut;
-		
-		while($t_current <= $this->date_fin) {
-		
-			$date =date('Y-m-d', $t_current);
+		if($nb_min>0) {
+			$t_current=$this->date_debut;
 			
-			$sql = $this->rechercheAucunConges($ATMdb, $idGroup,0,$date,$date);
-			$Tab = $ATMdb->ExecuteAsArray($sql);
-			$nb_user = count($Tab);
+			while($t_current <= $this->date_fin) {
 			
-			if($nb_user<=$nb_min) return false;
+				$date =date('Y-m-d', $t_current);
+				
+				$sql = $this->rechercheAucunConges($ATMdb, $idGroup,0,$date,$date);
+				
+				$Tab = $ATMdb->ExecuteAsArray($sql);
+				$nb_user = count($Tab);
+				
+				if($nb_user<=$nb_min) return false;
+				
+				$t_current = strtotime('+1day', $t_current);
+			}
 			
-			$t_current = strtotime('+1day', $t_current);
+			
 		}
 		
 		return true;
@@ -1381,6 +1386,8 @@ class TRH_Absence extends TObjetStd {
 
 	
 	function dureeAbsenceRecevable(&$ATMdb){
+		global $langs;
+		
 		$dureeAbsenceRecevable=0;
 		$TRegle=$this->recuperationRegleUser($ATMdb,$this->fk_user);
 		//var_dump($TRegle);
@@ -1609,7 +1616,7 @@ class TRH_Absence extends TObjetStd {
 	}
 	
 	//requete renvoyant les utilisateurs n'ayant pas pris de congés pendant une période
-	function rechercheAucunConges(&$ATMdb, $idGroupeRecherche,$idUserRecherche, $date_debut, $date_fin, $typeAbsence){ 
+	function rechercheAucunConges(&$ATMdb, $idGroupeRecherche,$idUserRecherche, $date_debut, $date_fin, $typeAbsence='Tous'){ 
 			global $conf, $langs;
 
 			if($idUserRecherche!=0){
@@ -1618,8 +1625,8 @@ class TRH_Absence extends TObjetStd {
 				FROM ".MAIN_DB_PREFIX."user as u 
 				WHERE u.rowid =".$idUserRecherche." AND u.rowid NOT IN (
 							SELECT a.fk_user 
-							FROM ".MAIN_DB_PREFIX."rh_absence as a
-							WHERE a.fk_user=".$idUserRecherche." AND
+							FROM ".MAIN_DB_PREFIX."rh_absence as a,".MAIN_DB_PREFIX."rh_type_absence as t 
+							WHERE a.fk_user=".$idUserRecherche." AND a.type=t.typeAbsence AND t.isPresence!=1
 							(a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
@@ -1634,10 +1641,10 @@ class TRH_Absence extends TObjetStd {
 			else if($idGroupeRecherche==0){ 
 				$sql="SELECT DISTINCT u.login, u.lastname, u.firstname
 				FROM ".MAIN_DB_PREFIX."user as u 
-				WHERE u.rowid NOT IN (
+				WHERE  u.rowid NOT IN (
 							SELECT a.fk_user 
-							FROM ".MAIN_DB_PREFIX."rh_absence as a
-							WHERE 
+							FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."rh_type_absence as t
+							WHERE a.type=t.typeAbsence AND t.isPresence!=1 AND
 							(a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
@@ -1653,15 +1660,16 @@ class TRH_Absence extends TObjetStd {
 
 				$sql="SELECT DISTINCT g.fk_user,  u.login, u.lastname, u.firstname
 				FROM ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."user as u
+				
 				WHERE u.rowid=g.fk_user";
 				if($idGroupeRecherche!=0){
 						$sql.=" AND g.fk_usergroup=".$idGroupeRecherche;
 				}
 				$sql.="
-				AND g.fk_user NOT IN (
+				AND  g.fk_user NOT IN (
 							SELECT a.fk_user 
-							FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."usergroup_user as g
-							WHERE g.fk_user=u.rowid 
+							FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."usergroup_user as g,".MAIN_DB_PREFIX."rh_type_absence as t 
+							WHERE g.fk_user=u.rowid AND a.type=t.typeAbsence AND t.isPresence!=1 
 							AND g.fk_usergroup=".$idGroupeRecherche." 
 							AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'

@@ -16,7 +16,10 @@
 			[onshow;block=end]
 
 
-			<table class="border" id="fiche-abs" style="width:40%">
+		<div id="fiche-abs">
+			[view.form_start;strconv=no]
+			
+				<table class="border"  style="width:40%">
 				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='1']
 				<tr>
 					<td>[translate.User;strconv=no;protect=no]</td>
@@ -87,11 +90,13 @@
 					</tr>
 					[onshow;block=end]
 				
-			</table>
+			</table>		
+
+
 
    		 <br/>
      	[absenceCourante.titreJourRestant;strconv=no;protect=no] 			
-            <table class="border" style="width:40%">
+            <table class="border" id="compteur-user" style="width:40%">
 				<tr>
 					<td>[translate.HolidaysPaid;strconv=no;protect=no]</td>
 					<td id='reste'>[congesPrec.reste;strconv=no;protect=no]</td>
@@ -126,6 +131,10 @@
 				[onshow;block=end]
 		[onshow;block=end]
 		[onshow;block=end]	
+
+			[view.form_end;strconv=no]
+
+		</div>
 
 
 		[onshow;block=begin;when [view.mode]!='edit']
@@ -259,7 +268,7 @@
 					});
 				
 
-					$('#user-planning').load('planningUser.php?fk_user='+fk_user+' #plannings');
+					$('#user-planning').load('planningUser.php?fk_user='+fk_user+'&no-link #plannings');
 			}
 			
 			//	script vérifiant que la date de début ne dépasse pas celle de fin
