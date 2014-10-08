@@ -2,6 +2,7 @@
 
 	require '../../config.php';
 	dol_include_once('/ressource/class/ressource.class.php');
+	dol_include_once('/ressource/class/evenement.class.php');
 	
 	$nomFichier = "affectation_sim_telephones.csv";
 	
@@ -14,10 +15,19 @@
 		
 		while(($data = fgetcsv($handle, "", ";")) != false){
 			
-			$u = _get_user($data);
-			//echo $u->lastname." ".$u->firstname."<br />";
-			$id_tel = _add_tel($data, $ATMdb);
-			_add_carte_sim($data, $ATMdb, $id_tel);
+			// Si le code compta est différent de "N/A" ou "?"
+			if($data[3] !== "N/A" && $data[3] !== "?") {
+				
+				$id_user = _get_user($data);
+				if($id_user !== false) {
+					
+					$id_tel = _add_tel($data, $ATMdb);
+					_add_carte_sim($data, $ATMdb, $id_tel);
+					_add_affectation_user_tel($ATMdb, $id_tel, $id_user);
+					
+				}
+				
+			}
 			
 		}
 		
@@ -35,7 +45,7 @@
 			while ($res = $db->fetch_object($resql)) {
 				$u = new User($db);
 				$u->fetch($res->rowid);
-				return $u;
+				return $u->id;
 			}
 		}
 		
@@ -47,9 +57,9 @@
 		
 		$sim = new TRH_Ressource;
 		$sim->fk_rh_ressource_type = 5; // SIM
-		$sim->libelle = "Carte SIM ".$data[1];
-		$sim->numerotel = $data[1];
-		$sim->fk_rh_ressource = $id_tel;
+		$sim->libelle = "Carte SIM 33".$data[1];
+		$sim->numerotel = "33".$data[1];
+		$sim->fk_rh_ressource = "33".$id_tel;
 		$sim->save($ATMdb);
 		
 	}
@@ -58,16 +68,21 @@
 		
 		$sim = new TRH_Ressource;
 		$sim->fk_rh_ressource_type = 4; // Tél
-		$sim->libelle = "Téléphone ".$data[1];
-		$sim->numerotel = $data[1];
+		$sim->libelle = "Téléphone 33".$data[1];
+		$sim->numerotel = "33".$data[1];
 		$sim->save($ATMdb);
 		
 		return $sim->rowid;
 		
 	}
 	
-	function _add_affectation_user_tel($id_tel) {
+	function _add_affectation_user_tel(&$ATMdb, $id_tel, $id_user) {
 		
 		$emprunt = new TRH_Evenement;
+		$emprunt->type = "emprunt";
+		$emprunt->fk_rh_ressource = $id_tel;
+		$emprunt->fk_user = $id_user;
+		
+		$emprunt->save($ATMdb);
 		
 	}
