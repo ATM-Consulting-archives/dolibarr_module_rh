@@ -171,6 +171,7 @@ class modAbsence extends DolibarrModules
 		$r++;
 		*/
 
+		$langs->load('absence@absence');
 		
 		$this->rights[$r][0] = 7101;
 		$this->rights[$r][1] = $langs->trans('ValidOrRefuseHolidayRequest');
@@ -240,6 +241,13 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirToutesAbsences';
+		$r++;
+		
+		$this->rights[$r][0] = 7126;
+		$this->rights[$r][1] = $langs->trans('ConsultGroupCollabAbsencesPresencesOnSchedule');
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'voirGroupesAbsences';
 		$r++;
 		
 		$this->rights[$r][0] = 7110;

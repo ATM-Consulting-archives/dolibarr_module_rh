@@ -121,6 +121,7 @@ ConsultAbsencesFiles=Visualiser les fichiers des absences
 ConsultAbsencesPresencesTab=Voir l'onglet des absences/présences
 ConsultAllAbsencesPresencesOnList=Voir toutes les absences ou présences sur la liste des absences
 ConsultAllCollabAbsencesPresencesOnSchedule=Voir toutes les absences ou présences des collaborateurs sur le calendrier
+ConsultGroupCollabAbsencesPresencesOnSchedule=Voir les absences ou présences des collaborateurs de mes groupes sur le calendrier
 ConsultCollabHolidayCounter=Visualiser le compteur de congés d'un collaborateur
 ConsultCollabSchedule=Visualiser l'emploi du temps des collaborateurs
 ConsultScheduleEachUsers=Visualiser le planning par utilisateur
