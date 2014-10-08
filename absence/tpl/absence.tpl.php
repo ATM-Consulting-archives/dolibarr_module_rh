@@ -16,7 +16,7 @@
 			[onshow;block=end]
 
 
-			<table class="border" style="width:40%">
+			<table class="border" id="fiche-abs" style="width:40%">
 				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='1']
 				<tr>
 					<td>[translate.User;strconv=no;protect=no]</td>

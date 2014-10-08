@@ -26,10 +26,13 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	*/
 	$date_debut=time();
 	$date_fin=strtotime('+7day');
-	$idGroupeRecherche=0;
+	$idGroupeRecherche=$idGroupeRecherche2=$idGroupeRecherche3=0;
 	$idUserRecherche=0;
 	
 	if(isset($_REQUEST['groupe'])) $idGroupeRecherche=$_REQUEST['idGroupeRecherche'];
+	if(isset($_REQUEST['groupe2'])) $idGroupeRecherche2=$_REQUEST['idGroupeRecherche2'];
+	if(isset($_REQUEST['groupe3'])) $idGroupeRecherche3=$_REQUEST['idGroupeRecherche3'];
+	
 	if(isset($_REQUEST['date_debut'])) {
 		 $date_debut=$_REQUEST['date_debut'];
 		 $date_debut_recherche = $date_debut;
@@ -87,7 +90,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		)
 		,array(
 			'recherche'=>array(
-				'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche)
+				'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche).$form->combo('','groupe2',$TGroupe,$idGroupeRecherche2).$form->combo('','groupe3',$TGroupe,$idGroupeRecherche3)
 				,'btValider'=>$form->btsubmit($langs->trans('Submit'), 'valider')
 				,'TUser'=>$form->combo('','fk_user',$TUser,$idUserRecherche)
 				
@@ -139,6 +142,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	}		
 	table.planning td {
 		border:1px solid #ccc;
+		text-align: center;
 	}	
 	
 	table.planning tr:nth-child(even) {
@@ -206,7 +210,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			
 			if($annee!=$annee_old) print '<p style="text-align:left;font-weight:bold">'.$annee.'</strong><br />';
 			
-			_planning($ATMdb, $absence, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin, $TStatPlanning );
+			_planning($ATMdb, $absence, array((int)$idGroupeRecherche,(int)$idGroupeRecherche2,(int)$idGroupeRecherche3), $idUserRecherche, $date_debut, $date_fin, $TStatPlanning );
 		
 			$annee_old = $annee;
 		
@@ -305,10 +309,38 @@ function _recap_abs(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, 
 }
 
 function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin, &$TStatPlanning) {
-	
+	global $langs;
 //on va obtenir la requête correspondant à la recherche désirée
 
 	$TPlanningUser=$absence->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin);
+	
+	?><script type="text/javascript">
+	function popAddAbsence(date, fk_user) {
+		
+		$('#popAbsence').remove();
+		$('body').append('<div id="popAbsence"></div>');
+		
+		$('#popAbsence').load("<?php echo dol_buildpath('/absence/absence.php?action=new',1) ?>&dfMoment=apresmidi&ddMoment=matin&fk_user="+fk_user+"&date_debut="+date+"&date_fin="+date+" #fiche-abs", function(data) {
+			
+			$('#popAbsence').dialog({
+				title:"Créer une nouvelle absence"
+				,width:500
+				,modal:true
+				,buttons:[
+					{
+						label:'<?php echo $langs->trans('Save') ?>'
+					}
+				]
+			});
+			
+		});
+		
+	}	
+		
+		
+	</script>
+	<?
+	
 	
 	print '<table class="planning" border="0">';
 	print "<tr class=\"entete\">";
@@ -353,8 +385,11 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 			if($isFerie && $estUnJourTravaille!='NON') { $TStatPlanning[$idUser]['ferie']++; }
 			
 			if($ouinon=='non'){
-				print '<td class="'.$class.$classTravail.'" rel="am">&nbsp;</td>
-					<td class="'.$class.$classTravail.'" rel="pm">&nbsp;</td>';
+				if(!$isFerie && $estUnJourTravaille!='NON') $linkPop = '<a title="'.$langs->trans('addAbsenceUser').'" href="javascript:popAddAbsence(\''.$std->get_date('date_jour','Y-m-d').'\', '.$idUser.');">+</a>';
+				else $link='&nbsp;'; 
+				
+				print '<td class="'.$class.$classTravail.'" rel="am">'.$linkPop.'</td>
+					<td class="'.$class.$classTravail.'" rel="pm">'.$linkPop.'</td>';
 					
 				if(!$isFerie && ($estUnJourTravaille=='AM' || $estUnJourTravaille=='PM'))$TStatPlanning[$idUser]['presence']+=0.5;
 				else if(!$isFerie && $estUnJourTravaille=='OUI')$TStatPlanning[$idUser]['presence']+=1;
