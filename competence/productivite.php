@@ -20,7 +20,7 @@
 				$productivite->load($ATMdb, $_REQUEST['id']);
 				$productivite->set_values($_REQUEST);
 				
-				$mesg = '<div class="ok">Indice de poductivité enregistré avec succès</div>';
+				$mesg = '<div class="ok">Indice de productivité enregistré avec succès</div>';
 				
 				$productivite->save($ATMdb);
 				$productivite->load($ATMdb, $_REQUEST['id']);
@@ -30,11 +30,19 @@
 			case 'delete':
 				$productivite->load($ATMdb, $_REQUEST['id']);
 				$productivite->delete($ATMdb, $_REQUEST['id']);
-				$mesg = '<div class="ok">Indice de poductivité enregistré avec succès</div>';
+				
+				?>
+					<script>
+					
+						document.location.href="<?php echo dol_buildpath("/competence/productivite_liste.php", 2) ?>"
+					
+					</script>
+				<?php
+
 				break;
 			
 			case 'view':
-				$productivite->loadBy($ATMdb, $_REQUEST['fk_user'], 'fk_user');
+				$productivite->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $productivite, 'view');
 				break;
 			
@@ -77,11 +85,11 @@
 					,'lastname'=>$fuser->lastname
 					,'firstname'=>$fuser->firstname
 				)
-				,'productivite_user'=>array(
+				,'productivite'=>array(
 					'id'=>$productivite->getId()
 					,'date_objectif'=>$form->calendrier('', 'date_objectif', $productivite->date_objectif, 12)
 					,'indice'=>$form->texte('', 'indice', $productivite->indice, 20,255,'','','à saisir')
-					,'objectif'=>$form->texte('', 'objectif', $productivite->objectif, 20,255,'','','à saisir')
+					,'label'=>$form->texte('', 'label', $productivite->label, 20,255,'','','à saisir')
 					//,'supprimable'=>$form->hidden('supprimable', 1)
 				)
 				,'view'=>array(
