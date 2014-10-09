@@ -47,10 +47,6 @@ $langs->load("ressource@ressource");
 $ATMdb = new TPDOdb;
 
 // Access control
-if (! $user->admin) {
-    accessforbidden();
-}
-
 if(!$user->rights->ressource->ressource->accessSpecialNumbers)
 	accessforbidden();
 
