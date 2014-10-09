@@ -123,7 +123,7 @@
 			)
 			,'link'=>array(
 				//'Rémunération brute annuelle'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
-				'ID'=>'<a href="'.dol_buildpath("/formulaire/grille_salaire.php?id=@ID@&action=view", 2).'">@val@</a>'
+				'ID'=>'<a href="'.dol_buildpath("/competence/grille_salaire.php?id=@ID@&action=view", 2).'">@val@</a>'
 				//,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
 				//,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?"<a onclick=\"if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?fk_user=@fk_user@&id=@ID@&action=delete'}\"><img src=\"./img/delete.png\"></a>":''
 			)

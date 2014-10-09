@@ -1,10 +1,3 @@
-<table width="100%" class="border"><tbody>
-	<tr><td width="25%" valign="top">Réf.</td><td>[user.id]</td></tr>
-	<tr><td width="25%" valign="top">Nom</td><td>[user.lastname]</td></tr>
-	<tr><td width="25%" valign="top">Prénom</td><td>[user.firstname]</td></tr>
-</tbody></table>
-<br>
-
 <div class="fiche">
 			
 		<h2 style="color: #2AA8B9;">Productivité utilisateur</h2>
