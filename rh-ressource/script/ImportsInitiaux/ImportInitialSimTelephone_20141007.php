@@ -20,7 +20,7 @@
 				
 				$id_tel = _add_tel($data, $ATMdb);
 				_add_carte_sim($data, $ATMdb, $id_tel);
-				_add_affectation_user_tel($ATMdb, $id_tel, $id_user);
+				_add_affectation_user_tel($ATMdb, $id_tel, $id_user, $data);
 				
 			}
 			
@@ -78,12 +78,15 @@
 		
 	}
 	
-	function _add_affectation_user_tel(&$ATMdb, $id_tel, $id_user) {
+	function _add_affectation_user_tel(&$ATMdb, $id_tel, $id_user, $data) {
 		
 		$emprunt = new TRH_Evenement;
 		$emprunt->type = "emprunt";
 		$emprunt->fk_rh_ressource = $id_tel;
 		$emprunt->fk_user = $id_user;
+		//echo implode("-", array_reverse(explode("/", $data[14])));exit;
+		$emprunt->date_debut = strtotime(implode("/", array_reverse(explode("/", $data[14]))));
+		$emprunt->date_fin = strtotime(implode("/", array_reverse(explode("/", $data[15]))));
 		
 		$emprunt->save($ATMdb);
 		
