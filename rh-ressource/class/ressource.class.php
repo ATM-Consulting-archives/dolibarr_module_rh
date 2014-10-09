@@ -9,7 +9,7 @@ class TRH_Ressource extends TObjetStd {
 		parent::add_champs('date_achat, date_vente, date_garantie','type=date;');
 		
 		//types énuméré
-		parent::add_champs('statut,numerotel','type=chaine;');
+		parent::add_champs('statut','type=chaine;');
 		
 		//clé étrangere : groupes propriétaire et utilisatrice
 		parent::add_champs('fk_utilisatrice','type=entier;index;');	//groupe : pointe sur llx_usergroup
