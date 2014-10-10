@@ -54,6 +54,7 @@
 		$sim = new TRH_Ressource;
 		$sim->fk_rh_ressource_type = 5; // SIM
 		$sim->load_ressource_type($ATMdb);
+		$sim->numId = "33".$data[3];
 		$sim->libelle = "Carte SIM 33".$data[3];
 		$sim->numerotel = "33".$data[3];
 		$sim->codepuk = $data[7];
