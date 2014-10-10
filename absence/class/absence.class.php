@@ -1491,11 +1491,14 @@ class TRH_Absence extends TObjetStd {
 	}
 	
 	function isWorkingDay(&$ATMdb, $date) {
-		
+		//print microtime().'<br>';
 		$res= (TRH_EmploiTemps::estTravaille($ATMdb, $this->fk_user, $date)!='NON');
+		//print microtime().'<br>';
 		if($res) $res = !(TRH_JoursFeries::estFerie($ATMdb, $date));
+		//print microtime().'<br>';
 		if($res) $res = $this->isNotAbsenceDay($ATMdb, $date);
-		
+		//print microtime().'<br>';
+		//exit;
 		return $res;
 	
 	}
@@ -2166,8 +2169,9 @@ class TRH_EmploiTemps extends TObjetStd {
 		
 		if(!empty($date)) {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
-			WHERE fk_user=".(int)$fk_user." AND is_archive=1 AND DATE_FORMAT(date_debut,'%Y-%m-%d') <='$date' AND DATE_FORMAT(date_fin,'%Y-%m-%d')>='$date'";
-			//print $sql;
+			WHERE fk_user=".(int)$fk_user." AND is_archive=1 
+			AND date_debut<='$date 23:59:59'  AND date_fin>='$date 00:00:00'";
+			
 			$ATMdb->Execute($sql);
 			if($row = $ATMdb->Get_line()) {
 				
