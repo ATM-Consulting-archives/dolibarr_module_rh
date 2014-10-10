@@ -1490,26 +1490,28 @@ class TRH_Absence extends TObjetStd {
 		
 	}
 	
+	function isWorkingDay(&$ATMdb, $date) {
+		
+		$res= (TRH_EmploiTemps::estTravaille($ATMdb, $this->fk_user, $date)!='NON');
+		if($res) $res = !(TRH_JoursFeries::estFerie($ATMdb, $date));
+		if($res) $res = $this->isNotAbsenceDay($ATMdb, $date);
+		
+		return $res;
+	
+	}
+	
 	function isWorkingDayNext(&$ATMdb, $dateTest){ // regarde x/x emploi du temps
 
 		$date=strtotime('+1day',$dateTest); 
-		$res= (TRH_EmploiTemps::estTravaille($ATMdb, $this->fk_user, date('Y-m-d',$date))!='NON');
-		if($res) $res = !(TRH_JoursFeries::estFerie($ATMdb, date('Y-m-d',$date)));
-		if($res) $res = $this->isNotAbsenceDay($ATMdb, date('Y-m-d',$date));
 		
-		return $res;
+		return $this->isWorkingDay($ATMdb, date('Y-m-d', $date));
 				
 	}
 	
 	function isWorkingDayPrevious(&$ATMdb, $dateTest){
 
 		$date=strtotime('-1day',$dateTest); 
-
-		$res= (TRH_EmploiTemps::estTravaille($ATMdb, $this->fk_user, date('Y-m-d',$date))!='NON');
-		if($res) $res = !TRH_JoursFeries::estFerie($ATMdb, date('Y-m-d',$date));
-		if($res) $res = $this->isNotAbsenceDay($ATMdb, date('Y-m-d',$date));
-		
-		return $res;
+		return $this->isWorkingDay($ATMdb, date('Y-m-d', $date));
 	}
 
 	function isNotAbsenceDay(&$ATMdb, $date) {
