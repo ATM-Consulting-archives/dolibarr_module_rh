@@ -2,6 +2,8 @@
 
 define('INC_FROM_CRON_SCRIPT', true);
 set_time_limit(0);
+ini_set('memory_limit','1024M');
+
 require('../config.php');
 require('../lib/ressource.lib.php');
 
@@ -420,7 +422,8 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	dol_include_once("/core/lib/admin.lib.php");
 	dol_include_once("/ressource/class/numeros_speciaux.class.php");
 	dol_include_once('/valideur/class/analytique_user.class.php');
-	
+	dol_include_once('/ressource/class/ressource.class.php');	
+
 	$TabLigne = array();
 	
 	$date_deb = Tools::get_time($date_debut);
@@ -455,7 +458,7 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	
 	$sql="SELECT ea.num_gsm, SUM(ea.montant_euros_ht) as 'montant_euros_ht',ea.date_appel FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea
 	WHERE ea.date_appel BETWEEN '$date_deb' AND '$date_end' AND ea.idImport = '$idImport'
-	GROUP BY ea.num_gsm,ea.date_appel";
+	GROUP BY ea.num_gsm"; //,ea.date_appel"; Je sais c'est moche
 	
 	//return $sql;
 
@@ -467,9 +470,12 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	// On récupère le tableau des numéros spéciaux (ceux à ne pas facturer)
 	//$TNumerosSpeciaux = unserialize(dolibarr_get_const($db, "RESSOURCE_ARRAY_NUMEROS_SPECIAUX"));
 	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
-	
+		$r1=new TRH_Ressource;
+		$r2=new TRH_Ressource;
+			$user_ressource=new User($db);
+
 	while($res = $db->fetch_object($resql)) {
-					
+//		echo $res->num_gsm.'<br/>';flush();
 		$non_facture = false;
 
 		// Si le numéro de la ligne de facture fait partie du tableau TNumerosSpeciaux, on passe à la ligne suivante (on facture pas)
@@ -485,15 +491,14 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 		if($non_facture) continue;
 				
 					
-		$r1=new TRH_Ressource;
 		$r1->load_by_numId($ATMdb, $res->num_gsm);		
 	
-		$r2=new TRH_Ressource;
-		$r2->load($ATMdb, $r1->fk_ressource);		
+		$r2->load($ATMdb, $r1->fk_rh_ressource);		
 	
 		$id_user = $r2->isEmpruntee($ATMdb, $res->date_appel);
-		$user_ressource=new User($db);
-		$user_ressource->fetch($id_user);	
+		if($id_user>0) {
+		
+		if($user_ressource->id!=$id_user) $user_ressource->fetch($id_user);	
 
 		$TAnal = TRH_analytique_user::getUserAnalytique($ATMdb, $id_user);
 		foreach($TAnal as $anal) {
@@ -505,21 +510,23 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 			 * On crée un tableau qui associe à chaque user la liste de ses codes analytiques
 			 * A chaque code analytique est associé la ligne qui sera exportée
 			 */
-			$TabLigne[$id_user][$anal->code] = array($user_ressource->name." ".$user_ressource->firstname
+			$TabLigne[$id_user][$anal->code] = array($user_ressource->nom." ".$user_ressource->firstname
 																			,$res->num_gsm
 																			,$user_ressource->email
 																			,$user_ressource->array_options['options_COMPTE_TIERS']
 																			,mb_strimwidth($user_ressource->array_options['options_COMPTE_TIERS'], 0, 3)
 																			,$anal->code
 																			,$anal->pourcentage
-																			,$total[$id_user][$anal->code]['total'] // Total qui va être calculé en fonction du pourcentage
-																			,$total[$id_user][$anal->code]['total_nm'] // Vrai total
+										,$total[$id_user][$anal->code]['total'] // Total qui va être calculé en fonction du pourcentage
+										,$total[$id_user][$anal->code]['total_nm'] // Vrai total
 																		);
 		
 
 		}	
-			
+		}
 
+/*		if(!empty($TabLigne)){	
+		var_dump($TabLigne);exit;}*/
 		
 	}
 	
