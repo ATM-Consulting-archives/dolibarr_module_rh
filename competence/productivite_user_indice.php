@@ -18,6 +18,7 @@
 			case 'save':
 				
 				$productivite_indice->load($ATMdb, $_REQUEST['id']);
+				
 				$productivite_indice->set_values($_REQUEST);
 				
 				$mesg = '<div class="ok">Indice de productivité enregistré avec succès</div>';
@@ -74,6 +75,7 @@
 		echo $form->hidden('id', $productivite_indice->getId());
 		echo $form->hidden('action', 'save');
 		echo $form->hidden('fk_user', $fuser->id);
+		echo $form->hidden('fk_productivite', $_REQUEST['fk_productivite']);
 
 		$TBS=new TTemplateTBS();
 
@@ -87,6 +89,7 @@
 				)
 				,'productivite_indice'=>array(
 					'id'=>$productivite_indice->getId()
+					,'fk_productivite'=>$_REQUEST['fk_productivite']
 					//,'date_objectif'=>$form->calendrier('', 'date_objectif', $productivite_indice->date_objectif, 12)
 					,'indice'=>$form->texte('', 'indice', $productivite_indice->indice, 20,255,'','','à saisir')
 					//,'label'=>$form->texte('', 'label', $productivite_indice->label, 20,255,'','','à saisir')

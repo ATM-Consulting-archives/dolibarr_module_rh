@@ -113,11 +113,11 @@
 		
 		////////////AFFICHAGE DES LIGNES DE REMUNERATION
 		$r = new TSSRenderControler($productivite_user);
-		$sql = "SELECT indice as 'Indice";
+		$sql = "SELECT rowid as 'ID', indice as 'Indice'";
 		$sql.= 'FROM '.MAIN_DB_PREFIX.'rh_productivite_indice ';
 		$sql.= 'WHERE fk_user = '.$_REQUEST['fk_user'];
 		$sql.= ' AND fk_productivite = '.$_REQUEST['id'];
-		
+
 		$TOrder = array('rowid'=>'ASC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
@@ -132,7 +132,7 @@
 			)
 			,'link'=>array(
 				//'Rémunération brute annuelle'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
-				'ID'=>'<a href="'.dol_buildpath("/competence/grille_salaire.php?id=@ID@&action=view", 2).'">@val@</a>'
+				'ID'=>'<a href="'.dol_buildpath("/competence/productivite_user_indice.php?id=@ID@&action=view&fk_user=".$_REQUEST['fk_user'], 2).'">@val@</a>'
 				//,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
 				//,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?"<a onclick=\"if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?fk_user=@fk_user@&id=@ID@&action=delete'}\"><img src=\"./img/delete.png\"></a>":''
 			)
