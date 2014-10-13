@@ -419,6 +419,7 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	
 	dol_include_once("/core/lib/admin.lib.php");
 	dol_include_once("/ressource/class/numeros_speciaux.class.php");
+	dol_include_once('/valideur/class/analytique_user.class.php');
 	
 	$TabLigne = array();
 	
@@ -437,7 +438,7 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	 * A laquelle on associe l'évènement detype "emprunt"
 	 * Auquel on associe l'utilisateur ayant fait cet emprunt (le user a qui est attribué ce téléphone)
 	 */
-	$sql = "SELECT u.rowid, u.email, u.firstname, u.name, ue.COMPTE_TIERS as compte_tiers, au.code, au.pourcentage, r1.fk_rh_ressource, ea.num_gsm, ea.montant_euros_ht";
+	/*$sql = "SELECT u.rowid, u.email, u.firstname, u.name, ue.COMPTE_TIERS as compte_tiers, au.code, au.pourcentage, r1.fk_rh_ressource, ea.num_gsm, ea.montant_euros_ht";
 	$sql.= " FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea";
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."rh_ressource r1 on (ea.num_gsm = r1.numerotel)";
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."rh_ressource r2 on (r1.fk_rh_ressource = r2.rowid)";
@@ -449,7 +450,13 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	$sql.= ' WHERE 1
 			AND ea.date_appel BETWEEN "'.$date_deb.'" AND "'.$date_end.'" 
 			 AND ea.idImport = "'.$idImport.'"';
-	$sql.= ' AND e.type="emprunt"';
+	$sql.= ' AND e.type="emprunt"';*/
+	
+	
+	$sql="SELECT ea.num_gsm, SUM(ea.montant_euros_ht) as 'montant_euros_ht',ea.date_appel FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea
+	WHERE ea.date_appel BETWEEN '$date_deb' AND '$date_end' AND ea.idImport = '$idImport'
+	GROUP BY ea.num_gsm,ea.date_appel";
+	
 	//return $sql;
 
 	$resql = $db->query($sql);
@@ -462,35 +469,57 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
 	
 	while($res = $db->fetch_object($resql)) {
-			
-		$total[$res->rowid][$res->code]['total'] += $res->montant_euros_ht * (1-($res->pourcentage/100));
-		$total[$res->rowid][$res->code]['total_nm'] += $res->montant_euros_ht ;
-
+					
 		$non_facture = false;
 
 		// Si le numéro de la ligne de facture fait partie du tableau TNumerosSpeciaux, on passe à la ligne suivante (on facture pas)
 		if(is_array($TNumerosSpeciaux) && count($TNumerosSpeciaux) > 0) {
 			foreach ($TNumerosSpeciaux as $num) {
-				if($num == $res->num_gsm) $non_facture = true;
+				if($num == $res->num_gsm) {
+					$non_facture = true; 
+					break;
+				}
 			}
 		}
 		
 		if($non_facture) continue;
+				
+					
+		$r1=new TRH_Ressource;
+		$r1->load_by_numId($ATMdb, $res->num_gsm);		
+	
+		$r2=new TRH_Ressource;
+		$r2->load($ATMdb, $r1->fk_ressource);		
+	
+		$id_user = $r2->isEmpruntee($ATMdb, $res->date_appel);
+		$user_ressource=new User($db);
+		$user_ressource->fetch($id_user);	
+
+		$TAnal = TRH_analytique_user::getUserAnalytique($ATMdb, $id_user);
+		foreach($TAnal as $anal) {
+			$total[$id_user][$anal->code]['total'] += $res->montant_euros_ht * (1-($anal->pourcentage/100));
+			$total[$id_user][$anal->code]['total_nm'] += $res->montant_euros_ht ;
+
+
+			/*
+			 * On crée un tableau qui associe à chaque user la liste de ses codes analytiques
+			 * A chaque code analytique est associé la ligne qui sera exportée
+			 */
+			$TabLigne[$id_user][$anal->code] = array($user_ressource->name." ".$user_ressource->firstname
+																			,$res->num_gsm
+																			,$user_ressource->email
+																			,$user_ressource->array_options['options_COMPTE_TIERS']
+																			,mb_strimwidth($user_ressource->array_options['options_COMPTE_TIERS'], 0, 3)
+																			,$anal->code
+																			,$anal->pourcentage
+																			,$total[$id_user][$anal->code]['total'] // Total qui va être calculé en fonction du pourcentage
+																			,$total[$id_user][$anal->code]['total_nm'] // Vrai total
+																		);
 		
-		/*
-		 * On crée un tableau qui associe à chaque user la liste de ses codes analytiques
-		 * A chaque code analytique est associé la ligne qui sera exportée
-		 */
-		$TabLigne[$res->rowid][$res->code] = array($res->name." ".$res->firstname
-																		,$res->num_gsm
-																		,$res->email
-																		,$res->compte_tiers
-																		,mb_strimwidth($res->compte_tiers, 0, 3)
-																		,$res->code
-																		,$res->pourcentage
-																		,$total[$res->rowid][$res->code]['total'] // Total qui va être calculé en fonction du pourcentage
-																		,$total[$res->rowid][$res->code]['total_nm'] // Vrai total
-																	);
+
+		}	
+			
+
 		
 	}
 	
@@ -500,7 +529,7 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	 */
 	 
 	//$TabLigne = _dispatchTarifsParCodeAnalytique($TabLigne);
-	_getFormattedArray($TabLigne);
+	_getFormattedArray($TabLigne); // TODO pas de fucking CSV ici, convertir à l'affichage
 	
 	return $TabLigne;
 }
