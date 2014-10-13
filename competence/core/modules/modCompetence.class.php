@@ -130,7 +130,7 @@ class modCompetence extends DolibarrModules
         $this->tabs = array(
         	'user:+competence:Formations et expériences:competence@competence:/competence/experience.php?fk_user=__ID__'  // To add a new tab identified by code tabname1
             ,'user:+remuneration:Rémunérations:competence@competence:$user->rights->curriculumvitae->myactions->voirRemuneration:/competence/remuneration.php?fk_user=__ID__'
-            ,'user:+productivite:Productivité:competence@competence:$user->rights->curriculumvitae->myactions->voirRemuneration:/competence/productivite.php?fk_user=__ID__&action=view'
+            ,'user:+productivite:Productivité:competence@competence:$user->rights->curriculumvitae->myactions->voirRemuneration:/competence/productivite_user.php?fk_user=__ID__&action=view'
        	);
 
         // Dictionnaries
