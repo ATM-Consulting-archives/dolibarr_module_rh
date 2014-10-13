@@ -10,33 +10,10 @@
 	
 	$ATMdb=new TPDOdb;
 	$productivite_user = new TRH_productiviteUser;
-	$productivite = new TRH_productivite;
 	
 	if(isset($_REQUEST['action'])) {
 		
 		switch($_REQUEST['action']) {
-			
-			case 'add_indice':
-				
-				$id_indice = $_REQUEST['fk_indice_prod'];
-				
-				if($id_indice != 0) {
-					
-					$productivite->load($ATMdb, $id_indice);
-					$TChamps = array(
-						'fk_user'=>$_REQUEST['fk_user']
-						,'fk_productivite'=>$productivite->rowid
-						,'indice'=>$productivite->indice
-						,'date_objectif'=>date("Y-m-d H:i:s", $productivite->date_objectif)
-					);
-					
-					$productivite_user->set_values($TChamps);
-					$productivite_user->save($ATMdb);
-				
-				}
-				
-				_liste($ATMdb, $productivite_user, 'view');
-				break;
 			
 			case 'save':
 				
@@ -64,7 +41,8 @@
 				break;
 			
 			case 'view':
-				_liste($ATMdb, $productivite_user, 'view');
+				$productivite_user->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $productivite_user, 'view');
 				break;
 			
 			case 'edit':
@@ -89,10 +67,6 @@
 		$fuser->fetch($_REQUEST['fk_user']);
 		$fuser->getrights();
 		
-		$head = user_prepare_head($fuser);
-		$current_head = 'productivite';
-		dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
-		
 		$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 		$form->Set_typeaff($mode);
 		
@@ -102,7 +76,7 @@
 
 		$TBS=new TTemplateTBS();
 
-		print $TBS->render('./tpl/productivite_user.tpl.php'
+		print $TBS->render('./tpl/productivite_user_fiche.tpl.php'
 			,array()
 			,array(
 				'user'=>array(
@@ -125,67 +99,31 @@
 			)	
 			
 		);
+		if($_REQUEST['action'] === 'view')
+			_listeChiffresUser($ATMdb, $productivite_user);
 		
 	}
 
-	function _liste(&$ATMdb, $productivite_user) {
+	function _listeChiffresUser(&$ATMdb, $productivite_user) {
 		global $langs, $conf, $db, $user;	
-		llxHeader('','Indices de productivité utilisateur');
 		
 		$fuser = new User($db);
 		$fuser->fetch($_REQUEST['fk_user']);
 		$fuser->getrights();
 		
-		$head = user_prepare_head($fuser);
-		dol_fiche_head($head, 'productivite', $langs->trans('Utilisateur'),0, 'user');
-		
-		// On récupère la liste des indices de productivité existants
-		$TIndices = array(0=>"(Sélectionnez un indice)");
-		$sql = 'SELECT p.rowid, p.indice, p.label ';
-		$sql.= 'FROM '.MAIN_DB_PREFIX.'rh_productivite p ';
-		$sql.= 'WHERE p.rowid NOT IN (';
-			$sql.= 'SELECT p.rowid ';
-			$sql.= 'FROM '.MAIN_DB_PREFIX.'rh_productivite p ';
-			$sql.= 'INNER JOIN '.MAIN_DB_PREFIX.'rh_productivite_user pu on (p.rowid = pu.fk_productivite)';
-			$sql.= 'WHERE pu.fk_user = '.$_REQUEST['fk_user'];
-		$sql.= ')';
-		
-		$resql = $db->query($sql);
-		if($resql) {
-			while($res = $db->fetch_object($resql)) {
-				$TIndices[$res->rowid] = $res->rowid." : ".$res->label." (".$res->indice.")";
-			}
-		}
-		
+		////////////AFFICHAGE DES LIGNES DE REMUNERATION
 		$r = new TSSRenderControler($productivite_user);
-		$sql = "SELECT rowid as 'ID', indice as 'Indice', objectif as 'Objectif'";
-		$sql.=" FROM ".MAIN_DB_PREFIX."rh_productivite_user";
-		$sql.= ' WHERE fk_user = '.$_REQUEST['fk_user'];
-
+		$sql = "SELECT indice as 'Indice";
+		$sql.= 'FROM '.MAIN_DB_PREFIX.'rh_productivite_indice ';
+		$sql.= 'WHERE fk_user = '.$_REQUEST['fk_user'];
+		$sql.= ' AND fk_productivite = '.$_REQUEST['id'];
+		
 		$TOrder = array('rowid'=>'ASC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
 		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 					
 		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
 		$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
-		
-		print '<table width="100%" class="border"><tbody>';
-		print '<tr><td width="25%" valign="top">Réf.</td><td>'.$fuser->ref.'</td></tr>';
-		print '<tr><td width="25%" valign="top">Nom</td><td>'.$fuser->lastname.'</td></tr>';
-		print '<tr><td width="25%" valign="top">Prénom</td><td>'.$fuser->firstname.'</td></tr>';
-		print '</tbody></table>';
-		print '<br />';
-		
-		print $form->combo('Indices de productivité disponibles', 'fk_indice_prod',$TIndices, 0);
-		
-		print $form->hidden('action', 'add_indice');
-		print $form->hidden('fk_user', $_REQUEST['fk_user']);
-		
-		print $form->btsubmit('Ajouter indice', 'add_indice');
-		
-		print '<br /><br />';
-		
-		//function btsubmit($pLib,$pName,$plus="", $class='button'){
 		
 		$r->liste($ATMdb, $sql, array(
 			'limit'=>array(
@@ -194,7 +132,7 @@
 			)
 			,'link'=>array(
 				//'Rémunération brute annuelle'=>'<a href="?id=@ID@&action=view&fk_user='.$fuser->id.'">@val@</a>'
-				'ID'=>'<a href="'.dol_buildpath("/competence/productivite_user_fiche.php?id=@ID@&action=view&fk_user=".$_REQUEST['fk_user'], 2).'">@val@</a>'
+				'ID'=>'<a href="'.dol_buildpath("/competence/grille_salaire.php?id=@ID@&action=view", 2).'">@val@</a>'
 				//,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?'<a href="?id=@ID@&action=delete&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>':''
 				//,'Supprimer'=>$user->rights->curriculumvitae->myactions->ajoutRemuneration?"<a onclick=\"if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?fk_user=@fk_user@&id=@ID@&action=delete'}\"><img src=\"./img/delete.png\"></a>":''
 			)
@@ -204,20 +142,19 @@
 			,'hide'=>array('DateCre', 'fk_user')
 			,'type'=>array()
 			,'liste'=>array(
-				'titre'=>'Visualisation des indices de productivité de l\'utilisateur'
+				'titre'=>'Chiffres réalisés par l\'utilisateur'
 				,'image'=>img_picto('','title.png', '', 0)
 				,'picto_precedent'=>img_picto('','back.png', '', 0)
 				,'picto_suivant'=>img_picto('','next.png', '', 0)
 				,'noheader'=> (int)isset($_REQUEST['socid'])
-				,'messageNothing'=>"Aucun type de poste"
+				,'messageNothing'=>"Aucun chiffre"
 				,'order_down'=>img_picto('','1downarrow.png', '', 0)
 				,'order_up'=>img_picto('','1uparrow.png', '', 0)
 				,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 			)
 			,'title'=>array(
-				'type_poste'=>'Type poste'
-				,'numero_convention'=>'Numero convention'
-				,'descriptif'=>'Descriptif'
+				'nb_annees_anciennete'=>"Années d'ancienneté"
+				,'montant'=>'Montant'
 			)
 			,'search'=>array(
 			)
@@ -225,8 +162,11 @@
 			
 		));
 	
-	
 		$form->end();
+		
+		?>
+			<a class="butAction" href="productivite_user_indice.php?action=new&fk_user=<?php echo $fuser->id; ?>&fk_productivite=<?php echo $_REQUEST['id']; ?>">Ajouter un indice</a><div style="clear:both"></div>
+		<?
 		
 		llxFooter();
 	}

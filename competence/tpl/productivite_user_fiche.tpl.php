@@ -1,13 +1,7 @@
-<table width="100%" class="border"><tbody>
-	<tr><td width="25%" valign="top">Réf.</td><td>[user.id]</td></tr>
-	<tr><td width="25%" valign="top">Nom</td><td>[user.lastname]</td></tr>
-	<tr><td width="25%" valign="top">Prénom</td><td>[user.firstname]</td></tr>
-</tbody></table>
-<br>
 
-<div class="fiche">
-			
-		<h2 style="color: #2AA8B9;">Productivité utilisateur</h2>
+<h2 style="color: #2AA8B9;">Productivité utilisateur</h2>
+
+<div class="tabBar">
 		
 		<table width="100%" class="border">
 			<tr>
@@ -29,6 +23,7 @@
 		
 		<table class="border" style="width:100%;">
 			[onshow;block=begin;when [view.mode]=='view']
+				<a style="text-align:center;width:20%;" class="butAction" href="productivite_user.php?action=view&fk_user=[user.id;block=tr;strconv=no;protect=no]">Retour</a>
 				<a style="text-align:center;width:20%;" class="butAction" href="?action=edit&id=[productivite_user.id;block=tr;strconv=no;protect=no]&fk_user=[user.id;block=tr;strconv=no;protect=no]">Modifier</a>
 			[onshow;block=end]	
 		</table>
