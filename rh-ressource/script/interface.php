@@ -450,7 +450,7 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	$sql.= ' AND type="emprunt"';
 	$sql.= ' AND date_appel BETWEEN "'.$date_deb.'" AND "'.$date_end.'"';
 	$sql.= " GROUP BY au.code, au.pourcentage, montant_euros_ht";
-	return $sql;
+	//return $sql;
 	$resql = $db->query($sql);
 	
 	$total = array();
