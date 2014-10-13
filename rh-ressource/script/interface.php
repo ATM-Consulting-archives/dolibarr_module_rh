@@ -439,18 +439,18 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	 */
 	$sql = "SELECT u.rowid, u.email, u.firstname, u.name, ue.COMPTE_TIERS as compte_tiers, au.code, au.pourcentage, r1.fk_rh_ressource, ea.num_gsm, ea.montant_euros_ht";
 	$sql.= " FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource r1 on (ea.num_gsm = r1.numerotel)";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource r2 on (r1.fk_rh_ressource = r2.rowid)";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement e on (r2.rowid = e.fk_rh_ressource)";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user u on (e.fk_user = u.rowid)";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields ue on (u.rowid = ue.fk_object)";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user au on (u.rowid = au.fk_user)";
+	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."rh_ressource r1 on (ea.num_gsm = r1.numerotel)";
+	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."rh_ressource r2 on (r1.fk_rh_ressource = r2.rowid)";
+	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."rh_evenement e on (r2.rowid = e.fk_rh_ressource)";
+	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user u on (e.fk_user = u.rowid)";
+	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user_extrafields ue on (u.rowid = ue.fk_object)";
+	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."rh_analytique_user au on (u.rowid = au.fk_user)";
 	//$sql.= " WHERE ea.num_import = (SELECT MAX(ea.num_import) FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea)";
 	$sql.= ' WHERE ea.idImport = "'.$idImport.'"';
 	$sql.= ' AND type="emprunt"';
 	$sql.= ' AND date_appel BETWEEN "'.$date_deb.'" AND "'.$date_end.'"';
 	$sql.= " GROUP BY au.code, au.pourcentage, montant_euros_ht";
-	
+	return $sql;
 	$resql = $db->query($sql);
 	
 	$total = array();
