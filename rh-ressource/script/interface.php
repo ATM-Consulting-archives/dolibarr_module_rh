@@ -446,11 +446,14 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user_extrafields ue on (u.rowid = ue.fk_object)";
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."rh_analytique_user au on (u.rowid = au.fk_user)";
 	//$sql.= " WHERE ea.num_import = (SELECT MAX(ea.num_import) FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea)";
-	$sql.= ' WHERE ea.idImport = "'.$idImport.'"';
+	$sql.= ' WHERE 1
+			AND ea.date_appel BETWEEN "'.$date_deb.'" AND "'.$date_end.'" 
+			 AND ea.idImport = "'.$idImport.'"';
 	$sql.= ' AND e.type="emprunt"';
-	$sql.= ' AND ea.date_appel BETWEEN "'.$date_deb.'" AND "'.$date_end.'"';
 	//return $sql;
+
 	$resql = $db->query($sql);
+//exit($sql);
 	
 	$total = array();
 	
