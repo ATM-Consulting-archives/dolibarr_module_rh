@@ -447,9 +447,8 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."rh_analytique_user au on (u.rowid = au.fk_user)";
 	//$sql.= " WHERE ea.num_import = (SELECT MAX(ea.num_import) FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea)";
 	$sql.= ' WHERE ea.idImport = "'.$idImport.'"';
-	$sql.= ' AND type="emprunt"';
-	$sql.= ' AND date_appel BETWEEN "'.$date_deb.'" AND "'.$date_end.'"';
-	$sql.= " GROUP BY au.code, au.pourcentage, montant_euros_ht";
+	$sql.= ' AND e.type="emprunt"';
+	$sql.= ' AND ea.date_appel BETWEEN "'.$date_deb.'" AND "'.$date_end.'"';
 	//return $sql;
 	$resql = $db->query($sql);
 	
@@ -461,7 +460,8 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	
 	while($res = $db->fetch_object($resql)) {
 			
-		$total[$res->code] += $res->montant_euros_ht;
+		$total[$res->rowid][$res->code]['total'] += $res->montant_euros_ht * (1-($res->pourcentage/100));
+		$total[$res->rowid][$res->code]['total_nm'] += $res->montant_euros_ht ;
 
 		$non_facture = false;
 
@@ -478,15 +478,15 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 		 * On crée un tableau qui associe à chaque user la liste de ses codes analytiques
 		 * A chaque code analytique est associé la ligne qui sera exportée
 		 */
-		$TabLigne[$res->lastname." ".$res->firstname][$res->code] = array($res->name." ".$res->firstname
+		$TabLigne[$res->rowid][$res->code] = array($res->name." ".$res->firstname
 																		,$res->num_gsm
 																		,$res->email
 																		,$res->compte_tiers
 																		,mb_strimwidth($res->compte_tiers, 0, 3)
 																		,$res->code
 																		,$res->pourcentage
-																		,$total[$res->code] // Total qui va être calculé en fonction du pourcentage
-																		,$total[$res->code] // Vrai total
+																		,$total[$res->rowid][$res->code]['total'] // Total qui va être calculé en fonction du pourcentage
+																		,$total[$res->rowid][$res->code]['total_nm'] // Vrai total
 																	);
 		
 	}
@@ -496,7 +496,7 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	 * on dispatch le montant à facturer en fonction du pourcentage correspondant au code analytique
 	 */
 	 
-	$TabLigne = _dispatchTarifsParCodeAnalytique($TabLigne);
+	//$TabLigne = _dispatchTarifsParCodeAnalytique($TabLigne);
 	_getFormattedArray($TabLigne);
 	
 	return $TabLigne;
