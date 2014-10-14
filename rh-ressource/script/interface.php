@@ -504,7 +504,7 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 
 		$TAnal = TRH_analytique_user::getUserAnalytique($ATMdb, $id_user);
 		foreach($TAnal as $anal) {
-			$total[$id_user][$anal->code]['total'] += $res->montant_euros_ht * (1-($anal->pourcentage/100));
+			$total[$id_user][$anal->code]['total'] += $res->montant_euros_ht * ($anal->pourcentage/100);
 			$total[$id_user][$anal->code]['total_nm'] += $res->montant_euros_ht ;
 
 
