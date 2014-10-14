@@ -274,18 +274,20 @@ foreach ($TUser as $nom => $id) {
 		$cptFacture++;
 		
 		//$num_import = _getNextNumeroImport();
-		_saveFactureIntoTable($ATMdb, $TDonnees, $TCompteurs[$id]['num'], $idImport);
+		//_saveFactureIntoTable($ATMdb, $TDonnees, $TCompteurs[$id]['num'], $idImport);
 		
-		}
+	}
 	
 }
 
-function _saveFactureIntoTable(&$ATMdb, &$TDonnees, $num_ligne, $idImport) {
+_saveFactureIntoTable($ATMdb, $TDonnees, $idImport);
+
+function _saveFactureIntoTable(&$ATMdb, &$TDonnees, $idImport) {
 	//var_dump($TDonnees);exit;
 	
 	foreach($TDonnees as $TArrayLine){
 		
-		if("33".$TArrayLine[1] == $num_ligne){
+		//if("33".$TArrayLine[1] == $num_ligne){
 
 			$TRH_event_appel = new TRH_Evenement_appel;
 			//$TRH_event_appel->num_import = $num_import;
@@ -307,7 +309,7 @@ function _saveFactureIntoTable(&$ATMdb, &$TDonnees, $num_ligne, $idImport) {
 			
 			$TRH_event_appel->save($ATMdb);
 		
-		}
+		//}
 	}
 	
 }
