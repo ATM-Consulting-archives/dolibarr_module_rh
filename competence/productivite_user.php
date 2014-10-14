@@ -27,6 +27,7 @@
 						'fk_user'=>$_REQUEST['fk_user']
 						,'fk_productivite'=>$productivite->rowid
 						,'indice'=>$productivite->indice
+						,'objectif'=>$productivite->objectif
 						,'date_objectif'=>date("Y-m-d H:i:s", $productivite->date_objectif)
 					);
 					

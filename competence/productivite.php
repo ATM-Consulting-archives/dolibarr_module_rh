@@ -90,6 +90,7 @@
 					,'date_objectif'=>$form->calendrier('', 'date_objectif', $productivite->date_objectif, 12)
 					,'indice'=>$form->texte('', 'indice', $productivite->indice, 20,255,'','','à saisir')
 					,'label'=>$form->texte('', 'label', $productivite->label, 20,255,'','','à saisir')
+					,'objectif'=>$form->texte('', 'objectif', $productivite->objectif, 20,255,'','','à saisir')
 					//,'supprimable'=>$form->hidden('supprimable', 1)
 				)
 				,'view'=>array(

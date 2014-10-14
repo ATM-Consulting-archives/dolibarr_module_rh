@@ -15,6 +15,10 @@
 				<td>Libellé</td>
 				<td>[productivite.label;block=tr;strconv=no;protect=no]</td>
 			</tr>
+			<tr>
+				<td>Objectif</td>
+				<td>[productivite.objectif;block=tr;strconv=no;protect=no]</td>
+			</tr>
 		</table>
 		<br/><br/>
 		

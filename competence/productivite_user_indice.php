@@ -89,9 +89,11 @@
 				)
 				,'productivite_indice'=>array(
 					'id'=>$productivite_indice->getId()
+					,'date_indice'=>$form->calendrier('', 'date_indice', $productivite_indice->date_indice, 12)
 					,'fk_productivite'=>$_REQUEST['fk_productivite']
 					//,'date_objectif'=>$form->calendrier('', 'date_objectif', $productivite_indice->date_objectif, 12)
 					,'indice'=>$form->texte('', 'indice', $productivite_indice->indice, 20,255,'','','à saisir')
+					,'chiffre_realise'=>$form->texte('', 'chiffre_realise', $productivite_indice->chiffre_realise, 20,255,'','','à saisir')
 					//,'label'=>$form->texte('', 'label', $productivite_indice->label, 20,255,'','','à saisir')
 					//,'supprimable'=>$form->hidden('supprimable', 1)
 				)

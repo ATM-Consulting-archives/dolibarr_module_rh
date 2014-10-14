@@ -3,9 +3,18 @@
 
 <div class="tabBar">		
 		<table width="100%" class="border">
+			
+			<tr>
+				<td>Date</td>
+				<td>[productivite_indice.date_indice;block=tr;strconv=no;protect=no]</td>
+			</tr>
 			<tr>
 				<td>Indice</td>
 				<td>[productivite_indice.indice;block=tr;strconv=no;protect=no]</td>
+			</tr>
+			<tr>
+				<td>Chiffre réalisé</td>
+				<td>[productivite_indice.chiffre_realise;block=tr;strconv=no;protect=no]</td>
 			</tr>
 		</table>
 		<br/><br/>
