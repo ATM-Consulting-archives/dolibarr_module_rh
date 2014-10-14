@@ -35,7 +35,7 @@
 [onshow;block=begin;when [view.mode]=='edit']
 <div class="tabsAction"  style="text-align:center">
 	<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[user.id;block=tr;strconv=no;protect=no]&action=view'">
-	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[productivite_user.id]&action=view'">
+	&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[productivite_user.id]&action=view&fk_user=[user.id]'">
 </div>
 [onshow;block=end]
 

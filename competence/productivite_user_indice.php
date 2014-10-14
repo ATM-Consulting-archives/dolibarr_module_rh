@@ -35,7 +35,7 @@
 				?>
 					<script>
 					
-						document.location.href="<?php echo dol_buildpath("/competence/productivite_liste.php", 2) ?>"
+						document.location.href="<?php echo dol_buildpath("/competence/productivite_user_fiche.php?action=view&id=".$_REQUEST['fk_productivite']."&fk_user=".$_REQUEST['fk_user'], 2) ?>"
 					
 					</script>
 				<?php

@@ -15,8 +15,8 @@
 		<table class="border" style="width:100%;">
 			[onshow;block=begin;when [view.mode]=='view']
 				<a style="text-align:center;width:20%;" class="butAction" href="productivite_user_fiche.php?action=view&id=[productivite_indice.fk_productivite;block=tr;strconv=no;protect=no]&fk_user=[user.id;block=tr;strconv=no;protect=no]">Retour</a>
-				<a style="text-align:center;width:20%;" class="butAction" href="?action=edit&id=[productivite_indice.id;block=tr;strconv=no;protect=no]&fk_user=[user.id;block=tr;strconv=no;protect=no]">Modifier</a>
-				<a  style="text-align:center;width:20%;" class="butActionDelete" id="action-delete" onclick="if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?fk_user=[userCourant.id]&id=[productivite.id;block=tr;strconv=no;protect=no]&action=delete'}">Supprimer</a>
+				<a style="text-align:center;width:20%;" class="butAction" href="?action=edit&fk_productivite=[productivite_indice.fk_productivite;block=tr;strconv=no;protect=no]&id=[productivite_indice.id;block=tr;strconv=no;protect=no]&fk_user=[user.id;block=tr;strconv=no;protect=no]">Modifier</a>
+				<a  style="text-align:center;width:20%;" class="butActionDelete" id="action-delete" onclick="if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?fk_user=[user.id]&fk_productivite=[productivite_indice.fk_productivite;block=tr;strconv=no;protect=no]&id=[productivite_indice.id;block=tr;strconv=no;protect=no]&action=delete'}">Supprimer</a>
 			[onshow;block=end]	
 		</table>
 
