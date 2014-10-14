@@ -488,7 +488,7 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 			}
 		}
 		
-		if($non_facture) continue;
+		if($non_facture || $res->montant_euros_ht == 0) continue; // On sort pas les lignes à 0 dans le CSV
 				
 					
 		$r1->load_by_numId($ATMdb, $res->num_gsm);		
