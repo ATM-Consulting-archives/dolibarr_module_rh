@@ -498,7 +498,9 @@ function _exportOrangeCSV($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 		$id_user = $r2->isEmpruntee($ATMdb, $res->date_appel);
 		if($id_user>0) {
 		
-		if($user_ressource->id!=$id_user) $user_ressource->fetch($id_user);	
+		if($user_ressource->id!=$id_user) $user_ressource->fetch($id_user);
+			
+		$user_ressource->fetch_optionals($user_ressource->id, array('COMPTE_TIERS' => ""));	
 
 		$TAnal = TRH_analytique_user::getUserAnalytique($ATMdb, $id_user);
 		foreach($TAnal as $anal) {
