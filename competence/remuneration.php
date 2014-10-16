@@ -178,8 +178,9 @@ function _liste(&$ATMdb, $remuneration) {
 	));
 		if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
 		?>
-		<a class="butAction" href="?&action=new&type=remuneration&fk_user=<?=$fuser->id?>">Ajouter une rémunération</a><div style="clear:both"></div>
-		
+		<div class="tabsAction">
+			<a class="butAction" href="?&action=new&type=remuneration&fk_user=<?=$fuser->id?>">Ajouter une rémunération</a><div style="clear:both"></div>
+		</div>
 		<?
 		}
 
@@ -233,13 +234,17 @@ function _liste(&$ATMdb, $remuneration) {
 	));
 		if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
 		?>
-		<a class="butAction" href="?&action=new&type=prime&fk_user=<?=$fuser->id?>">Ajouter une prime</a><div style="clear:both"></div>
-		
+		<div class="tabsAction">
+			<a class="butAction" href="?&action=new&type=prime&fk_user=<?=$fuser->id?>">Ajouter une prime</a><div style="clear:both"></div>
+		</div>
 		<?
 		}
 
 
 	$form->end();
+	
+	_displayChartRemunerations($ATMdb);
+	_displayChartPrimes($ATMdb);
 	
 	llxFooter();
 }	
@@ -395,5 +400,49 @@ function _getUsers() {
 	}
 	
 	return $TUsers;
+	
+}
+
+function _displayChartRemunerations(&$ATMdb) {
+	
+	global $conf,$langs;
+	
+	$langs->load('report@report');
+	dol_include_once("/report/class/dashboard.class.php");
+	//llxHeader('', '', '', '', 0, 0, array('http://www.google.com/jsapi'));
+	
+	$title = $langs->trans('Graphiques des rémunérations');
+	print_fiche_titre($title, '', 'report.png@report');
+	
+	$dash=new TReport_dashboard;
+	$dash->initByCode($ATMdb, 'SALAIREMOIS');
+	
+	$dash->dataSource[0] = strtr($dash->dataSource[0], array("__iduser__"=>$_REQUEST['fk_user']));
+			
+	?><div id="chart_remunerations" style="height:<?=$dash->hauteur?>px; margin-bottom:20px;"></div><?
+			
+	$dash->get('chart_remunerations');
+	
+}
+
+function _displayChartPrimes(&$ATMdb) {
+	
+	global $conf,$langs;
+	
+	$langs->load('report@report');
+	dol_include_once("/report/class/dashboard.class.php");
+	//llxHeader('', '', '', '', 0, 0, array('http://www.google.com/jsapi'));
+	
+	$title = $langs->trans('Graphiques des primes');
+	print_fiche_titre($title, '', 'report.png@report');
+	
+	$dash=new TReport_dashboard;
+	$dash->initByCode($ATMdb, 'PRIMESMOIS');
+	
+	$dash->dataSource[0] = strtr($dash->dataSource[0], array("__iduser__"=>$_REQUEST['fk_user']));
+			//echo $dash->dataSource[0];exit;
+	?><div id="chart_primes" style="height:<?=$dash->hauteur?>px; margin-bottom:20px;"></div><?
+			
+	$dash->get('chart_primes');
 	
 }
