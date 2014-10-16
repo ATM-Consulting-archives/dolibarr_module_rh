@@ -41,7 +41,7 @@ function absencePrepareHead(&$obj, $type='absence') {
 }
 
 
-function compteurPrepareHead(&$obj, $type='absence', $nomUser, $prenomUser) {
+function compteurPrepareHead(&$obj, $type='compteur', $fk_user, $nomUser='', $prenomUser='') {
 	global $user, $langs;
 	
 	switch ($type) {
@@ -49,8 +49,9 @@ function compteurPrepareHead(&$obj, $type='absence', $nomUser, $prenomUser) {
 		case 'compteur':
 			//eif($user->rights->absence->myactions->modifierParamGlobalConges=="1"){
 			return array(
-			array(dol_buildpath('/absence/compteur.php?action=view',1), $langs->trans('CounterOf') . ' ' . $nomUser . ' ' . $prenomUser, 'compteur')
-			//,array(dol_buildpath('/absence/adminCompteur.php?action=view', 'Administration générale congés','adminconges')
+				array(dol_buildpath('/absence/compteur.php?action=view&fk_user='.$fk_user,1), $langs->trans('CounterOf') . ' ' . $nomUser . ' ' . $prenomUser, 'compteur')
+				,array(dol_buildpath('/absence/compteur.php?action=log&fk_user='.$fk_user,1), $langs->trans('Log'), 'log')
+				
 			);
 			break;
 	}
@@ -79,8 +80,7 @@ function adminCongesPrepareHead($type='compteur') {
 				,array(dol_buildpath('/absence/typePresence.php',1), $langs->trans('PresencesTypes'),'typepresence')
 			);
 			break;
-	}
-}
+	}}
 
 function adminRecherchePrepareHead(&$obj, $type='recherche') {
 	global $user;
