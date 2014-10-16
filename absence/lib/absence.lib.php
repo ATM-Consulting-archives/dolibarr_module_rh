@@ -30,6 +30,11 @@ function absencePrepareHead(&$obj, $type='absence') {
 				array(dol_buildpath('/absence/absence.php?action=new',1), $langs->trans('Card'),'fiche')
 			);
 			break;
+		case 'presenceCreation':
+			return array(
+				array(dol_buildpath('/absence/presence.php?action=new',1), $langs->trans('Card'),'fiche')
+			);
+			break;
 		
 		
 	}

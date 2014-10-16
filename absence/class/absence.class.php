@@ -401,6 +401,31 @@ class TRH_Absence extends TObjetStd {
 		return $dureeAbsenceRecevable;
 	}
 		
+	function setRefusee(&$ATMdb) {
+		$this->recrediterHeure($ATMdb);
+		$this->load($ATMdb, $this->id); // TODO à vérifier ça me paraît très con ça
+		$this->etat='Refusee';
+		$this->libelleEtat = $langs->trans('DeniedRequest');
+		$this->save($ATMdb);
+		mailConges($this,$isPresence);
+	}
+	function setAcceptee(&$ATMdb, $fk_valideur,$isPresence=false) {
+		global $langs,$user;	
+		
+		
+		$this->etat='Validee';
+		$this->libelleEtat = $langs->trans('Accepted');
+		$this->date_validation=time();
+		$this->fk_user_valideur = $fk_valideur;
+		
+		$this->save($ATMdb);
+		
+			
+		mailConges($this, $isPresence);	
+			
+		
+	}	
+		
 		
 	function save(&$db) {
 
@@ -420,7 +445,14 @@ class TRH_Absence extends TObjetStd {
 		// Appel des triggers
 		dol_include_once('/core/class/interfaces.class.php');
 		$interface = new Interfaces($db);
-		$result = $interface->run_triggers('ABSENCE_BEFORECREATE',$this,$user,$langs,$conf);
+		
+		if($this->getId()>0) {
+			$result = $interface->run_triggers('ABSENCE_BEFOREUPDATE',$this,$user,$langs,$conf);
+		}
+		else{
+			$result = $interface->run_triggers('ABSENCE_BEFORECREATE',$this,$user,$langs,$conf);	
+		}
+		
 		if ($result < 0) {
 			$error++; $this->errors=$interface->errors;
 			return false; 
