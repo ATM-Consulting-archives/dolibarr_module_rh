@@ -229,5 +229,64 @@
 	
 		$form->end();
 		
+		_displayChartProductivite($ATMdb);
+		
 		llxFooter();
+	}
+
+	function _displayChartProductivite(&$ATMdb) {
+		
+		global $conf,$langs;
+		
+		$langs->load('report@report');
+		dol_include_once("/report/class/dashboard.class.php");
+		//llxHeader('', '', '', '', 0, 0, array('http://www.google.com/jsapi'));
+		
+		$title = $langs->trans('Graphiques des primes');
+		print_fiche_titre($title, '', 'report.png@report');
+		
+		$dash=new TReport_dashboard;
+		
+		$TIndicesuser = _getArrayIndicesuser($_REQUEST['fk_user']);
+		
+		$TData = array();
+		
+		foreach($TIndicesuser as $indice_user) {
+			$TData[] = array("code" => 'CHIFFRESUSER'
+							,'yDataKey' => 'Indice '.$indice_user
+							,"sql" => "SELECT DATE_FORMAT(date_indice, \"%Y-%m\" ) AS 'mois'
+							, SUM( chiffre_realise ) AS 'Indice ".$indice_user."' 
+							FROM ".MAIN_DB_PREFIX."rh_productivite_indice 
+							WHERE fk_user=".$_REQUEST['fk_user']."
+							AND indice=".$indice_user." 
+							GROUP BY `mois`");
+		}
+		
+		$dash->initByData($ATMdb,$TData);
+
+		?><div id="chart_productivite_user" style="height:<?=$dash->hauteur?>px; margin-bottom:20px;"></div><?
+				
+		$dash->get('chart_productivite_user');
+		
+	}
+
+	function _getArrayIndicesuser($id_user) {
+			
+		global $db;
+		
+		$TIndicesuser = array();
+		
+		$sql = "SELECT DISTINCT indice ";
+		$sql.= "FROM ".MAIN_DB_PREFIX."rh_productivite_indice ";
+		$sql.= "WHERE fk_user = ".$id_user;
+		$resql = $db->query($sql);
+		
+		while($res = $db->fetch_object($resql)) {
+			
+			$TIndicesuser[] = $res->indice;
+			
+		}
+		
+		return $TIndicesuser;
+		
 	}
