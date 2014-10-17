@@ -92,7 +92,7 @@
 					,'date_indice'=>$form->calendrier('', 'date_indice', $productivite_indice->date_indice, 12)
 					,'fk_productivite'=>$_REQUEST['fk_productivite']
 					//,'date_objectif'=>$form->calendrier('', 'date_objectif', $productivite_indice->date_objectif, 12)
-					,'indice'=>$form->texte('', 'indice', $productivite_indice->indice, 20,255,'','','à saisir')
+					,'indice'=>$form->texteRO('', 'indice', _getLibIndice($_REQUEST['fk_productivite']), 20,255)
 					,'chiffre_realise'=>$form->texte('', 'chiffre_realise', $productivite_indice->chiffre_realise, 20,255,'','','à saisir')
 					//,'label'=>$form->texte('', 'label', $productivite_indice->label, 20,255,'','','à saisir')
 					//,'supprimable'=>$form->hidden('supprimable', 1)
@@ -107,3 +107,19 @@
 		);
 		
 	}
+
+	function _getLibIndice($id_productivite) {
+		
+		global $db;
+		
+		$sql = "SELECT indice FROM ".MAIN_DB_PREFIX."rh_productivite WHERE rowid = ".$id_productivite;
+		$resql = $db->query($sql);
+		
+		if($resql) {
+			while($res = $db->fetch_object($resql)) {
+				return $res->indice;
+			}
+		}
+		
+	}
+	

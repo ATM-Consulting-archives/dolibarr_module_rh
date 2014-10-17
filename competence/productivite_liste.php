@@ -16,7 +16,7 @@
 		
 		////////////AFFICHAGE DES LIGNES DE REMUNERATION
 		$r = new TSSRenderControler($productivite);
-		$sql = 'SELECT rowid as "ID", label as "Libellé", indice as "Indice", DATE_FORMAT(date_objectif, "%d-%m-%Y") as "Date objectif"';
+		$sql = 'SELECT rowid as "ID", indice as "Libellé", DATE_FORMAT(date_objectif, "%d-%m-%Y") as "Date objectif"';
 		$sql.=" FROM ".MAIN_DB_PREFIX."rh_productivite";
 		
 		$TOrder = array('rowid'=>'ASC');

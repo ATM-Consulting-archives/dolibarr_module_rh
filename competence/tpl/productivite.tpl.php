@@ -8,12 +8,8 @@
 				<td>[productivite.date_objectif;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr>
-				<td>Indice</td>
-				<td>[productivite.indice;block=tr;strconv=no;protect=no]</td>
-			</tr>
-			<tr>
 				<td>Libellé</td>
-				<td>[productivite.label;block=tr;strconv=no;protect=no]</td>
+				<td>[productivite.indice;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr>
 				<td>Objectif</td>

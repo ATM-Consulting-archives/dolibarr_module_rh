@@ -87,7 +87,7 @@
 				,'productivite_user'=>array(
 					'id'=>$productivite_user->getId()
 					,'date_objectif'=>$form->calendrier('', 'date_objectif', $productivite_user->date_objectif, 12)
-					,'indice'=>$form->texte('', 'indice', $productivite_user->indice, 20,255,'','','à saisir')
+					,'indice'=>$form->texteRO('', 'indice', $productivite_user->indice, 20,"")
 					,'objectif'=>$form->texte('', 'objectif', $productivite_user->objectif, 20,255,'','','à saisir')
 					//,'supprimable'=>$form->hidden('supprimable', 1)
 				)
@@ -113,7 +113,7 @@
 		
 		////////////AFFICHAGE DES LIGNES DE REMUNERATION
 		$r = new TSSRenderControler($productivite_user);
-		$sql = "SELECT rowid as 'ID', indice as 'Indice'";
+		$sql = "SELECT rowid as 'ID', chiffre_realise as 'Chiffre réalisé', DATE_FORMAT(date_indice, \"%d-%m-%Y\") as 'Date'";
 		$sql.= 'FROM '.MAIN_DB_PREFIX.'rh_productivite_indice ';
 		$sql.= 'WHERE fk_user = '.$_REQUEST['fk_user'];
 		$sql.= ' AND fk_productivite = '.$_REQUEST['id'];
@@ -165,7 +165,9 @@
 		$form->end();
 		
 		?>
-			<a class="butAction" href="productivite_user_indice.php?action=new&fk_user=<?php echo $fuser->id; ?>&fk_productivite=<?php echo $_REQUEST['id']; ?>">Ajouter un indice</a><div style="clear:both"></div>
+			<div class="tabsAction">
+				<a class="butAction" href="productivite_user_indice.php?action=new&fk_user=<?php echo $fuser->id; ?>&fk_productivite=<?php echo $_REQUEST['id']; ?>">Ajouter un chiffre</a><div style="clear:both"></div>
+			</div>
 		<?
 		
 		llxFooter();

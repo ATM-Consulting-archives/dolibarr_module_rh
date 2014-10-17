@@ -5,9 +5,9 @@ class TRH_productivite extends TObjetStd {
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_productivite');
 		parent::add_champs('date_objectif','type=date;');
-		parent::add_champs('indice','type=float;');
+		parent::add_champs('objectif','type=float;');
 		
-		parent::add_champs('label,objectif');
+		parent::add_champs('indice');
 		
 		parent::add_champs('entity','type=entier;');
 		
@@ -23,9 +23,9 @@ class TRH_productiviteUser extends TObjetStd {
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_productivite_user');
 		parent::add_champs('date_objectif','type=date;');
-		parent::add_champs('indice','type=float;');
+		parent::add_champs('indice');
 		
-		parent::add_champs('objectif');
+		parent::add_champs('objectif','type=float;');
 		
 		
 		parent::add_champs('fk_user,fk_productivite','type=entier;index;');
@@ -94,9 +94,9 @@ class TRH_productiviteIndice extends TObjetStd {
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_productivite_indice');
 		parent::add_champs('date_indice','type=date;');
-		parent::add_champs('indice','type=float;');
+		parent::add_champs('indice');
 		
-		parent::add_champs('chiffre_realise');
+		parent::add_champs('chiffre_realise','type=float;');
 			
 		parent::add_champs('fk_user,fk_productivite,entity','type=entier;');
 		

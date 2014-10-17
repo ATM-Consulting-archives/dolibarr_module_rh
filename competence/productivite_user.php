@@ -142,7 +142,7 @@
 		
 		// On récupère la liste des indices de productivité existants
 		$TIndices = array(0=>"(Sélectionnez un indice)");
-		$sql = 'SELECT p.rowid, p.indice, p.label ';
+		$sql = 'SELECT p.rowid, p.indice ';
 		$sql.= 'FROM '.MAIN_DB_PREFIX.'rh_productivite p ';
 		$sql.= 'WHERE p.rowid NOT IN (';
 			$sql.= 'SELECT p.rowid ';
@@ -154,7 +154,7 @@
 		$resql = $db->query($sql);
 		if($resql) {
 			while($res = $db->fetch_object($resql)) {
-				$TIndices[$res->rowid] = $res->rowid." : ".$res->label." (".$res->indice.")";
+				$TIndices[$res->rowid] = $res->rowid." : ".$res->indice;
 			}
 		}
 		
@@ -250,14 +250,16 @@
 		$TData = array();
 		
 		foreach($TIndicesuser as $indice_user) {
-			$TData[] = array("code" => 'CHIFFRESUSER'
-							,'yDataKey' => 'Indice '.$indice_user
-							,"sql" => "SELECT DATE_FORMAT(date_indice, \"%Y-%m\" ) AS 'mois'
-							, SUM( chiffre_realise ) AS 'Indice ".$indice_user."' 
+			$sql = "SELECT DATE_FORMAT(date_indice, \"%Y-%m\" ) AS 'mois'
+							, SUM( chiffre_realise ) AS '".strtr($indice_user, array("'"=>"\'"))."' 
 							FROM ".MAIN_DB_PREFIX."rh_productivite_indice 
 							WHERE fk_user=".$_REQUEST['fk_user']."
-							AND indice=".$indice_user." 
-							GROUP BY `mois`");
+							AND indice='".strtr($indice_user, array("'"=>"\'"))."' 
+							GROUP BY `mois`";
+							
+			$TData[] = array("code" => 'CHIFFRESUSER'
+							,'yDataKey' => $indice_user
+							,"sql" => $sql);
 		}
 		
 		if(isset($_REQUEST['fk_usergroup'])) _addLinesGroup($TData, $TIndicesuser, $_REQUEST['fk_usergroup']);
@@ -318,15 +320,15 @@
 			foreach($TIndicesuser as $indice_user) {
 			
 				$sql = "SELECT DATE_FORMAT(i.date_indice, \"%Y-%m\" ) AS 'mois' ";
-				$sql.= ", AVG( i.chiffre_realise ) AS 'Moyenne indice ".$indice_user."' "; 
+				$sql.= ", AVG( i.chiffre_realise ) AS 'Moyenne indice : ".strtr($indice_user, array("'" => "\'"))."' "; 
 				$sql.= "FROM ".MAIN_DB_PREFIX."rh_productivite_indice i "; 
 				if($fk_usergroup > 0) $sql.= "INNER JOIN ".MAIN_DB_PREFIX."usergroup_user u on (u.fk_user = i.fk_user) ";
-				$sql.= "WHERE i.indice=".$indice_user." ";
+				$sql.= "WHERE i.indice='".strtr($indice_user, array("'" => "\'"))."' ";
 				if($fk_usergroup > 0) $sql.= "AND fk_usergroup = ".$fk_usergroup." ";
 				$sql.= "GROUP BY `mois`";
 				
 				$TData[] = array("code" => 'CHIFFRESUSER'
-								,'yDataKey' => 'Moyenne indice '.$indice_user
+								,'yDataKey' => 'Moyenne indice : '.$indice_user
 								,"sql" => $sql);
 								
 			}

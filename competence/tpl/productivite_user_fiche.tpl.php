@@ -5,12 +5,12 @@
 		
 		<table width="100%" class="border">
 			<tr>
-				<td>Date objectif</td>
-				<td>[productivite_user.date_objectif;block=tr;strconv=no;protect=no]</td>
-			</tr>
-			<tr>
 				<td>Indice</td>
 				<td>[productivite_user.indice;block=tr;strconv=no;protect=no]</td>
+			</tr>
+			<tr>
+				<td>Date objectif</td>
+				<td>[productivite_user.date_objectif;block=tr;strconv=no;protect=no]</td>
 			</tr>
 			<tr>
 				<td>Objectif</td>
