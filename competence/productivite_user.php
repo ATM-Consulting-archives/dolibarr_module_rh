@@ -20,7 +20,7 @@
 				
 				$id_indice = $_REQUEST['fk_indice_prod'];
 				
-				if($id_indice != 0) {
+				if($id_indice != 0 && !TRH_productiviteUser::existe_indice_user($id_indice, $_REQUEST['fk_user'])) {
 					
 					$productivite->load($ATMdb, $id_indice);
 					$TChamps = array(

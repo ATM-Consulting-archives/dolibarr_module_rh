@@ -45,6 +45,25 @@ class TRH_productiviteUser extends TObjetStd {
 		return false;
 		
 	}
+	
+	static function existe_indice_user($id_productivite, $id_user) {
+		
+		global $db;
+		
+		$sql = "SELECT rowid ";
+		$sql.= "FROM ".MAIN_DB_PREFIX."rh_productivite_user ";
+		$sql.= "WHERE fk_productivite = ".$id_productivite." ";
+		$sql.= "AND fk_user = ".$id_user;
+		$resql = $db->query($sql);
+		
+		if($resql) {
+			while($res = $db->fetch_object($resql))
+				return true;
+		}
+		
+		return false;
+		
+	}
 
 }
 
