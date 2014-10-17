@@ -64,6 +64,27 @@ class TRH_productiviteUser extends TObjetStd {
 		return false;
 		
 	}
+	
+	static function get_array_indices_user($id_user) {
+			
+		global $db;
+		
+		$TIndicesuser = array();
+		
+		$sql = "SELECT DISTINCT indice ";
+		$sql.= "FROM ".MAIN_DB_PREFIX."rh_productivite_indice ";
+		$sql.= "WHERE fk_user = ".$id_user;
+		$resql = $db->query($sql);
+		
+		while($res = $db->fetch_object($resql)) {
+			
+			$TIndicesuser[] = $res->indice;
+			
+		}
+		
+		return $TIndicesuser;
+		
+	}
 
 }
 

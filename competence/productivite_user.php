@@ -230,6 +230,7 @@
 		$form->end();
 		
 		_displayChartProductivite($ATMdb);
+		_displayFormProductivityChart();
 		
 		llxFooter();
 	}
@@ -242,12 +243,9 @@
 		dol_include_once("/report/class/dashboard.class.php");
 		//llxHeader('', '', '', '', 0, 0, array('http://www.google.com/jsapi'));
 		
-		$title = $langs->trans('Graphiques des primes');
-		print_fiche_titre($title, '', 'report.png@report');
-		
 		$dash=new TReport_dashboard;
 		
-		$TIndicesuser = _getArrayIndicesuser($_REQUEST['fk_user']);
+		$TIndicesuser = TRH_productiviteUser::get_array_indices_user($_REQUEST['fk_user']);
 		
 		$TData = array();
 		
@@ -262,31 +260,77 @@
 							GROUP BY `mois`");
 		}
 		
-		$dash->initByData($ATMdb,$TData);
-
-		?><div id="chart_productivite_user" style="height:<?=$dash->hauteur?>px; margin-bottom:20px;"></div><?
-				
-		$dash->get('chart_productivite_user');
+		if(isset($_REQUEST['fk_usergroup'])) _addLinesGroup($TData, $TIndicesuser, $_REQUEST['fk_usergroup']);
 		
-	}
-
-	function _getArrayIndicesuser($id_user) {
+		if(count($TIndicesuser) > 0) {
 			
-		global $db;
-		
-		$TIndicesuser = array();
-		
-		$sql = "SELECT DISTINCT indice ";
-		$sql.= "FROM ".MAIN_DB_PREFIX."rh_productivite_indice ";
-		$sql.= "WHERE fk_user = ".$id_user;
-		$resql = $db->query($sql);
-		
-		while($res = $db->fetch_object($resql)) {
+			$title = $langs->trans('Productivité utilisateur');
+			print_fiche_titre($title, '', 'report.png@report');
 			
-			$TIndicesuser[] = $res->indice;
+			$dash->initByData($ATMdb,$TData);
+	
+			?><div id="chart_productivite_user" style="height:<?=$dash->hauteur?>px; margin-bottom:20px;"></div><?
+			
+			$dash->get('chart_productivite_user');
 			
 		}
 		
-		return $TIndicesuser;
+	}
+	
+	/**
+	 * Affiche le formulaire permettant de comparer les chiffres de l'utilisateur
+	 * avec ceux des autres utilisateur ou ceux d'un groupe en particulier
+	 */
+	function _displayFormProductivityChart() {
+
+		$form = new TFormCore("", "formProductivityChart");
+		print $form->btsubmit("Comparer chiffres","subFormProductivityChart");
+		print $form->combo($pLib, "fk_usergroup", _getUserGroups(), $_REQUEST['fk_usergroup']);
+		
+		print '</form>';
+		
+	}
+	
+	function _getUserGroups() {
+				
+		global $db;
+		
+		$TGroups = array(0 => "Tous");
+		
+        $sql = "SELECT ug.rowid, ug.nom";
+        $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug";
+		$resql = $db->query($sql);
+		
+		if($resql) {
+			while($res = $db->fetch_object($resql)) {
+				$TGroups[$res->rowid] = 'Groupe "'.$res->nom.'"';
+			}
+		}
+		
+		return $TGroups;
+		
+	}
+	
+	function _addLinesGroup(&$TData, $TIndicesuser, $fk_usergroup) {
+		
+		//if($fk_usergroup == 0) {
+		
+			foreach($TIndicesuser as $indice_user) {
+			
+				$sql = "SELECT DATE_FORMAT(i.date_indice, \"%Y-%m\" ) AS 'mois' ";
+				$sql.= ", AVG( i.chiffre_realise ) AS 'Moyenne indice ".$indice_user."' "; 
+				$sql.= "FROM ".MAIN_DB_PREFIX."rh_productivite_indice i "; 
+				if($fk_usergroup > 0) $sql.= "INNER JOIN ".MAIN_DB_PREFIX."usergroup_user u on (u.fk_user = i.fk_user) ";
+				$sql.= "WHERE i.indice=".$indice_user." ";
+				if($fk_usergroup > 0) $sql.= "AND fk_usergroup = ".$fk_usergroup." ";
+				$sql.= "GROUP BY `mois`";
+				
+				$TData[] = array("code" => 'CHIFFRESUSER'
+								,'yDataKey' => 'Moyenne indice '.$indice_user
+								,"sql" => $sql);
+								
+			}
+		
+		//}
 		
 	}
