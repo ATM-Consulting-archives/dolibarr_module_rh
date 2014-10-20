@@ -20,15 +20,14 @@
 				<td>[productivite.objectif;block=tr;strconv=no;protect=no]</td>
 			</tr>
 		</table>
-		<br/><br/>
-		
-		<br/>
 		
 		<table class="border" style="width:100%;">
 			[onshow;block=begin;when [view.mode]=='view']
-				<a style="text-align:center;width:20%;" class="butAction" href="productivite_liste.php">Retour</a>
-				<a style="text-align:center;width:20%;" class="butAction" href="?action=edit&id=[productivite.id;block=tr;strconv=no;protect=no]&fk_user=[user.id;block=tr;strconv=no;protect=no]">Modifier</a>
-				<a  style="text-align:center;width:20%;" class="butActionDelete" id="action-delete" onclick="if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?fk_user=[userCourant.id]&id=[productivite.id;block=tr;strconv=no;protect=no]&action=delete'}">Supprimer</a>
+				<div class="tabsAction">
+					<a style="text-align:center;width:20%;" class="butAction" href="productivite_liste.php">Retour</a>
+					<a style="text-align:center;width:20%;" class="butAction" href="?action=edit&id=[productivite.id;block=tr;strconv=no;protect=no]&fk_user=[user.id;block=tr;strconv=no;protect=no]">Modifier</a>
+					<a  style="text-align:center;width:20%;" class="butActionDelete" id="action-delete" onclick="if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?fk_user=[userCourant.id]&id=[productivite.id;block=tr;strconv=no;protect=no]&action=delete'}">Supprimer</a>
+				</div>
 			[onshow;block=end]	
 		</table>
 
