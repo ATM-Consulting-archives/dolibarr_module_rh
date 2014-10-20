@@ -344,6 +344,7 @@ PublicHoliday=Jour férié
 PublicHolidayNonWorkedDaysList=Liste des jours fériés ou non travaillés
 PublicHolidayVisualization=Visualisation du jour férié
 PunchClock=Pointeuse
+PunchClockImport=Import Pointage
 RealDurationInDays=Durée réelle (Jours)
 RealDurationInHours=Durée réelle (Heures)
 ReferenceNumber=Matricule
