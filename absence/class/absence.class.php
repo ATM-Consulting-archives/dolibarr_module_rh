@@ -396,6 +396,31 @@ class TRH_Absence extends TObjetStd {
 		return $dureeAbsenceRecevable;
 	}
 		
+	function setRefusee(&$ATMdb) {
+		$this->recrediterHeure($ATMdb);
+		$this->load($ATMdb, $this->id); // TODO à vérifier ça me paraît très con ça
+		$this->etat='Refusee';
+		$this->libelleEtat = $langs->trans('DeniedRequest');
+		$this->save($ATMdb);
+		mailConges($this,$isPresence);
+	}
+	function setAcceptee(&$ATMdb, $fk_valideur,$isPresence=false) {
+		global $langs,$user;	
+		
+		
+		$this->etat='Validee';
+		$this->libelleEtat = $langs->trans('Accepted');
+		$this->date_validation=time();
+		$this->fk_user_valideur = $fk_valideur;
+		
+		$this->save($ATMdb);
+		
+			
+		mailConges($this, $isPresence);	
+			
+		
+	}	
+		
 		
 	function save(&$db) {
 
@@ -415,7 +440,14 @@ class TRH_Absence extends TObjetStd {
 		// Appel des triggers
 		dol_include_once('/core/class/interfaces.class.php');
 		$interface = new Interfaces($db);
-		$result = $interface->run_triggers('ABSENCE_BEFORECREATE',$this,$user,$langs,$conf);
+		
+		if($this->getId()>0) {
+			$result = $interface->run_triggers('ABSENCE_BEFOREUPDATE',$this,$user,$langs,$conf);
+		}
+		else{
+			$result = $interface->run_triggers('ABSENCE_BEFORECREATE',$this,$user,$langs,$conf);	
+		}
+		
 		if ($result < 0) {
 			$error++; $this->errors=$interface->errors;
 			return false; 
@@ -1544,26 +1576,31 @@ class TRH_Absence extends TObjetStd {
 		
 	}
 	
+	function isWorkingDay(&$ATMdb, $date) {
+		//print microtime().'<br>';
+		$res= (TRH_EmploiTemps::estTravaille($ATMdb, $this->fk_user, $date)!='NON');
+		//print microtime().'<br>';
+		if($res) $res = !(TRH_JoursFeries::estFerie($ATMdb, $date));
+		//print microtime().'<br>';
+		if($res) $res = $this->isNotAbsenceDay($ATMdb, $date);
+		//print microtime().'<br>';
+		//exit;
+		return $res;
+	
+	}
+	
 	function isWorkingDayNext(&$ATMdb, $dateTest){ // regarde x/x emploi du temps
 
 		$date=strtotime('+1day',$dateTest); 
-		$res= (TRH_EmploiTemps::estTravaille($ATMdb, $this->fk_user, date('Y-m-d',$date))!='NON');
-		if($res) $res = !(TRH_JoursFeries::estFerie($ATMdb, date('Y-m-d',$date)));
-		if($res) $res = $this->isNotAbsenceDay($ATMdb, date('Y-m-d',$date));
 		
-		return $res;
+		return $this->isWorkingDay($ATMdb, date('Y-m-d', $date));
 				
 	}
 	
 	function isWorkingDayPrevious(&$ATMdb, $dateTest){
 
 		$date=strtotime('-1day',$dateTest); 
-
-		$res= (TRH_EmploiTemps::estTravaille($ATMdb, $this->fk_user, date('Y-m-d',$date))!='NON');
-		if($res) $res = !TRH_JoursFeries::estFerie($ATMdb, date('Y-m-d',$date));
-		if($res) $res = $this->isNotAbsenceDay($ATMdb, date('Y-m-d',$date));
-		
-		return $res;
+		return $this->isWorkingDay($ATMdb, date('Y-m-d', $date));
 	}
 
 	function isNotAbsenceDay(&$ATMdb, $date) {
@@ -2227,8 +2264,9 @@ class TRH_EmploiTemps extends TObjetStd {
 		
 		if(!empty($date)) {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
-			WHERE fk_user=".(int)$fk_user." AND is_archive=1 AND DATE_FORMAT(date_debut,'%Y-%m-%d') <='$date' AND DATE_FORMAT(date_fin,'%Y-%m-%d')>='$date'";
-			//print $sql;
+			WHERE fk_user=".(int)$fk_user." AND is_archive=1 
+			AND date_debut<='$date 23:59:59'  AND date_fin>='$date 00:00:00'";
+			
 			$ATMdb->Execute($sql);
 			if($row = $ATMdb->Get_line()) {
 				

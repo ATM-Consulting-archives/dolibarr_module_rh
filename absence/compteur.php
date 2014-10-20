@@ -52,6 +52,12 @@
 				}
 				break;
 
+			case 'log':
+				$compteur->load_by_fkuser($ATMdb, GETPOST('fk_user'));
+				_log($ATMdb, $compteur);
+				
+				break;
+
 			case 'delete':
 				
 				break;
@@ -67,15 +73,53 @@
 
 	$ATMdb->close();
 	
-	llxFooter();
 	
+	
+function _log(&$ATMdb, &$compteur) {
+	global $langs, $conf, $db, $user, $listeGlobale;	
+	
+	llxHeader('', $langs->trans('CounterLog'));
+	
+	getStandartJS();
+	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur',$user->id, $user->lastname,$user->firstname)  , 'log', $langs->trans('Log'));
+	
+	$r = new TSSRenderControler($compteur);
+	$sql="SELECT date_cre, type,nb,motif
+		FROM ".MAIN_DB_PREFIX."rh_compteur_log 
+		WHERE fk_compteur=".$compteur->getId();
+		
+	
+	$TOrder = array('DateCre'=>'DESC');
+	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
+	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
+	
+	
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
+	//print $page;
+	$r->liste($ATMdb, $sql, array(
+		'limit'=>array(
+			'page'=>$page
+			,'nbLine'=>'30'
+		)
+		
+		,'translate'=>array()
+		,'type'=>array('date_cre'=>'date')
+		,'title'=>array(
+			'date_cre'=> $langs->trans('DateLog')
+		)
+		
+	));
+	
+		
+	llxFooter();
+}		
 	
 function _liste(&$ATMdb, &$compteur) {
 	global $langs, $conf, $db, $user, $listeGlobale;	
 	$listeGlobale='normale';
 	llxHeader('', $langs->trans('HolidaysCollabCounterList'));
 	getStandartJS();
-	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur')  , 'compteur', $langs->trans('HolidaysAdministration'));
+	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur',$user->id)  , 'compteur', $langs->trans('HolidaysAdministration'));
 	$r = new TSSRenderControler($compteur);
 	$sql="SELECT  r.rowid as 'ID', c.login, c.firstname, c.lastname, anneeN as 'annee', 
 		r.date_cre as 'DateCre', CAST(r.acquisExerciceN as DECIMAL(16,1)) as 'Congés acquis N', 
@@ -416,7 +460,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 			
 			,'view'=>array(
 				'mode'=>$mode
-				,'head'=>dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur', htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1'), htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'))  , 'compteur', $langs->trans('Absence'))
+				,'head'=>dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur',$userCourant->id, htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1'), htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'))  , 'compteur', $langs->trans('Absence'))
 			)
 			,'translate' => array(
 				'Year' 							=> $langs->trans('Year'),

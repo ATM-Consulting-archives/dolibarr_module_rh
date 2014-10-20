@@ -865,13 +865,13 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'CumulatedDayOff' => $langs->trans('CumulatedDayOff'),
 				'NonCumulatedDayOff' => $langs->trans('NonCumulatedDayOff'),
 				'Register' => $langs->trans('Register'),
-				'ConfirmAcceptAbsenceRequest' => $langs->trans('ConfirmAcceptAbsenceRequest'),
+				'ConfirmAcceptAbsenceRequest' => addslashes( $langs->transnoentitiesnoconv('ConfirmAcceptAbsenceRequest') ),
 				'Accept' => $langs->trans('Accept'),
 				'Refuse' => $langs->trans('Refuse'),
-				'ConfirmRefuseAbsenceRequest' => $langs->trans('ConfirmRefuseAbsenceRequest'),
-				'ConfirmSendToSuperiorAbsenceRequest' => $langs->trans('ConfirmSendToSuperiorAbsenceRequest'),
-				'SendToSuperiorValidator' => $langs->trans('SendToSuperiorValidator'),
-				'ConfirmDeleteAbsenceRequest' => $langs->trans('ConfirmDeleteAbsenceRequest'),
+				'ConfirmRefuseAbsenceRequest' => addslashes($langs->transnoentitiesnoconv('ConfirmRefuseAbsenceRequest')),
+				'ConfirmSendToSuperiorAbsenceRequest' => addslashes($langs->transnoentitiesnoconv('ConfirmSendToSuperiorAbsenceRequest')),
+				'SendToSuperiorValidator' => $langs->transnoentitiesnoconv('SendToSuperiorValidator'),
+				'ConfirmDeleteAbsenceRequest' =>addslashes( $langs->transnoentitiesnoconv('ConfirmDeleteAbsenceRequest')),
 				'Delete' => $langs->trans('Delete')
 				,'AbsenceBy' => $langs->trans('AbsenceBy')
 			)

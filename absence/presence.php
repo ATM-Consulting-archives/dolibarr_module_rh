@@ -80,8 +80,38 @@
 			case 'listeValidation' : 
 				_listeValidation($ATMdb, $absence);
 				break;
+				
 			case 'listeAdmin' : 
 				_listeAdmin($ATMdb, $absence);
+				break;
+				
+			case 'accept':
+				$absence->load($ATMdb, $_REQUEST['id']);
+				
+				$absence->setAcceptee($ATMdb, $user->id, true);
+				
+				$mesg = '<div class="error">' . $langs->trans('PresenceRequestAccepted') . '</div>';
+				_ficheCommentaire($ATMdb, $absence,'edit');
+				break;
+				
+			case 'niveausuperieur':
+				$absence->load($ATMdb, $_REQUEST['id']);
+				
+				$absence->niveauValidation++;
+				$absence->save($ATMdb);
+				
+				mailConges($absence, true);
+				$mesg = '<div class="error">' . $langs->trans('PresenceRequestSentToSuperior') . '</div>';
+				_fiche($ATMdb, $absence,'view');
+				break;
+				
+			case 'refuse':
+				$absence->load($ATMdb, $_REQUEST['id']);
+				$absence->setRefusee($ATMdb,true);
+				
+				
+				$mesg = '<div class="error">' . $langs->trans('DeniedPresenceRequest') . '</div>';
+				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
 		}
 	}
@@ -469,6 +499,35 @@ function _listeValidation(&$ATMdb, &$absence) {
 	
 	llxFooter();
 }	
+function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
+	global $db,$user,$conf, $langs;
+	llxHeader('', $langs->trans('PresenceRequest'));
+
+	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
+	$form->Set_typeaff($mode);
+	echo $form->hidden('id', $absence->getId());
+	echo $form->hidden('action', 'saveComment');
+	
+	print dol_get_fiche_head(absencePrepareHead($absence, 'presenceCreation')  , 'fiche', $langs->trans('Presence'));
+	
+	?> 
+	<br><t style='color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica;font-weight: bold;text-decoration: none;text-shadow: 1px 1px 2px #CFCFCF;'>
+    <?php echo $langs->trans('AddComment') ?> </t><br/><br/><br/>
+	<textarea name="commentValid" rows="3" cols="40"></textarea><br><br>
+	<INPUT class="button" TYPE="submit"   id="commentaire" VALUE="<?php echo $langs->trans('Continue'); ?>">
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
+	<INPUT class="button" TYPE="button" id="newAsk" VALUE="<?php echo $langs->trans('NewRequestOnSameUser'); ?>" onclick="document.location.href='presence.php?action=new&fk_user=<?=$absence->fk_user ?>'">	
+	<br><br>
+
+	<?php
+	
+	echo $form->end_form();
+	// End of page
+	
+	global $mesg, $error;
+	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	llxFooter();
+}
 
 function _fiche(&$ATMdb, &$absence, $mode) {
 	global $db,$user,$conf, $langs;
@@ -533,7 +592,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	}
 	//Tableau affichant les 10 dernières absences du collaborateur
 	$TRecap=array();
-	$TRecap=$absence->recuperationDerAbsUser($ATMdb, $regleId);
+	$TRecap=$absence->recuperationDerAbsUser($ATMdb, $userCourant->id);
 	
 	//on regarde si l'utilisateur a le droit de créer une absence non justifiée (POINTEUR)
 	
@@ -632,12 +691,12 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'CreatedThe' => $langs->trans('CreatedThe'),
 				'ValidatedThe' => $langs->trans('ValidatedThe'),
 				'Register' => $langs->trans('Register'),
-				'ConfirmAcceptAbsenceRequest' => $langs->trans('ConfirmAcceptAbsenceRequest'),
-				'ConfirmRefuseAbsenceRequest' => $langs->trans('ConfirmRefuseAbsenceRequest'),
+				'ConfirmAcceptAbsenceRequest' =>addslashes( $langs->trans('ConfirmAcceptAbsenceRequest')),
+				'ConfirmRefuseAbsenceRequest' =>addslashes( $langs->trans('ConfirmRefuseAbsenceRequest')),
 				'Accept' => $langs->trans('Accept'),
 				'Refuse' => $langs->trans('Refuse'),
-				'ConfirmSendToSuperiorAbsenceRequest' => $langs->trans('ConfirmSendToSuperiorAbsenceRequest'),
-				'ConfirmDeleteAbsenceRequest' => $langs->trans('ConfirmDeleteAbsenceRequest'),
+				'ConfirmSendToSuperiorAbsenceRequest' =>addslashes( $langs->trans('ConfirmSendToSuperiorAbsenceRequest')),
+				'ConfirmDeleteAbsenceRequest' =>addslashes( $langs->trans('ConfirmDeleteAbsenceRequest')),
 				'Delete' => $langs->trans('Delete'),
 				'AbsenceType' => $langs->trans('AbsenceType'),
 				'State' => $langs->trans('State'),
