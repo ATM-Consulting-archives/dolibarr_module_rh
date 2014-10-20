@@ -5,11 +5,12 @@
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+	dol_include_once('/competence/lib/competence.lib.php');
 	
 	$langs->load('formulaire@formulaire');
 	
 	$ATMdb=new TPDOdb;
-	$productivite_user = new TRH_productiviteUser;
+	$productivite = new TRH_productivite;
 	
 	if(isset($_REQUEST['action'])) {
 		
@@ -17,48 +18,49 @@
 			
 			case 'save':
 				
-				$productivite_user->load($ATMdb, $_REQUEST['id']);
-				$productivite_user->set_values($_REQUEST);
+				$productivite->load($ATMdb, $_REQUEST['id']);
+				$productivite->set_values($_REQUEST);
 				
-				$mesg = '<div class="ok">Grille de salaire enregistrée avec succès</div>';
+				$mesg = '<div class="ok">Indice de productivité enregistré avec succès</div>';
 				
-				$productivite_user->save($ATMdb);
-				$productivite_user->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $productivite_user, 'view');
+				$productivite->save($ATMdb);
+				$productivite->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $productivite, 'view');
 				break;
 			
 			case 'delete':
-				$productivite_user->load($ATMdb, $_REQUEST['id']);
-				$productivite_user->delete($ATMdb, $_REQUEST['id']);
-				$mesg = '<div class="ok">Grille de salaire enregistrée avec succès</div>';
+				$productivite->load($ATMdb, $_REQUEST['id']);
+				$productivite->delete($ATMdb, $_REQUEST['id']);
 				
-				$productivite_user->save($ATMdb);
 				?>
 					<script>
-						document.location.href='fiche_type_poste.php?id=<?php echo $_REQUEST['fk_type_poste'] ?>&action=view';
+					
+						document.location.href="<?php echo dol_buildpath("/competence/productivite_liste.php", 2) ?>"
+					
 					</script>
 				<?php
+
 				break;
 			
 			case 'view':
-				$productivite_user->loadBy($ATMdb, $_REQUEST['fk_user'], 'fk_user');
-				_fiche($ATMdb, $productivite_user, 'view');
+				$productivite->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $productivite, 'view');
 				break;
 			
 			case 'edit':
-				$productivite_user->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $productivite_user);
+				$productivite->load($ATMdb, $_REQUEST['id']);
+				_fiche($ATMdb, $productivite);
 				break;
 			
 			default:
-				_fiche($ATMdb, $productivite_user);
+				_fiche($ATMdb, $productivite);
 				break;
 			
 		}
 		
 	}
 	
-	function _fiche(&$ATMdb, $productivite_user, $mode="edit") {
+	function _fiche(&$ATMdb, $productivite, $mode="edit") {
 		
 		global $db,$user,$langs,$conf;
 		llxHeader('','Données de productivité');
@@ -67,14 +69,10 @@
 		$fuser->fetch($_REQUEST['fk_user']);
 		$fuser->getrights();
 		
-		$head = user_prepare_head($fuser);
-		$current_head = 'productivite';
-		dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
-		
 		$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 		$form->Set_typeaff($mode);
 		
-		echo $form->hidden('id', $productivite_user->getId());
+		echo $form->hidden('id', $productivite->getId());
 		echo $form->hidden('action', 'save');
 		echo $form->hidden('fk_user', $fuser->id);
 
@@ -88,16 +86,19 @@
 					,'lastname'=>$fuser->lastname
 					,'firstname'=>$fuser->firstname
 				)
-				,'productivite_user'=>array(
-					'id'=>$productivite_user->getId()
-					,'date_objectif'=>$form->calendrier('', 'date_objectif', $productivite_user->date_objectif, 12)
-					,'indice'=>$form->texte('', 'indice', $productivite_user->indice, 20,255,'','','à saisir')
-					,'objectif'=>$form->texte('', 'objectif', $productivite_user->objectif, 20,255,'','','à saisir')
+				,'productivite'=>array(
+					'id'=>$productivite->getId()
+					,'date_objectif'=>$form->calendrier('', 'date_objectif', $productivite->date_objectif, 12)
+					,'indice'=>$form->texte('', 'indice', $productivite->indice, 20,255,'','','à saisir')
+					,'label'=>$form->texte('', 'label', $productivite->label, 20,255,'','','à saisir')
+					,'objectif'=>$form->texte('', 'objectif', $productivite->objectif, 20,255,'','','à saisir')
 					//,'supprimable'=>$form->hidden('supprimable', 1)
 				)
 				,'view'=>array(
 					'mode'=>$mode
 					,'action'=>$_REQUEST['action']
+					,'head'=>dol_get_fiche_head(competencePrepareHead($productivite, 'productivite'),'fiche','Productivité')
+					,'onglet'=>dol_get_fiche_head(array(),'','Edition indice de productivité')
 				)
 				
 			)	
