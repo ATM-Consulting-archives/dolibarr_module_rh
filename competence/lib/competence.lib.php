@@ -15,6 +15,12 @@ function competencePrepareHead(&$obj, $type='competence') {
 				);
 				break;
 				
+		case 'productivite':
+				return array(
+					array(dol_buildpath('/competence/productivite.php?id='.$obj->getId()."&action=view",1), 'Fiche','fiche')
+				);
+				break;
+				
 		case 'productivite_user':
 				return array(
 					array(dol_buildpath('/competence/productivite_user_fiche.php?id='.$obj->getId()."&fk_user=".$_REQUEST['fk_user']."&action=view",1), 'Fiche','fiche')

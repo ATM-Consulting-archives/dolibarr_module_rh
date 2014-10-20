@@ -65,7 +65,10 @@
 		));
 			if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
 			?>
-			<a class="butAction" href="productivite.php?action=new">Ajouter un nouvel indice</a><div style="clear:both"></div>
+			
+			<div class="tabsAction">
+				<a class="butAction" href="productivite.php?action=new">Ajouter un nouvel indice</a><div style="clear:both"></div>
+			</div>
 			
 			<?
 			}

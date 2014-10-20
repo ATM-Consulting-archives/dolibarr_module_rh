@@ -5,6 +5,7 @@
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+	dol_include_once('/competence/lib/competence.lib.php');
 	
 	$langs->load('formulaire@formulaire');
 	
@@ -96,6 +97,8 @@
 				,'view'=>array(
 					'mode'=>$mode
 					,'action'=>$_REQUEST['action']
+					,'head'=>dol_get_fiche_head(competencePrepareHead($productivite, 'productivite'),'fiche','Productivité')
+					,'onglet'=>dol_get_fiche_head(array(),'','Edition indice de productivité')
 				)
 				
 			)	

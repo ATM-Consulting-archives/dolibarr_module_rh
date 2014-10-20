@@ -1,7 +1,11 @@
+[onshow;block=begin;when [view.mode]=='view']        
+	[view.head;strconv=no]
+[onshow;block=end]  
 
-<h2 style="color: #2AA8B9;">Indice de productivité</h2>
-
-<div class="tabBar">		
+[onshow;block=begin;when [view.mode]!='view']        
+	[view.onglet;strconv=no]
+[onshow;block=end]
+		
 		<table width="100%" class="border">
 			<tr>
 				<td>Date objectif</td>
@@ -27,9 +31,6 @@
 				<a  style="text-align:center;width:20%;" class="butActionDelete" id="action-delete" onclick="if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?fk_user=[userCourant.id]&id=[productivite.id;block=tr;strconv=no;protect=no]&action=delete'}">Supprimer</a>
 			[onshow;block=end]	
 		</table>
-
-</div>
-
 
 
 [onshow;block=begin;when [view.mode]=='edit']
