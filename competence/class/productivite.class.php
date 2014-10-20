@@ -46,6 +46,27 @@ class TRH_productiviteUser extends TObjetStd {
 		
 	}
 	
+	function delete(&$ATMdb, $fk_productivite) {
+		
+		// On récupère les chiffres réalisés par cet utilisateur sur cet indice pour les supprimer
+		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_productivite_indice 
+		WHERE fk_user=".$this->fk_user." AND fk_productivite=".$fk_productivite;
+		
+		$TChiffres_user = TRequeteCore::get_keyval_by_sql($ATMdb, $sql, 'rowid', 'rowid');
+		
+		$ATMdb->Execute($sql);
+		foreach ($TChiffres_user as $id_chiffre) {
+			
+			$obj = new TRH_productiviteIndice;
+			$obj->load($ATMdb, $id_chiffre);
+			$obj->delete($ATMdb);
+			
+		}
+		
+		parent::delete($ATMdb);
+		
+	}
+	
 	static function existe_indice_user($id_productivite, $id_user) {
 		
 		global $db;

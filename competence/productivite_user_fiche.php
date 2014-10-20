@@ -5,6 +5,7 @@
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+	dol_include_once('/competence/lib/competence.lib.php');
 	
 	$langs->load('formulaire@formulaire');
 	
@@ -20,8 +21,6 @@
 				$productivite_user->load($ATMdb, $_REQUEST['id']);
 				$productivite_user->set_values($_REQUEST);
 				
-				$mesg = '<div class="ok">Grille de salaire enregistrée avec succès</div>';
-				
 				$productivite_user->save($ATMdb);
 				$productivite_user->load($ATMdb, $_REQUEST['id']);
 				_fiche($ATMdb, $productivite_user, 'view');
@@ -30,12 +29,11 @@
 			case 'delete':
 				$productivite_user->load($ATMdb, $_REQUEST['id']);
 				$productivite_user->delete($ATMdb, $_REQUEST['id']);
-				$mesg = '<div class="ok">Grille de salaire enregistrée avec succès</div>';
 				
 				$productivite_user->save($ATMdb);
 				?>
 					<script>
-						document.location.href='fiche_type_poste.php?id=<?php echo $_REQUEST['fk_type_poste'] ?>&action=view';
+						document.location.href='productivite_user.php?action=view&fk_user=<?php echo $_REQUEST['fk_user'] ?>';
 					</script>
 				<?php
 				break;
@@ -94,6 +92,8 @@
 				,'view'=>array(
 					'mode'=>$mode
 					,'action'=>$_REQUEST['action']
+					,'head'=>dol_get_fiche_head(competencePrepareHead($productivite_user, 'productivite_user'),'fiche','Productivité utilisateur')
+					,'onglet'=>dol_get_fiche_head(array(),'','Edition indice de productivité utilisateur')
 				)
 				
 			)	

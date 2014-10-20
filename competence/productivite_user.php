@@ -229,8 +229,13 @@
 	
 		$form->end();
 		
-		_displayChartProductivite($ATMdb);
-		_displayFormProductivityChart();
+		if(_displayChartProductivite($ATMdb)) {
+		
+			print '<div class="tabsAction">';
+				_displayFormProductivityChart();
+			print '</div>';
+			
+		}
 		
 		llxFooter();
 	}
@@ -275,7 +280,11 @@
 			
 			$dash->get('chart_productivite_user');
 			
+			return true;
+			
 		}
+		
+		return false;
 		
 	}
 	

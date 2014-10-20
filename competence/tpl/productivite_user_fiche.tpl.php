@@ -1,8 +1,11 @@
+[onshow;block=begin;when [view.mode]=='view']        
+	[view.head;strconv=no]
+[onshow;block=end]  
 
-<h2 style="color: #2AA8B9;">Productivité utilisateur</h2>
+[onshow;block=begin;when [view.mode]!='view']        
+	[view.onglet;strconv=no]
+[onshow;block=end]
 
-<div class="tabBar">
-		
 		<table width="100%" class="border">
 			<tr>
 				<td>Indice</td>
@@ -17,19 +20,16 @@
 				<td>[productivite_user.objectif;block=tr;strconv=no;protect=no]</td>
 			</tr>
 		</table>
-		<br/><br/>
 		
-		<br/>
-		
-		<table class="border" style="width:100%;">
-			[onshow;block=begin;when [view.mode]=='view']
-				<a style="text-align:center;width:20%;" class="butAction" href="productivite_user.php?action=view&fk_user=[user.id;block=tr;strconv=no;protect=no]">Retour</a>
-				<a style="text-align:center;width:20%;" class="butAction" href="?action=edit&id=[productivite_user.id;block=tr;strconv=no;protect=no]&fk_user=[user.id;block=tr;strconv=no;protect=no]">Modifier</a>
-			[onshow;block=end]	
-		</table>
-
-</div>
-
+		<div class="tabsAction">
+			<table class="border" style="width:100%;">
+				[onshow;block=begin;when [view.mode]=='view']
+					<a style="text-align:center;width:20%;" class="butAction" href="productivite_user.php?action=view&fk_user=[user.id;block=tr;strconv=no;protect=no]">Retour</a>
+					<a style="text-align:center;width:20%;" class="butAction" href="?action=edit&id=[productivite_user.id;block=tr;strconv=no;protect=no]&fk_user=[user.id;block=tr;strconv=no;protect=no]">Modifier</a>
+					<a  style="text-align:center;width:20%;" class="butActionDelete" id="action-delete" onclick="if (window.confirm('Voulez vous supprimer l\'élément ?')){document.location.href='?fk_user=[user.id]&id=[productivite_user.id;block=tr;strconv=no;protect=no]&action=delete'}">Supprimer</a>
+				[onshow;block=end]	
+			</table>
+		</div>
 
 
 [onshow;block=begin;when [view.mode]=='edit']

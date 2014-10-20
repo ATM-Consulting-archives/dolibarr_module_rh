@@ -5,6 +5,7 @@
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+	dol_include_once('/competence/lib/competence.lib.php');
 	
 	$langs->load('formulaire@formulaire');
 	
@@ -100,6 +101,8 @@
 				,'view'=>array(
 					'mode'=>$mode
 					,'action'=>$_REQUEST['action']
+					,'head'=>dol_get_fiche_head(competencePrepareHead($productivite_indice, 'chiffre_user'),'fiche','Chiffre utilisateur')
+					,'onglet'=>dol_get_fiche_head(array(),'','Edition chiffre réalisé')
 				)
 				
 			)	
@@ -112,7 +115,7 @@
 		
 		global $db;
 		
-		$sql = "SELECT indice FROM ".MAIN_DB_PREFIX."rh_productivite WHERE rowid = ".$id_productivite;
+		$sql = "SELECT indice FROM ".MAIN_DB_PREFIX."rh_productivite_user WHERE rowid = ".$id_productivite;
 		$resql = $db->query($sql);
 		
 		if($resql) {
