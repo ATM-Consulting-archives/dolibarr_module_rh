@@ -105,7 +105,7 @@ class modCompetence extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0)
 		// );
-		$this->const = array(); 
+		$this->const = array(0=>array('COMPETENCE_HAUTEURGRAPHIQUES','chaine','200','Permet de modifier la hauteur des graphiques',1)); 
 
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  // To add a new tab identified by code tabname1

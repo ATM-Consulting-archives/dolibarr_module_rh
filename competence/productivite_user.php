@@ -242,7 +242,7 @@
 
 	function _displayChartProductivite(&$ATMdb) {
 		
-		global $conf,$langs;
+		global $conf,$langs,$db;
 		
 		$langs->load('report@report');
 		dol_include_once("/report/class/dashboard.class.php");
@@ -264,7 +264,8 @@
 							
 			$TData[] = array("code" => 'CHIFFRESUSER'
 							,'yDataKey' => $indice_user
-							,"sql" => $sql);
+							,"sql" => $sql
+							,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES'));
 		}
 		
 		if(isset($_REQUEST['fk_usergroup'])) _addLinesGroup($TData, $TIndicesuser, $_REQUEST['fk_usergroup']);
@@ -338,7 +339,8 @@
 				
 				$TData[] = array("code" => 'CHIFFRESUSER'
 								,'yDataKey' => 'Moyenne indice : '.$indice_user
-								,"sql" => $sql);
+								,"sql" => $sql
+								,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES'));
 								
 			}
 		
