@@ -154,7 +154,7 @@
 		));
 			if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
 			?>
-			<a class="butAction" href="grille_salaire.php?action=new&fk_type_poste=<?php echo $id_fiche_poste ?>">Ajouter une grille de salaire</a><div style="clear:both"></div>
+			<a class="butAction" href="grille_salaire.php?action=new&fk_type_poste=<?php echo $id_fiche_poste ?>">Ajouter salaire</a><div style="clear:both"></div>
 			
 			<?
 			}

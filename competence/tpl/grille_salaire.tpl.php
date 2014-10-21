@@ -1,7 +1,7 @@
 <div class="fiche">
 			
 		[onshow;block=begin;when [view.mode]=='edit']
-			<h2 style="color: #2AA8B9;">Création d'une grille de salaire</h2>
+			<h2 style="color: #2AA8B9;">Création d'une entrée sur la grille de salaire</h2>
 		[onshow;block=end]
 		[onshow;block=begin;when [view.mode]=='view']
 			<h2 style="color: #2AA8B9;">Fiche grille salaire</h2>
