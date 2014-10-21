@@ -116,7 +116,7 @@
 		$sql = "SELECT rowid as 'ID', chiffre_realise as 'Chiffre réalisé', DATE_FORMAT(date_indice, \"%d-%m-%Y\") as 'Date'";
 		$sql.= 'FROM '.MAIN_DB_PREFIX.'rh_productivite_indice ';
 		$sql.= 'WHERE fk_user = '.$_REQUEST['fk_user'];
-		$sql.= ' AND fk_productivite = '.$_REQUEST['id'];
+		$sql.= ' AND fk_productivite = '.$productivite_user->fk_productivite;
 
 		$TOrder = array('rowid'=>'ASC');
 		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
