@@ -324,6 +324,8 @@
 	}
 	
 	function _addLinesGroup(&$TData, $TIndicesuser, $fk_usergroup) {
+			
+		global $db;
 		
 		//if($fk_usergroup == 0) {
 		
