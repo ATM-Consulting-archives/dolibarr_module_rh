@@ -11,7 +11,6 @@
 	dol_include_once('/core/lib/company.lib.php');
 	dol_include_once('/core/class/html.formfile.class.php');
 	
-	global $db, $langs;
 	
 	$langs->load('competence@competence');
 	

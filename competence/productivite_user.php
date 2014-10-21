@@ -275,8 +275,10 @@
 			$title = $langs->trans('Productivité utilisateur');
 			print_fiche_titre($title, '', 'report.png@report');
 			
+			$dash->concat_title = false;
+			
 			$dash->initByData($ATMdb,$TData);
-	
+			
 			?><div id="chart_productivite_user" style="height:<?=$dash->hauteur?>px; margin-bottom:20px;"></div><?
 			
 			$dash->get('chart_productivite_user');
