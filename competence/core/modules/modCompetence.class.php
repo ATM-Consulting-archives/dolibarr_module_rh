@@ -130,7 +130,7 @@ class modCompetence extends DolibarrModules
         $this->tabs = array(
         	'user:+competence:Formations et expériences:competence@competence:/competence/experience.php?fk_user=__ID__'  // To add a new tab identified by code tabname1
             ,'user:+remuneration:Rémunérations:competence@competence:$user->rights->curriculumvitae->myactions->voirRemuneration:/competence/remuneration.php?fk_user=__ID__'
-            ,'user:+productivite:Productivité:competence@competence:$user->rights->curriculumvitae->myactions->voirRemuneration:/competence/productivite_user.php?fk_user=__ID__&action=view'
+            ,'user:+productivite:Productivité:competence@competence:$user->rights->competence->productivite->read:/competence/productivite_user.php?fk_user=__ID__&action=view'
        	);
 
         // Dictionnaries
@@ -207,9 +207,29 @@ class modCompetence extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirRemuneration';
 		$r++;
+	
+		$this->rights[$r][0] = 7957;
+		$this->rights[$r][1] = 'Consulter sa productivité';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'productivite';
+        $this->rights[$r][5] = 'read';
+		$r++;
+	
+		$this->rights[$r][0] = 7958;
+		$this->rights[$r][1] = 'Enregistrer sa productivité';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'productivite';
+        $this->rights[$r][5] = 'write';
+		$r++;
+	
+		$this->rights[$r][0] = 7959;
+		$this->rights[$r][1] = 'Administrer la productivité';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'productivite';
+        $this->rights[$r][5] = 'admin';
+		$r++;
 		
 	
-		
 		// Permissions
 		/*$this->rights = array();		// Permission array used by this module
 		$r=0;
@@ -334,7 +354,7 @@ class modCompetence extends DolibarrModules
 						'url'=> '/competence/productivite_liste.php',
 						'position'=> 105,
 						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-						'perms'=> '$user->rights->formulaire->formulaire->read',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						'perms'=> '$user->rights->competence->productivite->admin',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						'target'=> '',
 						'user'=> 2	// 0=Menu for internal users, 1=external users, 2=both
         );
@@ -348,7 +368,7 @@ class modCompetence extends DolibarrModules
 						'url'=> '/competence/productivite.php?action=new',
 						'position'=> 106,
 						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-						'perms'=> '$user->rights->formulaire->formulaire->read',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						'perms'=> '$user->rights->competence->productivite->write',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						'target'=> '',
 						'user'=> 2	// 0=Menu for internal users, 1=external users, 2=both
         );
