@@ -9,6 +9,7 @@
 	require('../class/competence.class.php');
 	require('../class/formation.class.php');
 	require('../class/productivite.class.php');
+	require('../class/type_poste.class.php');
 	
 
 	$ATMdb=new TPDOdb;
@@ -41,6 +42,12 @@
 	$r->init_db_by_vars($ATMdb);
 	
 	$r=new TRH_productiviteIndice;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_fichePoste;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_grilleSalaire;
 	$r->init_db_by_vars($ATMdb);
 	
 	
