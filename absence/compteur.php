@@ -45,7 +45,7 @@
 					_fiche($ATMdb, $compteur,'view');
 				}else{
 					//récupération compteur en cours
-					$compteur->load_by_fkuser($ATMdb, $user->id);
+					$compteur->load_by_fkuser($ATMdb, GETPOST('fk_user'));
 					
 					_fiche($ATMdb, $compteur,'view');
 					
@@ -80,9 +80,13 @@ function _log(&$ATMdb, &$compteur) {
 	
 	llxHeader('', $langs->trans('CounterLog'));
 	
+	$req = 'SELECT lastname, firstname FROM ' . MAIN_DB_PREFIX . 'user WHERE rowid = ' . $compteur->fk_user;
+	$ATMdb->Execute($req);
+	$usr = $ATMdb->Get_line();
+		
 	getStandartJS();
-	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur',$user->id, $user->lastname,$user->firstname)  , 'log', $langs->trans('Log'));
-	
+	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur', $compteur->fk_user, $usr->lastname, $usr->firstname)  , 'log', $langs->trans('Log'));
+
 	$r = new TSSRenderControler($compteur);
 	$sql="SELECT date_cre, type,nb,motif
 		FROM ".MAIN_DB_PREFIX."rh_compteur_log 
@@ -511,5 +515,3 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	llxFooter();
 }
 
-
-	
