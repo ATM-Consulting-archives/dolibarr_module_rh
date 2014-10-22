@@ -11,6 +11,15 @@
 			<h2 style="color: #2AA8B9;">Description de vos rémunérations</h2>
 			<table class="border" style="width:20%">	
 				<tr>
+					<td><b>Commentaire</b></td>	
+				</tr>
+				<tr>
+					<td>[remuneration.commentaire;block=tr;strconv=no;protect=no]</td>
+				</tr>
+			</table>
+			<br/><br/>
+			<table class="border" style="width:20%">	
+				<tr>
 					<td><b>Date d'entrée dans l'entreprise</b></td>	
 				</tr>
 				<tr>
