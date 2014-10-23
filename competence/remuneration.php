@@ -176,6 +176,8 @@ function _liste(&$ATMdb, $remuneration) {
 		,'orderBy'=>$TOrder
 		
 	));
+	
+	$form->end();
 		if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
 		?>
 		<div class="tabsAction">
@@ -183,7 +185,7 @@ function _liste(&$ATMdb, $remuneration) {
 		</div>
 		<?
 		}
-
+		
 	$r = new TSSRenderControler($remuneration);
 	$sql="SELECT r.rowid as 'ID', r.fk_user as 'fk_user', DATE_FORMAT(r.date_prime, '%d/%m/%Y') as 'Date prime', 
 			CONCAT(u.firstname,' ',u.lastname) as 'Utilisateur' , CONCAT(r.montant, ' €') as Montant, '' as 'Supprimer'
@@ -244,6 +246,10 @@ function _liste(&$ATMdb, $remuneration) {
 	$form->end();
 	
 	_displayChartRemunerations($ATMdb);
+	
+	_displayFormRemunerationChart();
+	print "<br />";
+	
 	_displayChartPrimes($ATMdb);
 	
 	llxFooter();
@@ -405,7 +411,7 @@ function _getUsers() {
 
 function _displayChartRemunerations(&$ATMdb) {
 	
-	global $conf,$langs;
+	global $conf,$langs,$db;
 	
 	$langs->load('report@report');
 	dol_include_once("/report/class/dashboard.class.php");
@@ -415,9 +421,45 @@ function _displayChartRemunerations(&$ATMdb) {
 	print_fiche_titre($title, '', 'report.png@report');
 	
 	$dash=new TReport_dashboard;
-	$dash->initByCode($ATMdb, 'SALAIREMOIS');
+	//$dash->initByCode($ATMdb, 'SALAIREMOIS');
 	
-	$dash->dataSource[0] = strtr($dash->dataSource[0], array("__iduser__"=>$_REQUEST['fk_user']));
+	$sql = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y-%m\" ) AS 'mois', SUM( salaireMensuel ) AS 'Salaire' FROM ".MAIN_DB_PREFIX."rh_remuneration WHERE fk_user=".$_REQUEST['fk_user']." GROUP BY `mois`";
+	$sql_moy = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y-%m\" ) AS 'mois', AVG( salaireMensuel ) AS 'Salaire moyen' FROM ".MAIN_DB_PREFIX."rh_remuneration GROUP BY `mois`";
+	$sql_min = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y-%m\" ) AS 'mois', MIN( salaireMensuel ) AS 'Salaire minimum' FROM ".MAIN_DB_PREFIX."rh_remuneration GROUP BY `mois`";
+	$sql_max = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y-%m\" ) AS 'mois', MAX( salaireMensuel ) AS 'Salaire maximum' FROM ".MAIN_DB_PREFIX."rh_remuneration GROUP BY `mois`";
+	
+	$TData = array(0=>array(
+					'code'=>'SALAIREMOIS'
+					,'yDataKey' => 'Salaire'
+					,'sql'=>$sql
+					,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+					),
+				   1=>array(
+				     'code'=>'SALAIREMOIS'
+				     ,'yDataKey' => 'Salaire moyen'
+				     ,'sql'=>$sql_moy
+				     ,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+				   ),
+				   2=>array(
+				     'code'=>'SALAIREMOIS'
+				     ,'yDataKey' => 'Salaire minimum'
+				     ,'sql'=>$sql_min
+				     ,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+				   ),
+				   3=>array(
+				     'code'=>'SALAIREMOIS'
+				     ,'yDataKey' => 'Salaire maximum'
+				     ,'sql'=>$sql_max
+				     ,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+				   )
+				);
+	
+	if(isset($_REQUEST['fk_usergroup'])) _addLinesGroup($TData, $_REQUEST['fk_usergroup']); 
+	
+	$dash->concat_title = false;
+	
+	$dash->initByData($ATMdb, $TData);
+	//$dash->dataSource[0] = strtr($dash->dataSource[0], array("__iduser__"=>$_REQUEST['fk_user']));
 			
 	?><div id="chart_remunerations" style="height:<?=$dash->hauteur?>px; margin-bottom:20px;"></div><?
 			
@@ -427,7 +469,7 @@ function _displayChartRemunerations(&$ATMdb) {
 
 function _displayChartPrimes(&$ATMdb) {
 	
-	global $conf,$langs;
+	global $conf,$langs,$db;
 	
 	$langs->load('report@report');
 	dol_include_once("/report/class/dashboard.class.php");
@@ -437,12 +479,117 @@ function _displayChartPrimes(&$ATMdb) {
 	print_fiche_titre($title, '', 'report.png@report');
 	
 	$dash=new TReport_dashboard;
-	$dash->initByCode($ATMdb, 'PRIMESMOIS');
+	//$dash->initByCode($ATMdb, 'PRIMESMOIS');
+	$sql = "SELECT DATE_FORMAT(date_prime, \"%Y-%m\" ) AS 'mois', SUM( montant ) AS 'Montant prime' FROM ".MAIN_DB_PREFIX."rh_remuneration_prime WHERE fk_user=".$_REQUEST['fk_user']." GROUP BY `mois`";
+	$sql_moy = "SELECT DATE_FORMAT(date_prime, \"%Y-%m\" ) AS 'mois', AVG( montant ) AS 'Montant prime moyen' FROM ".MAIN_DB_PREFIX."rh_remuneration_prime GROUP BY `mois`";
+	$sql_min = "SELECT DATE_FORMAT(date_prime, \"%Y-%m\" ) AS 'mois', MIN( montant ) AS 'Montant prime minimum' FROM ".MAIN_DB_PREFIX."rh_remuneration_prime GROUP BY `mois`";
+	$sql_max = "SELECT DATE_FORMAT(date_prime, \"%Y-%m\" ) AS 'mois', MAX( montant ) AS 'Montant prime maximum' FROM ".MAIN_DB_PREFIX."rh_remuneration_prime GROUP BY `mois`";
 	
-	$dash->dataSource[0] = strtr($dash->dataSource[0], array("__iduser__"=>$_REQUEST['fk_user']));
+	$TData = array(0=>array(
+					'code'=>'PRIMESMOIS'
+					,'yDataKey' => 'Montant prime'
+					,'sql'=>$sql
+					,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+					),
+				   1=>array(
+				     'code'=>'PRIMESMOIS'
+				     ,'yDataKey' => 'Montant prime moyen'
+				     ,'sql'=>$sql_moy
+				     ,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+				   ),
+				   2=>array(
+				     'code'=>'PRIMESMOIS'
+				     ,'yDataKey' => 'Montant prime minimum'
+				     ,'sql'=>$sql_min
+				     ,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+				   ),
+				   3=>array(
+				     'code'=>'PRIMESMOIS'
+				     ,'yDataKey' => 'Montant prime maximum'
+				     ,'sql'=>$sql_max
+				     ,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+				   )
+				);
+	
+	if(isset($_REQUEST['fk_usergroup'])) _addLinesGroup($TData, $_REQUEST['fk_usergroup'], "prime"); 
+	
+	$dash->concat_title = false;
+	
+	$dash->initByData($ATMdb, $TData);
+	//$dash->dataSource[0] = strtr($dash->dataSource[0], array("__iduser__"=>$_REQUEST['fk_user']));
 			//echo $dash->dataSource[0];exit;
 	?><div id="chart_primes" style="height:<?=$dash->hauteur?>px; margin-bottom:20px;"></div><?
 			
 	$dash->get('chart_primes');
 	
+}
+
+function _getUserGroups() {
+			
+	global $db;
+	
+	$TGroups = array(0 => "(Sélectionnez un groupe)");
+	
+    $sql = "SELECT ug.rowid, ug.nom";
+    $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug";
+	$resql = $db->query($sql);
+	
+	if($resql) {
+		while($res = $db->fetch_object($resql)) {
+			$TGroups[$res->rowid] = 'Groupe "'.$res->nom.'"';
+		}
+	}
+	
+	return $TGroups;
+	
+}
+
+function _displayFormRemunerationChart() {
+
+	$form = new TFormCore("", "formRemunerationChart");
+	print $form->btsubmit("Comparer chiffres","subFormRemunerationChart");
+	print $form->combo($pLib, "fk_usergroup", _getUserGroups(), $_REQUEST['fk_usergroup']);
+	
+	print '</form>';
+	
+}
+
+function _addLinesGroup(&$TData, $fk_usergroup, $type="remuneration") {
+		
+	global $db;
+	
+	if($type == "remuneration") {
+		
+		$sql = "SELECT DATE_FORMAT(r.date_debutRemuneration, \"%Y-%m\" ) AS 'mois'
+				, AVG( r.salaireMensuel ) AS 'Salaire moyen du groupe' 
+				FROM ".MAIN_DB_PREFIX."rh_remuneration r 
+				LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user ug ON (r.fk_user = ug.fk_user)
+				WHERE ug.fk_usergroup = ".$fk_usergroup." 
+				GROUP BY `mois`";
+		
+		$TData[] = array(
+						'code'=>'SALAIREMOIS'
+						,'yDataKey' => 'Salaire moyen du groupe'
+						,'sql'=>$sql
+						,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+					);
+					
+	} elseif($type == "prime") {
+		
+		$sql = "SELECT DATE_FORMAT(r.date_prime, \"%Y-%m\" ) AS 'mois'
+				, AVG( r.montant ) AS 'Montant moyen du groupe' 
+				FROM ".MAIN_DB_PREFIX."rh_remuneration_prime r
+				LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user ug ON (r.fk_user = ug.fk_user)
+				WHERE ug.fk_usergroup = ".$fk_usergroup." 
+				GROUP BY `mois`";
+		
+		$TData[] = array(
+						'code'=>'PRIMESMOIS'
+						,'yDataKey' => 'Montant moyen du groupe'
+						,'sql'=>$sql
+						,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+					);
+					
+	}
+		
 }
