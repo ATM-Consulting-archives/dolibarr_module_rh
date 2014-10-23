@@ -59,13 +59,42 @@
 				</tr>
 			</table>
 			<br/><br/>
-			<h2 style="color: #2AA8B9;">Charges</h2>
-			<table class="border" style="width:30%">		
+			<h2 style="color: #2AA8B9;">Vos cotisations</h2>
+			<table class="border" style="width:60%">		
 				<tr>
-					<td><b>Montant</b></td>	
+					<td></td>
+					<td><b>Part Salariale</b></td>
+					<td><b>Part Patronale</b></td>
 				</tr>
 				<tr>
-					<td>[remuneration.charges;block=tr;strconv=no;protect=no]€</td>
+					<td><b>PREVOYANCE</b></td>
+					<td>[remuneration.prevoyancePartSalariale;block=tr;strconv=no;protect=no]€</td>
+					<td>[remuneration.prevoyancePartPatronale;strconv=no;protect=no]€</td>
+				</tr>
+				<tr>
+					<td><b>URSSAF</b></td>
+					<td>[remuneration.urssafPartSalariale;strconv=no;protect=no]€</td>
+					<td>[remuneration.urssafPartPatronale;strconv=no;protect=no]€</td>
+				</tr>
+				<tr>
+					<td><b>RETRAITE</b></td>
+					<td>[remuneration.retraitePartSalariale;strconv=no;protect=no]€</td>
+					<td>[remuneration.retraitePartPatronale;strconv=no;protect=no]€</td>
+				</tr>
+				<tr>
+					<td><b>MUTUELLE</b></td>
+					<td>[remuneration.mutuellePartSalariale;strconv=no;protect=no]€</td>
+					<td>[remuneration.mutuellePartPatronale;strconv=no;protect=no]€</td>
+				</tr>
+				<tr>
+					<td><b>DIVERS</b></td>
+					<td>[remuneration.diversPartSalariale;strconv=no;protect=no]€</td>
+					<td>[remuneration.diversPartPatronale;strconv=no;protect=no]€</td>
+				</tr>
+				<tr>
+					<td><b>TOTAL</b></td>
+					<td>[remuneration.totalRemSalariale;strconv=no;protect=no]€</td>
+					<td>[remuneration.totalRemPatronale;strconv=no;protect=no]€</td>
 				</tr>
 			</table>
 			<br/>

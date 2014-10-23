@@ -409,7 +409,7 @@ class TRH_remuneration extends TObjetStd {
 		parent::add_champs('commission','type=float;');
 		
 		
-		parent::add_champs('prevoyancePartSalariale','type=chaine;');
+		/*parent::add_champs('prevoyancePartSalariale','type=chaine;');
 		parent::add_champs('prevoyancePartPatronale','type=chaine;');
 		parent::add_champs('urssafPartSalariale','type=chaine;');
 		parent::add_champs('urssafPartPatronale','type=chaine;');
@@ -418,7 +418,9 @@ class TRH_remuneration extends TObjetStd {
 		parent::add_champs('mutuellePartSalariale','type=chaine;');
 		parent::add_champs('mutuellePartPatronale','type=chaine;');
 		parent::add_champs('diversPartSalariale','type=chaine;');
-		parent::add_champs('diversPartPatronale','type=chaine;');
+		parent::add_champs('diversPartPatronale','type=chaine;');*/
+		
+		parent::add_champs('charges','type=float;');
 		
 		parent::add_champs('commentaire','type=chaine;');
 		parent::add_champs('fk_user','type=entier;');

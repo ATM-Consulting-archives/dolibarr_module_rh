@@ -308,6 +308,9 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 				,'commentaire'=>$form->texte('','commentaire',$remuneration->commentaire, 30,100,'','','')
 				,'fk_user'=>$remuneration->fk_user
 				,'lieuExperience'=>$form->texte('','lieuExperience',$remuneration->lieuExperience, 30,100,'','','')
+				
+				,'charges'=>$form->texte('','charges',$remuneration->charges, 30,100,'','','')
+				
 			)
 			,'userCourant'=>array(
 				'id'=>$_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id
