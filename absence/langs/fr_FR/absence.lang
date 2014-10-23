@@ -453,3 +453,4 @@ YourAbsPresences=Vos abs./présence
 NumberOfMinimumPeople=Nombre de personnes présentes minimum
 ErrInsuffisanteNumberOfPerson=Le nombre de personne minimum requis non disponible
 ErrAbsenceNotAllowedDueToRules=Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur
+TotalPresent=Nombre de présent

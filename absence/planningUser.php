@@ -166,6 +166,11 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			background-color:#666;
 	}
 	
+	table.planning tr.footer {
+			font-weight:bold;
+			background-color:#eee;
+	}
+	
 			
 	</style>
 	
@@ -370,6 +375,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 	}
 	print "</tr>";
 	
+	$TTotal=array();
 	foreach($tabUserMisEnForme as $idUser=>$planning){
 			
 		$sql="SELECT lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$idUser;
@@ -380,6 +386,8 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 		print '<tr >';		
 		print '<td style="text-align:right; font-weight:bold;height:20px;" nowrap="nowrap">'.$name.'</td>';
 		foreach($planning as $dateJour=>$ouinon){
+			
+			if(empty($TTotal[$dateJour]))$TTotal[$dateJour]=0;
 			
 			$class='';
 			
@@ -408,8 +416,14 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 				print '<td class="'.$class.$classTravail.'" rel="am">'.$linkPop.'</td>
 					<td class="'.$class.$classTravail.'" rel="pm">'.$linkPop.'</td>';
 					
-				if(!$isFerie && ($estUnJourTravaille=='AM' || $estUnJourTravaille=='PM'))$TStatPlanning[$idUser]['presence']+=0.5;
-				else if(!$isFerie && $estUnJourTravaille=='OUI')$TStatPlanning[$idUser]['presence']+=1;
+				if(!$isFerie && ($estUnJourTravaille=='AM' || $estUnJourTravaille=='PM')){
+					$TStatPlanning[$idUser]['presence']+=0.5;
+					$TTotal[$dateJour]+=0.5;
+				}
+				else if(!$isFerie && $estUnJourTravaille=='OUI'){
+					$TStatPlanning[$idUser]['presence']+=1;
+					$TTotal[$dateJour]+=1;
+				}
 						
 			}else{
 				$boucleOk=0;
@@ -497,6 +511,11 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 		print "</tr>";
 	}
 	
-	print '</table><p>&nbsp;</p>';
+	print '<tr class="footer"><td>'.$langs->trans('TotalPresent').'</td>';
+	foreach($TTotal as $date=>$nb) {
+		print '<td align="center" colspan="2">'.$nb.'</td>';
+	}
+	
+	print '</tr></table><p>&nbsp;</p>';
 	
 }
