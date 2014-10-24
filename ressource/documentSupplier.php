@@ -26,7 +26,7 @@
 	llxFooter();
 	
 	function _fiche(&$ATMdb, &$ressource) {
-		global $db,$user,$conf,$langs;
+		global $db,$user,$conf,$langs,$mysoc;
 		llxHeader('','Fichiers joints');
 		
 		$confirm = $_REQUEST['confirm'];
@@ -144,7 +144,13 @@
 		$sql="SELECT rowid,label FROM ".MAIN_DB_PREFIX."entity WHERE 1";
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
-			$liste_entities[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('label'), ENT_COMPAT , 'ISO8859-1');}
+			$liste_entities[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('label'), ENT_COMPAT , 'ISO8859-1');
+
+		}
+		
+		if(empty($liste_entities)) {
+			$liste_entities[$conf->entity] = $mysoc->name;
+		}
 		
 		$liste_types_imports=array('ImportFactureTotal.php' => 'Total'
 									,'ImportFactureArea.php' => 'Area'
@@ -218,7 +224,7 @@
 				,'order_up'=>img_picto('','1uparrow.png', '', 0)
 			)
 		));
-		?>
+		
 		
 		?>
 		
