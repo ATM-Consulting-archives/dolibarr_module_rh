@@ -59,6 +59,7 @@
 			<th>Numéro appelé</th>
 			<th>Type d'appel</th>
 			<th>Durée</th>
+			<th>Coût</th>
 		</tr>
 		<tr>
 			<td align="center">[line.date_appel;block=tr]</td>
@@ -66,21 +67,22 @@
 			<td align="center">[line.numero]</td>
 			<td align="left">[line.type]</td>
 			<td align="right">[line.duree]</td>
+			<td align="right">[line.cout]</td>
 			
 		</tr>
 		<tr class="total">
 			<td colspan="3">&nbsp;</td>
-			<td class="title">Total durée appel externe</td>
+			<td class="title" colspan="2">Total durée appel externe</td>
 			<td align="right">[card.duree_total_externe] </td>
 		</tr>
 		<tr >
 			<td colspan="3">&nbsp;</td>
-			<td class="title">Total durée appel interne</td>
+			<td class="title" colspan="2">Total durée appel interne</td>
 			<td align="right">[card.duree_total_interne] </td>
 		</tr>
 		<tr >
 			<td colspan="3">&nbsp;</td>
-			<td class="title">Total Euros</td>
+			<td class="title" colspan="2">Total Euros</td>
 			<td align="right"><strong>[card.total]</strong></td>
 		</tr>
 	</table>	

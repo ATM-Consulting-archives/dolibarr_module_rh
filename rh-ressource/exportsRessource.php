@@ -100,6 +100,7 @@ global $user,$db;
 					,'numero'=>$row->num_appele
 					,'type'=>$row->type_appel
 					,'duree'=>$row->volume_reel
+					,'cout'=>($row->montant_euros_ht>0 ? price($row->montant_euros_ht) : '')
 					
 				);
 				
