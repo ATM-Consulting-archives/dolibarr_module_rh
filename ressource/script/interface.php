@@ -455,7 +455,8 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	$user_ressource=new User($db);
 	$TAnal=array();
 	while($res = $db->fetch_object($resql)) {
-			
+		$gsm = trim($res->num_gsm);
+		
 		$non_facture = false;
 
 		// Si le numéro de la ligne de facture fait partie du tableau TNumerosSpeciaux, on passe à la ligne suivante (on facture pas)
@@ -470,7 +471,8 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 		
 		if($non_facture || $res->montant_euros_ht == 0) continue; // On sort pas les lignes à 0 dans le CSV
 				
-		$r1->load_by_numId($ATMdb, $res->num_gsm);		
+					
+		$r1->load_by_numId($ATMdb, $gsm);		
 	
 		$r2->load($ATMdb, $r1->fk_rh_ressource);		
 	
@@ -484,15 +486,15 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 			} 
 			
 			foreach($TAnal as $anal) {
-				$total[$id_user][$res->num_gsm][$anal->code]['total'] += $res->montant_euros_ht * ($anal->pourcentage/100);
-				$total[$id_user][$res->num_gsm][$anal->code]['total_nm'] += $res->montant_euros_ht ;
+				$total[$id_user][$gsm][$anal->code]['total'] += $res->montant_euros_ht * ($anal->pourcentage/100);
+				$total[$id_user][$gsm][$anal->code]['total_nm'] += $res->montant_euros_ht ;
 	
 	
 				/*
 				 * On crée un tableau qui associe à chaque user la liste de ses codes analytiques
 				 * A chaque code analytique est associé la ligne qui sera exportée
 				 */
-				$TabLigne[$id_user][$res->num_gsm][$anal->code] = array(
+				$TabLigne[$id_user][$gsm][$anal->code] = array(
 						'nom'=>$user_ressource->lastname." ".$user_ressource->firstname
 						,'fk_user'=>$id_user
 						,'numero'=>$res->num_gsm
@@ -501,8 +503,8 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 						,'code_agence'=>mb_strimwidth($user_ressource->array_options['options_COMPTE_TIERS'], 0, 3)
 						,'code_analytique'=>$anal->code
 						,'pourcentage'=>$anal->pourcentage
-						,'total'=>$total[$id_user][$res->num_gsm][$anal->code]['total'] // Total qui va être calculé en fonction du pourcentage
-						,'total_non_pondere'=>$total[$id_user][$res->num_gsm][$anal->code]['total_nm'] // Vrai total
+						,'total'=>$total[$id_user][$gsm][$anal->code]['total'] // Total qui va être calculé en fonction du pourcentage
+						,'total_non_pondere'=>$total[$id_user][$gsm][$anal->code]['total_nm'] // Vrai total
 				);
 			
 	
