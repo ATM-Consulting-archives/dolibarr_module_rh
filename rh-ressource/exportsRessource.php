@@ -60,7 +60,7 @@ global $user,$db;
 			$TLine=array();
 			
 			$total = $duree_total_externe = $duree_total_interne = 0;
-			
+			$mail='';
 			$sql=" SELECT date_appel, date_facture,num_appele, volume_reel,type_appel, montant_euros_ht
 			FROM ".MAIN_DB_PREFIX."rh_evenement_appel 
 			WHERE idImport='".$_POST['idImport']."' AND num_gsm='".$ligne['numero']."' AND date_appel BETWEEN '".date('Y-m-d 00:00:00',$t_debut)."' AND '".date('Y-m-d 23:59:59',$t_fin)."'";
@@ -71,8 +71,10 @@ global $user,$db;
 				$t_facture = strtotime($row->date_facture);
 				
 				if(strpos($row->volume_reel,':')!==false) {
-					
-					$duree = strtotime('0000-00-00 '.$row->volume_reel);
+					list($hh,$mm,$ss) = explode(':', $row->volume_reel);
+					$duree = convertTime2Seconds($hh,$mm,$ss);
+//					$duree = strtotime($row->volume_reel) - strtotime(date('Y-m-d')) ;
+// 				$mail.= $row->volume_reel.':'.$duree.'<br />';	
 					
 					if(in_array($row->num_appele, $TNumerosSpeciaux)) { //non facturé
 						$duree_total_interne+=$duree;
@@ -81,6 +83,9 @@ global $user,$db;
 						$duree_total_externe+=$duree;
 					}
 					
+				}
+				else{
+					$row->volume_reel='';
 				}
 				
 				
@@ -100,7 +105,7 @@ global $user,$db;
 			}
 			
 			
-			$mail=$TBS->render('tpl/mailExportRessource.tpl.php'
+			$mail.=$TBS->render('tpl/mailExportRessource.tpl.php'
 				,array(
 					'line'=>$TLine
 				)
@@ -110,8 +115,8 @@ global $user,$db;
 						,'date_facture'=>date('d/m/Y', $t_facture)
 						,'gsm'=>$ligne['numero']
 						,'total'=>price(round($total,2)).' €'
-						,'duree_total_interne'=>convertSecondToTime($duree_total_interne,'all')
-						,'duree_total_externe'=>convertSecondToTime($duree_total_externe,'all')
+						,'duree_total_interne'=>convertSecondToTime($duree_total_interne)
+						,'duree_total_externe'=>convertSecondToTime($duree_total_externe)
 					)
 					,'view'=>array(
 						'mode'=>$mode
