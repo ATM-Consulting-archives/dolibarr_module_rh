@@ -38,11 +38,13 @@
 		$resql = $db->query($sql);
 		
 		if($resql) {
-			while ($res = $db->fetch_object($resql)) {
+			$res = $db->fetch_object($resql);
 				$u = new User($db);
 				$u->fetch($res->rowid);
 				return $u->id;
-			}
+		}
+		else if(isset($_REQUEST['DEBUG'])){
+			return 1;
 		}
 		
 		return false;

@@ -299,7 +299,7 @@ function _saveFactureIntoTable(&$ATMdb, &$TDonnees, $idImport) {
 			$timestamp = strtotime(str_replace('/', '-', $TArrayLine[4]));
 			$TRH_event_appel->date_facture = $timestamp;
 			$TRH_event_appel->num_abonne = $TArrayLine[5];
-			$timestamp = strtotime(str_replace('/', '-', $TArrayLine[6]));
+			$timestamp = strtotime(str_replace('/', '-', $TArrayLine[6]).' '.$TArrayLine[7]);
 			$TRH_event_appel->date_appel = $timestamp;
 			$TRH_event_appel->num_appele = $TArrayLine[8];
 			$TRH_event_appel->volume_reel = $TArrayLine[9];
