@@ -72,7 +72,7 @@ global $user,$db;
 				
 				if(strpos($row->volume_reel,':')!==false) {
 					
-					$duree = strtotime('0000-00-00 '.$row->volume_reel);
+					$duree = strtotime($row->volume_reel) - strtotime(date('Y-m-d')) ;
 					
 					if(in_array($row->num_appele, $TNumerosSpeciaux)) { //non facturé
 						$duree_total_interne+=$duree;
@@ -276,6 +276,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		 print "TotalTVA = ".$montantTVA."<br/>";
 		 print "TotalHT = ".$montantHT."<br/>";
 		 print "TotalTTC = ".$montantTTC."<br/>";
+		if(isset($_REQUEST['DEBUG']))print "Ecart : ".$total;
 		
 		?>
 		<br />
@@ -308,7 +309,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 			<input type="hidden" name="idImport" value="<?php echo $idImport ?>" />
 			<input type="hidden" name="serialData" value="<?=base64_encode(serialize($TLignes)) ?>" />
 			<input type="submit" class="button" value="Envoyer par mail" />
-			<input type="checkbox" name="debugMode" value="1" checked="checked" /> M'afficher tout ces mails pour test
+			<input type="checkbox" name="debugMode" value="1" checked="checked" /> Ne pas envoyer, juste afficher pour test
 		
 		</form>
 		<?php
