@@ -63,7 +63,8 @@ global $user,$db;
 			$mail='';
 			$sql=" SELECT date_appel, date_facture,num_appele, volume_reel,type_appel, montant_euros_ht
 			FROM ".MAIN_DB_PREFIX."rh_evenement_appel 
-			WHERE idImport='".$_POST['idImport']."' AND num_gsm='".$ligne['numero']."' AND date_appel BETWEEN '".date('Y-m-d 00:00:00',$t_debut)."' AND '".date('Y-m-d 23:59:59',$t_fin)."'";
+			WHERE idImport='".$_POST['idImport']."' AND num_gsm='".$ligne['numero']."' AND date_appel BETWEEN '".date('Y-m-d 00:00:00',$t_debut)."' AND '".date('Y-m-d 23:59:59',$t_fin)."'
+			ORDER BY date_appel";
 			//print $sql;
 			$Tab = $ATMdb->ExecuteAsArray($sql);
 			foreach($Tab as $row) {
