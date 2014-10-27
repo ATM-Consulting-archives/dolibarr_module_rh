@@ -42,14 +42,18 @@
 			
 				if(isset($_REQUEST['id'])){
 					$compteur->load($ATMdb, $_REQUEST['id']);
-					_fiche($ATMdb, $compteur,'view');
-				}else{
+				}
+				elseif(GETPOST('fk_user')>0){
 					//récupération compteur en cours
 					$compteur->load_by_fkuser($ATMdb, GETPOST('fk_user'));
 					
-					_fiche($ATMdb, $compteur,'view');
-					
 				}
+				else{
+					$compteur->load_by_fkuser($ATMdb, $user->id);
+				}
+
+					_fiche($ATMdb, $compteur,'view');
+
 				break;
 
 			case 'log':
