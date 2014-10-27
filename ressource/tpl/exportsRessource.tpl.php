@@ -41,12 +41,14 @@
 	<thead>
 		<tr class="liste_titre">
 			[onshow;block=begin;when [exports.typeDirect]=='Orange']
-				<th>Utilisateur</th>
-				<th>Compte Tiers</th>
-				<th>Total Interne</th>
-				<th>Total Externe</th>
-				<th>Nature à refacturer</th>
-				<th>Montant à refacturer</th>
+				<th>Affectation</th>
+				<th>GSM</th>
+				<th>Email</th>
+				<th>Code compta</th>
+				<th>Agence</th>
+				<th>Code Analytique</th>
+				<th>Pourcentage</th>
+				<th>Dépassement Tél. du M-2/Mois en cours</th>
 				<th>Total</th>
 			[onshow;block=end]
 			[onshow;block=begin;when [exports.typeDirect]!='Orange']
@@ -80,13 +82,15 @@
 		[onshow;block=end]
 		>
 			[onshow;block=begin;when [exports.typeDirect]=='Orange']
-				<td> [ligne.user;block=tr;strconv=no;protect=no;noerr] </td>
-				<td> [ligne.comptetiers;strconv=no;protect=no;noerr] </td>
-				<td> [ligne.int;strconv=no;protect=no;noerr] </td>
-				<td> [ligne.ext;strconv=no;protect=no;noerr] </td>
-				<td> [ligne.naturerefact;strconv=no;protect=no;noerr] </td>
-				<td> [ligne.montantrefact;strconv=no;protect=no;noerr] </td>
-				<td> [ligne.total;strconv=no;protect=no;noerr] </td>
+				<td> [ligne.nom;block=tr;strconv=no;protect=no;noerr] </td>
+				<td> [ligne.numero;strconv=no;protect=no;noerr] </td>
+				<td> [ligne.email;strconv=no;protect=no;noerr] </td>
+				<td> [ligne.compte_tier;strconv=no;protect=no;noerr] </td>
+				<td> [ligne.code_agence;strconv=no;protect=no;noerr] </td>
+				<td> [ligne.code_analytique;strconv=no;protect=no;noerr] </td>
+				<td> [ligne.pourcentage;protect=no;noerr] </td>
+				<td> [ligne.total;protect=no;noerr] </td>
+				<td> [ligne.total_non_pondere;protect=no;noerr] </td>
 			[onshow;block=end]
 			[onshow;block=begin;when [exports.typeDirect]!='Orange']
 				<td> [ligne.numFacture;block=tr;strconv=no;protect=no;noerr] </td>
@@ -96,8 +100,8 @@
 				<td> [ligne.compteGeneral;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.typeCompte;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.codeAnalytique;strconv=no;protect=no;noerr] </td>
-				<td> [ligne.nom;strconv=no] </td>
-				<td> [ligne.prenom;] </td>
+				<td> [ligne.nom;strconv=no;strconv=no;protect=no;noerr] </td>
+				<td> [ligne.prenom;strconv=no;protect=no;noerr] </td>
 				
 				<td> [ligne.referenceEcriture;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.libelleEcriture;strconv=no;protect=no;noerr] </td>

@@ -2,6 +2,8 @@
 
 define('INC_FROM_CRON_SCRIPT', true);
 set_time_limit(0);
+ini_set('memory_limit','1024M');
+
 require('../config.php');
 require('../lib/ressource.lib.php');
 
@@ -19,7 +21,7 @@ function _get(&$ATMdb, $case) {
 			break;
 		case 'orange':
 			//__out(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
-			__out(_exportOrangeCSV());
+			__out(_exportOrange2($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity'], $_REQUEST['idImport']));
 			//print_r(_exportOrange($ATMdb, $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['entity']));
 			break;
 		case 'autocomplete':
@@ -380,7 +382,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	
 }
 
-
+// TODO delete, deprecated
 function _exportOrange(&$ATMdb, $date_debut, $date_fin, $entity){
 	$TabLigne = array();
 	
@@ -414,69 +416,106 @@ function _exportOrange(&$ATMdb, $date_debut, $date_fin, $entity){
 }
 
 
-function _exportOrangeCSV(){
+function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	
 	global $db;
 	
 	dol_include_once("/core/lib/admin.lib.php");
+	dol_include_once("/ressource/class/numeros_speciaux.class.php");
+	dol_include_once('/valideur/class/analytique_user.class.php');
+	dol_include_once('/ressource/class/ressource.class.php');	
+
+	$TabLigne = array();
+	
+	$date_deb = Tools::get_time($date_debut);
+	$date_deb = date("Y-m-d", $date_deb);
+	
+	$date_end = Tools::get_time($date_fin);
+	$date_end = date("Y-m-d", $date_end);
 	
 	$TabLigne = array();
 	
-	/*
-	 * Requete pour récupérer les lignes de la dernière facture
-	 * Auxquelles on associe la ressource correspondante (numero de telephone de la ligne facture correspondant au numero de tel d'une ressource)
-	 * A laquelle on associe la ressource utilisatrice (Le téléphone qui utilise la carte SIM et donc le numéro de téléphone)
-	 * A laquelle on associe l'évènement detype "emprunt"
-	 * Auquel on associe l'utilisateur ayant fait cet emprunt (le user a qui est attribué ce téléphone)
-	 */
-	$sql = "SELECT u.rowid, u.email, u.firstname, u.lastname, ue.COMPTE_TIERS as compte_tiers, au.code, au.pourcentage, r1.fk_rh_ressource, ea.num_gsm, ea.montant_euros_ht";
-	$sql.= " FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource r1 on (ea.num_gsm = r1.numerotel)";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource r2 on (r1.fk_rh_ressource = r2.rowid)";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement e on (r2.rowid = e.fk_rh_ressource)";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user u on (e.fk_user = u.rowid)";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields ue on (u.rowid = ue.fk_object)";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."rh_analytique_user au on (u.rowid = au.fk_user)";
-	$sql.= " WHERE ea.num_import = (SELECT MAX(ea.num_import) FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea)";
-	$sql.= ' AND type="emprunt"';
-	$sql.= " GROUP BY au.code, au.pourcentage, montant_euros_ht";
+	$sql="SELECT ea.num_gsm, SUM(ea.montant_euros_ht) as 'montant_euros_ht',ea.date_appel FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea
+	WHERE ea.date_appel BETWEEN '$date_deb 00:00:00' AND '$date_end 23:59:59'"; 
+	
+	if($idImport)$sql.=" AND ea.idImport = '$idImport' ";
+	
+	$sql.=" GROUP BY ea.num_gsm"; //,ea.date_appel"; Je sais c'est moche
+	
+	if(isset($_REQUEST['DEBUG'])) print $sql;
 	
 	$resql = $db->query($sql);
 	
 	$total = array();
 	
 	// On récupère le tableau des numéros spéciaux (ceux à ne pas facturer)
-	$TNumerosSpeciaux = unserialize(dolibarr_get_const($db, "RESSOURCE_ARRAY_NUMEROS_SPECIAUX"));
-	
+	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
+	$r1=new TRH_Ressource;
+	$r2=new TRH_Ressource;
+	$user_ressource=new User($db);
+	$TAnal=array();
 	while($res = $db->fetch_object($resql)) {
-			
-		$total[$res->code] += $res->montant_euros_ht;
-
+		$gsm = trim($res->num_gsm);
+		
 		$non_facture = false;
 
 		// Si le numéro de la ligne de facture fait partie du tableau TNumerosSpeciaux, on passe à la ligne suivante (on facture pas)
-		if(is_array($TNumerosSpeciaux) && count($TNumerosSpeciaux) > 0) { 
+		if(is_array($TNumerosSpeciaux) && count($TNumerosSpeciaux) > 0) {
 			foreach ($TNumerosSpeciaux as $num) {
-				if($num == $res->num_gsm) $non_facture = true;
+				if($num == $res->num_gsm) {
+					$non_facture = true; 
+					break;
+				}
 			}
 		}
 		
-		if($non_facture) continue;
+		if($non_facture || $res->montant_euros_ht == 0) continue; // On sort pas les lignes à 0 dans le CSV
+				
+					
+		$r1->load_by_numId($ATMdb, $gsm);		
+	
+		$r2->load($ATMdb, $r1->fk_rh_ressource);		
+	
+		$id_user = $r2->isEmpruntee($ATMdb, $res->date_appel);
+		if($id_user>0) {
 		
-		/*
-		 * On crée un tableau qui associe à chaque user la liste de ses codes analytiques
-		 * A chaque code analytique est associé la ligne qui sera exportée
-		 */
-		$TabLigne[$res->lastname." ".$res->firstname][$res->code] = array($res->lastname." ".$res->firstname
-																		,$res->num_gsm
-																		,$res->email
-																		,$res->compte_tiers
-																		,mb_strimwidth($res->compte_tiers, 0, 3)
-																		,$res->code
-																		,$res->pourcentage
-																		,$total[$res->code] // Total qui va être calculé en fonction du pourcentage
-																		,$total[$res->code] // Vrai total
-																	);
+			if($user_ressource->id!=$id_user) {
+					$user_ressource->fetch($id_user);
+					$user_ressource->fetch_optionals($user_ressource->id, array('COMPTE_TIERS' => ""));
+					$TAnal = TRH_analytique_user::getUserAnalytique($ATMdb, $id_user);	
+			} 
+			
+			foreach($TAnal as $anal) {
+				$total[$id_user][$gsm][$anal->code]['total'] += $res->montant_euros_ht * ($anal->pourcentage/100);
+				$total[$id_user][$gsm][$anal->code]['total_nm'] += $res->montant_euros_ht ;
+	
+	
+				/*
+				 * On crée un tableau qui associe à chaque user la liste de ses codes analytiques
+				 * A chaque code analytique est associé la ligne qui sera exportée
+				 */
+				$TabLigne[$id_user][$gsm][$anal->code] = array(
+						'nom'=>$user_ressource->lastname." ".$user_ressource->firstname
+						,'fk_user'=>$id_user
+						,'numero'=>$res->num_gsm
+						,'email'=>$user_ressource->email
+						,'compte_tier'=>$user_ressource->array_options['options_COMPTE_TIERS']
+						,'code_agence'=>mb_strimwidth($user_ressource->array_options['options_COMPTE_TIERS'], 0, 3)
+						,'code_analytique'=>$anal->code
+						,'pourcentage'=>$anal->pourcentage
+						,'total'=>$total[$id_user][$gsm][$anal->code]['total'] // Total qui va être calculé en fonction du pourcentage
+						,'total_non_pondere'=>$total[$id_user][$gsm][$anal->code]['total_nm'] // Vrai total
+				);
+			
+	
+			}	
+		}
+		else{
+			null;
+		}
+
+/*		if(!empty($TabLigne)){	
+		var_dump($TabLigne);exit;}*/
 		
 	}
 	
@@ -485,8 +524,8 @@ function _exportOrangeCSV(){
 	 * on dispatch le montant à facturer en fonction du pourcentage correspondant au code analytique
 	 */
 	 
-	$TabLigne = _dispatchTarifsParCodeAnalytique($TabLigne);
-	_getFormattedArray($TabLigne);
+	//$TabLigne = _dispatchTarifsParCodeAnalytique($TabLigne);
+	//_getFormattedArray($TabLigne); // TODO pas de fucking CSV ici, convertir à l'affichage //DODO beh vlà !
 	
 	return $TabLigne;
 }
