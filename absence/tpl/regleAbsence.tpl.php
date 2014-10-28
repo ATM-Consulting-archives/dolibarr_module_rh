@@ -68,6 +68,11 @@
 		<td>[newRule.contigue;strconv=no]</td>
 	</tr>
 	<tr>
+		<td>Ne pas considéré les jours non travaillé comme contigue</td>
+		<td>[newRule.contigueNoJNT;strconv=no]</td>
+	</tr>
+	 
+	<tr>
 		<td>Mode restrictif</td>
 		<td>[newRule.restrictif;strconv=no]</td>
 	</tr>
