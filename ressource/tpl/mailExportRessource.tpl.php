@@ -65,11 +65,12 @@
 			<td align="center">[line.date_appel;block=tr]</td>
 			<td align="center">[line.heure_appel]</td>
 			<td align="center">[line.numero]</td>
-			<td align="left">[line.type]</td>
+			<td align="center">[line.type]</td>
 			<td align="right">[line.duree]</td>
 			<td align="right">[line.cout]</td>
 			
 		</tr>
+
 		<tr class="total">
 			<td colspan="3">&nbsp;</td>
 			<td class="title" colspan="2">Total durée appel externe</td>
@@ -82,8 +83,18 @@
 		</tr>
 		<tr >
 			<td colspan="3">&nbsp;</td>
-			<td class="title" colspan="2">Total Euros</td>
+			<td class="title" colspan="2">Total dépassement en Euros</td>
 			<td align="right"><strong>[card.total]</strong></td>
+		</tr>
+		<tr >
+			<td colspan="3">&nbsp;</td>
+			<td class="title" colspan="2">Montant participation financement mobile </td>
+			<td align="right"><strong>[card.total_financement]</strong></td>
+		</tr>
+		<tr >
+			<td colspan="3">&nbsp;</td>
+			<td class="title" colspan="2">Total général à prélever</td>
+			<td align="right"><strong>[card.total_all]</strong></td>
 		</tr>
 	</table>	
 
