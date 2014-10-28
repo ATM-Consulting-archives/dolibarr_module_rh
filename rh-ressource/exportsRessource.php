@@ -185,9 +185,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		else if (strtolower($row->nom)=='euromaster') 
 			{$TIdRessource[$row->rowid] = $idVoiture;}
 		else {$TIdRessource[$row->rowid] = $idVoiture;}
-	},'total_financement'=>price(round($financement,2)).' €'
-						,'total_all'=>price(round($total+$financement,2)).' €'
-	
+	}
 	$url ='http://'.$_SERVER['SERVER_NAME'].dol_buildpath("/ressource/script/loadListeFactures.php", 1).'?fk_fournisseur='.$type.'&mode_retour=autre';	
 	if(isset($_REQUEST['DEBUG'])) { print $url.'<br>'; }
 	//echo $url;exit;
