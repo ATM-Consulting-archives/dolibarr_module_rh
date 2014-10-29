@@ -106,7 +106,7 @@ class TRH_Ressource extends TObjetStd {
 	
 	function load(&$ATMdb, $id, $annexe=true) {
 		global $conf;
-		parent::load($ATMdb, $id);
+		$res = parent::load($ATMdb, $id);
 
 		$this->load_ressource_type($ATMdb);
 	
@@ -121,6 +121,7 @@ class TRH_Ressource extends TObjetStd {
 				}	
 		}
 			
+		return $res;
 	}
 	
 	/**
