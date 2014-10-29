@@ -431,11 +431,11 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 				}
 				else if(strpos($ouinon, '[Présence]')!==false) {
 					$class .= ' vert';
+					$TTotal[$dateJour]+=1;
 				}
 				else {
 					$class .= 'rouge';	
 				}
-				
 				
 				if(!empty($class))$class.= ' classfortooltip';
 				
