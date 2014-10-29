@@ -127,14 +127,9 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		
 	<style type="text/css">
 
-	table.planning tr td.jourTravailleNON {
-			background:url("./img/fond_hachure_01.gif");
-	}
-	table.planning tr td[rel=pm].jourTravailleAM {
-			background:url("./img/fond_hachure_01.gif");
-	}
-	table.planning tr td[rel=am].jourTravaillePM {
-			background:url("./img/fond_hachure_01.gif");
+	table.planning tr td.jourTravailleNON,table.planning tr td[rel=pm].jourTravailleAM,table.planning tr td[rel=am].jourTravaillePM  {
+			background:url("./img/fond_hachure_01.png");
+			background-color:#858585; 
 	}
 
 	table.planning {
@@ -156,6 +151,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			background-color:#C03000;
 	}
 	table.planning tr td.vert{
+		/*	background:url("./img/fond_hachure_01.png");*/
 			background-color:#86ce86;
 	}
 	table.planning tr td.rougeRTT {
