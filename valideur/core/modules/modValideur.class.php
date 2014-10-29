@@ -206,7 +206,7 @@ class modValideur extends DolibarrModules
 		
 		dol_include_once('/core/class/extrafields.class.php');
         $extrafields=new ExtraFields($this->db);
-		$res = $extrafields->addExtraField('fk_user_delegation', 'Déléguation de note de frais', 'sellist', 0, '', 'user',0, 0,'', array("options"=> 'user:login:rowid:: WHERE statut=1'));
+		$res = $extrafields->addExtraField('fk_user_delegation', 'Déléguation de note de frais', 'sellist', 0, '', 'user',0, 0,'', array("options"=> array('user:login:rowid:: WHERE statut=1')));
 	
 		
 		
