@@ -455,3 +455,4 @@ ErrInsuffisanteNumberOfPerson=Le nombre de personne minimum requis non disponibl
 ErrAbsenceNotAllowedDueToRules=Demande refusée : La durée de l\'absence dépasse la règle restrictive en vigueur
 TotalPresent=Nombre de présent
 PresenceRequestAccepted=Demande acceptée
+AlertAllMyCoWorker=Alerté les collaborateurs de mes groupes d'appartenance de mes absences par mail

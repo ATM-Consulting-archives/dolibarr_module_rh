@@ -406,7 +406,7 @@ class TRH_Absence extends TObjetStd {
 		mailConges($this,$isPresence);
 	}
 	function setAcceptee(&$ATMdb, $fk_valideur,$isPresence=false) {
-		global $langs,$user;	
+		global $langs,$user,$conf;	
 		
 		
 		$this->etat='Validee';
@@ -414,10 +414,23 @@ class TRH_Absence extends TObjetStd {
 		$this->date_validation=time();
 		$this->fk_user_valideur = $fk_valideur;
 		
-		$this->save($ATMdb);
 		
+		// Appel des triggers
+		dol_include_once('/core/class/interfaces.class.php');
+		$interface = new Interfaces($db);
+		
+		$result = $interface->run_triggers('ABSENCE_BEFOREVALIDATE',$this,$user,$langs,$conf);
+		
+		if ($result < 0) {
+			$error++; $this->errors=$interface->errors;
+			return false; 
+		}
+		else { 
+			$this->save($ATMdb);
+			mailConges($this, $isPresence);	
 			
-		mailConges($this, $isPresence);	
+			return true;
+		}
 			
 		
 	}	
