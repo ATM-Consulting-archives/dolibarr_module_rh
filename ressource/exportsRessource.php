@@ -45,7 +45,11 @@ global $user,$db;
 	
 	dol_include_once('/core/lib/date.lib.php');
 	dol_include_once('/ressource/class/numeros_speciaux.class.php');
+	dol_include_once('/ressource/class/ressource.class.php');
 	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
+	
+	$r1=new TRH_Ressource;
+	$r2=new TRH_Ressource;
 	
 	$TBS=new TTemplateTBS();$html = '';
 	foreach($TLigne as $ligne) {
@@ -58,6 +62,11 @@ global $user,$db;
 			$t_fin = Tools::get_time($_POST['date_fin']);
 			
 			$TLine=array();
+			
+			$r1->load_by_numId($ATMdb, $ligne['numero']);		
+			$r2->load($ATMdb, $r1->fk_rh_ressource);
+			
+			$ATMdb->Execute("SET NAMES 'utf8'");
 			
 			$total = $duree_total_externe = $duree_total_interne = 0;
 			$mail='';
@@ -94,18 +103,19 @@ global $user,$db;
 				
 				$total+=$row->montant_euros_ht;
 				
-				$TLine[]=array(
-					'date_appel'=> date('d/m/Y', $t_appel)
-					,'heure_appel'=> date('H:i:s', $t_appel)
-					,'numero'=>$row->num_appele
-					,'type'=>$row->type_appel
-					,'duree'=>$row->volume_reel
-					,'cout'=>($row->montant_euros_ht>0 ? price($row->montant_euros_ht) : '')
-					
-				);
-				
+				if($row->montant_euros_ht>0 || $conf->global->RH_RESSOURCE_SHOW_EMPTY_LINE__IN_REPORT) {
+					$TLine[]=array(
+						'date_appel'=> date('d/m/Y', $t_appel)
+						,'heure_appel'=> date('H:i:s', $t_appel)
+						,'numero'=>$row->num_appele
+						,'type'=>$row->type_appel
+						,'duree'=>$row->volume_reel
+						,'cout'=>($row->montant_euros_ht>0 ? price($row->montant_euros_ht) : '')
+					);
+				}
 			}
 			
+			$financement = isset($r2->financement) ? $r2->financement : 0;
 			
 			$mail.=$TBS->render('tpl/mailExportRessource.tpl.php'
 				,array(
@@ -117,6 +127,8 @@ global $user,$db;
 						,'date_facture'=>date('d/m/Y', $t_facture)
 						,'gsm'=>$ligne['numero']
 						,'total'=>price(round($total,2)).' €'
+						,'total_financement'=>price(round($financement,2)).' €'
+						,'total_all'=>price(round($total+$financement,2)).' €'
 						,'duree_total_interne'=>convertSecondToTime($duree_total_interne,'all')
 						,'duree_total_externe'=>convertSecondToTime($duree_total_externe,'all')
 					)
@@ -132,7 +144,7 @@ global $user,$db;
 				
 				$from = empty($conf->global->RH_USER_MAIL_SENDER)?'conso-tel@cpro.fr':$conf->global->RH_USER_MAIL_SENDER;
 				
-				$r=new TReponseMail($from, $email, "Etat des appels sur téléphone mobile", $mail);
+				$r=new TReponseMail($from, $email, "Etat de la facturation hors forfait pour votre mobile", $mail);
 				$r->send(true, 'utf8');
 				
 				print "Email envoyé à $email<br :>"; flush();	

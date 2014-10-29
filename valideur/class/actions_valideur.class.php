@@ -283,7 +283,7 @@ class ActionsValideur
 					$tabDelegation[$k]=$user->id;
 					$k++;
 					//on récupère les delegateurs du user et on les affiche
-					$sql = "SELECT rowid FROM llx_user WHERE fk_user_delegation=".$user->id;
+					$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE fk_user_delegation=".$user->id;
 					$result = $db->query($sql);
 					if ($result)
 					{
@@ -309,7 +309,7 @@ class ActionsValideur
 						$tabDelegation[$k]=$user->id;
 						$k++;
 						//on récupère les delegateurs du user et on les affiche
-						$sql = "SELECT rowid FROM llx_user WHERE fk_user_delegation=".$user->id;
+						$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE fk_user_delegation=".$user->id;
 						$result = $db->query($sql);
 						if ($result)
 						{
