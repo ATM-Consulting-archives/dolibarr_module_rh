@@ -70,7 +70,7 @@
 			<td align="right">[line.cout]</td>
 			
 		</tr>
-
+<!--
 		<tr class="total">
 			<td colspan="3">&nbsp;</td>
 			<td class="title" colspan="2">Total durée appel externe</td>
@@ -80,7 +80,7 @@
 			<td colspan="3">&nbsp;</td>
 			<td class="title" colspan="2">Total durée appel interne</td>
 			<td align="right">[card.duree_total_interne] </td>
-		</tr>
+		</tr> -->
 		<tr >
 			<td colspan="3">&nbsp;</td>
 			<td class="title" colspan="2">Total dépassement en Euros</td>
