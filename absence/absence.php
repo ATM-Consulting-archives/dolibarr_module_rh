@@ -901,7 +901,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			$('#user-planning-dialog div.content').load('planningUser.php?fk_user=<?=$existeDeja[2] ?>&date_debut=<?=__get('date_debut') ?>&date_fin=<?=__get('date_fin') ?> #plannings');
 		
 			$('#user-planning-dialog').dialog({
-				title: <?php echo $langs->trans('CreationError'); ?>	
+				title: "<?php echo $langs->trans('CreationError'); ?>"	
 				,width:700
 				,modal:true
 			});
