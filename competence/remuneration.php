@@ -484,7 +484,7 @@ function _displayChartPrimes(&$ATMdb) {
 	
 	$dash=new TReport_dashboard;
 	//$dash->initByCode($ATMdb, 'PRIMESMOIS');
-	$sql = "SELECT DATE_FORMAT(date_prime, \"%Y-%m\" ) AS 'mois', SUM( montant ) AS 'Montant prime' FROM ".MAIN_DB_PREFIX."rh_remuneration_prime WHERE fk_user=".$_REQUEST['fk_user']." GROUP BY `mois`";
+	$sql = "SELECT DATE_FORMAT(date_prime, \"%Y-%m\" ) AS 'mois', SUM( montant ) AS 'Montant prime' , motif as 'Motif' FROM ".MAIN_DB_PREFIX."rh_remuneration_prime WHERE fk_user=".$_REQUEST['fk_user']." GROUP BY `mois`";
 	$sql_moy = "SELECT DATE_FORMAT(date_prime, \"%Y-%m\" ) AS 'mois', AVG( montant ) AS 'Montant prime moyen' FROM ".MAIN_DB_PREFIX."rh_remuneration_prime GROUP BY `mois`";
 	$sql_min = "SELECT DATE_FORMAT(date_prime, \"%Y-%m\" ) AS 'mois', MIN( montant ) AS 'Montant prime minimum' FROM ".MAIN_DB_PREFIX."rh_remuneration_prime GROUP BY `mois`";
 	$sql_max = "SELECT DATE_FORMAT(date_prime, \"%Y-%m\" ) AS 'mois', MAX( montant ) AS 'Montant prime maximum' FROM ".MAIN_DB_PREFIX."rh_remuneration_prime GROUP BY `mois`";
@@ -493,6 +493,7 @@ function _displayChartPrimes(&$ATMdb) {
 					'code'=>'PRIMESMOIS'
 					,'yDataKey' => 'Montant prime'
 					,'sql'=>$sql
+					,'complement' => 'Motif'
 					,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
 					),
 				   1=>array(
