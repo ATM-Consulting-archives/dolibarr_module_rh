@@ -91,7 +91,7 @@ function _draw_table(&$ATMdb,&$type) {
 	$Tab = TImportFile::get_All($ATMdb);
 	TImportFile::initField($ATMdb,$type);
 	
-	$TIndices = TRH_productivite::get_key_val_indices();
+	$TField = TRH_productivite::get_key_val_fields();
 	
 	$delimiter = __get('delimiter', IMPORT_FIELD_DELIMITER);
 	$enclosure = __get('enclosure', IMPORT_FIELD_ENCLOSURE);
@@ -100,7 +100,7 @@ function _draw_table(&$ATMdb,&$type) {
 		$delimiter = "\t";
 	}
 	
-	$TField = __get('TField',array());
+	//$TField = __get('TField',array());
 	
 	// str_getcsv ( string $input [, string $delimiter = ',' [, string $enclosure = '"' [, string $escape = '\\' ]]] )
 	$THeader = str_getcsv($Tab[0]['line_from_file'], $delimiter, $enclosure);
@@ -117,23 +117,20 @@ function _draw_table(&$ATMdb,&$type) {
 	echo $form->checkbox1('Ne pas réimporter les tiers', 'doNotReimportSociete', 1, __get('doNotReimportSociete', 0)).'<br />';	
 	
 	echo $form->btsubmit('Re-Mapper', 'btmap');
-	
 
 	?><table class="border" width="100%">
 		<tr>
 			<?php
+			
 				foreach($THeader as $key=>$values) {
 					
-					?><th><?php echo $form->combo('', 'TField['.$key.']', $TIndices, $TField[$key]) ?></th><?php
+					?><th><?php echo $form->combo('', 'TField['.$key.']', $TField, $TField[$key]) ?></th><?php
 					
 				}
 			?>
 		</tr>
 		<tr>
 			<?php
-			
-				echo '<th><a onclick="$(\'input[type=checkbox]\').attr(\'checked\', \'checkd\')" href="#">Cocher</a>/';
-				echo '<a onclick="$(\'input[type=checkbox]\').removeAttr(\'checked\')" href="#">Décocher</a></th>';
 			
 				foreach($THeader as $key=>$values) {
 					
@@ -154,8 +151,6 @@ function _draw_table(&$ATMdb,&$type) {
 				
 				?><tr class="<?php echo $class ?>">
 					<?php
-					
-						echo "<td>".$form->checkbox1('', "TLinesToImport[".$i."]", $i, 1)."</td>";
 					
 						foreach($row as $value) {
 							
@@ -182,7 +177,6 @@ function _draw_table(&$ATMdb,&$type) {
 function _import(&$ATMdb,&$type) {
 global $db,$user,$conf; 
 
-	$TLinesToImport = $_REQUEST['TLinesToImport'];
 	TImportFile::initField($ATMdb,$type);
 	
 	$delimiter = __get('delimiter', IMPORT_FIELD_DELIMITER);
@@ -200,14 +194,29 @@ global $db,$user,$conf;
 	
 	$import = new TImport;
 	
+	// On cherche quel champ correspond au login user, s'il existe pas, on n'importe rien
+	$num_colonne_login = _get_num_colonne_login($TField);
+	
+	if($num_colonne_login == 0) return false;
+	
 	for($i = $start;$i<$nb;$i++) {
 		
 		$row = str_getcsv($Tab[$i]['line_from_file'], $delimiter, $enclosure);
 		
-		if(isset($TLinesToImport[$i])) TImportFile::_import_productivite($ATMdb,$import,$row,$TField,$Tab);
+		TImportFile::_import_productivite($ATMdb,$import,$row,$TField,$Tab, $num_colonne_login);
 		
 	}
 	
 	
+	
+}
+
+// Retourne le numéro de la ligne qui contient le login utilisateur
+function _get_num_colonne_login($TField) {
+	
+	foreach($TField as $k=>$field)
+		if($field === "login") return $k;
+	
+	return 0;
 	
 }

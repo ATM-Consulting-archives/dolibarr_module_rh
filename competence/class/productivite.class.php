@@ -15,11 +15,15 @@ class TRH_productivite extends TObjetStd {
 		parent::start();
 	}
 	
-	static function get_key_val_indices() {
+	static function get_key_val_fields() {
 			
 		global $db;
 		
-		$TIndicesuser = array(0=>"");
+		$TIndices = array(
+						0=>""
+						,"login"=>"login"
+						,'date_indice'=>'date_indice'
+						);
 		
 		$sql = "SELECT rowid, indice ";
 		$sql.= "FROM ".MAIN_DB_PREFIX."rh_productivite ";
@@ -27,11 +31,27 @@ class TRH_productivite extends TObjetStd {
 		
 		while($res = $db->fetch_object($resql)) {
 			
-			$TIndicesuser[$res->rowid] = $res->indice;
+			$TIndices[$res->rowid] = $res->indice;
 			
 		}
 		
-		return $TIndicesuser;
+		return $TIndices;
+		
+	}
+	
+	static function get_libelle_indice($id_indice) {
+		
+		global $db;
+		
+		$sql = "SELECT indice ";
+		$sql.= "FROM ".MAIN_DB_PREFIX."rh_productivite ";
+		$sql.= "WHERE rowid = ".$id_indice;
+		
+		$resql = $db->query($sql);
+		
+		$res = $db->fetch_object($resql);
+		
+		return $res->indice;
 		
 	}
 
