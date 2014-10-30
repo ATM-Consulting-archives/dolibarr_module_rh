@@ -463,7 +463,7 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	
 	$sql.=" GROUP BY ea.num_gsm"; //,ea.date_appel"; Je sais c'est moche
 	
-	//return $sql;
+//	return $sql;exit;
 
 	$resql = $db->query($sql);
 //exit($sql);
