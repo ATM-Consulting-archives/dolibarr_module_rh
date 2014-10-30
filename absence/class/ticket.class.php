@@ -86,8 +86,7 @@ class TRH_TicketResto extends TObjetStd {
 		
 		foreach($TAbsence as $fk_user=>$TAbs) {
 			
-			$presence = 0;
-			$ndf = 0;
+			$presence = $ndf = $ndf_with_suspicious = 0;
 			
 			foreach($TAbs as $date=>$row) {
 				
