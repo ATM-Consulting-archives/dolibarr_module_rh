@@ -472,7 +472,7 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 		if($non_facture || $res->montant_euros_ht == 0) continue; // On sort pas les lignes à 0 dans le CSV
 				
 					
-		$r1->load_by_numId($ATMdb, $gsm);		
+		if(!$r1->load_by_numId($ATMdb, $gsm)) continue; // pas de ressource associée		
 	
 		$r2->load($ATMdb, $r1->fk_rh_ressource);		
 	
