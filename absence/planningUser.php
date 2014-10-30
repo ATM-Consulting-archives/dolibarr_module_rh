@@ -317,47 +317,34 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 	
 	?><script type="text/javascript">
 	function popAddAbsence(date, fk_user) {
-		
 		$('#popAbsence').remove();
 		$('body').append('<div id="popAbsence"></div>');
 		
-		$('#popAbsence').load("<?php echo dol_buildpath('/absence/absence.php?action=new',1) ?>&dfMoment=apresmidi&ddMoment=matin&fk_user="+fk_user+"&date_debut="+date+"&date_fin="+date+" #fiche-abs", function(data) {
-			
-			$('#popAbsence form').submit(function() {
-
-			$.post( $(this).attr('action')
-				, $(this).serialize()
-				
-			) .done(function(data) {
-				/*
-				 * Récupération de l'erreur de sauvegarde du temps
-				 */
-				
-				$.jnotify('<?php echo $langs->trans('AbsenceAdded') ?>', "ok");
-				
-				
-			});
+		var url = "<?php echo dol_buildpath('/absence/absence.php?action=new',1) ?>&dfMoment=apresmidi&ddMoment=matin&fk_user="+fk_user+"&date_debut="+date+"&date_fin="+date+" #fiche-abs";
+		
+		$('#popAbsence').load(url);
+		
+		$('#popAbsence form').submit(function() {
+			$.post($(this).attr('action'), $(this).serialize())
+				.done(function(data) {
+					$.jnotify('<?php echo $langs->trans('AbsenceAdded') ?>', "ok");
+				});
 			
 			$("#popAbsence").dialog('close');
 
 			return false;
 		
 		});
-			
-			$('#popAbsence').dialog({
-				title:"Créer une nouvelle absence"
-				,width:500
-				,modal:true
-				
-			});
-			
+		
+		$('#popAbsence').dialog({
+			title:"Créer une nouvelle absence"
+			,width:500
+			,modal:true
 		});
-		
 	}	
-		
-		
+
 	</script>
-	<?
+	<?php
 	
 	
 	print '<table class="planning" border="0">';
@@ -372,8 +359,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 	print "</tr>";
 	
 	$TTotal=array();
-	foreach($tabUserMisEnForme as $idUser=>$planning){
-			
+	foreach($tabUserMisEnForme as $idUser => $planning){
 		$sql="SELECT lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$idUser;
 		$ATMdb->Execute($sql);
 		if($ATMdb->Get_line()) {
@@ -381,9 +367,9 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 		}
 		print '<tr >';		
 		print '<td style="text-align:right; font-weight:bold;height:20px;" nowrap="nowrap">'.$name.'</td>';
-		foreach($planning as $dateJour=>$ouinon){
+		foreach($planning as $dateJour => $ouinon){
 			
-			if(empty($TTotal[$dateJour]))$TTotal[$dateJour]=0;
+			if(empty($TTotal[$dateJour])) $TTotal[$dateJour] = 0;
 			
 			$class='';
 			
@@ -405,7 +391,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 			
 			if($isFerie && $estUnJourTravaille!='NON') { $TStatPlanning[$idUser]['ferie']++; }
 			
-			if($ouinon=='non'){
+			if($ouinon=='non') {
 				if(!$isFerie && $estUnJourTravaille!='NON' && !isset($_REQUEST['no-link'])) $linkPop = '<a title="'.$langs->trans('addAbsenceUser').'" href="javascript:popAddAbsence(\''.$std->get_date('date_jour','Y-m-d').'\', '.$idUser.');">+</a>';
 				else $link='&nbsp;'; 
 				
@@ -513,5 +499,4 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 	}
 	
 	print '</tr></table><p>&nbsp;</p>';
-	
 }
