@@ -38,8 +38,8 @@ class TRH_TicketResto extends TObjetStd {
 	
 	static function isNDFforDay(&$ATMdb, $date, $fk_user, $withSuspicisous=false) {
 		global $conf;
-		
-		$sql = "SELECT count(*) as nb 
+		/* Note repas */
+		$sql = "SELECT  DISTINCT n.ref 
 		FROM ".MAIN_DB_PREFIX."ndfp_det nd LEFT JOIN ".MAIN_DB_PREFIX."ndfp n ON (nd.fk_ndfp=n.rowid)
 		WHERE n.fk_user=".$fk_user." AND nd.fk_exp IN (".$conf->global->RH_NDF_TICKET_RESTO.") ";
 		
@@ -53,12 +53,15 @@ class TRH_TicketResto extends TObjetStd {
 //var_dump($sql);       print '<br/>';
 		
 		$ATMdb->Execute($sql);
-		$obj = $ATMdb->Get_line();
+		$Tab=array();
+
+                while($obj = $ATMdb->Get_line()) {
+                        $Tab[] = $obj->ref;
+                }
 		
-		if($obj->nb>0) return true;
-		
-		
-		$sql = "SELECT count(*) as nb 
+
+		/*Note invité*/
+		$sql = "SELECT DISTINCT n.ref 
 		FROM ".MAIN_DB_PREFIX."ndfp_det nd 
 			INNER JOIN ".MAIN_DB_PREFIX."ndfp n ON (nd.fk_ndfp=n.rowid)
 			INNER JOIN ".MAIN_DB_PREFIX."ndfp_det_link_user ndl ON (nd.rowid=ndl.fk_ndfpdet)
@@ -72,12 +75,13 @@ class TRH_TicketResto extends TObjetStd {
 		}
 //var_dump($sql);	print '<br/>';
 		$ATMdb->Execute($sql);
-		$obj = $ATMdb->Get_line();
-		
-		if($obj->nb>0) return true;
-		
-		return false;
-		
+//		$Tab=array();
+
+		while($obj = $ATMdb->Get_line()) {
+			$Tab[] = $obj->ref;
+		}		
+
+		return $Tab;		
 	}
 	
 	static function getTicketFor(&$ATMdb, $date_debut, $date_fin, $idGroup=0, $fk_user=0) {
@@ -88,14 +92,19 @@ class TRH_TicketResto extends TObjetStd {
 			
 			$presence = $ndf = $ndf_with_suspicious = 0;
 			
+			$TRefSuspisious = array();
 			foreach($TAbs as $date=>$row) {
 				
 				$presence+=	$row['presence_jour_entier'];	
 				if(	$row['presence_jour_entier'] ) {
 					
-					$ndf+=	TRH_TicketResto::isNDFforDay($ATMdb, $date, $fk_user);
-					
-					$ndf_with_suspicious+=TRH_TicketResto::isNDFforDay($ATMdb, $date, $fk_user, true);
+					$TRefNDF = TRH_TicketResto::isNDFforDay($ATMdb, $date, $fk_user);
+					$ndf+=count( $TRefNDF );
+
+					$TRefNDF = TRH_TicketResto::isNDFforDay($ATMdb, $date, $fk_user, true);
+					$ndf_with_suspicious+=count( $TRefNDF );
+
+					$TRefSuspisious = array_merge($TRefSuspisious, $TRefNDF);
 				}
 				
 				
@@ -106,6 +115,7 @@ class TRH_TicketResto extends TObjetStd {
 				'presence'=>$presence
 				,'ndf'=>$ndf
 				,'ndf_suspicious'=>$ndf_with_suspicious - $ndf
+				, 'TRefSuspisious'=>$TRefSuspisious
 			);
 		}
 		
