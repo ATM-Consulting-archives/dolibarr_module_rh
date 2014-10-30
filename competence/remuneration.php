@@ -426,7 +426,7 @@ function _displayChartRemunerations(&$ATMdb) {
 	$dash=new TReport_dashboard;
 	//$dash->initByCode($ATMdb, 'SALAIREMOIS');
 	
-	$sql = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y-%m\" ) AS 'mois', SUM( salaireMensuel ) AS 'Salaire' FROM ".MAIN_DB_PREFIX."rh_remuneration WHERE fk_user=".$_REQUEST['fk_user']." GROUP BY `mois`";
+	$sql = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y-%m\" ) AS 'mois', SUM( salaireMensuel ) AS 'Salaire', commentaire as 'Commentaire' FROM ".MAIN_DB_PREFIX."rh_remuneration WHERE fk_user=".$_REQUEST['fk_user']." GROUP BY `mois`";
 	$sql_moy = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y-%m\" ) AS 'mois', AVG( salaireMensuel ) AS 'Salaire moyen' FROM ".MAIN_DB_PREFIX."rh_remuneration GROUP BY `mois`";
 	$sql_min = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y-%m\" ) AS 'mois', MIN( salaireMensuel ) AS 'Salaire minimum' FROM ".MAIN_DB_PREFIX."rh_remuneration GROUP BY `mois`";
 	$sql_max = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y-%m\" ) AS 'mois', MAX( salaireMensuel ) AS 'Salaire maximum' FROM ".MAIN_DB_PREFIX."rh_remuneration GROUP BY `mois`";
@@ -435,6 +435,7 @@ function _displayChartRemunerations(&$ATMdb) {
 					'code'=>'SALAIREMOIS'
 					,'yDataKey' => 'Salaire'
 					,'sql'=>$sql
+					,'complement' => 'Commentaire'
 					,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
 					),
 				   1=>array(
@@ -463,7 +464,7 @@ function _displayChartRemunerations(&$ATMdb) {
 	
 	$dash->initByData($ATMdb, $TData);
 	//$dash->dataSource[0] = strtr($dash->dataSource[0], array("__iduser__"=>$_REQUEST['fk_user']));
-			
+		
 	?><div id="chart_remunerations" style="height:<?=$dash->hauteur?>px; margin-bottom:20px;"></div><?
 			
 	$dash->get('chart_remunerations');
