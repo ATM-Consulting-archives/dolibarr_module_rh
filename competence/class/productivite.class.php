@@ -14,6 +14,26 @@ class TRH_productivite extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 	}
+	
+	static function get_key_val_indices() {
+			
+		global $db;
+		
+		$TIndicesuser = array(0=>"");
+		
+		$sql = "SELECT rowid, indice ";
+		$sql.= "FROM ".MAIN_DB_PREFIX."rh_productivite ";
+		$resql = $db->query($sql);
+		
+		while($res = $db->fetch_object($resql)) {
+			
+			$TIndicesuser[$res->rowid] = $res->indice;
+			
+		}
+		
+		return $TIndicesuser;
+		
+	}
 
 }
 
