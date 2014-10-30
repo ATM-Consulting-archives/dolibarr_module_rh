@@ -295,7 +295,7 @@ class TRH_Absence extends TObjetStd {
 		
 		
 		$sql="SELECT DISTINCT r.rowid,r.typeAbsence, r.`nbJourCumulable`, r. `restrictif`, 
-		r.fk_user, r.fk_usergroup, r.choixApplication, r.periode, r.contigue
+		r.fk_user, r.fk_usergroup, r.choixApplication, r.periode, r.contigue,r.contigueNoJNT
 		FROM ".MAIN_DB_PREFIX."rh_absence_regle as r 
 			LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (r.fk_usergroup=g.fk_usergroup)
 		WHERE r.choixApplication LIKE 'user' AND r.fk_user=".$fk_user."
@@ -317,6 +317,7 @@ class TRH_Absence extends TObjetStd {
 			$TRegle[$k]['periode']= $ATMdb->Get_field('periode');
 			$TRegle[$k]['id']= $ATMdb->Get_field('rowid');
 			$TRegle[$k]['contigue']= $ATMdb->Get_field('contigue');
+			$TRegle[$k]['contigueNoJNT']= $ATMdb->Get_field('contigueNoJNT');
 			
 			
 			$k++;
@@ -405,7 +406,7 @@ class TRH_Absence extends TObjetStd {
 		mailConges($this,$isPresence);
 	}
 	function setAcceptee(&$ATMdb, $fk_valideur,$isPresence=false) {
-		global $langs,$user;	
+		global $langs,$user,$conf;	
 		
 		
 		$this->etat='Validee';
@@ -413,10 +414,23 @@ class TRH_Absence extends TObjetStd {
 		$this->date_validation=time();
 		$this->fk_user_valideur = $fk_valideur;
 		
-		$this->save($ATMdb);
 		
+		// Appel des triggers
+		dol_include_once('/core/class/interfaces.class.php');
+		$interface = new Interfaces($db);
+		
+		$result = $interface->run_triggers('ABSENCE_BEFOREVALIDATE',$this,$user,$langs,$conf);
+		
+		if ($result < 0) {
+			$error++; $this->errors=$interface->errors;
+			return false; 
+		}
+		else { 
+			$this->save($ATMdb);
+			mailConges($this, $isPresence);	
 			
-		mailConges($this, $isPresence);	
+			return true;
+		}
 			
 		
 	}	
@@ -501,30 +515,42 @@ class TRH_Absence extends TObjetStd {
 		 $loop=true;$cpt=0;
 		 $date = $this->date_debut;
 		 while($loop && $cpt<50) {
-		 	$res = $this->isWorkingDayPrevious($ATMdb, $date);
-		 	if(!$res) {
+		 	list($isWorkingDay, $isNotFerie, $isNotAbsence) = $this->isWorkingDayPrevious($ATMdb, $date);
+			
+			if(!$isWorkingDay && $isNotFerie && $isNotAbsence) {
 				$this->dureeContigue++;
-				$date = strtotime('-1day', $date);
-				$cpt++;		
+			}
+			else if(!$isWorkingDay || !$isNotFerie || !$isNotAbsence) {
+				$this->dureeContigue++;
+				$this->dureeContigueWhitoutJNT++; // compte uniquement les jours d'absence et férié, pas les jour non travaillé
 			}
 			else{
 				$loop = false;
 			}
+
+			$date = strtotime('-1day', $date);
+			$cpt++;
 			
 		 }
 		 
 		 $loop=true;$cpt=0;
 		 $date = $this->date_fin;
 		 while($loop && $cpt<50) {
-		 	
-			if(!$this->isWorkingDayNext($ATMdb, $date)) {
-				$this->dureeContigue++;	
-				$date = strtotime('+1day', $date);	
-				$cpt++;
+		 	list($isWorkingDay, $isNotFerie, $isNotAbsence)=$this->isWorkingDayNext($ATMdb, $date);
+
+			if(!$isWorkingDay && $isNotFerie && $isNotAbsence) {
+				$this->dureeContigue++;
+			}
+			else if(!$isWorkingDay || !$isNotFerie || !$isNotAbsence) {
+				$this->dureeContigue++;
+				$this->dureeContigueWhitoutJNT++;
 			}
 			else{
 				$loop = false;
 			}
+
+			$date = strtotime('+1day', $date);	
+			$cpt++;
 			
 		 }
 	
@@ -540,6 +566,7 @@ class TRH_Absence extends TObjetStd {
 		
 		$this->dureeHeure=0;
 		$this->dureeContigue=0;
+		$this->dureeContigueWhitoutJNT = 0;
 		
 		$t_start = $this->date_debut;
 		$t_end = $this->date_fin;
@@ -602,12 +629,14 @@ class TRH_Absence extends TObjetStd {
 				}
 				
 				$duree+=$dureeJour;
+				$this->dureeContigueWhitoutJNT+=$dureeJour;
 				
 				$this->TDureeAbsenceUser[date('Y', $t_current)][date('m', $t_current)] += $dureeJour;
 			
 			}
 			
 			$this->dureeContigue++;
+			
 			
 			$t_current = strtotime("+1day",$t_current);
 		}
@@ -1478,10 +1507,19 @@ class TRH_Absence extends TObjetStd {
 				
 				if($TLineRegle['typeAbsence']==$this->type) {
 					
-					$dureeTest = $TLineRegle['contigue']==1 ? $this->dureeContigue : $this->duree;
-					
-						 
+					if($TLineRegle['contigue']==1 && $TLineRegle['contigueNoJNT']==1) {
+						$dureeTest = $this->dureeContigueWhitoutJNT;
+					}
+					else if($TLineRegle['contigue']==1) {
+						$dureeTest = $this->dureeContigue;
+					}
+					else{
+						$dureeTest = $this->duree;
+					}
 					$nbJoursAutorises = $TLineRegle['nbJourCumulable'];
+					
+						// var_dump($TLineRegle['nbJourCumulable'], $dureeTest, $this->duree, $this->dureeContigue,$this->dureeContigueWhitoutJNT);
+					
 					//echo $this->duree;exit;
 					if($TLineRegle['periode']==='ONE' && $dureeTest>$TLineRegle['nbJourCumulable']){
 						if($TLineRegle['restrictif']==1){
@@ -1577,15 +1615,15 @@ class TRH_Absence extends TObjetStd {
 	}
 	
 	function isWorkingDay(&$ATMdb, $date) {
-		//print microtime().'<br>';
-		$res= (TRH_EmploiTemps::estTravaille($ATMdb, $this->fk_user, $date)!='NON');
-		//print microtime().'<br>';
-		if($res) $res = !(TRH_JoursFeries::estFerie($ATMdb, $date));
-		//print microtime().'<br>';
-		if($res) $res = $this->isNotAbsenceDay($ATMdb, $date);
-		//print microtime().'<br>';
-		//exit;
-		return $res;
+		$isNotFerie=$isNotAbsence=$isWorkingDay=false;
+		
+		
+		$isNotFerie = !(TRH_JoursFeries::estFerie($ATMdb, $date));
+		if($isNotFerie) $isNotAbsence = $this->isNotAbsenceDay($ATMdb, $date);
+		
+		if($isNotFerie && $isNotAbsence) $isWorkingDay= (TRH_EmploiTemps::estTravaille($ATMdb, $this->fk_user, $date)!='NON');
+		
+		return array($isWorkingDay, $isNotFerie, $isNotAbsence);
 	
 	}
 	
@@ -2492,7 +2530,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		parent::add_champs('typeAbsence','type=chaine;');
 		parent::add_champs('choixApplication,periode','type=chaine;index;');
 		parent::add_champs('nbJourCumulable','type=entier;index;');
-		parent::add_champs('restrictif,contigue','type=entier;');
+		parent::add_champs('restrictif,contigue,contigueNoJNT','type=entier;');
 		parent::add_champs('fk_user','type=entier;index;');	//utilisateur concerné
 		parent::add_champs('fk_usergroup','type=entier;index;');	//utilisateur concerné
 		parent::add_champs('entity','type=entier;index;');

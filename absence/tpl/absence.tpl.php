@@ -216,23 +216,22 @@
 					
 					if(fk_user<=0) return false;
 				
+					$('#reste,#cumule,#noncumule').html('...');
 
 					$.ajax({
 						url: 'script/chargerCompteurDemandeAbsence.php?user='+fk_user
 						,dataType:'json'
 					}).done(function(liste) {
 						
-						$('#reste').empty();
-						$('#reste').append(liste.reste);
+						$('#reste').html(liste.reste);
+						if(liste.reste<0)$('#reste').css({'color':'red', 'font-weight':'bold'});
+						else $('#reste').css({'color':'black', 'font-weight':'normal'});
 						
-						$('#cumule').empty();
-						$('#cumule').append(liste.annuelCumule);
+						$('#cumule').html(liste.annuelCumule);
 						
-						$('#noncumule').empty();
-						$('#noncumule').append(liste.annuelNonCumule);
+						$('#noncumule').html(liste.annuelNonCumule);
 						
-						$('#mensuel').empty();
-						$('#mensuel').append(liste.mensuel);
+						$('#mensuel').html(liste.mensuel); //TODO n'existe pas ?
 	
 					});
 				
@@ -268,7 +267,9 @@
 					});
 				
 
-					$('#user-planning').load('planningUser.php?fk_user='+fk_user+'&no-link #plannings');
+					$('#user-planning').load('planningUser.php?fk_user='+fk_user+'&no-link #plannings',function() {
+						$('#user-planning tr.footer').remove();
+					});
 			}
 			
 			//	script vérifiant que la date de début ne dépasse pas celle de fin

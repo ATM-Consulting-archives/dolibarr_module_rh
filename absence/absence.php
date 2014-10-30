@@ -568,42 +568,45 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
 	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` 
-				WHERE fk_user=".$user->id;
+				WHERE fk_user=" . ((GETPOST('fk_user')) ? intval(GETPOST('fk_user')) : $user->id);
+		
 	$ATMdb->Execute($sqlReqUser);
 	$congePrec=array();
 	$congeCourant=array();
 	$rttCourant=array();
+		
 	while($ATMdb->Get_line()) { // TODO doit être un objet
-				$congePrec['id']=$ATMdb->Get_field('rowid');
-				$congePrec['acquisEx']=$ATMdb->Get_field('acquisExerciceNM1');
-				$congePrec['acquisAnc']=$ATMdb->Get_field('acquisAncienneteNM1');
-				$congePrec['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeNM1');
-				$congePrec['reportConges']=$ATMdb->Get_field('reportCongesNM1');
-				$congePrec['congesPris']=$ATMdb->Get_field('congesPrisNM1');
-				$congePrec['annee']=$ATMdb->Get_field('anneeNM1');
-				$congePrec['fk_user']=$ATMdb->Get_field('fk_user');
-	
-				$congeCourant['id']=$ATMdb->Get_field('rowid');
-				$congeCourant['acquisEx']=$ATMdb->Get_field('acquisExerciceN');
-				$congeCourant['acquisAnc']=$ATMdb->Get_field('acquisAncienneteN');
-				$congeCourant['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeN');
-				$congeCourant['annee']=$ATMdb->Get_field('anneeN');
-				$congeCourant['fk_user']=$ATMdb->Get_field('fk_user');
-				
-				
-				$rttCourant['id']=$ATMdb->Get_field('rowid');
-				
-				/*$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('rttCumuleTotal'));
-				$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('rttNonCumuleTotal'));
-				*/
-				$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('cumuleAcquis')+$ATMdb->Get_field('cumuleReport')-$ATMdb->Get_field('cumulePris'));
-				
-				$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('nonCumuleAcquis')+$ATMdb->Get_field('nonCumuleReport')-$ATMdb->Get_field('nonCumulePris'));
-				
-				$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
-	
-	
-	
+		$congePrec['id']=$ATMdb->Get_field('rowid');
+		$congePrec['acquisEx']=$ATMdb->Get_field('acquisExerciceNM1');
+		$congePrec['acquisAnc']=$ATMdb->Get_field('acquisAncienneteNM1');
+		$congePrec['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeNM1');
+		$congePrec['reportConges']=$ATMdb->Get_field('reportCongesNM1');
+		$congePrec['congesPris']=$ATMdb->Get_field('congesPrisNM1');
+		$congePrec['annee']=$ATMdb->Get_field('anneeNM1');
+		$congePrec['fk_user']=$ATMdb->Get_field('fk_user');
+		
+
+		$congeCourant['id']=$ATMdb->Get_field('rowid');
+		$congeCourant['acquisEx']=$ATMdb->Get_field('acquisExerciceN');
+		$congeCourant['acquisAnc']=$ATMdb->Get_field('acquisAncienneteN');
+		$congeCourant['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeN');
+		$congeCourant['annee']=$ATMdb->Get_field('anneeN');
+		$congeCourant['fk_user']=$ATMdb->Get_field('fk_user');
+		
+		
+		$rttCourant['id']=$ATMdb->Get_field('rowid');
+		
+		/*$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('rttCumuleTotal'));
+		$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('rttNonCumuleTotal'));
+		*/
+		$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('cumuleAcquis')+$ATMdb->Get_field('cumuleReport')-$ATMdb->Get_field('cumulePris'));
+		
+		$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('nonCumuleAcquis')+$ATMdb->Get_field('nonCumuleReport')-$ATMdb->Get_field('nonCumulePris'));
+		
+		$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
+
+
+
 	}
 	
 	$congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+$congePrec['acquisHorsPer']+$congePrec['reportConges'];
@@ -748,8 +751,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	}
 	
 	$formDoli = new Form($db);
-		
+	
 	$TBS=new TTemplateTBS();
+	
 	print $TBS->render('./tpl/absence.tpl.php'
 		,array(
 			//'TRegle' =>$TRegle
@@ -765,7 +769,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'congesPris'=>$form->texte('','congesprisNM1',$congePrec['congesPris'],10,50)
 				,'anneePrec'=>$form->texte('','anneeNM1',$anneePrec,10,50)
 				,'total'=>$form->texte('','total',$congePrecTotal,10,50)
-				,'reste'=>round2Virgule($congePrecReste)
+				,'reste' => round2Virgule($congePrecReste)
 				,'idUser'=>$_REQUEST['id']
 			)
 			,'congesCourant'=>array(
@@ -876,10 +880,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'AbsenceBy' => $langs->trans('AbsenceBy')
 			)
 			
-		)	
-		
+		)
 	);
-	
+
 	// End of page
 	
 	global $mesg, $error, $warning, $popinExisteDeja, $existeDeja;
@@ -901,7 +904,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			$('#user-planning-dialog div.content').load('planningUser.php?fk_user=<?=$existeDeja[2] ?>&date_debut=<?=__get('date_debut') ?>&date_fin=<?=__get('date_fin') ?> #plannings');
 		
 			$('#user-planning-dialog').dialog({
-				title: <?php echo $langs->trans('CreationError'); ?>	
+				title: "<?php echo $langs->trans('CreationError'); ?>"	
 				,width:700
 				,modal:true
 			});
