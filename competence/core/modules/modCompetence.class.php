@@ -209,20 +209,27 @@ class modCompetence extends DolibarrModules
 		$r++;
 	
 		$this->rights[$r][0] = 7957;
+		$this->rights[$r][1] = 'Consulter la rémunération des membres de son/ses groupes d\'utilisateur';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'voirRemunerationGroupe';
+		$r++;
+	
+		$this->rights[$r][0] = 7958;
 		$this->rights[$r][1] = 'Consulter sa productivité';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'productivite';
         $this->rights[$r][5] = 'read';
 		$r++;
 	
-		$this->rights[$r][0] = 7958;
+		$this->rights[$r][0] = 7959;
 		$this->rights[$r][1] = 'Enregistrer sa productivité';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'productivite';
         $this->rights[$r][5] = 'write';
 		$r++;
 	
-		$this->rights[$r][0] = 7959;
+		$this->rights[$r][0] = 7960;
 		$this->rights[$r][1] = 'Administrer la productivité';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'productivite';

@@ -5,6 +5,7 @@
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+	dol_include_once('/user/class/usergroup.class.php');
 	
 	$langs->load('competence@competence');
 	$langs->load("users");
@@ -124,6 +125,8 @@ function _liste(&$ATMdb, $remuneration) {
 		<tr><td width="25%" valign="top">Prénom</td><td><?=$fuser->firstname ?></td></tr>
 	</tbody></table>
 	<br/><?
+	
+	_bloqueAffichageSelonDroitUtilisateurGroupe();
 	
 	////////////AFFICHAGE DES LIGNES DE REMUNERATION
 	$r = new TSSRenderControler($remuneration);
@@ -597,4 +600,61 @@ function _addLinesGroup(&$TData, $fk_usergroup, $type="remuneration") {
 					
 	}
 		
+}
+
+/**
+ * Empêche ou autorise l'accès à la liste des rémunération des utilisateurs des groupes dont fait partie le user courant
+ * En fonction du droit défini
+ */
+function _bloqueAffichageSelonDroitUtilisateurGroupe() {
+	
+	global $user,$db;
+	
+	// 3 solutions :
+	
+	//**************************************************************************************************************
+	// 1 - Le user courant est admin, dans ce cas, l'accès n'est pas restreint, l'admin peut voir toutes les remunérations
+	if($user->admin) return true;
+	//**************************************************************************************************************
+	
+	
+	//**************************************************************************************************************
+	// 2 - Le user courant n'est pas admin et n'a pas le droit de voir les rémunérations des user de son/ses groupes, dans ce cas on bloque l'affichage si $_REQUEST['fk_user'] !== $user->id
+	if(!$user->rights->curriculumvitae->myactions->voirRemunerationGroupe && $_REQUEST['fk_user'] != $user->id)
+		accessforbidden('', 0);
+	//**************************************************************************************************************
+	
+	
+	//**************************************************************************************************************
+	// 3 - Le user courant n'est pas admin mais a le droit de voir les rémunérations des user de son/ses groupes, dans ce cas on on cherche les groupes du user courant et on regarde si le user de la fiche sur laquelle on se trouve fait partie d'au moins l'un d'entre eux, si oui on affiche, sinon on bloque
+	if($user->rights->curriculumvitae->myactions->voirRemunerationGroupe) {
+		
+		$ug = new UserGroup($db);
+		
+		// On récupère un tableau des groupes dont fait partie l'utilisateur courant
+		$TIDGroups_userCourant = array_keys($ug->listGroupsForUser($user->id));
+		
+		// On récupère un tableau des groupes dont fait partie l'utilisateur en $_REQUEST['fk_user']
+		$TIDGroups_userRequest = array_keys($ug->listGroupsForUser($_REQUEST['fk_user']));
+		
+		// Si l'un des 2 tableaux est vide, ça veut dire que le user en request ne fait forcément pas partie d'un même groupe que le user courant, donc on bloque
+		if(count($TIDGroups_userRequest) == 0 || $TIDGroups_userCourant == 0) {
+			accessforbidden('', 0);
+		} else { // Sinon, on les parcoure jusqu'à ce qu'on trouve un chiffre qui apparait dans les 2 tableaux
+		
+			foreach($TIDGroups_userCourant as $idGroup_userCourant) {
+				foreach($TIDGroups_userRequest as $idGroup_userRequest) {
+					// Si un chiffre apparait dans les 2 tableaux, ça veut dire que les 2 user font partie d'au moins un même groupe
+					if($idGroup_userCourant == $idGroup_userRequest)
+						return true;
+				}
+			}
+			
+			accessforbidden('', 0);
+			
+		}
+		
+	}
+	//**************************************************************************************************************
+	
 }
