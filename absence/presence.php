@@ -28,7 +28,14 @@
 						
 						$absence->niveauValidation=1;
 						
-						$absence->duree = $absence->calculDureeAbsenceParAddition($ATMdb);
+						$typeAbs = new TRH_TypeAbsence;
+						$typeAbs->load_by_type($ATMdb, $absence->type);
+						
+						//if ($typeAbs->isPresence) {
+							//$absence->duree = $absence->calculDureePresence($ATMdb);
+						//} else {
+							$absence->duree = $absence->calculDureeAbsenceParAddition($ATMdb);
+						//}
 						
 						if($absence->save($ATMdb)) {
 							if($absence->avertissementInfo) setEventMessage($absence->avertissementInfo, 'warnings');

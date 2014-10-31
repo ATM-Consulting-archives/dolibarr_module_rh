@@ -470,7 +470,6 @@ class TRH_Absence extends TObjetStd {
 		}
 		// Fin appel triggers
 		else {
-		
 			parent::save($db);
 			return true;	
 		}	
@@ -577,10 +576,11 @@ class TRH_Absence extends TObjetStd {
 		$typeAbs = new TRH_TypeAbsence;
 		
 		$typeAbs->load_by_type($ATMdb, $this->type);
+		
 		//print_r($typeAbs);
 		$emploiTemps = new TRH_EmploiTemps;
 		$emploiTemps->load_by_fkuser($ATMdb, $this->fk_user);
-		
+				
 		while($t_current<=$t_end) {
 			//print date('Y-m-d', $t_current).'<br>';;
 			$current_day = $TJourSemaine[(int)date('w', $t_current)];
@@ -591,7 +591,7 @@ class TRH_Absence extends TObjetStd {
 				if( ($t_current==$t_start && $this->ddMoment=='matin') || $t_current>$t_start  ) {
 					if(!isset($TJourFerie[ date('Y-m-d', $t_current) ]['am'])) {
 	
-						if($emploiTemps->{$current_day.'am'}==1 ) {
+						if($emploiTemps->{$current_day.'am'} == 1 ) {
 							$dureeJour+=.5;
 							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"am");
 						}		
@@ -602,7 +602,6 @@ class TRH_Absence extends TObjetStd {
 						
 					}
 				}
-				
 				
 				if(($t_current==$t_end && $this->dfMoment=='apresmidi') || $t_current<$t_end  ) {
 				
@@ -655,6 +654,66 @@ class TRH_Absence extends TObjetStd {
 		$this->calculDureeAddContigue($ATMdb);
 		
 		return $duree;
+	}
+	
+	function calculDureePresence(&$ATMdb) {
+		$typeAbs = new TRH_TypeAbsence;
+		
+		$typeAbs->load_by_type($ATMdb, $this->type);
+		
+		$duree = 0;
+		
+		$this->dureeHeure=0;
+		$this->dureeContigue=0;
+		$this->dureeContigueWhitoutJNT = 0;
+		
+		$dateStart = date('Y-m-d', $this->date_debut);
+		$dateEnd = date('Y-m-d', $this->date_fin);
+		
+		$datetimeStart = new DateTime($dateStart);
+		$datetimeEnd = new DateTime($dateEnd);
+		$interval = $datetimeStart->diff($datetimeEnd);
+		$days = $interval->days;
+		
+		// Retourne le nombre de semaine
+		$weeks = floor($days / 7);
+		
+		// Retourne le nombre de jour avant la fin de la première semaine
+		$remaining = fmod($days, 7);
+		
+		$firstDayOfWeek = date('N', $dateStart);
+		$lastDayOfWeek = date('N', $dateEnd);
+		
+		if ($firstDayOfWeek <= $lastDayOfWeek) {
+			if ($firstDayOfWeek <= 6 && 6 <= $lastDayOfWeek) $remaining--;
+			if ($firstDayOfWeek <= 7 && 7 <= $lastDayOfWeek) $remaining--;
+		} else {
+			if ($firstDayOfWeek == 7) {
+				$remaining--;
+				
+				if ($lastDayOfWeek == 6) {
+					$remaining--;
+				}
+			} else {
+				$remaining -= 2;
+			}
+		}
+		
+		$workingDays = $weeks * 5;
+		if ($remaining > 0) {
+			$workingDays += $remaining;
+		}
+		
+		$hourStart = date('H:i', $this->date_hourStart);
+		$hourEnd = date('H:i', $this->date_hourEnd);
+		
+		// Calcul du nombre d'heures de présence
+		$hours = difheure($hourStart, $hourEnd);
+		$hours = horaireMinuteEnCentieme($hours);
+		
+		$this->dureeHeure = $hours;
+		
+		return $workingDays;
 	}
 	
 	//TODO Delete, version dépréciée est buguée
@@ -2370,7 +2429,6 @@ class TRH_EmploiTemps extends TObjetStd {
 	}
 	
 	function getHeurePeriode($current_day,$periode){
-		
 		return ($this->{"date_".$current_day."_heuref".$periode} - $this->{"date_".$current_day."_heured".$periode}) / 3600;
 	}	
 	
