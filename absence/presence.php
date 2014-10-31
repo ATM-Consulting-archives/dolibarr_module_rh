@@ -120,6 +120,7 @@
 				$absence->setRefusee($ATMdb,true);
 				
 				$mesg = $langs->trans('DeniedRequest');
+				setEventMessage($mesg);
 				
 				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
