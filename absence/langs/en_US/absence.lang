@@ -327,6 +327,7 @@ Presence=Présence
 PresenceRequestAcceptance=Acceptation de votre demande de présence
 PresenceRequestCreation=Création d'une demande de présence
 PresenceRequestDenied=Refus de votre demande de présence
+PresenceRequestSentToSuperior=Demande de présence envoyée au valideur supérieur
 PresencesReport=Signalement de présences
 PresencesTypes=Type de présences
 PresenceTimeNoted=Temps de présence constatée

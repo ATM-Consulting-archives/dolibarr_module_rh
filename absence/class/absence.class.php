@@ -398,13 +398,15 @@ class TRH_Absence extends TObjetStd {
 	}
 		
 	function setRefusee(&$ATMdb) {
+		global $langs;
+		
 		$this->recrediterHeure($ATMdb);
-		$this->load($ATMdb, $this->id); // TODO à vérifier ça me paraît très con ça
 		$this->etat='Refusee';
 		$this->libelleEtat = $langs->trans('DeniedRequest');
 		$this->save($ATMdb);
 		mailConges($this,$isPresence);
 	}
+	
 	function setAcceptee(&$ATMdb, $fk_valideur,$isPresence=false) {
 		global $langs,$user,$conf;	
 		
@@ -1877,27 +1879,32 @@ class TRH_Absence extends TObjetStd {
 			$t_current = strtotime($date_debut);
 			$t_end = strtotime($date_fin);
 			
-			while($t_current<=$t_end) {
+			while($t_current <= $t_end) {
 				
 				$TPlanning = $abs->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, date('d/m/Y', $t_current), date('d/m/Y', $t_current));
 				
-				
 				list($dt, $TAbsence) = each($TPlanning);
 				
-				foreach($TAbsence as $fk_user=>$ouinon) {
-					
+				foreach($TAbsence as $fk_user => $ouinon) {	
 					$date = date('Y-m-d', $t_current);
+					
+					$presence = strpos($ouinon, '[Présence]') !== false;
 					
 					$estUnJourTravaille = TRH_EmploiTemps::estTravaille($ATMdb, $fk_user, $date);
 					$estFerie = TRH_JoursFeries::estFerie($ATMdb, $date);
 					
 					@$Tab[$fk_user][$date]['presence_jour_entier'] = (int)($estUnJourTravaille=='OUI' && $ouinon=='non' && !$estFerie) ;
-					@$Tab[$fk_user][$date]['presence'] = (int)($estUnJourTravaille!='NON' && $ouinon=='non' && !$estFerie) ;
+					@$Tab[$fk_user][$date]['presence'] = (int)(($estUnJourTravaille!='NON' && $ouinon=='non' && !$estFerie) || $presence) ;
 					
 					if($Tab[$fk_user][$date]['presence_jour_entier']==1)@$Tab[$fk_user][$date]['nb_jour_presence'] = 1;
 					else if($Tab[$fk_user][$date]['presence_jour_entier']==0 && $Tab[$fk_user][$date]['presence']==1)@$Tab[$fk_user][$date]['nb_jour_presence'] = 0.5;
 					else @$Tab[$fk_user][$date]['nb_jour_presence'] = 0;
-					 
+					
+					@$Tab[$fk_user][$date]['absence'] = (int)($ouinon!='non' && !$estFerie) ;
+					
+					if($Tab[$fk_user][$date]['absence']==1 && $estUnJourTravaille=='OUI')@$Tab[$fk_user][$date]['nb_jour_absence'] = 1;
+					else if($Tab[$fk_user][$date]['absence']==1 && $estUnJourTravaille!='NON')@$Tab[$fk_user][$date]['nb_jour_absence'] = 0.5;
+					else $Tab[$fk_user][$date]['nb_jour_absence'] = 0;
 					 
 					$TTime = TRH_EmploiTemps::getWorkingTimeForDayUser($ATMdb, $fk_user,$date);
 					$t_am = $TTime['am'];
@@ -1905,23 +1912,42 @@ class TRH_Absence extends TObjetStd {
 					
 					$Tab[$fk_user][$date]['t_am'] = $t_am;
 					$Tab[$fk_user][$date]['t_pm'] = $t_pm;
-					
-					if($Tab[$fk_user][$date]['nb_jour_presence']==1)$Tab[$fk_user][$date]['nb_heure_presence'] = $t_am + $t_pm;
-					else if($Tab[$fk_user][$date]['nb_jour_presence']==0.5 && $estUnJourTravaille=='AM')$Tab[$fk_user][$date]['nb_heure_presence'] = $t_am; 
-					else if($Tab[$fk_user][$date]['nb_jour_presence']==0.5 && $estUnJourTravaille=='PM')$Tab[$fk_user][$date]['nb_heure_presence'] = $t_pm; 
-					else $Tab[$fk_user][$date]['nb_heure_presence'] = 0;
-					
-					@$Tab[$fk_user][$date]['absence'] = (int)($ouinon!='non' && !$estFerie) ;
-					
-					if($Tab[$fk_user][$date]['absence']==1 && $estUnJourTravaille=='OUI')@$Tab[$fk_user][$date]['nb_jour_absence'] = 1;
-					else if($Tab[$fk_user][$date]['absence']==1 && $estUnJourTravaille!='NON')@$Tab[$fk_user][$date]['nb_jour_absence'] = 0.5;
-					else $Tab[$fk_user][$date]['nb_jour_absence'] = 0;
+										
+					if ($Tab[$fk_user][$date]['nb_jour_presence'] == 1 || ($Tab[$fk_user][$date]['nb_jour_absence'] == 1 && $presence))
+						$Tab[$fk_user][$date]['nb_heure_presence'] = $t_am + $t_pm;
+					else if ($Tab[$fk_user][$date]['nb_jour_presence']==0.5 && $estUnJourTravaille=='AM')
+						$Tab[$fk_user][$date]['nb_heure_presence'] = $t_am; 
+					else if ($Tab[$fk_user][$date]['nb_jour_presence']==0.5 && $estUnJourTravaille=='PM')
+						$Tab[$fk_user][$date]['nb_heure_presence'] = $t_pm;
+					else
+						$Tab[$fk_user][$date]['nb_heure_presence'] = 0;
 				
 					if($Tab[$fk_user][$date]['nb_jour_absence']==1)$Tab[$fk_user][$date]['nb_heure_absence'] = $t_am + $t_pm;
 					else if($Tab[$fk_user][$date]['nb_jour_absence']==0.5 && $estUnJourTravaille=='AM')$Tab[$fk_user][$date]['nb_heure_absence'] = $t_am; 
 					else if($Tab[$fk_user][$date]['nb_jour_absence']==0.5 && $estUnJourTravaille=='PM')$Tab[$fk_user][$date]['nb_heure_absence'] = $t_pm; 
 					else $Tab[$fk_user][$date]['nb_heure_absence'] = 0;
 				
+					if ($presence && $Tab[$fk_user][$date]['nb_heure_absence'] == 0 && $estUnJourTravaille == 'NON') {
+						$sql = 'SELECT date_debut, date_fin, date_hourStart, date_hourEnd FROM ' . MAIN_DB_PREFIX . 'rh_absence WHERE "' . $date . '" BETWEEN date_debut AND date_fin AND fk_user = ' . $fk_user;
+						$ATMdb->Execute($sql);
+						
+						$ATMdb->Get_line();
+						
+						$hourStart = date('H:i', strtotime($ATMdb->Get_field('date_hourStart')));
+						$hourEnd = date('H:i', strtotime($ATMdb->Get_field('date_hourEnd')));
+						
+						$totalHour = difheure($hourStart, $hourEnd);
+						$totalHour = horaireMinuteEnCentieme($totalHour);
+						
+						$Tab[$fk_user][$date]['nb_heure_presence'] = $totalHour;
+					}
+					
+					$pointeuse = new TRH_Pointeuse;
+					$pointeuse->loadByDate($ATMdb, $date);
+					
+					if ($pointeuse->fk_user != 0) {
+						$Tab[$fk_user][$date]['nb_heure_presence'] = $pointeuse->getTempsPresence();
+					}
 					
 					@$Tab[$fk_user][$date]['ferie'] = (int)$estFerie ;
 					
@@ -1933,12 +1959,9 @@ class TRH_Absence extends TObjetStd {
 				}
 				
 				$t_current = strtotime('+1day', $t_current);
-				
 			}
 			
-			
-			return $Tab;
-				
+			return $Tab;	
 	}
 	
 	//fonction qui va renvoyer la requête sql de recherche pour le planning
@@ -2372,11 +2395,11 @@ class TRH_EmploiTemps extends TObjetStd {
 			
 			$emploiTemps = new TRH_EmploiTemps;
 			$emploiTemps->load_by_fkuser($ATMdb, $fk_user,$date);
-			
+
 			$iJour = (int)date('N', strtotime($date)) - 1 ; 	
 		
 			$jour = $emploiTemps->TJour[$iJour];	
-				
+
 			$ret =  array(
 				'am' => $emploiTemps->getHeurePeriode($jour, 'am')
 				,'pm' => $emploiTemps->getHeurePeriode($jour, 'pm')

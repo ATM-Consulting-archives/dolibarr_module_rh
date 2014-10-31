@@ -40,12 +40,17 @@
 							}
 							
 							$mesg = $langs->trans('RegisteredPresence');
+							setEventMessage($mesg);
+							
 							_fiche($ATMdb, $absence,'view');	
 						}
 						else{
 							$errors='';
 							foreach($absence->errors as $err) $errors.=$err.'<br />';
-							$mesg = '<div class="error">'.$errors.'</div>';
+							
+							$mesg = $errors;
+							setEventMessage($errors);
+							
 							_fiche($ATMdb, $absence,'edit');
 							
 						}
@@ -90,7 +95,9 @@
 				
 				$absence->setAcceptee($ATMdb, $user->id, true);
 				
-				$mesg = '<div class="error">' . $langs->trans('PresenceRequestAccepted') . '</div>';
+				$mesg = $langs->trans('PresenceRequestAccepted');
+				setEventMessage($mesg);
+				
 				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
 				
@@ -101,7 +108,10 @@
 				$absence->save($ATMdb);
 				
 				mailConges($absence, true);
-				$mesg = '<div class="error">' . $langs->trans('PresenceRequestSentToSuperior') . '</div>';
+				
+				$mesg = $langs->trans('PresenceRequestSentToSuperior');
+				setEventMessage($mesg);
+				
 				_fiche($ATMdb, $absence,'view');
 				break;
 				
@@ -109,8 +119,9 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 				$absence->setRefusee($ATMdb,true);
 				
+				$mesg = $langs->trans('DeniedRequest');
+				setEventMessage($mesg);
 				
-				$mesg = '<div class="error">' . $langs->trans('DeniedPresenceRequest') . '</div>';
 				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
 		}
@@ -524,8 +535,8 @@ function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
 	echo $form->end_form();
 	// End of page
 	
-	global $mesg, $error;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	//global $mesg, $error;
+	//dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
 }
 
@@ -709,8 +720,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	echo $form->end_form();
 	// End of page
-	global $mesg, $error, $popinExisteDeja, $existeDeja;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	
+	//global $mesg, $error, $popinExisteDeja, $existeDeja;
+	//dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	
 	if(!empty($popinExisteDeja) && !empty($existeDeja)) {
 		?>

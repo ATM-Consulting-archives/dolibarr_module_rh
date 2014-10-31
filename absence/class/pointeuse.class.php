@@ -33,8 +33,13 @@ class TRH_Pointeuse extends TObjetStd {
 		else {
 			$this->time_presence = ($this->date_fin_am - $this->date_deb_am) + ( $this->date_fin_pm - $this->date_deb_pm );
 		}	
-		
+	}
 	
+	function getTempsPresence() {
+		$time = date('H:i', $this->time_presence - 3600);
+		$time = horaireMinuteEnCentieme($time);
+						
+		return $time;
 	}
 }
 

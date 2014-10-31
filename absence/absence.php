@@ -51,13 +51,18 @@
 								mailConges($absence);
 								mailCongesValideur($ATMdb,$absence);
 							}
+							
 							$mesg = $langs->trans('RegistedRequest');
+							
 							_fiche($ATMdb, $absence,'view');
 					}
 					else{
 						$errors='';
 						foreach($absence->errors as $err) $errors.=$err.'<br />';
-						$mesg = '<div class="error">'.$errors.'</div>';
+						
+						$mesg = $errors;
+						setEventMessage($mesg);
+						
 						_fiche($ATMdb, $absence,'edit');
 						
 					}
@@ -98,7 +103,10 @@
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="error">' . $langs->trans('AbsenceRequestAccepted') . '</div>';
+				
+				$mesg = $langs->trans('AbsenceRequestAccepted');
+				setEventMessage($mesg);
+				
 				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
 				
@@ -109,7 +117,10 @@
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="error">' . $langs->trans('AbsenceRequestSentToSuperior') . '</div>';
+				
+				$mesg = $langs->trans('AbsenceRequestSentToSuperior');
+				setEventMessage($mesg);
+				
 				_fiche($ATMdb, $absence,'view');
 				break;
 				
@@ -124,7 +135,8 @@
 
 				//$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="error">' . $langs->trans('DeniedAbsenceRequest') . '</div>';
+				$mesg = $langs->trans('DeniedAbsenceRequest');
+				setEventMessage($mesg);
 				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
 				
@@ -945,8 +957,6 @@ function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
 	echo $form->end_form();
 	// End of page
 	
-	global $mesg, $error;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
 }
 
