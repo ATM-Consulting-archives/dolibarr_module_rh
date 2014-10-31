@@ -1940,14 +1940,11 @@ class TRH_Absence extends TObjetStd {
 						$Tab[$fk_user][$date]['nb_heure_presence'] = $totalHour;
 					}
 					
-					$sql = 'SELECT time_presence FROM ' . MAIN_DB_PREFIX . 'rh_pointeuse WHERE fk_user = ' . $fk_user . ' AND DATE(date_deb_am) = "' . $date . '"';
-					$ATMdb->Execute($sql);
+					$pointeuse = new TRH_Pointeuse;
+					$pointeuse->loadByDate($ATMdb, $date);
 					
-					if ($ATMdb->Get_line()) {
-						$time = date('H:i', $ATMdb->Get_field('time_presence') - 3600);
-						$time = horaireMinuteEnCentieme($time);
-						
-						$Tab[$fk_user][$date]['nb_heure_presence'] = $time;
+					if ($pointeuse->fk_user != 0) {
+						$Tab[$fk_user][$date]['nb_heure_presence'] = $pointeuse->getTempsPresence();
 					}
 					
 					@$Tab[$fk_user][$date]['ferie'] = (int)$estFerie ;
