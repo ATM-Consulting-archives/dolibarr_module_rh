@@ -96,7 +96,7 @@ class modValideur extends DolibarrModules
 								array(
 									'RH_ALTERNATIVE_URL'
 									,'chaine'
-									,'http://127.0.0.1/'
+									,'http://127.0.0.1/dynamicrh/htdocs/rh/'
 									,'Adresse à utiliser pour appeler des scripts si la principale n\'est pas accessible'
 									,1
 								)
