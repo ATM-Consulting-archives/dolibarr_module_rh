@@ -1,17 +1,15 @@
 <?php
 	require('config.php');
 	set_time_limit(0);
-	require('./class/ressource.class.php');
-	require('./class/evenement.class.php');
-	require('./class/contrat.class.php');
-	require('./lib/ressource.lib.php');
+	dol_include_once('/ressource/class/ressource.class.php');
+	dol_include_once('/ressource//class/evenement.class.php');
+	dol_include_once('/ressource//class/contrat.class.php');
+	dol_include_once('/ressource//lib/ressource.lib.php');
 	
-	require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
-	require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-	require_once(DOL_DOCUMENT_ROOT."/core/class/fileupload.class.php");
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-	
-	global $conf;
+	dol_include_once("/core/class/html.form.class.php");
+	dol_include_once("/core/class/html.formfile.class.php");
+	dol_include_once("/core/class/fileupload.class.php");
+	dol_include_once("/core/lib/functions2.lib.php");
 	
 	$langs->load('ressource@ressource');
 	$langs->load('main');
