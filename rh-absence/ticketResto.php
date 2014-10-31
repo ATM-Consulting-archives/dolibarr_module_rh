@@ -40,7 +40,7 @@ global $conf;
 	
 	
 	if(isset($_REQUEST['bt_sage'])) {
-		header('Content-type: application/octet-stream');
+	    header('Content-type: application/octet-stream');
 	    header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.txt');
 	    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 
