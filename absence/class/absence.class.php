@@ -398,13 +398,15 @@ class TRH_Absence extends TObjetStd {
 	}
 		
 	function setRefusee(&$ATMdb) {
+		global $langs;
+		
 		$this->recrediterHeure($ATMdb);
-		$this->load($ATMdb, $this->id); // TODO à vérifier ça me paraît très con ça
 		$this->etat='Refusee';
 		$this->libelleEtat = $langs->trans('DeniedRequest');
 		$this->save($ATMdb);
 		mailConges($this,$isPresence);
 	}
+	
 	function setAcceptee(&$ATMdb, $fk_valideur,$isPresence=false) {
 		global $langs,$user,$conf;	
 		
