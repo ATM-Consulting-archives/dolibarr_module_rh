@@ -174,13 +174,20 @@
 		
 		echo $form->end_form();
 		
-		$formfile->form_attach_new_file($_SERVER["PHP_SELF"], '', 0, 0, $can_upload);
+		$formfile->form_attach_new_file($_SERVER["PHP_SELF"], '', 0, 0, $can_upload,80,'','',0,'',0,'formDocSupplier');
 		$formfile->list_of_documents($filearray, $ressource, 'ressource', '',0,'import_fournisseurs/',1);
 
 		?>
 		<script>
 			$(document).ready(function(){
-				$("form[name='formuserfile']").children().children().children().children().prepend('<? print $select_types_imports; ?>');
+				$("form#formDocSupplier").children().children().children().children().prepend('<? print $select_types_imports; ?>');
+				$("form#formDocSupplier").submit(function() {
+					
+					$(this).hide();
+					$(this).after('Chargement de votre document en cours, merci de patienter...');
+					
+					return true;
+				});
 			});
 		</script>
 		<br>

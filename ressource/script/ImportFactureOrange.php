@@ -98,6 +98,7 @@ $message .= 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 $idImport = Tools::url_format(basename($nomFichier));
 $ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement WHERE idImport='$idImport'");
+$ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement_appel WHERE idImport='$idImport'");
 
 $TDonnees = array();
 

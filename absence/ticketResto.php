@@ -81,7 +81,7 @@ function _generate_ticket_resto(&$ATMdb, $Tab) {
 	
 				print implode(';',array(
 					$conf->global->RH_CODEPRODUIT_TICKET_RESTO
-					,$conf->global->RH_CODECLIENT_TICKET_RESTO
+					,(empty($row['code_client']) ? $conf->global->RH_CODECLIENT_TICKET_RESTO : $row['code_client'])
 					,$row['pointlivraison']
 					,$row['niveau1']
 					,$row['niveau2']
@@ -308,6 +308,8 @@ function _ticket(&$ATMdb) {
 	$form=new TFormCore('auto', 'formTR', 'POST');
 	echo $form->hidden('action', 'GEN_TR');
 	
+	if(__get('date_debut')=='') return false;
+	
 	$t_debut = Tools::get_time( __get('date_debut',0 ));
 	$t_fin = Tools::get_time( __get('date_fin',0 ));
 	
@@ -345,7 +347,8 @@ function _ticket(&$ATMdb) {
 		$ville = $var[3];
 	
 		
-		$pointlivraison = $var[4];	
+		$pointlivraison = $var[4];
+		$code_client = $var[5];
 	}
 	else{
 		
@@ -354,7 +357,7 @@ function _ticket(&$ATMdb) {
 		$cp = $conf->global->MAIN_INFO_SOCIETE_ZIP;
 		$ville = $conf->global->MAIN_INFO_SOCIETE_TOWN;
 	
-		
+		$code_client='';
 	}
 	
 	
@@ -409,9 +412,9 @@ function _ticket(&$ATMdb) {
 			
 			?><td align="right"><?php echo $stat['presence'] ?></td>
 			<td align="right"><?php echo $stat['ndf'] ?></td>
-			<td align="right"><?php echo !empty($stat['ndf_suspicious']) ? '<strong style="color:red;">'.$stat['ndf_suspicious'].'</strong>' : '' ?></td>
+			<td align="right"><?php echo !empty($stat['ndf_suspicious']) ? '<strong style="color:red;" class="classfortooltip" title="'.implode(', ', $stat['TRefSuspisious']).'">'.$stat['ndf_suspicious'].'</strong>' : '' ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][nbTicket]', $stat['presence']-$stat['ndf'], 3)  ?> de <?php echo (int)$conf->global->RH_MONTANT_TICKET_RESTO ?> centimes</td>
-			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]',$pointlivraison, 10,255)  ?></td>
+			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][pointlivraison]',$pointlivraison, 10,255).$form->hidden('TTicket['.$idUser.'][code_client]', $code_client)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau1]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][niveau2]', '', 10,255)  ?></td>
 			<td align="right"><?php echo $form->texte('', 'TTicket['.$idUser.'][matricule]', $u->array_options['options_COMPTE_TIERS'], 10,255)  ?></td>
