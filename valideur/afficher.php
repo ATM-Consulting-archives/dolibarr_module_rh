@@ -130,7 +130,9 @@ function _liste(&$ATMdb) {
 			
 		));
 		
-		?><a class="butAction" href="?action=new&fk_user=<?=$fuser->id ?>">Nouveau</a>
+		?><div class="tabsAction">
+			<a class="butAction" href="?action=new&fk_user=<?=$fuser->id ?>">Nouveau</a>
+		</div>
 		<div style="clear:both;"></div>
 		<?
 		

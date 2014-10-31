@@ -251,8 +251,6 @@ class TRH_Absence extends TObjetStd {
 		$this->TJour = array('lundi','mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche');
 		$this->Tjoursem = array('dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'); 
 		
-		$ATMdb=new TPDOdb;
-				
 		//combo pour le choix de matin ou après midi 
 		$this->TddMoment = array('matin'=> $langs->trans('AbsenceMorning'),'apresmidi'=> $langs->trans('AbsenceAfternoon'));	//moment de date début
 		$this->TdfMoment = array('matin'=> $langs->trans('AbsenceMorning'),'apresmidi'=> $langs->trans('AbsenceAfternoon'));	//moment de date fin
@@ -270,6 +268,8 @@ class TRH_Absence extends TObjetStd {
 		
 		$this->congesPrisNM1 = 0; // lors du comptage d'une absence pour alimenter le compteur
 		$this->congesPrisN = 0; // lors du comptage d'une absence pour alimenter le compteur
+		
+		$this->TTypeAbsenceAdmin=$this->TTypeAbsenceUser=$this->TTypeAbsencePointeur=array(); //cf. loadTypeAbsencePerTypeUser
 	}
 
 	//renvoie le tableau des utilisateurs
@@ -1395,7 +1395,35 @@ class TRH_Absence extends TObjetStd {
 	
 		return $dureeAbsenceRecevable;
 	}
-
+	
+	function loadTypeAbsencePerTypeUser(&$ATMdb) {
+		
+		//combo box pour le type d'absence admin
+		$this->TTypeAbsenceAdmin=$this->TTypeAbsenceUser=$this->TTypeAbsencePointeur=array();
+		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence`";
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$this->TTypeAbsenceAdmin[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+		}
+		
+		
+		//combo box pour le type d'absence utilisateur
+		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
+				WHERE admin=0";
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$this->TTypeAbsenceUser[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+		}
+		
+		//combo box pour le type d'absence pointeur
+		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
+				WHERE admin=0 OR typeAbsence LIKE 'nonjustifiee'";
+		$ATMdb->Execute($sql);
+		while($ATMdb->Get_line()) {
+			$this->TTypeAbsencePointeur[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+		}
+	}
+	
 	/**
 	 * Charge l'attribut TDureeAllAbsenceUser de l'objet absence associant à chaque mois de chaque année une durée total de congés pris ou demandés
 	 * @param object $objet : objet absence

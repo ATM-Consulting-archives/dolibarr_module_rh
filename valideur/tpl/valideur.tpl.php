@@ -58,7 +58,7 @@
 		<td id="textMontant">Montant avant alerte</td>
 		<td>Se valide lui-même ?</td>
 		<td>Niveau du valideur</td>
-		<td id="pointeur">Pointeur</td>
+		<td id="pointeur" class="classfortooltip" title="Donne droit à créer toutes les absences 'non admin' et 'nonjustifiee'">Pointeur (?)</td>
 	</tr>
 	<tr>
 		<td>[valideur.group;strconv=no;protect=no]</td>

@@ -55,9 +55,9 @@ class TRH_TicketResto extends TObjetStd {
 		$ATMdb->Execute($sql);
 		$Tab=array();
 
-                while($obj = $ATMdb->Get_line()) {
-                        $Tab[] = $obj->ref;
-                }
+        while($obj = $ATMdb->Get_line()) {
+                $Tab[] = $obj->ref;
+        }
 		
 
 		/*Note invité*/
@@ -75,10 +75,10 @@ class TRH_TicketResto extends TObjetStd {
 		}
 		
 		$ATMdb->Execute($sql); // on cumule
-//		while($obj = $ATMdb->Get_line()) {
+		while($obj = $ATMdb->Get_line()) {
 			$Tab[] = $obj->ref;
-		}		
-
+		}
+		
 		return $Tab;		
 	}
 	

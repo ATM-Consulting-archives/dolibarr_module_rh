@@ -554,6 +554,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	llxHeader('', $langs->trans('AbsenceRequest'));
 	//echo $_REQUEST['validation'];
 	
+	$absence->loadTypeAbsencePerTypeUser($ATMdb);
+	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $absence->getId());
