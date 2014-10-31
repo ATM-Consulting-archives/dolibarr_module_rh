@@ -41,7 +41,7 @@ class TRH_TicketResto extends TObjetStd {
 	static function isNDFforDay(&$ATMdb, $date, $fk_user, $withSuspicisous=false) {
 		global $conf;
 		/* Note repas */
-		$sql = "SELECT  DISTINCT n.ref 
+		$sql = "SELECT n.ref, DATE_FORMAT(nd.dated,'%d/%m/%Y') as dated
 		FROM ".MAIN_DB_PREFIX."ndfp_det nd LEFT JOIN ".MAIN_DB_PREFIX."ndfp n ON (nd.fk_ndfp=n.rowid)
 		WHERE n.fk_user=".$fk_user." AND nd.fk_exp IN (".$conf->global->RH_NDF_TICKET_RESTO.") ";
 		
@@ -51,17 +51,19 @@ class TRH_TicketResto extends TObjetStd {
 		else{
 			$sql .= " AND nd.dated<='".$date."' AND nd.datef>='".$date."'";
 		}
-		
+		$sql.=" GROUP BY n.ref,nd.dated ";
+
 		$ATMdb->Execute($sql);
 		$Tab=array();
 
-        while($obj = $ATMdb->Get_line()) {
-                $Tab[] = $obj->ref;
-        }
+                while($obj = $ATMdb->Get_line()) {
+                        $line = $obj->ref.' ('.$obj->dated.')';
+			if(!in_array($line,$Tab))$Tab[]=$line;
+                }
 		
 
 		/*Note invité*/
-		$sql = "SELECT DISTINCT n.ref 
+		$sql = "SELECT n.ref, DATE_FORMAT(nd.dated,'%d/%m/%Y') as dated
 		FROM ".MAIN_DB_PREFIX."ndfp_det nd 
 			INNER JOIN ".MAIN_DB_PREFIX."ndfp n ON (nd.fk_ndfp=n.rowid)
 			INNER JOIN ".MAIN_DB_PREFIX."ndfp_det_link_user ndl ON (nd.rowid=ndl.fk_ndfpdet)
@@ -73,12 +75,16 @@ class TRH_TicketResto extends TObjetStd {
 		else{
 			$sql .= " AND nd.dated<='".$date."' AND nd.datef>='".$date."'";
 		}
-		
-		$ATMdb->Execute($sql); // on cumule
+
+		$sql.=" GROUP BY n.ref,nd.dated ";
+
+		$ATMdb->Execute($sql);
+
 		while($obj = $ATMdb->Get_line()) {
-			$Tab[] = $obj->ref;
-		}
-		
+			$line = $obj->ref.' ('.$obj->dated.')';
+                        if(!in_array($line,$Tab))$Tab[]=$line;
+		}		
+
 		return $Tab;		
 	}
 	
@@ -97,12 +103,13 @@ class TRH_TicketResto extends TObjetStd {
 				if(	$row['presence_jour_entier'] ) {
 					
 					$TRefNDF = TRH_TicketResto::isNDFforDay($ATMdb, $date, $fk_user);
-					$ndf+=count( $TRefNDF );
+					$ndf+=(count( $TRefNDF )>0) ? 1 : 0;
 
-					$TRefNDF = TRH_TicketResto::isNDFforDay($ATMdb, $date, $fk_user, true);
-					$ndf_with_suspicious+=count( $TRefNDF );
-
-					$TRefSuspisious = array_merge($TRefSuspisious, $TRefNDF);
+					$TRefNDFSus = TRH_TicketResto::isNDFforDay($ATMdb, $date, $fk_user, true);
+					$ndf_with_suspicious+=(count( $TRefNDFSus )>0) ?1:0;
+					
+					$TSuspicious = array_diff($TRefNDFSus,$TRefNDF);
+					if(!empty($TSuspicious)) $TRefSuspisious= array_merge($TRefSuspisious, $TSuspicious);
 				}
 				
 				
