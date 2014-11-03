@@ -110,6 +110,7 @@ class modAbsence extends DolibarrModules
 			,array('RH_NDF_TICKET_RESTO','chaine','30', $langs->trans('ConstIdSpendingNoTickets'),1)
 			,array('RH_CODEPRODUIT_TICKET_RESTO','chaine','789456', $langs->trans('ProductCode'),1)
 			,array('RH_CODECLIENT_TICKET_RESTO','chaine','123456', $langs->trans('ClientCode'),1)
+			,array('RH_ABSENCE_USE_THEORICTIME_FOR_DECLARATION','chaine','0', $langs->trans('UseTheoricTimeForDeclaration'),1)
 			
 		); 
 

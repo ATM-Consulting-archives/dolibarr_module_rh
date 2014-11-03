@@ -55,10 +55,9 @@ class TRH_Pointeuse extends TObjetStd {
 				
 				$type=new TRH_TypeAbsence;
 				$type->load_by_type($ATMdb, $row->type);
-				
 				if($type->isPresence) {
 					
-					$ttr = $type->date_hourEnd - $type->date_hourStart;
+					$ttr = strtotime($row->date_hourEnd) - strtotime($row->date_hourStart);
 					
 				}
 				

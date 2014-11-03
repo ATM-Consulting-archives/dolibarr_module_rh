@@ -90,7 +90,8 @@ global $db,$langs,$conf;
 		foreach($TStat as $date=>$stat) {
 			//var_dump(TRH_Pointeuse::tempsPresenceDuJour($ATMdb, $fk_user,$date));
 			
-			$nb_heure_travaille_ce_jour = $stat['nb_heure_presence_reelle'];
+			if($conf->global->RH_ABSENCE_USE_THEORICTIME_FOR_DECLARATION) $nb_heure_travaille_ce_jour = $stat['nb_heure_presence'];
+			else $nb_heure_travaille_ce_jour = $stat['nb_heure_presence_reelle'];
 			
 			$total += $nb_heure_travaille_ce_jour;
 		
