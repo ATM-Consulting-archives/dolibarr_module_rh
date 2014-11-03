@@ -18,7 +18,7 @@ class TRH_Pointeuse extends TObjetStd {
 		
 	}
 	function loadByDate(&$ATMdb, $date) {
-		$this->loadBy($ATMdb, $date, 'date_jour');
+		return $this->loadBy($ATMdb, $date, 'date_jour');
 	}
 	
 	function save(&$ATMdb) {
@@ -35,11 +35,50 @@ class TRH_Pointeuse extends TObjetStd {
 		}	
 	}
 	
-	function getTempsPresence() {
-		$time = date('H:i', $this->time_presence - 3600);
-		$time = horaireMinuteEnCentieme($time);
-						
-		return $time;
+	static function tempsTravailReelDuJour(&$ATMdb, $fk_user, $date, $defaultTR=0) {
+		
+		$ttr = 0;
+		if($defaultTR)$ttr = $defaultTR;
+		
+		$pointeuse=new TRH_Pointeuse;
+		if($pointeuse->loadByDate($ATMdb, $date)) {
+			$pointeuse->get_time_presence();
+			$ttr = $pointeuse->time_presence;
+		}
+		else{
+			
+			$absence=new TRH_Absence;
+			$sql = $absence->rechercheAbsenceUser($ATMdb, $fk_user, $date, $date);
+			$Tab = $ATMdb->ExecuteAsArray($sql);
+			
+			foreach($Tab as $row) { // A prévoir à terme, les présence multiple sur une journée
+				
+				$type=new TRH_TypeAbsence;
+				$type->load_by_type($ATMdb, $row->type);
+				
+				if($type->isPresence) {
+					
+					$ttr = $type->date_hourEnd - $type->date_hourStart;
+					
+				}
+				
+			}
+			
+		}
+		
+		return $ttr / 3600;
+		
+	}
+	
+	static function tempsPresenceDuJour(&$ATMdb, $fk_user, $date) {
+		
+		$TStatPlanning = TRH_Absence::getPlanning($ATMdb, 0, $fk_user,  $date , $date);
+		list($dummy,$TStat) = each($TStatPlanning);
+		
+		list($k, $TReturn) = each($TStat);
+		
+		return $TReturn;
+		
 	}
 }
 

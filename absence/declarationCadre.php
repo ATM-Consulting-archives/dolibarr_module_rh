@@ -60,7 +60,6 @@ global $db,$langs,$conf;
 		$t_debut = strtotime(__get('year').'-'.__get('month').'-01');
 		
 		$TStatPlanning = TRH_Absence::getPlanning($ATMdb, 0, $fk_user,  date('Y-m-d', $t_debut) , date('Y-m-t', $t_debut));
-		
 		list($dummy,$TStat) = each($TStatPlanning);
 
 		?>
@@ -89,10 +88,14 @@ global $db,$langs,$conf;
 		$total=0;
 		
 		foreach($TStat as $date=>$stat) {
-			$total += $stat['nb_heure_presence'];
+			//var_dump(TRH_Pointeuse::tempsPresenceDuJour($ATMdb, $fk_user,$date));
+			
+			$nb_heure_travaille_ce_jour = $stat['nb_heure_presence_reelle'];
+			
+			$total += $nb_heure_travaille_ce_jour;
 		
 			$date_ligne = $langs->trans(date('l', strtotime($date))) ;
-			$heure_ligne = convertSecondToTime( $stat['nb_heure_presence'] * 3600 );
+			$heure_ligne = convertSecondToTime( $nb_heure_travaille_ce_jour * 3600 );
 			
 			if($stat['nb_jour_ferie']>0) {
 				$raison = $langs->trans('PublicHoliday');

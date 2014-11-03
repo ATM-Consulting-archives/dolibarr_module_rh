@@ -197,7 +197,7 @@ function _get_temps_presence($time_presence) {
 	
 }
 function _fiche(&$ATMdb, &$pointeuse, $mode) {
-	global $db,$user,$conf;
+	global $db,$user,$conf,$langs;
 	
 	//echo $_REQUEST['validation'];
 	
@@ -214,10 +214,10 @@ function _fiche(&$ATMdb, &$pointeuse, $mode) {
 		,array(  )
 		,array(
 			'pointeuse'=>array(
-				'date_deb_am'=>$form->texte('','date_deb_am', date('H:i',$pointeuse->date_deb_am) ,5,7)
-				,'date_fin_am'=>$form->texte('','date_fin_am', date('H:i',$pointeuse->date_fin_am),5,7)
-				,'date_deb_pm'=>$form->texte('','date_deb_pm', date('H:i',$pointeuse->date_deb_pm),5,7)
-				,'date_fin_pm'=>$form->texte('','date_fin_pm', date('H:i',$pointeuse->date_fin_pm),5,7)
+				'date_deb_am'=>$form->timepicker('','date_deb_am', date('H:i',$pointeuse->date_deb_am) ,5,7)
+				,'date_fin_am'=>$form->timepicker('','date_fin_am', date('H:i',$pointeuse->date_fin_am),5,7)
+				,'date_deb_pm'=>$form->timepicker('','date_deb_pm', date('H:i',$pointeuse->date_deb_pm),5,7)
+				,'date_fin_pm'=>$form->timepicker('','date_fin_pm', date('H:i',$pointeuse->date_fin_pm),5,7)
 				,'date_jour'=>$form->calendrier('', 'date_jour', $pointeuse->date_jour)
 				,'time_presence'=>_get_temps_presence($pointeuse->time_presence)
 				,'id'=>$pointeuse->getId()	

@@ -1853,7 +1853,7 @@ class TRH_Absence extends TObjetStd {
 			global $conf, $langs;
 
 			//on recherche les absences d'un utilisateur pendant la période
-			$sql="SELECT a.rowid as 'ID',  u.login, u.lastname, u.firstname, 
+			$sql="SELECT a.rowid as 'ID',  u.login, u.lastname, u.firstname,a.type,
 				DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat
 				FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
@@ -1975,7 +1975,7 @@ class TRH_Absence extends TObjetStd {
 				foreach($TAbsence as $fk_user => $ouinon) {	
 					$date = date('Y-m-d', $t_current);
 					
-					$presence = strpos($ouinon, '[Présence]') !== false;
+					$presence = strpos($ouinon, '[Présence]') !== false; //TODO refondre un peu ça pour éviter cette grosse merde de strpos
 					
 					$estUnJourTravaille = TRH_EmploiTemps::estTravaille($ATMdb, $fk_user, $date);
 					$estFerie = TRH_JoursFeries::estFerie($ATMdb, $date);
@@ -2014,34 +2014,16 @@ class TRH_Absence extends TObjetStd {
 					else if($Tab[$fk_user][$date]['nb_jour_absence']==0.5 && $estUnJourTravaille=='PM')$Tab[$fk_user][$date]['nb_heure_absence'] = $t_pm; 
 					else $Tab[$fk_user][$date]['nb_heure_absence'] = 0;
 				
-					if ($presence && $Tab[$fk_user][$date]['nb_heure_absence'] == 0 && $estUnJourTravaille == 'NON') {
-						$sql = 'SELECT date_debut, date_fin, date_hourStart, date_hourEnd FROM ' . MAIN_DB_PREFIX . 'rh_absence WHERE "' . $date . '" BETWEEN date_debut AND date_fin AND fk_user = ' . $fk_user;
-						$ATMdb->Execute($sql);
-						
-						$ATMdb->Get_line();
-						
-						$hourStart = date('H:i', strtotime($ATMdb->Get_field('date_hourStart')));
-						$hourEnd = date('H:i', strtotime($ATMdb->Get_field('date_hourEnd')));
-						
-						$totalHour = difheure($hourStart, $hourEnd);
-						$totalHour = horaireMinuteEnCentieme($totalHour);
-						
-						$Tab[$fk_user][$date]['nb_heure_presence'] = $totalHour;
-					}
-					
-					$pointeuse = new TRH_Pointeuse;
-					$pointeuse->loadByDate($ATMdb, $date);
-					
-					if ($pointeuse->fk_user != 0) {
-						$Tab[$fk_user][$date]['nb_heure_presence'] = $pointeuse->getTempsPresence();
-					}
-					
 					@$Tab[$fk_user][$date]['ferie'] = (int)$estFerie ;
 					
 					$Tab[$fk_user][$date]['nb_jour_ferie'] = ($Tab[$fk_user][$date]['ferie'] && $estUnJourTravaille!='NON') ? 1:0;
 					
 					$Tab[$fk_user][$date]['estUnJourTravaille'] = $estUnJourTravaille;
 					$Tab[$fk_user][$date]['typeAbsence'] = $ouinon;
+					
+					$Tab[$fk_user][$date]['nb_heure_presence_reelle'] = TRH_Pointeuse::tempsTravailReelDuJour($ATMdb, $fk_user, $date, ($Tab[$fk_user][$date]['t_am'] +	$Tab[$fk_user][$date]['t_pm']) * 3600); // en heure
+					
+					$Tab[$fk_user][$date]['nb_heure_suplementaire'] = $Tab[$fk_user][$date]['nb_heure_presence_reelle'] - $Tab[$fk_user][$date]['nb_heure_presence']; 
 					
 				}
 				
