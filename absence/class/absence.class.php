@@ -239,7 +239,7 @@ class TRH_Absence extends TObjetStd {
 		parent::add_champs('commentaireValideur','type=chaine;');		//commentaire
 		parent::add_champs('etat','type=chaine;index;');			//état (à valider, validé...)
 		parent::add_champs('avertissement','type=entier;');	
-		parent::add_champs('libelleEtat','type=chaine;');			//état (à valider, validé...)
+		parent::add_champs('libelleEtat,avertissementInfo','type=chaine;');			//état (à valider, validé...)
 		parent::add_champs('niveauValidation','type=entier;');	//niveau de validation
 		parent::add_champs('idAbsImport','type=entier;index;');	//niveau de validation
 		parent::add_champs('fk_user, fk_user_valideur','type=entier;index;');	//utilisateur concerné
@@ -384,18 +384,13 @@ class TRH_Absence extends TObjetStd {
 		}
 		else if($this->type=="rttnoncumule"){
 			
-			
 			$compteur->add($ATMdb, $this->type, $dureeAbsenceCourante, 'Prise de RTT non cumulé');
 			
 		}
 		else if($this->type=="conges"||$this->type=="cppartiel"){	//autre que RTT : décompte les congés
-					
-			
 			$compteur->add($ATMdb, $this->type, array($this->congesPrisNM1,  $this->congesPrisN), 'Prise de congé');
 			
 			$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
-			
-			
 			
 		}
 		
@@ -403,15 +398,17 @@ class TRH_Absence extends TObjetStd {
 	}
 		
 	function setRefusee(&$ATMdb) {
+		global $langs;
+		
 		$this->recrediterHeure($ATMdb);
-		$this->load($ATMdb, $this->id); // TODO à vérifier ça me paraît très con ça
 		$this->etat='Refusee';
 		$this->libelleEtat = $langs->trans('DeniedRequest');
 		$this->save($ATMdb);
 		mailConges($this,$isPresence);
 	}
+	
 	function setAcceptee(&$ATMdb, $fk_valideur,$isPresence=false) {
-		global $langs,$user;	
+		global $langs,$user,$conf;	
 		
 		
 		$this->etat='Validee';
@@ -419,10 +416,23 @@ class TRH_Absence extends TObjetStd {
 		$this->date_validation=time();
 		$this->fk_user_valideur = $fk_valideur;
 		
-		$this->save($ATMdb);
 		
+		// Appel des triggers
+		dol_include_once('/core/class/interfaces.class.php');
+		$interface = new Interfaces($db);
+		
+		$result = $interface->run_triggers('ABSENCE_BEFOREVALIDATE',$this,$user,$langs,$conf);
+		
+		if ($result < 0) {
+			$error++; $this->errors=$interface->errors;
+			return false; 
+		}
+		else { 
+			$this->save($ATMdb);
+			mailConges($this, $isPresence);	
 			
-		mailConges($this, $isPresence);	
+			return true;
+		}
 			
 		
 	}	
@@ -460,7 +470,6 @@ class TRH_Absence extends TObjetStd {
 		}
 		// Fin appel triggers
 		else {
-		
 			parent::save($db);
 			return true;	
 		}	
@@ -567,10 +576,11 @@ class TRH_Absence extends TObjetStd {
 		$typeAbs = new TRH_TypeAbsence;
 		
 		$typeAbs->load_by_type($ATMdb, $this->type);
+		
 		//print_r($typeAbs);
 		$emploiTemps = new TRH_EmploiTemps;
 		$emploiTemps->load_by_fkuser($ATMdb, $this->fk_user);
-		
+				
 		while($t_current<=$t_end) {
 			//print date('Y-m-d', $t_current).'<br>';;
 			$current_day = $TJourSemaine[(int)date('w', $t_current)];
@@ -581,7 +591,7 @@ class TRH_Absence extends TObjetStd {
 				if( ($t_current==$t_start && $this->ddMoment=='matin') || $t_current>$t_start  ) {
 					if(!isset($TJourFerie[ date('Y-m-d', $t_current) ]['am'])) {
 	
-						if($emploiTemps->{$current_day.'am'}==1 ) {
+						if($emploiTemps->{$current_day.'am'} == 1 ) {
 							$dureeJour+=.5;
 							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"am");
 						}		
@@ -592,7 +602,6 @@ class TRH_Absence extends TObjetStd {
 						
 					}
 				}
-				
 				
 				if(($t_current==$t_end && $this->dfMoment=='apresmidi') || $t_current<$t_end  ) {
 				
@@ -645,6 +654,66 @@ class TRH_Absence extends TObjetStd {
 		$this->calculDureeAddContigue($ATMdb);
 		
 		return $duree;
+	}
+	
+	function calculDureePresence(&$ATMdb) {
+		$typeAbs = new TRH_TypeAbsence;
+		
+		$typeAbs->load_by_type($ATMdb, $this->type);
+		
+		$duree = 0;
+		
+		$this->dureeHeure=0;
+		$this->dureeContigue=0;
+		$this->dureeContigueWhitoutJNT = 0;
+		
+		$dateStart = date('Y-m-d', $this->date_debut);
+		$dateEnd = date('Y-m-d', $this->date_fin);
+		
+		$datetimeStart = new DateTime($dateStart);
+		$datetimeEnd = new DateTime($dateEnd);
+		$interval = $datetimeStart->diff($datetimeEnd);
+		$days = $interval->days;
+		
+		// Retourne le nombre de semaine
+		$weeks = floor($days / 7);
+		
+		// Retourne le nombre de jour avant la fin de la première semaine
+		$remaining = fmod($days, 7);
+		
+		$firstDayOfWeek = date('N', $dateStart);
+		$lastDayOfWeek = date('N', $dateEnd);
+		
+		if ($firstDayOfWeek <= $lastDayOfWeek) {
+			if ($firstDayOfWeek <= 6 && 6 <= $lastDayOfWeek) $remaining--;
+			if ($firstDayOfWeek <= 7 && 7 <= $lastDayOfWeek) $remaining--;
+		} else {
+			if ($firstDayOfWeek == 7) {
+				$remaining--;
+				
+				if ($lastDayOfWeek == 6) {
+					$remaining--;
+				}
+			} else {
+				$remaining -= 2;
+			}
+		}
+		
+		$workingDays = $weeks * 5;
+		if ($remaining > 0) {
+			$workingDays += $remaining;
+		}
+		
+		$hourStart = date('H:i', $this->date_hourStart);
+		$hourEnd = date('H:i', $this->date_hourEnd);
+		
+		// Calcul du nombre d'heures de présence
+		$hours = difheure($hourStart, $hourEnd);
+		$hours = horaireMinuteEnCentieme($hours);
+		
+		$this->dureeHeure = $hours;
+		
+		return $workingDays;
 	}
 	
 	//TODO Delete, version dépréciée est buguée
@@ -1383,15 +1452,74 @@ class TRH_Absence extends TObjetStd {
 		if($hf[0]<$hd[0]){$hf[0]=$hf[0]+24;}
 		return (($hf[0]-$hd[0]).":".($hf[1]-$hd[1]).":".($hf[2]-$hd[2]));
 	}
+	function testMinEffectifGroupeOk(&$ATMdb, $idGroup, $nb_min) {
+		
+		if($nb_min>0) {
+			$t_current=$this->date_debut;
+			
+			while($t_current <= $this->date_fin) {
+			
+				$date =date('Y-m-d', $t_current);
+				
+				$sql = $this->rechercheAucunConges($ATMdb, $idGroup,0,$date,$date);
+				
+				$Tab = $ATMdb->ExecuteAsArray($sql);
+				$nb_user = count($Tab);
+				
+				if($nb_user<=$nb_min) return false;
+				
+				$t_current = strtotime('+1day', $t_current);
+			}
+			
+			
+		}
+		
+		return true;
+		
+	}
+
+	function testEffectifGroupe(&$ATMdb) {
+		global $db;
+		
+		$user =new User($db);
+		$user->fetch($this->fk_user);
+		
+		if($user->id>0) {
+			
+			$g=new UserGroup($db);
+			$TGroup = $g->listGroupsForUser($user->id);
+			
+			foreach($TGroup as $group) {
+				
+				$nb_min = (int)$group->array_options['options_number_min'];
+				
+				if(!$this->testMinEffectifGroupeOk($ATMdb, $group->id, $nb_min)) {
+					return false;
+				}
+				
+			}		
+		
+			return true;
+		
+		}		
+		
+		return false;
+	}
 
 	
 	function dureeAbsenceRecevable(&$ATMdb){
+		global $langs;
+		
 		$dureeAbsenceRecevable=0;
 		$TRegle=$this->recuperationRegleUser($ATMdb,$this->fk_user);
 		//var_dump($TRegle);
 		$this->loadDureeAllAbsenceUser($ATMdb, $this->type);
 		$dureeAbsenceRecevable = $this->nbJoursTotalRegle($this->TDureeAllAbsenceUser, $TRegle);
 		
+		if(!$this->testEffectifGroupe($ATMdb)) {
+			$dureeAbsenceRecevable = 2;
+			$this->error = $langs->trans('ErrInsuffisanteNumberOfPerson');
+		}
 	
 		return $dureeAbsenceRecevable;
 	}
@@ -1652,7 +1780,7 @@ class TRH_Absence extends TObjetStd {
 	}
 	
 	//requete renvoyant les utilisateurs n'ayant pas pris de congés pendant une période
-	function rechercheAucunConges(&$ATMdb, $idGroupeRecherche,$idUserRecherche, $date_debut, $date_fin, $typeAbsence){ 
+	function rechercheAucunConges(&$ATMdb, $idGroupeRecherche,$idUserRecherche, $date_debut, $date_fin, $typeAbsence='Tous'){ 
 			global $conf, $langs;
 
 			if($idUserRecherche!=0){
@@ -1661,8 +1789,8 @@ class TRH_Absence extends TObjetStd {
 				FROM ".MAIN_DB_PREFIX."user as u 
 				WHERE u.rowid =".$idUserRecherche." AND u.rowid NOT IN (
 							SELECT a.fk_user 
-							FROM ".MAIN_DB_PREFIX."rh_absence as a
-							WHERE a.fk_user=".$idUserRecherche." AND
+							FROM ".MAIN_DB_PREFIX."rh_absence as a,".MAIN_DB_PREFIX."rh_type_absence as t 
+							WHERE a.fk_user=".$idUserRecherche." AND a.type=t.typeAbsence AND t.isPresence!=1
 							(a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
@@ -1677,10 +1805,10 @@ class TRH_Absence extends TObjetStd {
 			else if($idGroupeRecherche==0){ 
 				$sql="SELECT DISTINCT u.login, u.lastname, u.firstname
 				FROM ".MAIN_DB_PREFIX."user as u 
-				WHERE u.rowid NOT IN (
+				WHERE  u.rowid NOT IN (
 							SELECT a.fk_user 
-							FROM ".MAIN_DB_PREFIX."rh_absence as a
-							WHERE 
+							FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."rh_type_absence as t
+							WHERE a.type=t.typeAbsence AND t.isPresence!=1 AND
 							(a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
@@ -1696,15 +1824,16 @@ class TRH_Absence extends TObjetStd {
 
 				$sql="SELECT DISTINCT g.fk_user,  u.login, u.lastname, u.firstname
 				FROM ".MAIN_DB_PREFIX."usergroup_user as g, ".MAIN_DB_PREFIX."user as u
+				
 				WHERE u.rowid=g.fk_user";
 				if($idGroupeRecherche!=0){
 						$sql.=" AND g.fk_usergroup=".$idGroupeRecherche;
 				}
 				$sql.="
-				AND g.fk_user NOT IN (
+				AND  g.fk_user NOT IN (
 							SELECT a.fk_user 
-							FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."usergroup_user as g
-							WHERE g.fk_user=u.rowid 
+							FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."usergroup_user as g,".MAIN_DB_PREFIX."rh_type_absence as t 
+							WHERE g.fk_user=u.rowid AND a.type=t.typeAbsence AND t.isPresence!=1 
 							AND g.fk_usergroup=".$idGroupeRecherche." 
 							AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 							OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
@@ -1837,27 +1966,32 @@ class TRH_Absence extends TObjetStd {
 			$t_current = strtotime($date_debut);
 			$t_end = strtotime($date_fin);
 			
-			while($t_current<=$t_end) {
+			while($t_current <= $t_end) {
 				
 				$TPlanning = $abs->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, date('d/m/Y', $t_current), date('d/m/Y', $t_current));
 				
-				
 				list($dt, $TAbsence) = each($TPlanning);
 				
-				foreach($TAbsence as $fk_user=>$ouinon) {
-					
+				foreach($TAbsence as $fk_user => $ouinon) {	
 					$date = date('Y-m-d', $t_current);
+					
+					$presence = strpos($ouinon, '[Présence]') !== false;
 					
 					$estUnJourTravaille = TRH_EmploiTemps::estTravaille($ATMdb, $fk_user, $date);
 					$estFerie = TRH_JoursFeries::estFerie($ATMdb, $date);
 					
 					@$Tab[$fk_user][$date]['presence_jour_entier'] = (int)($estUnJourTravaille=='OUI' && $ouinon=='non' && !$estFerie) ;
-					@$Tab[$fk_user][$date]['presence'] = (int)($estUnJourTravaille!='NON' && $ouinon=='non' && !$estFerie) ;
+					@$Tab[$fk_user][$date]['presence'] = (int)(($estUnJourTravaille!='NON' && $ouinon=='non' && !$estFerie) || $presence) ;
 					
 					if($Tab[$fk_user][$date]['presence_jour_entier']==1)@$Tab[$fk_user][$date]['nb_jour_presence'] = 1;
 					else if($Tab[$fk_user][$date]['presence_jour_entier']==0 && $Tab[$fk_user][$date]['presence']==1)@$Tab[$fk_user][$date]['nb_jour_presence'] = 0.5;
 					else @$Tab[$fk_user][$date]['nb_jour_presence'] = 0;
-					 
+					
+					@$Tab[$fk_user][$date]['absence'] = (int)($ouinon!='non' && !$estFerie) ;
+					
+					if($Tab[$fk_user][$date]['absence']==1 && $estUnJourTravaille=='OUI')@$Tab[$fk_user][$date]['nb_jour_absence'] = 1;
+					else if($Tab[$fk_user][$date]['absence']==1 && $estUnJourTravaille!='NON')@$Tab[$fk_user][$date]['nb_jour_absence'] = 0.5;
+					else $Tab[$fk_user][$date]['nb_jour_absence'] = 0;
 					 
 					$TTime = TRH_EmploiTemps::getWorkingTimeForDayUser($ATMdb, $fk_user,$date);
 					$t_am = $TTime['am'];
@@ -1865,23 +1999,42 @@ class TRH_Absence extends TObjetStd {
 					
 					$Tab[$fk_user][$date]['t_am'] = $t_am;
 					$Tab[$fk_user][$date]['t_pm'] = $t_pm;
-					
-					if($Tab[$fk_user][$date]['nb_jour_presence']==1)$Tab[$fk_user][$date]['nb_heure_presence'] = $t_am + $t_pm;
-					else if($Tab[$fk_user][$date]['nb_jour_presence']==0.5 && $estUnJourTravaille=='AM')$Tab[$fk_user][$date]['nb_heure_presence'] = $t_am; 
-					else if($Tab[$fk_user][$date]['nb_jour_presence']==0.5 && $estUnJourTravaille=='PM')$Tab[$fk_user][$date]['nb_heure_presence'] = $t_pm; 
-					else $Tab[$fk_user][$date]['nb_heure_presence'] = 0;
-					
-					@$Tab[$fk_user][$date]['absence'] = (int)($ouinon!='non' && !$estFerie) ;
-					
-					if($Tab[$fk_user][$date]['absence']==1 && $estUnJourTravaille=='OUI')@$Tab[$fk_user][$date]['nb_jour_absence'] = 1;
-					else if($Tab[$fk_user][$date]['absence']==1 && $estUnJourTravaille!='NON')@$Tab[$fk_user][$date]['nb_jour_absence'] = 0.5;
-					else $Tab[$fk_user][$date]['nb_jour_absence'] = 0;
+										
+					if ($Tab[$fk_user][$date]['nb_jour_presence'] == 1 || ($Tab[$fk_user][$date]['nb_jour_absence'] == 1 && $presence))
+						$Tab[$fk_user][$date]['nb_heure_presence'] = $t_am + $t_pm;
+					else if ($Tab[$fk_user][$date]['nb_jour_presence']==0.5 && $estUnJourTravaille=='AM')
+						$Tab[$fk_user][$date]['nb_heure_presence'] = $t_am; 
+					else if ($Tab[$fk_user][$date]['nb_jour_presence']==0.5 && $estUnJourTravaille=='PM')
+						$Tab[$fk_user][$date]['nb_heure_presence'] = $t_pm;
+					else
+						$Tab[$fk_user][$date]['nb_heure_presence'] = 0;
 				
 					if($Tab[$fk_user][$date]['nb_jour_absence']==1)$Tab[$fk_user][$date]['nb_heure_absence'] = $t_am + $t_pm;
 					else if($Tab[$fk_user][$date]['nb_jour_absence']==0.5 && $estUnJourTravaille=='AM')$Tab[$fk_user][$date]['nb_heure_absence'] = $t_am; 
 					else if($Tab[$fk_user][$date]['nb_jour_absence']==0.5 && $estUnJourTravaille=='PM')$Tab[$fk_user][$date]['nb_heure_absence'] = $t_pm; 
 					else $Tab[$fk_user][$date]['nb_heure_absence'] = 0;
 				
+					if ($presence && $Tab[$fk_user][$date]['nb_heure_absence'] == 0 && $estUnJourTravaille == 'NON') {
+						$sql = 'SELECT date_debut, date_fin, date_hourStart, date_hourEnd FROM ' . MAIN_DB_PREFIX . 'rh_absence WHERE "' . $date . '" BETWEEN date_debut AND date_fin AND fk_user = ' . $fk_user;
+						$ATMdb->Execute($sql);
+						
+						$ATMdb->Get_line();
+						
+						$hourStart = date('H:i', strtotime($ATMdb->Get_field('date_hourStart')));
+						$hourEnd = date('H:i', strtotime($ATMdb->Get_field('date_hourEnd')));
+						
+						$totalHour = difheure($hourStart, $hourEnd);
+						$totalHour = horaireMinuteEnCentieme($totalHour);
+						
+						$Tab[$fk_user][$date]['nb_heure_presence'] = $totalHour;
+					}
+					
+					$pointeuse = new TRH_Pointeuse;
+					$pointeuse->loadByDate($ATMdb, $date);
+					
+					if ($pointeuse->fk_user != 0) {
+						$Tab[$fk_user][$date]['nb_heure_presence'] = $pointeuse->getTempsPresence();
+					}
 					
 					@$Tab[$fk_user][$date]['ferie'] = (int)$estFerie ;
 					
@@ -1893,12 +2046,9 @@ class TRH_Absence extends TObjetStd {
 				}
 				
 				$t_current = strtotime('+1day', $t_current);
-				
 			}
 			
-			
-			return $Tab;
-				
+			return $Tab;	
 	}
 	
 	//fonction qui va renvoyer la requête sql de recherche pour le planning
@@ -1906,6 +2056,10 @@ class TRH_Absence extends TObjetStd {
 			// TODO cette fonction est une horreur, à recoder
 			
 		global $conf;
+		
+		if(!is_array($idGroupeRecherche)) { 
+			$idGroupeRecherche = array($idGroupeRecherche);
+		}
 		
 		
 		if($idUserRecherche>0){	//on recherche une  personne précis
@@ -1924,14 +2078,18 @@ class TRH_Absence extends TObjetStd {
 				
 		}
 
-		else if($idGroupeRecherche>0){	//on recherche un groupe précis
+		else if(array_sum($idGroupeRecherche)>0){	//on recherche un groupe précis
+		
 			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.lastname,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment,ta.isPresence
 				FROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
 				LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_type_absence as ta ON (a.type=ta.typeAbsence)
 				LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (g.fk_user=u.rowid)
-				WHERE g.fk_usergroup=".$idGroupeRecherche."
-				AND a.etat!='Refusee'
+				WHERE 1 ";
+				
+				$sql.= " AND g.fk_usergroup IN (".implode(',',$idGroupeRecherche).")";
+			
+			$sq.=" AND a.etat!='Refusee'
 				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
@@ -1954,7 +2112,7 @@ class TRH_Absence extends TObjetStd {
 				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin
 				)";
 		}
-		
+	
 		// on traite la recherche pour le planning
 		$k=0;
 		$ATMdb->Execute($sql);
@@ -1977,9 +2135,9 @@ class TRH_Absence extends TObjetStd {
 		if($idUserRecherche>0) {
 			$sql="SELECT u.rowid, u.login, u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u WHERE rowid=".$idUserRecherche;
 		}
-		else if($idGroupeRecherche!=0){	//on recherche un groupe précis
+		else if( array_sum($idGroupeRecherche)>0) {	//on recherche un groupe précis
 			$sql="SELECT u.rowid, u.login, u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
-			WHERE u.rowid=g.fk_user AND g.fk_usergroup=".$idGroupeRecherche." ORDER BY u.lastname";
+			WHERE u.rowid=g.fk_user AND g.fk_usergroup IN (".implode(',',$idGroupeRecherche).") ORDER BY u.lastname";
 		}else{
 			$sql="SELECT rowid, login, lastname, firstname FROM ".MAIN_DB_PREFIX."user";
 		}
@@ -2299,7 +2457,6 @@ class TRH_EmploiTemps extends TObjetStd {
 	}
 	
 	function getHeurePeriode($current_day,$periode){
-		
 		return ($this->{"date_".$current_day."_heuref".$periode} - $this->{"date_".$current_day."_heured".$periode}) / 3600;
 	}	
 	
@@ -2324,11 +2481,11 @@ class TRH_EmploiTemps extends TObjetStd {
 			
 			$emploiTemps = new TRH_EmploiTemps;
 			$emploiTemps->load_by_fkuser($ATMdb, $fk_user,$date);
-			
+
 			$iJour = (int)date('N', strtotime($date)) - 1 ; 	
 		
 			$jour = $emploiTemps->TJour[$iJour];	
-				
+
 			$ret =  array(
 				'am' => $emploiTemps->getHeurePeriode($jour, 'am')
 				,'pm' => $emploiTemps->getHeurePeriode($jour, 'pm')

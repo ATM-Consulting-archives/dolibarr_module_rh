@@ -14,6 +14,42 @@ class ActionsValideur
     { 
         global $db,$html,$user, $langs;
 		
+		if(in_array('ndfpcard', explode(':', $parameters['context']))) {
+			
+			if($action==='create' && $parameters['action']==='delegation') {
+				
+					$TUserDelegation=array();
+					$TUserDelegation[]=$user->id;
+					
+					//on récupère les delegateurs du user et on les affiche
+					$sql = "SELECT fk_object FROM ".MAIN_DB_PREFIX."user_extrafields WHERE fk_user_delegation=".$user->id;
+					print $sql;
+					$result = $db->query($sql);
+					if ($result)
+					{
+						$num = $db->num_rows($result);
+						$i = 0;
+						if ($num){
+						    while ($i < $num){
+						        $obj = $db->fetch_object($sql);
+						        if ($obj){
+									$TUserDelegation[]=$obj->fk_object;
+									
+						        }
+						        $i++;
+							}
+						}
+			     	}
+					echo $html->select_dolusers($user->id, "fk_user",0,'','',$TUserDelegation );
+					
+					return 1;
+				
+			}
+			
+			
+		}
+		
+		// TODO tout le code qui suit est de la merde, il faut le débugguer dans les prochainess versions
 		if($action=='is_validator'){
 			$user_id=$user->id;
 			

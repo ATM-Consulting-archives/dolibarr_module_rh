@@ -14,6 +14,24 @@ function competencePrepareHead(&$obj, $type='competence') {
 					array(dol_buildpath('/competence/planFormation.php?id='.$obj->getId()."&action=view",1), 'Fiche','fiche')
 				);
 				break;
+				
+		case 'productivite':
+				return array(
+					array(dol_buildpath('/competence/productivite.php?id='.$obj->getId()."&action=view",1), 'Fiche','fiche')
+				);
+				break;
+				
+		case 'productivite_user':
+				return array(
+					array(dol_buildpath('/competence/productivite_user_fiche.php?id='.$obj->getId()."&fk_user=".$_REQUEST['fk_user']."&action=view",1), 'Fiche','fiche')
+				);
+				break;
+				
+		case 'chiffre_user':
+				return array(
+					array(dol_buildpath('/competence/productivite_user_indice.php?id='.$obj->getId()."&fk_user=".$_REQUEST['fk_user']."&fk_productivite=".$_REQUEST['fk_productivite']."&action=view",1), 'Fiche','fiche')
+				);
+				break;
 		
 	}
 }

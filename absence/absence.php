@@ -51,13 +51,18 @@
 								mailConges($absence);
 								mailCongesValideur($ATMdb,$absence);
 							}
+							
 							$mesg = $langs->trans('RegistedRequest');
+							
 							_fiche($ATMdb, $absence,'view');
 					}
 					else{
 						$errors='';
 						foreach($absence->errors as $err) $errors.=$err.'<br />';
-						$mesg = '<div class="error">'.$errors.'</div>';
+						
+						$mesg = $errors;
+						setEventMessage($mesg);
+						
 						_fiche($ATMdb, $absence,'edit');
 						
 					}
@@ -98,7 +103,10 @@
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="error">' . $langs->trans('AbsenceRequestAccepted') . '</div>';
+				
+				$mesg = $langs->trans('AbsenceRequestAccepted');
+				setEventMessage($mesg);
+				
 				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
 				
@@ -109,7 +117,10 @@
 				$ATMdb->Execute($sqlEtat);
 				$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="error">' . $langs->trans('AbsenceRequestSentToSuperior') . '</div>';
+				
+				$mesg = $langs->trans('AbsenceRequestSentToSuperior');
+				setEventMessage($mesg);
+				
 				_fiche($ATMdb, $absence,'view');
 				break;
 				
@@ -124,7 +135,8 @@
 
 				//$absence->load($ATMdb, $_REQUEST['id']);
 				mailConges($absence);
-				$mesg = '<div class="error">' . $langs->trans('DeniedAbsenceRequest') . '</div>';
+				$mesg = $langs->trans('DeniedAbsenceRequest');
+				setEventMessage($mesg);
 				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
 				
@@ -554,55 +566,59 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	llxHeader('', $langs->trans('AbsenceRequest'));
 	//echo $_REQUEST['validation'];
 	
-	$absence->loadTypeAbsencePerTypeUser($ATMdb);
+	$form=new TFormCore;
 	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
+	$form_start = $form->begin_form($_SERVER['PHP_SELF'],'form1','POST');
+	
 	$form->Set_typeaff($mode);
-	echo $form->hidden('id', $absence->getId());
-	echo $form->hidden('action', 'save');
-	echo $form->hidden('userRecapCompteur', isset($_REQUEST['fk_user'])?$_REQUEST['fk_user']:$absence->fk_user);
-	echo $form->hidden('userAbsenceCree', ($absence->fk_user>0 ) ?$absence->fk_user:0);
+	$form_start.=$form->hidden('id', $absence->getId());
+	$form_start.=$form->hidden('action', 'save');
+	$form_start.=$form->hidden('userRecapCompteur', isset($_REQUEST['fk_user'])?$_REQUEST['fk_user']:$absence->fk_user);
+	$form_start.=$form->hidden('userAbsenceCree', ($absence->fk_user>0 ) ?$absence->fk_user:0);
 	
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
 	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` 
-				WHERE fk_user=".$user->id;
+				WHERE fk_user=" . ((GETPOST('fk_user')) ? intval(GETPOST('fk_user')) : $user->id);
+		
 	$ATMdb->Execute($sqlReqUser);
 	$congePrec=array();
 	$congeCourant=array();
 	$rttCourant=array();
+		
 	while($ATMdb->Get_line()) { // TODO doit être un objet
-				$congePrec['id']=$ATMdb->Get_field('rowid');
-				$congePrec['acquisEx']=$ATMdb->Get_field('acquisExerciceNM1');
-				$congePrec['acquisAnc']=$ATMdb->Get_field('acquisAncienneteNM1');
-				$congePrec['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeNM1');
-				$congePrec['reportConges']=$ATMdb->Get_field('reportCongesNM1');
-				$congePrec['congesPris']=$ATMdb->Get_field('congesPrisNM1');
-				$congePrec['annee']=$ATMdb->Get_field('anneeNM1');
-				$congePrec['fk_user']=$ATMdb->Get_field('fk_user');
-	
-				$congeCourant['id']=$ATMdb->Get_field('rowid');
-				$congeCourant['acquisEx']=$ATMdb->Get_field('acquisExerciceN');
-				$congeCourant['acquisAnc']=$ATMdb->Get_field('acquisAncienneteN');
-				$congeCourant['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeN');
-				$congeCourant['annee']=$ATMdb->Get_field('anneeN');
-				$congeCourant['fk_user']=$ATMdb->Get_field('fk_user');
-				
-				
-				$rttCourant['id']=$ATMdb->Get_field('rowid');
-				
-				/*$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('rttCumuleTotal'));
-				$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('rttNonCumuleTotal'));
-				*/
-				$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('cumuleAcquis')+$ATMdb->Get_field('cumuleReport')-$ATMdb->Get_field('cumulePris'));
-				
-				$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('nonCumuleAcquis')+$ATMdb->Get_field('nonCumuleReport')-$ATMdb->Get_field('nonCumulePris'));
-				
-				$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
-	
-	
-	
+		$congePrec['id']=$ATMdb->Get_field('rowid');
+		$congePrec['acquisEx']=$ATMdb->Get_field('acquisExerciceNM1');
+		$congePrec['acquisAnc']=$ATMdb->Get_field('acquisAncienneteNM1');
+		$congePrec['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeNM1');
+		$congePrec['reportConges']=$ATMdb->Get_field('reportCongesNM1');
+		$congePrec['congesPris']=$ATMdb->Get_field('congesPrisNM1');
+		$congePrec['annee']=$ATMdb->Get_field('anneeNM1');
+		$congePrec['fk_user']=$ATMdb->Get_field('fk_user');
+		
+
+		$congeCourant['id']=$ATMdb->Get_field('rowid');
+		$congeCourant['acquisEx']=$ATMdb->Get_field('acquisExerciceN');
+		$congeCourant['acquisAnc']=$ATMdb->Get_field('acquisAncienneteN');
+		$congeCourant['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeN');
+		$congeCourant['annee']=$ATMdb->Get_field('anneeN');
+		$congeCourant['fk_user']=$ATMdb->Get_field('fk_user');
+		
+		
+		$rttCourant['id']=$ATMdb->Get_field('rowid');
+		
+		/*$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('rttCumuleTotal'));
+		$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('rttNonCumuleTotal'));
+		*/
+		$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('cumuleAcquis')+$ATMdb->Get_field('cumuleReport')-$ATMdb->Get_field('cumulePris'));
+		
+		$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('nonCumuleAcquis')+$ATMdb->Get_field('nonCumuleReport')-$ATMdb->Get_field('nonCumulePris'));
+		
+		$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
+
+
+
 	}
 	
 	$congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+$congePrec['acquisHorsPer']+$congePrec['reportConges'];
@@ -747,8 +763,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	}
 	
 	$formDoli = new Form($db);
-		
+	
 	$TBS=new TTemplateTBS();
+	
 	print $TBS->render('./tpl/absence.tpl.php'
 		,array(
 			//'TRegle' =>$TRegle
@@ -764,7 +781,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'congesPris'=>$form->texte('','congesprisNM1',$congePrec['congesPris'],10,50)
 				,'anneePrec'=>$form->texte('','anneeNM1',$anneePrec,10,50)
 				,'total'=>$form->texte('','total',$congePrecTotal,10,50)
-				,'reste'=>round2Virgule($congePrecReste)
+				,'reste' => round2Virgule($congePrecReste)
 				,'idUser'=>$_REQUEST['id']
 			)
 			,'congesCourant'=>array(
@@ -841,7 +858,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'head'=>dol_get_fiche_head(absencePrepareHead($absence, 'absence')  , 'fiche', $langs->trans('Absence'))
 				,'head2'=>dol_get_fiche_head(absencePrepareHead($absence, 'absenceCreation')  , 'fiche', $langs->trans('Absence'))
 				,'dateFormat'=>$langs->trans("FormatDateShortJavaInput")
-				
+				,'form_start'=>$form_start
+				,'form_end'=>$form->end_form()
 			)
 			,'translate' => array(
 				'User' => $langs->trans('User'),
@@ -874,15 +892,18 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'AbsenceBy' => $langs->trans('AbsenceBy')
 			)
 			
-		)	
-		
+		)
 	);
-	
-	echo $form->end_form();
+
 	// End of page
 	
-	global $mesg, $error, $popinExisteDeja, $existeDeja;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
+	global $mesg, $error, $warning, $popinExisteDeja, $existeDeja;
+	
+	if($warning)$typeMesg = 'warning';
+	elseif($error)$typeMesg = 'error';
+	else $typeMesg='ok';
+	
+	dol_htmloutput_mesg($mesg, '', $typeMesg);
 	
 	if(!empty($popinExisteDeja) && !empty($existeDeja)) {
 		?>
@@ -895,7 +916,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			$('#user-planning-dialog div.content').load('planningUser.php?fk_user=<?=$existeDeja[2] ?>&date_debut=<?=__get('date_debut') ?>&date_fin=<?=__get('date_fin') ?> #plannings');
 		
 			$('#user-planning-dialog').dialog({
-				title: <?php echo $langs->trans('CreationError'); ?>	
+				title: "<?php echo $langs->trans('CreationError'); ?>"	
 				,width:700
 				,modal:true
 			});
@@ -936,8 +957,6 @@ function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
 	echo $form->end_form();
 	// End of page
 	
-	global $mesg, $error;
-	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
 }
 

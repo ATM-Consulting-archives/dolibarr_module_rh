@@ -113,7 +113,8 @@ class InterfaceAbsenceWorkflow
 				
 			}
 			
-		} elseif ($action === 'ABSENCE_BEFORECREATE') {
+		} 
+		elseif ($action === 'ABSENCE_BEFORECREATE') {
 				
 			global $user, $db,$langs;
 				
@@ -130,13 +131,6 @@ class InterfaceAbsenceWorkflow
 					$object->avertissement=1;
 				}	
 				
-				/*$object->calculDureeAbsenceParAddition($ATMdb);
-				$object->TDureeAllAbsenceUser = $object->TDureeAbsenceUser;
-				
-				$this->_loadDureeAllAbsenceUser($ATMdb, $object);
-				
-				$object->code_validite = $this->_absenceEstValide($ATMdb, $object);*/
-					
 				return 1;
 			}
 			else{
@@ -147,6 +141,69 @@ class InterfaceAbsenceWorkflow
 			}
 			
 			
+		}
+		elseif ($action === 'ABSENCE_BEFOREVALIDATE') {
+			
+			if($object->isPresence==0) {
+				
+				
+				$u=new User($db);
+				$u->fetch($object->fk_user);
+				$u->getrights('absence');
+				
+				if($u->rights->absence->myactions->alertAllMyCoWorker) {
+					define('INC_FROM_DOLIBARR', true);
+			        dol_include_once('/absence/config.php');	
+				
+					$ATMdb=new TPDOdb;
+					
+					if($object->date_debut == $object->date_debut) {
+						$dateInterval = 'le '.dol_print_date($object->date_debut);
+					}
+					else{
+						$dateInterval = 'du '.dol_print_date($object->date_debut).' '.$langs->trans('to').' '.dol_print_date($object->date_fin);	
+					}
+					
+					
+					
+					$Tab = $ATMdb->ExecuteAsArray("SELECT gu.fk_user 
+						FROM ".MAIN_DB_PREFIX."usergroup_user gu 
+						WHERE gu.fk_usergroup IN ( SELECT DISTINCT fk_usergroup FROM ".MAIN_DB_PREFIX."usergroup_user WHERE fk_user=".$u->id." )	 
+						AND gu.fk_user NOT IN (".$u->id.") 
+					");
+					
+					foreach($Tab as $row) {
+						
+						$uMail = new User($db);
+						$uMail->fetch($row->fk_user);
+
+						if( $uMail->email ) {
+							$TBS=new TTemplateTBS;						
+							$html = $TBS->render( dol_buildpath('/absence/tpl/mail.absence.alert.coworkers.tpl.php')
+								,array() 
+								,array(
+									'mail'=>array(
+										'name'=>$uMail->getNomUrl()
+										,'collabName'=>$u->getNomUrl()
+										,'DateInterval'=>$dateInterval
+									)
+								)
+							);
+							
+							$rep=new TReponseMail($conf->global->RH_USER_MAIL_SENDER, $uMail->email,"Votre collaborateur sera absent", $html);
+							$rep->send();
+							
+						}
+						
+					}
+					
+				}
+				
+
+			}
+			
+			
+			return 0;
 		}
 
 		return 0;

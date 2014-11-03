@@ -105,7 +105,7 @@ class modCompetence extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0)
 		// );
-		$this->const = array(); 
+		$this->const = array(0=>array('COMPETENCE_HAUTEURGRAPHIQUES','chaine','200','Permet de modifier la hauteur des graphiques',1)); 
 
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  // To add a new tab identified by code tabname1
@@ -130,6 +130,7 @@ class modCompetence extends DolibarrModules
         $this->tabs = array(
         	'user:+competence:Formations et expériences:competence@competence:/competence/experience.php?fk_user=__ID__'  // To add a new tab identified by code tabname1
             ,'user:+remuneration:Rémunérations:competence@competence:$user->rights->curriculumvitae->myactions->voirRemuneration:/competence/remuneration.php?fk_user=__ID__'
+            ,'user:+productivite:Productivité:competence@competence:$user->rights->curriculumvitae->productivite->read:/competence/productivite_user.php?fk_user=__ID__&action=view'
        	);
 
         // Dictionnaries
@@ -206,9 +207,36 @@ class modCompetence extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirRemuneration';
 		$r++;
+	
+		$this->rights[$r][0] = 7957;
+		$this->rights[$r][1] = 'Consulter la rémunération des membres de son/ses groupes d\'utilisateur';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'voirRemunerationGroupe';
+		$r++;
+	
+		$this->rights[$r][0] = 7958;
+		$this->rights[$r][1] = 'Consulter sa productivité';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'productivite';
+        $this->rights[$r][5] = 'read';
+		$r++;
+	
+		$this->rights[$r][0] = 7959;
+		$this->rights[$r][1] = 'Enregistrer sa productivité';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'productivite';
+        $this->rights[$r][5] = 'write';
+		$r++;
+	
+		$this->rights[$r][0] = 7960;
+		$this->rights[$r][1] = 'Administrer la productivité';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'productivite';
+        $this->rights[$r][5] = 'admin';
+		$r++;
 		
 	
-		
 		// Permissions
 		/*$this->rights = array();		// Permission array used by this module
 		$r=0;
@@ -294,6 +322,65 @@ class modCompetence extends DolibarrModules
 					'user'=> 2
         );
 		$r++;
+		
+		$this->menu[$r]=array(
+			            'fk_menu'=>'fk_mainmenu=competence',			// Put 0 if this is a top menu
+			        	'type'=> 'left',			// This is a Top menu entry
+			        	'titre'=>$langs->trans('typePoste'),
+			        	'mainmenu'=> 'competence',
+			        	'leftmenu'=> 'type_poste',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+						'url'=> '/competence/liste_types_postes.php',
+						'position'=> 103,
+						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+						'perms'=> '$user->rights->formulaire->formulaire->read',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						'target'=> '',
+						'user'=> 2	// 0=Menu for internal users, 1=external users, 2=both
+        );
+
+		$r++;
+        $this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=competence,fk_leftmenu=type_poste',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('createPoste'),
+		        	'mainmenu'=> 'competence',
+		        	'leftmenu'=> 'formulaires',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/competence/fiche_type_poste.php?action=new',
+					'position'=> 104,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '$user->rights->formulaire->formulaire->write',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
+		$r++;
+		$this->menu[$r]=array(
+			            'fk_menu'=>'fk_mainmenu=competence',			// Put 0 if this is a top menu
+			        	'type'=> 'left',			// This is a Top menu entry
+			        	'titre'=>$langs->trans('Productivité'),
+			        	'mainmenu'=> 'competence',
+			        	'leftmenu'=> 'productivite',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+						'url'=> '/competence/productivite_liste.php',
+						'position'=> 105,
+						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+						'perms'=> '$user->rights->curriculumvitae->productivite->admin',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						'target'=> '',
+						'user'=> 2	// 0=Menu for internal users, 1=external users, 2=both
+        );
+		$r++;
+		$this->menu[$r]=array(
+			            'fk_menu'=>'fk_mainmenu=competence,fk_leftmenu=productivite',			// Put 0 if this is a top menu
+			        	'type'=> 'left',			// This is a Top menu entry
+			        	'titre'=>$langs->trans('Nouvel indice'),
+			        	'mainmenu'=> 'competence',
+			        	'leftmenu'=> 'formulaires',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+						'url'=> '/competence/productivite.php?action=new',
+						'position'=> 106,
+						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+						'perms'=> '$user->rights->curriculumvitae->productivite->admin',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						'target'=> '',
+						'user'=> 2	// 0=Menu for internal users, 1=external users, 2=both
+        );
+		$r++;
+		
 	/*	
 		$this->menu[$r]=array(
 			            'fk_menu'=>'fk_mainmenu=competence',			// Put 0 if this is a top menu

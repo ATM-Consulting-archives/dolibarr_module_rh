@@ -57,7 +57,7 @@ global $db,$langs,$conf;
 		$TStatPlanning = TRH_Absence::getPlanning($ATMdb, 0, $fk_user,  date('Y-m-d', $t_debut) , date('Y-m-t', $t_debut));
 		
 		list($dummy,$TStat) = each($TStatPlanning);
-		
+
 		?>
 		<script type="text/javascript">
 			function signFeuille() {
@@ -82,17 +82,17 @@ global $db,$langs,$conf;
 		<?php
 		
 		$total=0;
-		//var_dump($TStat);
+		
 		foreach($TStat as $date=>$stat) {
-			
-			$total+=$stat['nb_heure_presence'];
+			$total += $stat['nb_heure_presence'];
+		
 			$date_ligne = $langs->trans(date('l', strtotime($date))) ;
 			$heure_ligne = convertSecondToTime( $stat['nb_heure_presence'] * 3600 );
 			
 			if($stat['nb_jour_ferie']>0) {
 				$raison = $langs->trans('PublicHoliday');
 			}
-			else if($stat['estUnJourTravaille']=='NON') {
+			else if($stat['estUnJourTravaille']=='NON' && $stat['nb_heure_presence'] == 0) {
 				$raison = $langs->trans('NoWorkedDays');
 			}
 			else if($stat['estUnJourTravaille']!='OUI' && $stat['estUnJourTravaille']!='NON' && $stat['absence']==0) {

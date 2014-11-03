@@ -92,7 +92,15 @@ class modValideur extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0)
 		// );
-		$this->const = array(); 
+		$this->const = array(
+								array(
+									'RH_ALTERNATIVE_URL'
+									,'chaine'
+									,'http://127.0.0.1/dynamicrh/htdocs/rh/'
+									,'Adresse à utiliser pour appeler des scripts si la principale n\'est pas accessible'
+									,1
+								)
+							); 
 
 		// Array to add new pages in new tabs
 		// Example: $this->tabs = array('objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__',  // To add a new tab identified by code tabname1
@@ -206,7 +214,7 @@ class modValideur extends DolibarrModules
 		
 		dol_include_once('/core/class/extrafields.class.php');
         $extrafields=new ExtraFields($this->db);
-		$res = $extrafields->addExtraField('fk_user_delegation', 'Déléguation de note de frais', 'sellist', 0, '', 'user',0, 0,'', array("options"=> 'user:login:rowid:: WHERE statut=1'));
+		$res = $extrafields->addExtraField('fk_user_delegation', 'Déléguation de note de frais', 'sellist', 0, '', 'user',0, 0,'', array("options"=> array('user:login:rowid:: WHERE statut=1')));
 	
 		
 		

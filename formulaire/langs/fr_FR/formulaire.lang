@@ -1,3 +1,5 @@
 #GLOBAL
 formulaire=Enquêtes
 adminFormulaire= Administration des enquêtes
+typePoste=Types de postes
+createPoste=Créer un type de poste

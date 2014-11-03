@@ -8,6 +8,8 @@
 	require('../config.php');
 	require('../class/competence.class.php');
 	require('../class/formation.class.php');
+	require('../class/productivite.class.php');
+	require('../class/type_poste.class.php');
 	
 
 	$ATMdb=new TPDOdb;
@@ -26,11 +28,30 @@
 	$r=new TRH_remuneration;
 	$r->init_db_by_vars($ATMdb);
 	
+	$r=new TRH_remunerationPrime;
+	$r->init_db_by_vars($ATMdb);
+	
 	$r=new TRH_dif;
 	$r->init_db_by_vars($ATMdb);
 	
+	// Productivité
+	$r=new TRH_productivite;
+	$r->init_db_by_vars($ATMdb);
 	
-	//Formation
+	$r=new TRH_productiviteUser;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_productiviteIndice;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_fichePoste;
+	$r->init_db_by_vars($ATMdb);
+	
+	$r=new TRH_grilleSalaire;
+	$r->init_db_by_vars($ATMdb);
+	
+	
+/*	//Formation
 	$r=new TRH_formation_plan;
 	$r->init_db_by_vars($ATMdb);
 	
@@ -50,4 +71,4 @@
 	$r->init_db_by_vars($ATMdb);
 	
 	$r=new TRH_formation_participant_statut;
-	$r->init_db_by_vars($ATMdb);
+	$r->init_db_by_vars($ATMdb);*/

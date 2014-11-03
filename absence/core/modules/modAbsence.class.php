@@ -171,6 +171,7 @@ class modAbsence extends DolibarrModules
 		$r++;
 		*/
 
+		$langs->load('absence@absence');
 		
 		$this->rights[$r][0] = 7101;
 		$this->rights[$r][1] = $langs->trans('ValidOrRefuseHolidayRequest');
@@ -240,6 +241,13 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'voirToutesAbsences';
+		$r++;
+		
+		$this->rights[$r][0] = 7126;
+		$this->rights[$r][1] = $langs->trans('ConsultGroupCollabAbsencesPresencesOnSchedule');
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'voirGroupesAbsences';
 		$r++;
 		
 		$this->rights[$r][0] = 7110;
@@ -347,6 +355,13 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'declarePastAbsence';
+		
+		$r++;
+		$this->rights[$r][0] = 7127;
+		$this->rights[$r][1] = $langs->trans('AlertAllMyCoWorker');
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+		$this->rights[$r][5] = 'alertAllMyCoWorker';
 		
 		
 		
@@ -503,6 +518,21 @@ class modAbsence extends DolibarrModules
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 					'url'=> '/absence/pointeuse.php',
+					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 103,
+					'perms'=> '$user->rights->absence->myactions->pointeuse',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
+		
+		$r++;
+		$this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('PunchClockImport'),
+		        	'mainmenu'=> '',
+		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/absence/import_pointage.php',
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 103,
 					'perms'=> '$user->rights->absence->myactions->pointeuse',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
@@ -707,6 +737,8 @@ class modAbsence extends DolibarrModules
 	{
 		global $langs;
 		
+		$langs->load('absence@absence');
+		
 		$sql = array();
 		
 		$result=$this->load_tables();
@@ -726,6 +758,12 @@ class modAbsence extends DolibarrModules
 		dol_include_once('/core/class/extrafields.class.php');
         $extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('ticketresto_ok', $langs->trans('HaveChooseTickets'), 'boolean', 0, '', 'user');
+		
+       	$extrafields=new ExtraFields($this->db);
+		$res = $extrafields->addExtraField('number_min', $langs->trans('NumberOfMinimumPeople'), 'int', 0, '', 'usergroup');
+       	
+       	$extrafields=new ExtraFields($this->db);
+		$res = $extrafields->addExtraField('alert_email', $langs->trans('EmailAlert'), 'varchar', 255, '', 'usergroup');
 		
 
 		return $this->_init($sql, $options);

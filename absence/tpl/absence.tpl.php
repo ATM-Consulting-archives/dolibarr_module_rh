@@ -16,7 +16,10 @@
 			[onshow;block=end]
 
 
-			<table class="border" style="width:40%">
+		<div id="fiche-abs">
+			[view.form_start;strconv=no]
+			
+				<table class="border"  style="width:40%">
 				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='1']
 				<tr>
 					<td>[translate.User;strconv=no;protect=no]</td>
@@ -87,11 +90,13 @@
 					</tr>
 					[onshow;block=end]
 				
-			</table>
+			</table>		
+
+
 
    		 <br/>
      	[absenceCourante.titreJourRestant;strconv=no;protect=no] 			
-            <table class="border" style="width:40%">
+            <table class="border" id="compteur-user" style="width:40%">
 				<tr>
 					<td>[translate.HolidaysPaid;strconv=no;protect=no]</td>
 					<td id='reste'>[congesPrec.reste;strconv=no;protect=no]</td>
@@ -126,6 +131,10 @@
 				[onshow;block=end]
 		[onshow;block=end]
 		[onshow;block=end]	
+
+			[view.form_end;strconv=no]
+
+		</div>
 
 
 		[onshow;block=begin;when [view.mode]!='edit']
@@ -207,23 +216,22 @@
 					
 					if(fk_user<=0) return false;
 				
+					$('#reste,#cumule,#noncumule').html('...');
 
 					$.ajax({
 						url: 'script/chargerCompteurDemandeAbsence.php?user='+fk_user
 						,dataType:'json'
 					}).done(function(liste) {
 						
-						$('#reste').empty();
-						$('#reste').append(liste.reste);
+						$('#reste').html(liste.reste);
+						if(liste.reste<0)$('#reste').css({'color':'red', 'font-weight':'bold'});
+						else $('#reste').css({'color':'black', 'font-weight':'normal'});
 						
-						$('#cumule').empty();
-						$('#cumule').append(liste.annuelCumule);
+						$('#cumule').html(liste.annuelCumule);
 						
-						$('#noncumule').empty();
-						$('#noncumule').append(liste.annuelNonCumule);
+						$('#noncumule').html(liste.annuelNonCumule);
 						
-						$('#mensuel').empty();
-						$('#mensuel').append(liste.mensuel);
+						$('#mensuel').html(liste.mensuel); //TODO n'existe pas ?
 	
 					});
 				
@@ -259,7 +267,9 @@
 					});
 				
 
-					$('#user-planning').load('planningUser.php?fk_user='+fk_user+' #plannings');
+					$('#user-planning').load('planningUser.php?fk_user='+fk_user+'&no-link #plannings',function() {
+						$('#user-planning tr.footer').remove();
+					});
 			}
 			
 			//	script vérifiant que la date de début ne dépasse pas celle de fin
