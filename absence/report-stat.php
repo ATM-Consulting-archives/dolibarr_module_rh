@@ -247,7 +247,7 @@ function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup,
 							LEFT JOIN ".MAIN_DB_PREFIX."rh_absence_emploitemps as e ON (e.fk_user=u.rowid AND e.is_archive=1)
 			WHERE a.date_debut<='". date("Y-m-d H:i:s", $t_fin_export)."' 
 			AND a.date_fin>='".date("Y-m-d H:i:s", $t_debut_export)."'
-			AND a.etat LIKE 'Validee' AND a.code!=''
+			AND a.etat!='Refusee' AND a.code!=''
 			";
 	//on traite le cas où l'on recherche un groupe ou un utilisateur seulement
 	if($fk_user!=0){
