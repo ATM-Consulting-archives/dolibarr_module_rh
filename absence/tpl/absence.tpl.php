@@ -19,7 +19,7 @@
 		<div id="fiche-abs">
 			[view.form_start;strconv=no]
 			
-				<table class="border"  style="width:40%">
+				<table class="border" width="100%">
 				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='1']
 				<tr>
 					<td>[translate.User;strconv=no;protect=no]</td>
@@ -96,7 +96,7 @@
 
    		 <br/>
      	[absenceCourante.titreJourRestant;strconv=no;protect=no] 			
-            <table class="border" id="compteur-user" style="width:40%">
+            <table class="border" id="compteur-user"  width="100%">
 				<tr>
 					<td>[translate.HolidaysPaid;strconv=no;protect=no]</td>
 					<td id='reste'>[congesPrec.reste;strconv=no;protect=no]</td>
@@ -110,12 +110,12 @@
 					<td id='noncumule'>[rttCourant.nonCumuleReste;strconv=no;protect=no]</td>
 				</tr>
 			</table>
-	
+		<div class="tabsAction" >
 		[onshow;block=begin;when [absenceCourante.etat]!='Refusee']
 		[onshow;block=begin;when [absenceCourante.etat]!='Validee']
 			
 				[onshow;block=begin;when [view.mode]=='edit']
-					<br>
+				
 					<input type="submit" value="[translate.Register;strconv=no;protect=no]" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
 				[onshow;block=end]
 				
@@ -134,14 +134,12 @@
 
 			[view.form_end;strconv=no]
 
-		</div>
-
-
 		[onshow;block=begin;when [view.mode]!='edit']
 				[onshow;block=begin;when [absenceCourante.droitSupprimer]==1]
 						<span class="butActionDelete" id="action-delete"  onclick="if (window.confirm('[translate.ConfirmDeleteAbsenceRequest;strconv=no;protect=no]')){document.location.href='?action=delete&id=[absenceCourante.id]'};">[translate.Delete;strconv=no;protect=no]</span>
 				[onshow;block=end]			
 		[onshow;block=end]
+		</div>
 		<div style="clear:both;"></div>
 	</div>
 	
