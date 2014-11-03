@@ -267,6 +267,7 @@
 
 					$('#user-planning').load('planningUser.php?fk_user='+fk_user+'&no-link #plannings',function() {
 						$('#user-planning tr.footer').remove();
+						$(".classfortooltip").tipTip({maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
 					});
 			}
 			

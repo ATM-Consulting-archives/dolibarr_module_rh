@@ -44,8 +44,13 @@ global $db,$langs,$conf;
 	echo $form->hidden('action','SHOW');
 	
 	$formother = new FormOther($db);
-	echo $formother->select_month(__get('month',-1,'integer'),'month',1);
-	$formother->select_year(__get('year',-1,'integer') ,'year',1, 20, 1);
+	
+	$selectmonth = __get('month', date('m', strtotime('-1month')  ) ,'integer');
+	$selectyear = __get('year', date('Y', strtotime('-1month')  ),'integer');
+	
+	
+	echo $formother->select_month($selectmonth,'month',1);
+	$formother->select_year( $selectyear,'year',1, 20, 1);
 	echo $form->btsubmit('Ok', 'bt_ok');
 	
 	$TLigne=array();
@@ -179,20 +184,20 @@ global $db,$langs,$conf;
 						,'town'=>$conf->mycompany->town
 					)
 					,'translate' => array(
-						'MonthlyStatementAboutCountingWorkedDaysAndTakingDaysOff' => $langs->trans('MonthlyStatementAboutCountingWorkedDaysAndTakingDaysOff'),
-						'ManagersInDayPlan' => $langs->trans('ManagersInDayPlan'),
-						'EmployeeName' => $langs->trans('EmployeeName'),
-						'ConcernedMonthMY' => $langs->trans('ConcernedMonthMY'),
-						'Date' => $langs->trans('Date'),
-						'WorkedDays' => $langs->trans('WorkedDays'),
-						'RestDays' => $langs->trans('RestDays'),
-						'Eventually' => $langs->trans('Eventually'),
-						'Whether' => $langs->trans('Whether'),
-						'PossibleObservations' => $langs->trans('PossibleObservations'),
-						'RespectGivenDatasInDeclaration' => $langs->trans('RespectGivenDatasInDeclaration'),
-						'To' => $langs->trans('To'),
-						'MadeTheDate' => $langs->trans('MadeTheDate', date('d/m/Y')),
-						'Signature' => $langs->trans('Signature')
+						'MonthlyStatementAboutCountingWorkedDaysAndTakingDaysOff' => $langs->transnoentitiesnoconv('MonthlyStatementAboutCountingWorkedDaysAndTakingDaysOff'),
+						'ManagersInDayPlan' => $langs->transnoentitiesnoconv('ManagersInDayPlan'),
+						'EmployeeName' => $langs->transnoentitiesnoconv('EmployeeName'),
+						'ConcernedMonthMY' => $langs->transnoentitiesnoconv('ConcernedMonthMY'),
+						'Date' => $langs->transnoentitiesnoconv('Date'),
+						'WorkedDays' => $langs->transnoentitiesnoconv('WorkedDays'),
+						'RestDays' => $langs->transnoentitiesnoconv('RestDays'),
+						'Eventually' => $langs->transnoentitiesnoconv('Eventually'),
+						'Whether' => $langs->transnoentitiesnoconv('Whether'),
+						'PossibleObservations' => $langs->transnoentitiesnoconv('PossibleObservations'),
+						'RespectGivenDatasInDeclaration' => $langs->transnoentitiesnoconv('RespectGivenDatasInDeclaration'),
+						'To' => $langs->transnoentitiesnoconv('To'),
+						'MadeTheDate' => $langs->transnoentitiesnoconv('MadeTheDate', date('d/m/Y')),
+						'Signature' => $langs->transnoentitiesnoconv('Signature')
 					)
 				)
 			);
