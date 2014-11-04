@@ -440,7 +440,7 @@ function _displayChartRemunerations(&$ATMdb) {
 					,'sql'=>$sql
 					,'complement' => 'Commentaire'
 					,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
-					),
+					)/*,
 				   1=>array(
 				     'code'=>'SALAIREMOIS'
 				     ,'yDataKey' => 'Salaire moyen'
@@ -458,7 +458,7 @@ function _displayChartRemunerations(&$ATMdb) {
 				     ,'yDataKey' => 'Salaire maximum'
 				     ,'sql'=>$sql_max
 				     ,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
-				   )
+				   )*/
 				);
 	
 	if(isset($_REQUEST['fk_usergroup'])) _addLinesGroup($TData, $_REQUEST['fk_usergroup']); 
@@ -575,12 +575,38 @@ function _addLinesGroup(&$TData, $fk_usergroup, $type="remuneration") {
 				WHERE ug.fk_usergroup = ".$fk_usergroup." 
 				GROUP BY `mois`";
 		
+		$sql_min = "SELECT DATE_FORMAT(r.date_debutRemuneration, \"%Y-%m\" ) AS 'mois'
+					, MIN( r.salaireMensuel ) AS 'Salaire minimum du groupe' 
+					FROM ".MAIN_DB_PREFIX."rh_remuneration r
+					LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user ug ON (r.fk_user = ug.fk_user)
+					WHERE ug.fk_usergroup = ".$fk_usergroup." 
+					GROUP BY `mois`";
+					
+		$sql_max = "SELECT DATE_FORMAT(r.date_debutRemuneration, \"%Y-%m\" ) AS 'mois'
+					, MAX( r.salaireMensuel ) AS 'Salaire maximum du groupe' 
+					FROM ".MAIN_DB_PREFIX."rh_remuneration r 
+					LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user ug ON (r.fk_user = ug.fk_user)
+					WHERE ug.fk_usergroup = ".$fk_usergroup."
+					GROUP BY `mois`";
+		
 		$TData[] = array(
-						'code'=>'SALAIREMOIS'
-						,'yDataKey' => 'Salaire moyen du groupe'
-						,'sql'=>$sql
-						,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
-					);
+							'code'=>'SALAIREMOIS'
+							,'yDataKey' => 'Salaire moyen du groupe'
+							,'sql'=>$sql
+							,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+						);
+		$TData[] = array(
+							'code'=>'SALAIREMOIS'
+							,'yDataKey' => 'Salaire minimum du groupe'
+							,'sql'=>$sql_min
+							,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+						);
+		$TData[] = array(
+							'code'=>'SALAIREMOIS'
+							,'yDataKey' => 'Salaire maximum du groupe'
+							,'sql'=>$sql_max
+							,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+						);
 					
 	} elseif($type == "prime") {
 		
