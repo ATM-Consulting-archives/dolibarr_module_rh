@@ -761,7 +761,7 @@ class modAbsence extends DolibarrModules
 		$res = $extrafields->addExtraField('ticketresto_ok', $langs->trans('HaveChooseTickets'), 'boolean', 0, '', 'user');
 		
        	$extrafields=new ExtraFields($this->db);
-		$res = $extrafields->addExtraField('number_min', $langs->trans('NumberOfMinimumPeople'), 'int', 0, '', 'usergroup');
+		$res = $extrafields->addExtraField('number_min', $langs->trans('NumberOfMinimumPeople'), 'int', 0, 11, 'usergroup');
        	
        	$extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('alert_email', $langs->trans('EmailAlert'), 'varchar', 0, 255, 'usergroup');
