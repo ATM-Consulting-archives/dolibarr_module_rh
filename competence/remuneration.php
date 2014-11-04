@@ -1,6 +1,7 @@
 <?php
 	require('config.php');
 	require('./class/competence.class.php');
+	require('./class/type_poste.class.php');
 	
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -461,6 +462,9 @@ function _displayChartRemunerations(&$ATMdb) {
 				   )*/
 				);
 	
+	// On rajoute au graphique la courbe correspondant au salaire associé à la grille de salaire du poste du user courant
+	_addLineGrilleRemunerationAssociee($ATMdb, $TData);
+	
 	if(isset($_REQUEST['fk_usergroup'])) _addLinesGroup($TData, $_REQUEST['fk_usergroup']); 
 	
 	$dash->concat_title = false;
@@ -498,7 +502,9 @@ function _displayChartPrimes(&$ATMdb) {
 					,'sql'=>$sql
 					,'complement' => 'Motif'
 					,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
-					),
+					)
+					 // Pour l'instant on s'enf out d'avoir la moyenne des primes
+					 /*,
 				   1=>array(
 				     'code'=>'PRIMESMOIS'
 				     ,'yDataKey' => 'Montant prime moyen'
@@ -516,10 +522,10 @@ function _displayChartPrimes(&$ATMdb) {
 				     ,'yDataKey' => 'Montant prime maximum'
 				     ,'sql'=>$sql_max
 				     ,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
-				   )
+				   )*/
 				);
 	
-	if(isset($_REQUEST['fk_usergroup'])) _addLinesGroup($TData, $_REQUEST['fk_usergroup'], "prime"); 
+	//if(isset($_REQUEST['fk_usergroup'])) _addLinesGroup($TData, $_REQUEST['fk_usergroup'], "prime"); 
 	
 	$dash->concat_title = false;
 	
@@ -626,6 +632,113 @@ function _addLinesGroup(&$TData, $fk_usergroup, $type="remuneration") {
 					
 	}
 		
+}
+
+function _addLineGrilleRemunerationAssociee(&$ATMdb, &$TData) {
+	
+	global $db;
+	
+	// On récupère le type de poste de l'utilisateur
+	$u = new User($db);
+	$u->fetch($_REQUEST['fk_user']);
+	$u->fetch_optionals($u->id);
+	
+	$id_type_poste = $u->array_options['options_type_poste'];
+	
+	$nb_annees_anciennete = _getAnneesAncienneteuser($u);
+	
+	if($nb_annees_anciennete === false) return false;
+	
+	if(empty($id_type_poste)) return false;
+	else {
+		
+		$id_grille = _getIDGrilleSalaireCorrespondante($id_type_poste, $nb_annees_anciennete);
+		
+	}
+	
+	if($id_grille === false) return false;
+	else {
+		
+		$grille = new TRH_grilleSalaire;
+		$grille->load($ATMdb, $id_grille);	
+		
+		$sql = "SELECT DATE_FORMAT(r.date_debutRemuneration, \"%Y-%m\") AS 'mois', ";
+		$sql.= $grille->montant." as 'Niveau de la grille de salaires'"; 
+		$sql.= "FROM ".MAIN_DB_PREFIX."rh_remuneration r";
+
+		$TData[] = array(
+							'code'=>'SALAIREMOIS'
+							,'yDataKey' => 'Niveau de la grille de salaires'
+							,'sql'=>$sql
+							,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+						);
+		
+	}
+	
+}
+
+/**
+ * retourne le nombre d'années d'acienneté de l'utilisateur passé en param
+ * @param object : user dont on veut récup le nombre d'années d'ancienneté
+ * @return int : nombre d'années d'ancienneté
+ */
+function _getAnneesAncienneteuser(&$u) {
+	
+	$date_anciennete_user = $u->array_options['options_DDA'];
+	$date_du_jour = date('Y-m-d');
+	
+	if(empty($date_anciennete_user)) return false;
+	
+	$dt_jour = new DateTime($date_du_jour);
+	$dt_anciennete = new DateTime($date_anciennete_user);
+	
+	$intervale = $dt_anciennete->diff($dt_jour);
+	
+	$nb_annees_anciennete = $intervale->y;
+	
+	return $nb_annees_anciennete;
+	
+}
+
+/**
+ * retourne l'id de la grille de salaires par laquelle est concerné l'utilisateur courant en fonction de son type de poste e de son ancienneté
+ * @param $id_type_poste int : id du poste
+ * @param $nb_annees_anciennete_user int : nb années ancienneté user courant
+ * @return $id_grille int : id de la grille de salaire
+ * 
+ */
+function _getIDGrilleSalaireCorrespondante($id_type_poste, $nb_annees_anciennete_user) {
+	
+	global $db;
+	
+	$TResult = array();
+	
+	$sql = "SELECT rowid, nb_annees_anciennete ";
+	$sql.= "FROM ".MAIN_DB_PREFIX."rh_grille_salaire ";
+	$sql.= "WHERE fk_type_poste = ".$id_type_poste." ";
+	$sql.= "ORDER BY nb_annees_anciennete DESC";
+	
+	$resql = $db->query($sql);
+	
+	while($res = $db->fetch_object($resql)) {
+				
+		$TResult[$res->rowid] = $res->nb_annees_anciennete;
+		
+	}
+	
+	if(count($TResult) == 0) return false;
+	else {
+		
+		foreach ($TResult as $id_grille => $nb_annees_anciennete) {
+			
+			if($nb_annees_anciennete_user > $nb_annees_anciennete) return $id_grille;
+			
+		}
+		
+	}
+	
+	return false;
+	
 }
 
 /**
