@@ -1477,7 +1477,49 @@ class TRH_Absence extends TObjetStd {
 		return true;
 		
 	}
-
+	function mailAlertEffectif($idGroup) {
+		global $db;
+		$g=new UserGroup($db);
+		$g->fetch($idGroup);
+		
+		$mailto = $g->array_options['options_alert_email'];
+		$nb_minimum = $g->array_options['options_number_min'];
+		if($this->date_debut == $this->date_debut) {
+			$dateInterval = 'le '.dol_print_date($this->date_debut);
+		}
+		else{
+			$dateInterval = 'du '.dol_print_date($this->date_debut).' '.$langs->trans('to').' '.dol_print_date($this->date_fin);	
+		}
+		
+		if( $mailto ) {
+			
+				$u=new User($db);
+				$u->fetch($this->fk_user);
+			
+				$TBS=new TTemplateTBS;						
+				$html = $TBS->render( dol_buildpath('/absence/tpl/mail.absence.alert.minimum.tpl.php')
+					,array() 
+					,array(
+						'mail'=>array(
+							'collabName'=>$u->getNomUrl()
+							,'DateInterval'=>$dateInterval
+							,'groupName'=>$g->name
+							,'minimum'=>$nb_minimum
+						)
+					)
+				);
+				
+				$mailfrom = empty($conf->global->RH_USER_MAIL_SENDER) ? 'alert@dynamicrh.atm-consulting.fr' : $conf->global->RH_USER_MAIL_SENDER;
+				
+				$rep=new TReponseMail( $mailfrom, $mailto,"Alerte défaut de personnel groupe ".$g->name, $html);
+				$rep->send();
+				
+			
+		}
+		
+		
+		
+	}
 	function testEffectifGroupe(&$ATMdb) {
 		global $db;
 		
@@ -1494,6 +1536,9 @@ class TRH_Absence extends TObjetStd {
 				$nb_min = (int)$group->array_options['options_number_min'];
 				
 				if(!$this->testMinEffectifGroupeOk($ATMdb, $group->id, $nb_min)) {
+					
+					$this->mailAlertEffectif($group->id);
+					
 					return false;
 				}
 				
