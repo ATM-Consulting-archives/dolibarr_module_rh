@@ -16,7 +16,7 @@
 			[onshow;block=end]
 
 			[absenceCourante.fk_user_absence;strconv=no;protect=no]
-			<table class="border" style="width:40%">
+			<table class="border" style="width:100%">
 				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='1']
 				<tr>
 					<td>[translate.User;strconv=no]</td>
@@ -62,7 +62,8 @@
 					[onshow;block=end]
 				
 			</table>
-
+			
+		<div class="tabsAction" >
 		[onshow;block=begin;when [absenceCourante.etat]!='Refusee']
 		[onshow;block=begin;when [absenceCourante.etat]!='Validee']
 			

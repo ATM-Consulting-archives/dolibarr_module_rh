@@ -738,7 +738,7 @@ class modAbsence extends DolibarrModules
 		$url =dol_buildpath("/absence/script/create-maj-base.php",2);
 		file_get_contents($url);
 		
-		$url2 =dol_buildpath("/absence/script/create-compteur.php",2);
+		$url2 =dol_buildpath("/absence/script/crons/init-compteur.php",2);
 		file_get_contents($url2);
 		
 		dol_include_once('/core/class/extrafields.class.php');
@@ -746,10 +746,11 @@ class modAbsence extends DolibarrModules
 		$res = $extrafields->addExtraField('ticketresto_ok', $langs->trans('HaveChooseTickets'), 'boolean', 0, '', 'user');
 		
        	$extrafields=new ExtraFields($this->db);
-		$res = $extrafields->addExtraField('number_min', $langs->trans('NumberOfMinimumPeople'), 'int', 0, '', 'usergroup');
+		$res = $extrafields->addExtraField('number_min', $langs->trans('NumberOfMinimumPeople'), 'int', 0, 11, 'usergroup');
        	
        	$extrafields=new ExtraFields($this->db);
-		$res = $extrafields->addExtraField('alert_email', $langs->trans('EmailAlert'), 'varchar', 255, '', 'usergroup');
+		$res = $extrafields->addExtraField('alert_email', $langs->trans('EmailAlert'), 'varchar', 0, 255, 'usergroup');
+		
 		
 
 		return $this->_init($sql, $options);

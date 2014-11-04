@@ -139,7 +139,9 @@ function _liste(&$ATMdb, $regle) {
 		
 	));
 	
-	?><a class="butAction" href="?id=<?=$regle->getId()?>&action=new"><?php echo $langs->trans('NewRule'); ?></a><div style="clear:both"></div></div><?php
+	?><div class="tabsAction" >
+		<a class="butAction" href="?id=<?=$regle->getId()?>&action=new"><?php echo $langs->trans('NewRule'); ?></a>
+		<div style="clear:both"></div></div><?php
 	$form->end();
 	llxFooter();
 }	
