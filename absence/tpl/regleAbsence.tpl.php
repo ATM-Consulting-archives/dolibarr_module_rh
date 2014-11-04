@@ -2,7 +2,7 @@
 
 	[newRule.titreRegle; strconv=no]
 
-<table width="60%" class="border">
+<table width="100%" class="border">
 	<tr>
 		<td>Choix d'application</td>
 		[onshow;block=begin;when [view.mode]=='view']
