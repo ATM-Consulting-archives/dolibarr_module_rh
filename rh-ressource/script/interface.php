@@ -455,9 +455,14 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 			 AND ea.idImport = "'.$idImport.'"';
 	$sql.= ' AND e.type="emprunt"';*/
 	
+	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
 	
-	$sql="SELECT ea.num_gsm, SUM(ea.montant_euros_ht) as 'montant_euros_ht',ea.date_appel FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea
-	WHERE ea.date_appel BETWEEN '$date_deb 00:00:00' AND '$date_end 23:59:59'"; 
+	$sql="SELECT ea.num_gsm, SUM(ea.montant_euros_ht) as 'montant_euros_ht', ea.num,ea.date_appel FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea
+	WHERE ea.date_appel BETWEEN '$date_deb 00:00:00' AND '$date_end 23:59:59' ";
+	
+	if(!empty($TNumerosSpeciaux)) {
+		$sql.=" AND ea.num_appele NOT IN ('".implode("','", $TNumerosSpeciaux)."')";	
+	}
 	
 	if($idImport)$sql.=" AND ea.idImport = '$idImport' ";
 	
@@ -472,7 +477,7 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	
 	// On récupère le tableau des numéros spéciaux (ceux à ne pas facturer)
 	//$TNumerosSpeciaux = unserialize(dolibarr_get_const($db, "RESSOURCE_ARRAY_NUMEROS_SPECIAUX"));
-	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
+	
 	$r1=new TRH_Ressource;
 	$r2=new TRH_Ressource;
 	$user_ressource=new User($db);
