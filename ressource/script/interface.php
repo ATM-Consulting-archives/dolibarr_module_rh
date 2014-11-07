@@ -434,10 +434,15 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	$date_end = date("Y-m-d", $date_end);
 	
 	$TabLigne = array();
-	
+
+	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
+
 	$sql="SELECT ea.num_gsm, SUM(ea.montant_euros_ht) as 'montant_euros_ht',ea.date_appel FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea
 	WHERE ea.date_appel BETWEEN '$date_deb 00:00:00' AND '$date_end 23:59:59'"; 
 	
+	if(!empty($TNumerosSpeciaux)) {
+		$sql.=" AND ea.num_appele NOT IN ('".implode("','", $TNumerosSpeciaux)."')";	
+	}
 	if($idImport)$sql.=" AND ea.idImport = '$idImport' ";
 	
 	$sql.=" GROUP BY ea.num_gsm"; //,ea.date_appel"; Je sais c'est moche
@@ -449,7 +454,7 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	$total = array();
 	
 	// On récupère le tableau des numéros spéciaux (ceux à ne pas facturer)
-	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
+	
 	$r1=new TRH_Ressource;
 	$r2=new TRH_Ressource;
 	$user_ressource=new User($db);
@@ -459,16 +464,6 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 		
 		$non_facture = false;
 
-		// Si le numéro de la ligne de facture fait partie du tableau TNumerosSpeciaux, on passe à la ligne suivante (on facture pas)
-		if(is_array($TNumerosSpeciaux) && count($TNumerosSpeciaux) > 0) {
-			foreach ($TNumerosSpeciaux as $num) {
-				if($num == $res->num_gsm) {
-					$non_facture = true; 
-					break;
-				}
-			}
-		}
-		
 		if($non_facture || $res->montant_euros_ht == 0) continue; // On sort pas les lignes à 0 dans le CSV
 				
 					
