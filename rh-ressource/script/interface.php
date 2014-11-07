@@ -489,7 +489,7 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 		$non_facture = false;
 
 		// Si le numéro de la ligne de facture fait partie du tableau TNumerosSpeciaux, on passe à la ligne suivante (on facture pas)
-		if(is_array($TNumerosSpeciaux) && count($TNumerosSpeciaux) > 0) {
+		/*if(is_array($TNumerosSpeciaux) && count($TNumerosSpeciaux) > 0) {
 			foreach ($TNumerosSpeciaux as $num) {
 				if($num == $res->num_gsm) {
 					$non_facture = true; 
@@ -497,7 +497,7 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 				}
 			}
 		}
-		
+		*/
 		if($non_facture || $res->montant_euros_ht == 0) continue; // On sort pas les lignes à 0 dans le CSV
 				
 					
