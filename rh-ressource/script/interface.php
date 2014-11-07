@@ -457,7 +457,7 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	
 	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
 	
-	$sql="SELECT ea.num_gsm, SUM(ea.montant_euros_ht) as 'montant_euros_ht', ea.num,ea.date_appel FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea
+	$sql="SELECT ea.num_gsm, SUM(ea.montant_euros_ht) as 'montant_euros_ht',ea.date_appel FROM ".MAIN_DB_PREFIX."rh_evenement_appel ea
 	WHERE ea.date_appel BETWEEN '$date_deb 00:00:00' AND '$date_end 23:59:59' ";
 	
 	if(!empty($TNumerosSpeciaux)) {
