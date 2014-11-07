@@ -46,10 +46,11 @@ global $user,$db;
 	dol_include_once('/core/lib/date.lib.php');
 	dol_include_once('/ressource/class/numeros_speciaux.class.php');
 	dol_include_once('/ressource/class/ressource.class.php');
-	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
 	
 	$r1=new TRH_Ressource;
 	$r2=new TRH_Ressource;
+	
+	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
 	
 	$TBS=new TTemplateTBS();$html = '';
 	foreach($TLigne as $ligne) {
@@ -80,6 +81,8 @@ global $user,$db;
 				
 				$t_facture = strtotime($row->date_facture);
 				
+				$montant_ligne = $row->montant_euros_ht;
+				
 				if(strpos($row->volume_reel,':')!==false) {
 					
 					list($hh,$mm,$ss) = explode(':', $row->volume_reel);
@@ -88,6 +91,7 @@ global $user,$db;
 					
 					if(in_array($row->num_appele, $TNumerosSpeciaux)) { //non facturé
 						$duree_total_interne+=$duree;
+						$montant_ligne=0;
 					}
 					else {
 						$duree_total_externe+=$duree;
@@ -101,7 +105,7 @@ global $user,$db;
 				
 				$t_appel = strtotime($row->date_appel);
 				
-				$total+=$row->montant_euros_ht;
+				$total+=$montant_ligne;
 				
 				if($row->montant_euros_ht>0 || $conf->global->RH_RESSOURCE_SHOW_EMPTY_LINE__IN_REPORT) {
 					$TLine[]=array(
@@ -110,7 +114,7 @@ global $user,$db;
 						,'numero'=>$row->num_appele
 						,'type'=>$row->type_appel
 						,'duree'=>$row->volume_reel
-						,'cout'=>($row->montant_euros_ht>0 ? price($row->montant_euros_ht) : '')
+						,'cout'=>($montant_ligne>0 ? price($montant_ligne) : '')
 					);
 				}
 			}
