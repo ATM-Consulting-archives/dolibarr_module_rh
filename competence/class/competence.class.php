@@ -444,6 +444,24 @@ class TRH_remuneration extends TObjetStd {
 		
 	}
 
+	static function getFields(&$ATMdb) {
+		$fields = array(
+							-1=>""
+							,'nom_user'=>nom_user
+							,'prenom_user'=>prenom_user
+						);
+		
+		$sql = 'SHOW COLUMNS FROM ' . MAIN_DB_PREFIX . 'rh_remuneration';
+		
+		$ATMdb->Execute($sql);
+		
+		while ($column = $ATMdb->Get_line()) {
+			$fields[] = $column->Field;
+		}
+		
+		return $fields;
+	}
+
 }
 
 

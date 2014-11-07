@@ -530,21 +530,6 @@ class modAbsence extends DolibarrModules
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('PunchClockImport'),
-		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/import_pointage.php',
-					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-					'position'=> 103,
-					'perms'=> '$user->rights->absence->myactions->pointeuse',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-					'target'=> '',
-					'user'=> 2
-        );
-		
-		$r++;
-		$this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
-		        	'type'=> 'left',			// This is a Top menu entry
 		        	'titre'=> $langs->trans('AllAbsPresences'),
 		        	'mainmenu'=> '',
 		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
@@ -753,7 +738,7 @@ class modAbsence extends DolibarrModules
 		$url =dol_buildpath("/absence/script/create-maj-base.php",2);
 		file_get_contents($url);
 		
-		$url2 =dol_buildpath("/absence/script/create-compteur.php",2);
+		$url2 =dol_buildpath("/absence/script/crons/init-compteur.php",2);
 		file_get_contents($url2);
 		
 		dol_include_once('/core/class/extrafields.class.php');
@@ -761,10 +746,11 @@ class modAbsence extends DolibarrModules
 		$res = $extrafields->addExtraField('ticketresto_ok', $langs->trans('HaveChooseTickets'), 'boolean', 0, '', 'user');
 		
        	$extrafields=new ExtraFields($this->db);
-		$res = $extrafields->addExtraField('number_min', $langs->trans('NumberOfMinimumPeople'), 'int', 0, '', 'usergroup');
+		$res = $extrafields->addExtraField('number_min', $langs->trans('NumberOfMinimumPeople'), 'int', 0, 11, 'usergroup');
        	
        	$extrafields=new ExtraFields($this->db);
-		$res = $extrafields->addExtraField('alert_email', $langs->trans('EmailAlert'), 'varchar', 255, '', 'usergroup');
+		$res = $extrafields->addExtraField('alert_email', $langs->trans('EmailAlert'), 'varchar', 0, 255, 'usergroup');
+		
 		
 
 		return $this->_init($sql, $options);
