@@ -2006,6 +2006,8 @@ class TRH_Absence extends TObjetStd {
 	
 	static function getPlanning(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin){
 			
+		dol_include_once('/absence/class/pointeuse.class.php');
+
 			$abs = new TRH_Absence;
 			
 			$t_current = strtotime($date_debut);
