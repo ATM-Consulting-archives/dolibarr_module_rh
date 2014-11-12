@@ -301,7 +301,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	
 	
 	$anneeCourante=date('Y');
-	$anneePrec=$anneeCourante-1;
+	$anneePrec=$anneeCourante-1; 
+	// TODO fucking object !
 	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
 	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=". $userCourant->id;
 	
@@ -330,6 +331,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				$congeCourant['annee']=$ATMdb->Get_field('anneeN');
 				$congeCourant['fk_user']=$ATMdb->Get_field('fk_user');
 				$congeCourant['nombreCongesAcquisMensuel']=$ATMdb->Get_field('nombreCongesAcquisMensuel');
+				$congeCourant['acquisRecuperation']=$ATMdb->Get_field('acquisRecuperation');
 				
 				
 				$rttCourant['id']=$ATMdb->Get_field('rowid');
@@ -417,6 +419,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				
 				,'titreConges'=>load_fiche_titre($langs->trans('HolidaysPaid'),'', 'title.png', 0, '')
 
+				,'acquisRecuperation'=>$form->texte('','acquisRecuperation',round2Virgule($congeCourant['acquisRecuperation']),10,50)
 				
 			)
 			
@@ -505,7 +508,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				'Cancel' 						=> $langs->trans('Cancel'),
 				'Modify' 						=> $langs->trans('Modify'),
 				'Total'							=> $langs->trans('Total'),
-				'NonCumulatedDaysOffToTake'		=> $langs->trans('NonCumulatedDaysOffToTake')
+				'NonCumulatedDaysOffToTake'		=> $langs->trans('NonCumulatedDaysOffToTake'),
+				'acquisRecuperation'=>$langs->trans('acquisRecuperation'),
 			)
 		)	
 		

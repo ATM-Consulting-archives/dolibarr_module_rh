@@ -109,6 +109,11 @@
 					<td>[translate.NonCumulatedDayOff;strconv=no;protect=no]</td>
 					<td id='noncumule'>[rttCourant.nonCumuleReste;strconv=no;protect=no]</td>
 				</tr>
+				<tr>
+					<td>[translate.acquisRecuperation;strconv=no;protect=no]</td>
+					<td id='recup'>[congesCourant.recup;strconv=no;protect=no]</td>
+				</tr>
+				
 			</table>
 		<div class="tabsAction" >
 		[onshow;block=begin;when [absenceCourante.etat]!='Refusee']
@@ -214,7 +219,7 @@
 					
 					if(fk_user<=0) return false;
 				
-					$('#reste,#cumule,#noncumule').html('...');
+					$('#reste,#cumule,#noncumule,#recup').html('...');
 
 					$.ajax({
 						url: 'script/chargerCompteurDemandeAbsence.php?user='+fk_user
@@ -228,6 +233,7 @@
 						$('#cumule').html(liste.annuelCumule);
 						
 						$('#noncumule').html(liste.annuelNonCumule);
+						$('#recup').html(liste.acquisRecuperation);
 						
 						$('#mensuel').html(liste.mensuel); //TODO n'existe pas ?
 	

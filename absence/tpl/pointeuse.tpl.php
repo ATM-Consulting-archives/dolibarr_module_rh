@@ -26,6 +26,10 @@
 					<td>[translate.PresenceTimeNoted;strconv=no]</td>
 					<td>[pointeuse.time_presence;strconv=no;protect=no]</td>
 				</tr>
+				<tr>
+					<td>[translate.Note;strconv=no]</td>
+					<td>[pointeuse.motif;strconv=no;protect=no]</td>
+				</tr>
 			</table>
 
    		 <br/>

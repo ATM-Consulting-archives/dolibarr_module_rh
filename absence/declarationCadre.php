@@ -18,11 +18,31 @@
 		
 		$d=new TRH_declarationTemps;
 		$date_ref = $_POST['year'].'-'.$_POST['month'].'-01';
-		$d->load_by_date($ATMdb, $date_ref);
+		if(!$d->load_by_date($ATMdb, $date_ref)) {
+			// première signature
+			
+			if($_POST['nb_hour_diff']!=0) {
+				
+				$nb_hour_per_day = !empty($conf->global->TIMESHEET_WORKING_HOUR_PER_DAY) ? $conf->global->TIMESHEET_WORKING_HOUR_PER_DAY : 7;
+				
+				$recupSum = round($_POST['nb_hour_diff'] / $nb_hour_per_day,2);
+				
+				$compteur=new TRH_Compteur;
+				$compteur->load_by_fkuser($ATMdb, $fk_user);
+				$compteur->acquisRecuperation+=$recupSum;
+				
+				$compteur->save($ATMdb);
+				
+				setEventMessage("Votre compteur de récupération a été incrémenté de ".$recupSum." jour(s)");
+				
+			}
+			
+		}
 		
 		$d->set_date('date_ref', $date_ref);
 		$d->fk_user = $fk_user;
 		$d->nb_hour = $_POST['nb_hour']; 
+		$d->nb_hour_diff = $_POST['nb_hour_diff']; 
 	
 		$d->save($ATMdb);
 		
@@ -81,11 +101,13 @@ global $db,$langs,$conf;
 			<tr>
 				<th><?php echo $langs->trans('Date'); ?></th>
 				<th><?php echo $langs->trans('WorkedDays'); ?></th>
+				<th><?php echo $langs->trans('DifferencielHeure'); ?></th>
 				<th><?php echo $langs->trans('RestDays'); ?></th>
+				
 			</tr>
 		<?php
 		
-		$total=0;
+		$total=$totaldiff=0;
 		
 		foreach($TStat as $date=>$stat) {
 			//var_dump(TRH_Pointeuse::tempsPresenceDuJour($ATMdb, $fk_user,$date));
@@ -94,6 +116,7 @@ global $db,$langs,$conf;
 			else $nb_heure_travaille_ce_jour = $stat['nb_heure_presence_reelle'];
 			
 			$total += $nb_heure_travaille_ce_jour;
+			$totaldiff += $stat['nb_heure_suplementaire'];
 		
 			$date_ligne = $langs->trans(date('l', strtotime($date))) ;
 			$heure_ligne = convertSecondToTime( $nb_heure_travaille_ce_jour * 3600 );
@@ -123,6 +146,8 @@ global $db,$langs,$conf;
 			?><tr>
 				<td><?php	echo date('d', strtotime($date)).' '.$date_ligne; ?></td>
 				<td align="right"><?php echo $heure_ligne ?></td>
+				<td align="right"><?php echo  ( $stat['nb_heure_suplementaire']<0?'-':''  ).convertSecondToTime( abs($stat['nb_heure_suplementaire']) * 3600, 'allhourmin' ) ?></td>
+				
 				<td><?php echo $raison; ?></td>
 			</tr><?php
 		
@@ -132,15 +157,23 @@ global $db,$langs,$conf;
 		<tr>
 			<th>Total</th>
 			<th align="right"><?=convertSecondToTime( $total * 3600, 'allhourmin' ) ?></th>
+			<th align="right"><?= ( $totaldiff<0?'-':''  ). convertSecondToTime( abs($totaldiff) * 3600, 'allhourmin' ) ?></th>
 			<th>  </th>
 		</tr>
 		</table>
 		<?php
 		
 		echo $form->hidden('nb_hour', $total);
+		echo $form->hidden('nb_hour_diff', $totaldiff);
 		
 		echo '<p align="right">';
-		echo $form->bt($langs->trans('NoteTheseTimes'), 'bt_sign', 'onclick="signFeuille()"');
+		
+		$d=new TRH_declarationTemps;
+		$date_ref = $_POST['year'].'-'.$_POST['month'].'-01';
+		if(!$d->load_by_date($ATMdb, $date_ref)) {
+			echo $form->bt($langs->trans('NoteTheseTimes'), 'bt_sign', 'onclick="signFeuille()"');	
+		}
+		
 		echo $form->btsubmit('Télécharger', 'bt_gen');
 		echo '</p><br />';
 		

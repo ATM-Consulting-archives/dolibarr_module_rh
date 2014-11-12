@@ -8,6 +8,8 @@ if(isset($_REQUEST['user'])) {
 		$TCompteur = array();
 		$ATMdb =new TPDOdb;
 		$congePrec =array();
+		
+		// TODO mais t'es sérieux là ? 
 		$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$_REQUEST['user'];
 		
 		$ATMdb->Execute($sql);
@@ -15,6 +17,8 @@ if(isset($_REQUEST['user'])) {
 			
 			$TCompteur['annuelCumule']=round2Virgule($ATMdb->Get_field('rttCumuleAcquis')+$ATMdb->Get_field('rttCumuleReportNM1')-$ATMdb->Get_field('rttCumulePris'));
 			$TCompteur['annuelNonCumule']=round2Virgule($ATMdb->Get_field('rttNonCumuleAcquis')+$ATMdb->Get_field('rttNonCumuleReportNM1')-$ATMdb->Get_field('rttNonCumulePris'));
+			
+			$TCompteur['acquisRecuperation'] = round2Virgule( $ATMdb->Get_field('acquisRecuperation') );
 			
 			$congePrec['acquisEx']=$ATMdb->Get_field('acquisExerciceNM1');
 			$congePrec['acquisAnc']=$ATMdb->Get_field('acquisAncienneteNM1');

@@ -8,7 +8,7 @@ class TRH_Compteur extends TObjetStd {
 		
 		//conges N
 		parent::set_table(MAIN_DB_PREFIX.'rh_compteur');
-		parent::add_champs('acquisExerciceN','type=float;');				
+		parent::add_champs('acquisExerciceN,acquisRecuperation','type=float;');				
 		parent::add_champs('acquisAncienneteN','type=float;');				
 		parent::add_champs('acquisHorsPeriodeN','type=float;');											
 		parent::add_champs('anneeN','type=entier;');					
@@ -157,6 +157,12 @@ class TRH_Compteur extends TObjetStd {
 			$this->rttNonCumulePris += $duree;
 			$this->rttNonCumuleTotal -= $duree; 
 			
+			$this->save($ATMdb);
+			
+			TRH_CompteurLog::log($ATMdb, $this->getId(), $type, $duree, $motif);
+		}
+		else if($type=='recup') {
+			$this->acquisRecuperation -= $duree;
 			$this->save($ATMdb);
 			
 			TRH_CompteurLog::log($ATMdb, $this->getId(), $type, $duree, $motif);
@@ -385,6 +391,11 @@ class TRH_Absence extends TObjetStd {
 		else if($this->type=="rttnoncumule"){
 			
 			$compteur->add($ATMdb, $this->type, $dureeAbsenceCourante, 'Prise de RTT non cumulé');
+			
+		}
+		else if($this->type=="recup"){
+			
+			$compteur->add($ATMdb, $this->type, $dureeAbsenceCourante, 'Prise de jour de récupération');
 			
 		}
 		else if($this->type=="conges"||$this->type=="cppartiel"){	//autre que RTT : décompte les congés
@@ -1434,6 +1445,11 @@ class TRH_Absence extends TObjetStd {
 					$compteur->add($ATMdb, $this->type, array(-$this->congesPrisNM1, -$this->congesPrisN), 'Refus congé');		
 					
 				break;
+				
+				case 'recup':
+					$compteur->add($ATMdb, $this->type, -$this->duree, 'Refus jour de récupération');
+			
+					break;
 			}
 		}
 	}

@@ -7,6 +7,7 @@ class TRH_Pointeuse extends TObjetStd {
 		$this->add_champs('date_deb_am,date_fin_am,date_deb_pm,date_fin_pm,date_jour','type=date;');
 		$this->add_champs('time_presence', 'type=entier;');
 		$this->add_champs('fk_user','type=entier;index;');
+		$this->add_champs('motif','type=text;');
 		
 		$this->_init_vars();
 		
@@ -99,7 +100,7 @@ class TRH_declarationTemps extends TObjetStd {
 		$this->set_table(MAIN_DB_PREFIX.'rh_declaration_temps');
 		
 		$this->add_champs('date_ref','type=date;');
-		$this->add_champs('nb_hour', 'type=float;');
+		$this->add_champs('nb_hour,nb_hour_diff', 'type=float;');
 		$this->add_champs('fk_user','type=entier;index;');
 		
 		$this->_init_vars();

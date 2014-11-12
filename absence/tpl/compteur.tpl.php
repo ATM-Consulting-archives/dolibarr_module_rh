@@ -79,6 +79,12 @@
 					<td><b>[translate.LastClosingHoliday;strconv=no;protect=no]</b></td>
 					<td>[congesCourant.date_congesCloture;strconv=no;protect=no]</td>
 				</tr>
+				<tr>
+					<td>[translate.acquisRecuperation;strconv=no;protect=no]</td>
+					<td>[congesCourant.acquisRecuperation;strconv=no;protect=no]</td>
+				</tr>
+				
+				
 		</table>
 
 

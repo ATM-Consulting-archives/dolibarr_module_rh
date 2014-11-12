@@ -82,6 +82,7 @@ function showParameters(&$form) {
 			,'RH_NDF_TICKET_RESTO'
 			,'RH_CODEPRODUIT_TICKET_RESTO'
 			,'RH_CODECLIENT_TICKET_RESTO'
+			,'TIMESHEET_WORKING_HOUR_PER_DAY'
 	);
 	
 	?><form action="<?php echo $_SERVER['PHP_SELF'] ?>" name="load-<?php echo $typeDoc ?>" method="POST" enctype="multipart/form-data">

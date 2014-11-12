@@ -77,6 +77,8 @@
 			case 'save':
 				$pointeuse->load($ATMdb, $_REQUEST['id']);
 				
+				$pointeuse->set_values($_REQUEST);
+				
 				$pointeuse->set_date('date_jour', $_REQUEST['date_jour']);
 				//print_r($_REQUEST);
 				$pointeuse->date_deb_am = strtotime(date('Y-m-d '.$_REQUEST['date_deb_am'], $pointeuse->date_jour));
@@ -230,6 +232,7 @@ function _fiche(&$ATMdb, &$pointeuse, $mode) {
 				,'date_deb_pm'=>$form->timepicker('','date_deb_pm', date('H:i',$pointeuse->date_deb_pm),5,7)
 				,'date_fin_pm'=>$form->timepicker('','date_fin_pm', date('H:i',$pointeuse->date_fin_pm),5,7)
 				,'date_jour'=>$form->calendrier('', 'date_jour', $pointeuse->date_jour)
+				,'motif'=>$form->zonetexte('', 'motif', $pointeuse->motif, 60,5)
 				,'time_presence'=>_get_temps_presence($pointeuse->time_presence)
 				,'id'=>$pointeuse->getId()	
 			)
@@ -248,7 +251,8 @@ function _fiche(&$ATMdb, &$pointeuse, $mode) {
 				'Register' => $langs->trans('Register'),
 				'Modify' => $langs->trans('Modify'),
 				'Delete' => $langs->trans('Delete'),
-				'ConfirmDeleteScore' => $langs->trans('ConfirmDeleteScore')
+				'ConfirmDeleteScore' => $langs->trans('ConfirmDeleteScore'),
+				'Note' => $langs->trans('Note')
 			)
 		)	
 	);

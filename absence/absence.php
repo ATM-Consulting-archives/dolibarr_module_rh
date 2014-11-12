@@ -583,7 +583,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1;
-	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant : 
+	//////////////////////récupération des informations des congés courants (N) de l'utilisateur courant :
+	// TODO OBJECT !!!!!!!!!!!!!! votre honneur ! 
 	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` 
 				WHERE fk_user=" . ((GETPOST('fk_user')) ? intval(GETPOST('fk_user')) : $user->id);
 		
@@ -609,6 +610,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$congeCourant['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeN');
 		$congeCourant['annee']=$ATMdb->Get_field('anneeN');
 		$congeCourant['fk_user']=$ATMdb->Get_field('fk_user');
+		$congeCourant['recup']=$ATMdb->Get_field('acquisRecuperation');
 		
 		
 		$rttCourant['id']=$ATMdb->Get_field('rowid');
@@ -795,6 +797,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'acquisAnc'=>$form->texte('','acquisAncienneteN',$congeCourant['acquisAnc'],10,50)
 				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeN',$congeCourant['acquisHorsPer'],10,50)
 				,'anneeCourante'=>$form->texte('','anneeN',$anneeCourante,10,50)
+				,'recup'=>$congeCourant['recup']
 				,'idUser'=>$_REQUEST['id']
 			)
 			,'rttCourant'=>array(
@@ -895,6 +898,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'ConfirmDeleteAbsenceRequest' =>addslashes( $langs->transnoentitiesnoconv('ConfirmDeleteAbsenceRequest')),
 				'Delete' => $langs->trans('Delete')
 				,'AbsenceBy' => $langs->trans('AbsenceBy')
+				,'acquisRecuperation'=>$langs->trans('acquisRecuperation')
 			)
 			
 		)
