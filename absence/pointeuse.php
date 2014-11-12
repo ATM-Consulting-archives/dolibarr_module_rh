@@ -12,8 +12,10 @@
 	llxHeader('', $langs->trans('Clocking'));
 	switch(__get('action','list') ) {
 			case 'new':
+				$pointeuse->fk_user = $user->id;
+				
 				$pointeuse->set_values($_REQUEST);
-				_fiche($ATMdb, $absence,'edit');	
+				_fiche($ATMdb, $pointeuse,'edit');	
 				break;	
 
 			case 'imcomming':
@@ -202,6 +204,15 @@ function _fiche(&$ATMdb, &$pointeuse, $mode) {
 	//echo $_REQUEST['validation'];
 	
 	$fk_user = $user->id; //TODO admin
+	
+	if($pointeuse->getId() == 0) {
+		
+		$emploi = new TRH_EmploiTemps;
+		$emploi->load_by_fkuser($ATMdb, $pointeuse->fk_user, $pointeuse->get_date('date_jour','Y-m-d'));
+		
+		list($pointeuse->date_deb_am,$pointeuse->date_fin_am,$pointeuse->date_deb_pm,$pointeuse->date_fin_pm) = $emploi->getHeures($pointeuse->get_date('date_jour','Y-m-d'));
+	}
+	
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
