@@ -2691,7 +2691,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_absence_regle');
 		parent::add_champs('typeAbsence','type=chaine;');
 		parent::add_champs('choixApplication,periode','type=chaine;index;');
-		parent::add_champs('nbJourCumulable','type=entier;index;');
+		parent::add_champs('nbJourCumulable','type=float;index;');
 		parent::add_champs('restrictif,contigue,contigueNoJNT','type=entier;');
 		parent::add_champs('fk_user','type=entier;index;');	//utilisateur concerné
 		parent::add_champs('fk_usergroup','type=entier;index;');	//utilisateur concerné
