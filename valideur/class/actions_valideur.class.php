@@ -23,7 +23,7 @@ class ActionsValideur
 					
 					//on récupère les delegateurs du user et on les affiche
 					$sql = "SELECT fk_object FROM ".MAIN_DB_PREFIX."user_extrafields WHERE fk_user_delegation=".$user->id;
-					print $sql;
+					
 					$result = $db->query($sql);
 					if ($result)
 					{
