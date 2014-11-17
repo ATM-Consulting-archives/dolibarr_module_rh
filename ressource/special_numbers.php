@@ -159,8 +159,9 @@ if(is_array($TNumerosSpeciaux) && count($TNumerosSpeciaux) > 0) {
 	foreach($TNumerosSpeciaux as $numero) {
 		
 		print '<tr>';
-		print '<td><input type="text" name="TNumerosSpeciaux[]" value="'.$numero.'" /></td>';
-		print '<td><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?number='.$numero.'&action=delete" />Supprimer numéro</a></td>';
+		//print '<td><input type="text" name="TNumerosSpeciaux[]" value="'.$numero.'" /></td>';
+		print '<td>'.$numero.'</td>';
+		print '<td><a href="'.$_SERVER['PHP_SELF'].'?number='.$numero.'&action=delete" />'.img_delete().'</a></td>';
 		print '</tr>';
 		
 	}	
