@@ -751,6 +751,8 @@ class modAbsence extends DolibarrModules
        	$extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('alert_email', $langs->trans('EmailAlert'), 'varchar', 0, 255, 'usergroup');
 		
+		$extrafields=new ExtraFields($this->db);
+		$res =$extrafields->addExtraField("type", "Type", "select", 0, $size, "usergroup", 0, 0, '', array('options'=>array('site','Site','metier','Metier','service','Service','groupe','Groupe')));
 		
 
 		return $this->_init($sql, $options);
