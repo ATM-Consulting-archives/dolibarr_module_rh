@@ -149,7 +149,7 @@ print '<form name="formNumerosSpeciaux" method="POST" action="'.dol_buildpath('/
 print '<table class="noborder" width="100%">';
 	
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans('SpecialNumbersList').'</td>';
+print '<td>'.$langs->trans('SpecialNumbersList').'</td><td></td>';
 print '</tr>';
 
 print '<input type="hidden" name="action" value="save" />';
