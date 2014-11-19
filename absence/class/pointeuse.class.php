@@ -108,9 +108,19 @@ class TRH_declarationTemps extends TObjetStd {
 		$this->start();
 		
 	}
-	function load_by_date(&$ATMdb, $date_ref) {
+	function load_by_date(&$ATMdb, $date_ref, $fk_user=0) {
+		global $user;
 		
-		return $this->loadBy($ATMdb, $date_ref, 'date_ref');
+		
+		if($fk_user<=0)$fk_user = $user->id;
+		
+		$ATMdb->Execute("SELECT rowid FROM ".MAIN_DB_PREFIX."rh_declaration_temps WHERE fk_user=".$fk_user." AND date_ref='".$date_ref."'");
+		if($obj=$ATMdb->Get_line()) {
+			return $this->load($ATMdb, $obj->rowid);
+		}
+		else{
+			return false;
+		}
 		
 	}	
 }

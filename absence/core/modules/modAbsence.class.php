@@ -365,6 +365,12 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][5] = 'alertAllMyCoWorker';
 		
 		
+		$r++;
+		$this->rights[$r][0] = 7128;
+		$this->rights[$r][1] = $langs->trans('DeclarationFormTimesManagDelete');
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+		$this->rights[$r][5] = 'deletedeclarationCadre';
 		
 		
 		

@@ -29,9 +29,7 @@
 				
 				$compteur=new TRH_Compteur;
 				$compteur->load_by_fkuser($ATMdb, $fk_user);
-				$compteur->acquisRecuperation+=$recupSum;
-				
-				$compteur->save($ATMdb);
+				$compteur->add($ATMdb, 'recup', -$recupSum, 'Récupération suite à la validation feuille de temps');
 				
 				setEventMessage("Votre compteur de récupération a été incrémenté de ".$recupSum." jour(s)");
 				
@@ -180,16 +178,20 @@ global $db,$langs,$conf;
 	
 		$l=new TListviewTBS('listDeclaration');
 		
-		print $l->render($ATMdb, "SELECT nb_hour,date_ref 
+		print $l->render($ATMdb, "SELECT rowid as Id, nb_hour,nb_hour_diff,date_ref, '' as Action  
 								FROM ".MAIN_DB_PREFIX."rh_declaration_temps
 								WHERE fk_user=".$fk_user." ORDER BY date_ref DESC",array(
 					'title'=>array(
 						'nb_hour'=> $langs->trans('NbDeclaredHours')
+						,'nb_hour_diff'=> $langs->trans('DifferencielHeure')
 						,'date_ref'=> $langs->trans('DeclaredMonth') 
 					)
 					,'eval'=>array(
 						'date_ref'=>' date("m/Y", strtotime("@val@"))'
 						,'nb_hour'=>' convertSecondToTime( @val@ * 3600, "allhourmin" ) '
+					)
+					,'link'=>array(
+						'Action'=>($user->rights->absence->myactions->deletedeclarationCadre ? '<a href="?action=deleteDeclaration&id=@Id@">'.img_delete().'</a>' : '')
 					)
 					,'liste'=>array(
 						'titre'=> $langs->trans('DeclaredHoursList')

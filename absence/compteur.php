@@ -268,37 +268,10 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	$form->Set_typeaff($mode);
 	
 	echo $form->hidden('action', 'save');
-	//echo $form->hidden('fk_user', $_REQUEST['id']);
-	
-	//compteur de l'user courant : 
-	$sql="SELECT rowid FROM `".MAIN_DB_PREFIX."rh_compteur` WHERE fk_user=".$compteur->fk_user;
-	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		$compteurUserCourant=$ATMdb->Get_field('rowid');
-	}
-	
-	
-	//récupération informations utilisateur dont on modifie le compte
-	$CompteurActuel=$compteurUserCourant;
+	echo $form->hidden('id', $compteur->getId());
 
-	echo $form->hidden('id', $CompteurActuel);
-	$sqlReqUser="SELECT fk_user FROM `".MAIN_DB_PREFIX."rh_compteur` where rowid=".$CompteurActuel;
-	$ATMdb->Execute($sqlReqUser);
-	while($ATMdb->Get_line()) {
-				$userCompteurActuel=$ATMdb->Get_field('fk_user');
-	}
-	
-	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` where rowid=".$userCompteurActuel;
-
-	$ATMdb->Execute($sqlReqUser);
-	$Tab=array();
-	while($ATMdb->Get_line()) {
-				$userCourant=new User($db);
-				$userCourant->firstname=$ATMdb->Get_field('firstname');
-				$userCourant->id=$ATMdb->Get_field('rowid');
-				$userCourant->lastname=$ATMdb->Get_field('lastname');
-	}
-	
+	$userCourant=new User($db);
+	$userCourant->fetch($compteur->fk_user);
 	
 	$anneeCourante=date('Y');
 	$anneePrec=$anneeCourante-1; 
@@ -374,8 +347,6 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				
 				
 	}
-
-
 	$congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+	$congePrec['acquisHorsPer']+$congePrec['reportConges'];
 	$congePrecReste=$congePrecTotal-$congePrec['congesPris'];
 	
