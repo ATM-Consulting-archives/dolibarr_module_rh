@@ -310,7 +310,7 @@ function _recap_abs(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, 
 }
 
 function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin, &$TStatPlanning) {
-	global $langs;
+	global $langs,$user;
 //on va obtenir la requête correspondant à la recherche désirée
 
 	$TPlanningUser=$absence->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin);
@@ -346,12 +346,25 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 	</script>
 	<?php
 	
+	$TJourTrans=array(
+		1=>substr($langs->trans('Monday'),0,1)
+		,2=>substr($langs->trans('Tuesday'),0,1)
+		,3=>substr($langs->trans('Wednesday'),0,1)
+		,4=>substr($langs->trans('Thursday'),0,1)
+		,5=>substr($langs->trans('Friday'),0,1)
+		,6=>substr($langs->trans('Saturday'),0,1)
+		,7=>substr($langs->trans('Sunday'),0,1)
+	);
+	
 	
 	print '<table class="planning" border="0">';
 	print "<tr class=\"entete\">";
 	print "<td ></td>";
 	foreach($TPlanningUser as $planning=>$val){
-		print '<td colspan="2">'.substr($planning,0,5).'</td>';
+		$std = new TObjetStd;
+		$std->set_date('date_jour', $planning);
+		
+		print '<td colspan="2">'.$TJourTrans[date('N', $std->date_jour)].' '.substr($planning,0,5).'</td>';
 		foreach($val as $id=>$present){
 			$tabUserMisEnForme[$id][$planning]=$present;	
 		}
@@ -392,7 +405,10 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 			if($isFerie && $estUnJourTravaille!='NON') { $TStatPlanning[$idUser]['ferie']++; }
 			
 			if($ouinon=='non') {
-				if(!$isFerie && $estUnJourTravaille!='NON' && !isset($_REQUEST['no-link'])) $linkPop = '<a title="'.$langs->trans('addAbsenceUser').'" href="javascript:popAddAbsence(\''.$std->get_date('date_jour','Y-m-d').'\', '.$idUser.');">+</a>';
+				
+				$labelJour = '+';//$labelJour = $TJourTrans[date('N', strtotime($dateJour))];
+				
+				if($user->rights->absence->myactions->creerAbsenceCollaborateur && !$isFerie && $estUnJourTravaille!='NON' && !isset($_REQUEST['no-link'])) $linkPop = '<a title="'.$langs->trans('addAbsenceUser').'" href="javascript:popAddAbsence(\''.$std->get_date('date_jour','Y-m-d').'\', '.$idUser.');">'.$labelJour.'</a>';
 				else $link='&nbsp;'; 
 				
 				print '<td class="'.$class.$classTravail.'" rel="am">'.$linkPop.'</td>
