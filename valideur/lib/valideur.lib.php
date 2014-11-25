@@ -13,6 +13,8 @@
  */
 function send_mail(&$db, $object, $user, $langs, $statut)
 {
+	global $conf;
+	
 	// On récupère les informations de l'utilisateur
 	
 	$sql = "SELECT lastname,firstname,email FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$object->fk_user;
@@ -92,6 +94,8 @@ function send_mail(&$db, $object, $user, $langs, $statut)
 	
 	// Send mail
 	$mail = new TReponseMail($from,$sendto,$subject,$message);
+	
+	if(!empty($conf->global->NDFP_MAIL_COPY_VALIDATION))$mail->emailtoBcc = $conf->global->NDFP_MAIL_COPY_VALIDATION;
 	
 	dol_syslog("Valideur::sendmail content=$from,$sendto,$subject,$message", LOG_DEBUG);
 	
