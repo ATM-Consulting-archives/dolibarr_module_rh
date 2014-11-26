@@ -46,7 +46,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 
 	$idGroupeRecherche=$_REQUEST['groupe'];
 	
-	
+	//TODO object USerGroup !
 	if($idGroupeRecherche!=0){	//	on recherche le nom du groupe
 		$sql="SELECT nom FROM ".MAIN_DB_PREFIX."usergroup
 		WHERE rowid =".$idGroupeRecherche;
@@ -202,10 +202,11 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		
 		$annee_old = '';
 		
-		while($t_current<=$absence->debut_fin_planning) {
+		$t_max= strtotime(date('Y-m-t',  $absence->debut_fin_planning));
+		
+		while($t_current<=$t_max) {
 			
 			$annee = date('Y', $t_current);
-			
 			if($t_current==$absence->debut_debut_planning) {
 				$date_debut =date('d/m/Y', $absence->debut_debut_planning);	
 			}
@@ -213,7 +214,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 				$date_debut =date('01/m/Y', $t_current);	
 			}
 			
-			if($t_current==$absence->debut_fin_planning) {
+			if($t_current>=$absence->debut_fin_planning) {
 				$date_fin =date('d/m/Y', $absence->debut_fin_planning);	
 			}
 			else {
