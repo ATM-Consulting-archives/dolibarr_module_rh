@@ -231,7 +231,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		}
 	}
 	
-	_recap_abs($ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut_recherche, $date_fin_recherche);
+	if($user->rights->absence->myactions->creerAbsenceCollaborateur) _recap_abs($ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut_recherche, $date_fin_recherche);
 	
 	echo $form->end_form();
 	
