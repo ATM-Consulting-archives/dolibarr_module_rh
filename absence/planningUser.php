@@ -166,8 +166,19 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			font-weight:bold;
 			background-color:#eee;
 	}
-	
-			
+	.just-print {
+  			display:none;
+  	}
+  
+	@media print {
+  	
+  		.no-print, #id-left,#tmenu_tooltip,.login_block  {
+  			display:none;
+  		}
+  		.just-print {
+  			display:block;
+  		}
+	}		
 	</style>
 	
 	<?php
@@ -408,7 +419,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 				
 				$labelJour = '+';//$labelJour = $TJourTrans[date('N', strtotime($dateJour))];
 				
-				if($user->rights->absence->myactions->creerAbsenceCollaborateur && !$isFerie && $estUnJourTravaille!='NON' && !isset($_REQUEST['no-link'])) $linkPop = '<a title="'.$langs->trans('addAbsenceUser').'" href="javascript:popAddAbsence(\''.$std->get_date('date_jour','Y-m-d').'\', '.$idUser.');">'.$labelJour.'</a>';
+				if($user->rights->absence->myactions->creerAbsenceCollaborateur && !$isFerie && $estUnJourTravaille!='NON' && !isset($_REQUEST['no-link'])) $linkPop = '<a title="'.$langs->trans('addAbsenceUser').'" href="javascript:popAddAbsence(\''.$std->get_date('date_jour','Y-m-d').'\', '.$idUser.');" class="no-print">'.$labelJour.'</a>';
 				else $link='&nbsp;'; 
 				
 				print '<td class="'.$class.$classTravail.'" rel="am">'.$linkPop.'</td>
@@ -514,5 +525,20 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 		print '<td align="center" colspan="2">'.$nb.'</td>';
 	}
 	
-	print '</tr></table><p>&nbsp;</p>';
+	print '</tr></table><p>&nbsp;</p>
+	<script language="javascript">
+	
+		$(document).ready(function() {
+			
+			$("table.planning td.rouge, table.planning td.vert").each(function() {
+				
+				$(this).append("<span class=\"just-print\">"+ $(this).attr("title")+"</span>" );
+				
+			});
+			
+		});
+	
+	</script>
+	
+	';
 }

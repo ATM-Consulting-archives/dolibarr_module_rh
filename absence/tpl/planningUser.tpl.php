@@ -1,5 +1,5 @@
 
-	<div>			
+	<div class="no-print">			
 		 [recherche.titreRecherche;block=tr;strconv=no;protect=no]
 		<br/>
 		<table class="border" style="width:60%">	
