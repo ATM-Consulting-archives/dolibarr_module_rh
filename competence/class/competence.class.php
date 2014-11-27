@@ -449,6 +449,7 @@ class TRH_remuneration extends TObjetStd {
 							-1=>""
 							,'nom_user'=>nom_user
 							,'prenom_user'=>prenom_user
+							,'prime_user'=>prime_user
 						);
 		
 		$sql = 'SHOW COLUMNS FROM ' . MAIN_DB_PREFIX . 'rh_remuneration';
