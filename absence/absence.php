@@ -636,6 +636,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	
 	//récupération informations utilisateur dont on observe l'absence, ou la crée
+	// TODO object again & again !
 	if($absence->fk_user!=0){
 		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$absence->fk_user;
 	}else{
@@ -773,6 +774,12 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	$TBS=new TTemplateTBS();
 	
+	if(GETPOST('popin') == 1) {
+		$TUser=array($absence->fk_user=>$userCourant->firstname.' '.$userCourant->lastname);
+		//$droitsCreation=2; plus beau mais bug car user courant systématique
+		$typeAbsenceCreable=array_merge($typeAbsenceCreable, TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin', 1));
+	}
+
 	print $TBS->render('./tpl/absence.tpl.php'
 		,array(
 			//'TRegle' =>$TRegle

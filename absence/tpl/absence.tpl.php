@@ -121,7 +121,7 @@
 			
 				[onshow;block=begin;when [view.mode]=='edit']
 				
-					<input type="submit" value="[translate.Register;strconv=no;protect=no]" name="save" class="button" onclick="document.location.href='?id=[absenceCourante.id]&action=view'">
+					<input type="submit" value="[translate.Register;strconv=no;protect=no]" name="save" class="button" />
 				[onshow;block=end]
 				
 				
