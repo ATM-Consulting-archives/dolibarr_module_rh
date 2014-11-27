@@ -59,6 +59,25 @@
 				</tr>
 			</table>
 			<br/><br/>
+			<table class="border" style="width:100%">		
+				<tr>
+					<td><b>Nombre d'heures/mois</b></td>
+					<td><b>AN</b></td>
+					<td><b>Cout global</b></td>
+					<td><b>Cumul heures travaillées</b></td>
+					<td><b>Cumul heures sup</b></td>
+					<td><b>HS</b></td>
+				</tr>
+				<tr>
+					<td>[remuneration.nbHeuresMois;strconv=no;protect=no]€</td>
+					<td>[remuneration.an;strconv=no;protect=no]€</td>
+					<td>[remuneration.coutGlobal;strconv=no;protect=no]€</td>
+					<td>[remuneration.cumHeureTrav;strconv=no;protect=no]€</td>
+					<td>[remuneration.cumHSup;strconv=no;protect=no]€</td>
+					<td>[remuneration.HS;strconv=no;protect=no]€</td>
+				</tr>
+			</table>
+			<br/><br/>
 			<h2 style="color: #2AA8B9;">Charges</h2>
 			<table class="border" style="width:30%">		
 				<tr>

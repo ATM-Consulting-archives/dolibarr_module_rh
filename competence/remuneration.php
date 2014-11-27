@@ -315,6 +315,15 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 				
 				,'charges'=>$form->texte('','charges',$remuneration->charges, 30,100,'','','')
 				
+				
+				// Nouveaux champs
+				,'nbHeuresMois'=>$form->texte('','nbHeuresMois',$remuneration->nbHeuresMois, 30,100,'','','-')
+				,'an'=>$form->texte('','an',$remuneration->an, 30,100,'','','-')
+				,'coutGlobal'=>$form->texte('','coutGlobal',$remuneration->coutGlobal, 30,100,'','','-')
+				,'cumHeureTrav'=>$form->texte('','cumHeureTrav',$remuneration->cumHeureTrav, 30,100,'','','-')
+				,'cumHSup'=>$form->texte('','cumHSup',$remuneration->cumHSup, 30,100,'','','-')
+				,'HS'=>$form->texte('','HS',$remuneration->HS, 30,100,'','','-')
+				
 			)
 			,'userCourant'=>array(
 				'id'=>$_REQUEST['fk_user'] ? $_REQUEST['fk_user'] : $user->id
