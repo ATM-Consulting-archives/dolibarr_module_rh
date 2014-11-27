@@ -248,6 +248,18 @@
 		dol_include_once("/report/class/dashboard.class.php");
 		//llxHeader('', '', '', '', 0, 0, array('http://www.google.com/jsapi'));
 		
+		if(GETPOST('date_deb')){
+			$date_deb = GETPOST('date_deb');
+			$date_deb = explode('/', $date_deb);
+			$date_deb = $date_deb[2].'-'.$date_deb[1].'-'.$date_deb[0].' 00:00:00';
+		}
+		
+		if(GETPOST('date_fin')){
+			$date_fin = GETPOST('date_fin');
+			$date_fin = explode('/', $date_fin);
+			$date_fin = $date_fin[2].'-'.$date_fin[1].'-'.$date_fin[0].' 23:59:59';
+		}
+		
 		$dash=new TReport_dashboard;
 		
 		$TIndicesuser = TRH_productiviteUser::get_array_indices_user($_REQUEST['fk_user']);
@@ -259,16 +271,20 @@
 							, SUM( chiffre_realise ) AS '".strtr($indice_user, array("'"=>"\'"))."' 
 							FROM ".MAIN_DB_PREFIX."rh_productivite_indice 
 							WHERE fk_user=".$_REQUEST['fk_user']."
-							AND indice='".strtr($indice_user, array("'"=>"\'"))."' 
-							GROUP BY `mois`";
-							
+							AND indice='".strtr($indice_user, array("'"=>"\'"))."' ";
+			
+			if(!empty($date_deb)) $sql .= "AND date_indice >= \"".$date_deb."\" ";
+			if(!empty($date_fin)) $sql .= "AND date_indice <= \"".$date_fin."\" ";
+			
+			$sql .= "		GROUP BY `mois`";
+			
 			$TData[] = array("code" => 'CHIFFRESUSER'
 							,'yDataKey' => $indice_user
 							,"sql" => $sql
 							,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES'));
 		}
 		
-		if(isset($_REQUEST['fk_usergroup'])) _addLinesGroup($TData, $TIndicesuser, $_REQUEST['fk_usergroup']);
+		if(isset($_REQUEST['fk_usergroup'])) _addLinesGroup($TData, $TIndicesuser, $_REQUEST['fk_usergroup'], $date_deb,$date_fin);
 		
 		if(count($TIndicesuser) > 0) {
 			
@@ -298,6 +314,8 @@
 	function _displayFormProductivityChart() {
 
 		$form = new TFormCore("", "formProductivityChart");
+		print $form->calendrier('Date début', 'date_deb', GETPOST('date_deb'));
+		print $form->calendrier('Date fin', 'date_fin', GETPOST('date_fin'));
 		print $form->btsubmit("Comparer chiffres","subFormProductivityChart");
 		print $form->combo($pLib, "fk_usergroup", _getUserGroups(), $_REQUEST['fk_usergroup']);
 		
@@ -325,7 +343,7 @@
 		
 	}
 	
-	function _addLinesGroup(&$TData, $TIndicesuser, $fk_usergroup) {
+	function _addLinesGroup(&$TData, $TIndicesuser, $fk_usergroup, $date_deb, $date_fin) {
 			
 		global $db;
 		
@@ -339,6 +357,10 @@
 				if($fk_usergroup > 0) $sql.= "INNER JOIN ".MAIN_DB_PREFIX."usergroup_user u on (u.fk_user = i.fk_user) ";
 				$sql.= "WHERE i.indice='".strtr($indice_user, array("'" => "\'"))."' ";
 				if($fk_usergroup > 0) $sql.= "AND fk_usergroup = ".$fk_usergroup." ";
+				
+				if(!empty($date_deb)) $sql .= "AND i.date_indice >= \"".$date_deb."\" ";
+				if(!empty($date_fin)) $sql .= "AND i.date_indice <= \"".$date_fin."\" ";
+				
 				$sql.= "GROUP BY `mois`";
 				
 				$TData[] = array("code" => 'CHIFFRESUSER'
