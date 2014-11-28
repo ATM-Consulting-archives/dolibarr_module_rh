@@ -256,6 +256,10 @@ function _liste(&$ATMdb, $remuneration) {
 	
 	_displayChartPrimes($ATMdb);
 	
+	print "<br />";
+	
+	_displayChartRemunerationsPrimes($ATMdb);
+	
 	llxFooter();
 }	
 
@@ -544,6 +548,76 @@ function _displayChartPrimes(&$ATMdb) {
 	?><div id="chart_primes" style="height:<?=$dash->hauteur?>px; margin-bottom:20px;"></div><?
 			
 	$dash->get('chart_primes');
+	
+}
+
+function _displayChartRemunerationsPrimes(&$ATMdb){
+	
+	global $conf,$langs,$db;
+	
+	$langs->load('report@report');
+	dol_include_once("/report/class/dashboard.class.php");
+	//llxHeader('', '', '', '', 0, 0, array('http://www.google.com/jsapi'));
+	
+	$title = $langs->trans('Graphiques des rémunérations totale annuelles');
+	print_fiche_titre($title, '', 'report.png@report');
+	
+	$dash=new TReport_dashboard;
+	//$dash->initByCode($ATMdb, 'SALAIREMOIS');
+	
+	$sql = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y\" ) AS 'annee', SUM( salaireMensuel ) + (
+				SELECT SUM( montant ) FROM ".MAIN_DB_PREFIX."rh_remuneration_prime WHERE fk_user=".$_REQUEST['fk_user']." AND DATE_FORMAT(date_prime, \"%Y\" ) = `annee`
+			) AS 'Salaire', commentaire as 'Commentaire' 
+			FROM ".MAIN_DB_PREFIX."rh_remuneration 
+			WHERE fk_user=".$_REQUEST['fk_user']." 
+			GROUP BY `annee`";
+	
+	$sql_moy = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y\" ) AS 'mois', AVG( salaireMensuel ) AS 'Salaire moyen' FROM ".MAIN_DB_PREFIX."rh_remuneration GROUP BY `annee`";
+	$sql_min = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y\" ) AS 'mois', MIN( salaireMensuel ) AS 'Salaire minimum' FROM ".MAIN_DB_PREFIX."rh_remuneration GROUP BY `annee`";
+	$sql_max = "SELECT DATE_FORMAT(date_debutRemuneration, \"%Y\" ) AS 'mois', MAX( salaireMensuel ) AS 'Salaire maximum' FROM ".MAIN_DB_PREFIX."rh_remuneration GROUP BY `annee`";
+	
+	$TData = array(0=>array(
+					'code'=>'SALAIREYEAR'
+					,'yDataKey' => 'Salaire'
+					,'sql'=>$sql
+					,'complement' => 'Commentaire'
+					,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+					)/*,
+				   1=>array(
+				     'code'=>'SALAIREMOIS'
+				     ,'yDataKey' => 'Salaire moyen'
+				     ,'sql'=>$sql_moy
+				     ,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+				   ),
+				   2=>array(
+				     'code'=>'SALAIREMOIS'
+				     ,'yDataKey' => 'Salaire minimum'
+				     ,'sql'=>$sql_min
+				     ,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+				   ),
+				   3=>array(
+				     'code'=>'SALAIREMOIS'
+				     ,'yDataKey' => 'Salaire maximum'
+				     ,'sql'=>$sql_max
+				     ,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+				   )*/
+				);
+	
+	// On rajoute au graphique la courbe correspondant au salaire associé à la grille de salaire du poste du user courant
+	//_addLineGrilleRemunerationPrimeAssociee($ATMdb, $TData);
+	
+	if(isset($_REQUEST['fk_usergroup'])) _addLinesGroup($TData, $_REQUEST['fk_usergroup']); 
+	
+	$dash->concat_title = false;
+	
+	$dash->initByData($ATMdb, $TData);
+	//$dash->dataSource[0] = strtr($dash->dataSource[0], array("__iduser__"=>$_REQUEST['fk_user']));
+		
+	?><div id="chart_remunerations_primes" style="height:<?php echo $dash->hauteur; ?>px; margin-bottom:20px;"></div><?php
+			
+	$dash->get('chart_remunerations_primes');
+	
+	
 	
 }
 
