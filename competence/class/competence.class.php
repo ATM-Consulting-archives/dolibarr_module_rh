@@ -439,11 +439,11 @@ class TRH_remuneration extends TObjetStd {
 	}
 
 
-	function load_by_user_and_dates(&$ATMdb, $fk_user, $debut, $fin){
+	function load_by_user_and_dates(&$ATMdb, $fk_user, $debut, $fin, $verif_date_fin=true){
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_remuneration 
-		WHERE date_debutRemuneration = '".date("Y-m-d",$debut)."'
-		AND date_finRemuneration = '".date("Y-m-d",$fin)."'
-		AND fk_user=".$fk_user;
+		WHERE date_debutRemuneration = '".date("Y-m-d",$debut)."'";
+		if($verif_date_fin) $sql.= " AND date_finRemuneration = '".date("Y-m-d",$fin)."' ";
+		$sql.= " AND fk_user=".$fk_user;
 		$ATMdb->Execute($sql);
 		if ($ATMdb->Get_line()) {
 			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
@@ -496,7 +496,7 @@ class TRH_remunerationPrime extends TObjetStd {
 
 	function load_by_user_and_dates(&$ATMdb, $fk_user, $date){
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_remuneration_prime 
-		WHERE date_prime = '".date("Y-m-d",$debut)."'
+		WHERE date_prime = '".date("Y-m-d",$date)."'
 		AND fk_user=".$fk_user;
 		$ATMdb->Execute($sql);
 		if ($ATMdb->Get_line()) {
