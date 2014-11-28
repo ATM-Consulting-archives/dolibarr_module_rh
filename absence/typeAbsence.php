@@ -60,6 +60,8 @@
 			,'libelleAbsence'=>$form->texte('', 'TTypeAbsence['.$absenceType->getId().'][libelleAbsence]', $absenceType->libelleAbsence, 30,255)
 			,'codeAbsence'=>$form->texte('', 'TTypeAbsence['.$absenceType->getId().'][codeAbsence]', $absenceType->codeAbsence, 6,10)
 			
+			,'colorId'=>$form->combo('', 'TTypeAbsence['.$absenceType->getId().'][colorId]', $absenceTypeDummy->TColorId , $absenceType->colorId)
+			
 			,'unite'=>$form->combo('', 'TTypeAbsence['.$absenceType->getId().'][unite]', $absenceTypeDummy->TUnite , $absenceType->unite)
 			,'decompteNormal'=>$form->combo('', 'TTypeAbsence['.$absenceType->getId().'][decompteNormal]', $absenceTypeDummy->TDecompteNormal , $absenceType->decompteNormal)
 			,'isPresence'=>$form->hidden( 'TTypeAbsence['.$absenceType->getId().'][isPresence]', 0)
@@ -79,6 +81,8 @@
 			,'decompteNormal'=>$form->combo('', 'TTypeAbsenceNew[decompteNormal]', $absenceTypeDummy->TDecompteNormal , null)
 			,'isPresence'=>$form->hidden( 'TTypeAbsenceNew[isPresence]', 0)
 			,'admin'=>$form->combo('', 'TTypeAbsenceNew[admin]', $absenceTypeDummy->TForAdmin , null)
+			
+			,'colorId'=>$form->combo('', 'TTypeAbsenceNew[colorId]', $absenceTypeDummy->TColorId , null)
 		);
 
 
@@ -97,6 +101,7 @@
 				'Wording' => $langs->trans('Wording'),
 				'Unit' => $langs->trans('Unit'),
 				'AccountingOfficerCode' => $langs->trans('AccountingOfficerCode'),
+				'ColorCode' => $langs->trans('ColorCode'),
 				'AskReservedAdmin' => $langs->trans('AskReservedAdmin'),
 				'OnlyCountBusinessDay' => $langs->trans('OnlyCountBusinessDay'),
 				'New' => $langs->trans('New'),
