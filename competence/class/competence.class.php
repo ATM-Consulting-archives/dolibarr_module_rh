@@ -408,6 +408,14 @@ class TRH_remuneration extends TObjetStd {
 		parent::add_champs('primeNoel','type=float;');
 		parent::add_champs('commission','type=float;');
 		
+		// Nouveaux champs
+		parent::add_champs('nbHeuresMois','type=float;');
+		parent::add_champs('an','type=float;');
+		parent::add_champs('coutGlobal','type=float;');
+		parent::add_champs('cumHeureTrav','type=float;');
+		parent::add_champs('cumHSup','type=float;');
+		parent::add_champs('HS','type=float;');
+		
 		
 		/*parent::add_champs('prevoyancePartSalariale','type=chaine;');
 		parent::add_champs('prevoyancePartPatronale','type=chaine;');
@@ -449,6 +457,7 @@ class TRH_remuneration extends TObjetStd {
 							-1=>""
 							,'nom_user'=>nom_user
 							,'prenom_user'=>prenom_user
+							,'prime_user'=>prime_user
 						);
 		
 		$sql = 'SHOW COLUMNS FROM ' . MAIN_DB_PREFIX . 'rh_remuneration';
