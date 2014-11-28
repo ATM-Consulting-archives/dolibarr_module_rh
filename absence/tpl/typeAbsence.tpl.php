@@ -9,6 +9,7 @@
 				<th>[translate.Wording;strconv=no]</th>
 				<th>[translate.Unit;strconv=no]</th>
 				<th>[translate.AccountingOfficerCode;strconv=no]</th>
+				<th>[translate.ColorCode]</th>
 				<th>[translate.AskReservedAdmin;strconv=no]</th>
 				<th>[translate.OnlyCountBusinessDay;strconv=no]</th>
 				<th>[translate.AskDelete;strconv=no]</th>
@@ -21,6 +22,7 @@
 				<td>[typeAbsence.libelleAbsence; strconv=no]</td>
 				<td>[typeAbsence.unite; strconv=no]</td>
 				<td>[typeAbsence.codeAbsence; strconv=no]</td>
+				<td>[typeAbsence.colorId; strconv=no]</td>
 				<td>[typeAbsence.admin; strconv=no]</td>
 				<td>[typeAbsence.decompteNormal; strconv=no][typeAbsence.isPresence; strconv=no]</td>
 				<td>[typeAbsence.delete; strconv=no]</td>

@@ -14,7 +14,7 @@
 	
 	
 function _planningResult(&$ATMdb, &$absence, $mode) {
-	global $langs, $conf, $db, $user;	
+	global $langs, $conf, $db, $user;
 	llxHeader('', $langs->trans('Summary'));
 	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', $langs->trans('Schedule'));
 
