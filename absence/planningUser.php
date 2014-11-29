@@ -372,7 +372,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 		,7=>substr($langs->trans('Sunday'),0,1)
 	);
 	
-	
+	$tabUserMisEnForme=array();
 	print '<table class="planning" border="0">';
 	print "<tr class=\"entete\">";
 	print "<td ></td>";
@@ -386,7 +386,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 		}
 	}
 	print "</tr>";
-	
+	//var_dump($tabUserMisEnForme);
 	$TTotal=array();
 	foreach($tabUserMisEnForme as $idUser => $planning){
 		$sql="SELECT lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$idUser;
@@ -397,6 +397,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 		print '<tr >';		
 		print '<td style="text-align:right; font-weight:bold;height:20px;" nowrap="nowrap">'.$name.'</td>';
 		foreach($planning as $dateJour => $ouinon){
+			
 			
 			if(empty($TTotal[$dateJour])) $TTotal[$dateJour] = 0;
 			
@@ -420,12 +421,12 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 			
 			if($isFerie && $estUnJourTravaille!='NON') { $TStatPlanning[$idUser]['ferie']++; }
 			
+			$labelJour = '+';//$labelJour = $TJourTrans[date('N', strtotime($dateJour))];
+			if($user->rights->absence->myactions->creerAbsenceCollaborateur /*&& !$isFerie && $estUnJourTravaille!='NON'*/ && !isset($_REQUEST['no-link'])) $linkPop = '<a title="'.$langs->trans('addAbsenceUser').'" href="javascript:popAddAbsence(\''.$std->get_date('date_jour','Y-m-d').'\', '.$idUser.');" class="no-print">'.$labelJour.'</a>';
+			else $linkPop='&nbsp;'; 
+			
+			
 			if($ouinon=='non') {
-				
-				$labelJour = '+';//$labelJour = $TJourTrans[date('N', strtotime($dateJour))];
-				
-				if($user->rights->absence->myactions->creerAbsenceCollaborateur && !$isFerie && $estUnJourTravaille!='NON' && !isset($_REQUEST['no-link'])) $linkPop = '<a title="'.$langs->trans('addAbsenceUser').'" href="javascript:popAddAbsence(\''.$std->get_date('date_jour','Y-m-d').'\', '.$idUser.');" class="no-print">'.$labelJour.'</a>';
-				else $link='&nbsp;'; 
 				
 				print '<td class="'.$class.$classTravail.'" rel="am">'.$linkPop.'</td>
 					<td class="'.$class.$classTravail.'" rel="pm">'.$linkPop.'</td>';

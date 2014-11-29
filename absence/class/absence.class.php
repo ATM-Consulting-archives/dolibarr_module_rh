@@ -1,5 +1,61 @@
 <?php
 
+class TRH_absenceDay {
+	
+	var $date = '';
+	var $isPresence = 0;
+	var $label = '';
+	var $AM=false;
+	var $PM=false;
+	var $DAM=false;
+	var $DPM=false;
+	var $FPM=false;
+	var $FAM=false;
+	
+	function __construct() {
+	
+	}
+	
+	function __toString() {
+		$r = '';
+		if(!empty($this->label)) {
+			
+			if($this->isPresence)$r.='[Présence] ';
+			
+			$r.=$this->label;
+			
+			if($this->DAM) {
+				$r.=' : DAM';
+			}
+			else if($this->FAM) {
+				$r.=' : FAM';
+			}
+			else if($this->DPM) {
+				$r.=' : DPM';
+			}
+			else if($this->FPM) {
+				$r.=' : FPM';
+			}
+			else if($this->PM) {
+				$r.=' : PM';
+			}
+			else if($this->AM) {
+				$r.=' : AM';
+			}
+				
+		}
+		else{
+			return 'non';	
+		}
+		
+		
+		
+		
+		
+	}
+	
+}
+
 //TRH_CONGE
 //classe pour la définition d'une absence 
 class TRH_Compteur extends TObjetStd {
@@ -2188,7 +2244,7 @@ class TRH_Absence extends TObjetStd {
 		if($idUserRecherche>0) {
 			$sql="SELECT u.rowid, u.login, u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u WHERE rowid=".$idUserRecherche;
 		}
-		else if( array_sum($idGroupeRecherche)>0) {	//on recherche un groupe précis
+		else if(array_sum($idGroupeRecherche)>0 ) {	//on recherche un groupe précis
 			$sql="SELECT u.rowid, u.login, u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
 			WHERE u.rowid=g.fk_user AND g.fk_usergroup IN (".implode(',',$idGroupeRecherche).") ORDER BY u.lastname";
 		}else{
@@ -2208,7 +2264,7 @@ class TRH_Absence extends TObjetStd {
 			$jourDebut=strtotime(str_replace("/","-",$date_debut));
 			//echo "ici".$id." ";
 			while($jourFin>=$jourDebut){
-					$TRetour[date('d/m/Y',$jourDebut)][$id]="non";
+					$TRetour[date('d/m/Y',$jourDebut)][$id]=new TRH_absenceDay;
 					$jourDebut=strtotime('+1day',$jourDebut);
 			}
 		}
@@ -2217,7 +2273,7 @@ class TRH_Absence extends TObjetStd {
 		
 		
 		foreach ($TabLogin as $id=>$user) {
-			$jourDebut=strtotime(str_replace("/","-",$date_debut));
+			$jourDebut=strtotime(str_replace("/","-",$date_debut)); //TODO so moche
 			if(!empty($TabAbsence[$id])){
 				foreach($TabAbsence as $tabAbs){
 					//print_r($tabAbs[$k]);exit;
@@ -2226,30 +2282,33 @@ class TRH_Absence extends TObjetStd {
 						//print_r($value);exit;
 						if($value['idUser']==$id){
 							while($jourFin>=$jourDebut){
-								if($TRetour[date('d/m/Y',$jourDebut)][$id]=="non"){
-									$moment="";
+								if($TRetour[date('d/m/Y',$jourDebut)][$id]==='non'){
+									$moment=new TRH_absenceDay;
 									if(strtotime(str_replace("/","-",$value['date_debut']))<=$jourDebut&&strtotime(str_replace("/","-",$value['date_fin']))>=$jourDebut){
 										if($jourDebut==strtotime(str_replace("/","-",$value['date_debut']))&&$jourDebut==strtotime(str_replace("/","-",$value['date_fin']))){
 											if($value['ddMoment']==$value['dfMoment']){
 												if($value['ddMoment']=='matin'){
-													$moment=" :  AM";
-												}else $moment=" :  PM";
+													$moment->AM = true;
+												}else $moment->PM = true;
 											}
 										}else if($jourDebut==strtotime(str_replace("/","-",$value['date_debut']))){
 											if($value['ddMoment']=='matin'){
-												$moment=" : DAM";
-											}else $moment=" : DPM";
+												$moment->DAM=$moment->AM=true;
+											}else $moment->DPM=$moment->PM=true;
 										}else if($jourDebut==strtotime(str_replace("/","-",$value['date_fin']))){
 											if($value['dfMoment']=='matin'){
-												$moment=" : FAM";
-											}else $moment=" : FPM";
+												$moment->FAM=$moment->AM=true;
+											}else $moment->FPM=$moment->PM=true;
 										}
 										
-										if($value['isPresence']>0) $TRetour[date('d/m/Y',$jourDebut)][$id]='[Présence] '.$value['type'].$moment;
-										else $TRetour[date('d/m/Y',$jourDebut)][$id]=$value['type'].$moment; 
+										if($value['isPresence']>0) $moment->isPresence = 1;
+										$moment->label = $value['type'];
+										 
+										$TRetour[date('d/m/Y',$jourDebut)][$id]=$moment;
+										 
 									}else{
 										
-										$TRetour[date('d/m/Y',$jourDebut)][$id]="non";
+										$TRetour[date('d/m/Y',$jourDebut)][$id]=new TRH_absenceDay;
 									}
 								}
 								//$typeTemp=$value['type'];
@@ -2264,7 +2323,7 @@ class TRH_Absence extends TObjetStd {
 			}else{
 				//echo "ici".$id." ";
 				while($jourFin>=$jourDebut){
-						$TRetour[date('d/m/Y',$jourDebut)][$id]="non";
+						$TRetour[date('d/m/Y',$jourDebut)][$id]=new TRH_absenceDay;
 						$jourDebut=strtotime('+1day',$jourDebut);
 				}
 			}
