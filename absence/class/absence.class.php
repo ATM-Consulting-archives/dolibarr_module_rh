@@ -12,6 +12,7 @@ class TRH_absenceDay {
 	var $FPM=false;
 	var $FAM=false;
 	var $colorId = 0;
+	var $description='';
 	
 	function __construct() {
 	
@@ -2176,7 +2177,7 @@ class TRH_Absence extends TObjetStd {
 		if($idUserRecherche>0){	//on recherche une  personne précis
 	
 			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.lastname,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
-				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment,ta.isPresence,ta.colorId
+				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment,ta.isPresence,ta.colorId, a.commentaire
 				FROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
 				LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_type_absence as ta ON (a.type=ta.typeAbsence)
 				LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (g.fk_user=u.rowid)
@@ -2192,7 +2193,7 @@ class TRH_Absence extends TObjetStd {
 		else if(array_sum($idGroupeRecherche)>0){	//on recherche un groupe précis
 		
 			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.lastname,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
-				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment,ta.isPresence,ta.colorId
+				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment,ta.isPresence,ta.colorId, a.commentaire
 				FROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
 				LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_type_absence as ta ON (a.type=ta.typeAbsence)
 				LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (g.fk_user=u.rowid)
@@ -2210,7 +2211,7 @@ class TRH_Absence extends TObjetStd {
 		else
 		{	//on recherche pour tous les utilisateurs
 			$sql="SELECT a.rowid as 'ID',  u.rowid as 'idUser', u.login, u.lastname, u.firstname, 
-				DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, a.ddMoment, a.dfMoment,
+				DATE_FORMAT(a.date_debut, '%d/%m/%Y') as date_debut, a.ddMoment, a.dfMoment, a.commentaire,
 				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as date_fin, a.libelle, a.libelleEtat,ta.isPresence,ta.colorId
 				FROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
 				LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_type_absence as ta ON (a.type=ta.typeAbsence)
@@ -2237,6 +2238,7 @@ class TRH_Absence extends TObjetStd {
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['dfMoment']=$ATMdb->Get_field('dfMoment');
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['isPresence']=$ATMdb->Get_field('isPresence');
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['colorId']=$ATMdb->Get_field('colorId');
+			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['commentaire']=$ATMdb->Get_field('commentaire');
 			
 			
 			$k++;
@@ -2307,9 +2309,9 @@ class TRH_Absence extends TObjetStd {
 										
 										if($value['isPresence']>0) $moment->isPresence = 1;
 										$moment->label = $value['type'];
-										
+										$moment->description = $value['commentaire'];
 										$moment->colorId = $value['colorId'];
-										
+										$moment->date = date('Y-m-d', $jourDebut);
 										 
 										$TRetour[date('d/m/Y',$jourDebut)][$id]=$moment;
 										 
@@ -2884,7 +2886,7 @@ class TRH_TypeAbsence extends TObjetStd {
 			,12=>'jaune'
 			,13=>'orange'
 			,14=>'orange sanguin'
-			,15=>'rose'
+			,15=>'rose sombre'
 		);
 		
 	}
@@ -2902,9 +2904,9 @@ class TRH_TypeAbsence extends TObjetStd {
 		parent::save($ATMdb);
 	}
 	 
-	static function getColor($i,$theme=6) {
+	static function getColor($i,$theme=0) {
 		
-		$color = "666666888888aaaaaabbbbbbdddddda32929cc3333d96666e69999f0c2c2b1365fdd4477e67399eea2bbf5c7d67a367a994499b373b3cca2cce1c7e15229a36633cc8c66d9b399e6d1c2f029527a336699668cb399b3ccc2d1e12952a33366cc668cd999b3e6c2d1f01b887a22aa9959bfb391d5ccbde6e128754e32926265ad8999c9b1c2dfd00d78131096184cb05288cb8cb8e0ba52880066aa008cbf40b3d580d1e6b388880eaaaa11bfbf4dd5d588e6e6b8ab8b00d6ae00e0c240ebd780f3e7b3be6d00ee8800f2a640f7c480fadcb3b1440edd5511e6804deeaa88f5ccb8865a5aa87070be9494d4b8b8e5d4d47057708c6d8ca992a9c6b6c6ddd3dd4e5d6c6274878997a5b1bac3d0d6db5a69867083a894a2beb8c1d4d4dae54a716c5c8d8785aaa5aec6c3cedddb6e6e41898951a7a77dc4c4a8dcdccb8d6f47b08b59c4a883d8c5ace7dcce";
+		$color = "666666d96666e67399b373b38c66d9668cb3668cd959bfb365ad894cb0528cbf40bfbf4de0c240f2a640e6804dbe9494";
 	
 		$hex = substr($color, $theme*30 +  $i*6, 6);
 		

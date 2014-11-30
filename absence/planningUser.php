@@ -430,7 +430,6 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 			if($user->rights->absence->myactions->creerAbsenceCollaborateur /*&& !$isFerie && $estUnJourTravaille!='NON'*/ && !isset($_REQUEST['no-link'])) $linkPop = '<a title="'.$langs->trans('addAbsenceUser').'" href="javascript:popAddAbsence(\''.$std->get_date('date_jour','Y-m-d').'\', '.$idUser.');" class="no-print">'.$labelJour.'</a>';
 			else $linkPop='&nbsp;'; 
 			
-			
 			if($ouinon=='non') {
 				
 				print '<td class="'.$class.$classTravail.'" rel="am">'.$linkPop.'</td>
@@ -447,13 +446,14 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 						
 			}else{
 				$boucleOk=0;
-				
-				$labelAbs = substr($ouinon,0,-5);
+				//var_dump($ouinon);
+				$labelAbs = $ouinon->label;
+				if(!empty($ouinon->description)) $labelAbs.=' : '.$ouinon->description;
 				
 				if(strpos($ouinon, 'RTT')!==false) {
 					$class .= ' rougeRTT';
 				}
-				else if(strpos($ouinon, '[Présence]')!==false) {
+				else if($ouinon->isPresence) {
 					$class .= ' vert';
 					$TTotal[$dateJour]+=1;
 				}
@@ -518,8 +518,8 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 
 				}
 				else {
-					print '<td class="'.$class.$classTravail.'" title="'.$ouinon.'" rel="am">&nbsp;</td>
-					<td class="'.$class.$classTravail.'"  rel="pm">&nbsp;</td>';
+					print '<td class="'.$class.$classTravail.'" title="'.$labelAbs.'" rel="am">&nbsp;</td>
+					<td class="'.$class.$classTravail.'"  title="'.$labelAbs.'" rel="pm">&nbsp;</td>';
 						
 					if(!$isFerie && ($estUnJourTravaille=='AM' || $estUnJourTravaille=='PM'))$TStatPlanning[$idUser]['absence']+=0.5;
 					else if(!$isFerie && $estUnJourTravaille=='OUI')$TStatPlanning[$idUser]['absence']+=1;	
