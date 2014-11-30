@@ -169,7 +169,12 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	.just-print {
   			display:none;
   	}
-  
+    <?php
+    for($i=1;$i<=15;$i++) {
+    	print ' .persocolor'.$i.' { background-color:'.TRH_TypeAbsence::getColor($i).' !important;  }';
+    }
+    
+    ?>
 	@media print {
   	
   		.no-print, #id-left,#tmenu_tooltip,.login_block  {
@@ -181,6 +186,40 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	}		
 	</style>
 	
+		
+	<script type="text/javascript">
+	function popAddAbsence(date, fk_user) {
+		$('#popAbsence').remove();
+		$('body').append('<div id="popAbsence"></div>');
+		
+		var url = "<?php echo dol_buildpath('/absence/absence.php?action=new',1) ?>&dfMoment=apresmidi&ddMoment=matin&fk_user="+fk_user+"&date_debut="+date+"&date_fin="+date+"&popin=1 #fiche-abs";
+		
+		$('#popAbsence').load(url, function() {
+			$('#popAbsence form').submit(function() {
+				$.post($(this).attr('action'), $(this).serialize())
+					.done(function(data) {
+						$.jnotify('<?php echo $langs->trans('AbsenceAdded') ?>', "ok");
+					});
+			
+				$("#popAbsence").dialog('close');
+				
+				$("#plannings").load(document.location.href+" #plannings");
+
+				return false;
+		
+			});
+
+		});
+		
+		
+		$('#popAbsence').dialog({
+			title:"Créer une nouvelle absence ou présence" /* TODO langs */
+			,width:500
+			,modal:true
+		});
+	}	
+
+	</script>
 	<?php
 	
 	if(!empty( $_REQUEST['date_debut_search'] ) || $idUserRecherche>0) {
@@ -326,41 +365,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 //on va obtenir la requête correspondant à la recherche désirée
 
 	$TPlanningUser=$absence->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin);
-	
-	?><script type="text/javascript">
-	function popAddAbsence(date, fk_user) {
-		$('#popAbsence').remove();
-		$('body').append('<div id="popAbsence"></div>');
-		
-		var url = "<?php echo dol_buildpath('/absence/absence.php?action=new',1) ?>&dfMoment=apresmidi&ddMoment=matin&fk_user="+fk_user+"&date_debut="+date+"&date_fin="+date+"&popin=1 #fiche-abs";
-		
-		$('#popAbsence').load(url, function() {
-			$('#popAbsence form').submit(function() {
-				$.post($(this).attr('action'), $(this).serialize())
-					.done(function(data) {
-						$.jnotify('<?php echo $langs->trans('AbsenceAdded') ?>', "ok");
-					});
-			
-				$("#popAbsence").dialog('close');
-				
-				$("#plannings").load(document.location.href+" #plannings");
 
-				return false;
-		
-			});
-
-		});
-		
-		
-		$('#popAbsence').dialog({
-			title:"Créer une nouvelle absence ou présence" /* TODO langs */
-			,width:500
-			,modal:true
-		});
-	}	
-
-	</script>
-	<?php
 	
 	$TJourTrans=array(
 		1=>substr($langs->trans('Monday'),0,1)
@@ -457,6 +462,10 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 				}
 				
 				if(!empty($class))$class.= ' classfortooltip';
+				
+				if($ouinon->colorId>0) {
+					$class.= ' persocolor'.$ouinon->colorId;
+				}
 				
 				if(strpos($ouinon,'DAM')!==false){
 						print '<td class="'.$class.$classTravail.'" title="'.$labelAbs.'" rel="am">&nbsp;</td>
