@@ -42,7 +42,8 @@ class TRH_absenceDay {
 			else if($this->AM) {
 				$r.=' : AM';
 			}
-				
+			
+			return $r;				
 		}
 		else{
 			return 'non';	
@@ -2282,7 +2283,8 @@ class TRH_Absence extends TObjetStd {
 						//print_r($value);exit;
 						if($value['idUser']==$id){
 							while($jourFin>=$jourDebut){
-								if($TRetour[date('d/m/Y',$jourDebut)][$id]==='non'){
+								if($TRetour[date('d/m/Y',$jourDebut)][$id]=='non'){
+										
 									$moment=new TRH_absenceDay;
 									if(strtotime(str_replace("/","-",$value['date_debut']))<=$jourDebut&&strtotime(str_replace("/","-",$value['date_fin']))>=$jourDebut){
 										if($jourDebut==strtotime(str_replace("/","-",$value['date_debut']))&&$jourDebut==strtotime(str_replace("/","-",$value['date_fin']))){
@@ -2862,7 +2864,7 @@ class TRH_TypeAbsence extends TObjetStd {
 		);
 		
 		$this->TColorId=array(
-			0=>'gris'
+			0=>$langs->trans('Default')
 			,1=>'rouge'
 			,2=>'rose'
 			,3=>'violet'
