@@ -2239,6 +2239,7 @@ class TRH_Absence extends TObjetStd {
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['isPresence']=$ATMdb->Get_field('isPresence');
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['colorId']=$ATMdb->Get_field('colorId');
 			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['commentaire']=$ATMdb->Get_field('commentaire');
+			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['idAbsence']=$ATMdb->Get_field('ID');
 			
 			
 			$k++;
@@ -2312,6 +2313,8 @@ class TRH_Absence extends TObjetStd {
 										$moment->description = $value['commentaire'];
 										$moment->colorId = $value['colorId'];
 										$moment->date = date('Y-m-d', $jourDebut);
+										 
+										$moment->idAbsence =  $value['idAbsence'];
 										 
 										$TRetour[date('d/m/Y',$jourDebut)][$id]=$moment;
 										 
