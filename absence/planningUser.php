@@ -29,9 +29,9 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	$idGroupeRecherche=$idGroupeRecherche2=$idGroupeRecherche3=0;
 	$idUserRecherche=0;
 	
-	if(isset($_REQUEST['groupe'])) $idGroupeRecherche=$_REQUEST['idGroupeRecherche'];
-	if(isset($_REQUEST['groupe2'])) $idGroupeRecherche2=$_REQUEST['idGroupeRecherche2'];
-	if(isset($_REQUEST['groupe3'])) $idGroupeRecherche3=$_REQUEST['idGroupeRecherche3'];
+	if(isset($_REQUEST['groupe'])) $idGroupeRecherche=$_REQUEST['groupe'];
+	if(isset($_REQUEST['groupe2'])) $idGroupeRecherche2=$_REQUEST['groupe2'];
+	if(isset($_REQUEST['groupe3'])) $idGroupeRecherche3=$_REQUEST['groupe3'];
 	
 	if(isset($_REQUEST['date_debut_search'])) {
 		 $date_debut=$_REQUEST['date_debut_search'];
@@ -231,9 +231,8 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	
 		}
 		else {
-			$absence->set_date('debut_debut_planning', $_REQUEST['date_debut_search']);
-			$absence->set_date('debut_fin_planning', $_REQUEST['date_fin_search']);
-			
+			$absence->set_date('debut_debut_planning', $_REQUEST['date_debut_search']); 
+			$absence->set_date('debut_fin_planning', $_REQUEST['date_fin_search']); // TODO var date_fin_planning non ?!
 		}
 		
 		
@@ -253,11 +252,13 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 				$date_debut =date('01/m/Y', $t_current);	
 			}
 			
-			if($t_current>=$absence->debut_fin_planning) {
+			$t_fin_periode= strtotime(date('Y-m-t',  $t_current));
+			
+			if($t_fin_periode>=$absence->debut_fin_planning) {
 				$date_fin =date('d/m/Y', $absence->debut_fin_planning);	
 			}
 			else {
-				$date_fin =date('t/m/Y', $t_current);	
+				$date_fin =date('d/m/Y', $t_fin_periode);	
 			}
 			
 			if($annee!=$annee_old) print '<p style="text-align:left;font-weight:bold">'.$annee.'</strong><br />';
