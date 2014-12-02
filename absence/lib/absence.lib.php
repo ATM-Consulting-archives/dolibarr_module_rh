@@ -267,22 +267,20 @@ function php2dmy($phpDate){
 
 //fonction permettant l'envoi de mail
 function mailConges(&$absence,$presence=false){
-	global $db, $langs;		
+	global $db, $langs,$conf, $user;		
 
 	$from = USER_MAIL_SENDER;
 	
 
-	$ATMdb=new TPDOdb;
-	
 	/*
 	 * Mail destinataire
 	 */
-	$user = new User($db);	
-	$user->fetch($absence->fk_user);
+	$userAbsence = new User($db);	
+	$userAbsence->fetch($absence->fk_user);
 
-	$sendto=$user->email;
-	$name=$user->lastname;
-	$firstname=$user->firstname;
+	$sendto=$userAbsence->email;
+	$name=$userAbsence->lastname;
+	$firstname=$userAbsence->firstname;
 		
 
 	$TBS=new TTemplateTBS();
@@ -332,13 +330,6 @@ function mailConges(&$absence,$presence=false){
 			,array()
 			,array(
 				'absence'=>array(
-
-					/*'nom'=>utf8_encode($name)
-					,'prenom'=>utf8_encode($firstname)
-					,'date_debut'=>php2dmy($absence->date_debut)
-					,'date_fin'=>php2dmy($absence->date_fin)
-					,'libelle'=>utf8_encode($absence->libelle)
-					,'libelleEtat'=>utf8_encode($absence->libelleEtat)*/
 					'nom'=> htmlentities($name, ENT_COMPAT | ENT_HTML401, 'ISO-8859-1')
 	                ,'prenom'=> htmlentities($firstname, ENT_COMPAT | ENT_HTML401, 'ISO-8859-1')
 	                ,'date_debut'=> php2dmy($absence->date_debut)
@@ -356,6 +347,41 @@ function mailConges(&$absence,$presence=false){
 				)
 			)
 		);
+		
+		if($conf->global->ABSENCE_ALERT_OTHER_VALIDEUR) {
+			// TODO copier-coller too crade ! Mais c'est le mien	
+			$ATMdb=new TPDOdb;
+			$sql="SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."usergroup_user 
+			WHERE fk_user= ".$absence->fk_user;
+		
+			$ATMdb->Execute($sql);
+			$TGValideur=array();
+			while($ATMdb->Get_line()){
+				$TGValideur[]=$ATMdb->Get_field('fk_usergroup');
+			}
+			
+			$sql="SELECT fk_user 
+			FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
+			WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).") AND pointeur=0 AND level=".$absence->niveauValidation." AND fk_user NOT IN(".$absence->fk_user.",".$user->id.")";
+	
+			$TValideur=$ATMdb->ExecuteAsArray($sql);
+			
+			foreach($TValideur as $row) {
+				$valideur=new User($db);
+				$valideur->fetch($row->fk_user);
+				
+				if(!empty($valideur->email)) {
+					$mail = new TReponseMail($from,$valideur->email,'['.$langs->trans['Copy'].'] '. $subject,$message);
+			
+					$result = $mail->send(true, 'utf-8');
+					
+				}
+				
+			}
+			
+			
+		}		
+		
 	}
 	else if($absence->etat=='Refusee'){
 		if(!$presence){
@@ -396,10 +422,10 @@ function mailConges(&$absence,$presence=false){
 		);
 	}
 	
-	
-	$mail = new TReponseMail($from,$sendto,$subject,$message);
-	
-	$result = $mail->send(true, 'utf-8');
+	if(!empty($sendto)) {
+		$mail = new TReponseMail($from,$sendto,$subject,$message);
+		$result = $mail->send(true, 'utf-8');
+	}
 	
 	return 1;	
 }
