@@ -287,11 +287,11 @@ function mailConges(&$absence,$presence=false){
 	if($absence->etat=='Avalider'){
 		
 		if(!$presence){
-			$subject = $langs->trans('HolidayRequestCreation');
+			$subject = $langs->transnoentities('HolidayRequestCreation');
 			$tpl = dol_buildpath('/absence/tpl/mail.absence.creation.tpl.php');
 		}
 		else{
-			$subject = $langs->trans('PresenceRequestCreation');
+			$subject = $langs->transnoentities('PresenceRequestCreation');
 			$tpl = dol_buildpath('/absence/tpl/mail.presence.creation.tpl.php');
 		}
 		
@@ -308,21 +308,21 @@ function mailConges(&$absence,$presence=false){
 					
 				)
 				,'translate' => array(
-					'Hello' => $langs->trans('Hello'),
-					'MailYourRequestOf' => $langs->trans('MailYourRequestOf'),
-					'DateInterval' => $langs->trans('DateInterval', php2dmy($absence->date_debut), php2dmy($absence->date_fin)),
-					'MailActionCreate' => $langs->trans('MailActionCreate'),
-					'MailStateIsNow' => $langs->trans('MailStateIsNow')
+					'Hello' => $langs->transnoentities('Hello'),
+					'MailYourRequestOf' => $langs->transnoentities('MailYourRequestOf'),
+					'DateInterval' => $langs->transnoentities('DateInterval', php2dmy($absence->date_debut), php2dmy($absence->date_fin)),
+					'MailActionCreate' => $langs->transnoentities('MailActionCreate'),
+					'MailStateIsNow' => $langs->transnoentities('MailStateIsNow')
 				)
 			)
 		);
 	}else if($absence->etat=='Validee'){
 		if(!$presence){
-			$subject = $langs->trans('HolidayRequestAcceptance');
+			$subject = $langs->transnoentities('HolidayRequestAcceptance');
 			$tpl = dol_buildpath('/absence/tpl/mail.absence.acceptation.tpl.php');
 		}
 		else{
-			$subject = $langs->trans('PresenceRequestAcceptance');
+			$subject = $langs->transnoentities('PresenceRequestAcceptance');
 			$tpl = dol_buildpath('/absence/tpl/mail.presence.acceptation.tpl.php');
 		}
 		
@@ -339,11 +339,11 @@ function mailConges(&$absence,$presence=false){
 					,'commentaireValideur'=>utf8_encode($absence->commentaireValideur)
 				)
 				,'translate' => array(
-					'Hello' => $langs->trans('Hello'),
-					'SuperiorComment' => $langs->trans('SuperiorComment'),
-					'MailYourRequestOf' => $langs->trans('MailYourRequestOf'),
-					'DateInterval' => $langs->trans('DateInterval', php2dmy($absence->date_debut), php2dmy($absence->date_fin)),
-					'MailActionChange' => $langs->trans('MailActionChange', htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8'))
+					'Hello' => $langs->transnoentities('Hello'),
+					'SuperiorComment' => $langs->transnoentities('SuperiorComment'),
+					'MailYourRequestOf' => $langs->transnoentities('MailYourRequestOf'),
+					'DateInterval' => $langs->transnoentities('DateInterval', php2dmy($absence->date_debut), php2dmy($absence->date_fin)),
+					'MailActionChange' => $langs->transnoentities('MailActionChange', htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8'))
 				)
 			)
 		);
@@ -362,8 +362,8 @@ function mailConges(&$absence,$presence=false){
 			
 			$sql="SELECT fk_user 
 			FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
-			WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).") AND pointeur=0 AND level=".$absence->niveauValidation." AND fk_user NOT IN(".$absence->fk_user.",".$user->id.")";
-	
+			WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).") AND pointeur=0 AND level>=".$absence->niveauValidation." AND fk_user NOT IN(".$absence->fk_user.",".$user->id.")";
+	//	print $sql;
 			$TValideur=$ATMdb->ExecuteAsArray($sql);
 			
 			foreach($TValideur as $row) {
@@ -371,10 +371,10 @@ function mailConges(&$absence,$presence=false){
 				$valideur->fetch($row->fk_user);
 				
 				if(!empty($valideur->email)) {
-					$mail = new TReponseMail($from,$valideur->email,'['.$langs->trans['Copy'].'] '. $subject,$message);
+					$mail = new TReponseMail($from,$valideur->email,'[Copie] '. $subject,$message);
 			
 					$result = $mail->send(true, 'utf-8');
-					
+				//	print "{$valideur->email}<br />";
 				}
 				
 			}
@@ -385,11 +385,11 @@ function mailConges(&$absence,$presence=false){
 	}
 	else if($absence->etat=='Refusee'){
 		if(!$presence){
-			$subject = $langs->trans('HolidayRequestDenied');
+			$subject = $langs->transnoentities('HolidayRequestDenied');
 			$tpl = dol_buildpath('/absence/tpl/mail.absence.refus.tpl.php');
 		}
 		else{
-			$subject = $langs->trans('PresenceRequestDenied');
+			$subject = $langs->transnoentities('PresenceRequestDenied');
 			$tpl = dol_buildpath('/absence/tpl/mail.presence.refus.tpl.php');
 		}
 		
@@ -412,11 +412,11 @@ function mailConges(&$absence,$presence=false){
 					,'commentaireValideur'=>utf8_encode($absence->commentaireValideur)
 				)
 				,'translate' => array(
-					'Hello' => $langs->trans('Hello'),
-					'MailYourRequestOf' => $langs->trans('MailYourRequestOf'),
-					'DateInterval' => $langs->trans('DateInterval', php2dmy($absence->date_debut), php2dmy($absence->date_fin)),
-					'MailActionChange' => $langs->trans('MailActionChange', htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')),
-					'ValidatorCommentRequestDenied' => $langs->trans('ValidatorCommentRequestDenied')
+					'Hello' => $langs->transnoentities('Hello'),
+					'MailYourRequestOf' => $langs->transnoentities('MailYourRequestOf'),
+					'DateInterval' => $langs->transnoentities('DateInterval', php2dmy($absence->date_debut), php2dmy($absence->date_fin)),
+					'MailActionChange' => $langs->transnoentities('MailActionChange', htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')),
+					'ValidatorCommentRequestDenied' => $langs->transnoentities('ValidatorCommentRequestDenied')
 				)
 			)
 		);
