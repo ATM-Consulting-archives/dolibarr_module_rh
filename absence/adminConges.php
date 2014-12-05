@@ -56,6 +56,9 @@
 				
 				$ATMdb->Execute($sql);
 				
+				dol_include_once('/core/lib/admin.lib.php');
+				dolibarr_set_const($db, 'RH_DATE_RTT_CLOTURE', date('Y-m-d',$compteur->date_rttClotureInit));
+				dolibarr_set_const($db, 'RH_DATE_CONGES_CLOTURE', date('Y-m-d',$compteur->date_congesClotureInit));
 				
 				
 				$mesg = '<div class="ok">' . $langs->trans('ChangesMade') . '</div>';
