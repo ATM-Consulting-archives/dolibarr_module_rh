@@ -69,12 +69,12 @@
 					<td><b>HS</b></td>
 				</tr>
 				<tr>
-					<td>[remuneration.nbHeuresMois;strconv=no;protect=no]€</td>
-					<td>[remuneration.an;strconv=no;protect=no]€</td>
+					<td>[remuneration.nbHeuresMois;strconv=no;protect=no]</td>
+					<td>[remuneration.an;strconv=no;protect=no]</td>
 					<td>[remuneration.coutGlobal;strconv=no;protect=no]€</td>
-					<td>[remuneration.cumHeureTrav;strconv=no;protect=no]€</td>
-					<td>[remuneration.cumHSup;strconv=no;protect=no]€</td>
-					<td>[remuneration.HS;strconv=no;protect=no]€</td>
+					<td>[remuneration.cumHeureTrav;strconv=no;protect=no]</td>
+					<td>[remuneration.cumHSup;strconv=no;protect=no]</td>
+					<td>[remuneration.HS;strconv=no;protect=no]</td>
 				</tr>
 			</table>
 			<br/><br/>
