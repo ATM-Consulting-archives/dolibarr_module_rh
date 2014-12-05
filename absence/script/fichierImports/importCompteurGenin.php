@@ -26,20 +26,21 @@
 		$u->fetch('', $login);
 
 		if($u->id>0) {
+			print "Mise à jour compteur {$u->login}...";
 			$compteur=new TRH_Compteur;	
 			$compteur->load_by_fkuser($ATMdb, $u->id);
 				
 			$compteur->initCompteur($ATMdb, $u->id);
 			
-			$compteur->acquisExerciceN=$row[17]; 
+			$compteur->acquisExerciceN=$row[16]; 
 			$compteur->acquisAncienneteN=0;
 			$compteur->acquisHorsPeriodeN=0;
 			$compteur->anneeN=$annee;
-			$compteur->acquisExerciceNM1=$row[18];
+			$compteur->acquisExerciceNM1=$row[17];
 			$compteur->acquisAncienneteNM1=0;
 			$compteur->acquisHorsPeriodeNM1=0;
 			$compteur->reportCongesNM1=0;
-			$compteur->congesPrisNM1=$row[19];
+			$compteur->congesPrisNM1=$row[18];
 			$compteur->congesPrisN=0;
 			$compteur->anneeNM1=$anneePrec;
 			$compteur->rttTypeAcquisition='Annuel';
@@ -68,7 +69,9 @@
 			$compteur->reportRtt=0;
 			
 			$compteur->is_archive=0;
-			
+//			var_dump($compteur);exit;
+			$compteur->save($ATMdb);
+			print "ok<br />";
 		}
 		
 	}
