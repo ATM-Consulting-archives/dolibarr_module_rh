@@ -68,10 +68,11 @@
 			,'orderBy'=>$TOrder
 			
 		));
-			if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
+			if($user->rights->curriculumvitae->poste->admin){
 			?>
+			<div class="tabsAction">
 			<a class="butAction" href="fiche_type_poste.php?action=new">Ajouter un type de poste</a><div style="clear:both"></div>
-			
+			</div>
 			<?
 			}
 	

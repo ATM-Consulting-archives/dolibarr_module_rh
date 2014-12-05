@@ -34,20 +34,21 @@
 				</table>
 			</div>
 
+
 </div>
 
+			[onshow;block=begin;when [view.mode]=='edit']
+			<div class="tabsAction"  style="text-align:center">
+				<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[fiche_poste.id;block=tr;strconv=no;protect=no]&action=view'">
+				[onshow;block=begin;when [view.action]=='new']
+					&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='liste_types_postes.php'">
+				[onshow;block=end]	
+				[onshow;block=begin;when [view.action]=='edit']
+					&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[fiche_poste.id]&action=view'">
+				[onshow;block=end]
+				
+			</div>
+			[onshow;block=end]
 
 
-[onshow;block=begin;when [view.mode]=='edit']
-<div class="tabsAction"  style="text-align:center">
-	<input type="submit" value="Enregistrer" name="save" class="button" onclick="document.location.href='?id=[fiche_poste.id;block=tr;strconv=no;protect=no]&action=view'">
-	[onshow;block=begin;when [view.action]=='new']
-		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='liste_types_postes.php'">
-	[onshow;block=end]	
-	[onshow;block=begin;when [view.action]=='edit']
-		&nbsp; &nbsp; <input type="button" value="Annuler" name="cancel" class="button" onclick="document.location.href='?id=[fiche_poste.id]&action=view'">
-	[onshow;block=end]
-	
-</div>
-[onshow;block=end]
 

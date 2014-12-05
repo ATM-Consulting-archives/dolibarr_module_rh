@@ -5,7 +5,8 @@ class TRH_fichePoste extends TObjetStd {
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_fiche_poste');
 		parent::add_champs('type_poste','type=chaine');
-		parent::add_champs('numero_convention,descriptif','type=chaine');
+		parent::add_champs('numero_convention','type=chaine;');
+		parent::add_champs('descriptif', 'type=text;');
 		
 		parent::add_champs('entity','type=entier;');
 		
@@ -22,10 +23,10 @@ class TRH_grilleSalaire extends TObjetStd {
 	function __construct() { 
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_grille_salaire');
-		parent::add_champs('fk_type_poste','type=chaine');
-		parent::add_champs('montant,salaire_min,salaire_max,salaire_conventionnel,salaire_constate','type=chaine');
+		parent::add_champs('fk_type_poste','type=chaine;');
+		parent::add_champs('montant,salaire_min,salaire_max,salaire_conventionnel,salaire_constate','type=float;');
 		
-		parent::add_champs('entity,nb_annees_anciennete','type=entier;');
+		parent::add_champs('entity,nb_annees_anciennete,echelon','type=entier;');
 		
 		parent::_init_vars();
 		parent::start();

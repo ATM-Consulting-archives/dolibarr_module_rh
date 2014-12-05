@@ -75,9 +75,9 @@
 			,array(
 				'fiche_poste'=>array(
 					'id'=>$fiche_poste->getId()
-					,'type_poste'=>$form->texte('', 'type_poste', $fiche_poste->type_poste, 20,255,'','','à saisir')
+					,'type_poste'=>$form->texte('', 'type_poste', $fiche_poste->type_poste, 80,255,'','','à saisir')
 					,'numero_convention'=>$form->texte('', 'numero_convention', $fiche_poste->numero_convention, 20,255,'','','à saisir')
-					,'descriptif'=>$form->texte('', 'descriptif', $fiche_poste->descriptif, 20,255,'','','à saisir') 
+					,'descriptif'=>$form->zonetexte('', 'descriptif', $fiche_poste->descriptif, 80,5) 
 					//,'supprimable'=>$form->hidden('supprimable', 1)
 				)
 				,'view'=>array(
@@ -154,8 +154,9 @@
 		));
 			if($user->rights->curriculumvitae->myactions->ajoutRemuneration==1){
 			?>
+			<div class="tabsAction">
 			<a class="butAction" href="grille_salaire.php?action=new&fk_type_poste=<?php echo $id_fiche_poste ?>">Ajouter salaire</a><div style="clear:both"></div>
-			
+			</div>
 			<?
 			}
 	

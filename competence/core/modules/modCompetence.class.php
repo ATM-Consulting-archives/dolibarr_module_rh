@@ -236,6 +236,20 @@ class modCompetence extends DolibarrModules
         $this->rights[$r][5] = 'admin';
 		$r++;
 		
+		$this->rights[$r][0] = 7961;
+		$this->rights[$r][1] = 'Administrer les fiche de poste';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'poste';
+        $this->rights[$r][5] = 'admin';
+		$r++;
+		
+		$this->rights[$r][0] = 7962;
+		$this->rights[$r][1] = 'Consulter les fiche de poste';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'poste';
+        $this->rights[$r][5] = 'read';
+		$r++;
+		
 	
 		// Permissions
 		/*$this->rights = array();		// Permission array used by this module
@@ -332,7 +346,7 @@ class modCompetence extends DolibarrModules
 						'url'=> '/competence/liste_types_postes.php',
 						'position'=> 103,
 						'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-						'perms'=> '$user->rights->formulaire->formulaire->read',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						'perms'=> '$user->rights->curriculumvitae->poste->read',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						'target'=> '',
 						'user'=> 2	// 0=Menu for internal users, 1=external users, 2=both
         );
@@ -347,7 +361,7 @@ class modCompetence extends DolibarrModules
 					'url'=> '/competence/fiche_type_poste.php?action=new',
 					'position'=> 104,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-					'perms'=> '$user->rights->formulaire->formulaire->write',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'perms'=> '$user->rights->curriculumvitae->poste->admin',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
 					'user'=> 2
         );
