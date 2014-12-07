@@ -316,7 +316,10 @@ function mailConges(&$absence,$presence=false){
 				)
 			)
 		);
-	}else if($absence->etat=='Validee'){
+	
+		
+	}
+	else if($absence->etat=='Validee'){
 		if(!$presence){
 			$subject = $langs->transnoentities('HolidayRequestAcceptance');
 			$tpl = dol_buildpath('/absence/tpl/mail.absence.acceptation.tpl.php');
@@ -432,6 +435,8 @@ function mailConges(&$absence,$presence=false){
 
 //fonction permettant la récupération
 function mailCongesValideur(&$ATMdb, &$absence,$presence=false){
+	global $conf;
+
 	//on récupèreles ids des groupes auxquels appartient l'utilisateur
 	$sql="SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."usergroup_user 
 	WHERE fk_user= ".$absence->fk_user;
@@ -450,13 +455,24 @@ function mailCongesValideur(&$ATMdb, &$absence,$presence=false){
 	while($ATMdb->Get_line()){
 		$TValideur[]=$ATMdb->Get_field('fk_user');
 	}
-	
+
+	if($conf->global->RH_ABSENCE_ALERT_NONJUSTIF_SUPERIOR && $absence->code=='nonjustifiee') {
+		$sql="SELECT fk_user FROM ".MAIN_DB_PREFIX."user WHERE rowid=".(int)$absence->fk_user;
+		$ATMdb->Execute($sql);
+		$ATMdb->Get_line();
+		$fk_sup = $ATMdb->Get_field('fk_user');
+		if(!empty($fk_sup)) $TValideur[] = $fk_sup;
+	}
+
+	if($conf->global->RH_ABSENCE_ALERT_NONJUSTIF_USER && $absence->code=='nonjustifiee') {
+		$TValideur[] = $conf->global->RH_ABSENCE_ALERT_NONJUSTIF_USER;
+	}
+
 	if(!empty($TValideur)){
 		foreach($TValideur as $idVal){
 			envoieMailValideur($ATMdb, $absence, $idVal,$presence);
 		}
 	}
-	
 }
 
 
@@ -467,10 +483,10 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
 	$from = USER_MAIL_SENDER;
 
 	$user = new User($db);  
-    $user->fetch($absence->fk_user);
+	$user->fetch($absence->fk_user);
 
-    $name=$user->lastname;
-    $firstname=$user->firstname;
+    	$name=$user->lastname;
+    	$firstname=$user->firstname;
 
 	/*
 	 * Mail destinataire

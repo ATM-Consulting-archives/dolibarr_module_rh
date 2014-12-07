@@ -529,9 +529,11 @@ class TRH_Absence extends TObjetStd {
 		
 		if($this->getId()>0) {
 			$result = $interface->run_triggers('ABSENCE_BEFOREUPDATE',$this,$user,$langs,$conf);
+			$f_mode = 'UPDATE';
 		}
 		else{
 			$result = $interface->run_triggers('ABSENCE_BEFORECREATE',$this,$user,$langs,$conf);	
+			$f_mode = 'CREATE';
 		}
 		
 		if ($result < 0) {
@@ -541,6 +543,9 @@ class TRH_Absence extends TObjetStd {
 		// Fin appel triggers
 		else {
 			parent::save($db);
+
+			$result = $interface->run_triggers('ABSENCE_'.$f_mode,$this,$user,$langs,$conf);	
+
 			return true;	
 		}	
 		
