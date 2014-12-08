@@ -650,13 +650,15 @@ function _getUserGroups() {
 }
 
 function _displayFormRemunerationChart() {
-
-	$form = new TFormCore("", "formRemunerationChart");
-	print $form->btsubmit("Comparer chiffres","subFormRemunerationChart");
-	print $form->combo($pLib, "fk_usergroup", _getUserGroups(), $_REQUEST['fk_usergroup']);
-	
-	print '</form>';
-	
+	global $user;
+			
+	if($user->rights->curriculumvitae->myactions->ajoutRemuneration){
+		$form = new TFormCore("", "formRemunerationChart");
+		print $form->btsubmit("Comparer chiffres","subFormRemunerationChart");
+		print $form->combo($pLib, "fk_usergroup", _getUserGroups(), $_REQUEST['fk_usergroup']);
+		
+		print '</form>';
+	}
 }
 
 function _addLinesGroup(&$TData, $fk_usergroup, $type="remuneration") {
