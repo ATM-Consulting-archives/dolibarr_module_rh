@@ -502,11 +502,11 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
 	$TBS=new TTemplateTBS();
 	
 	if(!$presence){
-		$subject = $langs->trans('NewAbsenceRequestWaitingValidation');
+		$subject = $langs->transnoentities('NewAbsenceRequestWaitingValidation');
 		$tpl = dol_buildpath('/absence/tpl/mail.absence.creationValideur.tpl.php');
 	}
 	else{
-		$subject = $langs->trans('NewPresenceRequestWaitingValidation');
+		$subject = $langs->transnoentities('NewPresenceRequestWaitingValidation');
 		$tpl = dol_buildpath('/absence/tpl/mail.presence.creationValideur.tpl.php');
 	}
 	
