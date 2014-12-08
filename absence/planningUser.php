@@ -469,7 +469,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 					$TTotal[$dateJour]+=1;
 				}
 				else {
-					$class .= 'rouge';	
+					$class .= ' rouge';	
 				}
 				
 				if(!empty($class))$class.= ' classfortooltip';
