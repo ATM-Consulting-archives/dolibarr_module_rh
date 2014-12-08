@@ -395,6 +395,22 @@ class modCompetence extends DolibarrModules
         );
 		$r++;
 		
+		$this->menu[$r]=array(
+		            'fk_menu'=>'fk_mainmenu=report',			// Put 0 if this is a top menu
+		        	'type'=> 'left',			// This is a Top menu entry
+		        	'titre'=> $langs->trans('Statistique productivité'),
+		        	'mainmenu'=> 'report',
+		        	'leftmenu'=> 'productivite',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+					'url'=> '/competence/productivite.php?action=stat',
+					'langs'=> 'report@report',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+					'position'=> 107,
+					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+					'perms'=> '$user->rights->curriculumvitae->productivite->admin',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'target'=> '',
+					'user'=> 2
+        );
+		
+		
 	/*	
 		$this->menu[$r]=array(
 			            'fk_menu'=>'fk_mainmenu=competence',			// Put 0 if this is a top menu
