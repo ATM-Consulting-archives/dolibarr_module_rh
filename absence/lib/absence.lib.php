@@ -461,13 +461,13 @@ function mailCongesValideur(&$ATMdb, &$absence,$presence=false){
 		$ATMdb->Execute($sql);
 		$ATMdb->Get_line();
 		$fk_sup = $ATMdb->Get_field('fk_user');
-		if(!empty($fk_sup)) $TValideur[] = $fk_sup;
+		if(!empty($fk_sup) && !in_array($conf->global->RH_ABSENCE_ALERT_NONJUSTIF_USER, $TValideur)) $TValideur[] = $fk_sup;
 	}
 
 	if($conf->global->RH_ABSENCE_ALERT_NONJUSTIF_USER && $absence->code=='nonjustifiee') {
-		$TValideur[] = $conf->global->RH_ABSENCE_ALERT_NONJUSTIF_USER;
+		if(!in_array($conf->global->RH_ABSENCE_ALERT_NONJUSTIF_USER, $TValideur))  $TValideur[] = $conf->global->RH_ABSENCE_ALERT_NONJUSTIF_USER;
 	}
-
+//var_dump($TValideur);
 	if(!empty($TValideur)){
 		foreach($TValideur as $idVal){
 			envoieMailValideur($ATMdb, $absence, $idVal,$presence);
@@ -520,7 +520,7 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
 				,'valideurPrenom'=>htmlentities($firstnameValideur, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 				,'date_debut'=>php2dmy($absence->date_debut)
 				,'date_fin'=>php2dmy($absence->date_fin)
-				,'libelle'=>htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8')
+				,'libelle'=>'<a href="'.dol_buildpath('/absence/absence.php?id='.$absence->getId().'&action=view',2).'">'.htmlentities($absence->libelle, ENT_COMPAT | ENT_HTML401, 'UTF-8').'</a>'
 				,'libelleEtat'=>htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')
 			)
 			,'translate' => array(

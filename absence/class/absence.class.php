@@ -1694,10 +1694,13 @@ class TRH_Absence extends TObjetStd {
 			$abs->load($ATMdb, $row->ID);
 			$abs->calculDureeAbsenceParAddition($ATMdb);
 			
-			foreach($abs->TDureeAbsenceUser as $annee => $tabMonth) {
-				foreach($tabMonth as $month => $duree) {
-					@$this->TDureeAllAbsenceUser[$annee][$month] += $duree;
+			if(!empty($abs->TDureeAbsenceUser)) {
+				foreach($abs->TDureeAbsenceUser as $annee => $tabMonth) {
+					foreach($tabMonth as $month => $duree) {
+						@$this->TDureeAllAbsenceUser[$annee][$month] += $duree;
+					}
 				}
+				
 			}
 			
 		}
