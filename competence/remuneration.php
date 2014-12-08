@@ -127,7 +127,9 @@ function _liste(&$ATMdb, $remuneration) {
 	</tbody></table>
 	<br/><?
 	
-	_bloqueAffichageSelonDroitUtilisateurGroupe();
+	if(!_bloqueAffichageSelonDroitUtilisateurGroupe($remuneration)) {
+		accessforbidden('', 0);
+	}
 	
 	////////////AFFICHAGE DES LIGNES DE REMUNERATION
 	$r = new TSSRenderControler($remuneration);
@@ -268,8 +270,12 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 	global $db,$user,$langs,$conf;
 	llxHeader('','Vos Rémunérations');
 	
+	if(!_bloqueAffichageSelonDroitUtilisateurGroupe($remuneration)) {
+		accessforbidden('',0);
+	}
+	
 	$fuser = new User($db);
-	$fuser->fetch(isset($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : $remuneration->fk_user);
+	$fuser->fetch(!empty($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : $remuneration->fk_user);
 	$fuser->getrights();
 	
 	$head = user_prepare_head($fuser);
@@ -828,7 +834,7 @@ function _getIDGrilleSalaireCorrespondante($id_type_poste, $nb_annees_anciennete
  * Empêche ou autorise l'accès à la liste des rémunération des utilisateurs des groupes dont fait partie le user courant
  * En fonction du droit défini
  */
-function _bloqueAffichageSelonDroitUtilisateurGroupe() {
+function _bloqueAffichageSelonDroitUtilisateurGroupe(&$remuneration) {
 	
 	global $user,$db;
 	
@@ -842,8 +848,8 @@ function _bloqueAffichageSelonDroitUtilisateurGroupe() {
 	
 	//**************************************************************************************************************
 	// 2 - Le user courant n'est pas admin et n'a pas le droit de voir les rémunérations des user de son/ses groupes, dans ce cas on bloque l'affichage si $_REQUEST['fk_user'] !== $user->id
-	if(!$user->rights->curriculumvitae->myactions->voirRemunerationGroupe && $_REQUEST['fk_user'] != $user->id)
-		accessforbidden('', 0);
+	if(!$user->rights->curriculumvitae->myactions->voirRemunerationGroupe && $remuneration->fk_user != $user->id) return false;
+		
 	//**************************************************************************************************************
 	
 	
@@ -854,29 +860,29 @@ function _bloqueAffichageSelonDroitUtilisateurGroupe() {
 		$ug = new UserGroup($db);
 		
 		// On récupère un tableau des groupes dont fait partie l'utilisateur courant
-		$TIDGroups_userCourant = array_keys($ug->listGroupsForUser($user->id));
+		$TGroups_userCourant = $ug->listGroupsForUser($user->id);
 		
 		// On récupère un tableau des groupes dont fait partie l'utilisateur en $_REQUEST['fk_user']
-		$TIDGroups_userRequest = array_keys($ug->listGroupsForUser($_REQUEST['fk_user']));
+		$TGroups_userRequest = $ug->listGroupsForUser($remuneration->fk_user);
 		
-		// Si l'un des 2 tableaux est vide, ça veut dire que le user en request ne fait forcément pas partie d'un même groupe que le user courant, donc on bloque
-		if(count($TIDGroups_userRequest) == 0 || $TIDGroups_userCourant == 0) {
-			accessforbidden('', 0);
-		} else { // Sinon, on les parcoure jusqu'à ce qu'on trouve un chiffre qui apparait dans les 2 tableaux
+		if(empty($TGroups_userCourant) || empty($TGroups_userRequest)) return false;
 		
-			foreach($TIDGroups_userCourant as $idGroup_userCourant) {
-				foreach($TIDGroups_userRequest as $idGroup_userRequest) {
-					// Si un chiffre apparait dans les 2 tableaux, ça veut dire que les 2 user font partie d'au moins un même groupe
-					if($idGroup_userCourant == $idGroup_userRequest)
-						return true;
+		
+		foreach($TGroups_userCourant as $idg1=>$G1) {
+			foreach($TGroups_userRequest as $idg2=>$G2) {
+				// Si un chiffre apparait dans les 2 tableaux, ça veut dire que les 2 user font partie d'au moins un même groupe
+				if($G1->array_options['options_type'] == 'service' /*&& $G2->array_options['options_type'] == 'service'*/ &&  $G1->id == $G2->id) {
+					return true; // les 2 groupe sont identique et de type service... Donc un seul à tester non ? yep
 				}
+					
 			}
-			
-			accessforbidden('', 0);
-			
 		}
+		
+		return false;
+			
+		
 		
 	}
 	//**************************************************************************************************************
-	
+	return false;
 }
