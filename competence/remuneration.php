@@ -634,9 +634,11 @@ function _getUserGroups() {
 	$TGroups = array(0 => "(Sélectionnez un groupe)");
 	
     $sql = "SELECT ug.rowid, ug.nom";
-    $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug";
+    $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug
+    LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON (ugu.fk_usergroup=ug.rowid)
+    WHERE ugu.fk_user IN (".GETPOST('fk_user').") ";
 	$resql = $db->query($sql);
-	
+//	print $sql;
 	if($resql) {
 		while($res = $db->fetch_object($resql)) {
 			$TGroups[$res->rowid] = 'Groupe "'.$res->nom.'"';
