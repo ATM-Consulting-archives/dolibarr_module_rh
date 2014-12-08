@@ -86,7 +86,6 @@
 		
 		$fk_group = GETPOST('fk_group', 'int');
 		
-		
 		llxHeader('','Statistique de productivité');
 		
 		print_fiche_titre("Statistiques productivité");
