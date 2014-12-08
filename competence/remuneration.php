@@ -725,7 +725,7 @@ function _addLinesGroup(&$TData, $fk_usergroup, $type="remuneration") {
 
 function _addLineGrilleRemunerationAssociee(&$ATMdb, &$TData) {
 	
-	global $db;
+	global $db,$conf;
 	
 	// On récupère le type de poste de l'utilisateur
 	$u = new User($db);
@@ -734,9 +734,16 @@ function _addLineGrilleRemunerationAssociee(&$ATMdb, &$TData) {
 	
 	$id_type_poste = $u->array_options['options_type_poste'];
 	
-	$nb_annees_anciennete = _getAnneesAncienneteuser($u);
+	if($u->array_options['options_echelon']>0) {
+		$nb_annees_anciennete = $u->array_options['options_echelon'];
+	}
+	else{
+		$nb_annees_anciennete = _getAnneesAncienneteuser($u);	
+	}
 	
-	if($nb_annees_anciennete === false) return false;
+	
+	
+	if(empty($nb_annees_anciennete)) return false;
 	
 	if(empty($id_type_poste)) return false;
 	else {
@@ -752,14 +759,25 @@ function _addLineGrilleRemunerationAssociee(&$ATMdb, &$TData) {
 		$grille->load($ATMdb, $id_grille);	
 		
 		$sql = "SELECT DATE_FORMAT(r.date_debutRemuneration, \"%Y-%m\") AS 'mois', ";
-		$sql.= $grille->montant." as 'Niveau de la grille de salaires'"; 
+		$sql.= $grille->salaire_min." as 'Niveau min. de la grille de salaires'"; 
 		$sql.= "FROM ".MAIN_DB_PREFIX."rh_remuneration r";
 
 		$TData[] = array(
 							'code'=>'SALAIREMOIS'
-							,'yDataKey' => 'Niveau de la grille de salaires'
+							,'yDataKey' => 'Niveau min. de la grille de salaires'
 							,'sql'=>$sql
-							,'hauteur'=>dolibarr_get_const($db, 'COMPETENCE_HAUTEURGRAPHIQUES')
+							,'hauteur'=>$conf->global->COMPETENCE_HAUTEURGRAPHIQUES
+						);
+		
+		$sql = "SELECT DATE_FORMAT(r.date_debutRemuneration, \"%Y-%m\") AS 'mois', ";
+		$sql.= $grille->salaire_max." as 'Niveau max. de la grille de salaires'"; 
+		$sql.= "FROM ".MAIN_DB_PREFIX."rh_remuneration r";
+
+		$TData[] = array(
+							'code'=>'SALAIREMOIS'
+							,'yDataKey' => 'Niveau max. de la grille de salaires'
+							,'sql'=>$sql
+							,'hauteur'=>$conf->global->COMPETENCE_HAUTEURGRAPHIQUES
 						);
 		
 	}
@@ -805,24 +823,14 @@ function _getIDGrilleSalaireCorrespondante($id_type_poste, $nb_annees_anciennete
 	$sql = "SELECT rowid, nb_annees_anciennete ";
 	$sql.= "FROM ".MAIN_DB_PREFIX."rh_grille_salaire ";
 	$sql.= "WHERE fk_type_poste = ".$id_type_poste." ";
-	$sql.= "ORDER BY nb_annees_anciennete DESC";
+	$sql.= " AND nb_annees_anciennete<=$nb_annees_anciennete_user ORDER BY nb_annees_anciennete DESC
+	LIMIT 1";
 	
 	$resql = $db->query($sql);
 	
-	while($res = $db->fetch_object($resql)) {
+	if($res = $db->fetch_object($resql)) {
 				
-		$TResult[$res->rowid] = $res->nb_annees_anciennete;
-		
-	}
-	
-	if(count($TResult) == 0) return false;
-	else {
-		
-		foreach ($TResult as $id_grille => $nb_annees_anciennete) {
-			
-			if($nb_annees_anciennete_user > $nb_annees_anciennete) return $id_grille;
-			
-		}
+		return $res->rowid;
 		
 	}
 	

@@ -9,12 +9,8 @@
 			<div class="tabBar">
 				<table width="100%" class="border">
 					<tr>
-						<td>Nombre d'annees d'anciennete</td>
+						<td>Nombre d'annees d'anciennete ou Echelon</td>
 						<td>[grille_salaire.nb_annees_anciennete;block=tr;strconv=no;protect=no]</td>
-					</tr>
-					<tr>
-						<td>Montant</td>
-						<td>[grille_salaire.montant;block=tr;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
 						<td>Salaire minimum</td>
