@@ -494,6 +494,9 @@ class modCompetence extends DolibarrModules
 		$e = new Extrafields($db);
 		$e->addExtraField("type_poste", "Type de poste", "sellist", 0, $size, "user", 0, 0, '', array('options'=>array("rh_fiche_poste:type_poste"=>null)));
 		
+		$e = new Extrafields($db);
+		$e->addExtraField("echelon", "Echelon", "int", 0, 11, "user", 0, 0, '');
+		
 		return $this->_init($sql, $options);
 	}
 
