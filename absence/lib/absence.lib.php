@@ -801,14 +801,15 @@ function _getSQLListValidation($userid) {
 	}else if($k>1){		//on a plusieurs groupes de validation
 		$sql=" SELECT DISTINCT u.fk_user, 
 				a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
-			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.lastname,
+			  	ta.libelleAbsence as libelle,a.fk_user,  s.firstname, s.lastname,
 			 	a.libelleEtat as 'Statut demande', a.avertissement
 				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
-				".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as s
+				".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as s,".MAIN_DB_PREFIX."rh_type_absence as ta 
 				WHERE v.fk_user=".$userid." 
 				AND v.fk_usergroup=u.fk_usergroup
 				AND u.fk_user=a.fk_user 
 				AND u.fk_user=s.rowid
+				AND ta.typeAbsence=a.type
 				AND a.etat LIKE 'AValider'";
  		
  		$j=0;
