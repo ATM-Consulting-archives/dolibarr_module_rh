@@ -480,7 +480,7 @@ function mailCongesValideur(&$ATMdb, &$absence,$presence=false){
 function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
 	global $db, $langs;
 		
-	$from = USER_MAIL_SENDER;
+	$from = USER_MAIL_SENDER;global $langs,$user;
 
 	$user = new User($db);  
 	$user->fetch($absence->fk_user);
@@ -700,7 +700,8 @@ function _recap_abs(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, 
 }
 
 function getPlanningAbsence(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche) {
-global $conf,$user;
+global $conf,$db,$user;
+	
 	
 		$t_current = $absence->date_debut_planning;
 		
@@ -810,7 +811,6 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 			if($isFerie && $estUnJourTravaille!='NON') { $TStatPlanning[$idUser]['ferie']++; }
 			
 			$labelJour = '+';//$labelJour = $TJourTrans[date('N', strtotime($dateJour))];
-			
 			if( isset($_REQUEST['no-link']) || !$user->rights->absence->myactions->creerAbsenceCollaborateur ) {
 				$linkPop='&nbsp;';
 			}

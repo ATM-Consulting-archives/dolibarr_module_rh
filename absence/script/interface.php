@@ -1,6 +1,13 @@
 <?php
 
-define('INC_FROM_CRON_SCRIPT', true);
+if($_REQUEST['inc']=='main') {
+	null;
+}
+else{
+	define('INC_FROM_CRON_SCRIPT', true);	
+}
+
+
 require '../config.php';
 dol_include_once('/absence/class/absence.class.php');
 dol_include_once('/absence/lib/absence.lib.php');

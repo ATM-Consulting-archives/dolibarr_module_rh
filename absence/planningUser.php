@@ -238,7 +238,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			
 				$("#popAbsence").dialog('close');
 				
-				$("#plannings").load(document.location.href+" #plannings");
+				refreshPlanning();
 
 				return false;
 		
@@ -282,35 +282,40 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 			
 			?><script type="text/javascript">
 				
-				$.ajax({
-					url: "script/interface.php"
-					,dataType: "jsonp"
-					,async: true
-		    		,crossDomain: true
-					,data: {
-						get:'planning'
-						,date_debut_search: "<?php echo date('d/m/Y', $absence->date_debut_planning) ?>"
-						,date_fin_search: "<?php echo date('d/m/Y', $absence->date_fin_planning) ?>"
-						,groupe : <?php echo (int)$idGroupeRecherche ?>
-						,groupe2 : <?php echo (int)$idGroupeRecherche2 ?>
-						,groupe3 : <?php echo (int)$idGroupeRecherche3 ?>
-						,fk_user : <?php echo (int)$idUserRecherche ?>
-						,jsonp : 1
+				function refreshPlanning() {
+				
+					$.ajax({
+						url: "script/interface.php"
+						,dataType: "jsonp"
+						,async: true
+			    		,crossDomain: true
+						,data: {
+							get:'planning'
+							,date_debut_search: "<?php echo date('d/m/Y', $absence->date_debut_planning) ?>"
+							,date_fin_search: "<?php echo date('d/m/Y', $absence->date_fin_planning) ?>"
+							,groupe : <?php echo (int)$idGroupeRecherche ?>
+							,groupe2 : <?php echo (int)$idGroupeRecherche2 ?>
+							,groupe3 : <?php echo (int)$idGroupeRecherche3 ?>
+							,fk_user : <?php echo (int)$idUserRecherche ?>
+							,jsonp : 1
+							,inc:'main'
+						}
 						
-					}
-					
-				})
-				.done(function (response) {
-					$('#planning_html').html( response ); // server response
-					
-					$("table.planning td.rouge, table.planning td.vert").each(function() {
-			
-						$(this).append("<span class=\"just-print\">"+ $(this).attr("title")+"</span>" );
+					})
+					.done(function (response) {
+						$('#planning_html').html( response ); // server response
 						
+						$("table.planning td.rouge, table.planning td.vert").each(function() {
+				
+							$(this).append("<span class=\"just-print\">"+ $(this).attr("title")+"</span>" );
+							
+						});
+						
+						$(".classfortooltip").tipTip({maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
 					});
+				}
 					
-					$(".classfortooltip").tipTip({maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
-				});
+				refreshPlanning();	
 				
 			</script>
 			<div id="planning_html">
