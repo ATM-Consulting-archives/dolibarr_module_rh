@@ -386,116 +386,13 @@ function _listeValidation(&$ATMdb, &$absence) {
 	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', $langs->trans('Absence'));
 	//getStandartJS();
  
+ 	$sql = _getSQLListValidation($user->id);
  
- 	//LISTE DES GROUPES À VALIDER
- 	$sql=" SELECT DISTINCT fk_usergroup, nbjours, validate_himself, level
- 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe`
-			WHERE fk_user=".$user->id." 
-			AND type='Conges' AND pointeur !=1 ";
-			//AND entity IN (0,".$conf->entity.")";
-
-	$ATMdb->Execute($sql);
-	$TabGroupe=array();
-	$k=0;
-	while($ATMdb->Get_line()) {
-				$TabGroupe[$k]['fk_usergroup']=$ATMdb->Get_field('fk_usergroup');
-				$TabGroupe[$k]['nbjours']=$ATMdb->Get_field('nbjours');
-				$TabGroupe[$k]['validate_himself']=$ATMdb->Get_field('validate_himself');
-				$TabGroupe[$k]['level']=$ATMdb->Get_field('level');
-				$k++;
-	}
-	
-	//LISTE USERS À VALIDER
-	if($k==1){		//on n'a qu'un groupe de validation
-		$sql=" SELECT DISTINCT u.fk_user, 
-				a.rowid as 'ID', a.date_cre  as 'DateCre',a.date_debut, a.date_fin, 
-			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.lastname,
-			 	a.libelleEtat as 'Statut demande', a.avertissement
-				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
-				".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as s
-				WHERE v.fk_user=".$user->id." 
-				AND v.fk_usergroup=u.fk_usergroup
-				AND u.fk_user=a.fk_user 
-				AND u.fk_user=s.rowid
-				AND a.etat LIKE 'AValider'
-				AND v.fk_usergroup=".$TabGroupe[0]['fk_usergroup'];
-				
-				if($TabGroupe[0]['level']==1){	//on teste le niveau de validation : si il est de niveau 1, il faut qu'il puisse voir le 2 et 3
-					$sql.=" AND ( a.niveauValidation>=1)";
-				}else if($TabGroupe[0]['level']==2){
-					$sql.=" AND ( a.niveauValidation>=2)";
-				}
-				else if($TabGroupe[0]['level']==3){
-					$sql.=" AND a.niveauValidation>=3";
-				}
-
-				
-			if($TabGroupe[0]['validate_himself']==0){
-				$sql.=" AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$user->id.")";
-			}
-
-		
-	}else if($k>1){		//on a plusieurs groupes de validation
-		$sql=" SELECT DISTINCT u.fk_user, 
-				a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
-			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.lastname,
-			 	a.libelleEtat as 'Statut demande', a.avertissement
-				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
-				".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as s
-				WHERE v.fk_user=".$user->id." 
-				AND v.fk_usergroup=u.fk_usergroup
-				AND u.fk_user=a.fk_user 
-				AND u.fk_user=s.rowid
-				AND a.etat LIKE 'AValider'";
- 		
- 		$j=0;
-		foreach($TabGroupe as $TGroupe){ 	//on affiche les absences des différents groupe de validation
-			if($j==0){
-				if($TabGroupe[$j]['level']==1){	//on teste le niveau de validation  si il est de niveau 1, il faut qu'il puisse voir le 2 et 3
-					$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-					AND (a.niveauValidation>=1)
-					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
-					)";
-				}else if($TabGroupe[$j]['level']==2){
-					$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-					AND (a.niveauValidation>=2)
-					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
-					)";
-				}
-				else if($TabGroupe[$j]['level']==3){
-					$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-					AND a.niveauValidation>=3
-					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
-					)";
-				}
-				
-			}else{
-				if($TabGroupe[$j]['level']==1){	//on teste le niveau de validation
-					$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-						AND (a.niveauValidation>=1) 
-						AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
-						)";
-				}
-				else if($TabGroupe[$j]['level']==2){
-					$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-						AND (a.niveauValidation>=2) 
-						AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
-						)";
-				}
-				else if($TabGroupe[$j]['level']==3){
-					$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
-						AND a.niveauValidation>=3
-						AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
-						)";
-				}	
-			}
- 			
-			$j++;
- 		}
- 		$sql.=")";
-	}
- 	else {
+ 	if($sql===false) {
 		?><div class="error">Vous n'&ecirc;tes pas valideur de cong&eacute;  </div><?php
+		
+		llxFooter();
+		return false;
 	}
  
 	
@@ -517,7 +414,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				,'nbLine'=>'30'
 			)
 			,'link'=>array(
-				'Type absence'=>'<a href="?id=@ID@&action=view&validation=ok">@val@</a>'
+				'libelle'=>'<a href="?id=@ID@&action=view&validation=ok">@val@</a>'
 			)
 			,'translate'=>array('Statut demande'=>array(
 				$langs->trans('Refused') => '<b style="color:#A72947">' . $langs->trans('Refused') . '</b>',
@@ -545,6 +442,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 				,'avertissement'=> $langs->trans('Rules')
 				,'firstname'=> $langs->trans('FirstName')
 				,'lastname'=> $langs->trans('LastName')
+				,'libelle'=>'Type absence'
 				
 			)
 			,'search'=>array(

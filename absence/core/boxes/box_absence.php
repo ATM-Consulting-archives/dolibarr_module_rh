@@ -45,17 +45,21 @@ class box_absence extends ModeleBoxes {
 				'text' => $text,
 				'limit'=> dol_strlen($text)
 		);
-
-		if ($user->rights->absence->myactions->valideurConges)	{
-			$sql="SELECT a.rowid , a.date_cre as 'DateCre',a.date_debut , a.date_fin, 
-		 	a.libelle, ROUND(a.duree ,1) as 'duree', a.fk_user,  a.fk_user, u.login, u.firstname, u.lastname,
-		  	a.libelleEtat as 'Statut demande', a.avertissement
-			FROM ".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as u
-			WHERE u.rowid=a.fk_user";
-
-            $sql.= " ".$db->order('a.date_cre', 'DESC');
-            $sql.= " ".$db->plimit($max, 0);
-//print $sql;
+		
+		dol_include_once('/absence/lib/absence.lib.php');
+		
+		$sql = _getSQLListValidation($user->id);
+ 
+	 	if($sql===false) {
+			$this->info_box_contents[0][0] = array(
+				'td' => 'align="left"',
+            	'text' => $langs->trans("ReadPermissionNotAllowed")
+            );
+			
+			return false;
+		}
+		else {
+			
             dol_syslog("BoxAbsence sql=".$sql, LOG_DEBUG);
 
 			$result = $db->query($sql);
@@ -74,19 +78,22 @@ class box_absence extends ModeleBoxes {
 
 					$picto = 'object_absence@absence';
 
+					$u=new User($db);
+					$u->fetch($objp->fk_user);
+
 					$this->info_box_contents[$i]=array(
-						array('td' => 'align="left" width="16"',
-			                    'logo' => $picto,
-			                    'url' => dol_buildpath('/absence/absence.php', 1).'?action=view&id='.$objp->rowid)
-						,array('td' => 'align="left"',
-			                    'text' => utf8_decode($objp->libelle),
-			                    'url' => dol_buildpath('/absence/absence.php', 1).'?action=view&id='.$objp->rowid)
+						
+						array('td' => 'align="left"',
+						 	'logo' => $picto,
+			                    'text' => utf8_decode($objp->libelle). ' - '. dol_print_date( strtotime($objp->date_debut) ).'',
+			                    'url' => dol_buildpath('/absence/absence.php', 1).'?action=view&id='.$objp->ID)
 			                    
 						,array('td' => 'align="left"',
-			                    'text' => utf8_decode($objp->duree)
+			                    'text' => utf8_decode($objp->duree).' '.$langs->trans('days')
 			                   )
 			             ,array('td' => 'align="left"',
-			                    'text' => utf8_decode($objp->firsname.' '.$objp->name)
+			                    'text' => $u->getFullName($langs)
+			                    ,'url'=> dol_buildpath('/user/fiche.php?id='.$u->id,1)
 			                   )      
 					);
 
@@ -106,10 +113,7 @@ class box_absence extends ModeleBoxes {
 			}
 
 		}
-		else {
-			$this->info_box_contents[0][0] = array('td' => 'align="left"',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
-		}
+		
 	}
 
 	function showBox($head = null, $contents = null)

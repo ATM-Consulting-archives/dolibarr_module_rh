@@ -744,6 +744,127 @@ global $conf,$db,$user;
 	
 }
 
+function _getSQLListValidation($userid) {
+	// TODO AA encore une grosse merde bien collante sous la semelle
+
+	global $db;
+		
+ 	//LISTE DES GROUPES À VALIDER
+ 	$sql=" SELECT DISTINCT fk_usergroup, nbjours, validate_himself, level
+ 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe`
+			WHERE fk_user=".$userid." 
+			AND type='Conges' AND pointeur !=1 ";
+			//AND entity IN (0,".$conf->entity.")";
+
+	$res = $db->query($sql);
+	$TabGroupe=array();
+	$k=0;
+	while($obj = $db->fetch_object($res)) {
+				$TabGroupe[$k]['fk_usergroup']=$obj->fk_usergroup;
+				$TabGroupe[$k]['nbjours']=$obj->nbjours;
+				$TabGroupe[$k]['validate_himself']=$obj->validate_himself;
+				$TabGroupe[$k]['level']=$obj->level;
+				$k++;
+	}
+	
+	//LISTE USERS À VALIDER
+	if($k==1){		//on n'a qu'un groupe de validation
+		$sql=" SELECT DISTINCT u.fk_user, 
+				a.rowid as 'ID', a.date_cre  as 'DateCre',a.date_debut, a.date_fin, a.duree,
+			  	a.libelle,a.fk_user,  s.firstname, s.lastname,
+			 	a.libelleEtat as 'Statut demande', a.avertissement
+				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
+				".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as s
+				WHERE v.fk_user=".$userid." 
+				AND v.fk_usergroup=u.fk_usergroup
+				AND u.fk_user=a.fk_user 
+				AND u.fk_user=s.rowid
+				AND a.etat LIKE 'AValider'
+				AND v.fk_usergroup=".$TabGroupe[0]['fk_usergroup'];
+				
+				if($TabGroupe[0]['level']==1){	//on teste le niveau de validation : si il est de niveau 1, il faut qu'il puisse voir le 2 et 3
+					$sql.=" AND ( a.niveauValidation>=1)";
+				}else if($TabGroupe[0]['level']==2){
+					$sql.=" AND ( a.niveauValidation>=2)";
+				}
+				else if($TabGroupe[0]['level']==3){
+					$sql.=" AND a.niveauValidation>=3";
+				}
+
+				
+			if($TabGroupe[0]['validate_himself']==0){
+				$sql.=" AND u.fk_user NOT IN (SELECT a.fk_user FROM ".MAIN_DB_PREFIX."rh_absence as a where a.fk_user=".$userid.")";
+			}
+
+			return $sql;
+	}else if($k>1){		//on a plusieurs groupes de validation
+		$sql=" SELECT DISTINCT u.fk_user, 
+				a.rowid as 'ID', a.date_cre as 'DateCre',a.date_debut, a.date_fin, 
+			  	a.libelle as 'Type absence',a.fk_user,  s.firstname, s.lastname,
+			 	a.libelleEtat as 'Statut demande', a.avertissement
+				FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v, ".MAIN_DB_PREFIX."usergroup_user as u, 
+				".MAIN_DB_PREFIX."rh_absence as a, ".MAIN_DB_PREFIX."user as s
+				WHERE v.fk_user=".$userid." 
+				AND v.fk_usergroup=u.fk_usergroup
+				AND u.fk_user=a.fk_user 
+				AND u.fk_user=s.rowid
+				AND a.etat LIKE 'AValider'";
+ 		
+ 		$j=0;
+		foreach($TabGroupe as $TGroupe){ 	//on affiche les absences des différents groupe de validation
+			if($j==0){
+				if($TabGroupe[$j]['level']==1){	//on teste le niveau de validation  si il est de niveau 1, il faut qu'il puisse voir le 2 et 3
+					$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+					AND (a.niveauValidation>=1)
+					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+					)";
+				}else if($TabGroupe[$j]['level']==2){
+					$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+					AND (a.niveauValidation>=2)
+					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+					)";
+				}
+				else if($TabGroupe[$j]['level']==3){
+					$sql.=" AND ( (v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+					AND a.niveauValidation>=3
+					AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+					)";
+				}
+				
+			}else{
+				if($TabGroupe[$j]['level']==1){	//on teste le niveau de validation
+					$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+						AND (a.niveauValidation>=1) 
+						AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+						)";
+				}
+				else if($TabGroupe[$j]['level']==2){
+					$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+						AND (a.niveauValidation>=2) 
+						AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+						)";
+				}
+				else if($TabGroupe[$j]['level']==3){
+					$sql.=" OR ( v.fk_usergroup=".$TabGroupe[$j]['fk_usergroup']."
+						AND a.niveauValidation>=3
+						AND NOW() >= ADDDATE(a.date_cre, ".$TabGroupe[$j]['nbjours'].")
+						)";
+				}	
+			}
+ 			
+			$j++;
+ 		}
+ 		$sql.=")";
+		
+		return $sql;
+	}
+ 	else {
+		return false;
+	}
+ 
+	
+}
+
 function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin, &$TStatPlanning) {
 	global $langs,$user;
 //on va obtenir la requête correspondant à la recherche désirée
