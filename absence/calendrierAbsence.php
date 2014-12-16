@@ -3,6 +3,11 @@
 	require('./class/absence.class.php');
 	require('./lib/absence.lib.php');
 	
+	if($conf->global->RH_ABSENCE_USE_WORKING_PLANNING){
+		header('location:planningUser.php?mode=auto&jsonp=1');
+	} 
+	
+	
 	$langs->load('absence@absence');
 	
 //print_r(get_defined_vars());	

@@ -1,8 +1,9 @@
 <?php
 
 define('INC_FROM_CRON_SCRIPT', true);
-require('../config.php');
-require('../class/absence.class.php');
+require '../config.php';
+dol_include_once('/absence/class/absence.class.php');
+dol_include_once('/absence/lib/absence.lib.php');
 
 //Interface qui renvoie les congés maladie (maintenue ou non) et les jours ancienneté acquis du collaborateur souhaité durant la période demandée
 $ATMdb=new TPDOdb;
@@ -33,9 +34,22 @@ function _get(&$ATMdb, $case) {
 				,'end'=>$typeAbsence->get_date('date_hourEnd','H:i')
 			));
 			break;
+			
+		case 'planning':
+			
+			$ATMdb=new TPDOdb;
+			$absence=new TRH_Absence;
+			$absence->set_date('date_debut_planning', $_REQUEST['date_debut_search']); 
+			$absence->set_date('date_fin_planning', $_REQUEST['date_fin_search']); 
+			
+			ob_start();
+			getPlanningAbsence($ATMdb, $absence, array((int)GETPOST('groupe'),(int)GETPOST('groupe2'),(int)GETPOST('groupe3')), GETPOST('fk_user'));
+			$html = ob_get_clean();
+			__out($html);
+			
+			break;
 	}
 }
-
 
 function _jourAnciennete(&$ATMdb, $userId){
 	global $user, $conf;
