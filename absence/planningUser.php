@@ -169,6 +169,11 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	.just-print {
   			display:none;
   	}
+  	
+	div.bodyline {
+		z-index:1050;
+	}
+
     <?php
     for($i=1;$i<=15;$i++) {
     	print ' .persocolor'.$i.' { background-color:'.TRH_TypeAbsence::getColor($i).' !important;  }';
