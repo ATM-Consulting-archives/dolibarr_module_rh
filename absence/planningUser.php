@@ -16,7 +16,7 @@
 function _planningResult(&$ATMdb, &$absence, $mode) {
 	global $langs, $conf, $db, $user;
 	llxHeader('', $langs->trans('Summary'));
-	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', $langs->trans('Schedule'));
+	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', $langs->trans('Planning'));
 
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formPlanning','GET');
@@ -62,22 +62,47 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		$nomGroupeRecherche='Tous';
 	}
 
-	$TGroupe  = array();
-	$TGroupe[0]  = $langs->trans('AllThis');
-	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
-	$ATMdb->Execute($sqlReq);
-	while($ATMdb->Get_line()) {
-		$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+	$TGroupe = $TUser = array();
+	
+	if($user->rights->absence->myactions->voirTousEdt) {
+
+		$TGroupe[0]  = $langs->trans('AllThis');
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+		}
+		
+		$TUser=array($langs->trans('AllThis'));
+		$sql=" SELECT DISTINCT u.rowid, u.lastname, u.firstname 
+				FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON (u.rowid=ug.fk_user)
+				";
+	
+		if($idGroupeRecherche>0) {
+			$sql.=" WHERE ug.fk_usergroup=".$idGroupeRecherche;
+		}
+		
+	}
+	elseif($user->rights->absence->myactions->voirGroupesAbsences)  {
+		
+		$TGroupe[99999]  = $langs->trans('None');
+		
+		$sqlReq="SELECT g.rowid, g.nom FROM ".MAIN_DB_PREFIX."usergroup g
+			LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON (g.rowid=ug.fk_usergroup)
+		WHERE g.entity IN (0,".$conf->entity.")
+		AND ug.fk_user=".$user->id;
+		$ATMdb->Execute($sqlReq);
+		while($ATMdb->Get_line()) {
+			$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+		}
+		
+		$TUser[0] = $langs->trans('AllThis');
+		$TUser[$user->id] = $user->firstname.' '.$user->lastname;
+	}
+	else{
+		$TUser[$user->id] = $user->firstname.' '.$user->lastname;
 	}
 	
-	$TUser=array($langs->trans('AllThis'));
-	$sql=" SELECT DISTINCT u.rowid, u.lastname, u.firstname 
-			FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON (u.rowid=ug.fk_user)
-			";
-
-	if($idGroupeRecherche>0) {
-		$sql.=" WHERE ug.fk_usergroup=".$idGroupeRecherche;
-	}
 
 	$sql.=" ORDER BY u.lastname, u.firstname";
 	//print $sql;
@@ -94,7 +119,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		)
 		,array(
 			'recherche'=>array(
-				'TGroupe'=>$form->combo('','groupe',$TGroupe,$idGroupeRecherche).$form->combo('','groupe2',$TGroupe,$idGroupeRecherche2).$form->combo('','groupe3',$TGroupe,$idGroupeRecherche3)
+				'TGroupe'=> (empty($TGroupe) ? "Vous n'avez pas les droits pour faire une sélection de groupe" : $form->combo('','groupe',$TGroupe,$idGroupeRecherche).$form->combo('','groupe2',$TGroupe,$idGroupeRecherche2).$form->combo('','groupe3',$TGroupe,$idGroupeRecherche3))
 				,'btValider'=>$form->btsubmit($langs->trans('Submit'), 'valider')
 				,'TUser'=>$form->combo('','fk_user',$TUser,$idUserRecherche)
 				
@@ -197,15 +222,6 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	
 		
 	<script type="text/javascript">
-	$(document).ready(function() {
-			
-		$("table.planning td.rouge, table.planning td.vert").each(function() {
-			
-			$(this).append("<span class=\"just-print\">"+ $(this).attr("title")+"</span>" );
-			
-		});
-		
-	});
 	
 	function popAddAbsence(date, fk_user) {
 		$('#popAbsence').remove();
@@ -286,6 +302,14 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 				})
 				.done(function (response) {
 					$('#planning_html').html( response ); // server response
+					
+					$("table.planning td.rouge, table.planning td.vert").each(function() {
+			
+						$(this).append("<span class=\"just-print\">"+ $(this).attr("title")+"</span>" );
+						
+					});
+					
+					$(".classfortooltip").tipTip({maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
 				});
 				
 			</script>
