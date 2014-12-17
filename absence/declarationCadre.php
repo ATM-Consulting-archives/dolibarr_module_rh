@@ -116,23 +116,23 @@ global $db,$langs,$conf;
 			$total += $nb_heure_travaille_ce_jour;
 			$totaldiff += $stat['nb_heure_suplementaire'];
 		
-			$date_ligne = $langs->trans(date('l', strtotime($date))) ;
+			$date_ligne = $langs->transnoentities(date('l', strtotime($date))) ;
 			$heure_ligne = convertSecondToTime( $nb_heure_travaille_ce_jour * 3600 );
 			
 			if($stat['nb_jour_ferie']>0) {
-				$raison = $langs->trans('PublicHoliday');
+				$raison = $langs->transnoentities('PublicHoliday');
 			}
 			else if($stat['estUnJourTravaille']=='NON' && $stat['nb_heure_presence'] == 0) {
-				$raison = $langs->trans('NoWorkedDays');
+				$raison = $langs->transnoentities('NoWorkedDays');
 			}
 			else if($stat['estUnJourTravaille']!='OUI' && $stat['estUnJourTravaille']!='NON' && $stat['absence']==0) {
-				$raison = $langs->trans('WorkedHalfDay');
+				$raison = $langs->transnoentities('WorkedHalfDay');
 			}
 			else if($stat['typeAbsence']=='non') {
 				$raison = '-';
 			}
 			else {
-				$raison = $stat['typeAbsence'];			
+				$raison = html_entity_decode( $stat['typeAbsence'] );			
 			}
 	
 			$TLigne[]=array(
@@ -204,7 +204,7 @@ global $db,$langs,$conf;
 	if(__get('action')=='SHOW' || __get('action')=='SAVE') {
 		
 		if(isset($_REQUEST['bt_gen'])) {
-			ob_clean();
+			ob_clean(); // TODO AA à quoi ça sert ce truc :/ don't remember ?
 			
 			$u=new User($db);
 			$u->fetch($fk_user);
@@ -223,20 +223,20 @@ global $db,$langs,$conf;
 						,'town'=>$conf->mycompany->town
 					)
 					,'translate' => array(
-						'MonthlyStatementAboutCountingWorkedDaysAndTakingDaysOff' => $langs->transnoentitiesnoconv('MonthlyStatementAboutCountingWorkedDaysAndTakingDaysOff'),
-						'ManagersInDayPlan' => $langs->transnoentitiesnoconv('ManagersInDayPlan'),
-						'EmployeeName' => $langs->transnoentitiesnoconv('EmployeeName'),
-						'ConcernedMonthMY' => $langs->transnoentitiesnoconv('ConcernedMonthMY'),
-						'Date' => $langs->transnoentitiesnoconv('Date'),
-						'WorkedDays' => $langs->transnoentitiesnoconv('WorkedDays'),
-						'RestDays' => $langs->transnoentitiesnoconv('RestDays'),
-						'Eventually' => $langs->transnoentitiesnoconv('Eventually'),
-						'Whether' => $langs->transnoentitiesnoconv('Whether'),
-						'PossibleObservations' => $langs->transnoentitiesnoconv('PossibleObservations'),
-						'RespectGivenDatasInDeclaration' => $langs->transnoentitiesnoconv('RespectGivenDatasInDeclaration'),
-						'To' => $langs->transnoentitiesnoconv('To'),
-						'MadeTheDate' => $langs->transnoentitiesnoconv('MadeTheDate', date('d/m/Y')),
-						'Signature' => $langs->transnoentitiesnoconv('Signature')
+						'MonthlyStatementAboutCountingWorkedDaysAndTakingDaysOff' => utf8_decode($langs->transnoentities('MonthlyStatementAboutCountingWorkedDaysAndTakingDaysOff')),
+						'ManagersInDayPlan' => utf8_decode($langs->transnoentities('ManagersInDayPlan')),
+						'EmployeeName' => utf8_decode( $langs->transnoentities('EmployeeName') ),
+						'ConcernedMonthMY' => utf8_decode($langs->transnoentities('ConcernedMonthMY')),
+						'Date' =>utf8_decode( $langs->transnoentities('Date')),
+						'WorkedDays' => utf8_decode($langs->transnoentities('WorkedDays')),
+						'RestDays' =>utf8_decode( $langs->transnoentities('RestDays')),
+						'Eventually' => utf8_decode($langs->transnoentities('Eventually')),
+						'Whether' => utf8_decode($langs->transnoentities('Whether')),
+						'PossibleObservations' => utf8_decode($langs->transnoentities('PossibleObservations')),
+						'RespectGivenDatasInDeclaration' => utf8_decode($langs->transnoentities('RespectGivenDatasInDeclaration')),
+						'To' => utf8_decode($langs->transnoentities('To')),
+						'MadeTheDate' => utf8_decode($langs->transnoentities('MadeTheDate', date('d/m/Y'))),
+						'Signature' => utf8_decode($langs->transnoentities('Signature'))
 					)
 				)
 			);
