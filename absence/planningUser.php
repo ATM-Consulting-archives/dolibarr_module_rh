@@ -15,40 +15,71 @@
 	
 function _planningResult(&$ATMdb, &$absence, $mode) {
 	global $langs, $conf, $db, $user;
-	llxHeader('', $langs->trans('Summary'));
-	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', $langs->trans('Planning'));
-
-	
-	$form=new TFormCore($_SERVER['PHP_SELF'],'formPlanning','GET');
-	echo $form->hidden('jsonp', 1);
-	$form->Set_typeaff($mode);
 	/*echo $form->hidden('fk_user', $user->id);
 	echo $form->hidden('entity', $conf->entity);
 	*/
 	$date_debut=strtotime( date('Y-m-01') );
 	$date_fin=strtotime( date('Y-m-t') );
 	$idGroupeRecherche=$idGroupeRecherche2=$idGroupeRecherche3=0;
-	
-	
 	$idUserRecherche = (GETPOST('mode')=='auto') ? $user->id : 0;
 	
-	
-	if(isset($_REQUEST['groupe'])) $idGroupeRecherche=$_REQUEST['groupe'];
-	if(isset($_REQUEST['groupe2'])) $idGroupeRecherche2=$_REQUEST['groupe2'];
-	if(isset($_REQUEST['groupe3'])) $idGroupeRecherche3=$_REQUEST['groupe3'];
-	
-	if(isset($_REQUEST['date_debut_search'])) {
-		 $date_debut=$_REQUEST['date_debut_search'];
-		 $date_debut_recherche = $date_debut;
-	}
-	if(isset($_REQUEST['date_fin_search'])) {
-		$date_fin=$_REQUEST['date_fin_search'];
-		$date_fin_recherche = $date_fin;
+	if(!isset($_GET['actionSearch'])) {
+		
+		if(!empty($_COOKIE['TRHPlanning']) ){
+				
+			$idGroupeRecherche=$_COOKIE['TRHPlanning']['groupe'];
+			$idGroupeRecherche2=$_COOKIE['TRHPlanning']['groupe2'];
+			$idGroupeRecherche3=$_COOKIE['TRHPlanning']['groupe3'];
+			$idUserRecherche = $_COOKIE['TRHPlanning']['fk_user'];
+			
+			if(!empty($_COOKIE['TRHPlanning']['date_debut_search'])) {
+				$date_debut=$_COOKIE['TRHPlanning']['date_debut_search'];
+				$date_debut_recherche = $date_debut;
+			}
 
+			if(!empty($_COOKIE['TRHPlanning']['date_fin_search'])) {
+				$date_fin=$_COOKIE['TRHPlanning']['date_fin_search'];
+				$date_fin_recherche = $date_fin;
+			}
+		} 
+		
 	}
-	if(isset($_REQUEST['fk_user'])) $idUserRecherche=$_REQUEST['fk_user'];
-
-	$idGroupeRecherche=$_REQUEST['groupe'];
+	else{
+		
+	
+		if(isset($_REQUEST['groupe'])) {
+			$idGroupeRecherche=$_REQUEST['groupe'];
+			setcookie('TRHPlanning[groupe]', $idGroupeRecherche,strtotime( '+30 days' ),'/');
+			
+		}
+		
+		if(isset($_REQUEST['groupe2'])) {
+			$idGroupeRecherche2=$_REQUEST['groupe2'];
+			setcookie('TRHPlanning[groupe2]', $idGroupeRecherche2,strtotime( '+30 days' ),'/');
+		}
+		if(isset($_REQUEST['groupe3'])) {
+			$idGroupeRecherche3=$_REQUEST['groupe3'];
+			setcookie('TRHPlanning[groupe3]', $idGroupeRecherche3,strtotime( '+30 days' ),'/');
+		}
+		
+		if(isset($_REQUEST['date_debut_search'])) {
+			 $date_debut=$_REQUEST['date_debut_search'];
+			 $date_debut_recherche = $date_debut;
+			 setcookie('TRHPlanning[date_debut_search]', $date_debut,strtotime( '+30 days' ),'/');
+		}
+		if(isset($_REQUEST['date_fin_search'])) {
+			$date_fin=$_REQUEST['date_fin_search'];
+			$date_fin_recherche = $date_fin;
+			setcookie('TRHPlanning[date_fin_search]', $date_fin,strtotime( '+30 days' ),'/');
+		}
+		if(isset($_REQUEST['fk_user'])){
+			 $idUserRecherche=$_REQUEST['fk_user'];
+			 setcookie('TRHPlanning[fk_user]', $idUserRecherche,strtotime( '+30 days' ),'/');
+		}
+	
+	}
+	
+	
 	
 	//TODO object USerGroup !
 	if($idGroupeRecherche!=0){	//	on recherche le nom du groupe
@@ -110,6 +141,15 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	while($ATMdb->Get_line()) {
 		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 	}
+	
+	llxHeader('', $langs->trans('Summary'));
+	print dol_get_fiche_head(adminRecherchePrepareHead($absence, '')  , '', $langs->trans('Planning'));
+
+	
+	$form=new TFormCore($_SERVER['PHP_SELF'],'formPlanning','GET');
+	echo $form->hidden('jsonp', 1);
+	echo $form->hidden('actionSearch', 1);
+	$form->Set_typeaff($mode);
 	
 	$TStatPlanning=array();
 	
@@ -257,9 +297,9 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	</script>
 	<?php
 	
-	if(!empty( $_REQUEST['date_debut_search'] ) || $idUserRecherche>0) {
+	if(!empty( $_GET['actionSearch'] ) || GETPOST('mode')=='auto' || $idUserRecherche>0) {
 		
-		if($idUserRecherche>0 && empty( $_REQUEST['date_debut_search'] )) {
+		if($idUserRecherche>0 && empty( $date_debut_recherche )) {
 			
 			if(GETPOST('mode')=='auto') {
 				$absence->date_debut_planning = $date_debut;
@@ -274,8 +314,8 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	
 		}
 		else {
-			$absence->set_date('date_debut_planning', $_REQUEST['date_debut_search']); 
-			$absence->set_date('date_fin_planning', $_REQUEST['date_fin_search']); 
+			$absence->set_date('date_debut_planning', $date_debut_recherche); 
+			$absence->set_date('date_fin_planning',$date_fin_recherche); 
 		}
 		
 		if(GETPOST('jsonp') == 1) {
