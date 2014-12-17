@@ -2260,9 +2260,9 @@ class TRH_Absence extends TObjetStd {
 		}
 		else if(array_sum($idGroupeRecherche)>0 ) {	//on recherche un groupe précis
 			$sql="SELECT u.rowid, u.login, u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."usergroup_user as g
-			WHERE u.rowid=g.fk_user AND g.fk_usergroup IN (".implode(',',$idGroupeRecherche).") ORDER BY u.lastname";
+			WHERE u.rowid=g.fk_user AND g.fk_usergroup IN (".implode(',',$idGroupeRecherche).") AND u.statut=1 ORDER BY u.lastname";
 		}else{
-			$sql="SELECT rowid, login, lastname, firstname FROM ".MAIN_DB_PREFIX."user";
+			$sql="SELECT rowid, login, lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE statut=1";
 		}
 		$ATMdb->Execute($sql);
 		while ($ATMdb->Get_line()) {
