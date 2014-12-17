@@ -33,12 +33,15 @@
 					<td><b>Date fin rémunération</b></td>
 					<td><b>Rémunération brute annuelle</b></td>
 					<td><b>Salaire Mensuel</b></td>
+					<td><b>Net à payer</b></td>
 				</tr>
 				<tr>
 					<td>[remuneration.date_debutRemuneration;block=tr;strconv=no;protect=no]</td>
 					<td>[remuneration.date_finRemuneration;block=tr;strconv=no;protect=no]</td>
 					<td>[remuneration.bruteAnnuelle;strconv=no;protect=no]€</td>
 					<td>[remuneration.salaireMensuel;strconv=no;protect=no]€</td>
+					<td>[remuneration.net_a_payer;strconv=no;protect=no]€</td>
+					
 				</tr>
 			</table>
 			<br/><br/>

@@ -302,6 +302,7 @@ function _fiche(&$ATMdb, $remuneration,  $mode) {
 				,'date_finRemuneration'=>$form->calendrier('', 'date_finRemuneration', $remuneration->date_finRemuneration, 12)
 				,'bruteAnnuelle'=>$form->texte('','bruteAnnuelle',$remuneration->bruteAnnuelle, 30,100,'','','-')
 				,'salaireMensuel'=>$form->texte('','salaireMensuel',$remuneration->salaireMensuel, 30,100,'','','-')
+				,'net_a_payer'=>$form->texte('','net_a_payer',$remuneration->net_a_payer, 30,100,'','','-')
 				,'primeAnciennete'=>$form->texte('','primeAnciennete',$remuneration->primeAnciennete, 30,100,'','','-')
 				,'primeNoel'=>$form->texte('','primeNoel',$remuneration->primeNoel, 30,100,'','','-')
 				,'commission'=>$form->texte('','commission',$remuneration->commission, 30,100,'','','-')

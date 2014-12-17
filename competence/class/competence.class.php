@@ -414,7 +414,7 @@ class TRH_remuneration extends TObjetStd {
 		parent::add_champs('coutGlobal','type=float;');
 		parent::add_champs('cumHeureTrav','type=float;');
 		parent::add_champs('cumHSup','type=float;');
-		parent::add_champs('HS','type=float;');
+		parent::add_champs('HS,net_a_payer','type=float;');
 		
 		
 		/*parent::add_champs('prevoyancePartSalariale','type=chaine;');
