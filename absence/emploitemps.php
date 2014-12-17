@@ -171,7 +171,7 @@ global $db;
 }
 	
 function _fiche(&$ATMdb, &$emploiTemps, $mode) {
-	global $db, $user,$idUserCompt, $idComptEnCours,$conf, $langs;
+	global $db, $user,$idUserCompt, $idComptEnCours,$conf, $langs,$mysoc;
 	llxHeader('', $langs->trans('Schedule'));
 	$emploiTemps->load($ATMdb, $_REQUEST['id']);
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
@@ -244,7 +244,7 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				,'societe'=>$emploiTemps->societeRtt
 			)
 			,'entity'=>array(
-				'TEntity'=>$form->combo('','societeRtt',$TEntity,$emploiTemps->societeRtt)
+				'TEntity'=>( empty($TEntity) ? $mysoc->name : $form->combo('','societeRtt',$TEntity,$emploiTemps->societeRtt))
 			)
 			,'view'=>array(
 				'mode'=>$mode
