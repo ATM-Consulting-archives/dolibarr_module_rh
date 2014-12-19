@@ -141,7 +141,7 @@ class TRH_Evenement  extends TObjetStd {
 		
 		$this->isAllDayEvent = 1;
 		//if (empty($this->coutEntrepriseHT)) {
-			$this->coutEntrepriseHT =  $this->coutEntrepriseTTC * (100/($this->TTVA[$this->TVA] + 100)); 
+			$this->coutEntrepriseHT =  round($this->coutEntrepriseTTC * (100/($this->TTVA[$this->TVA] + 100)),2); 
 		//}
 		parent::save($db);
 		
