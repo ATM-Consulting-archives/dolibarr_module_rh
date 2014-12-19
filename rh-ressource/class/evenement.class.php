@@ -140,7 +140,9 @@ class TRH_Evenement  extends TObjetStd {
 		$this->attributionAuto($db);
 		
 		$this->isAllDayEvent = 1;
-		if (empty($this->coutEntrepriseHT)) {$this->coutEntrepriseHT = ($this->coutEntrepriseTTC)*(1-(0.01*$this->TTVA[$this->TVA]));}
+		if (empty($this->coutEntrepriseHT)) {
+			$this->coutEntrepriseHT =  $this->coutEntrepriseTTC * (100/($this->TTVA[$this->TVA] + 100)); 
+		}
 		parent::save($db);
 		
 	}
