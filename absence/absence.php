@@ -8,6 +8,7 @@
 	
 	$ATMdb=new TPDOdb;
 	$absence=new TRH_Absence;
+	$absence->loadTypeAbsencePerTypeUser($ATMdb);
 
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
