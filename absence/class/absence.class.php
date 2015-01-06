@@ -2200,20 +2200,22 @@ class TRH_Absence extends TObjetStd {
 
 		else if(array_sum($idGroupeRecherche)>0){	//on recherche un groupe précis
 		
-			$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.lastname,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
-				DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment,ta.isPresence,ta.colorId, a.commentaire
-				FROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
-				LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_type_absence as ta ON (a.type=ta.typeAbsence)
-				LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (g.fk_user=u.rowid)
-				WHERE 1 ";
+				$sql="SELECT  a.rowid as 'ID', u.rowid as 'idUser', u.login, u.lastname,u.firstname, DATE_FORMAT(a.date_debut, '%d/%m/%Y') as 'date_debut', 
+					DATE_FORMAT(a.date_fin, '%d/%m/%Y') as 'date_fin', a.libelle, a.libelleEtat, a.ddMoment, a.dfMoment,ta.isPresence,ta.colorId, a.commentaire
+					FROM ".MAIN_DB_PREFIX."rh_absence as a LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (a.fk_user=u.rowid)
+					LEFT OUTER JOIN ".MAIN_DB_PREFIX."rh_type_absence as ta ON (a.type=ta.typeAbsence)
+					LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (g.fk_user=u.rowid)
+					WHERE 1 ";
+					
+					$sql.= " AND g.fk_usergroup IN (".implode(',',$idGroupeRecherche).")";
 				
-				$sql.= " AND g.fk_usergroup IN (".implode(',',$idGroupeRecherche).")";
+				$sql.=" AND a.etat!='Refusee'
+					AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
+					OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
+					OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
+					OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)";
+				
 			
-			$sq.=" AND a.etat!='Refusee'
-				AND (a.date_debut between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
-				OR a.date_fin between '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' AND '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."'
-				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_debut)))."' between a.date_debut AND a.date_fin
-				OR '".$this->php2Date(strtotime(str_replace("/","-",$date_fin)))."' between a.date_debut AND a.date_fin)";
 		}
 		
 		else
@@ -2268,6 +2270,39 @@ class TRH_Absence extends TObjetStd {
 		while ($ATMdb->Get_line()) {
 			$TabLogin[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('lastname');
 		}
+		
+		if($conf->global->RH_PLANNING_SEARCH_MODE == 'INTERSECTION') {
+		// élimination des users non présent dans tous les groupes. AA peu opti mais je n'ai guère le choix si je veux pas refondre toutes la requête	
+			
+			foreach($TabLogin as $idUser=>$row) {
+				
+				$TLGroup = array();
+				
+				$sql="SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."usergroup_user WHERE fk_user=".$idUser;
+				
+				$ATMdb->Execute($sql);
+				while($obj = $ATMdb->Get_line()) {
+					$TLGroup[] = $obj->fk_usergroup;
+				}
+				
+				foreach($idGroupeRecherche as $idGroup) {
+					
+					if($idGroup>0) {
+						
+						if(!in_array($idGroup, $TLGroup)) {
+							unset($TabLogin[$idUser]);
+						}
+						
+					}
+					
+				}
+				
+				
+			}
+						
+		}
+		
+		
 		
 		$jourFin=strtotime(str_replace("/","-",$date_fin));
 		$jourDebut=strtotime(str_replace("/","-",$date_debut));
