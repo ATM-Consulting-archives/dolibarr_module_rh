@@ -31,11 +31,11 @@
 			$r->fk_proprietaire = 2;
 			$r->fk_loueur = 3;
 			$r->fk_entity_utilisatrice = _getIdEntity($data[10]);
-			$r->fk_utilisatrice = _getIdGroupe($ATMdb, $data[11] );
+//			$r->fk_utilisatrice = _getIdGroupe($ATMdb, $data[11] );
 			$r->numerotel = $data[12];
 			$r->codepuk = $data[13];
 			$r->forfait = $data[14];
-var_dump($r);exit;
+//var_dump($r);exit;
 			if($reel=='Y')$r->save($ATMdb);
 
 			print "ok<br/>";
@@ -45,6 +45,8 @@ var_dump($r);exit;
 			
 		}
 		
+		$ressourceTel = $r->fk_rh_ressource;
+
 		$r=new TRH_Ressource;
 		$ref = trim($data[16]);
 		if($r->load_by_numId($ATMdb, $ref)!==false) {
@@ -55,11 +57,11 @@ var_dump($r);exit;
 			$r->fk_proprietaire = 2;
 			$r->fk_loueur = 3;
 			$r->fk_entity_utilisatrice = _getIdEntity($data[21]);
-			$r->fk_utilisatrice = _getIdGroupe($ATMdb, $data[22] );
+//			$r->fk_utilisatrice = _getIdGroupe($ATMdb, $data[22] );
 			$r->marquetel = $data[22];
 			$r->modeletel = $data[23];
 			$r->financement = $data[24];
-var_dump($r);exit;
+//var_dump($r);exit;
 			if($reel=='Y')$r->save($ATMdb);
 
 			print "ok<br/>";
@@ -76,12 +78,12 @@ function _getIdGroupe(&$ATMdb, $groupe) {
 	if($groupe=='CPRO TELECOM')$groupe='AGT';
 	
 	$ATMdb->Execute("SELECT rowid FROM `llx_usergroup`
-WHERE `nom` LIKE '$groupe' LIMIT 1");
+WHERE `nom` LIKE '".addslashes($groupe)."' LIMIT 1");
 	if($ATMdb->Get_line()) {
 		return $ATMdb->Get_field('rowid');
 	}
 	else{
-		print('erreur agence non trouvée');
+		print('erreur agence '.$groupe.' non trouvée');
 		return 0;
 	}
 	
