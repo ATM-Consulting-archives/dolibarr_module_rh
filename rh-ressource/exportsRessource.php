@@ -52,6 +52,8 @@ global $user,$db;
 	
 	$TNumerosSpeciaux = TRH_Numero_special::getAllNumbers($db);
 	
+//var_dump($TNumerosSpeciaux); exit;
+
 	$TBS=new TTemplateTBS();$html = '';
 	foreach($TLigne as $ligne) {
 		
@@ -82,6 +84,10 @@ global $user,$db;
 				$t_facture = strtotime($row->date_facture);
 				
 				$montant_ligne = $row->montant_euros_ht;
+
+				if(in_array($row->num_appele, $TNumerosSpeciaux)) { //non facturé
+					 $montant_ligne=0;
+				}
 				
 				if(strpos($row->volume_reel,':')!==false) {
 					
@@ -107,7 +113,7 @@ global $user,$db;
 				
 				$total+=$montant_ligne;
 				
-				if($row->montant_euros_ht>0 || $conf->global->RH_RESSOURCE_SHOW_EMPTY_LINE__IN_REPORT) {
+				if($montant_ligne>0 || $conf->global->RH_RESSOURCE_SHOW_EMPTY_LINE__IN_REPORT) {
 					$TLine[]=array(
 						'date_appel'=> date('d/m/Y', $t_appel)
 						,'heure_appel'=> date('H:i:s', $t_appel)
@@ -121,6 +127,8 @@ global $user,$db;
 			
 			$financement = isset($r2->financement) ? $r2->financement : 0;
 			
+			if($total==0) continue; // on saute le tour
+
 			$mail.=$TBS->render('tpl/mailExportRessource.tpl.php'
 				,array(
 					'line'=>$TLine
