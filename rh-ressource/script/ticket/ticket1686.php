@@ -74,6 +74,14 @@
 			$r0->load($ATMdb, $ressourceTel);
 			print "Ancienne ressource ".$r0->numId."<br />";
 			
+			$id_user = $r0->isEmpruntee($ATMdb, date('Y-m-d'));
+			
+			$u=new User($db);
+			$u->fetch($id_user);
+			
+			print "Affecté à $id_user ".$u->getLoginUrl()."<br />";
+			
+			
 			
 		}
 		
