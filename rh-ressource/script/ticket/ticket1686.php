@@ -31,7 +31,7 @@
 			$r->fk_proprietaire = 2;
 			$r->fk_loueur = 3;
 			$r->fk_entity_utilisatrice = _getIdEntity($data[10]);
-			$r->fk_utilisatrice = _getIdGroupe($ATMdb, $data[11] );
+			//$r->fk_utilisatrice = _getIdGroupe($ATMdb, $data[11] );
 			$r->numerotel = $data[12];
 			$r->codepuk = $data[13];
 			$r->forfait = $data[14];
