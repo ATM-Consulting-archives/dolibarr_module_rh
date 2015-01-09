@@ -81,6 +81,40 @@
 			
 			print "Affecté à $id_user ".$u->getLoginUrl()."<br />";
 			
+			if($id_user>0) {
+					
+				$r2=new TRH_Ressource;
+				$ref = trim($data[16]);
+				print "création de $ref...";
+				$r2->numId = $ref;
+				$r2->libelle = $data[17];
+				$r2->set_date('date_achat', $data[18]);
+				$r2->set_date('date_vente', $data[19]);
+				$r2->fk_proprietaire = 2;
+				$r2->fk_loueur = 3;
+				$r2->fk_entity_utilisatrice = _getIdEntity($data[21]);
+	//			$r->fk_utilisatrice = _getIdGroupe($ATMdb, $data[22] );
+				$r2->marquetel = $data[22];
+				$r2->modeletel = $data[23];
+				$r2->financement = $data[24];
+	//var_dump($r);exit;
+				if($reel=='Y') {
+					$r2->save($ATMdb);
+				
+					$e=new TRH_Evenement;
+					$e->date_debut = $r2->date_achat;
+					$e->date_fin = $r2->date_vente;
+					$e->fk_rh_ressource = $r2->getId();
+					$e->fk_user = $u->id;
+					$e->type='emprunt';
+					$e->save($ATMdb);
+					
+					$r->fk_rh_ressource = $r2->getId();
+					$r->save($ATMdb);
+					
+					exit;
+				}
+			}
 			
 			
 		}
