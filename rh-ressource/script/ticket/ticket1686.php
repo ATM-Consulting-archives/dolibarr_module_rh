@@ -48,22 +48,22 @@
 		
 		$ressourceTel = $r->fk_rh_ressource;
 
-		$r=new TRH_Ressource;
+		$r2=new TRH_Ressource;
 		$ref = trim($data[16]);
-		if($r->load_by_numId($ATMdb, $ref)!==false) {
+		if($r2->load_by_numId($ATMdb, $ref)!==false) {
 			print "$ref...";
-			$r->libelle = $data[17];
-			$r->set_date('date_achat', $data[18]);
-			$r->set_date('date_vente', $data[19]);
-			$r->fk_proprietaire = 2;
-			$r->fk_loueur = 3;
-			$r->fk_entity_utilisatrice = _getIdEntity($data[21]);
+			$r2->libelle = $data[17];
+			$r2->set_date('date_achat', $data[18]);
+			$r2->set_date('date_vente', $data[19]);
+			$r2->fk_proprietaire = 2;
+			$r2->fk_loueur = 3;
+			$r2->fk_entity_utilisatrice = _getIdEntity($data[21]);
 //			$r->fk_utilisatrice = _getIdGroupe($ATMdb, $data[22] );
-			$r->marquetel = $data[22];
-			$r->modeletel = $data[23];
-			$r->financement = $data[24];
+			$r2->marquetel = $data[22];
+			$r2->modeletel = $data[23];
+			$r2->financement = $data[24];
 //var_dump($r);exit;
-			if($reel=='Y')$r->save($ATMdb);
+			if($reel=='Y')$r2->save($ATMdb);
 
 			print "ok<br/>";
 		}
