@@ -2,7 +2,7 @@
 <table>
 	<tr>
 		<td>[exports.type;strconv=no;protect=no]</td>
-		<td>[exports.idImport;strconv=no;protect=no]</td>
+		<td id="col-list-import">[exports.idImport;strconv=no;protect=no]</td>
 		<td>[exports.date_debut;strconv=no;protect=no]</td>
 		<td>[exports.date_fin;strconv=no;protect=no]</td>
 		[exports.urlFacture;strconv=no;protect=no]
@@ -18,7 +18,10 @@
 			 url: urlFact
 			 ,dataType:'json'
 		}).done(function(liste) {
-			$("#idImport").empty(); // remove old options
+			$("#col-list-import").empty(); // remove old options
+			
+			$("#col-list-import").append('<select id="idImport" ></select>');
+			
 			$.each(liste, function(key, value) {
 			  $("#idImport").append($("<option></option>")
 			     .attr("value", key).text(value));
