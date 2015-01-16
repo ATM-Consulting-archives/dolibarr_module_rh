@@ -20,7 +20,7 @@
 		}).done(function(liste) {
 			$("#col-list-import").empty(); // remove old options
 			
-			$("#col-list-import").append('<select id="idImport" ></select>');
+			$("#col-list-import").append('<select id="idImport" name="idImport"></select>');
 			
 			$.each(liste, function(key, value) {
 			  $("#idImport").append($("<option></option>")
