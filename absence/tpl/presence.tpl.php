@@ -88,7 +88,7 @@
 
 		[onshow;block=begin;when [view.mode]!='edit']
 				[onshow;block=begin;when [absenceCourante.droitSupprimer]==1]
-						<span class="butActionDelete" id="action-delete"  onclick="if (window.confirm('[translate.ConfirmDeleteAbsenceRequest;strconv=no]')){document.location.href='?action=delete&id=[absenceCourante.id]'};">[translate.Delete;strconv=no]</span>
+						<span class="butActionDelete" id="action-delete"  onclick="if (window.confirm('[translate.ConfirmDeletePresenceRequest;strconv=no]')){document.location.href='?action=delete&id=[absenceCourante.id]'};">[translate.Delete;strconv=no]</span>
 				[onshow;block=end]			
 		[onshow;block=end]
 		<div style="clear:both;"></div>

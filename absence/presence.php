@@ -714,7 +714,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'Accept' => $langs->trans('Accept'),
 				'Refuse' => $langs->trans('Refuse'),
 				'ConfirmSendToSuperiorAbsenceRequest' =>addslashes( $langs->trans('ConfirmSendToSuperiorAbsenceRequest')),
-				'ConfirmDeleteAbsenceRequest' =>addslashes( $langs->trans('ConfirmDeleteAbsenceRequest')),
+				'ConfirmDeletePresenceRequest' =>addslashes( $langs->trans('ConfirmDeletePresenceRequest')),
 				'Delete' => $langs->trans('Delete'),
 				'AbsenceType' => $langs->trans('AbsenceType'),
 				'State' => $langs->trans('State'),

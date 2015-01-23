@@ -107,6 +107,7 @@ ConcernedMonthMY=Mois concerné (MM/AAAA)
 ConfirmAcceptAbsenceRequest=Voulez-vous vraiment accepter la demande pour absence ?
 Confirm=Confirmez
 ConfirmDeleteAbsenceRequest=Voulez-vous vraiment supprimer la demande pour absence ?
+ConfirmDeletePresenceRequest=Voulez-vous vraiment supprimer le signalement de présence ?
 ConfirmDeleteEvent=Voulez vous supprimer cet événement ?
 ConfirmDeletePublicHoliday=Voulez-vous vraiment supprimer ce jour férié ?
 ConfirmDeleteRule=Voulez-vous vraiment supprimer la règle ?
