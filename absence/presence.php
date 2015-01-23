@@ -710,7 +710,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'ValidatedThe' => $langs->trans('ValidatedThe'),
 				'Register' => $langs->trans('Register'),
 				'ConfirmAcceptPresenceRequest' =>addslashes( $langs->trans('ConfirmAcceptPresenceRequest')),
-				'ConfirmRefusePresenceRequest' =>addslashes( $langs->trans('ConfirmRefusePresenceRequest')),
+				'ConfirmRefusePresenceRequest' =>addslashes( $langs->transnoentitiesnoconv('ConfirmRefusePresenceRequest')),
 				'Accept' => $langs->trans('Accept'),
 				'Refuse' => $langs->trans('Refuse'),
 				'ConfirmSendToSuperiorAbsenceRequest' =>addslashes( $langs->trans('ConfirmSendToSuperiorAbsenceRequest')),

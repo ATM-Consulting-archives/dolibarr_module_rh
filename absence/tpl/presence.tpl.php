@@ -77,7 +77,7 @@
 					[onshow;block=begin;when [userCourant.valideurConges]=='1']
 					
 						<a class="butAction" id="action-update"  onclick="if (window.confirm('[translate.ConfirmAcceptPresenceRequest;strconv=no]')){document.location.href='?action=accept&id=[absenceCourante.id]'};">[translate.Accept;strconv=no]</a>	
-						<span class="butActionDelete" id="action-delete"  onclick="if (window.confirm('[translate.ConfirmRefusePresenceRequest;strconv=no]')){document.location.href='?action=refuse&id=[absenceCourante.id]'};">[translate.Refuse;strconv=no]</span>
+						<span class="butActionDelete" id="action-delete"  onclick="refusePresence();">[translate.Refuse;strconv=no]</span>
 						<a style='width:30%' class="butAction" id="action-update"  onclick="if (window.confirm('[translate.ConfirmSendToSuperiorAbsenceRequest;strconv=no]')){document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'};">[translate.ConfirmSendToSuperiorAbsenceRequest;strconv=no]</a>	
 									
 					[onshow;block=end]
@@ -128,6 +128,15 @@
 		
 
 		<script type="text/javascript">
+			function refusePresence() {
+				
+				if (commentaireValideur = window.prompt('[translate.ConfirmRefusePresenceRequest;strconv=no]')){
+					
+					document.location.href='?action=refuse&id=[absenceCourante.id]&commentaireValideur='+commentaireValideur
+					
+				};
+				
+			}
 			function comparerDates(){
 			/* TODO AA réécrire,  à chier  */
 					var t1 = $("#date_debut").val().split('/');

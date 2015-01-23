@@ -131,6 +131,7 @@
 				$absence->load($ATMdb, $_REQUEST['id']);
 
 				$absence->etat='Refusee';
+				$absence->commentaireValideur = GETPOST('commentaireValideur');
 
 				$absence->save($ATMdb);
 
@@ -861,7 +862,7 @@ function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
 	?> 
 	<br><t style='color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica;font-weight: bold;text-decoration: none;text-shadow: 1px 1px 2px #CFCFCF;'>
     <?php echo $langs->trans('AddComment') ?> </t><br/><br/><br/>
-	<textarea name="commentValid" rows="3" cols="40"></textarea><br><br>
+	<textarea name="commentValid" rows="3" cols="40"><?php echo $absence->commentaireValideur; ?></textarea><br><br>
 	<INPUT class="button" TYPE="submit"   id="commentaire" VALUE="<?php echo $langs->trans('Continue'); ?>">
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	
 	<INPUT class="button" TYPE="button" id="newAsk" VALUE="<?php echo $langs->trans('NewRequestOnSameUser'); ?>" onclick="document.location.href='absence.php?action=new&fk_user=<?=$absence->fk_user ?>'">	
