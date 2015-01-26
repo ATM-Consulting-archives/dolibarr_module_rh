@@ -852,21 +852,19 @@ function _bloqueAffichageSelonDroitUtilisateurGroupe(&$remuneration) {
 	global $user,$db;
 	
 	// 3 solutions :
-	
-	//**************************************************************************************************************
+	/**************************************************************************************************************/
 	// 1 - Le user courant est admin, dans ce cas, l'accès n'est pas restreint, l'admin peut voir toutes les remunérations
 	if($user->admin) return true;
 	//**************************************************************************************************************
 	
 	
-	//**************************************************************************************************************
+	/**************************************************************************************************************/
 	// 2 - Le user courant n'est pas admin et n'a pas le droit de voir les rémunérations des user de son/ses groupes, dans ce cas on bloque l'affichage si $_REQUEST['fk_user'] !== $user->id
 	if(!$user->rights->curriculumvitae->myactions->voirRemunerationGroupe && $remuneration->fk_user != $user->id) return false;
 		
-	//**************************************************************************************************************
+	/**************************************************************************************************************/
 	
-	
-	//**************************************************************************************************************
+	/**************************************************************************************************************/
 	// 3 - Le user courant n'est pas admin mais a le droit de voir les rémunérations des user de son/ses groupes, dans ce cas on on cherche les groupes du user courant et on regarde si le user de la fiche sur laquelle on se trouve fait partie d'au moins l'un d'entre eux, si oui on affiche, sinon on bloque
 	if($user->rights->curriculumvitae->myactions->voirRemunerationGroupe) {
 		
@@ -874,9 +872,10 @@ function _bloqueAffichageSelonDroitUtilisateurGroupe(&$remuneration) {
 		
 		// On récupère un tableau des groupes dont fait partie l'utilisateur courant
 		$TGroups_userCourant = $ug->listGroupsForUser($user->id);
-		
 		// On récupère un tableau des groupes dont fait partie l'utilisateur en $_REQUEST['fk_user']
-		$TGroups_userRequest = $ug->listGroupsForUser($remuneration->fk_user);
+		$userRem = !empty($_REQUEST['fk_user'])?$_REQUEST['fk_user']:$remuneration->fk_user;
+
+		$TGroups_userRequest = $ug->listGroupsForUser($userRem);
 		
 		if(empty($TGroups_userCourant) || empty($TGroups_userRequest)) return false;
 		
