@@ -171,8 +171,8 @@
 			@$TTotal['rendement']+= $rendement;
 			@$TTotal['productivite']+= $productivite;
 			
-			print '<td>'. $rendement  .'</td>';
-			print '<td>'. $productivite .'</td>';
+			print '<td>'. round( $rendement,2)  .'</td>';
+			print '<td>'. round($productivite,2) .'</td>';
 			
 			print '</tr>';
 			
@@ -187,8 +187,8 @@
 		$rendement = ($TTotal[$idFacturee]>0 ? $TTotal[$idFacturable] / $TTotal[$idFacturee] : 0);
 		$productivite = ($TTotal[$idFacturable]>0 ? $TTotal[$idFacturee] / ($TTotal[$idFacturable]+$TTotal[$idImproductivite] ): 0);
 		
-		print '<td><strong>'.$rendement.'</strong></td>';	
-		print '<td><strong>'.$productivite.'</strong></td>';	
+		print '<td><strong>'.round($rendement,2).'</strong></td>';	
+		print '<td><strong>'.round($productivite,2).'</strong></td>';	
 		
 		print '</tr>';
 		
