@@ -160,10 +160,12 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$loyerHT = floatval(strtr($infos[12], ',','.'));
 		
 			$taux = '20';
-			if($typeVehicule == "VU") { null; }
+			if($typeVehicule == "VU") { 
+			null;
+			 }
 			else {
 				$taux="0";
-				$loyerHT = $TTC;
+				$loyerHT = $loyerTTC;
 			} 
 			
 			//FACTURE SUR LE LOYER
@@ -194,8 +196,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$loyerTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
 			$loyerHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
 		
-			$taux = '19.6';
-			if($typeVehicule == "VU") { null; }
+			$taux = '20';
+			if($typeVehicule == "VU") { 
+				$loyerTTC = $loyerHT;
+			}
 			else {
 				$taux="0";
 				$loyerHT = $loyerTTC;
