@@ -159,7 +159,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$loyerTTC = floatval(strtr($infos[30], ',','.'));
 			$loyerHT = floatval(strtr($infos[12], ',','.'));
 		
-			$taux = '19.6';
+			$taux = '20';
 			if($typeVehicule == "VU") { null; }
 			else {
 				$taux="0";
