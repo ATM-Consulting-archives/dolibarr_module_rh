@@ -82,10 +82,13 @@ class InterfaceValideurWorkflow
         $langs->load("other");
         $langs->load('ndfp@ndfp');
 		
-		//$ATMdb=new TPDOdb;
-		 define('INC_FROM_DOLIBARR', true);
-         dol_include_once('/valideur/config.php');
-         dol_include_once('/valideur/lib/valideur.lib.php');
+		if ($action === 'NDFP_VALIDATE' || $action==='NDFP_PAID' || $action==='NDFP_CANCEL' || $action==='NDFP_VALIDATE' ){
+			//$ATMdb=new TPDOdb;
+		 	define('INC_FROM_DOLIBARR', true);
+         	dol_include_once('/valideur/config.php');
+         	dol_include_once('/valideur/lib/valideur.lib.php');
+		
+		}
 		
 		
 		if($object->statut==1){			// Statut 1 : note de frais acceptée
