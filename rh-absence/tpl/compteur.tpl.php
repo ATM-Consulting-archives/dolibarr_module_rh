@@ -106,7 +106,7 @@
 					<td>[rttCourant.cumuleReport;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
-					<td><b>Jours RTT cumulés à prendre</b></td>
+					<td><b>Jours RTT cumulés à prendre avant le 31/12</b></td>
 					<td>[rttCourant.cumuleTotal;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
@@ -126,7 +126,7 @@
 					<td>[rttCourant.nonCumuleReport;strconv=no;protect=no]	</td>
 				</tr>
 				<tr>
-					<td><b>Jours RTT non cumulés à prendre</b></td>
+					<td><b>Jours RTT non cumulés à prendre avant le 31/12</b></td>
 					<td>[rttCourant.nonCumuleTotal;strconv=no;protect=no]</td>
 				</tr>
 
