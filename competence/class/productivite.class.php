@@ -164,6 +164,30 @@ class TRH_productiviteIndice extends TObjetStd {
 		parent::_init_vars();
 		parent::start();
 	}
+	
+	function existeIndice() {
+		
+		global $db;
+		
+		$sql = 'SELECT rowid
+				FROM '.MAIN_DB_PREFIX.'rh_productivite_indice
+				WHERE fk_user = '.$this->fk_user.'
+				AND fk_productivite = '.$this->fk_productivite.'
+				AND MONTH(date_indice) = '.date('m', $this->date_indice).'
+				AND YEAR(date_indice) = '.date('Y', $this->date_indice).'
+				LIMIT 1';
+		
+		$resql = $db->query($sql);
+		$res = $db->fetch_object($resql);
+		
+		return ($res->rowid > 0);
+		
+	}
 
+	function save(&$ATMdb) {
+		
+		if(!$this->existeIndice()) parent::save($ATMdb);
+		
+	}
 
 }
