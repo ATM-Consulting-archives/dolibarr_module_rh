@@ -379,6 +379,13 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'canreportpresence';
 		
+		$this->rights[$r][0] = 7130;
+		$this->rights[$r][1] = $langs->trans('ModifyCollabScheduleByHierarchy');
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'modifierEdtByHierarchy';
+		$r++;
+		
 		
 		
 

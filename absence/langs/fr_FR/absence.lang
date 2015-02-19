@@ -263,6 +263,7 @@ MessageNothingAbsence=Il n'y a aucune absence à afficher
 Midday=Midi
 ModifyCollabHolidayCounter=Modifier le compteur de congés d'un collaborateur
 ModifyCollabSchedule=Modifier l'emploi du temps des collaborateurs
+ModifyCollabScheduleByHierarchy=Modifier l'emploi du temps des collaborateurs dont l'utilisateur est supérieur hiérarchique
 ModifyGlobalHolidayParams=Modifier les paramètres globaux des congés
 Modify=Modifier
 ModuleAbsenceDesc=Gestion des absences

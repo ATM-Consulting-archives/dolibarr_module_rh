@@ -230,6 +230,8 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	$TEmploiTemps['date_debut'] = $form->calendrier('', 'date_debut', $emploiTemps->get_date('date_debut')  );
 	$TEmploiTemps['date_fin'] = $form->calendrier('', 'date_fin',  $emploiTemps->get_date('date_fin'));
 	
+	if($user->rights->absence->myactions->modifierEdt || ($user->rights->absence->myactions->modifierEdtByHierarchy && _userCanModifyEdt($_REQUEST['id'])))	$can_modify_edt = 1;
+	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/emploitemps.tpl.php'
 		,array(	
@@ -250,11 +252,15 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', $langs->trans('Absence'))
 				,'compteur_id'=>$emploiTemps->getId()
-				,'titreEdt'=>load_fiche_titre($langs->trans('ScheduleOf', htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'), htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')),'', 'title.png', 0, '')
+				,'titreEdt'=>load_fiche_titre($langs->trans('ScheduleOf', $userCourant->firstname, $userCourant->lastname),'', 'title.png', 0, '')
+				
+				// Avant y'avait ça : (ça posait un souci sur l'affichage des caractères accentués)
+				//,'titreEdt'=>load_fiche_titre($langs->trans('ScheduleOf', htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'), htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')),'', 'title.png', 0, '')
+				
 				,'listeArchive'=>$listeArchive
 			)
 			,'droits'=>array(
-				'modifierEdt'=>$user->rights->absence->myactions->modifierEdt
+				'modifierEdt'=>$can_modify_edt
 			)
 			,'translate' => array(
 				'Morning' 				=> $langs->trans('Morning'),
@@ -289,6 +295,32 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
 	llxFooter();
+}
+
+/**
+ * Détermine si l'emploi du temps sur lequel on se trouve appartient à un utilisateur dont le user courant est supérieur hiérarchique
+ */
+function _userCanModifyEdt($id_user_edt) {
+	
+	global $db, $user;
+	
+	// Tableau d'utilisateur hiérarchiquement en dessous du user courant.
+	// Le tableau contient également l'utilisateur courant, car on part du principe que si l'utilisateur a le droit de modifier l'edt de ses collaborateurs en dessous, il peut également modifier le sien.
+	$TCollaborateurs = array();
+	
+	$sql = 'SELECT rowid 
+			FROM '.MAIN_DB_PREFIX.'user
+			WHERE fk_user = '.$user->id.'
+			OR rowid = '.$user->id;
+			
+	$resql = $db->query($sql);
+	
+	while($res = $db->fetch_object($resql)) {
+		$TCollaborateurs[] = $res->rowid;
+	}
+	
+	return in_array($id_user_edt, $TCollaborateurs);
+	
 }
 
 
