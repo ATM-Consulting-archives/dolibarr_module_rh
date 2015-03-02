@@ -76,7 +76,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 				DATE_FORMAT(e.date_debut, '%m') as mois_date_debut, 
 				DATE_FORMAT(e.date_debut, '%Y') as annee_date_debut, 
 				r.typeVehicule, u.name as 'lastname', u.firstname, e.entity, t.codecomptable, 
-				ue.COMPTE_TIERS, e.idImport,e.numFacture
+				ue.COMPTE_TIERS, e.idImport,e.numFacture, r.fk_rh_ressource
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
@@ -89,14 +89,15 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 	$sql .= " GROUP BY e.numFacture, t.codecomptable";
 	
 	if(isset($_REQUEST['DEBUG'])) {
-		print $sql;
+		print "SQL Débit ".$sql;
 	}
 	
 	$ATMdb2=new TPDOdb;
 			
-	$ATMdb->Execute($sql);
+	$ATMdb->Execute($sql); $montantTotal=0;
 	while($row = $ATMdb->Get_line()) {
 		$montant = $row->coutEntrepriseHT;
+		$montantTotal+= $row->coutEntrepriseTTC;
 		$sens = 'D';
 		$code_compta = $row->codecomptable;
 		$type_compte = 'G';
@@ -124,7 +125,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 			,'idImport'=>$row->idImport
 			
 		);
-		
+if(isset($_REQUEST['DEBUG'])) print 'MontantTotal = '. $montantTotal.'<br />';		
 		/*
 		 * Exploitation de l'analytique
 		 */
@@ -136,6 +137,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 				, a.pourcentage as 'pourcentage'
 				,u.firstname,u.name as 'lastname',u.rowid as 'fk_user'
 				,e.idImport,e.numFacture
+				,r.fk_rh_ressource
 		FROM ".MAIN_DB_PREFIX."rh_evenement as e
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
 		LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
@@ -160,7 +162,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 //print_r($code_anal);
 
 			$TUser[$code_anal][$fk_user]=array(
-					'nom' => ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('lastname') ."</a>"
+					'nom' => ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('lastname') ." (".$ATMdb2->Get_field('fk_rh_ressource').")</a>"
 					,'prenom' => $ATMdb2->Get_field('firstname')
 			);
  						
@@ -341,7 +343,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 		$montant = $row->coutEntrepriseTTC;
 		
 		$sens = 'C';
-		$code_compta = '425902'; //TODO paramètre
+		$code_compta = '401100'; //TODO paramètre
 		$type_compte = 'X';
 		
 		//if($row->fk_entity_utilisatrice==$entity || $row->$fk_fournisseur==$idTotal){

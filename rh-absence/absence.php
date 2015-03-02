@@ -27,7 +27,7 @@
 					$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
 					
 					// Test de la cohérence des dates
-					if(!$user->rights->absence->myactions->creerAbsenceCollaborateur && !TRH_valideur_groupe::isValideur($ATMdb, $user->id)
+					if(!$user->rights->absence->myactions->creerAbsenceCollaborateur /*&& !TRH_valideur_groupe::isValideur($ATMdb, $user->id)*/
 					
 					&& ($absence->date_debut <= strtotime('-1 day') ||$absence->date_fin <= strtotime('-1 day') )) {
 						/*

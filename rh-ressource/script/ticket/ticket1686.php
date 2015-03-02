@@ -25,7 +25,7 @@
 		$ref = '33'.trim($data[4]);
 		if($r->load_by_numId($ATMdb, $ref)!==false) {
 			print "$ref...";
-			$r->libelle = $data[5];
+			$r->libelle = 'SIM '.$ref; //$data[5];
 			$r->set_date('date_achat', $data[6]);
 			$r->set_date('date_vente', $data[7]);
 			$r->fk_proprietaire = 2;
@@ -57,15 +57,17 @@
 			$r2->set_date('date_vente', $data[19]);
 			$r2->fk_proprietaire = 2;
 			$r2->fk_loueur = 3;
-			$r2->fk_entity_utilisatrice = _getIdEntity($data[21]);
+			$r2->fk_entity_utilisatrice = _getIdEntity($data[22]);
 //			$r->fk_utilisatrice = _getIdGroupe($ATMdb, $data[22] );
-			$r2->marquetel = $data[22];
-			$r2->modeletel = $data[23];
-			$r2->financement = $data[24];
+			$r2->marquetel = $data[24];
+			$r2->modletel = $data[25];
+			$r2->financement = $data[26];
 //var_dump($r);exit;
 			if($reel=='Y')$r2->save($ATMdb);
 
 			print "ok<br/>";
+//var_dump($r2);
+//exit;
 		}
 		else {
 			print $ref." non trouvé <br/>";
@@ -112,7 +114,7 @@
 					$r->fk_rh_ressource = $r2->getId();
 					$r->save($ATMdb);
 					
-					exit;
+//					exit;
 				}
 			}
 			

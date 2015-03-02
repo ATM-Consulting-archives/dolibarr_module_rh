@@ -83,7 +83,7 @@ class ActionsValideur
 			AND (n.fk_user IN (".implode(',', $TUser).")
 			               OR (v.type='NDFP' AND v.fk_user = ".$user->id."
 			                       AND (n.statut = 4 OR n.statut = 1)
-			                       AND ((NOW() >= ADDDATE(n.tms, v.nbjours)) OR (n.total_ttc > v.montant) OR v.level=n.alertLevel)
+			                       AND ((NOW() >= ADDDATE(n.tms, v.nbjours)) OR (n.total_ttc > v.montant) OR v.level<=n.alertLevel)
                    )
            	)";
 			
@@ -152,7 +152,7 @@ class ActionsValideur
 	        $sql.= $db->plimit($parameters[14]+1, $parameters[15]);
 			
 			$result = $db->query($sql);
-			
+if(isset($_REQUEST['DEBUG']))exit( $sql);			
 			return $result;
 		}elseif($action=='validation'){
 			//On récupère d'abord tous les groupes auxquels appartient l'utilisateur concerné par la note de frais
