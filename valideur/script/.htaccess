@@ -1,0 +1,4 @@
+AuthType none
+Satisfy Any
+Allow from All
+

@@ -13,17 +13,14 @@ class ActionsValideur
     function formObjectOptions(&$parameters, &$object, &$action, $hookmanager) 
     { 
         global $db,$html,$user, $langs;
-		
 		if(in_array('ndfpcard', explode(':', $parameters['context']))) {
 			
 			if($action==='create' && $parameters['action']==='delegation') {
-				
 					$TUserDelegation=array();
 					$TUserDelegation[]=$user->id;
 					
 					//on récupère les delegateurs du user et on les affiche
 					$sql = "SELECT fk_object FROM ".MAIN_DB_PREFIX."user_extrafields WHERE fk_user_delegation=".$user->id;
-					
 					$result = $db->query($sql);
 					if ($result)
 					{
