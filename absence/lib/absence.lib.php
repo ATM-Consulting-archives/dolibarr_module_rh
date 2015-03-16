@@ -346,11 +346,12 @@ function mailConges(&$absence,$presence=false){
 					'SuperiorComment' => $langs->transnoentities('SuperiorComment'),
 					'MailYourRequestOf' => $langs->transnoentities('MailYourRequestOf'),
 					'DateInterval' => $langs->transnoentities('DateInterval', php2dmy($absence->date_debut), php2dmy($absence->date_fin)),
-					'MailActionChange' => $langs->transnoentities('MailActionChange', htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8'))
+					//'MailActionChange' => $langs->transnoentities('MailActionChange', htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8'))
+					'MailActionChange' => $langs->transnoentities('MailActionChange', $absence->libelleEtat)
 				)
 			)
 		);
-		
+		//echo $message;exit;
 		if($conf->global->ABSENCE_ALERT_OTHER_VALIDEUR) {
 			// TODO copier-coller too crade ! Mais c'est le mien	
 			$ATMdb=new TPDOdb;
@@ -418,7 +419,8 @@ function mailConges(&$absence,$presence=false){
 					'Hello' => $langs->transnoentities('Hello'),
 					'MailYourRequestOf' => $langs->transnoentities('MailYourRequestOf'),
 					'DateInterval' => $langs->transnoentities('DateInterval', php2dmy($absence->date_debut), php2dmy($absence->date_fin)),
-					'MailActionChange' => $langs->transnoentities('MailActionChange', htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')),
+					//'MailActionChange' => $langs->transnoentities('MailActionChange', htmlentities($absence->libelleEtat, ENT_COMPAT | ENT_HTML401, 'UTF-8')),
+					'MailActionChange' => $langs->transnoentities('MailActionChange', $absence->libelleEtat),
 					'ValidatorCommentRequestDenied' => $langs->transnoentities('ValidatorCommentRequestDenied')
 				)
 			)
