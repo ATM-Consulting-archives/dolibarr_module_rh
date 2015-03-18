@@ -250,6 +250,13 @@ class modCompetence extends DolibarrModules
         $this->rights[$r][5] = 'read';
 		$r++;
 		
+		$this->rights[$r][0] = 7963;
+		$this->rights[$r][1] = 'Importer les rémunérations';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'remuneration';
+        $this->rights[$r][5] = 'importer';
+		$r++;
+		
 	
 		// Permissions
 		/*$this->rights = array();		// Permission array used by this module
