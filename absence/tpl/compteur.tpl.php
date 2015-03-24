@@ -3,18 +3,17 @@
 
 	[congesCourant.titreConges;strconv=no;protect=no] 
 	<br><br/>                     
-	<div style="display:inline-block; margin-top:-20px;">
-		<div style="display:inline-block;">
+	
 		
                        
-		<table class="border " style="width:200%;"  >
+		<table class="border " style="width:100%;"  >
 				<tr>
 					<td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" > 
 				    [translate.Year;strconv=no;protect=no] N-1   </td> </div>
 				</tr>
 				<tr>
-					<td>[translate.CurrentUser;strconv=no;protect=no]</td>
-					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
+					<td width="30%">[translate.CurrentUser;strconv=no;protect=no]</td>
+					<td>[userCourant.link;strconv=no;protect=no]</td>
 				</tr>	
 				<tr>
 					<td>[translate.AcquiredOnExercise;strconv=no;protect=no] ([congesPrec.dates])</td>
@@ -72,6 +71,11 @@
 					<td> [congesCourant.nombreCongesAcquisMensuel;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
+					<td>[translate.NbDaysAcquiredByYear;strconv=no;protect=no]</td>
+					<td> [congesCourant.nombreCongesAcquisAnnuel;strconv=no;protect=no]</td>
+				</tr>
+				
+				<tr>
 					<td><b>[translate.Total;strconv=no;protect=no]</b></td>
 					<td><b>[congesCourant.total;strconv=no;protect=no]</b></td>
 				</tr>
@@ -93,14 +97,14 @@
 	
 	[rttCourant.titreRtt;strconv=no;protect=no]   
 	 <br/>                              
-		<table class="border" style="width:200%">
+		<table class="border" style="width:100%">
 				<tr>
 					 <td  colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" >
 					 	[translate.CounterCumulatedDayOff;strconv=no;protect=no] </td>
 				</tr>
 
 				<tr>
-					<td style="width:65%;">[translate.CumulatedDayOffAcquired;strconv=no;protect=no]</td>
+					<td width="30%">[translate.CumulatedDayOffAcquired;strconv=no;protect=no]</td>
 					<td>[rttCourant.cumuleAcquis;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
@@ -177,8 +181,7 @@
 					<td>[rttCourant.date_rttCloture;strconv=no;protect=no]</td>
 				</tr>	
 		</table>
-	    </div>  
-	</div>            
+	       
 
 
 	

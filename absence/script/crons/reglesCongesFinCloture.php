@@ -12,14 +12,13 @@
 	require('../../class/absence.class.php');
 
 	$PDOdb=new TPDOdb;
-	$PDOdb->db->debug=true;
+	$PDOdb->debug=true;
 
 	$o=new TRH_Compteur;
 	$o->init_db_by_vars($PDOdb); // TODO remove or not : on sait jamais, dans la nuit :-/
 	
 	
 	//on récupère la date de fin de cloture des congés
-	$k=0;
 	$sqlReqCloture="SELECT fk_user, date_congesCloture FROM `".MAIN_DB_PREFIX."rh_compteur`";
 	$PDOdb->Execute($sqlReqCloture);
 	$Tab=array();
@@ -31,11 +30,11 @@
 	{
 	   	//echo $idUser." ".$dateCloture. "<br/>";
 		$date=strtotime('+1day',strtotime($dateCloture));
-		$dateMD=date("dm",$date);
+		$dateMD=date('dm',$date);
 	
 		////// 1er juin, tous les congés de l'année N sont remis à 0, et sont transférés vers le compteur congés N-1
-		$juin=date("dm");
-		if($juin==$dateMD){
+		$juin=date('dm');
+		if($juin==$dateMD || isset($_REQUEST['force_for_test'])){
 			
 			$compteur=new TRH_Compteur;
 			$compteur->load_by_fkuser($PDOdb, $idUser);
