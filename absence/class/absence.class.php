@@ -89,7 +89,7 @@ class TRH_Compteur extends TObjetStd {
 		
 		//RTT cumulés 
 		parent::add_champs('rttCumulePris','type=float;');
-		parent::add_champs('rttAcquisAnnuelCumuleInit','type=float;');
+		parent::add_champs('rttAcquisAnnuelCumuleInit,rttAcquisAnnuelNonCumuleInit','type=float;');
 		parent::add_champs('rttCumuleReportNM1','type=float;');
 		parent::add_champs('rttCumuleTotal','type=float;');
 		parent::add_champs('rttCumuleAcquis','type=float;');
@@ -150,7 +150,7 @@ class TRH_Compteur extends TObjetStd {
 		$this->acquisAncienneteN=0;
 		$this->acquisHorsPeriodeN=0;
 		$this->anneeN=$annee;
-		$this->acquisExerciceNM1=25;
+		$this->acquisExerciceNM1=0;
 		$this->acquisAncienneteNM1=0;
 		$this->acquisHorsPeriodeNM1=0;
 		$this->reportCongesNM1=0;
@@ -159,25 +159,28 @@ class TRH_Compteur extends TObjetStd {
 		$this->anneeNM1=$anneePrec;
 		$this->rttTypeAcquisition='Annuel';
 		
-		$this->rttAcquisMensuelInit=0;
+		$this->rttAcquisMensuelInit=$conf->global->RH_NB_RTT_ANNUEL;
+		$this->rttAcquisAnnuelNonCumuleInit=$conf->global->RH_NB_RTTNC_ANNUEL;
 		
 		
-		$this->rttCumuleAcquis=5;
-		$this->rttAcquisAnnuelCumuleInit=5;
+		$this->rttCumuleAcquis=0;
+		$this->rttAcquisAnnuelCumuleInit=0;
 		$this->rttCumuleReportNM1=0;
 		$this->rttCumulePris=0;
 		$this->rttCumuleTotal=$this->rttCumuleAcquis+$this->rttCumuleReportNM1-$this->rttCumulePris;
 		
-		$this->rttNonCumuleAcquis=7;
+		$this->rttNonCumuleAcquis=0;
 		$this->rttNonCumuleReportNM1=0;
-		$this->rttAcquisAnnuelNonCumuleInit=7;
+		
+		
 		$this->rttNonCumulePris=0;
 		$this->rttNonCumuleTotal=$this->rttNonCumuleAcquis+$this->rttNonCumuleReportNM1-$this->rttNonCumulePris;
 		
 		
 		$this->rttMetier='none';
 		$this->rttannee=$annee;
-		$this->nombreCongesAcquisMensuel=2.08;
+		$this->nombreCongesAcquisMensuel=$conf->global->RH_NB_CONGES_MOIS;
+		$this->nombrecongesAcquisAnnuel=$conf->global->RH_NB_CONGES_ANNUEL;
 		$this->date_rttCloture=strtotime($conf->global->RH_DATE_RTT_CLOTURE); 
 		$this->date_congesCloture=strtotime($conf->global->RH_DATE_CONGES_CLOTURE);
 		$this->reportRtt=0;
@@ -2395,7 +2398,7 @@ class TRH_AdminCompteur extends TObjetStd {
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_admin_compteur');
 		parent::add_champs('congesAcquisMensuelInit,congesAcquisAnnuelInit','type=float;');
-		parent::add_champs('rttCumuleInit','type=float;');
+		parent::add_champs('rttCumuleInit,rttNonCumuleInit','type=float;');
 		parent::add_champs('date_rttClotureInit','type=date;');
 		parent::add_champs('date_congesClotureInit','type=date;');				
 
@@ -2406,8 +2409,8 @@ class TRH_AdminCompteur extends TObjetStd {
 		parent::start();	
 		
 		
-		$this->date_rttClotureInit=strtotime(DATE_RTT_CLOTURE);
-		$this->date_congesClotureInit=strtotime(DATE_CONGES_CLOTURE);
+		$this->date_rttClotureInit=strtotime(date('01-01-Y',strtotime('1year')));
+		$this->date_congesClotureInit=strtotime(date('Y-05-31'));
 		
 	}
 	

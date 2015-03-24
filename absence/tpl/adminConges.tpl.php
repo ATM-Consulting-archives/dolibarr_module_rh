@@ -30,8 +30,12 @@
 	 <br/>                                         
 		<table class="border" style="width:100%">
 				<tr>
-					<td style="width:30%;">[translate.NbDayOffAcquiredByManagers;strconv=no;protect=no]</td>
-					<td>[compteurGlobal.rttCumuleInitCadreCpro;strconv=no;protect=no]</td>
+					<td style="width:30%;">[translate.NbDayOffAcquired;strconv=no;protect=no]</td>
+					<td>[compteurGlobal.rttCumuleInit;strconv=no;protect=no]</td>
+				</tr>
+				<tr>
+					<td style="width:30%;">[translate.NbDayOffNCAcquired;strconv=no;protect=no]</td>
+					<td>[compteurGlobal.rttNonCumuleInit;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 						<td>[translate.ClosingDateDayOff;strconv=no;protect=no]</td>

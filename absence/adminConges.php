@@ -28,10 +28,10 @@
 				
 				$compteur->load($ATMdb, $_REQUEST['id']);
 				
-				
 				$sql="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
 					SET rttAcquisAnnuelCumuleInit=".$compteur->rttCumuleInit." 
-					WHERE rttMetier LIKE 'cadre' ";
+					,rttAcquisAnnuelNonCumuleInit=".$compteur->rttNonCumuleInit." 
+					WHERE 1 ";
 				
 				if(!empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode)) {
 					null;
@@ -63,6 +63,7 @@
 				dolibarr_set_const($db, 'RH_DATE_CONGES_CLOTURE', date('Y-m-d',$compteur->date_congesClotureInit));
 				dolibarr_set_const($db, 'RH_NB_CONGES_MOIS', $compteur->congesAcquisMensuelInit);
 				dolibarr_set_const($db, 'RH_NB_RTT_ANNUEL', $compteur->rttCumuleInit);
+				dolibarr_set_const($db, 'RH_NB_RTTNC_ANNUEL', $compteur->rttNonCumuleInit);
 				dolibarr_set_const($db, 'RH_NB_CONGES_ANNUEL', $compteur->congesAcquisAnnuelInit);
 				
 				
@@ -115,7 +116,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'congesAcquisAnnuelInit'=>$form->texte('','congesAcquisAnnuelInit',round2Virgule($compteur->congesAcquisAnnuelInit),10,50)
 				
 				
-				,'rttCumuleInitCadreCpro'=>$form->texte('','rttCumuleInitCadreCpro',round2Virgule($compteur->rttCumuleInit),10,50)	
+				,'rttCumuleInit'=>$form->texte('','rttCumuleInit',round2Virgule($compteur->rttCumuleInit),10,50)	
+				,'rttNonCumuleInit'=>$form->texte('','rttNonCumuleInit',round2Virgule($compteur->rttNonCumuleInit),10,50)	
 				
 				/*,'rttCumuleInitCadreCproInfo'=>$form->texte('','rttCumuleInitCadreCproInfo',round2Virgule($compteur->rttCumuleInitCadreCproInfo),10,50)*/	
 				
@@ -138,7 +140,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				'NbDaysAcquiredByMonth' => $langs->trans('NbDaysAcquiredByMonth'),
 				'NbDaysAcquiredByYear'=>$langs->trans('NbDaysAcquiredByYear'),
 				'ClosingHolidayDate' => $langs->trans('ClosingHolidayDate'),
-				'NbDayOffAcquiredByManagers' => $langs->trans('NbDayOffAcquiredByManagers'),
+				'NbDayOffAcquired' => $langs->trans('NbDayOffAcquired'),
+				'NbDayOffNCAcquired' => $langs->trans('NbDayOffNCAcquired'),
 				'ClosingDateDayOff' => $langs->trans('ClosingDateDayOff'),
 				'Register' => $langs->trans('Register'),
 				'Cancel' => $langs->trans('Cancel'),

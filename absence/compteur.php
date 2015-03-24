@@ -283,7 +283,6 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	
 	$rttCourantReste=$compteur->rttCumuleAcquis -$compteur->rttCumulePris;
 	
-	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/compteur.tpl.php'
 		,array(
@@ -336,7 +335,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'annuelCumuleInit'=>$form->texte('','rttAcquisAnnuelCumuleInit',round2Virgule($compteur->rttAcquisAnnuelCumuleInit),10,50,'')
 				,'annuelNonCumuleInit'=>$form->texte('','rttAcquisAnnuelNonCumuleInit',round2Virgule($compteur->rttAcquisAnnuelNonCumuleInit),10,50,'')
 				,'typeAcquisition'=>$form->combo('','rttTypeAcquisition',$compteur->TTypeAcquisition,$compteur->rttTypeAcquisition)
-				,'rttMetier'=>$form->combo('','rttMetier',$TTypeMetier,$compteur->rttMetier)
+				,'rttMetier'=>$userCourant->job  /*$form->combo('','rttMetier',$TTypeMetier,$compteur->rttMetier)*/
 				,'rttTypeAcquis'=>$compteur->rttTypeAcquisition
 				,'reste'=>$form->texte('','total',round2Virgule($rttCourantReste),10,50,'')
 				,'id'=>$compteur->getId()
