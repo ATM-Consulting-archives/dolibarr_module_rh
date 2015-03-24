@@ -44,8 +44,10 @@
 				$ATMdb->Execute($sql);
 
 				$sql="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-					SET date_rttCloture='".date('Y-m-d h:i:s',$compteur->date_rttClotureInit)."', date_congesCloture='".date('Y-m-d h:i:s',$compteur->date_congesClotureInit)."'
-					,nombreCongesAcquisMensuel=".$compteur->congesAcquisMensuelInit." WHERE 1 ";	
+					SET date_rttCloture='".date('Y-m-d h:i:s',$compteur->date_rttClotureInit)."'
+					, date_congesCloture='".date('Y-m-d h:i:s',$compteur->date_congesClotureInit)."'
+					,nombreCongesAcquisMensuel=".$compteur->congesAcquisMensuelInit."
+					,nombrecongesAcquisAnnuel=".$compteur->congesAcquisAnnuelInit." WHERE 1 ";	
 					
 				if(!empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode)) {
 					null;
@@ -59,6 +61,9 @@
 				dol_include_once('/core/lib/admin.lib.php');
 				dolibarr_set_const($db, 'RH_DATE_RTT_CLOTURE', date('Y-m-d',$compteur->date_rttClotureInit));
 				dolibarr_set_const($db, 'RH_DATE_CONGES_CLOTURE', date('Y-m-d',$compteur->date_congesClotureInit));
+				dolibarr_set_const($db, 'RH_NB_CONGES_MOIS', $compteur->congesAcquisMensuelInit);
+				dolibarr_set_const($db, 'RH_NB_RTT_ANNUEL', $compteur->rttCumuleInit);
+				dolibarr_set_const($db, 'RH_NB_CONGES_ANNUEL', $compteur->congesAcquisAnnuelInit);
 				
 				
 				$mesg = '<div class="ok">' . $langs->trans('ChangesMade') . '</div>';
@@ -107,7 +112,11 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'date_rttClotureInit'=>$form->calendrier('', 'date_rttClotureInit', $compteur->date_rttClotureInit, 12)
 				,'date_congesClotureInit'=>$form->calendrier('', 'date_congesClotureInit', $compteur->date_congesClotureInit, 12)
 				,'congesAcquisMensuelInit'=>$form->texte('','congesAcquisMensuelInit',round2Virgule($compteur->congesAcquisMensuelInit),10,50)
+				,'congesAcquisAnnuelInit'=>$form->texte('','congesAcquisAnnuelInit',round2Virgule($compteur->congesAcquisAnnuelInit),10,50)
+				
+				
 				,'rttCumuleInitCadreCpro'=>$form->texte('','rttCumuleInitCadreCpro',round2Virgule($compteur->rttCumuleInit),10,50)	
+				
 				/*,'rttCumuleInitCadreCproInfo'=>$form->texte('','rttCumuleInitCadreCproInfo',round2Virgule($compteur->rttCumuleInitCadreCproInfo),10,50)*/	
 				
 				,'titreConges'=>load_fiche_titre($langs->trans('HolidaysPaid'),'', 'title.png', 0, '')
@@ -127,6 +136,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 			)
 			,'translate' => array(
 				'NbDaysAcquiredByMonth' => $langs->trans('NbDaysAcquiredByMonth'),
+				'NbDaysAcquiredByYear'=>$langs->trans('NbDaysAcquiredByYear'),
 				'ClosingHolidayDate' => $langs->trans('ClosingHolidayDate'),
 				'NbDayOffAcquiredByManagers' => $langs->trans('NbDayOffAcquiredByManagers'),
 				'ClosingDateDayOff' => $langs->trans('ClosingDateDayOff'),

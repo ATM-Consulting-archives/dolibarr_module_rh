@@ -12,6 +12,11 @@
 						<td> [compteurGlobal.congesAcquisMensuelInit;strconv=no;protect=no]</td>
 					</tr>
 					<tr>
+						<td style="width:30%;">[translate.NbDaysAcquiredByYear;strconv=no;protect=no]</td>
+						<td> [compteurGlobal.congesAcquisAnnuelInit;strconv=no;protect=no]</td>
+					</tr>
+					
+					<tr>
 						<td>[translate.ClosingHolidayDate;strconv=no;protect=no]</td>
 						<td>[compteurGlobal.date_congesClotureInit;strconv=no;protect=no]</td>
 					</tr>

@@ -73,7 +73,7 @@ class TRH_Compteur extends TObjetStd {
 		parent::add_champs('anneeN','type=entier;');					
 		parent::add_champs('dureeN','type=entier;');
 		parent::add_champs('date_congesCloture','type=date;');	//date de clôture période rtt
-		parent::add_champs('nombreCongesAcquisMensuel','type=float;');
+		parent::add_champs('nombreCongesAcquisMensuel,nombrecongesAcquisAnnuel','type=float;');
 		
 		//conges N-1
 		parent::add_champs('acquisExerciceNM1','type=float;');				
@@ -2394,7 +2394,7 @@ class TRH_Absence extends TObjetStd {
 class TRH_AdminCompteur extends TObjetStd {
 	function __construct() { 
 		parent::set_table(MAIN_DB_PREFIX.'rh_admin_compteur');
-		parent::add_champs('congesAcquisMensuelInit','type=float;');
+		parent::add_champs('congesAcquisMensuelInit,congesAcquisAnnuelInit','type=float;');
 		parent::add_champs('rttCumuleInit','type=float;');
 		parent::add_champs('date_rttClotureInit','type=date;');
 		parent::add_champs('date_congesClotureInit','type=date;');				

@@ -11,22 +11,20 @@
 	require('../../config.php');
 	require('../../class/absence.class.php');
 
-	$ATMdb=new TPDOdb;
-	$ATMdb->db->debug=true;
+	$PDOdb=new TPDOdb;
+	$PDOdb->db->debug=true;
 
 	$o=new TRH_Compteur;
-	$o->init_db_by_vars($ATMdb);
+	$o->init_db_by_vars($PDOdb); // TODO remove or not : on sait jamais, dans la nuit :-/
 	
-	
-	//TODO AA mettre dans l'objet compteur !
 	
 	//on récupère la date de fin de cloture des congés
 	$k=0;
 	$sqlReqCloture="SELECT fk_user, date_congesCloture FROM `".MAIN_DB_PREFIX."rh_compteur`";
-	$ATMdb->Execute($sqlReqCloture);
+	$PDOdb->Execute($sqlReqCloture);
 	$Tab=array();
-	while($ATMdb->Get_line()) {
-				$Tab[$ATMdb->Get_field('fk_user')] = $ATMdb->Get_field('date_congesCloture');
+	while($PDOdb->Get_line()) {
+				$Tab[$PDOdb->Get_field('fk_user')] = $PDOdb->Get_field('date_congesCloture');
 	}
 
 	foreach($Tab as $idUser => $dateCloture )
@@ -38,42 +36,24 @@
 		////// 1er juin, tous les congés de l'année N sont remis à 0, et sont transférés vers le compteur congés N-1
 		$juin=date("dm");
 		if($juin==$dateMD){
-			//on transfère les jours N-1 non pris vers jours report 
-			$sqlTransfert="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-				SET reportCongesNM1=(acquisExerciceNM1+acquisAncienneteNM1+acquisHorsPeriodeNM1-congesPrisNM1)  
-				WHERE fk_user =".$idUser;
-			$ATMdb->Execute($sqlTransfert);
 			
-			// suppression des jours non anticipé mais perdu
-			$sqlTransfert="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-				SET reportCongesNM1=0, congesPrisNM1=congesPrisN
-				WHERE fk_user =".$idUser." AND reportCongesNM1>0";
-			$ATMdb->Execute($sqlTransfert);
+			$compteur=new TRH_Compteur;
+			$compteur->load_by_fkuser($PDOdb, $idUser);
+			$compteur->reportCongesNM1 = 0;
+			$compteur->congesPrisNM1=$compteur->congesPrisN;
 			
-			//on transfère les jours acquis N vers N-1
-			$sqlTransfert2="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-			SET acquisExerciceNM1=CEILING(acquisExerciceN), acquisAncienneteNM1=acquisAncienneteN,
-			acquisHorsPeriodeNM1=acquisHorsPeriodeN
-			WHERE fk_user =".$idUser;
-			$ATMdb->Execute($sqlTransfert2);
+			$compteur->acquisExerciceNM1 = ceil($compteur->acquisExerciceN) + $compteur->nombrecongesAcquisAnnuel;
 			
-			//on remet à 0 les jours année courante
-			//L'ancienneté devra normalement être gérée manuellement. 
-			$sqlRaz="UPDATE ".MAIN_DB_PREFIX."rh_compteur 
-			SET acquisExerciceN=0, acquisHorsPeriodeN=0, congesPrisN=0 ,date_congesCloture='".date('Y-m-d', strtotime('+1 year',$date) )."' WHERE fk_user =".$idUser;
-			$ATMdb->Execute($sqlRaz);
+			$compteur->acquisAncienneteNM1 = $compteur->acquisAncienneteN;
+			$compteur->acquisHorsPeriodeNM1 = $compteur->acquisHorsPeriodeN;
 			
+			$compteur->acquisExerciceN = 0;
+			$compteur->acquisHorsPeriodeN = 0;
+			$compteur->congesPrisN = 0;
+			$compteur->date_congesCloture = strtotime('+1 year',$date);
+			
+			$compteur->save($PDOdb);
 		}
 	}
 	
-	
-	
-	//on incrémente les années
-	$annee=date("dm");
-	if($annee=="0101"){
-		//on transfère les jours N-1 non pris vers jours report
-		$sqlAnnee="UPDATE ".MAIN_DB_PREFIX."rh_compteur SET anneeN=anneN+1, anneeNM1=anneNM1+1";
-		$ATMdb->Execute($sqlAnnee);	
-	}
-
-$ATMdb->close();
+$PDOdb->close();
