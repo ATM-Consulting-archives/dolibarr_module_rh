@@ -32,11 +32,14 @@ $sql="SELECT rowid, numId, coutminuteint, coutminuteext FROM ".MAIN_DB_PREFIX."r
 	WHERE fk_rh_ressource_type=".$idCarteSim." 
 	AND entity IN (0,".$conf->entity.")";
 $ATMdb->Execute($sql);
-while($ATMdb->Get_line()) {
-	$TNumero[$ATMdb->Get_field('numId')] = $ATMdb->Get_field('rowid');
-	$TCoutMinuteInt[$ATMdb->Get_field('numId')] = $ATMdb->Get_field('coutminuteint');
-	$TCoutMinuteExt[$ATMdb->Get_field('numId')] = $ATMdb->Get_field('coutminuteext');
-	}
+
+while($ATMdb->Get_line()) 
+{
+	$numIdTrimed = trim($ATMdb->Get_field('numId'));
+	$TNumero[$numIdTrimed] = $ATMdb->Get_field('rowid');
+	$TCoutMinuteInt[$numIdTrimed] = $ATMdb->Get_field('coutminuteint');
+	$TCoutMinuteExt[$numIdTrimed] = $ATMdb->Get_field('coutminuteext');
+}
 
 
 // Pour trouver les utilisateurs, on ne regarde pas la colonne du fichier, mais qui utilise la ressource au moment de la facture
@@ -109,7 +112,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		//echo 'Traitement de la ligne '.$numLigne.'... ';
 		if ($numLigne >=3){
 			
-			$infos = explode(';', $data[0]);
+			//$infos = explode(';', $data[0]);
 			$infos = $data;
 			
 			$TDonnees[] = $infos;
@@ -117,7 +120,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			//var_dump($infos);
 			$mois = substr($infos[4],3,7);
 			
-			$num = $infos[1];
+			$num = trim($infos[1]);
 			
 			if ($num[0]=='0'){$num = '33'.substr($num, 1);}  	//0607021672=>33607021672
 			else if ($num[0]=='6'){$num = '33'.$num;}				// 607021672=>33607021672
@@ -126,11 +129,12 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			
 			
-			if ( empty($TNumero[$num] )){
+			if (empty($TNumero[$num]))
+			{
 				$TNumeroInexistants[$num] = 1;
 			}
-			
-			else{
+			else
+			{
 				$idUser = $TAttribution[$num] ;
 				
 				if ($idUser!=0){
