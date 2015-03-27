@@ -99,7 +99,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	while(($infos = fgetcsv($handle, 0,';')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
 	
-		$numFacture = $infos[2];
+		$numFacture = $infos[1];
 		
 		if ($numLigne >=1 && $numFacture!=''){
 			//print_r($infos);
@@ -160,7 +160,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			//$typeVehicule = $info[9];	 
 				 
 				 
-			$loyerTTC = floatval(strtr($infos[30], ',','.'));
+			$loyerTTC = floatval(strtr($infos[22], ',','.'));
 			$loyerHT = floatval(strtr($infos[12], ',','.'));
 		
 			$taux = '19.6';
@@ -178,9 +178,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$fact->fk_user = $idUser;
 			$fact->fk_rh_ressource_type = $idVoiture;
 			$fact->motif = 'Facture mensuelle Parcours : Loyer';
-			$fact->commentaire = 'Facture lié au contrat '.$infos[4];
+			$fact->commentaire = 'Facture lié au contrat '.$infos[0];
 			$fact->set_date('date_debut', $infos[10]);
-			$fact->set_date('date_fin', $infos[1]);
+			$fact->set_date('date_fin', $infos[4]);
 			$fact->coutTTC = $loyerTTC;
 			$fact->coutEntrepriseTTC =  $loyerTTC;
 			$fact->TVA= $TTVA[$taux];
@@ -188,21 +188,20 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$fact->entity =$entity;
 			$fact->fk_fournisseur = $idParcours;
 			$fact->idImport = $idImport;
-			$fact->numFacture = $infos[2];
 			$fact->date_facture = dateToInt($infos[3]);
 			$fact->save($ATMdb);
 			$cptFactureLoyer++;
 				
 				
 		
-			$loyerTTC = floatval(strtr($infos[31], ',','.')+strtr($infos[32], ',','.'));
+			$loyerTTC = floatval(strtr($infos[23], ',','.')+strtr($infos[24], ',','.'));
 			$loyerHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
 		
 			$taux = '19.6';
 			if($typeVehicule == "VU") { null; }
 			else {
 				$taux="0";
-				$loyerHT = $TTC;
+				$loyerHT = $loyerTTC;
 			} 
 			
 				
@@ -214,18 +213,17 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$factEnt->fk_user = $idUser;
 			$factEnt->fk_rh_ressource_type = $idVoiture;
 			$factEnt->motif = 'Facture mensuelle Parcours : Gestion et Entretien';
-			$factEnt->commentaire = 'Facture lié au contrat '.$infos[4].',<br>
-									Entretien TTC :'.floatval(strtr($infos[32], ',','.')).'€,<br>
-									Gestion TTC :'.floatval(strtr($infos[31], ',','.')).'€';
+			$factEnt->commentaire = 'Facture lié au contrat '.$infos[0].',<br>
+									Entretien TTC :'.floatval(strtr($infos[24], ',','.')).'€,<br>
+									Gestion TTC :'.floatval(strtr($infos[23], ',','.')).'€';
 			$factEnt->set_date('date_debut', $infos[10]);
-			$factEnt->set_date('date_fin', $infos[1]);
+			$factEnt->set_date('date_fin', $infos[4]);
 			$factEnt->coutTTC = $loyerTTC;
 			$factEnt->coutEntrepriseTTC = $loyerTTC;
 			$factEnt->TVA= $TTVA[$taux];
 			$factEnt->coutEntrepriseHT = $loyerHT ;
 			$factEnt->fk_fournisseur = $idParcours;
 			$factEnt->idImport = $idImport;
-			$factEnt->numFacture = $infos[2];
 			$factEnt->date_facture = dateToInt($infos[3]);
 			$factEnt->entity =$entity;
 			$factEnt->save($ATMdb);
