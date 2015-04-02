@@ -163,7 +163,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$loyerTTC = floatval(strtr($infos[22], ',','.'));
 			$loyerHT = floatval(strtr($infos[12], ',','.'));
 		
-			$taux = '19.6';
+			$taux = '20';
 			if($typeVehicule == "VU") { null; }
 			else {
 				$taux="0";
@@ -197,7 +197,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$loyerTTC = floatval(strtr($infos[23], ',','.')+strtr($infos[24], ',','.'));
 			$loyerHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
 		
-			$taux = '19.6';
+			$taux = '20';
 			if($typeVehicule == "VU") { null; }
 			else {
 				$taux="0";
