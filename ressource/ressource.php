@@ -355,7 +355,7 @@ function getStatut($val){
 
 function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 	global $db,$user;
-	llxHeader('', 'Ressource', '', '', 0, 0, array('/rhlibrary/jquery.jOrgChart.js'));
+	llxHeader('', 'Ressource', '', '', 0, 0, array('/hierarchie/js/jquery.jOrgChart.js'));
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
@@ -374,10 +374,10 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 		<?php
 		foreach($ressource->ressourceType->TField as $k=>$field) {
 			switch($field->type){
-				case liste:
+				case 'liste':
 					$temp = $form->combo('',$field->code,$field->TListe,$ressource->{$field->code});
 					break;
-				case checkbox:
+				case 'checkbox':
 					$temp = $form->combo('',$field->code,array('oui'=>'Oui', 'non'=>'Non'),$ressource->{$field->code});
 					break;
 				default:
