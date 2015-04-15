@@ -1,3 +1,6 @@
 [submodule "hierarchie"]
 	path = hierarchie
 	url = git@github.com:ATM-Consulting/dolibarr_module_hierarchie.git
+[submodule "jouroff"]
+	path = jouroff
+	url = git@github.com:ATM-Consulting/dolibarr_module_jouroff.git
