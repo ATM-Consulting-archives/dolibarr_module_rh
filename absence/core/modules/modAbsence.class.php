@@ -202,13 +202,6 @@ class modAbsence extends DolibarrModules
         $this->rights[$r][5] = 'modifierParamGlobalConges';
 		$r++;
 		
-		$this->rights[$r][0] = 7105;
-		$this->rights[$r][1] = $langs->trans('AddRemoveNoWorkingDays');
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'myactions';
-        $this->rights[$r][5] = 'ajoutJourOff';
-		$r++;
-		
 		$this->rights[$r][0] = 7106;
 		$this->rights[$r][1] = $langs->trans('ConsultCollabSchedule');
 		$this->rights[$r][3] = 0;

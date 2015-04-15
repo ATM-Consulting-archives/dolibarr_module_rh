@@ -54,7 +54,6 @@ AcquisitionType=Type acquisition
 AddComment=Vous pouvez ajouter ou modifier le commentaire pour justifier votre choix (mail déjà envoyé)
 AddedLines=%d lignes rajoutées à la table
 AddGroupCollabAbsencePresence=Créer une absence ou présence pour un collaborateur de son groupe
-AddRemoveNoWorkingDays=Ajouter/Supprimer des jours non travaillés
 AddRulesAbsencesRequests=Rajouter des règles sur les demandes d'absences
 AddValidationRightOfSmbdInGroup=Ajout du droit de validation congé de %s dans (%d) %s
 AfternoonArrival=Arrivée l'après-midi

@@ -100,17 +100,20 @@ function adminRecherchePrepareHead(&$obj, $type='recherche') {
 }
 
 function edtPrepareHead(&$obj, $type='absence') {
-	global $user, $langs;
+	global $user, $langs,$conf;
 
 	switch ($type) {
 		
 		case 'emploitemps':
 				
-			return array(
-				array(dol_buildpath('/absence/emploitemps.php?&fk_user='.$user->id,1), $langs->trans('Schedule'),'emploitemps')
-			   ,array(dol_buildpath('/absence/joursferies.php?&fk_user='.$user->id,1), $langs->trans('HolidaysOrNoWorkingDays'),'joursferies')
-			   //,array(dol_buildpath('/absence/pointage.php?&fk_user='.$user->id, 'Pointage Collaborateurs','pointage')
+			$Tab=array(
+				array(dol_buildpath('/absence/emploitemps.php?fk_user='.$user->id,1), $langs->trans('Schedule'),'emploitemps')
 			);
+            
+            if($conf->jouroff->enabled) $Tab[] = array(dol_buildpath('/jouroff/admin/jouroff_setup.php?fk_user='.$user->id,1), $langs->trans('HolidaysOrNoWorkingDays'),'joursferies');
+            
+            return $Tab;
+            
 			break;
 				
 	}
