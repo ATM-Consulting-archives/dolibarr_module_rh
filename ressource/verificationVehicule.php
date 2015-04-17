@@ -15,8 +15,8 @@ $plagedeb = isset($_REQUEST['plagedebut']) ? $_REQUEST['plagedebut'] : date("d/m
 $date_debut = mktime(0,0,0,substr($plagedeb, 3,2),substr($plagedeb, 0,2), substr($plagedeb, 6,4));
 $plagefin = isset($_REQUEST['plagefin']) ? $_REQUEST['plagefin'] : date("d/m/Y", time()+3600*24*31);
 $date_fin = mktime(0,0,0,substr($plagefin, 3,2),substr($plagefin, 0,2), substr($plagefin, 6,4));
-
-$TRessource = getContratLimit($date_debut,$date_fin,$conf->entity);
+$ATMdb=new TPDOdb;
+$TRessource = getContratLimit($ATMdb, $date_debut,$date_fin,$conf->entity);
 
 $form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 $form->Set_typeaff('edit');

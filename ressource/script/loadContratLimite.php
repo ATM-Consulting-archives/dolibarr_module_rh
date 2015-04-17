@@ -12,7 +12,7 @@ $plagefin = !empty($_REQUEST['plagefin']) ? $_REQUEST['plagefin'] : date("d/m/Y"
 $deb = dateToInt($plagedeb);
 $fin = dateToInt($plagefin);
 
-$TRetour = getContratLimit($deb, $fin, $conf->entity);
+$TRetour = getContratLimit($ATMdb, $deb, $fin, $conf->entity);
 
 //print_r($TRetour);
 //echo json_encode($TRetour);

@@ -996,7 +996,7 @@ function dateToInt($chaine){
 }
 
 
-function getContratLimit($deb, $fin, $entity) {
+function getContratLimit(&$ATMdb, $deb, $fin, $entity) {
     
     
 $idVoiture = getIdType('voiture');
