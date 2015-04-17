@@ -12,6 +12,7 @@ llxHeader('','Vérification des concordances entre contrats et factures des véh
 
 print dol_get_fiche_head(array()  , '', 'Vérification');
 
+
 $plagedeb = isset($_REQUEST['plagedebut']) ? $_REQUEST['plagedebut'] : date("d/m/Y",time()-3600*24*30*12);
 $date_debut = dateToInt($plagedeb);
 
@@ -156,9 +157,3 @@ function dateToInt($chaine){
 	return mktime(0,0,0,substr($chaine,3,2),substr($chaine,0,2),substr($chaine,6,4));
 }
 
-/*
- * prend un format YYYY-mm-dd et renvoie un timestamp
- */
-function date2ToInt($chaine){
-	return mktime(0,0,0,substr($chaine,5,2),substr($chaine,8,2),substr($chaine,0,4));
-}
