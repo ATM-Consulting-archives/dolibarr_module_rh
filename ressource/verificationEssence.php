@@ -17,11 +17,9 @@ $tsdeb = mktime(0,0,0,substr($plagedeb,3,2), substr($plagedeb,0,2), substr($plag
 $tsfin = mktime(0,0,0,substr($plagefin, 3,2), substr($plagefin, 0,2), substr($plagefin, 6,4));
 $fk_user = !empty($_REQUEST['fk_user']) ? $_REQUEST['fk_user'] : 0 ;
 
-$url =dol_buildpath("/ressource/script/loadConsommationEssence.php?limite=".$limite."&plagedebut=".$plagedeb."&plagefin=".$plagefin."&fk_user=".$fk_user,2);
-if (isset($_REQUEST['DEBUG'])){echo $url;}
-$result = file_get_contents($url);
-$TRessource = unserialize($result);
-
+$ATMdb=new TPDOdb;
+$TRessource = getConsommation($ATMdb, $tsdeb, $tsfin, $fk_user,  $limite );
+ 
 $TUser = getUsers(true, false);
 
 
