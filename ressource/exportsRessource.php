@@ -192,10 +192,8 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		else {$TIdRessource[$row->rowid] = $idVoiture;}
 	}
 	
-	$url =dol_buildpath('/ressource/script/loadListeFactures.php?fk_fournisseur='.$type.'&mode_retour=autre',2);	
-	if(isset($_REQUEST['DEBUG'])) { print $url.'<br>'; }
-	$result = file_get_contents($url);
-	$TIdFacture = unserialize($result);  
+    dol_include_once('/ressource/lib/ressource.lib.php');
+    $TIdFacture = getFactures($ATMdb, $type);
 	
 	print dol_get_fiche_head(array()  , '', 'Export Ressources');
 	
@@ -206,14 +204,10 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 	$sendMail=false;
 	
 	if($boutonGenerer){
-		// ---- Exports
-		$url =dol_buildpath("/ressource/script/interface.php?date_debut=".$date_debut."&date_fin=".$date_fin."&get=".$TType[$type]."&fk_fournisseur=".$type."&idTypeRessource=".$TIdRessource[$type]."&entity=".$conf->entity,2);
 
-		if(!empty($_REQUEST['idImport'])) $url.='&idImport='.$_REQUEST['idImport'];
-		
-		if(isset($_REQUEST['DEBUG'])) { print $url."&withLogin=1"; }
-		$result = file_get_contents($url."&withLogin=1");
-		$TLignes = unserialize($result);
+        if(stripos($TType[$type],'orange')!==false) $TLignes = _exportOrange2($ATMdb, $date_debut, $date_fin, $conf->entity, $idImport);
+        else $TLignes = _exportVoiture($ATMdb, $date_debut, $date_fin, $conf->entity, $type, $TIdRessource[$type], $idImport);
+        
 		
 		if(isset($_REQUEST['DEBUG']))var_dump($TLignes);
 		
