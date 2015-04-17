@@ -150,10 +150,4 @@ function getTab(&$ATMdb, $deb, $fin,$incoherance){
 }
 
 
-/*
- * prend un format dd/mm/YYYY et renvoie un timestamp
- */
-function dateToInt($chaine){
-	return mktime(0,0,0,substr($chaine,3,2),substr($chaine,0,2),substr($chaine,6,4));
-}
 

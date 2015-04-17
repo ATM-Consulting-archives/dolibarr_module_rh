@@ -140,18 +140,3 @@ __out($TRessource);
 
 
 exit();
-
-/**
- * prend un format 2013-03-19 00:00:00 et renvoie un timestamp
- */
-function date2ToInt($chaine){
-	//echo $chaine.' '.substr($chaine,5,2).' '.substr($chaine,8,2).' '.substr($chaine,0,4).'<br>';
-	return mktime(0,0,0,substr($chaine,5,2),substr($chaine,8,2),substr($chaine,0,4));
-}
-/*
- * prend un format d/m/Y et renvoie un timestamp
- */
-function dateToInt($chaine){
-	return mktime(0,0,0,substr($chaine,3,2),substr($chaine,0,2),substr($chaine,6,4));
-}
-	

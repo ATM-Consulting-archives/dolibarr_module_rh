@@ -288,13 +288,6 @@ function chargeVoiture(&$ATMdb){
 }
 
 
-/*
- * prend un format d/m/Y et renvoie un timestamp
- */
-function dateToInt($chaine){
-	return mktime(0,0,0,substr($chaine,3,2),substr($chaine,0,2),substr($chaine,6,4));
-}
-
 function getTVAId(&$TTVA, $tva) {
 
 	foreach($TTVA as $taux=>$id) {
