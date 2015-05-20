@@ -104,7 +104,7 @@ function _liste(&$ATMdb, $regle) {
 				'maternite'				=> $langs->trans('Maternity'),
 				'paternite'				=> $langs->trans('Paternity'), 
 				'chomagepartiel'		=> $langs->trans('PartialUnemployment'),
-				'nonremuneree'			=> $langs->trans('Unpaid'),
+				'nonremuneree'			=> $langs->trans('UnpaidAbsence'),
 				'accidentdetravail'		=> $langs->trans('WorkAccident'),
 				'maladieprofessionnelle'=> $langs->trans('ProfessionalSickness'),
 				'congeparental'			=> $langs->trans('ParentalHoliday'),
