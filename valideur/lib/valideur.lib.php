@@ -138,7 +138,7 @@ function extract_ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity,$withLogin=
     
     $sql = "SELECT
             t.accountancy_code
-            ,SUM(l.total_ht) as 'total_ht'
+            ,SUM(l.total_ht) as 'total_ht', l.mission
             
             FROM ".MAIN_DB_PREFIX."ndfp_det as l
                 LEFT JOIN ".MAIN_DB_PREFIX."ndfp as n ON n.rowid = l.fk_ndfp
@@ -149,6 +149,10 @@ function extract_ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity,$withLogin=
             AND n.type LIKE '".$type."'
             AND (n.date_valid>='".$date_debut."' AND n.date_valid<='".$date_fin."')
             GROUP BY t.accountancy_code";
+	//Spécifque Sded
+	if($conf->clisded->enabled){
+		$sql .= ", l.mission";
+	}
     
     if(isset($_REQUEST['DEBUG'])) {
         print $sql;
@@ -160,6 +164,9 @@ function extract_ndf(&$ATMdb, $date_debut, $date_fin, $type, $entity,$withLogin=
     $ATMdb->Execute($sql);
     while($ATMdb->Get_line()) {
         $code_compta        =   $ATMdb->Get_field('accountancy_code');
+		//Spécifque Sded
+		if($conf->clisded->enabled && $ATMdb->Get_field('mission')) $code_compta == '625600';
+		
         $total_ht           =   round($ATMdb->Get_field('total_ht'),2);
         
         $line = array('NDF', date('dmy'), 'OD', $code_compta, 'G', '', '', 'NOTE DE FRAIS '.date('m').'/'.date('Y'), 'V', date('dmy'), 'D', $total_ht, 'N', '', '', 'EUR', '', '');
