@@ -289,7 +289,7 @@
                         ,data: {
                             actionSearch:1
                             ,fk_user : fk_user
-                            
+                            ,'no-link':1
                         }
                         
                     }).done(function(response) {
