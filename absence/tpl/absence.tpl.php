@@ -99,19 +99,19 @@
             <table class="border" id="compteur-user"  width="100%">
 				<tr>
 					<td>[translate.HolidaysPaid;strconv=no;protect=no]</td>
-					<td id='reste'>[congesPrec.reste;strconv=no;protect=no]</td>
+					<td id="reste">[congesPrec.reste;strconv=no;protect=no]</td>
 				</tr>	
 				<tr>
-					<td>[translate.CumulatedDayOff;strconv=no;protect=no]</td>
-					<td id='cumule'>[rttCourant.cumuleReste;strconv=no;protect=no]</td>
+					<td>[translate.CumulatedDayOff]</td>
+					<td id="cumule">[rttCourant.cumuleReste;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
-					<td>[translate.NonCumulatedDayOff;strconv=no;protect=no]</td>
-					<td id='noncumule'>[rttCourant.nonCumuleReste;strconv=no;protect=no]</td>
+					<td>[translate.NonCumulatedDayOff]</td>
+					<td id="noncumule">[rttCourant.nonCumuleReste;strconv=no;protect=no]</td>
 				</tr>
 				<tr>
 					<td>[translate.acquisRecuperation;strconv=no;protect=no]</td>
-					<td id='recup'>[congesCourant.recup;strconv=no;protect=no]</td>
+					<td id="recup">[congesCourant.recup;strconv=no;protect=no]</td>
 				</tr>
 				
 			</table>
@@ -194,6 +194,7 @@
 				
 			}
 		
+		    
 		
 			function comparerDates(){
 				
@@ -308,6 +309,22 @@
 				loadRecapCompteur();
 				loadRecapAbsence()
 		});
+		
+		$("#type").change(function() {
+		   var TUnsecable = [ [absenceCourante.unsecableIds;protect=no;strconv=no] ];
+		   
+		   $("#ddMoment,#dfMoment").prop("disabled",false);
+		   
+		   for(x in TUnsecable) {
+		       
+		       if($(this).val() == TUnsecable[x]) {
+		              $("#ddMoment,#dfMoment").prop("disabled",true);     
+		       }
+		       
+		   }
+		    
+		});
+		
 		</script>
 
 

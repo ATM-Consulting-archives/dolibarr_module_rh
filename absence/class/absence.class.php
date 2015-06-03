@@ -141,7 +141,7 @@ class TRH_Compteur extends TObjetStd {
 		parent::save($db);
 	}
 	
-	function initCompteur(&$ATMdb, $idUser){
+	function initCompteur(&$PDOdb, $idUser){
 		global $conf;
 		$this->entity = $conf->entity;
 		$annee=date('Y');
@@ -192,44 +192,44 @@ class TRH_Compteur extends TObjetStd {
 	
 
 	//	fonction permettant le chargement du compteur pour un utilisateur si celui-ci existe	
-	function load_by_fkuser(&$ATMdb, $fk_user){
+	function load_by_fkuser(&$PDOdb, $fk_user){
 
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_compteur 
 		WHERE fk_user=".(int)$fk_user;
 
-		$ATMdb->Execute($sql);
-		if ($obj = $ATMdb->Get_line()) {
-			return $this->load($ATMdb, $obj->rowid);
+		$PDOdb->Execute($sql);
+		if ($obj = $PDOdb->Get_line()) {
+			return $this->load($PDOdb, $obj->rowid);
 			
 		}
 		return false;
 	}
 	
 	
-	function add(&$ATMdb, $type, $duree, $motif) {
+	function add(&$PDOdb, $type, $duree, $motif) {
 		
 		if($type=="rttcumule"){
 			$this->rttCumulePris += $duree;
 			$this->rttCumuleTotal -= $duree; 
 			
-			$this->save($ATMdb);
+			$this->save($PDOdb);
 			
-			TRH_CompteurLog::log($ATMdb, $this->getId(), $type, $duree, $motif);
+			TRH_CompteurLog::log($PDOdb, $this->getId(), $type, $duree, $motif);
 			
 		}
 		else if($type=='rttnoncumule') {
 			$this->rttNonCumulePris += $duree;
 			$this->rttNonCumuleTotal -= $duree; 
 			
-			$this->save($ATMdb);
+			$this->save($PDOdb);
 			
-			TRH_CompteurLog::log($ATMdb, $this->getId(), $type, $duree, $motif);
+			TRH_CompteurLog::log($PDOdb, $this->getId(), $type, $duree, $motif);
 		}
 		else if($type=='recup') {
 			$this->acquisRecuperation -= $duree;
-			$this->save($ATMdb);
+			$this->save($PDOdb);
 			
-			TRH_CompteurLog::log($ATMdb, $this->getId(), $type, $duree, $motif);
+			TRH_CompteurLog::log($PDOdb, $this->getId(), $type, $duree, $motif);
 		}
 		else if($type=="conges"||$type=="cppartiel"){	//autre que RTT : décompte les congés
 					
@@ -238,10 +238,10 @@ class TRH_Compteur extends TObjetStd {
 			$this->congesPrisNM1 += $congesPrisNM1;
 			$this->congesPrisN += $congesPrisN; 
 			
-			$this->save($ATMdb);
+			$this->save($PDOdb);
 			
-			TRH_CompteurLog::log($ATMdb, $this->getId(), $type, $congesPrisNM1, $motif . 'NM1');
-			TRH_CompteurLog::log($ATMdb, $this->getId(), $type, $congesPrisN, $motif . 'N');
+			TRH_CompteurLog::log($PDOdb, $this->getId(), $type, $congesPrisNM1, $motif . 'NM1');
+			TRH_CompteurLog::log($PDOdb, $this->getId(), $type, $congesPrisN, $motif . 'N');
 			
 		
 		}
@@ -268,7 +268,7 @@ class TRH_CompteurLog extends TObjetStd {
 		
 	}
 	
-	static function log(&$ATMdb, $fk_compteur,$type, $nb, $motif = '') {
+	static function log(&$PDOdb, $fk_compteur,$type, $nb, $motif = '') {
 		
 		if($nb!=0) {
 			$l=new TRH_CompteurLog;
@@ -278,7 +278,7 @@ class TRH_CompteurLog extends TObjetStd {
 			$l->nb=$nb;
 			$l->motif = $motif;
 			
-			$l->save($ATMdb);
+			$l->save($PDOdb);
 			
 			
 		}
@@ -325,6 +325,9 @@ class TRH_Absence extends TObjetStd {
 		$this->TddMoment = array('matin'=> $langs->trans('AbsenceMorning'),'apresmidi'=> $langs->trans('AbsenceAfternoon'));	//moment de date début
 		$this->TdfMoment = array('matin'=> $langs->trans('AbsenceMorning'),'apresmidi'=> $langs->trans('AbsenceAfternoon'));	//moment de date fin
 		
+		$this->ddMoment = 'matin';
+        $this->dfMoment = 'apresmidi';
+		
 		//on crée un tableau des utilisateurs pour l'afficher en combo box, et ensuite sélectionner quelles absences afficher
 		
 		$this->TEtat=array(
@@ -340,19 +343,21 @@ class TRH_Absence extends TObjetStd {
 		$this->congesPrisN = 0; // lors du comptage d'une absence pour alimenter le compteur
 		
 		$this->TTypeAbsenceAdmin=$this->TTypeAbsenceUser=$this->TTypeAbsencePointeur=array(); //cf. loadTypeAbsencePerTypeUser
+		
+		
 	}
 
 	//renvoie le tableau des utilisateurs
-	function recupererTUser(&$ATMdb){
+	function recupererTUser(&$PDOdb){
 		global $conf, $langs;
 		$TUser=array();
 		$TUser[0] = $langs->trans('AllThis');	
 		$sqlReqUser="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` 
 						ORDER BY lastname";
-		$ATMdb->Execute($sqlReqUser);
+		$PDOdb->Execute($sqlReqUser);
 
-		while($ATMdb->Get_line()) {
-			$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+		while($PDOdb->Get_line()) {
+			$TUser[$PDOdb->Get_field('rowid')]=htmlentities($PDOdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($PDOdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 		return $TUser;
 	}
@@ -360,7 +365,7 @@ class TRH_Absence extends TObjetStd {
 
 	//permet la récupération des règles liées à un utilisateur 
 	//utile lors de l'affichage à la création d'une demande d'absence
-	function recuperationRegleUser(&$ATMdb, $fk_user){
+	function recuperationRegleUser(&$PDOdb, $fk_user){
 		global $conf;
 		
 		
@@ -373,21 +378,21 @@ class TRH_Absence extends TObjetStd {
 		OR (r.choixApplication LIKE 'group' AND g.fk_user=".$fk_user.") 
 		ORDER BY r.nbJourCumulable";
 
-		$ATMdb->Execute($sql);
+		$PDOdb->Execute($sql);
 		$TRegle = array();
 		$k=0;
-		while($ATMdb->Get_line()) {
-			$TRegle[$k]['typeAbsence']= $ATMdb->Get_field('typeAbsence');
-			$TRegle[$k]['libelle']= saveLibelle($ATMdb->Get_field('typeAbsence'));
-			$TRegle[$k]['nbJourCumulable']= $ATMdb->Get_field('nbJourCumulable');
-			$TRegle[$k]['restrictif']= $ATMdb->Get_field('restrictif');
-			$TRegle[$k]['fk_user']= $ATMdb->Get_field('fk_user');
-			$TRegle[$k]['fk_usergroup']= $ATMdb->Get_field('fk_usergroup');
-			$TRegle[$k]['choixApplication']= $ATMdb->Get_field('choixApplication');
-			$TRegle[$k]['periode']= $ATMdb->Get_field('periode');
-			$TRegle[$k]['id']= $ATMdb->Get_field('rowid');
-			$TRegle[$k]['contigue']= $ATMdb->Get_field('contigue');
-			$TRegle[$k]['contigueNoJNT']= $ATMdb->Get_field('contigueNoJNT');
+		while($PDOdb->Get_line()) {
+			$TRegle[$k]['typeAbsence']= $PDOdb->Get_field('typeAbsence');
+			$TRegle[$k]['libelle']= saveLibelle($PDOdb->Get_field('typeAbsence'));
+			$TRegle[$k]['nbJourCumulable']= $PDOdb->Get_field('nbJourCumulable');
+			$TRegle[$k]['restrictif']= $PDOdb->Get_field('restrictif');
+			$TRegle[$k]['fk_user']= $PDOdb->Get_field('fk_user');
+			$TRegle[$k]['fk_usergroup']= $PDOdb->Get_field('fk_usergroup');
+			$TRegle[$k]['choixApplication']= $PDOdb->Get_field('choixApplication');
+			$TRegle[$k]['periode']= $PDOdb->Get_field('periode');
+			$TRegle[$k]['id']= $PDOdb->Get_field('rowid');
+			$TRegle[$k]['contigue']= $PDOdb->Get_field('contigue');
+			$TRegle[$k]['contigueNoJNT']= $PDOdb->Get_field('contigueNoJNT');
 			
 			
 			$k++;
@@ -401,37 +406,37 @@ class TRH_Absence extends TObjetStd {
 	
 	//permet la récupération des règles liées à un utilisateur 
 	//utile lors de l'affichage à la création d'une demande d'absence
-	function recuperationDerAbsUser(&$ATMdb, $fk_user){
+	function recuperationDerAbsUser(&$PDOdb, $fk_user){
 		global $conf;
 		$sql="SELECT DATE_FORMAT(date_debut, '%d/%m/%Y') as 'dateD', 
 		DATE_FORMAT(date_fin, '%d/%m/%Y')  as 'dateF', libelle, libelleEtat 
 		FROM `".MAIN_DB_PREFIX."rh_absence` WHERE fk_user=".$fk_user." 
 		GROUP BY date_cre LIMIT 0,10";
 
-		$ATMdb->Execute($sql);
+		$PDOdb->Execute($sql);
 		$TRecap=array();
 		$k=0;
-		while($ATMdb->Get_line()) {		
-			$TRecap[$k]['date_debut']=$ATMdb->Get_field('dateD');
-			$TRecap[$k]['date_fin']=$ATMdb->Get_field('dateF');
-			$TRecap[$k]['libelle']=$ATMdb->Get_field('libelle');
-			$TRecap[$k]['libelleEtat']=$ATMdb->Get_field('libelleEtat');
+		while($PDOdb->Get_line()) {		
+			$TRecap[$k]['date_debut']=$PDOdb->Get_field('dateD');
+			$TRecap[$k]['date_fin']=$PDOdb->Get_field('dateF');
+			$TRecap[$k]['libelle']=$PDOdb->Get_field('libelle');
+			$TRecap[$k]['libelleEtat']=$PDOdb->Get_field('libelleEtat');
 			$k++;
 		}
 		return $TRecap;
 	}
 	
 
-	function testDemande(&$ATMdb, $userConcerne, &$absence){
+	function testDemande(&$PDOdb, $userConcerne, &$absence){
 		global $conf, $user;
 		$this->entity = $conf->entity;
 		
 		//on calcule la duree de l'absence, en décomptant jours fériés et jours non travaillés par le collaborateur
 
 		$compteur =new TRH_Compteur;
-		$compteur->load_by_fkuser($ATMdb, $userConcerne);
+		$compteur->load_by_fkuser($PDOdb, $userConcerne);
 		
-		$dureeAbsenceCourante = $this->calculDureeAbsenceParAddition($ATMdb, $compteur->date_congesCloture);
+		$dureeAbsenceCourante = $this->calculDureeAbsenceParAddition($PDOdb, $compteur->date_congesCloture);
 		
 		//autres paramètes à sauvegarder
 		$this->duree=$dureeAbsenceCourante;
@@ -440,7 +445,7 @@ class TRH_Absence extends TObjetStd {
 		
 		//on teste s'il y a des règles qui s'appliquent à cette demande d'absence
 		//$this->findRegleUser($db);
-		$dureeAbsenceRecevable=$this->dureeAbsenceRecevable($ATMdb);
+		$dureeAbsenceRecevable=$this->dureeAbsenceRecevable($PDOdb);
 		
 	
 		if($dureeAbsenceRecevable==0){
@@ -449,21 +454,21 @@ class TRH_Absence extends TObjetStd {
 		
 		///////décompte des congés
 		if($this->type=="rttcumule"){
-			$compteur->add($ATMdb, $this->type, $dureeAbsenceCourante, 'Prise de RTT');
+			$compteur->add($PDOdb, $this->type, $dureeAbsenceCourante, 'Prise de RTT');
 			
 		}
 		else if($this->type=="rttnoncumule"){
 			
-			$compteur->add($ATMdb, $this->type, $dureeAbsenceCourante, 'Prise de RTT non cumulé');
+			$compteur->add($PDOdb, $this->type, $dureeAbsenceCourante, 'Prise de RTT non cumulé');
 			
 		}
 		else if($this->type=="recup"){
 			
-			$compteur->add($ATMdb, $this->type, $dureeAbsenceCourante, 'Prise de jour de récupération');
+			$compteur->add($PDOdb, $this->type, $dureeAbsenceCourante, 'Prise de jour de récupération');
 			
 		}
 		else if($this->type=="conges"||$this->type=="cppartiel"){	//autre que RTT : décompte les congés
-			$compteur->add($ATMdb, $this->type, array($this->congesPrisNM1,  $this->congesPrisN), 'Prise de congé');
+			$compteur->add($PDOdb, $this->type, array($this->congesPrisNM1,  $this->congesPrisN), 'Prise de congé');
 			
 			$this->congesResteNM1=$this->congesResteNM1-$dureeAbsenceCourante;
 			
@@ -472,17 +477,17 @@ class TRH_Absence extends TObjetStd {
 		return $dureeAbsenceRecevable;
 	}
 		
-	function setRefusee(&$ATMdb) {
+	function setRefusee(&$PDOdb) {
 		global $langs;
 		
-		$this->recrediterHeure($ATMdb);
+		$this->recrediterHeure($PDOdb);
 		$this->etat='Refusee';
 		$this->libelleEtat = $langs->trans('DeniedRequest');
-		$this->save($ATMdb);
+		$this->save($PDOdb);
 		mailConges($this,$isPresence);
 	}
 	
-	function setAcceptee(&$ATMdb, $fk_valideur,$isPresence=false) {
+	function setAcceptee(&$PDOdb, $fk_valideur,$isPresence=false) {
 		global $langs,$user,$conf;	
 		
 		
@@ -503,7 +508,7 @@ class TRH_Absence extends TObjetStd {
 			return false; 
 		}
 		else { 
-			$this->save($ATMdb);
+			$this->save($PDOdb);
 			mailConges($this, $isPresence);	
 			
 			return true;
@@ -561,16 +566,16 @@ class TRH_Absence extends TObjetStd {
 	 * Récupère la liste des jours fériés sur la période d'absence
 	 */
 	 
-	function getJourFerie(&$ATMdb) {
+	function getJourFerie(&$PDOdb) {
 		
-		$ATMdb->Execute("SELECT date_jourOff, moment FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries 
+		$PDOdb->Execute("SELECT date_jourOff, moment FROM  ".MAIN_DB_PREFIX."rh_absence_jours_feries 
 		WHERE date_jourOff BETWEEN '".date('Y-m-d 00:00:00', $this->date_debut)."' AND '".date('Y-m-d 23:59:59', $this->date_fin)."'");
 		
 		$Tab=array();
-		while($ATMdb->Get_line()) {
+		while($PDOdb->Get_line()) {
 		
-			$moment = $ATMdb->Get_field('moment');
-			$date_jourOff = date('Y-m-d', strtotime($ATMdb->Get_field('date_jourOff')));
+			$moment = $PDOdb->Get_field('moment');
+			$date_jourOff = date('Y-m-d', strtotime($PDOdb->Get_field('date_jourOff')));
 			
 			if($moment=='matin') {
 				$Tab[$date_jourOff]['am']=true;	
@@ -591,12 +596,12 @@ class TRH_Absence extends TObjetStd {
 	 * Fonction qui calcule en interne du la base de la durée de nombre de jour contigue d'une absence (jours avant, pendant, après férié ou non travaillé)
 	 * 
 	 */
-	 private function calculDureeAddContigue(&$ATMdb) {
+	 private function calculDureeAddContigue(&$PDOdb) {
 		
 		 $loop=true;$cpt=0;
 		 $date = $this->date_debut;
 		 while($loop && $cpt<50) {
-		 	list($isWorkingDay, $isNotFerie, $isNotAbsence) = $this->isWorkingDayPrevious($ATMdb, $date);
+		 	list($isWorkingDay, $isNotFerie, $isNotAbsence) = $this->isWorkingDayPrevious($PDOdb, $date);
 			
 			if(!$isWorkingDay && $isNotFerie && $isNotAbsence) {
 				$this->dureeContigue++;
@@ -617,7 +622,7 @@ class TRH_Absence extends TObjetStd {
 		 $loop=true;$cpt=0;
 		 $date = $this->date_fin;
 		 while($loop && $cpt<50) {
-		 	list($isWorkingDay, $isNotFerie, $isNotAbsence)=$this->isWorkingDayNext($ATMdb, $date);
+		 	list($isWorkingDay, $isNotFerie, $isNotAbsence)=$this->isWorkingDayNext($PDOdb, $date);
 
 			if(!$isWorkingDay && $isNotFerie && $isNotAbsence) {
 				$this->dureeContigue++;
@@ -637,11 +642,11 @@ class TRH_Absence extends TObjetStd {
 	
 	}
 	
-	function calculDureeAbsenceParAddition(&$ATMdb, $dateN=0) {
+	function calculDureeAbsenceParAddition(&$PDOdb, $dateN=0) {
 		global $TJourNonTravailleEntreprise, $langs;
 		
 		$TJourSemaine = array('dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi');
-		$TJourFerie = $this->getJourFerie($ATMdb);	
+		$TJourFerie = $this->getJourFerie($PDOdb);	
 		
 		$duree = 0;
 		
@@ -655,11 +660,11 @@ class TRH_Absence extends TObjetStd {
 		
 		$typeAbs = new TRH_TypeAbsence;
 		
-		$typeAbs->load_by_type($ATMdb, $this->type);
+		$typeAbs->load_by_type($PDOdb, $this->type);
 		
 		//print_r($typeAbs);
 		$emploiTemps = new TRH_EmploiTemps;
-		$emploiTemps->load_by_fkuser($ATMdb, $this->fk_user);
+		$emploiTemps->load_by_fkuser($PDOdb, $this->fk_user);
 				
 		while($t_current<=$t_end) {
 			//print date('Y-m-d', $t_current).'<br>';;
@@ -731,15 +736,15 @@ class TRH_Absence extends TObjetStd {
 			$this->dureeHeurePaie=$this->dureeHeure;
 		} 
 		
-		$this->calculDureeAddContigue($ATMdb);
+		$this->calculDureeAddContigue($PDOdb);
 		
 		return $duree;
 	}
 	
-	function calculDureePresence(&$ATMdb) {
+	function calculDureePresence(&$PDOdb) {
 		$typeAbs = new TRH_TypeAbsence;
 		
-		$typeAbs->load_by_type($ATMdb, $this->type);
+		$typeAbs->load_by_type($PDOdb, $this->type);
 		
 		$duree = 0;
 		
@@ -798,7 +803,7 @@ class TRH_Absence extends TObjetStd {
 	
 	//TODO Delete, version dépréciée est buguée
 	//calcul de la durée initiale de l'absence (sans jours fériés, sans les jours travaillés du salariés)
-	function calculDureeAbsence(&$ATMdb, $date_debut, $date_fin, &$absence){
+	function calculDureeAbsence(&$PDOdb, $date_debut, $date_fin, &$absence){
 		$diff=$date_fin-$date_debut;
 		$duree=intval($diff/3600/24);
 		//echo $duree;exit;
@@ -815,22 +820,22 @@ class TRH_Absence extends TObjetStd {
 		$this->date_debut = $date_debut;
 		$this->date_fin = $date_fin;
 		
-		return $this->calculDureeAbsenceParAddition($ATMdb);
+		return $this->calculDureeAbsenceParAddition($PDOdb);
 	}
 	
 	//TODO Delete, version dépréciée est buguée
 	//calcul la durée de l'absence après le décompte des jours fériés
-	function calculJoursFeries(&$ATMdb, $duree, $date_debut, $date_fin, &$absence){
+	function calculJoursFeries(&$PDOdb, $duree, $date_debut, $date_fin, &$absence){
 			
 		global $conf, $TJourNonTravailleEntreprise;		
 		//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
 		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries`";
-		$ATMdb->Execute($sql);
+		$PDOdb->Execute($sql);
 		$Tab = array();
-		while($ATMdb->Get_line()) {
-			$Tab[date('Y-m-d', strtotime($ATMdb->Get_field('date_jourOff')))]= array(
-				'rowid'=>$ATMdb->Get_field('rowid')
-				,'moment'=>$ATMdb->Get_field('moment')
+		while($PDOdb->Get_line()) {
+			$Tab[date('Y-m-d', strtotime($PDOdb->Get_field('date_jourOff')))]= array(
+				'rowid'=>$PDOdb->Get_field('rowid')
+				,'moment'=>$PDOdb->Get_field('moment')
 				);
 		}
 		
@@ -892,12 +897,12 @@ class TRH_Absence extends TObjetStd {
 		
 		//on cherche s'il existe un ou plusieurs jours fériés  entre la date de début et de fin d'absence
 		$sql="SELECT rowid, date_jourOff, moment FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries`";
-		$ATMdb->Execute($sql);
+		$PDOdb->Execute($sql);
 		$Tab = array();
-		while($ATMdb->Get_line()) {
-			$Tab[$ATMdb->Get_field('rowid')]= array(
-				'date_jourOff'=>$ATMdb->Get_field('date_jourOff')
-				,'moment'=>$ATMdb->Get_field('moment')
+		while($PDOdb->Get_line()) {
+			$Tab[$PDOdb->Get_field('rowid')]= array(
+				'date_jourOff'=>$PDOdb->Get_field('date_jourOff')
+				,'moment'=>$PDOdb->Get_field('moment')
 				);
 		}
 		
@@ -978,7 +983,7 @@ class TRH_Absence extends TObjetStd {
 	}
 
 		
-	function calculJoursTravailles(&$ATMdb, $duree, $date_debut, $date_fin, &$absence){
+	function calculJoursTravailles(&$PDOdb, $duree, $date_debut, $date_fin, &$absence){
 		/*
 		 * Cette fonction est ignoble, à retravailler !
 		 */
@@ -986,9 +991,9 @@ class TRH_Absence extends TObjetStd {
 		
 		//on récupère l'information permettant de savoir si l'on doit décompter les jours normalement ou non
 		$sql="SELECT decompteNormal FROM ".MAIN_DB_PREFIX."rh_type_absence WHERE typeAbsence LIKE '".$absence->type."'";
-		$ATMdb->Execute($sql);
-		if($ATMdb->Get_line()) {
-			$decompteNormal=$ATMdb->Get_field('decompteNormal');
+		$PDOdb->Execute($sql);
+		if($PDOdb->Get_line()) {
+			$decompteNormal=$PDOdb->Get_field('decompteNormal');
 		}
 		
 		//echo $duree." ".$date_debut." ".$date_fin." <br>";
@@ -1005,13 +1010,13 @@ class TRH_Absence extends TObjetStd {
 		//on récupère les jours fériés compris dans la demande d'absence
 		$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_absence_jours_feries`";
 		//echo $sql;
-		$ATMdb->Execute($sql);
+		$PDOdb->Execute($sql);
 		$TabFerie = array();
 		
-		while($ATMdb->Get_line()) {
-			$TabFerie[$ATMdb->Get_field('rowid')]= array(
-				'date_jourOff'=>$ATMdb->Get_field('date_jourOff')
-				,'moment'=>$ATMdb->Get_field('moment')
+		while($PDOdb->Get_line()) {
+			$TabFerie[$PDOdb->Get_field('rowid')]= array(
+				'date_jourOff'=>$PDOdb->Get_field('date_jourOff')
+				,'moment'=>$PDOdb->Get_field('moment')
 				);
 			
 		}			
@@ -1019,7 +1024,7 @@ class TRH_Absence extends TObjetStd {
 		//on cherche le temps total de travail d'un employé par semaine : 
 		//cela va permettre de savoir si la durée d'une absence doit être limité à 7h par jour et 35h par semaine ou non
 		//si $tempsTravail supérieur à 35h, on limite les durées
-		//$tempsTravail=$this->calculTempsTravailHebdo($ATMdb,$this->fk_user);
+		//$tempsTravail=$this->calculTempsTravailHebdo($PDOdb,$this->fk_user);
 		
 		//on cherche les jours travaillés par l'employé
 		$sql="SELECT rowid, lundiam, lundipm, 
@@ -1065,21 +1070,21 @@ class TRH_Absence extends TObjetStd {
 		FROM `".MAIN_DB_PREFIX."rh_absence_emploitemps` 
 		WHERE fk_user=".$absence->fk_user." AND is_archive!=1";  
 //print $sql;
-		$ATMdb->Execute($sql);
+		$PDOdb->Execute($sql);
 		$TTravail = array();
 		$TTravailHeure= array();
-		while($ATMdb->Get_line()) {
+		while($PDOdb->Get_line()) {
 			foreach ($absence->TJour as $jour) {
 				foreach(array('am','pm') as $moment) {
-					$TTravail[$jour.$moment]=$ATMdb->Get_field($jour.$moment);
+					$TTravail[$jour.$moment]=$PDOdb->Get_field($jour.$moment);
 					
 				}
 				foreach(array('dam','fam','dpm','fpm') as $moment) {
-					$TTravailHeure["date_".$jour."_heure".$moment]=$ATMdb->Get_field("date_".$jour."_heure".$moment);
+					$TTravailHeure["date_".$jour."_heure".$moment]=$PDOdb->Get_field("date_".$jour."_heure".$moment);
 				}
 			}
-			$rowid=$ATMdb->Get_field('rowid');
-			$tpsHebdoUser=$ATMdb->Get_field('tempsHebdo');
+			$rowid=$PDOdb->Get_field('rowid');
+			$tpsHebdoUser=$PDOdb->Get_field('tempsHebdo');
 		}	
 					
 		//on traite les jours de début et de fin indépendemment des autres
@@ -1488,35 +1493,35 @@ class TRH_Absence extends TObjetStd {
 	
 	
 	//recrédite les heures au compteur lors de la suppression d'une absence 
-	function recrediterHeure(&$ATMdb){
+	function recrediterHeure(&$PDOdb){
 		global $conf, $user;
 		$this->entity = $conf->entity;
 		
 		if($this->etat!='Refusee'){
 			
 			$compteur=new TRH_Compteur;
-			$compteur->load_by_fkuser($ATMdb, $this->fk_user);
+			$compteur->load_by_fkuser($PDOdb, $this->fk_user);
 			
 			switch($this->type){
 				case "rttcumule" : 
 
-						$compteur->add($ATMdb, $this->type, -$this->duree, 'Refus rtt cumulé');						
+						$compteur->add($PDOdb, $this->type, -$this->duree, 'Refus rtt cumulé');						
 						
 				break;
 				case "rttnoncumule" : 
 						
-						$compteur->add($ATMdb, $this->type, -$this->duree, 'Refus rtt non cumulé');		
+						$compteur->add($PDOdb, $this->type, -$this->duree, 'Refus rtt non cumulé');		
 						
 				break;
 				case 'conges':
 				case 'cppartiel':
 					
-					$compteur->add($ATMdb, $this->type, array(-$this->congesPrisNM1, -$this->congesPrisN), 'Refus congé');		
+					$compteur->add($PDOdb, $this->type, array(-$this->congesPrisNM1, -$this->congesPrisN), 'Refus congé');		
 					
 				break;
 				
 				case 'recup':
-					$compteur->add($ATMdb, $this->type, -$this->duree, 'Refus jour de récupération');
+					$compteur->add($PDOdb, $this->type, -$this->duree, 'Refus jour de récupération');
 			
 					break;
 			}
@@ -1537,7 +1542,7 @@ class TRH_Absence extends TObjetStd {
 		if($hf[0]<$hd[0]){$hf[0]=$hf[0]+24;}
 		return (($hf[0]-$hd[0]).":".($hf[1]-$hd[1]).":".($hf[2]-$hd[2]));
 	}
-	function testMinEffectifGroupeOk(&$ATMdb, $idGroup, $nb_min) {
+	function testMinEffectifGroupeOk(&$PDOdb, $idGroup, $nb_min) {
 		
 		if($nb_min>0) {
 			$t_current=$this->date_debut;
@@ -1546,9 +1551,9 @@ class TRH_Absence extends TObjetStd {
 			
 				$date =date('Y-m-d', $t_current);
 				
-				$sql = $this->rechercheAucunConges($ATMdb, $idGroup,0,$date,$date);
+				$sql = $this->rechercheAucunConges($PDOdb, $idGroup,0,$date,$date);
 				
-				$Tab = $ATMdb->ExecuteAsArray($sql);
+				$Tab = $PDOdb->ExecuteAsArray($sql);
 				$nb_user = count($Tab);
 				
 				if($nb_user<=$nb_min) return false;
@@ -1605,7 +1610,7 @@ class TRH_Absence extends TObjetStd {
 		
 		
 	}
-	function testEffectifGroupe(&$ATMdb) {
+	function testEffectifGroupe(&$PDOdb) {
 		global $db;
 		
 		$user =new User($db);
@@ -1620,7 +1625,7 @@ class TRH_Absence extends TObjetStd {
 				
 				$nb_min = (int)$group->array_options['options_number_min'];
 				
-				if(!$this->testMinEffectifGroupeOk($ATMdb, $group->id, $nb_min)) {
+				if(!$this->testMinEffectifGroupeOk($PDOdb, $group->id, $nb_min)) {
 					
 					$this->mailAlertEffectif($group->id);
 					
@@ -1637,16 +1642,16 @@ class TRH_Absence extends TObjetStd {
 	}
 
 	
-	function dureeAbsenceRecevable(&$ATMdb){
+	function dureeAbsenceRecevable(&$PDOdb){
 		global $langs;
 		
 		$dureeAbsenceRecevable=0;
-		$TRegle=$this->recuperationRegleUser($ATMdb,$this->fk_user);
+		$TRegle=$this->recuperationRegleUser($PDOdb,$this->fk_user);
 		//var_dump($TRegle);
-		$this->loadDureeAllAbsenceUser($ATMdb, $this->type);
+		$this->loadDureeAllAbsenceUser($PDOdb, $this->type);
 		$dureeAbsenceRecevable = $this->nbJoursTotalRegle($this->TDureeAllAbsenceUser, $TRegle);
 		
-		if(!$this->testEffectifGroupe($ATMdb)) {
+		if(!$this->testEffectifGroupe($PDOdb)) {
 			$dureeAbsenceRecevable = 2;
 			$this->error = $langs->trans('ErrInsuffisanteNumberOfPerson');
 		}
@@ -1654,31 +1659,31 @@ class TRH_Absence extends TObjetStd {
 		return $dureeAbsenceRecevable;
 	}
 	
-	function loadTypeAbsencePerTypeUser(&$ATMdb) {
+	function loadTypeAbsencePerTypeUser(&$PDOdb) {
 		
 		//combo box pour le type d'absence admin
 		$this->TTypeAbsenceAdmin=$this->TTypeAbsenceUser=$this->TTypeAbsencePointeur=array();
 		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence`";
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			$this->TTypeAbsenceAdmin[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+		$PDOdb->Execute($sql);
+		while($PDOdb->Get_line()) {
+			$this->TTypeAbsenceAdmin[$PDOdb->Get_field('typeAbsence')]=$PDOdb->Get_field('libelleAbsence');
 		}
 		
 		
 		//combo box pour le type d'absence utilisateur
 		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
 				WHERE admin=0";
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			$this->TTypeAbsenceUser[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+		$PDOdb->Execute($sql);
+		while($PDOdb->Get_line()) {
+			$this->TTypeAbsenceUser[$PDOdb->Get_field('typeAbsence')]=$PDOdb->Get_field('libelleAbsence');
 		}
 		
 		//combo box pour le type d'absence pointeur
 		$sql="SELECT typeAbsence, libelleAbsence  FROM `".MAIN_DB_PREFIX."rh_type_absence` 
 				WHERE admin=0 OR typeAbsence LIKE 'nonjustifiee'";
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			$this->TTypeAbsencePointeur[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+		$PDOdb->Execute($sql);
+		while($PDOdb->Get_line()) {
+			$this->TTypeAbsencePointeur[$PDOdb->Get_field('typeAbsence')]=$PDOdb->Get_field('libelleAbsence');
 		}
 	}
 	
@@ -1686,18 +1691,18 @@ class TRH_Absence extends TObjetStd {
 	 * Charge l'attribut TDureeAllAbsenceUser de l'objet absence associant à chaque mois de chaque année une durée total de congés pris ou demandés
 	 * @param object $objet : objet absence
 	 */
-	function loadDureeAllAbsenceUser(&$ATMdb, $typeAbsence='Tous') {
+	function loadDureeAllAbsenceUser(&$PDOdb, $typeAbsence='Tous') {
 		$this->TDureeAllAbsenceUser=array();
 		
 		// On récupère toutes les absences contenues dans le ou les mois sur le(s)quel(s) se trouve la plage de congés
-		$sql = $this->rechercheAbsenceUser($ATMdb,$this->fk_user, date("Y-m-01 H:i:s", $this->date_debut), date("Y-m-".date("t", date("m", $this->date_fin))." H:i:s", $this->date_fin), $typeAbsence);
+		$sql = $this->rechercheAbsenceUser($PDOdb,$this->fk_user, date("Y-m-01 H:i:s", $this->date_debut), date("Y-m-".date("t", date("m", $this->date_fin))." H:i:s", $this->date_fin), $typeAbsence);
 
-		$Tab = $ATMdb->ExecuteAsArray($sql);
+		$Tab = $PDOdb->ExecuteAsArray($sql);
 		foreach($Tab as $row) {
 			
 			$abs = new TRH_Absence;
-			$abs->load($ATMdb, $row->ID);
-			$abs->calculDureeAbsenceParAddition($ATMdb);
+			$abs->load($PDOdb, $row->ID);
+			$abs->calculDureeAbsenceParAddition($PDOdb);
 			
 			if(!empty($abs->TDureeAbsenceUser)) {
 				foreach($abs->TDureeAbsenceUser as $annee => $tabMonth) {
@@ -1836,37 +1841,37 @@ class TRH_Absence extends TObjetStd {
 		
 	}
 	
-	function isWorkingDay(&$ATMdb, $date) {
+	function isWorkingDay(&$PDOdb, $date) {
 		$isNotFerie=$isNotAbsence=$isWorkingDay=false;
 		
 		
-		$isNotFerie = !(TRH_JoursFeries::estFerie($ATMdb, $date));
-		if($isNotFerie) $isNotAbsence = $this->isNotAbsenceDay($ATMdb, $date);
+		$isNotFerie = !(TRH_JoursFeries::estFerie($PDOdb, $date));
+		if($isNotFerie) $isNotAbsence = $this->isNotAbsenceDay($PDOdb, $date);
 		
-		if($isNotFerie && $isNotAbsence) $isWorkingDay= (TRH_EmploiTemps::estTravaille($ATMdb, $this->fk_user, $date)!='NON');
+		if($isNotFerie && $isNotAbsence) $isWorkingDay= (TRH_EmploiTemps::estTravaille($PDOdb, $this->fk_user, $date)!='NON');
 		
 		return array($isWorkingDay, $isNotFerie, $isNotAbsence);
 	
 	}
 	
-	function isWorkingDayNext(&$ATMdb, $dateTest){ // regarde x/x emploi du temps
+	function isWorkingDayNext(&$PDOdb, $dateTest){ // regarde x/x emploi du temps
 
 		$date=strtotime('+1day',$dateTest); 
 		
-		return $this->isWorkingDay($ATMdb, date('Y-m-d', $date));
+		return $this->isWorkingDay($PDOdb, date('Y-m-d', $date));
 				
 	}
 	
-	function isWorkingDayPrevious(&$ATMdb, $dateTest){
+	function isWorkingDayPrevious(&$PDOdb, $dateTest){
 
 		$date=strtotime('-1day',$dateTest); 
-		return $this->isWorkingDay($ATMdb, date('Y-m-d', $date));
+		return $this->isWorkingDay($PDOdb, date('Y-m-d', $date));
 	}
 
-	function isNotAbsenceDay(&$ATMdb, $date) {
+	function isNotAbsenceDay(&$PDOdb, $date) {
 		
-		$sql = $this->rechercheAbsenceUser($ATMdb, $this->fk_user, $date, $date);
-		$Tab = $ATMdb->ExecuteAsArray($sql);
+		$sql = $this->rechercheAbsenceUser($PDOdb, $this->fk_user, $date, $date);
+		$Tab = $PDOdb->ExecuteAsArray($sql);
 		
 		return (count($Tab) == 0);
 		
@@ -1875,22 +1880,22 @@ class TRH_Absence extends TObjetStd {
 	///////////////FONCTIONS pour le fichier rechercheAbsence\\\\\\\\\\\\\\\\\\\\\\\\\\\
 	
 	//va permettre la création de la requête pour les recherches d'absence pour les collaborateurs
-	function requeteRechercheAbsence(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $horsConges, $date_debut, $date_fin, $typeAbsence){
+	function requeteRechercheAbsence(&$PDOdb, $idGroupeRecherche, $idUserRecherche, $horsConges, $date_debut, $date_fin, $typeAbsence){
 			
 			if($horsConges==1){ //on recherche uniquement une compétence
-				$sql=$this->rechercheAucunConges($ATMdb,$idGroupeRecherche, $idUserRecherche,$date_debut, $date_fin, $typeAbsence);
+				$sql=$this->rechercheAucunConges($PDOdb,$idGroupeRecherche, $idUserRecherche,$date_debut, $date_fin, $typeAbsence);
 			}
 			else if($idGroupeRecherche!=0&&$idUserRecherche==0){ //on recherche les absences d'un groupe
-				$sql=$this->rechercheAbsenceGroupe($ATMdb, $idGroupeRecherche, $date_debut, $date_fin, $typeAbsence);
+				$sql=$this->rechercheAbsenceGroupe($PDOdb, $idGroupeRecherche, $date_debut, $date_fin, $typeAbsence);
 			}
 			else{ //if($idUserRecherche!=0){ //on recherche les absences d'un utilisateur
-				$sql=$this->rechercheAbsenceUser($ATMdb,$idUserRecherche, $date_debut, $date_fin, $typeAbsence);
+				$sql=$this->rechercheAbsenceUser($PDOdb,$idUserRecherche, $date_debut, $date_fin, $typeAbsence);
 			}
 			return $sql;
 	}
 	
 	//requete avec groupe de collaborateurs précis
-	function rechercheAbsenceGroupe(&$ATMdb, $idGroupeRecherche, $date_debut, $date_fin, $typeAbsence){ 
+	function rechercheAbsenceGroupe(&$PDOdb, $idGroupeRecherche, $date_debut, $date_fin, $typeAbsence){ 
 			global $conf, $langs;
 			
 			//on recherche les absences d'un groupe pendant la période
@@ -1913,7 +1918,7 @@ class TRH_Absence extends TObjetStd {
 	}
 	
 	//requete renvoyant les utilisateurs n'ayant pas pris de congés pendant une période
-	function rechercheAucunConges(&$ATMdb, $idGroupeRecherche,$idUserRecherche, $date_debut, $date_fin, $typeAbsence='Tous'){ 
+	function rechercheAucunConges(&$PDOdb, $idGroupeRecherche,$idUserRecherche, $date_debut, $date_fin, $typeAbsence='Tous'){ 
 			global $conf, $langs;
 
 			if($idUserRecherche!=0){
@@ -1982,7 +1987,7 @@ class TRH_Absence extends TObjetStd {
 	}
 
 	//requete avec un collaborateur précis
-	function rechercheAbsenceUser(&$ATMdb,$idUserRecherche, $date_debut, $date_fin, $typeAbsence='Tous'){
+	function rechercheAbsenceUser(&$PDOdb,$idUserRecherche, $date_debut, $date_fin, $typeAbsence='Tous'){
 			global $conf, $langs;
 
 			//on recherche les absences d'un utilisateur pendant la période
@@ -2008,21 +2013,21 @@ class TRH_Absence extends TObjetStd {
 	}
 	
 	//	fonction permettant le chargement de l'absence pour un utilisateur si celle-ci existe	
-	function load_by_idImport(&$ATMdb, $idImport){
+	function load_by_idImport(&$PDOdb, $idImport){
 		global $conf;
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence 
 		WHERE idAbsImport=".$idImport;
 
-		$ATMdb->Execute($sql);
-		if ($ATMdb->Get_line()) {
-			return $this->load($ATMdb, $ATMdb->Get_field('rowid'));
+		$PDOdb->Execute($sql);
+		if ($PDOdb->Get_line()) {
+			return $this->load($PDOdb, $PDOdb->Get_field('rowid'));
 		}
 		return false;
 	}
 	
 	
 	//fonction qui renvoie 1 si une absence existe déjà pendant la date que l'on veut ajouter, 0 sinon
-	function testExisteDeja($ATMdb, $absence){
+	function testExisteDeja($PDOdb, $absence){
 			
 		if($absence->ddMoment=='apresmidi')	{
 			$date_debut = strtotime( date('Y-m-d 12:00:00', $absence->date_debut) );
@@ -2047,19 +2052,19 @@ class TRH_Absence extends TObjetStd {
 		AND date_fin>='".date('Y-m-d 00:00:00', $absence->date_debut)."' 
 		";
 
-		$ATMdb->Execute($sql);
+		$PDOdb->Execute($sql);
 		$k=0;
 		
 		$TAbs=array();
-		while($ATMdb->Get_line()) {
-			$TAbs[$k]['date_debut']=strtotime($ATMdb->Get_field('date_debut'));
-			$TAbs[$k]['date_fin']=strtotime($ATMdb->Get_field('date_fin')) + 86399;
+		while($PDOdb->Get_line()) {
+			$TAbs[$k]['date_debut']=strtotime($PDOdb->Get_field('date_debut'));
+			$TAbs[$k]['date_fin']=strtotime($PDOdb->Get_field('date_fin')) + 86399;
 			
-			/*$TAbs[$k]['ddMoment']=strtotime($ATMdb->Get_field('ddMoment'));
-			$TAbs[$k]['dfMoment']=strtotime($ATMdb->Get_field('dfMoment'));*/
+			/*$TAbs[$k]['ddMoment']=strtotime($PDOdb->Get_field('ddMoment'));
+			$TAbs[$k]['dfMoment']=strtotime($PDOdb->Get_field('dfMoment'));*/
 			
-			if($ATMdb->Get_field('ddMoment')=='apresmidi') $TAbs[$k]['date_debut'] = strtotime( date('Y-m-d 12:00:00', $TAbs[$k]['date_debut']) );
-			if($ATMdb->Get_field('dfMoment')=='matin') $TAbs[$k]['date_fin'] = strtotime( date('Y-m-d 11:59:59', $TAbs[$k]['date_fin']) );
+			if($PDOdb->Get_field('ddMoment')=='apresmidi') $TAbs[$k]['date_debut'] = strtotime( date('Y-m-d 12:00:00', $TAbs[$k]['date_debut']) );
+			if($PDOdb->Get_field('dfMoment')=='matin') $TAbs[$k]['date_fin'] = strtotime( date('Y-m-d 11:59:59', $TAbs[$k]['date_fin']) );
 			
 			
 			$k++;
@@ -2092,7 +2097,7 @@ class TRH_Absence extends TObjetStd {
 		return false;
 	}
 	
-	static function getPlanning(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin){
+	static function getPlanning(&$PDOdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin){
 			
 		dol_include_once('/absence/class/pointeuse.class.php');
 
@@ -2103,7 +2108,7 @@ class TRH_Absence extends TObjetStd {
 			
 			while($t_current <= $t_end) {
 				
-				$TPlanning = $abs->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, date('d/m/Y', $t_current), date('d/m/Y', $t_current));
+				$TPlanning = $abs->requetePlanningAbsence($PDOdb, $idGroupeRecherche, $idUserRecherche, date('d/m/Y', $t_current), date('d/m/Y', $t_current));
 				
 				list($dt, $TAbsence) = each($TPlanning);
 				
@@ -2112,8 +2117,8 @@ class TRH_Absence extends TObjetStd {
 					
 					$presence = strpos($ouinon, '[Présence]') !== false; //TODO refondre un peu ça pour éviter cette grosse merde de strpos
 					
-					$estUnJourTravaille = TRH_EmploiTemps::estTravaille($ATMdb, $fk_user, $date);
-					$estFerie = TRH_JoursFeries::estFerie($ATMdb, $date);
+					$estUnJourTravaille = TRH_EmploiTemps::estTravaille($PDOdb, $fk_user, $date);
+					$estFerie = TRH_JoursFeries::estFerie($PDOdb, $date);
 					
 					@$Tab[$fk_user][$date]['presence_jour_entier'] = (int)($estUnJourTravaille=='OUI' && $ouinon=='non' && !$estFerie) ;
 					@$Tab[$fk_user][$date]['presence'] = (int)(($estUnJourTravaille!='NON' && $ouinon=='non' && !$estFerie) || $presence) ;
@@ -2128,7 +2133,7 @@ class TRH_Absence extends TObjetStd {
 					else if($Tab[$fk_user][$date]['absence']==1 && $estUnJourTravaille!='NON')@$Tab[$fk_user][$date]['nb_jour_absence'] = 0.5;
 					else $Tab[$fk_user][$date]['nb_jour_absence'] = 0;
 					 
-					$TTime = TRH_EmploiTemps::getWorkingTimeForDayUser($ATMdb, $fk_user,$date);
+					$TTime = TRH_EmploiTemps::getWorkingTimeForDayUser($PDOdb, $fk_user,$date);
 					$t_am = $TTime['am'];
 					$t_pm = $TTime['pm'];
 					
@@ -2160,7 +2165,7 @@ class TRH_Absence extends TObjetStd {
 					$timePresencePresume = $Tab[$fk_user][$date]['nb_heure_presence'] * 3600;
 					
 					$Tab[$fk_user][$date]['nb_heure_presence_reelle'] = TRH_Pointeuse::tempsTravailReelDuJour(
-							$ATMdb
+							$PDOdb
 							, $fk_user
 							, $date
 							, $timePresencePresume
@@ -2177,7 +2182,7 @@ class TRH_Absence extends TObjetStd {
 	}
 	
 	//fonction qui va renvoyer la requête sql de recherche pour le planning
-	function requetePlanningAbsence(&$ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin){
+	function requetePlanningAbsence(&$PDOdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin){
 			// TODO cette fonction est une horreur, à recoder
 			
 		global $conf;
@@ -2242,19 +2247,19 @@ class TRH_Absence extends TObjetStd {
 	
 		// on traite la recherche pour le planning
 		$k=0;
-		$ATMdb->Execute($sql);
+		$PDOdb->Execute($sql);
 		$TabLogin=array();
-		while ($ATMdb->Get_line()) {
-			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['date_debut']=$ATMdb->Get_field('date_debut');
-			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['date_fin']=$ATMdb->Get_field('date_fin');
-			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['idUser']=$ATMdb->Get_field('idUser');
-			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['type']=$ATMdb->Get_field('libelle');
-			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['ddMoment']=$ATMdb->Get_field('ddMoment');
-			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['dfMoment']=$ATMdb->Get_field('dfMoment');
-			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['isPresence']=$ATMdb->Get_field('isPresence');
-			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['colorId']=$ATMdb->Get_field('colorId');
-			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['commentaire']=$ATMdb->Get_field('commentaire');
-			$TabAbsence[$ATMdb->Get_field('idUser')][$k]['idAbsence']=$ATMdb->Get_field('ID');
+		while ($PDOdb->Get_line()) {
+			$TabAbsence[$PDOdb->Get_field('idUser')][$k]['date_debut']=$PDOdb->Get_field('date_debut');
+			$TabAbsence[$PDOdb->Get_field('idUser')][$k]['date_fin']=$PDOdb->Get_field('date_fin');
+			$TabAbsence[$PDOdb->Get_field('idUser')][$k]['idUser']=$PDOdb->Get_field('idUser');
+			$TabAbsence[$PDOdb->Get_field('idUser')][$k]['type']=$PDOdb->Get_field('libelle');
+			$TabAbsence[$PDOdb->Get_field('idUser')][$k]['ddMoment']=$PDOdb->Get_field('ddMoment');
+			$TabAbsence[$PDOdb->Get_field('idUser')][$k]['dfMoment']=$PDOdb->Get_field('dfMoment');
+			$TabAbsence[$PDOdb->Get_field('idUser')][$k]['isPresence']=$PDOdb->Get_field('isPresence');
+			$TabAbsence[$PDOdb->Get_field('idUser')][$k]['colorId']=$PDOdb->Get_field('colorId');
+			$TabAbsence[$PDOdb->Get_field('idUser')][$k]['commentaire']=$PDOdb->Get_field('commentaire');
+			$TabAbsence[$PDOdb->Get_field('idUser')][$k]['idAbsence']=$PDOdb->Get_field('ID');
 			
 			
 			$k++;
@@ -2271,9 +2276,9 @@ class TRH_Absence extends TObjetStd {
 		}else{
 			$sql="SELECT rowid, login, lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE statut=1";
 		}
-		$ATMdb->Execute($sql);
-		while ($ATMdb->Get_line()) {
-			$TabLogin[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('firstname')." ".$ATMdb->Get_field('lastname');
+		$PDOdb->Execute($sql);
+		while ($PDOdb->Get_line()) {
+			$TabLogin[$PDOdb->Get_field('rowid')]=$PDOdb->Get_field('firstname')." ".$PDOdb->Get_field('lastname');
 		}
 		
 		if($conf->global->RH_PLANNING_SEARCH_MODE == 'INTERSECTION') {
@@ -2285,8 +2290,8 @@ class TRH_Absence extends TObjetStd {
 				
 				$sql="SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."usergroup_user WHERE fk_user=".$idUser;
 				
-				$ATMdb->Execute($sql);
-				while($obj = $ATMdb->Get_line()) {
+				$PDOdb->Execute($sql);
+				while($obj = $PDOdb->Get_line()) {
 					$TLGroup[] = $obj->fk_usergroup;
 				}
 				
@@ -2471,18 +2476,18 @@ class TRH_EmploiTemps extends TObjetStd {
 		$this->is_archive=0;
 	}
 	
-	function loadByuser(&$ATMdb, $id_user) {
-		return $this->load_by_fkuser($ATMdb, $id_user); // TODO remove double
+	function loadByuser(&$PDOdb, $id_user) {
+		return $this->load_by_fkuser($PDOdb, $id_user); // TODO remove double
 		
 		
 	}
 
-	function load_entities(&$ATMdb){
+	function load_entities(&$PDOdb){
 		$sql="SELECT label, rowid FROM ".MAIN_DB_PREFIX."entity";
-		$ATMdb->Execute($sql);
+		$PDOdb->Execute($sql);
 		$this->TEntity=array();
-		while($ATMdb->Get_line()) {
-			$this->TEntity[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('label');
+		while($PDOdb->Get_line()) {
+			$this->TEntity[$PDOdb->Get_field('rowid')]=$PDOdb->Get_field('label');
 		}
 		return $this->TEntity;
 	}
@@ -2493,7 +2498,7 @@ class TRH_EmploiTemps extends TObjetStd {
 		parent::save($db);
 	}
 	
-	function initCompteurHoraire (&$ATMdb, $idUser){
+	function initCompteurHoraire (&$PDOdb, $idUser){
 		global $conf;
 		$this->entity = $conf->entity;
 	
@@ -2536,7 +2541,7 @@ class TRH_EmploiTemps extends TObjetStd {
 	}
 	
 	//remet à 0 les checkbox avant la sauvegarde
-	function razCheckbox(&$ATMdb){
+	function razCheckbox(&$PDOdb){
 		global $conf, $user;
 		$this->entity = $conf->entity;
 		
@@ -2547,7 +2552,7 @@ class TRH_EmploiTemps extends TObjetStd {
 	}
 	
 	//remet à 0 les checkbox avant la sauvegarde
-	function calculTempsHebdo(&$ATMdb, $edt){
+	function calculTempsHebdo(&$PDOdb, $edt){
 		
 		
 		$tpsHebdo='0:0';
@@ -2579,7 +2584,7 @@ class TRH_EmploiTemps extends TObjetStd {
 	
 
 	//fonction permettant le chargement de l'emploi du temps d'un user si celui-ci existe	
-	function load_by_fkuser(&$ATMdb, $fk_user, $date=''){
+	function load_by_fkuser(&$PDOdb, $fk_user, $date=''){
 		
 		
 		if(!empty($date)) {
@@ -2587,8 +2592,8 @@ class TRH_EmploiTemps extends TObjetStd {
 			WHERE fk_user=".(int)$fk_user." AND is_archive=1 
 			AND date_debut<='$date 23:59:59'  AND date_fin>='$date 00:00:00'";
 			
-			$ATMdb->Execute($sql);
-			if($row = $ATMdb->Get_line()) {
+			$PDOdb->Execute($sql);
+			if($row = $PDOdb->Get_line()) {
 				
 				$id = $row->rowid;
 				
@@ -2600,15 +2605,15 @@ class TRH_EmploiTemps extends TObjetStd {
 			$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps
 			WHERE fk_user=".(int)$fk_user." AND is_archive!=1";
 			
-			$ATMdb->Execute($sql);
+			$PDOdb->Execute($sql);
 		
-			if($ATMdb->Get_line()) {
-				$id = $ATMdb->Get_field('rowid');	
+			if($PDOdb->Get_line()) {
+				$id = $PDOdb->Get_field('rowid');	
 			}
 			
 		}
 				
-		if(!empty($id)) return $this->load($ATMdb, $id);
+		if(!empty($id)) return $this->load($PDOdb, $id);
 		else return false;
 		
 	}
@@ -2632,10 +2637,10 @@ class TRH_EmploiTemps extends TObjetStd {
 		return ($this->{"date_".$current_day."_heuref".$periode} - $this->{"date_".$current_day."_heured".$periode}) / 3600;
 	}	
 	
-	static function estTravaille(&$ATMdb, $id_user, $date) {
+	static function estTravaille(&$PDOdb, $id_user, $date) {
 		
 		$e=new TRH_EmploiTemps;
-		$e->load_by_fkuser($ATMdb, $id_user, $date);
+		$e->load_by_fkuser($PDOdb, $id_user, $date);
 		
 		$iJour = (int)date('N', strtotime($date)) - 1 ; 	
 		
@@ -2648,11 +2653,11 @@ class TRH_EmploiTemps extends TObjetStd {
 		
 	}
 	
-	static function getWorkingTimeForDayUser($ATMdb, $fk_user, $date) {
+	static function getWorkingTimeForDayUser($PDOdb, $fk_user, $date) {
 				
 			
 			$emploiTemps = new TRH_EmploiTemps;
-			$emploiTemps->load_by_fkuser($ATMdb, $fk_user,$date);
+			$emploiTemps->load_by_fkuser($PDOdb, $fk_user,$date);
 
 			$iJour = (int)date('N', strtotime($date)) - 1 ; 	
 		
@@ -2709,7 +2714,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		
 	}
 	
-	function save(&$ATMdb) {
+	function save(&$PDOdb) {
 		global $conf;
 		$this->entity = $conf->entity;
 		
@@ -2729,28 +2734,28 @@ class TRH_RegleAbsence extends TObjetStd {
 				break;				
 		}
 		
-		parent::save($ATMdb);
+		parent::save($PDOdb);
 	}
 
 	
 	
-	function load_liste(&$ATMdb){
+	function load_liste(&$PDOdb){
 		global $conf;
 
 		//LISTE DE GROUPES
 		$this->TGroup  = array();
 		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup";
-		$ATMdb->Execute($sqlReq);
-		while($ATMdb->Get_line()) {
-			$this->TGroup[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+		$PDOdb->Execute($sqlReq);
+		while($PDOdb->Get_line()) {
+			$this->TGroup[$PDOdb->Get_field('rowid')] = htmlentities($PDOdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 		}
 		
 		//LISTE DE USERS
 		$this->TUser = array();
 		$sqlReq="SELECT rowid, firstname, lastname FROM ".MAIN_DB_PREFIX."user";
-		$ATMdb->Execute($sqlReq);
-		while($ATMdb->Get_line()) {
-			$this->TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1');
+		$PDOdb->Execute($sqlReq);
+		while($PDOdb->Get_line()) {
+			$this->TUser[$PDOdb->Get_field('rowid')] = htmlentities($PDOdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($PDOdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1');
 		}
 	}
 }
@@ -2817,17 +2822,24 @@ class TRH_TypeAbsence extends TObjetStd {
 		
 	}
 	
-	function load_by_type(&$ATMdb, $type) {
+	function load_by_type(&$PDOdb, $type) {
 		
-		return parent::loadBy($ATMdb, $type, 'typeAbsence');
+		return parent::loadBy($PDOdb, $type, 'typeAbsence');
 		
 	}
-	function save(&$ATMdb) {
+    static function getUnsecable(&$PDOdb) {
+        
+        return TRequeteCore::get_id_from_what_you_want($PDOdb, MAIN_DB_PREFIX."rh_type_absence", 'insecable=1', 'typeAbsence');
+        
+        
+    }
+    
+	function save(&$PDOdb) {
 		global $conf;
 		
 		$this->entity = $conf->entity;
 		
-		parent::save($ATMdb);
+		parent::save($PDOdb);
 	}
 	 
 	static function getColor($i,$theme=0) {
@@ -2842,7 +2854,7 @@ class TRH_TypeAbsence extends TObjetStd {
 		
 	}
 	
-	static function getList(&$ATMdb, $isPresence=false) {
+	static function getList(&$PDOdb, $isPresence=false) {
 		global $conf;
 		
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_type_absence
@@ -2850,13 +2862,13 @@ class TRH_TypeAbsence extends TObjetStd {
 		AND isPresence=".(int)$isPresence."
 		ORDER BY typeAbsence";
 		
-		$Tab = TRequeteCore::_get_id_by_sql($ATMdb, $sql);
+		$Tab = TRequeteCore::_get_id_by_sql($PDOdb, $sql);
 		$TAbsenceType=array();
 		
 		foreach($Tab as $id) {
 			
 			$a=new TRH_TypeAbsence;
-			$a->load($ATMdb, $id);
+			$a->load($PDOdb, $id);
 			
 			$TAbsenceType[] = $a;
 		}
@@ -2864,7 +2876,7 @@ class TRH_TypeAbsence extends TObjetStd {
 		return $TAbsenceType;
 	}
 	
-	static function getTypeAbsence(&$ATMdb, $type='', $isPresence=false) {
+	static function getTypeAbsence(&$PDOdb, $type='', $isPresence=false) {
 	/* Retourne un tableau code => label */		
 		$Tab=array();
 		
@@ -2875,9 +2887,9 @@ class TRH_TypeAbsence extends TObjetStd {
 				ORDER BY libelleAbsence
 				"
 				;
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$Tab[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+			$PDOdb->Execute($sql);
+			while($PDOdb->Get_line()) {
+				$Tab[$PDOdb->Get_field('typeAbsence')]=$PDOdb->Get_field('libelleAbsence');
 			}
 			
 		}
@@ -2887,9 +2899,9 @@ class TRH_TypeAbsence extends TObjetStd {
 					WHERE (admin=0 OR typeAbsence LIKE 'nonjustifiee') AND isPresence=".(int)$isPresence."
 					ORDER BY libelleAbsence
 					";
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$Tab[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+			$PDOdb->Execute($sql);
+			while($PDOdb->Get_line()) {
+				$Tab[$PDOdb->Get_field('typeAbsence')]=$PDOdb->Get_field('libelleAbsence');
 			}	
 
 		}
@@ -2900,9 +2912,9 @@ class TRH_TypeAbsence extends TObjetStd {
 				ORDER BY libelleAbsence
 				"
 				;
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$Tab[$ATMdb->Get_field('typeAbsence')]=$ATMdb->Get_field('libelleAbsence');
+			$PDOdb->Execute($sql);
+			while($PDOdb->Get_line()) {
+				$Tab[$PDOdb->Get_field('typeAbsence')]=$PDOdb->Get_field('libelleAbsence');
 			}
 
 		}
