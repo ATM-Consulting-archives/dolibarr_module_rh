@@ -14,6 +14,9 @@
 	
 	$langs->load('absence@absence');
 	
+    if(!class_exists('modAbsence')) dol_include_once('/absence/core/modules/modAbsence.class.php');
+    Tools::setVersion($db, 'modAbsence');
+    
 	$ATMdb=new TPDOdb;
 	$ATMdb->db->debug=true;
 
