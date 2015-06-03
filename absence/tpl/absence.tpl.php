@@ -172,7 +172,7 @@
 		</div>
 		
 		<div id="user-planning">
-				
+			
 		</div>
 		
 		</div>
@@ -282,13 +282,23 @@
 						
 					});
 				
-
-					$('#user-planning').load('planningUser.php?fk_user='+fk_user+'&no-link #plannings',function() {
-						$('#user-planning tr.footer').remove();
-						$(".classfortooltip").tipTip({maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
-					});
+                    $.ajax({
+                        url: "planningUser.php"
+                        ,async: true
+                        ,crossDomain: true
+                        ,data: {
+                            actionSearch:1
+                            ,fk_user : fk_user
+                            
+                        }
+                        
+                    }).done(function(response) {
+					    $('#user-planning').html($(response).find("#plannings"));
+                        $('#user-planning tr.footer').remove();
+                        $(".classfortooltip").tipTip({maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+    			    });
+    			    
 			}
-			
 			//	script vérifiant que la date de début ne dépasse pas celle de fin
 			$(document).ready( function(){
 				$("#dfMoment").val('apresmidi');
