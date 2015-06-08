@@ -96,10 +96,10 @@
 				break;
 				
 			case 'accept':
-				$absence->load($ATMdb, $_REQUEST['id']);
-				$absence->valid($ATMdb);
+				$absence->load($PDOdb, $_REQUEST['id']);
+				$absence->valid($PDOdb);
 				
-				$absence->load($ATMdb, $_REQUEST['id']);
+				$absence->load($PDOdb, $_REQUEST['id']);
 
 				
 				if ($absence->etat == 'Validee')
@@ -690,7 +690,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 		,array(
 			//'TRegle' =>$TRegle
 			'TRecap'=>$TRecap
-			,'TUserAccepted'=>_getUserAlreadyAccepted($ATMdb, $db, $absence)
+			,'TUserAccepted'=>_getUserAlreadyAccepted($PDOdb, $db, $absence)
 		)
 		,array(
 			'congesPrec'=>array(
