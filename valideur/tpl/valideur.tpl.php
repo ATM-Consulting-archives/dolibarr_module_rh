@@ -18,6 +18,7 @@
 				<tr>
 					<td>Groupe</td>
 					<td>Type</td>
+					<td>Valideur fort</td>
 					<td>Nombre de jours avant alerte</td>
 					<td>Montant avant alerte</td>
 					<td>Action</td>
@@ -26,6 +27,7 @@
 				<tr>
 					<td>[validations.group;block=tr;strconv=no;protect=no]</td>
 					<td>[validations.type;strconv=no;protect=no]</td>
+					<td>[validations.is_weak;strconv=no;protect=no]</td>
 					<td>[validations.nbjours;strconv=no;protect=no]</td>
 					<td>[validations.montant;strconv=no;protect=no]€</td>
 					<td>[validations.validate_himself;strconv=no;protect=no]</td>
@@ -54,6 +56,7 @@
 	<tr>
 		<td>Groupe</td>
 		<td>Type</td>
+		<td>Valideur fort</td>
 		<td>Nombre de jours avant alerte</td>
 		<td id="textMontant">Montant avant alerte</td>
 		<td>Se valide lui-même ?</td>
@@ -63,6 +66,7 @@
 	<tr>
 		<td>[valideur.group;strconv=no;protect=no]</td>
 		<td>[valideur.type;strconv=no;protect=no]</td>
+		<td>[valideur.is_weak;strconv=no;protect=no]</td>
 		<td>[valideur.nbjours;strconv=no;protect=no]</td>
 		<td id="textMontant2">[valideur.montant;strconv=no;protect=no]€</td>
 		<td>[valideur.validate_himself;strconv=no;protect=no]</td>

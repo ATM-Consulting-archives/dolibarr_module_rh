@@ -9,7 +9,7 @@ class TRH_valideur_groupe extends TObjetStd {
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_valideur_groupe');
 		parent::add_champs('type','type=chaine;');				//type de valideur
-		parent::add_champs('nbjours','type=entier;');			//nbjours avant alerte
+		parent::add_champs('nbjours,is_weak','type=entier;');			//nbjours avant alerte
 		parent::add_champs('montant','type=float;');			//montant avant alerte
 		parent::add_champs('fk_user,fk_usergroup,entity,validate_himself,pointeur,level','type=entier;index;');	//utilisateur ou groupe concerné
 		
@@ -79,6 +79,16 @@ class TRH_valideur_groupe extends TObjetStd {
 		
 	}
 	
+	static function isStrong(&$PDOdb, $fk_user, $type, $entity)
+	{
+		$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'rh_valideur_groupe WHERE fk_user = '.(int) $fk_user.' AND type = "'.$type.'" AND entity = '.(int) $entity;
+		$PDOdb->Execute($sql);
+		
+		$line = $PDOdb->Get_line();
+		if ($line && !$line->is_weak) return true;
+		else return false;		
+	}
+	
 }
 
 class TRH_valideur_object extends TObjetStd
@@ -103,14 +113,16 @@ class TRH_valideur_object extends TObjetStd
 	}
 	
 	/*
-	 * Renvois false s'il existe des user valideur non présent dans la liste des user ayant déjà validé
+	 * Renvois false s'il existe des valideurs qui non pas encore validé
 	 */
 	static function checkAllAccepted(&$PDOdb, $type, $fk_object)
 	{
 		$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'rh_valideur_groupe';
 		$sql.= ' WHERE fk_user NOT IN (SELECT fk_user FROM '.MAIN_DB_PREFIX.'rh_valideur_object WHERE type="'.$type.'" AND fk_object='.(int) $fk_object.')';
 		
-		if ($PDOdb->Get_line()) return true;
+		$PDOdb->Execute($sql);
+		
+		if ($PDOdb->Get_line()) return false;
 		else return true;
 	}
 
@@ -118,5 +130,27 @@ class TRH_valideur_object extends TObjetStd
 	{
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'rh_valideur_object WHERE type="'.$type.'" AND fk_object='.(int) $fk_object;
 		return $PDOdb->Execute($sql);
+	}
+	
+	static function addLink(&$PDOdb, $entity, $fk_user, $fk_object, $type)
+	{
+		$TRH_valideur_object = new TRH_valideur_object;
+		
+		$TRH_valideur_object->fk_user = $fk_user;
+		$TRH_valideur_object->fk_object = $fk_object;
+		$TRH_valideur_object->entity = $entity;
+		$TRH_valideur_object->type = $type;
+		$TRH_valideur_object->save($PDOdb);
+		
+		return $TRH_valideur_object;
+	}
+	
+	static function alreadyAcceptedByThisUser(&$PDOdb, $entity, $fk_user, $fk_object, $type)
+	{
+		$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'rh_valideur_object WHERE type = "'.$type.'" AND fk_object = '.$fk_object.' AND fk_user = '.$fk_user.' AND entity = '.$entity;
+		$PDOdb->Execute($sql);
+		
+		if ($PDOdb->Get_line()) return true;
+		else return false;
 	}
 }

@@ -186,6 +186,7 @@ function _fiche(&$ATMdb, &$valideur, $mode) {
 					,'valideur'=>array(
 						'group'=>$form->combo('','fk_usergroup',$valideur->TGroup,$valideur->fk_usergroup)
 						,'type'=> $form->combo('','type',$valideur->TType, $valideur->type)
+						,'is_weak'=> $form->combo('','is_weak',array(0 => 'Oui', 1 => 'Non'), $valideur->is_weak) 
 						,'nbjours'=> $form->texte('', 'nbjours', $valideur->nbjours, 7,10,'','','-')
 						,'montant'=> $form->texte('', 'montant', $valideur->montant, 7,10,'','','-')
 						,'validate_himself'=>$form->combo('','validate_himself', $valideur->TValidate_himself, $valideur->validate_himself )

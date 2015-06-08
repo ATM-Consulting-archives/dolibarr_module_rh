@@ -373,35 +373,21 @@ class TRH_Absence extends TObjetStd {
 				AND rowid=".$this->getId();
 		
 		//Valideur fort
-		if (!empty($user->rights->absence->myactions->valideurConges))
+		if (TRH_valideur_groupe::isStrong($PDOdb, $user->id, 'Conges', $conf->entity))
 		{
-			if (!$this->alreadyAcceptedByThisUser($PDOdb, $user, $conf))
-			{
-				$TRH_valideur_object = new TRH_valideur_object;
-				$TRH_valideur_object->fk_user = $user->id;
-				$TRH_valideur_object->fk_object = $this->getId();
-				$TRH_valideur_object->entity = $conf->entity;
-				$TRH_valideur_object->type = 'ABS';
-				$TRH_valideur_object->save($PDOdb);
-				
-				//Validation final
-				$PDOdb->Execute($sqlEtat);
-			}
+			$TRH_valideur_object = TRH_valideur_object::addLink($PDOdb, $conf->entity, $user->id, $this->getId(), 'ABS');
+			
+			//Validation final
+			$PDOdb->Execute($sqlEtat);
 		}
 		//Valideur faible
-		elseif (!empty($user->rights->absence->myactions->valideurCongesWeak))
+		else
 		{
-			if (!$this->alreadyAcceptedByThisUser($PDOdb, $user, $conf))
+			if (!TRH_valideur_object::alreadyAcceptedByThisUser($PDOdb, $conf->entity, $user->id, $this->getId(), 'ABS'))
 			{
-				$TRH_valideur_object = new TRH_valideur_object;
-				$TRH_valideur_object->fk_user = $user->id;
-				$TRH_valideur_object->fk_object = $this->getId();
-				$TRH_valideur_object->entity = $conf->entity;
-				$TRH_valideur_object->type = 'ABS';
-				$TRH_valideur_object->save($PDOdb);
+				$TRH_valideur_object = TRH_valideur_object::addLink($PDOdb, $conf->entity, $user->id, $this->getId(), 'ABS');
 				
-				
-				//check il tous le monde a validé
+				//check si tous le monde a validé
 				if (TRH_valideur_object::checkAllAccepted($PDOdb, 'ABS', $this->getId()))
 				{
 					//Validation final
@@ -410,15 +396,6 @@ class TRH_Absence extends TObjetStd {
 			}
 		}
 		
-	}
-
-	function alreadyAcceptedByThisUser(&$PDOdb, &$user, &$conf)
-	{
-		$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'rh_valideur_object WHERE type = "ABS" AND fk_object = '.$this->getId().' AND fk_user = '.$user->id.' AND entity = '.$conf->entity;
-		$PDOdb->Execute($sql);
-		
-		if ($PDOdb->Get_line()) return true;
-		else return false;
 	}
 
 	//permet la récupération des règles liées à un utilisateur 
