@@ -24,6 +24,8 @@
 					$ta->save($ATMdb);	
 				}
 			}
+            
+            setEventMessage($langs->trans('Saved'));
 		}
 		
 		$newTA = & $_REQUEST['TTypeAbsenceNew']; 
@@ -64,7 +66,8 @@
 			
 			,'unite'=>$form->combo('', 'TTypeAbsence['.$absenceType->getId().'][unite]', $absenceTypeDummy->TUnite , $absenceType->unite)
 			,'decompteNormal'=>$form->combo('', 'TTypeAbsence['.$absenceType->getId().'][decompteNormal]', $absenceTypeDummy->TDecompteNormal , $absenceType->decompteNormal)
-			,'isPresence'=>$form->hidden( 'TTypeAbsence['.$absenceType->getId().'][isPresence]', 0)
+            ,'secable'=>$form->combo('', 'TTypeAbsence['.$absenceType->getId().'][insecable]', $absenceTypeDummy->TForAdmin , $absenceType->insecable)
+            ,'isPresence'=>$form->hidden( 'TTypeAbsence['.$absenceType->getId().'][isPresence]', 0)
 			,'admin'=>$form->combo('', 'TTypeAbsence['.$absenceType->getId().'][admin]', $absenceTypeDummy->TForAdmin , $absenceType->admin)
 			
 			,'delete'=>$form->checkbox1('', 'TTypeAbsence['.$absenceType->getId().'][delete]', 1)
@@ -101,6 +104,7 @@
 				'Wording' => $langs->trans('Wording'),
 				'Unit' => $langs->trans('Unit'),
 				'AccountingOfficerCode' => $langs->trans('AccountingOfficerCode'),
+				'AbsenceSecable' => $langs->trans('AbsenceSecable'),
 				'ColorCode' => $langs->trans('ColorCode'),
 				'AskReservedAdmin' => $langs->trans('AskReservedAdmin'),
 				'OnlyCountBusinessDay' => $langs->trans('OnlyCountBusinessDay'),

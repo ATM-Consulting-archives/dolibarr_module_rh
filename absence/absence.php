@@ -6,56 +6,56 @@
 	
 	$langs->load('absence@absence');
 	
-	$ATMdb=new TPDOdb;
+	$PDOdb=new TPDOdb;
 	$absence=new TRH_Absence;
-	$absence->loadTypeAbsencePerTypeUser($ATMdb);
+	$absence->loadTypeAbsencePerTypeUser($PDOdb);
 
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'new':
 				$absence->set_values($_REQUEST);
-				_fiche($ATMdb, $absence,'edit');	
+				_fiche($PDOdb, $absence,'edit');	
 				break;	
 
 			case 'save':
-				//$ATMdb->db->debug=true;
-				$absence->load($ATMdb, $_REQUEST['id']);
+				//$PDOdb->db->debug=true;
+				$absence->load($PDOdb, $_REQUEST['id']);
 				$absence->set_values($_REQUEST);
 				
 				$absence->set_date('date_debut', GETPOST('date_debutday').'/'.GETPOST('date_debutmonth').'/'.GETPOST('date_debutyear') );
 				$absence->set_date('date_fin', GETPOST('date_finday').'/'.GETPOST('date_finmonth').'/'.GETPOST('date_finyear') );
 				
 				$absence->niveauValidation=1;
-				$existeDeja=$absence->testExisteDeja($ATMdb, $absence);
+				$existeDeja=$absence->testExisteDeja($PDOdb, $absence);
 				if($existeDeja===false){
-					$absence->code=saveCodeTypeAbsence($ATMdb, $absence->type);
+					$absence->code=saveCodeTypeAbsence($PDOdb, $absence->type);
 					
 					// Test de la cohérence des dates
-					if(!$user->rights->absence->myactions->creerAbsenceCollaborateur && !TRH_valideur_groupe::isValideur($ATMdb, $user->id)
+					if(!$user->rights->absence->myactions->creerAbsenceCollaborateur && !TRH_valideur_groupe::isValideur($PDOdb, $user->id)
 					&& !$user->rights->absence->myactions->declarePastAbsence
 					&& ($absence->date_debut <= strtotime('midnight') ||$absence->date_fin <= strtotime('midnight') )) {
 						/*
 							Si ce n'est pas un user avec droit, pas le droit de créer des anciennes absences						
 						*/
 						$mesg = '<div class="error">' . $langs->trans('ErrOnlyUserWithPowerCanCreatePastAbsence') . '</div>';
-						_fiche($ATMdb, $absence,'edit');
+						_fiche($PDOdb, $absence,'edit');
 						break;
 					} 
 					
-					if($absence->save($ATMdb)) {
+					if($absence->save($PDOdb)) {
 						
 							if($absence->avertissementInfo) setEventMessage($absence->avertissementInfo, 'warnings');
 						
-							$absence->load($ATMdb, $_REQUEST['id']);
+							$absence->load($PDOdb, $_REQUEST['id']);
 							if($absence->fk_user==$user->id){	//on vérifie si l'absence a été créée par l'user avant d'envoyer un mail
 								mailConges($absence);
-								mailCongesValideur($ATMdb,$absence);
+								mailCongesValideur($PDOdb,$absence);
 							}
 							
 							$mesg = $langs->trans('RegistedRequest');
 							
-							_fiche($ATMdb, $absence,'view');
+							_fiche($PDOdb, $absence,'view');
 					}
 					else{
 						$errors='';
@@ -64,29 +64,29 @@
 						$mesg = $errors;
 						setEventMessage($mesg);
 						
-						_fiche($ATMdb, $absence,'edit');
+						_fiche($PDOdb, $absence,'edit');
 						
 					}
 					
 					
 				}else{
 					$popinExisteDeja = '<div class="error">' . $langs->trans('ImpossibleCreation') . ' : ' . $langs->trans('ErrExistingRequestInPeriod', date('d/m/Y', strtotime($existeDeja[0])), date('d/m/Y',  strtotime($existeDeja[1]))) . '</div>';
-					_fiche($ATMdb, $absence,'edit');
+					_fiche($PDOdb, $absence,'edit');
 				}
 				break;
 				
 			case 'view':
-				$absence->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $absence,'view');
+				$absence->load($PDOdb, $_REQUEST['id']);
+				_fiche($PDOdb, $absence,'view');
 				break;
 
 			case 'delete':
-				$absence->load($ATMdb, $_REQUEST['id']);
-				//$ATMdb->db->debug=true;
+				$absence->load($PDOdb, $_REQUEST['id']);
+				//$PDOdb->db->debug=true;
 				//avant de supprimer, on récredite les heures d'absences qui avaient été décomptées. (que si l'absence n'a pas été refusée, dans quel cas 
 				//les heures seraient déjà recréditées)
-				$absence->recrediterHeure($ATMdb);
-				$absence->delete($ATMdb);
+				$absence->recrediterHeure($PDOdb);
+				$absence->delete($PDOdb);
 				
 				?>
 				<script language="javascript">
@@ -100,6 +100,7 @@
 				$absence->valid($ATMdb);
 				
 				$absence->load($ATMdb, $_REQUEST['id']);
+
 				
 				if ($absence->etat == 'Validee')
 				{
@@ -109,53 +110,53 @@
 					setEventMessage($mesg);
 				}
 				
-				_ficheCommentaire($ATMdb, $absence,'edit');
+				_ficheCommentaire($PDOdb, $absence,'edit');
 				break;
 				
 			case 'niveausuperieur':
-				$absence->load($ATMdb, $_REQUEST['id']);
+				$absence->load($PDOdb, $_REQUEST['id']);
 				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
 					SET niveauValidation=niveauValidation+1 WHERE rowid=".$absence->getId();
-				$ATMdb->Execute($sqlEtat);
-				$absence->load($ATMdb, $_REQUEST['id']);
+				$PDOdb->Execute($sqlEtat);
+				$absence->load($PDOdb, $_REQUEST['id']);
 				mailConges($absence);
 				
 				$mesg = $langs->trans('AbsenceRequestSentToSuperior');
 				setEventMessage($mesg);
 				
-				_fiche($ATMdb, $absence,'view');
+				_fiche($PDOdb, $absence,'view');
 				break;
 				
 			case 'refuse':
-				$absence->load($ATMdb, $_REQUEST['id']);
-				$absence->recrediterHeure($ATMdb);
-				$absence->load($ATMdb, $_REQUEST['id']);
+				$absence->load($PDOdb, $_REQUEST['id']);
+				$absence->recrediterHeure($PDOdb);
+				$absence->load($PDOdb, $_REQUEST['id']);
 
 				$absence->etat='Refusee';
 				$absence->commentaireValideur = GETPOST('commentaireValideur');
 
-				$absence->save($ATMdb);
+				$absence->save($PDOdb);
 
-				//$absence->load($ATMdb, $_REQUEST['id']);
+				//$absence->load($PDOdb, $_REQUEST['id']);
 				mailConges($absence);
 				$mesg = $langs->trans('DeniedAbsenceRequest');
 				setEventMessage($mesg);
-				_ficheCommentaire($ATMdb, $absence,'edit');
+				_ficheCommentaire($PDOdb, $absence,'edit');
 				break;
 				
 			case 'saveComment':
 				
-				$absence->load($ATMdb, $_REQUEST['id']);
+				$absence->load($PDOdb, $_REQUEST['id']);
 				$absence->commentaireValideur=$_REQUEST['commentValid'];
-				$absence->save($ATMdb);
-				_fiche($ATMdb, $absence,'view');
+				$absence->save($PDOdb);
+				_fiche($PDOdb, $absence,'view');
 
 				break;
 			case 'listeValidation' : 
-				_listeValidation($ATMdb, $absence);
+				_listeValidation($PDOdb, $absence);
 				break;
 			case 'listeAdmin' : 
-				_listeAdmin($ATMdb, $absence);
+				_listeAdmin($PDOdb, $absence);
 				break;
 		}
 	}
@@ -163,17 +164,17 @@
 		
 	}
 	else {
-		//$ATMdb->db->debug=true;
-		_liste($ATMdb, $absence);
+		//$PDOdb->db->debug=true;
+		_liste($PDOdb, $absence);
 	}
 	
 	
-	$ATMdb->close();
+	$PDOdb->close();
 	
 	llxFooter();
 	
 	
-function _liste(&$ATMdb, &$absence) {
+function _liste(&$PDOdb, &$absence) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('', $langs->trans('ListOfAbsence'));
 	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', $langs->trans('Absence'));
@@ -203,7 +204,7 @@ function _liste(&$ATMdb, &$absence) {
 	
 	//echo $sql;exit;
 	
-	$r->liste($ATMdb, $sql, array(
+	$r->liste($PDOdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
 			,'nbLine'=>'30'
@@ -278,7 +279,7 @@ function _historyCompteurInForm($duree) {
 	else return ''; 
 	
 }
-function _listeAdmin(&$ATMdb, &$absence) {
+function _listeAdmin(&$PDOdb, &$absence) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('', $langs->trans('ListeAllAbsences'));
 	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', $langs->trans('Absence'));
@@ -309,7 +310,7 @@ function _listeAdmin(&$ATMdb, &$absence) {
 	
 	//echo $sql;exit;
 	
-	$r->liste($ATMdb, $sql, array(
+	$r->liste($PDOdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
 			,'nbLine'=>'30'
@@ -383,7 +384,7 @@ function _setColorEtat($val) {
 	));
 }
 	
-function _listeValidation(&$ATMdb, &$absence) {
+function _listeValidation(&$PDOdb, &$absence) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('', $langs->trans('ListOfAbsence'));
 	print dol_get_fiche_head(absencePrepareHead($absence, '')  , '', $langs->trans('Absence'));
@@ -411,7 +412,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 		echo $form->hidden('action', 'listeValidation');
 			
 		//print $page;
-		$r->liste($ATMdb, $sql, array(
+		$r->liste($PDOdb, $sql, array(
 			'limit'=>array(
 				'page'=>$page
 				,'nbLine'=>'30'
@@ -467,7 +468,7 @@ function _listeValidation(&$ATMdb, &$absence) {
 	llxFooter();
 }	
 
-function _fiche(&$ATMdb, &$absence, $mode) {
+function _fiche(&$PDOdb, &$absence, $mode) {
 	global $db,$user,$conf,$langs;
 	llxHeader('', $langs->trans('AbsenceRequest'));
 	//echo $_REQUEST['validation'];
@@ -489,41 +490,41 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` 
 				WHERE fk_user=" . ((GETPOST('fk_user')) ? intval(GETPOST('fk_user')) : $user->id);
 		
-	$ATMdb->Execute($sqlReqUser);
+	$PDOdb->Execute($sqlReqUser);
 	$congePrec=array();
 	$congeCourant=array();
 	$rttCourant=array();
 		
-	while($ATMdb->Get_line()) { // TODO doit être un objet
-		$congePrec['id']=$ATMdb->Get_field('rowid');
-		$congePrec['acquisEx']=$ATMdb->Get_field('acquisExerciceNM1');
-		$congePrec['acquisAnc']=$ATMdb->Get_field('acquisAncienneteNM1');
-		$congePrec['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeNM1');
-		$congePrec['reportConges']=$ATMdb->Get_field('reportCongesNM1');
-		$congePrec['congesPris']=$ATMdb->Get_field('congesPrisNM1');
-		$congePrec['annee']=$ATMdb->Get_field('anneeNM1');
-		$congePrec['fk_user']=$ATMdb->Get_field('fk_user');
+	while($PDOdb->Get_line()) { // TODO doit être un objet
+		$congePrec['id']=$PDOdb->Get_field('rowid');
+		$congePrec['acquisEx']=$PDOdb->Get_field('acquisExerciceNM1');
+		$congePrec['acquisAnc']=$PDOdb->Get_field('acquisAncienneteNM1');
+		$congePrec['acquisHorsPer']=$PDOdb->Get_field('acquisHorsPeriodeNM1');
+		$congePrec['reportConges']=$PDOdb->Get_field('reportCongesNM1');
+		$congePrec['congesPris']=$PDOdb->Get_field('congesPrisNM1');
+		$congePrec['annee']=$PDOdb->Get_field('anneeNM1');
+		$congePrec['fk_user']=$PDOdb->Get_field('fk_user');
 		
 
-		$congeCourant['id']=$ATMdb->Get_field('rowid');
-		$congeCourant['acquisEx']=$ATMdb->Get_field('acquisExerciceN');
-		$congeCourant['acquisAnc']=$ATMdb->Get_field('acquisAncienneteN');
-		$congeCourant['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeN');
-		$congeCourant['annee']=$ATMdb->Get_field('anneeN');
-		$congeCourant['fk_user']=$ATMdb->Get_field('fk_user');
-		$congeCourant['recup']=$ATMdb->Get_field('acquisRecuperation');
+		$congeCourant['id']=$PDOdb->Get_field('rowid');
+		$congeCourant['acquisEx']=$PDOdb->Get_field('acquisExerciceN');
+		$congeCourant['acquisAnc']=$PDOdb->Get_field('acquisAncienneteN');
+		$congeCourant['acquisHorsPer']=$PDOdb->Get_field('acquisHorsPeriodeN');
+		$congeCourant['annee']=$PDOdb->Get_field('anneeN');
+		$congeCourant['fk_user']=$PDOdb->Get_field('fk_user');
+		$congeCourant['recup']=$PDOdb->Get_field('acquisRecuperation');
 		
 		
-		$rttCourant['id']=$ATMdb->Get_field('rowid');
+		$rttCourant['id']=$PDOdb->Get_field('rowid');
 		
-		/*$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('rttCumuleTotal'));
-		$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('rttNonCumuleTotal'));
+		/*$rttCourant['cumuleReste']=round2Virgule($PDOdb->Get_field('rttCumuleTotal'));
+		$rttCourant['nonCumuleReste']=round2Virgule($PDOdb->Get_field('rttNonCumuleTotal'));
 		*/
-		$rttCourant['cumuleReste']=round2Virgule($ATMdb->Get_field('cumuleAcquis')+$ATMdb->Get_field('cumuleReport')-$ATMdb->Get_field('cumulePris'));
+		$rttCourant['cumuleReste']=round2Virgule($PDOdb->Get_field('cumuleAcquis')+$PDOdb->Get_field('cumuleReport')-$PDOdb->Get_field('cumulePris'));
 		
-		$rttCourant['nonCumuleReste']=round2Virgule($ATMdb->Get_field('nonCumuleAcquis')+$ATMdb->Get_field('nonCumuleReport')-$ATMdb->Get_field('nonCumulePris'));
+		$rttCourant['nonCumuleReste']=round2Virgule($PDOdb->Get_field('nonCumuleAcquis')+$PDOdb->Get_field('nonCumuleReport')-$PDOdb->Get_field('nonCumulePris'));
 		
-		$rttCourant['fk_user']=$ATMdb->Get_field('fk_user');
+		$rttCourant['fk_user']=$PDOdb->Get_field('fk_user');
 
 
 
@@ -543,17 +544,17 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	}else{
 		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id;
 	}
-	$ATMdb->Execute($sqlReqUser);
+	$PDOdb->Execute($sqlReqUser);
 	$Tab=array();
-	while($ATMdb->Get_line()) { // TODO utiliser objet std dolibarr
+	while($PDOdb->Get_line()) { // TODO utiliser objet std dolibarr
 				$userCourant=new User($db);
-				$userCourant->firstname=$ATMdb->Get_field('firstname');
-				$userCourant->id=$ATMdb->Get_field('rowid');
-				$userCourant->lastname=$ATMdb->Get_field('lastname');
+				$userCourant->firstname=$PDOdb->Get_field('firstname');
+				$userCourant->id=$PDOdb->Get_field('rowid');
+				$userCourant->lastname=$PDOdb->Get_field('lastname');
 	}
 	
 	
-	//$estValideur=$absence->estValideur($ATMdb,$user->id);
+	//$estValideur=$absence->estValideur($PDOdb,$user->id);
 	if(isset($_REQUEST['validation'])){
 		if($_REQUEST['validation']=='ok'){
 			$estValideur=1;
@@ -566,17 +567,17 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	
 	//récupération des règles liées à l'utilisateur 
 	//$TRegle=array();
-	//$TRegle=$absence->recuperationRegleUser($ATMdb, $regleId);
+	//$TRegle=$absence->recuperationRegleUser($PDOdb, $regleId);
 
 	$comboAbsence=0;
 	//création du tableau des utilisateurs liés au groupe du valideur, pour créer une absence, pointage...
 	$TUser = array();
 	$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id;
-	$ATMdb->Execute($sql);
-	if($ATMdb->Get_line()){
-		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+	$PDOdb->Execute($sql);
+	if($PDOdb->Get_line()){
+		$TUser[$PDOdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($PDOdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($PDOdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 	}
-	$typeAbsenceCreable= TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user', 0);
+	$typeAbsenceCreable= TRH_TypeAbsence::getTypeAbsence($PDOdb, 'user', 0);
 
 	$droitAdmin=0;
 
@@ -584,7 +585,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 		$comboAbsence=2;
-		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin', 0);
+		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($PDOdb, 'admin', 0);
 		$droitAdmin=1;
 //print "admin";
 //print_r( $typeAbsenceCreable);
@@ -597,28 +598,28 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			$comboAbsence=1;
 			//echo $sqlReqUser;exit;
 		$droitsCreation=1;
-		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'user', 0);
+		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($PDOdb, 'user', 0);
 	}
 	else $droitsCreation=2; //on n'a pas les droits de création
 	
 	if($droitsCreation==1){
 		$sql.=" ORDER BY lastname";
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+		$PDOdb->Execute($sql);
+		while($PDOdb->Get_line()) {
+			$TUser[$PDOdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($PDOdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($PDOdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 		}
 	}
 	//Tableau affichant les 10 dernières absences du collaborateur
 	$TRecap=array();
-	$TRecap=$absence->recuperationDerAbsUser($ATMdb, $regleId);
+	$TRecap=$absence->recuperationDerAbsUser($PDOdb, $regleId);
 	
 	//on regarde si l'utilisateur a le droit de créer une absence non justifiée (POINTEUR)
 	
 	$sql="SELECT count(*) as 'nb' FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` WHERE fk_user=".$user->id." AND type='Conges' AND pointeur=1";
-	$ATMdb->Execute($sql);
-	$ATMdb->Get_line();
+	$PDOdb->Execute($sql);
+	$PDOdb->Get_line();
 	
-	$pointeurTest=(int)$ATMdb->Get_field('nb');
+	$pointeurTest=(int)$PDOdb->Get_field('nb');
 	
 	if(_debug()) {
 		print $sql;
@@ -639,9 +640,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			AND v.pointeur=1
 			ORDER BY s.lastname
 			";
-			$ATMdb->Execute($sql);
-			while($ATMdb->Get_line()) {
-				$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$PDOdb->Execute($sql);
+			while($PDOdb->Get_line()) {
+				$TUser[$PDOdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($PDOdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($PDOdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
 			}
 		}
 		
@@ -668,7 +669,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	//print_r($userValidation);
 	
 	if(isset($_REQUEST['calcul'])) {
-		$absence->duree = $absence->calculDureeAbsenceParAddition($ATMdb);
+		$absence->duree = $absence->calculDureeAbsenceParAddition($PDOdb);
 	}
 	
 	$formDoli = new Form($db);
@@ -678,10 +679,14 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	if(GETPOST('popin') == 1) {
 		$TUser=array($absence->fk_user=>$userCourant->firstname.' '.$userCourant->lastname);
 		//$droitsCreation=2; plus beau mais bug car user courant systématique
-		$typeAbsenceCreable=array_merge($typeAbsenceCreable, TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin', 1));
+		$typeAbsenceCreable=array_merge($typeAbsenceCreable, TRH_TypeAbsence::getTypeAbsence($PDOdb, 'admin', 1));
 	}
 
-	print $TBS->render('./tpl/absence.tpl.php'
+	$TTypeAbsence = TRH_TypeAbsence::getTypeAbsence($PDOdb, 'admin');
+
+    $TUnsecableId = TRH_TypeAbsence::getUnsecable($PDOdb);
+    
+    print $TBS->render('./tpl/absence.tpl.php'
 		,array(
 			//'TRegle' =>$TRegle
 			'TRecap'=>$TRecap
@@ -762,7 +767,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'lib_conges_dispo_avant' => $langs->trans('AvailableHolidayBefore')
 				,'lib_etat' => $langs->trans('State')
 				
-				
+				,'unsecableIds'=>'"'.implode('","',$TUnsecableId).'"'
 			)	
 			,'userCourant'=>array(
 				'id'=>$userCourant->id
@@ -798,8 +803,8 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'CreatedThe' => $langs->trans('CreatedThe'),
 				'ValidatedThe' => $langs->trans('ValidatedThe'),
 				'HolidaysPaid' => $langs->trans('HolidaysPaid'),
-				'CumulatedDayOff' => $langs->trans('CumulatedDayOff'),
-				'NonCumulatedDayOff' => $langs->trans('NonCumulatedDayOff'),
+				'CumulatedDayOff' => utf8_decode($TTypeAbsence['rttcumule']),
+				'NonCumulatedDayOff' => utf8_decode($TTypeAbsence['rttnoncumule']),
 				'Register' => $langs->trans('Register'),
 				'ConfirmAcceptAbsenceRequest' => addslashes( $langs->transnoentitiesnoconv('ConfirmAcceptAbsenceRequest') ),
 				'Accept' => $langs->trans('Accept'),
@@ -853,7 +858,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	llxFooter();
 }
 
-function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
+function _ficheCommentaire(&$PDOdb, &$absence, $mode) {
 	global $db,$user,$conf, $langs;
 	llxHeader('', $langs->trans('AbsenceRequest'));
 

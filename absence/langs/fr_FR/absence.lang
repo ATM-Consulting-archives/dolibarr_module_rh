@@ -468,3 +468,4 @@ NbDaysAcquiredByYear=Nombre de jours acquis à l'an
 NbDayOffAcquired=Nombre de RTT acquis à l'an pour tous
 NbDayOffNCAcquired=Nombre de RTT Non cumulé acquis à l'an pour tous
 ListUserAlreadyAccepted=Liste des valideurs ayant déjà accéptés
+AbsenceSecable = Absence Non Sécable ?
