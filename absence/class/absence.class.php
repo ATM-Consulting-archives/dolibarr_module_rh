@@ -389,7 +389,7 @@ class TRH_Absence extends TObjetStd {
 			}
 		}
 		//Valideur faible
-		elseif (!empty($user->rights->absence->myactions->valideurCongesWeak) || 1)
+		elseif (!empty($user->rights->absence->myactions->valideurCongesWeak))
 		{
 			if (!$this->alreadyAcceptedByThisUser($PDOdb, $user, $conf))
 			{
