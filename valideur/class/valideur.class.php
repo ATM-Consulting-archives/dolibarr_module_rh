@@ -80,3 +80,43 @@ class TRH_valideur_groupe extends TObjetStd {
 	}
 	
 }
+
+class TRH_valideur_object extends TObjetStd
+{
+	function __construct() 
+	{
+		global $conf;
+		
+		$PDOdb=new TPDOdb;
+		
+		parent::set_table(MAIN_DB_PREFIX.'rh_valideur_object');
+		parent::add_champs('type','type=chaine;'); // type de l'objet validé (NDFP, ABS)
+		parent::add_champs('fk_user,fk_object,entity','type=entier;index;');
+		
+		parent::_init_vars();
+		parent::start();
+		
+		$this->TType = array(
+			'NDFP'=>'Note de frais'
+			,'ABS'=>'Absence'
+		);
+	}
+	
+	/*
+	 * Renvois false s'il existe des user valideur non présent dans la liste des user ayant déjà validé
+	 */
+	static function checkAllAccepted(&$PDOdb, $type, $fk_object)
+	{
+		$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'rh_valideur_groupe';
+		$sql.= ' WHERE fk_user NOT IN (SELECT fk_user FROM '.MAIN_DB_PREFIX.'rh_valideur_object WHERE type="'.$type.'" AND fk_object='.(int) $fk_object.')';
+		
+		if ($PDOdb->Get_line()) return true;
+		else return true;
+	}
+
+	static function deleteChildren(&$PDOdb, $type, $fk_object)
+	{
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'rh_valideur_object WHERE type="'.$type.'" AND fk_object='.(int) $fk_object;
+		return $PDOdb->Execute($sql);
+	}
+}

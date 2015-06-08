@@ -97,16 +97,17 @@
 				
 			case 'accept':
 				$absence->load($ATMdb, $_REQUEST['id']);
-				$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
-					SET etat='Validee', libelleEtat='" . $langs->trans('Accepted') . "', date_validation='".date('Y-m-d')."', fk_user_valideur=".$user->id." 
-					WHERE fk_user=".$absence->fk_user. " 
-					AND rowid=".$absence->getId();
-				$ATMdb->Execute($sqlEtat);
-				$absence->load($ATMdb, $_REQUEST['id']);
-				mailConges($absence);
+				$absence->valid($ATMdb);
 				
-				$mesg = $langs->trans('AbsenceRequestAccepted');
-				setEventMessage($mesg);
+				$absence->load($ATMdb, $_REQUEST['id']);
+				
+				if ($absence->etat == 'Validee')
+				{
+					mailConges($absence);
+				
+					$mesg = $langs->trans('AbsenceRequestAccepted');
+					setEventMessage($mesg);
+				}
 				
 				_ficheCommentaire($ATMdb, $absence,'edit');
 				break;
@@ -684,6 +685,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 		,array(
 			//'TRegle' =>$TRegle
 			'TRecap'=>$TRecap
+			,'TUserAccepted'=>_getUserAlreadyAccepted($ATMdb, $db, $absence)
 		)
 		,array(
 			'congesPrec'=>array(
@@ -715,6 +717,9 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				,'cumuleReste'=>round2Virgule($rttCourant['cumuleReste'])
 				,'nonCumuleReste'=>round2Virgule($rttCourant['nonCumuleReste'])
 				,'idNum'=>$idRttCourant
+			)
+			,'listUserAlreadyAccepted'=>array(
+				'titre'=>load_fiche_titre($langs->trans('ListUserAlreadyAccepted'),'', 'title.png', 0, '')
 			)
 			,'absenceCourante'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
@@ -876,5 +881,28 @@ function _ficheCommentaire(&$ATMdb, &$absence, $mode) {
 	llxFooter();
 }
 
+function _getUserAlreadyAccepted(&$PDOdb, &$db, &$absence)
+{
+	$TRes = array();
+
+	$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'rh_valideur_object WHERE type="ABS" AND fk_object='.$absence->getId();
+	$PDOdb->Execute($sql);
+	
+	while ($row = $PDOdb->Get_line())
+	{
+		$sql = 'SELECT lastname, firstname  FROM '.MAIN_DB_PREFIX.'user WHERE rowid = '.$row->fk_user;
+		$resql = $db->query($sql);
+		if ($resql && $db->num_rows($resql))
+		{
+			$u = $db->fetch_object($resql);
+			$TRes[] = array(
+				'date_acceptation' => date('d/m/Y', strtotime($row->date_cre))
+				,'username' => trim($u->lastname.' '.$u->firstname)
+			);	
+		}
+	}
+
+	return $TRes;
+}
 	
 	

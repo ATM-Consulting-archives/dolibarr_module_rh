@@ -342,6 +342,12 @@ class TRH_Absence extends TObjetStd {
 		$this->TTypeAbsenceAdmin=$this->TTypeAbsenceUser=$this->TTypeAbsencePointeur=array(); //cf. loadTypeAbsencePerTypeUser
 	}
 
+	function delete(&$PDOdb)
+	{
+		TRH_valideur_object::deleteChildren($PDOdb, 'ABS', $this->getId());
+		return parent::delete($PDOdb);
+	}
+
 	//renvoie le tableau des utilisateurs
 	function recupererTUser(&$ATMdb){
 		global $conf, $langs;
@@ -357,6 +363,63 @@ class TRH_Absence extends TObjetStd {
 		return $TUser;
 	}
 
+	function valid(&$PDOdb)
+	{
+		global $user,$conf,$langs;
+		
+		$sqlEtat="UPDATE `".MAIN_DB_PREFIX."rh_absence` 
+				SET etat='Validee', libelleEtat='" . $langs->trans('Accepted') . "', date_validation='".date('Y-m-d')."', fk_user_valideur=".$user->id." 
+				WHERE fk_user=".$this->fk_user. " 
+				AND rowid=".$this->getId();
+		
+		//Valideur fort
+		if (!empty($user->rights->absence->myactions->valideurConges))
+		{
+			if (!$this->alreadyAcceptedByThisUser($PDOdb, $user, $conf))
+			{
+				$TRH_valideur_object = new TRH_valideur_object;
+				$TRH_valideur_object->fk_user = $user->id;
+				$TRH_valideur_object->fk_object = $this->getId();
+				$TRH_valideur_object->entity = $conf->entity;
+				$TRH_valideur_object->type = 'ABS';
+				$TRH_valideur_object->save($PDOdb);
+				
+				//Validation final
+				$PDOdb->Execute($sqlEtat);
+			}
+		}
+		//Valideur faible
+		elseif (!empty($user->rights->absence->myactions->valideurCongesWeak) || 1)
+		{
+			if (!$this->alreadyAcceptedByThisUser($PDOdb, $user, $conf))
+			{
+				$TRH_valideur_object = new TRH_valideur_object;
+				$TRH_valideur_object->fk_user = $user->id;
+				$TRH_valideur_object->fk_object = $this->getId();
+				$TRH_valideur_object->entity = $conf->entity;
+				$TRH_valideur_object->type = 'ABS';
+				$TRH_valideur_object->save($PDOdb);
+				
+				
+				//check il tous le monde a validé
+				if (TRH_valideur_object::checkAllAccepted($PDOdb, 'ABS', $this->getId()))
+				{
+					//Validation final
+					$PDOdb->Execute($sqlEtat);
+				}
+			}
+		}
+		
+	}
+
+	function alreadyAcceptedByThisUser(&$PDOdb, &$user, &$conf)
+	{
+		$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'rh_valideur_object WHERE type = "ABS" AND fk_object = '.$this->getId().' AND fk_user = '.$user->id.' AND entity = '.$conf->entity;
+		$PDOdb->Execute($sql);
+		
+		if ($PDOdb->Get_line()) return true;
+		else return false;
+	}
 
 	//permet la récupération des règles liées à un utilisateur 
 	//utile lors de l'affichage à la création d'une demande d'absence

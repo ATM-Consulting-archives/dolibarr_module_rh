@@ -19,6 +19,8 @@
 	$o->init_db_by_vars($ATMdb);
 	$o=new TRH_analytique_user;
 	$o->init_db_by_vars($ATMdb);
+	$o=new TRH_valideur_object;
+	$o->init_db_by_vars($ATMdb);
 	
 	$ATMdb->Execute("ALTER TABLE `llx_ndfp` ADD alertLevel INT DEFAULT 1");
 	

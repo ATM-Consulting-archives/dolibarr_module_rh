@@ -146,6 +146,20 @@
 		[onshow;block=end]
 		</div>
 		<div style="clear:both;"></div>
+		
+		
+		[listUserAlreadyAccepted.titre;strconv=no;protect=no] 
+		<table class="liste formdoc noborder">
+			<tr class="liste_titre">
+				<td><b>Date d'acceptation</b></td>
+				<td><b>Accéptée par</b></td>
+			</tr>
+			<tr>
+				<td>[TUserAccepted.date_acceptation;strconv=no;protect=no]</td>
+				<td>[TUserAccepted.username;strconv=no;protect=no]</td>
+			</tr>
+		</table>
+		<br />
 	</div>
 	
 
