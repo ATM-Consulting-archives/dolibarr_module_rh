@@ -209,9 +209,12 @@ class modValideur extends DolibarrModules
 
 		$result=$this->load_tables();
 
-		$url =dol_buildpath("/valideur/script/create-maj-base.php",2);
-		file_get_contents($url);
+        define('INC_FROM_DOLIBARR',true);
+        dol_include_once('/valideur/config.php');
+        
+        dol_include_once('/valideur/script/create-maj-base.php');
 		
+        
 		dol_include_once('/core/class/extrafields.class.php');
         $extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('fk_user_delegation', 'Déléguation de note de frais', 'sellist', 0, '', 'user',0, 0,'', array("options"=> array('user:login:rowid:: WHERE statut=1')));

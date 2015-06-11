@@ -697,6 +697,14 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 
     $TUnsecableId = TRH_TypeAbsence::getUnsecable($PDOdb);
     
+    $valideurs = '';
+    if($absence->etat=='Avalider') {
+        $TValideurId = TRH_valideur_groupe::getUserValideur($PDOdb, $user, $absence, 'Conges', true);
+        $valideurs = implode(", ", $TValideurId);
+        if(!empty($valideurs)) $valideurs = ' (à valider par '.$valideurs.')';
+        
+    }
+    
     print $TBS->render('./tpl/absence.tpl.php'
 		,array(
 			//'TRegle' =>$TRegle
@@ -748,7 +756,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 				,'idUser'=>$user->id
 				,'comboType'=>$form->combo('','type',$typeAbsenceCreable,$absence->type)
 				,'etat'=>$absence->etat
-				,'libelleEtat'=>$form->texte('','etat',$absence->libelleEtat,5,10,'',$class="text", $default='')
+				,'libelleEtat'=>$absence->libelleEtat.$valideurs
 				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
 				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')
 				,'dureeHeurePaie'=>$form->texte('','dureeHeurePaie',$absence->dureeHeurePaie,5,10,'',$class="text", $default='')

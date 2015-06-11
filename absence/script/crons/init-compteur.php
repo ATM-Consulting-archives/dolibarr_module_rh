@@ -1,11 +1,16 @@
 #!/usr/bin/php
 <?php
-	define('INC_FROM_CRON_SCRIPT', true);
-	chdir(__DIR__);
+
+    chdir(__DIR__);
+
+    if(!defined('INC_FROM_DOLIBARR')) {
+	   define('INC_FROM_CRON_SCRIPT', true);
+       require('../../config.php');
+    }
 	
-	require('../../config.php');
-	require('../../class/absence.class.php');
-	require('../../class/pointeuse.class.php');
+	
+	dol_include_once('/absence/class/absence.class.php');
+    dol_include_once('/absence/class/pointeuse.class.php');
 	
 	$ATMdb=new TPDOdb;
 

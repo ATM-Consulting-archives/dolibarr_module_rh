@@ -3,15 +3,20 @@
  * Script créant et vérifiant que les champs requis s'ajoutent bien
  * 
  */
- 	define('INC_FROM_CRON_SCRIPT', true);
+    if(!defined('INC_FROM_DOLIBARR')) {
+        
+        define('INC_FROM_CRON_SCRIPT', true);
+        require('../config.php');
+        
+    }
+    
+    global $db,$langs;
+    
 	
-	require('../config.php');
-	require('../class/absence.class.php');
-	require('../class/pointeuse.class.php');
-	require('../class/ticket.class.php');
+	dol_include_once('/absence/class/absence.class.php');
+	dol_include_once('/absence/class/pointeuse.class.php');
+	dol_include_once('/absence/class/ticket.class.php');
 	 
-	global $langs;
-	
 	$langs->load('absence@absence');
 	
     if(!class_exists('modAbsence')) dol_include_once('/absence/core/modules/modAbsence.class.php');

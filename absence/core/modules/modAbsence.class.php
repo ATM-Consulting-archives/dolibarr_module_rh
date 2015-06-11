@@ -756,12 +756,14 @@ class modAbsence extends DolibarrModules
 			file_put_contents( dol_buildpath("/absence/config.php" ) , $data);
 		}
 
-		$url =dol_buildpath("/absence/script/create-maj-base.php",2);
-		file_get_contents($url);
-		
-		$url2 =dol_buildpath("/absence/script/crons/init-compteur.php",2);
-		file_get_contents($url2);
-		
+        $db = &$this->db;
+
+        define('INC_FROM_DOLIBARR',true);
+		dol_include_once('/absence/config.php');
+        
+        dol_include_once('/absence/script/create-maj-base.php');
+        dol_include_once('/absence/script/crons/init-compteur.php');
+        
 		dol_include_once('/core/class/extrafields.class.php');
         $extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('ticketresto_ok', $langs->trans('HaveChooseTickets'), 'boolean', 0, '', 'user');

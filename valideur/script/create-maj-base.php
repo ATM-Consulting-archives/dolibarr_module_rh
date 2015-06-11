@@ -3,15 +3,17 @@
  * Script créant et vérifiant que les champs requis s'ajoutent bien
  * 
  */
- 	define('INC_FROM_CRON_SCRIPT', true);
+ 	if(!defined('INC_FROM_DOLIBARR')) {
+       define('INC_FROM_CRON_SCRIPT', true);
+       require('../../config.php');
+    }
+    
+    global $db,$langs; // pour les require from init mod
+    
+	dol_include_once('/valideur/class/valideur.class.php');
+	dol_include_once('/valideur/class/analytique_user.class.php');
+	dol_include_once('/core/class/extrafields.class.php');
 	
-	require('../config.php');
-	require('../class/valideur.class.php');
-	require('../class/analytique_user.class.php');
-	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	
-	global $db;
-
 	$ATMdb=new TPDOdb;
 	$ATMdb->db->debug=true;
 

@@ -9,7 +9,7 @@ class TRH_valideur_groupe extends TObjetStd {
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_valideur_groupe');
 		parent::add_champs('type','type=chaine;');				//type de valideur
-		parent::add_champs('nbjours,is_weak','type=entier;');			//nbjours avant alerte
+		parent::add_champs('nbjours,is_weak','type=entier;index;');			//nbjours avant alerte
 		parent::add_champs('montant','type=float;');			//montant avant alerte
 		parent::add_champs('fk_user,fk_usergroup,entity,validate_himself,pointeur,level','type=entier;index;');	//utilisateur ou groupe concerné
 		
@@ -89,9 +89,10 @@ class TRH_valideur_groupe extends TObjetStd {
 		else return false;		
 	}
 	
-	static function getUserValideur(&$PDOdb, &$user, &$object, $type)
+	static function getUserValideur(&$PDOdb, &$user, &$object, $type='Conges', $complete=false)
 	{
-		if ($type = 'ABS') $type = 'Conges';
+	    global $db;
+		if ($type == 'ABS') $type = 'Conges';
 		
 		$sql="SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."usergroup_user 
 		WHERE fk_user= ".$object->fk_user;
@@ -102,15 +103,33 @@ class TRH_valideur_groupe extends TObjetStd {
 			$TGValideur[]=$PDOdb->Get_field('fk_usergroup');
 		}
 		
-		$sql="SELECT fk_user 
+		$sql="SELECT fk_user,is_weak
 		FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
 		WHERE type = '".$type."' AND fk_usergroup IN (".implode(',', $TGValideur).") AND pointeur=0 AND level>=".(int)$object->niveauValidation." AND fk_user NOT IN(".$object->fk_user.",".$user->id.")";
 
 		$TValideur=$PDOdb->ExecuteAsArray($sql);
 		
 		$TRes = array();
-		foreach ($TValideur as $row => $val) $TRes[] = $val->fk_user;
 		
+        
+        if($complete) {
+            foreach($TValideur as $row => $val) {
+                $uValideur = new User($db);
+                $uValideur->fetch($val->fk_user);
+                
+                $nom  = $uValideur->getNomUrl(1);
+                
+                if($val->is_weak) {
+                    $nom='<span style="font-size:9px;">'.$nom.'</span>';
+                }
+                
+                $TRes[]=  $nom;
+            }
+        }
+        else{
+            foreach ($TValideur as $row => $val) $TRes[] = $val->fk_user;
+        }
+
 		return $TRes;
 	}
 	
