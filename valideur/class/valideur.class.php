@@ -89,6 +89,31 @@ class TRH_valideur_groupe extends TObjetStd {
 		else return false;		
 	}
 	
+	static function getUserValideur(&$PDOdb, &$user, &$object, $type)
+	{
+		if ($type = 'ABS') $type = 'Conges';
+		
+		$sql="SELECT fk_usergroup FROM ".MAIN_DB_PREFIX."usergroup_user 
+		WHERE fk_user= ".$object->fk_user;
+	
+		$PDOdb->Execute($sql);
+		$TGValideur=array();
+		while($PDOdb->Get_line()){
+			$TGValideur[]=$PDOdb->Get_field('fk_usergroup');
+		}
+		
+		$sql="SELECT fk_user 
+		FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
+		WHERE type = '".$type."' AND fk_usergroup IN (".implode(',', $TGValideur).") AND pointeur=0 AND level>=".(int)$object->niveauValidation." AND fk_user NOT IN(".$object->fk_user.",".$user->id.")";
+
+		$TValideur=$PDOdb->ExecuteAsArray($sql);
+		
+		$TRes = array();
+		foreach ($TValideur as $row => $val) $TRes[] = $val->fk_user;
+		
+		return $TRes;
+	}
+	
 }
 
 class TRH_valideur_object extends TObjetStd
@@ -115,10 +140,13 @@ class TRH_valideur_object extends TObjetStd
 	/*
 	 * Renvois false s'il existe des valideurs qui non pas encore validé
 	 */
-	static function checkAllAccepted(&$PDOdb, $type, $fk_object)
+	static function checkAllAccepted(&$PDOdb, &$user, $type, $fk_object, $object=null)
 	{
+		$TValideur = TRH_valideur_groupe::getUserValideur($PDOdb, $user, $object, $type);
+	
 		$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'rh_valideur_groupe';
-		$sql.= ' WHERE fk_user NOT IN (SELECT fk_user FROM '.MAIN_DB_PREFIX.'rh_valideur_object WHERE type="'.$type.'" AND fk_object='.(int) $fk_object.')';
+		$sql.= ' WHERE fk_user IN ('.implode(',', $TValideur).')';
+		$sql.= ' AND fk_user NOT IN (SELECT fk_user FROM '.MAIN_DB_PREFIX.'rh_valideur_object WHERE type="'.$type.'" AND fk_object='.(int) $fk_object.')';
 		
 		$PDOdb->Execute($sql);
 		

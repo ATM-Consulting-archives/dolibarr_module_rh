@@ -387,13 +387,13 @@ class TRH_Absence extends TObjetStd {
 		}
 		//Valideur faible
 		else
-		{
+		{	
 			if (!TRH_valideur_object::alreadyAcceptedByThisUser($PDOdb, $conf->entity, $user->id, $this->getId(), 'ABS'))
 			{
 				$TRH_valideur_object = TRH_valideur_object::addLink($PDOdb, $conf->entity, $user->id, $this->getId(), 'ABS');
 				
 				//check si tous le monde a validé
-				if (TRH_valideur_object::checkAllAccepted($PDOdb, 'ABS', $this->getId()))
+				if (TRH_valideur_object::checkAllAccepted($PDOdb, $user, 'ABS', $this->getId(), $this))
 				{
 					//Validation final
 					$PDOdb->Execute($sqlEtat);
