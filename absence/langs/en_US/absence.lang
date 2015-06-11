@@ -78,6 +78,7 @@ BornOrAdoption=Naissance ou adoption
 By=par
 Cancel=Annuler
 CanReportAbsenceInPast=Peut déclarer une absence dans le passé
+CanReportAbsenceToDay=Peut déclarer une absence le jour même
 Card=Fiche
 ChangesMade=Modifications effectuées
 CheckAllTypes=Cocher tous les types

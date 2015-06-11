@@ -30,17 +30,28 @@
 				$existeDeja=$absence->testExisteDeja($PDOdb, $absence);
 				if($existeDeja===false){
 					$absence->code=saveCodeTypeAbsence($PDOdb, $absence->type);
-					
+
 					// Test de la cohérence des dates
 					if(!$user->rights->absence->myactions->creerAbsenceCollaborateur && !TRH_valideur_groupe::isValideur($PDOdb, $user->id)
 					&& !$user->rights->absence->myactions->declarePastAbsence
 					&& ($absence->date_debut <= strtotime('midnight') ||$absence->date_fin <= strtotime('midnight') )) {
-						/*
-							Si ce n'est pas un user avec droit, pas le droit de créer des anciennes absences						
-						*/
-						$mesg = '<div class="error">' . $langs->trans('ErrOnlyUserWithPowerCanCreatePastAbsence') . '</div>';
-						_fiche($PDOdb, $absence,'edit');
-						break;
+						
+						//Ok le mec n'a pas le droit de créer une absence dans le passé mais est-ce qu'il peut le jour même
+						if ($user->rights->absence->myactions->declareToDayAbsence && $absence->date_debut >= strtotime('midnight') && $absence->date_fin >= strtotime('midnight'))
+						{
+							//RAS il peut créer l'absence le jour même
+						}
+						else 
+						{
+							/* 
+								Si ce n'est pas un user avec droit, pas le droit de créer des anciennes absences						
+							*/
+							$mesg = '<div class="error">' . $langs->trans('ErrOnlyUserWithPowerCanCreatePastAbsence') . '</div>';
+							_fiche($PDOdb, $absence,'edit');
+							break;
+						}
+						
+						
 					} 
 					
 					if($absence->save($PDOdb)) {
