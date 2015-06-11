@@ -128,7 +128,17 @@ global $user,$db;
 			$financement = isset($r2->financement) ? $r2->financement : 0;
 			
 			if($total==0) continue; // on saute le tour
-
+			
+			$total = price(round($total,2));
+			$total_financement = price(round($financement,2));
+			$total_all = price(round($total+$financement,2));
+			
+			if($total < 5.5) {
+				$total_all = $total_financement;
+			} else {
+				$total_all = price(round($total_all - 5 + $total_financement), 2);
+			}
+			
 			$mail.=$TBS->render('tpl/mailExportRessource.tpl.php'
 				,array(
 					'line'=>$TLine
@@ -138,9 +148,9 @@ global $user,$db;
 						'username'=>$ligne['nom']
 						,'date_facture'=>date('d/m/Y', $t_facture)
 						,'gsm'=>$ligne['numero']
-						,'total'=>price(round($total,2)).' €'
-						,'total_financement'=>price(round($financement,2)).' €'
-						,'total_all'=>price(round($total+$financement,2)).' €'
+						,'total'=>$total.' €'
+						,'total_financement'=>$total_financement.' €'
+						,'total_all'=>$total_all.' €'
 						,'duree_total_interne'=>convertSecondToTime($duree_total_interne)
 						,'duree_total_externe'=>convertSecondToTime($duree_total_externe)
 					)
@@ -155,7 +165,6 @@ global $user,$db;
 			if(!isset($_POST['debugMode'])) {
 				
 				$from = empty($conf->global->RH_USER_MAIL_SENDER)?'conso-tel@cpro.fr':$conf->global->RH_USER_MAIL_SENDER;
-				
 				$r=new TReponseMail($from, $email, "Etat de la facturation hors forfait pour votre mobile", $mail);
 				$r->send(true, 'utf8');
 				
