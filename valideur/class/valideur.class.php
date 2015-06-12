@@ -26,7 +26,7 @@ class TRH_valideur_groupe extends TObjetStd {
 		
 		$this->TGroup = array();
 		
-		// TODO AA arg encore un ! :(
+		// TODO AA arg encore un ! :( A virer !
 		//chargement d'une liste de tous les utilisateurs
 		$this->TUser = array();
 		$sqlReq="SELECT rowid, firstname, lastname FROM ".MAIN_DB_PREFIX."user";
@@ -89,7 +89,7 @@ class TRH_valideur_groupe extends TObjetStd {
 		else return false;		
 	}
 	
-	static function getUserValideur(&$PDOdb, &$user, &$object, $type='Conges', $complete=false)
+	static function getUserValideur(&$PDOdb, &$user, &$object, $type='Conges', $complete=false, $withMe=false)
 	{
 	    global $db;
 		if ($type == 'ABS') $type = 'Conges';
@@ -105,7 +105,10 @@ class TRH_valideur_groupe extends TObjetStd {
 		
 		$sql="SELECT fk_user,is_weak
 		FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
-		WHERE type = '".$type."' AND fk_usergroup IN (".implode(',', $TGValideur).") AND pointeur=0 AND level>=".(int)$object->niveauValidation." AND fk_user NOT IN(".$object->fk_user.",".$user->id.")";
+		WHERE type = '".$type."' AND fk_usergroup IN (".implode(',', $TGValideur).") 
+		AND pointeur=0 AND level>=".(int)$object->niveauValidation;
+		
+		if(!$withMe)$sq.= " AND fk_user NOT IN(".$object->fk_user.",".$user->id.")";
 
 		$TValideur=$PDOdb->ExecuteAsArray($sql);
 		

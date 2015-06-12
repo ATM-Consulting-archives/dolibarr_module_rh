@@ -86,7 +86,7 @@ class box_absence extends ModeleBoxes {
 						array('td' => 'align="left"',
 						 	'logo' => $picto,
 			                    'text' => utf8_decode($objp->libelle). ' - '. dol_print_date( strtotime($objp->date_debut) ).'',
-			                    'url' => dol_buildpath('/absence/absence.php', 1).'?action=view&id='.$objp->ID)
+			                    'url' => dol_buildpath('/absence/absence.php', 1).'?action=view&id='.$objp->ID.'&validation=ok')
 			                    
 						,array('td' => 'align="left"',
 			                    'text' => utf8_decode($objp->duree).' '.$langs->trans('days')

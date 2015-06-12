@@ -699,7 +699,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
     
     $valideurs = '';
     if($absence->etat=='Avalider') {
-        $TValideurId = TRH_valideur_groupe::getUserValideur($PDOdb, $user, $absence, 'Conges', true);
+        $TValideurId = TRH_valideur_groupe::getUserValideur($PDOdb, $user, $absence, 'Conges', true, true);
         $valideurs = implode(", ", $TValideurId);
         if(!empty($valideurs)) $valideurs = ' (à valider par '.$valideurs.')';
         
