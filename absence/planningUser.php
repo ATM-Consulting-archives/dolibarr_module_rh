@@ -139,7 +139,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 	//print $sql;
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
-		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+		$TUser[$ATMdb->Get_field('rowid')]=$ATMdb->Get_field('lastname')." ".$ATMdb->Get_field('firstname');
 	}
 	
 	llxHeader('', $langs->trans('Summary'));

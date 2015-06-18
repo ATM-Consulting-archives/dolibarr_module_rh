@@ -617,7 +617,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 		$sql.=" ORDER BY lastname";
 		$PDOdb->Execute($sql);
 		while($PDOdb->Get_line()) {
-			$TUser[$PDOdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($PDOdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($PDOdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$TUser[$PDOdb->Get_field('rowid')]=$PDOdb->Get_field('lastname')." ".$PDOdb->Get_field('firstname');
 		}
 	}
 	//Tableau affichant les 10 dernières absences du collaborateur
