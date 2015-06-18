@@ -49,7 +49,7 @@ class box_absence extends ModeleBoxes {
 		dol_include_once('/absence/lib/absence.lib.php');
 		
 		$sql = _getSQLListValidation($user->id);
- 
+// var_dump($sql);
 	 	if($sql===false) {
 			$this->info_box_contents[0][0] = array(
 				'td' => 'align="left"',
@@ -89,7 +89,7 @@ class box_absence extends ModeleBoxes {
 			                    'url' => dol_buildpath('/absence/absence.php', 1).'?action=view&id='.$objp->ID.'&validation=ok')
 			                    
 						,array('td' => 'align="left"',
-			                    'text' => utf8_decode($objp->duree).' '.$langs->trans('days')
+			                    'text' => $objp->duree.' '.$langs->trans('days')
 			                   )
 			             ,array('td' => 'align="left"',
 			                    'text' => $u->getFullName($langs)
