@@ -668,13 +668,15 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 	$diff=strtotime('+0day',$absence->date_debut)-time();
 	$duree=intval($diff/3600/24);
 
-	if($duree>0 && $absence->fk_user==$user->id && ($absence->etat!='Validee' || $user->rights->absence->myactions->supprimerMonAbsence)){
+	if( (int)date('Ymd',$absence->date_debut)> (int) date('Ymd') && $absence->fk_user==$user->id && ($absence->etat!='Validee' || $user->rights->absence->myactions->supprimerMonAbsence)){
 		$droitSupprimer=1;
 	}
 	elseif($user->rights->absence->myactions->creerAbsenceCollaborateur){
 		$droitSupprimer=1;
 	}
-	
+
+	//var_dump($droitSupprimer, $absence->duree,date('Y-m-d', $absence->date_debut), $absence->fk_user, $absence->etat);
+
 	$userValidation=new User($db);
 	$userValidation->fetch($absence->fk_user_valideur);
 	//print_r($userValidation);
@@ -704,7 +706,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
         if(!empty($valideurs)) $valideurs = ' (à valider par '.$valideurs.')';
         
     }
-    
+//    var_dump($droitSupprimer);
     print $TBS->render('./tpl/absence.tpl.php'
 		,array(
 			//'TRegle' =>$TRegle
