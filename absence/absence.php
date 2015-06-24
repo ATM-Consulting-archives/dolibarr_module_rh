@@ -759,9 +759,9 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 				,'comboType'=>$form->combo('','type',$typeAbsenceCreable,$absence->type)
 				,'etat'=>$absence->etat
 				,'libelleEtat'=>$absence->libelleEtat.$valideurs
-				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10,'',$class="text", $default='')	
-				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10,'',$class="text", $default='')
-				,'dureeHeurePaie'=>$form->texte('','dureeHeurePaie',$absence->dureeHeurePaie,5,10,'',$class="text", $default='')
+				,'duree'=>$form->texte('','duree',round2Virgule($absence->duree),5,10)	
+				,'dureeHeure'=>$form->texte('','dureeHeure',$absence->dureeHeure,5,10)
+				,'dureeHeurePaie'=>$form->texte('','dureeHeurePaie',$absence->dureeHeurePaie,5,10)
 				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png" />' . $langs->trans('DoNotRespectRules') . ' : '.$absence->avertissementInfo: $langs->trans('None')
 				,'fk_user'=>$absence->fk_user
 				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$absence->fk_user):''

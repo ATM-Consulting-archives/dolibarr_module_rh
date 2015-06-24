@@ -100,7 +100,7 @@
 		<table class="border" style="width:100%">
 				<tr>
 					 <td  colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" >
-					 	[translate.CounterCumulatedDayOff;strconv=no;protect=no] </td>
+					 	[translate.CounterCumulatedDayOff] </td>
 				</tr>
 
 				<tr>

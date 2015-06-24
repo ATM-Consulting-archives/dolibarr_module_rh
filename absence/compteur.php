@@ -5,7 +5,7 @@
 	
 	$langs->load('absence@absence');
 	
-	$ATMdb=new TPDOdb;
+	$PDOdb=new TPDOdb;
 	$compteur=new TRH_Compteur;
 
 
@@ -15,50 +15,50 @@
 			
 			case 'add':
 			case 'new':
-				_fiche($ATMdb, $compteur,'edit');
+				_fiche($PDOdb, $compteur,'edit');
 				break;	
 			case 'compteurAdmin':
-				_listeAdmin($ATMdb, $compteur);
+				_listeAdmin($PDOdb, $compteur);
 				break;
 			case 'edit'	:
-				$compteur->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $compteur,'edit');
+				$compteur->load($PDOdb, $_REQUEST['id']);
+				_fiche($PDOdb, $compteur,'edit');
 				break;
 				
 			case 'save':
-				//$ATMdb->db->debug=true;
+				//$PDOdb->db->debug=true;
 				
-				$compteur->load($ATMdb, $_REQUEST['id']);
+				$compteur->load($PDOdb, $_REQUEST['id']);
 				$compteur->reportRtt=0; // on remet à 0 la checkbox avant de setter la nouvelle valeur
 				$compteur->set_values($_REQUEST);
-				$compteur->save($ATMdb);
-				$compteur->load($ATMdb, $_REQUEST['id']);
+				$compteur->save($PDOdb);
+				$compteur->load($PDOdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">' . $langs->trans('ChangesMade') . '</div>';
-				_fiche($ATMdb, $compteur,'view');
+				_fiche($PDOdb, $compteur,'view');
 			
 				break;
 			
 			case 'view':
 			
 				if(isset($_REQUEST['id'])){
-					$compteur->load($ATMdb, $_REQUEST['id']);
+					$compteur->load($PDOdb, $_REQUEST['id']);
 				}
 				elseif(GETPOST('fk_user')>0){
 					//récupération compteur en cours
-					$compteur->load_by_fkuser($ATMdb, GETPOST('fk_user'));
+					$compteur->load_by_fkuser($PDOdb, GETPOST('fk_user'));
 					
 				}
 				else{
-					$compteur->load_by_fkuser($ATMdb, $user->id);
+					$compteur->load_by_fkuser($PDOdb, $user->id);
 				}
 
-					_fiche($ATMdb, $compteur,'view');
+					_fiche($PDOdb, $compteur,'view');
 
 				break;
 
 			case 'log':
-				$compteur->load_by_fkuser($ATMdb, GETPOST('fk_user'));
-				_log($ATMdb, $compteur);
+				$compteur->load_by_fkuser($PDOdb, GETPOST('fk_user'));
+				_log($PDOdb, $compteur);
 				
 				break;
 
@@ -71,22 +71,22 @@
 		
 	}
 	else {
-		//$ATMdb->db->debug=true;
-		_liste($ATMdb, $compteur);
+		//$PDOdb->db->debug=true;
+		_liste($PDOdb, $compteur);
 	}
 
-	$ATMdb->close();
+	$PDOdb->close();
 	
 	
 	
-function _log(&$ATMdb, &$compteur) {
+function _log(&$PDOdb, &$compteur) {
 	global $langs, $conf, $db, $user, $listeGlobale;	
 	
 	llxHeader('', $langs->trans('CounterLog'));
 	
 	$req = 'SELECT lastname, firstname FROM ' . MAIN_DB_PREFIX . 'user WHERE rowid = ' . $compteur->fk_user;
-	$ATMdb->Execute($req);
-	$usr = $ATMdb->Get_line();
+	$PDOdb->Execute($req);
+	$usr = $PDOdb->Get_line();
 		
 	getStandartJS();
 	print dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur', $compteur->fk_user, $usr->lastname, $usr->firstname)  , 'log', $langs->trans('Log'));
@@ -104,7 +104,7 @@ function _log(&$ATMdb, &$compteur) {
 	
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
 	//print $page;
-	$r->liste($ATMdb, $sql, array(
+	$r->liste($PDOdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
 			,'nbLine'=>'30'
@@ -122,7 +122,7 @@ function _log(&$ATMdb, &$compteur) {
 	llxFooter();
 }		
 	
-function _liste(&$ATMdb, &$compteur) {
+function _liste(&$PDOdb, &$compteur) {
 	global $langs, $conf, $db, $user, $listeGlobale;	
 	$listeGlobale='normale';
 	llxHeader('', $langs->trans('HolidaysCollabCounterList'));
@@ -145,7 +145,7 @@ function _liste(&$ATMdb, &$compteur) {
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
 	//print $page;
-	$r->liste($ATMdb, $sql, array(
+	$r->liste($PDOdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
 			,'nbLine'=>'30'
@@ -186,7 +186,7 @@ function _liste(&$ATMdb, &$compteur) {
 	
 	
 	
-function _listeAdmin(&$ATMdb, &$compteur) {
+function _listeAdmin(&$PDOdb, &$compteur) {
 	global $langs, $conf, $db, $user,$listeGlobale;	
 	$listeGlobale='admin';
 	llxHeader('', $langs->trans('HolidaysCollabCounterList'));
@@ -211,7 +211,7 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 	//print $page;
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
 	echo $form->hidden('action', 'compteurAdmin');		
-	$r->liste($ATMdb, $sql, array(
+	$r->liste($PDOdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
 			,'nbLine'=>'30'
@@ -260,7 +260,7 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 }	
 	
 	
-function _fiche(&$ATMdb, &$compteur, $mode) {
+function _fiche(&$PDOdb, &$compteur, $mode) {
 	global $db,$user,$conf,$TTypeMetier, $langs;
 	llxHeader('');
 
@@ -283,6 +283,8 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 	
 	$rttCourantReste=$compteur->rttCumuleAcquis -$compteur->rttCumulePris;
 	
+    $TTypeAbsence = TRH_TypeAbsence::getTypeAbsence($PDOdb, 'admin');
+    
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/compteur.tpl.php'
 		,array(
@@ -373,44 +375,45 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(compteurPrepareHead($compteur, 'compteur',$userCourant->id, htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1'), htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1'))  , 'compteur', $langs->trans('Absence'))
 			)
+            
 			,'translate' => array(
-				'Year' 							=> $langs->trans('Year'),
-				'CurrentUser' 					=> $langs->trans('CurrentUser'),
-				'AcquiredOnExercise' 			=> $langs->trans('AcquiredOnExercise'),
-				'AcquiredSeniority' 			=> $langs->trans('AcquiredSeniority'),
-				'AcquiredOutOfPeriod' 			=> $langs->trans('AcquiredOutOfPeriod'),
-				'OpenPostponement' 				=> $langs->trans('OpenPostponement'),
-				'TotalHolidays' 				=> $langs->trans('TotalHolidays'),
-				'HolidaysTaken' 				=> $langs->trans('HolidaysTaken'),
-				'RemainingBefore' 				=> $langs->trans('RemainingBefore'),
-				'AcquiredExercise' 				=> $langs->trans('AcquiredExercise'),
-				'HolidaysTaken' 				=> $langs->trans('HolidaysTaken'),
-				'NbDaysAcquiredByMonth' 		=> $langs->trans('NbDaysAcquiredByMonth'),
-				'LastClosingHoliday' 			=> $langs->trans('LastClosingHoliday'),
-				'CounterCumulatedDayOff' 		=> $langs->trans('CounterCumulatedDayOff'),
-				'CumulatedDayOffAcquired' 		=> $langs->trans('CumulatedDayOffAcquired'),
-				'CumulatedDayOffTaken' 			=> $langs->trans('CumulatedDayOffTaken'),
-				'PostponedCumulatedDayOff' 		=> $langs->trans('PostponedCumulatedDayOff'),
-				'CumulatedDayOffToTake' 		=> $langs->trans('CumulatedDayOffToTake'),
-				'CounterNonCumulatedDayOff' 	=> $langs->trans('CounterNonCumulatedDayOff'),
-				'NonCumulatedDayOffAcquired' 	=> $langs->trans('NonCumulatedDayOffAcquired'),
-				'NonCumulatedDayOffTaken' 		=> $langs->trans('NonCumulatedDayOffTaken'),
-				'PostponedNonCumulatedDayOff' 	=> $langs->trans('PostponedNonCumulatedDayOff'),
-				'AcquisitionMethodOfDays' 		=> $langs->trans('AcquisitionMethodOfDays'),
-				'CollabJob' 					=> $langs->trans('CollabJob'),
-				'AcquisitionType' 				=> $langs->trans('AcquisitionType'),
-				'AcquiredDaysOffPerMonth' 		=> $langs->trans('AcquiredDaysOffPerMonth'),
-				'NbDaysAcquiredByYear' 		=> $langs->trans('NbDaysAcquiredByYear'),
-				'YearlyCumulatedDaysOff' 		=> $langs->trans('YearlyCumulatedDaysOff'),
-				'YearlyNonCumulatedDaysOff' 	=> $langs->trans('YearlyNonCumulatedDaysOff'),
-				'DaysOffPostponement' 			=> $langs->trans('DaysOffPostponement'),
-				'LastClosingDayOff' 			=> $langs->trans('LastClosingDayOff'),
-				'Register' 						=> $langs->trans('Register'),
-				'Cancel' 						=> $langs->trans('Cancel'),
-				'Modify' 						=> $langs->trans('Modify'),
-				'Total'							=> $langs->trans('Total'),
-				'NonCumulatedDaysOffToTake'		=> $langs->trans('NonCumulatedDaysOffToTake'),
-				'acquisRecuperation'=>$langs->trans('acquisRecuperation'),
+				'Year' 							=> $langs->transnoentities('Year'),
+				'CurrentUser' 					=> $langs->transnoentities('CurrentUser'),
+				'AcquiredOnExercise' 			=> $langs->transnoentities('AcquiredOnExercise'),
+				'AcquiredSeniority' 			=> $langs->transnoentities('AcquiredSeniority'),
+				'AcquiredOutOfPeriod' 			=> $langs->transnoentities('AcquiredOutOfPeriod'),
+				'OpenPostponement' 				=> $langs->transnoentities('OpenPostponement'),
+				'TotalHolidays' 				=> $langs->transnoentities('TotalHolidays'),
+				'HolidaysTaken' 				=> $langs->transnoentities('HolidaysTaken'),
+				'RemainingBefore' 				=> $langs->transnoentities('RemainingBefore'),
+				'AcquiredExercise' 				=> $langs->transnoentities('AcquiredExercise'),
+				'HolidaysTaken' 				=> $langs->transnoentities('HolidaysTaken'),
+				'NbDaysAcquiredByMonth' 		=> $langs->transnoentities('NbDaysAcquiredByMonth'),
+				'LastClosingHoliday' 			=> $langs->transnoentities('LastClosingHoliday'),
+				'CounterCumulatedDayOff' 		=> $langs->transnoentities('Counter').' '.$TTypeAbsence['rttcumule'],
+				'CumulatedDayOffAcquired' 		=> $langs->transnoentities('CumulatedDayOffAcquired'),
+				'CumulatedDayOffTaken' 			=> $langs->transnoentities('CumulatedDayOffTaken'),
+				'PostponedCumulatedDayOff' 		=> $langs->transnoentities('PostponedCumulatedDayOff'),
+				'CumulatedDayOffToTake' 		=> $langs->transnoentities('CumulatedDayOffToTake'),
+				'CounterNonCumulatedDayOff' 	=> $langs->transnoentities('Counter').' '.$TTypeAbsence['rttnoncumule'],
+				'NonCumulatedDayOffAcquired' 	=> $langs->transnoentities('NonCumulatedDayOffAcquired'),
+				'NonCumulatedDayOffTaken' 		=> $langs->transnoentities('NonCumulatedDayOffTaken'),
+				'PostponedNonCumulatedDayOff' 	=> $langs->transnoentities('PostponedNonCumulatedDayOff'),
+				'AcquisitionMethodOfDays' 		=> $langs->transnoentities('AcquisitionMethodOfDays'),
+				'CollabJob' 					=> $langs->transnoentities('CollabJob'),
+				'AcquisitionType' 				=> $langs->transnoentities('AcquisitionType'),
+				'AcquiredDaysOffPerMonth' 		=> $langs->transnoentities('AcquiredDaysOffPerMonth'),
+				'NbDaysAcquiredByYear' 		=> $langs->transnoentities('NbDaysAcquiredByYear'),
+				'YearlyCumulatedDaysOff' 		=> $langs->transnoentities('YearlyCumulatedDaysOff'),
+				'YearlyNonCumulatedDaysOff' 	=> $langs->transnoentities('YearlyNonCumulatedDaysOff'),
+				'DaysOffPostponement' 			=> $langs->transnoentities('DaysOffPostponement'),
+				'LastClosingDayOff' 			=> $langs->transnoentities('LastClosingDayOff'),
+				'Register' 						=> $langs->transnoentities('Register'),
+				'Cancel' 						=> $langs->transnoentities('Cancel'),
+				'Modify' 						=> $langs->transnoentities('Modify'),
+				'Total'							=> $langs->transnoentities('Total'),
+				'NonCumulatedDaysOffToTake'		=> $langs->transnoentities('NonCumulatedDaysOffToTake'),
+				'acquisRecuperation'=>$langs->transnoentities('acquisRecuperation'),
 			)
 		)	
 		
