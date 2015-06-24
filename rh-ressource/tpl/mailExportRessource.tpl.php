@@ -88,7 +88,7 @@
 		</tr>
 		<tr >
 			<td colspan="3">&nbsp;</td>
-			<td class="title" colspan="2">Montant participation financement mobile </td>
+			<td class="title" colspan="2">Montant participation financement mobile<br/>Une franchise de 5€ est appliquée</td>
 			<td align="right"><strong>[card.total_financement]</strong></td>
 		</tr>
 		<tr >
