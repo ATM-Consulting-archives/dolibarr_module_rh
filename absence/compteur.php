@@ -299,7 +299,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				,'total'=>round2Virgule($congePrecTotal)
 				,'reste'=>round2Virgule($congePrecReste)
 				
-				,'dates'=>date('d/m', $compteur->date_congesCloture ).' au '.date('d/m', strtotime('-1day',$compteur->date_congesCloture) )
+				,'dates'=>date('d/m', strtotime('+1day',$compteur->date_congesCloture) ).' au '.date('d/m', $compteur->date_congesCloture )
 				,'dateFin'=>date('d/m', $compteur->date_congesCloture )
 			)
 			
