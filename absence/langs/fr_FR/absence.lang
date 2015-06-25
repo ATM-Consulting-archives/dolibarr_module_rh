@@ -470,3 +470,5 @@ NbDayOffAcquired=Nombre de RTT acquis à l'an pour tous
 NbDayOffNCAcquired=Nombre de RTT Non cumulé acquis à l'an pour tous
 ListUserAlreadyAccepted=Liste des valideurs ayant déjà accéptés
 AbsenceSecable = Absence Non Sécable ?
+ApplyEmploiTempToGroup=Appliquer cet emploi du temps sur un groupe
+NewAbsenceRequestCollective=Nouvelle absence collective

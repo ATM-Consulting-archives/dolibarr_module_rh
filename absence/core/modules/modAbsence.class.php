@@ -484,21 +484,39 @@ class modAbsence extends DolibarrModules
 					'user'=> 2
         );
 		
-		$r++;
-		$this->menu[$r]=array(
-		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu
-		        	'type'=> 'left',			// This is a Top menu entry
-		        	'titre'=> $langs->trans('AbsenceRequest'),
-		        	'mainmenu'=> '',
-		        	'leftmenu'=> 'sousabsence',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
-					'url'=> '/absence/absence.php?action=new',
-					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-					'position'=> 102,
-					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-					'perms'=> '',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-					'target'=> '',
-					'user'=> 2
+        $r++;
+        $this->menu[$r]=array(
+                    'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',           // Put 0 if this is a top menu
+                    'type'=> 'left',            // This is a Top menu entry
+                    'titre'=> $langs->trans('AbsenceRequest'),
+                    'mainmenu'=> '',
+                    'leftmenu'=> 'sousabsence',     // Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+                    'url'=> '/absence/absence.php?action=new',
+                    'langs'=> 'absence@absence',    // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                    'position'=> 102,
+                    'enabled'=> '1',            // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+                    'perms'=> '',           // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                    'target'=> '',
+                    'user'=> 2
         );
+        
+        $r++;
+        $this->menu[$r]=array(
+                    'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',           // Put 0 if this is a top menu
+                    'type'=> 'left',            // This is a Top menu entry
+                    'titre'=> $langs->trans('AbsenceRequestForGroup'),
+                    'mainmenu'=> '',
+                    'leftmenu'=> 'sousabsence',     // Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+                    'url'=> '/absence/absenceGroup.php',
+                    'langs'=> 'absence@absence',    // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+                    'position'=> 103,
+                    'perms'=> '$user->rights->absence->myactions->CanDeclareAbsenceForGroup',           // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+                    
+        );
+        
+        
+        
+        
 		$r++;
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=sousabsence',			// Put 0 if this is a top menu

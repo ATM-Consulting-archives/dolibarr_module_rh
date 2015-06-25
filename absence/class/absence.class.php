@@ -558,7 +558,7 @@ class TRH_Absence extends TObjetStd {
 	}	
 		
 		
-	function save(&$PDOdb) {
+	function save(&$PDOdb, $runTrigger = true) {
 
 		global $conf, $user,$db,$langs;
 		$this->entity = $conf->entity;
@@ -594,7 +594,7 @@ class TRH_Absence extends TObjetStd {
 		else {
 			parent::save($PDOdb);
 
-			$result = $interface->run_triggers('ABSENCE_'.$f_mode,$this,$user,$langs,$conf);	
+			if($runTrigger) $result = $interface->run_triggers('ABSENCE_'.$f_mode,$this,$user,$langs,$conf);	
 
 			return true;	
 		}	
