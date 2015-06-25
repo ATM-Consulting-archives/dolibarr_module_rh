@@ -96,7 +96,7 @@
 			
 	<br/><br>
 	[translate.TotalTimeWeeklyWork;strconv=no;protect=no] : [userCourant.tempsHebdo;strconv=no;protect=no]h<br>
-	[translate.Company;strconv=no;protect=no] : [entity.TEntity;strconv=no;protect=no]
+	
 	
 	
 	

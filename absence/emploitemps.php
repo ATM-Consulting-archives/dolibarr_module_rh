@@ -5,41 +5,88 @@
 	
 	$langs->load('absence@absence');
 	
-	$ATMdb=new TPDOdb;
+	$PDOdb=new TPDOdb;
 	$emploiTemps=new TRH_EmploiTemps;
 
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
 
+            case 'save_to_group':
+                
+                $fk_group =(int)GETPOST('fk_group');
+                $fk_user = (int)GETPOST('fk_user');
+                
+                if($fk_group && $fk_user && !empty($user->rights->absence->myactions->CanChangeEmploiTempsForGroup)) {
+                    
+                    $emploiTemps->loadByuser($PDOdb, $fk_user);
+                    
+                    dol_include_once('/user/class/usergroup.class.php');
+                    
+                    $group = new UserGroup($db);
+                    $group->fetch($fk_group);
+                    $TUser = $group->listUsersForGroup('',1);
+                   
+                    foreach($TUser as $fk_user_in_group) {
+                        
+                        if($fk_user_in_group == $fk_user) continue;
+                        
+                        $e2 = new TRH_EmploiTemps;
+                        $e2->loadByuser($PDOdb, $fk_user_in_group);
+                        
+                        foreach ($e2->TJour as $jour) {
+                            $e2->{'date_'.$jour."_heuredam"}=$emploiTemps->{'date_'.$jour."_heuredam"};
+                            $e2->{'date_'.$jour."_heuredpm"}=$emploiTemps->{'date_'.$jour."_heuredpm"};
+                            
+                            $e2->{'date_'.$jour."_heurefpm"}=$emploiTemps->{'date_'.$jour."_heurefpm"};
+                            $e2->{'date_'.$jour."_heurefpm"}=$emploiTemps->{'date_'.$jour."_heurefpm"};
+                        
+                            $e2->{$jour.'am'} = $emploiTemps->{$jour.'am'};
+                            $e2->{$jour.'pm'} = $emploiTemps->{$jour.'pm'};
+                        
+                        }
+                        
+                        $e2->save($PDOdb);
+                        
+                    }
+                    
+                    
+                    
+                    setEventMessage($langs->trans('GroupScheduleApplied'));
+                    _fiche($PDOdb, $emploiTemps,'view');
+                
+                }            
+                
+                break;
+
 			case 'edit'	:
-				$emploiTemps->load($ATMdb, $_REQUEST['id']);
-				_fiche($ATMdb, $emploiTemps,'edit');
+				$emploiTemps->load($PDOdb, $_REQUEST['id']);
+				_fiche($PDOdb, $emploiTemps,'edit');
 				break;
 				
 			case 'save':
-				//$ATMdb->db->debug=true;
-				$emploiTemps->load($ATMdb, $_REQUEST['id']);
+				//$PDOdb->db->debug=true;
+				$emploiTemps->load($PDOdb, $_REQUEST['id']);
 				
-				$emploiTemps->razCheckbox($ATMdb, $emploiTemps);
+				$emploiTemps->razCheckbox($PDOdb, $emploiTemps);
 				
 				$emploiTemps->set_values($_REQUEST);
 				
-				$emploiTemps->tempsHebdo=$emploiTemps->calculTempsHebdo($ATMdb, $emploiTemps);
+				$emploiTemps->tempsHebdo=$emploiTemps->calculTempsHebdo($PDOdb, $emploiTemps);
 				
-				$emploiTemps->save($ATMdb);
+				$emploiTemps->save($PDOdb);
 				
 				$mesg = '<div class="ok">' . $langs->trans('RegistedRequest') . '</div>';
-				_fiche($ATMdb, $emploiTemps,'view');
+				_fiche($PDOdb, $emploiTemps,'view');
 				break;
 			case 'archive':
-				if(GETPOST('id','int')>0) $emploiTemps->load($ATMdb, GETPOST('id','int'));
-				else $emploiTemps->loadByuser($ATMdb, GETPOST('fk_user','int'));
+				if(GETPOST('id','int')>0) $emploiTemps->load($PDOdb, GETPOST('id','int'));
+				else $emploiTemps->loadByuser($PDOdb, GETPOST('fk_user','int'));
 				
 				$emploiTempsArchive = clone $emploiTemps;
 				
-				$ATMdb->Execute("SELECT MAX(date_fin) as date_fin 
+				$PDOdb->Execute("SELECT MAX(date_fin) as date_fin 
 					FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps WHERE fk_user=".$emploiTemps->fk_user." AND is_archive=1");
-				$row = $ATMdb->Get_line();
+				$row = $PDOdb->Get_line();
 				if($row) {
 					$emploiTempsArchive->date_debut = strtotime($row->date_fin);
 				}
@@ -48,30 +95,30 @@
 				$emploiTempsArchive->rowid=0;
 				$emploiTempsArchive->is_archive=1;
 				
-				$emploiTempsArchive->save($ATMdb);
+				$emploiTempsArchive->save($PDOdb);
 				setEventMessage($langs->trans('ArchivedSchedule'));
 				
-				_fiche($ATMdb, $emploiTemps,'view');
+				_fiche($PDOdb, $emploiTemps,'view');
 				
 				break;
 			case 'deleteArchive':
 				
 				$emploiTempsArchive=new TRH_EmploiTemps;
-				$emploiTempsArchive->load($ATMdb, GETPOST('idArchive','int'));
-				$emploiTempsArchive->delete($ATMdb);
+				$emploiTempsArchive->load($PDOdb, GETPOST('idArchive','int'));
+				$emploiTempsArchive->delete($PDOdb);
 				
 				setEventMessage($langs->trans('ScheduleArchiveDeleted'));
 				
-				if(GETPOST('id','int')>0) $emploiTemps->load($ATMdb, GETPOST('id','int'));
-				else $emploiTemps->loadByuser($ATMdb, GETPOST('fk_user','int'));
-				_fiche($ATMdb, $emploiTemps,'view');
+				if(GETPOST('id','int')>0) $emploiTemps->load($PDOdb, GETPOST('id','int'));
+				else $emploiTemps->loadByuser($PDOdb, GETPOST('fk_user','int'));
+				_fiche($PDOdb, $emploiTemps,'view');
 				
 				break;	
 			
 			case 'view':
-					if(GETPOST('id','int')>0) $emploiTemps->load($ATMdb, GETPOST('id','int'));
-					else $emploiTemps->loadByuser($ATMdb, GETPOST('fk_user','int'));
-					_fiche($ATMdb, $emploiTemps,'view');
+					if(GETPOST('id','int')>0) $emploiTemps->load($PDOdb, GETPOST('id','int'));
+					else $emploiTemps->loadByuser($PDOdb, GETPOST('fk_user','int'));
+					_fiche($PDOdb, $emploiTemps,'view');
 				break;
 
 		}
@@ -81,21 +128,21 @@
 	}
 	else {
 		if($user->rights->absence->myactions->voirTousEdt){
-			$emploiTemps->loadByuser($ATMdb, $_REQUEST['fk_user']);
-			_liste($ATMdb, $emploiTemps);
+			$emploiTemps->loadByuser($PDOdb, $_REQUEST['fk_user']);
+			_liste($PDOdb, $emploiTemps);
 		}else{
 
-			$emploiTemps->loadByuser($ATMdb, $user->id);
-			_fiche($ATMdb, $emploiTemps,'view');
+			$emploiTemps->loadByuser($PDOdb, $user->id);
+			_fiche($PDOdb, $emploiTemps,'view');
 		}
 		
 	}
 	
-	$ATMdb->close();
+	$PDOdb->close();
 	llxFooter();
 	
 	
-function _liste(&$ATMdb, &$emploiTemps) {
+function _liste(&$PDOdb, &$emploiTemps) {
 	global $langs, $conf, $db, $user;	
 	llxHeader('', $langs->trans('ListOfAbsence'));
 	getStandartJS();
@@ -117,7 +164,7 @@ function _liste(&$ATMdb, &$emploiTemps) {
 	if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
 				
 	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;			
-	$r->liste($ATMdb, $sql, array(
+	$r->liste($PDOdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
 			,'nbLine'=>'30'
@@ -170,10 +217,10 @@ global $db;
 	return $user->getNomUrl(1);
 }
 	
-function _fiche(&$ATMdb, &$emploiTemps, $mode) {
+function _fiche(&$PDOdb, &$emploiTemps, $mode) {
 	global $db, $user,$idUserCompt, $idComptEnCours,$conf, $langs,$mysoc;
 	llxHeader('', $langs->trans('Schedule'));
-	$emploiTemps->load($ATMdb, $_REQUEST['id']);
+	$emploiTemps->load($PDOdb, $_REQUEST['id']);
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
 	echo $form->hidden('id', $_REQUEST['id']);
@@ -199,10 +246,10 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	} 
 
 	$TEntity=array();
-	$TEntity=$emploiTemps->load_entities($ATMdb);
+	$TEntity=$emploiTemps->load_entities($PDOdb);
 	
 	$r=new TListviewTBS('listArchive');
-	$listeArchive = $r->render($ATMdb, "SELECT
+	$listeArchive = $r->render($PDOdb, "SELECT
 	 	rowid as ID, date_debut,date_fin,tempsHebdo, '' as 'Actions'
 	 FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps 
 	 WHERE fk_user=".$userCourant->id." AND is_archive=1 ORDER BY date_debut DESC",array(
@@ -243,11 +290,8 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 			,'userCourant'=>array(
 				'id'=>$userCourant->id
 				,'tempsHebdo'=>$emploiTemps->tempsHebdo
-				,'societe'=>$emploiTemps->societeRtt
 			)
-			,'entity'=>array(
-				'TEntity'=>( empty($TEntity) ? $mysoc->name : $form->combo('','societeRtt',$TEntity,$emploiTemps->societeRtt))
-			)
+			
 			,'view'=>array(
 				'mode'=>$mode
 				,'head'=>dol_get_fiche_head(edtPrepareHead($emploiTemps, 'emploitemps')  , 'emploitemps', $langs->trans('Absence'))
@@ -291,6 +335,23 @@ function _fiche(&$ATMdb, &$emploiTemps, $mode) {
 	
 	echo $form->end_form();
 	// End of page
+	
+	if(!empty($user->rights->absence->myactions->CanChangeEmploiTempsForGroup) && $mode == 'view') {
+	    $form=new TFormCore($_SERVER['PHP_SELF'],'form2','POST');
+        echo $form->hidden('action', 'save_to_group');
+        echo $form->hidden('fk_user', $emploiTemps->fk_user);
+        
+        $formDoli=new Form($db);
+        
+        echo $langs->trans('ApplyEmploiTempToGroup').' : ';
+        echo $formDoli->select_dolgroups(-1,'fk_group',1);
+        
+        echo $form->btsubmit('Appliquer', 'btgroupapply', '', 'butAction');
+        
+        $form->end();
+        
+        
+	}
 	
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));

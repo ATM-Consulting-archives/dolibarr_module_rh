@@ -2505,7 +2505,7 @@ class TRH_EmploiTemps extends TObjetStd {
 					
 		parent::add_champs('fk_user','type=entier;index;');	//utilisateur concerné
 		parent::add_champs('tempsHebdo','type=float;');
-		parent::add_champs('societeRtt','type=chaine;');
+		
 		parent::add_champs('entity,is_archive','type=entier;index;');
 		
 		parent::add_champs('date_debut,date_fin', array('type'=>'date'));
@@ -2576,8 +2576,7 @@ class TRH_EmploiTemps extends TObjetStd {
 			}
 		}
 		$this->tempsHebdo=37;
-		$this->societeRtt='aucune';
-
+	
 	}
 	
 	//remet à 0 les checkbox avant la sauvegarde

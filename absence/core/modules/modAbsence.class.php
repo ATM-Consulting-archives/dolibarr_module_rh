@@ -331,6 +331,7 @@ class modAbsence extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 7123;
 		$this->rights[$r][1] = $langs->trans('DeleteOwnAbsenceOnceReported');
+        
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'supprimerMonAbsence';
@@ -380,14 +381,29 @@ class modAbsence extends DolibarrModules
 		$r++;
 		
 		
-		$r++;
-		$this->rights[$r][0] = 7131;
-		$this->rights[$r][1] = $langs->trans('CanReportAbsenceToDay');
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'myactions';
-		$this->rights[$r][5] = 'declareToDayAbsence';
-		
-		
+        $r++;
+        $this->rights[$r][0] = 7131;
+        $this->rights[$r][1] = $langs->trans('CanReportAbsenceToDay');
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'declareToDayAbsence';
+        
+        $r++;
+        $this->rights[$r][0] = 7132;
+        $this->rights[$r][1] = $langs->trans('CanChangeEmploiTempsForGroup');
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'CanChangeEmploiTempsForGroup';
+        
+        
+        $r++;
+        $this->rights[$r][0] = 7133;
+        $this->rights[$r][1] = $langs->trans('CanDeclareAbsenceForGroup');
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'CanDeclareAbsenceForGroup';
+        
+        
 		
 
 		

@@ -107,7 +107,7 @@ function edtPrepareHead(&$obj, $type='absence') {
 		case 'emploitemps':
 				
 			$Tab=array(
-				array(dol_buildpath('/absence/emploitemps.php?fk_user='.$user->id,1), $langs->trans('Schedule'),'emploitemps')
+				array(dol_buildpath('/absence/emploitemps.php?action=view&id='.$obj->getId(),1), $langs->trans('Schedule'),'emploitemps')
 			);
             
             if($conf->jouroff->enabled) $Tab[] = array(dol_buildpath('/jouroff/admin/jouroff_setup.php?fk_user='.$user->id,1), $langs->trans('HolidaysOrNoWorkingDays'),'joursferies');
