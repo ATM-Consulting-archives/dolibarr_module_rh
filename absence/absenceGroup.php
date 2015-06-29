@@ -41,7 +41,7 @@
                     $abs->date_debut = $absence->date_debut;
                     $abs->ddMoment = $absence->ddMoment;
                     $abs->date_fin = $absence->date_fin;
-                    $abs->dfMoment = $absence->ddMoment;
+                    $abs->dfMoment = $absence->dfMoment;
                     $abs->commentaire = $absence->commentaire;
                     $abs->type = $absence->type;
                     
@@ -49,6 +49,8 @@
                     $existeDeja=$abs->testExisteDeja($PDOdb, $abs);
                     
                     if($existeDeja === false) {
+                        
+                        $abs->calculDureeAbsenceParAddition($PDOdb);
                         
                         $abs->etat='Validee';
                         $abs->libelleEtat = $langs->trans('Accepted');

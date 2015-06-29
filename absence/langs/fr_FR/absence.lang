@@ -472,3 +472,5 @@ ListUserAlreadyAccepted=Liste des valideurs ayant déjà accéptés
 AbsenceSecable = Absence Non Sécable ?
 ApplyEmploiTempToGroup=Appliquer cet emploi du temps sur un groupe
 NewAbsenceRequestCollective=Nouvelle absence collective
+GroupAbsCreated=Absences créés pour le groupe
+AbsenceRequestForGroup=Absences pour un groupe 
