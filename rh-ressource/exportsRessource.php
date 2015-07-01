@@ -188,6 +188,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 	llxHeader('', 'Exports Ressources');
 	
 	$TLignes = array();
+	$TLignesSansLignesAZero = array();
 	
 	$idVoiture = getIdType('voiture');
 	$idTotal = getIdType('cartetotal');
@@ -236,15 +237,20 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		
 		if(stripos($TType[$type],'orange')!==false) {
 			$TLines = array();
+			$TLinesSansLignesAZero = array();
 		
 			foreach($TLignes as $line) {
 				foreach($line as $line_niveau2)
-					foreach($line_niveau2 as $line_niveau3)
+					foreach($line_niveau2 as $line_niveau3) {
 						$TLines[] = $line_niveau3;
+						if($line_niveau3['total_non_pondere'] > 0) $TLinesSansLignesAZero[] = $line_niveau3;
+					}
 			}
 	
 			$TLignes = $TLines;
-	
+			
+			$TLignesSansLignesAZero = $TLinesSansLignesAZero;
+			
 			$npm = false;
 			$sendMail=true;
 		}
@@ -261,12 +267,10 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','GET');
 	$form->Set_typeaff('new');
 	
-
-	
 	$TBS=new TTemplateTBS();
 	print $TBS->render($template
 		,array(
-			'ligne'=>$TLignes
+			'ligne'=>$TLignesSansLignesAZero
 		)
 		,array(
 			'exports'=>array(
@@ -329,7 +333,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		
 		?>
 		<form name="downExcel" style="text-align:center; display:inline;" action="<?php echo dol_buildpath('/report/report.php',2); ?>" method="POST">
-			<input type="hidden" name="serialData" value="<?=base64_encode(serialize($TLignes)) ?>" />
+			<input type="hidden" name="serialData" value="<?=base64_encode(serialize($TLignesSansLignesAZero)) ?>" />
 			<input type="hidden" name="format" value="ExcelTBS" />
 			<input type="hidden" name="rapport" value="ExportRessource" />
 			

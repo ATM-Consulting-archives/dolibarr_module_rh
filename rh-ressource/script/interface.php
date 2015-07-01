@@ -518,8 +518,6 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 			else $res->montant_euros_ht = 0;
 			$res->montant_euros_ht = $res->montant_euros_ht - $financement;
 			if($res->montant_euros_ht < 0) $res->montant_euros_ht = 0;
-			
-			if($res->montant_euros_ht == 0) continue;
 		
 			// Fin règle ******************
 		
