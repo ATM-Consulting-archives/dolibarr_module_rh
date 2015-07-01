@@ -509,6 +509,19 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
 	
 		$id_user = $r2->isEmpruntee($ATMdb, $res->date_appel);
 		if($id_user>0) {
+			
+			
+			// Règle tk 2446 **************
+			$financement = isset($r2->financement) ? $r2->financement : 0;
+			
+			if($res->montant_euros_ht >= 5.5) $res->montant_euros_ht -= 5;
+			else $res->montant_euros_ht = 0;
+			$res->montant_euros_ht = $res->montant_euros_ht - $financement;
+			if($res->montant_euros_ht < 0) $res->montant_euros_ht = 0;
+			
+			if($res->montant_euros_ht == 0) continue;
+		
+			// Fin règle ******************
 		
 			if($user_ressource->id!=$id_user) {
 					$user_ressource->fetch($id_user);
