@@ -129,16 +129,17 @@ global $user,$db;
 			
 			if($total==0) continue; // on saute le tour
 			
-			$total = price(round($total,2));
-			$total_financement = price(round($financement,2));
-			$total_all = price(round($total+$financement,2));
-			
+			$total = round($total,2);
+			$total_financement = round($financement,2);
+			$total_all = round($total+$financement,2);
+			//echo $total.' : '.$total_financement.' : '.$total_all.'<br>';
 			if($total < 5.5) {
 				$total_all = $total_financement;
 			} else {
-				$total_all = price(round($total_all - 5 + $total_financement), 2);
+				//echo 'calcul : '.$total.' - 5 + '.$total_financement.'<br>';
+				$total_all = round(($total - 5 + $total_financement), 2);
 			}
-			
+			//echo 'après : '.$total_all.'<br><br>';
 			$mail.=$TBS->render('tpl/mailExportRessource.tpl.php'
 				,array(
 					'line'=>$TLine
@@ -148,9 +149,9 @@ global $user,$db;
 						'username'=>$ligne['nom']
 						,'date_facture'=>date('d/m/Y', $t_facture)
 						,'gsm'=>$ligne['numero']
-						,'total'=>$total.' €'
-						,'total_financement'=>$total_financement.' €'
-						,'total_all'=>$total_all.' €'
+						,'total'=>price($total).' €'
+						,'total_financement'=>price($total_financement).' €'
+						,'total_all'=>price($total_all).' €'
 						,'duree_total_interne'=>convertSecondToTime($duree_total_interne)
 						,'duree_total_externe'=>convertSecondToTime($duree_total_externe)
 					)
