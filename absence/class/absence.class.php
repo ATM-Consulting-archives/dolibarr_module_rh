@@ -713,38 +713,59 @@ class TRH_Absence extends TObjetStd {
 				
 				$dureeJour=0;
 				
-				if( ($t_current==$t_start && $this->ddMoment=='matin') || $t_current>$t_start  ) {
-					if(!isset($TJourFerie[ date('Y-m-d', $t_current) ]['am'])) {
-	
-						if($emploiTemps->{$current_day.'am'} == 1 ) {
-							$dureeJour+=.5;
-							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"am");
-						}		
-						else if($typeAbs->decompteNormal=='non' && $emploiTemps->{$current_day.'am'}==0 ) {
-							$dureeJour+=.5;
-							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"am");
-						}
-						
-					}
-				}
-				
-				if(($t_current==$t_end && $this->dfMoment=='apresmidi') || $t_current<$t_end  ) {
-				
-				
-					if(!isset($TJourFerie[ date('Y-m-d', $t_current) ]['pm'])) {
-	
-						if($emploiTemps->{$current_day.'pm'}==1 ) {
-							$dureeJour+=.5;
-							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"pm");
-						}		
-						else if($typeAbs->decompteNormal=='non' && $emploiTemps->{$current_day.'pm'}==0 ) {
-							$dureeJour+=.5;
-							$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"pm");
-						}
-						
-					}
-				
-				}
+                if($typeAbs->insecable == 1) {
+                        // absence de type insécable, on compte à la journée complète
+                        
+                        if(!isset($TJourFerie[ date('Y-m-d', $t_current) ]['am']) 
+                            && !isset($TJourFerie[ date('Y-m-d', $t_current) ]['pm']) // ce n'est pas un jour non travaillé complet
+                            && ($emploiTemps->{$current_day.'am'} == 1 || $emploiTemps->{$current_day.'pm'} == 1) // et qu'on travail au moins une demie-journée
+                        ) {
+                            $dureeJour+=1; // je compte la journée entière car insécable
+                            $this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"am");
+                            $this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"pm");
+                        }
+                        
+                }
+                else {
+                    if( ($t_current==$t_start && $this->ddMoment=='matin') || $t_current>$t_start  ) {
+                        // si l'absence démarre aujorud'hui et qu'elle commence le matin ou bien qu'elle a déjà commencée, je test le matin
+                        
+                        
+                        if(!isset($TJourFerie[ date('Y-m-d', $t_current) ]['am'])) {
+        
+                            if($emploiTemps->{$current_day.'am'} == 1 ) {
+                                $dureeJour+=.5;
+                                $this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"am");
+                            }       
+                            else if($typeAbs->decompteNormal=='non' && $emploiTemps->{$current_day.'am'}==0 ) {
+                                $dureeJour+=.5;
+                                $this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"am");
+                            }
+                            
+                        }
+                    }
+                    
+                    if(($t_current==$t_end && $this->dfMoment=='apresmidi') || $t_current<$t_end  ) {
+                    // si l'absence se termine aujourd'hui et cet après midi ou bien que l'absence se termine dans le futur, alors je test l'après-midi
+                    
+                        if(!isset($TJourFerie[ date('Y-m-d', $t_current) ]['pm'])) {
+        
+                            if($emploiTemps->{$current_day.'pm'}==1 ) {
+                                $dureeJour+=.5;
+                                $this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"pm");
+                            }       
+                            else if($typeAbs->decompteNormal=='non' && $emploiTemps->{$current_day.'pm'}==0 ) {
+                                $dureeJour+=.5;
+                                $this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"pm");
+                            }
+                            
+                        }
+                    
+                    }
+                        
+                }
+                
+                
 				
 				if(!empty($dateN)) {
 					// distrib sur conges N ou N+1
@@ -764,7 +785,7 @@ class TRH_Absence extends TObjetStd {
 			$this->dureeContigue++;
 			
 			
-			$t_current = strtotime("+1day",$t_current);
+			$t_current = strtotime('+1day',$t_current);
 		}
 		
 		$this->duree = $duree; // Attention, je rajoute ça ici car semble normal, vérif pas effets de bord
