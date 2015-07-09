@@ -1,37 +1,28 @@
 <?php
 require('../config.php');
+require('../class/absence.class.php');
 require('../lib/absence.lib.php');
 global $conf,$user;
 
 if(isset($_REQUEST['user'])) {
 		
 		$TCompteur = array();
-		$ATMdb =new TPDOdb;
+		$PDOdb =new TPDOdb;
 		$congePrec =array();
 		
-		// TODO mais t'es sérieux là ? 
-		$sql="SELECT * FROM `".MAIN_DB_PREFIX."rh_compteur` where fk_user=".$_REQUEST['user'];
+		$c=new TRH_Compteur;
+        $c->load_by_fkuser($PDOdb, (int)$_REQUEST['user']);
+        
+        echo json_encode(array(
+            'reste'=>round2Virgule($c->acquisExerciceNM1+$c->acquisAncienneteNM1+$c->acquisHorsPeriodeNM1+$c->reportCongesNM1-$c->congesPrisNM1)
+            ,'resteN'=>round2Virgule($c->acquisExerciceN+$c->acquisAncienneteN+$c->acquisHorsPeriodeN+$c->reportCongesN-$c->congesPrisN)
+            ,'acquisRecuperation'=>round2Virgule($c->acquisRecuperation)
+            ,'annuelCumule'=>round2Virgule($c->rttCumuleAcquis+$c->rttCumuleReportNM1-$c->rttCumulePris)
+            ,'annuelNonCumule'=>round2Virgule($c->rttNonCumuleAcquis+$c->rttNonCumuleReportNM1-$c->rttNonCumulePris)
+            
+        ));
+        
+        exit;
 		
-		$ATMdb->Execute($sql);
-		while($ATMdb->Get_line()) {
-			
-			$TCompteur['annuelCumule']=round2Virgule($ATMdb->Get_field('rttCumuleAcquis')+$ATMdb->Get_field('rttCumuleReportNM1')-$ATMdb->Get_field('rttCumulePris'));
-			$TCompteur['annuelNonCumule']=round2Virgule($ATMdb->Get_field('rttNonCumuleAcquis')+$ATMdb->Get_field('rttNonCumuleReportNM1')-$ATMdb->Get_field('rttNonCumulePris'));
-			
-			$TCompteur['acquisRecuperation'] = round2Virgule( $ATMdb->Get_field('acquisRecuperation') );
-			
-			$congePrec['acquisEx']=$ATMdb->Get_field('acquisExerciceNM1');
-			$congePrec['acquisAnc']=$ATMdb->Get_field('acquisAncienneteNM1');
-			$congePrec['acquisHorsPer']=$ATMdb->Get_field('acquisHorsPeriodeNM1');
-			$congePrec['reportConges']=$ATMdb->Get_field('reportCongesNM1');
-			$congePrec['congesPris']=$ATMdb->Get_field('congesPrisNM1');
-		}
-
-		$congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+$congePrec['acquisHorsPer']+$congePrec['reportConges'];
-		$TCompteur['reste']=round2Virgule($congePrecTotal-$congePrec['congesPris']);
-		
-		echo json_encode($TCompteur);
-		
-		exit();
 }
 	

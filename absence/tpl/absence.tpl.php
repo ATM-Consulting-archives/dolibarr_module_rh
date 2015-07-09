@@ -97,21 +97,25 @@
    		 <br/>
      	[absenceCourante.titreJourRestant;strconv=no;protect=no] 			
             <table class="border" id="compteur-user"  width="100%">
-				<tr>
-					<td>[translate.HolidaysPaid;strconv=no;protect=no]</td>
-					<td id="reste">[congesPrec.reste;strconv=no;protect=no]</td>
-				</tr>	
+                <tr>
+                    <td>[translate.HolidaysPaid;strconv=no;protect=no] N-1</td>
+                    <td id="reste"></td>
+                </tr>   
+                <tr>
+                    <td>[translate.HolidaysPaid;strconv=no;protect=no] N</td>
+                    <td id="resteN"></td>
+                </tr>   
 				<tr>
 					<td>[translate.CumulatedDayOff]</td>
-					<td id="cumule">[rttCourant.cumuleReste;strconv=no;protect=no]</td>
+					<td id="cumule"></td>
 				</tr>
 				<tr>
 					<td>[translate.NonCumulatedDayOff]</td>
-					<td id="noncumule">[rttCourant.nonCumuleReste;strconv=no;protect=no]</td>
+					<td id="noncumule"></td>
 				</tr>
 				<tr>
 					<td>[translate.acquisRecuperation;strconv=no;protect=no]</td>
-					<td id="recup">[congesCourant.recup;strconv=no;protect=no]</td>
+					<td id="recup"></td>
 				</tr>
 				
 			</table>
@@ -242,7 +246,7 @@
 			function loadRecapCompteur() {
 					if($('#fk_user').length>0) fk_user = $('#fk_user').val();
 					else  fk_user = $('#userRecapCompteur').val() ; 
-					
+					console.log("loadRecapCompteur "+fk_user);
 					if(fk_user<=0) return false;
 				
 					$('#reste,#cumule,#noncumule,#recup').html('...');
@@ -253,6 +257,8 @@
 					}).done(function(liste) {
 						
 						$('#reste').html(liste.reste);
+                        $('#resteN').html(liste.resteN);
+                        
 						if(liste.reste<0)$('#reste').css({'color':'red', 'font-weight':'bold'});
 						else $('#reste').css({'color':'black', 'font-weight':'normal'});
 						

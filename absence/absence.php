@@ -524,6 +524,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 		$congeCourant['annee']=$PDOdb->Get_field('anneeN');
 		$congeCourant['fk_user']=$PDOdb->Get_field('fk_user');
 		$congeCourant['recup']=$PDOdb->Get_field('acquisRecuperation');
+        $congeCourant['congesPris']=$PDOdb->Get_field('congesPris');
 		
 		
 		$rttCourant['id']=$PDOdb->Get_field('rowid');
@@ -541,9 +542,12 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 
 	}
 	
-	$congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+$congePrec['acquisHorsPer']+$congePrec['reportConges'];
-	$congePrecReste=$congePrecTotal-$congePrec['congesPris'];
-	
+    $congePrecTotal=$congePrec['acquisEx']+$congePrec['acquisAnc']+$congePrec['acquisHorsPer']+$congePrec['reportConges'];
+    $congePrecReste=$congePrecTotal-$congePrec['congesPris'];
+    
+    $congeCourantTotal=$congeCourant['acquisEx']+$congeCourant['acquisAnc']+$congeCourant['acquisHorsPer']+$congeCourant['reportConges'];
+    $congeCourantReste=$congePrecTotal-$congeCourant['congesPris'];
+    
 
 	
 	
@@ -734,6 +738,8 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 				,'anneeCourante'=>$form->texte('','anneeN',$anneeCourante,10,50)
 				,'recup'=>$congeCourant['recup']
 				,'idUser'=>$_REQUEST['id']
+				
+                
 			)
 			,'rttCourant'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='',$class="text", $default='')
