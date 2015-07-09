@@ -30,9 +30,11 @@
 				
 				$compteur->load($PDOdb, $_REQUEST['id']);
 				$compteur->reportRtt=0; // on remet à 0 la checkbox avant de setter la nouvelle valeur
+				//var_dump($_REQUEST);
 				$compteur->set_values($_REQUEST);
 				$compteur->save($PDOdb);
 				$compteur->load($PDOdb, $_REQUEST['id']);
+              //  var_dump($compteur);
 				$mesg = '<div class="ok">' . $langs->trans('ChangesMade') . '</div>';
 				_fiche($PDOdb, $compteur,'view');
 			
@@ -292,7 +294,7 @@ function _fiche(&$PDOdb, &$compteur, $mode) {
 		,array(
 			'congesPrec'=>array(
 				//texte($pLib,$pName,$pVal,$pTaille,$pTailleMax=0,$plus='')
-				'acquisEx'=>$form->texte('','acquisExerciceNM1',round2Virgule($compteur->acquisExerciceN),10,50,'')
+				'acquisEx'=>$form->texte('','acquisExerciceNM1',round2Virgule($compteur->acquisExerciceNM1),10,50,'')
 				,'acquisAnc'=>$form->texte('','acquisAncienneteNM1',round2Virgule($compteur->acquisAncienneteNM1),10,50,'')
 				,'acquisHorsPer'=>$form->texte('','acquisHorsPeriodeNM1',round2Virgule($compteur->acquisHorsPeriodeNM1),10,50,'')
 				,'reportConges'=>$form->texte('','reportCongesNM1',round2Virgule($compteur->reportCongesNM1),10,50,'')
