@@ -270,7 +270,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 	$TBS=new TTemplateTBS();
 	print $TBS->render($template
 		,array(
-			'ligne'=>$TLignesSansLignesAZero
+			'ligne'=>(empty( $TLignesSansLignesAZero ) ? $TLignes : $TLignesSansLignesAZero )
 		)
 		,array(
 			'exports'=>array(
@@ -333,7 +333,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		
 		?>
 		<form name="downExcel" style="text-align:center; display:inline;" action="<?php echo dol_buildpath('/report/report.php',2); ?>" method="POST">
-			<input type="hidden" name="serialData" value="<?=base64_encode(serialize($TLignesSansLignesAZero)) ?>" />
+			<input type="hidden" name="serialData" value="<?=base64_encode(serialize( !empty( $TLignesSansLignesAZero ) ?  $TLignesSansLignesAZero :  $TLignes )) ?>" />
 			<input type="hidden" name="format" value="ExcelTBS" />
 			<input type="hidden" name="rapport" value="ExportRessource" />
 			
