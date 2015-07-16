@@ -307,7 +307,12 @@ class modRessource extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'ressource';
 		$this->rights[$r][5] = 'accessSpecialNumbers';
-		
+		$r++;
+		$this->rights[$r][0] = 7024;
+		$this->rights[$r][1] = 'Accéder au menu ressources';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'ressource';
+		$this->rights[$r][5] = 'accessMenu';
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
@@ -326,7 +331,7 @@ class modRessource extends DolibarrModules
 						'langs'=>'ressource@ressource',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						'position'=>100,
 						'enabled'=>'1',							// Define condition to show or hide menu entry. Use '$conf->financement->enabled' if entry must be visible if module is enabled.
-						'perms'=>'',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
+						'perms'=>'$user->rights->ressource->ressource->accessMenu',			                // Use 'perms'=>'$user->rights->financement->level1->level2' if you want your menu with a permission rules
 						'target'=>'',
 						'user'=>0								// 0=Menu for internal users, 1=external users, 2=both
 		);
