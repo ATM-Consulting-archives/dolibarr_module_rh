@@ -1,8 +1,10 @@
 <?php
 
 require('../config.php');
-include_once("../class/absence.class.php");
-include_once("../../rhlibrary/wdCalendar/php/functions.php");
+dol_include_once("/absence/class/absence.class.php");
+dol_include_once("/valideur/class/valideur.class.php");
+dol_include_once("/rhlibrary/wdCalendar/php/functions.php");
+
 $ATMdb=new TPDOdb;
 
 $method = $_GET["method"];
@@ -154,9 +156,11 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 	      
 	}
   	
-  	$ATMdb->Execute($sql1);
+  	$TRow = $ATMdb->ExecuteAsArray($sql1);
     
-    while ($row = $ATMdb->Get_line()) {
+	
+
+    foreach($TRow as $row) {
     				
 		$idAbs[]=$row->rowid;
     
@@ -181,9 +185,18 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 				$timeFin = strtotime(date('Y-m-d',$t_current).' '.substr($row->date_hourEnd,11) ) ; 
 				
 				$url = "presence.php?id=".$row->rowid."&action=view";//$row->location,
-		        $attends = 'presence';//$attends
+		        	$attends = 'presence';//$attends
+
+				if($user->id!=$row->fk_user && !TRH_valideur_groupe::isValideur($ATMdb, $user->id)) {
+					$label = utf8_encode($row->lastname.' '.$row->firstname);
+                                }
+                                else {
+
+					$label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
 	
-				$label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
+                                }
+	
+
 				if($moreOneDay) {
 					$label.=' du '._justDate($timeDebut,'d/m').' au '._justDate($timeFin,'d/m/Y');
 				}
@@ -228,13 +241,23 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 			
 			if($row->ddMoment=='apresmidi')$timeDebut += (3600 * 12) ; //+12h
 			if($row->dfMoment=='matin')$timeFin -= (3600 * 12) ; //-12h
-						
+	
+
+					
 			$allDayEvent=(int)($row->ddMoment=='matin' && $row->dfMoment=='apresmidi' || $row->date_debut<$row->date_fin);		
 			$moreOneDay=(int)($row->date_debut<$row->date_fin);
 			$url = "absence.php?id=".$row->rowid."&action=view";//$row->location,
-	        $attends = 'absence';//$attends
-	        
-	        $label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
+		        $attends = 'absence';//$attends
+				
+			if($user->id!=$row->fk_user && !TRH_valideur_groupe::isValideur($ATMdb, $user->id)) {
+                                 $label = utf8_encode($row->lastname.' '.$row->firstname);
+                        }
+                        else {
+                                 $label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
+
+                        }
+//	var_dump($label, $user->id,$row->fk_user,TRH_valideur_groupe::isValideur($ATMdb, $row->fk_user), '<br>');        
+	//	        $label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
 			if($moreOneDay) {
 				$label.=' du '._justDate($timeDebut,'d/m').' au '._justDate($timeFin,'d/m/Y');
 			}
