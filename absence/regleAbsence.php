@@ -131,8 +131,8 @@ function _liste(&$ATMdb, $regle) {
 			,'nbJourCumulable'=> $langs->trans('NbPossibleContiguousDays')
 		)
 		,'eval'=>array(
-			'Utilisateur'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
-			,'Groupe'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
+			'Utilisateur'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "UTF-8")))'
+			,'Groupe'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "UTF-8")))'
 			,'nbJourCumulable'=>'_periode("@val@", "@periode@")'
 		)
 		,'orderBy'=>$TOrder

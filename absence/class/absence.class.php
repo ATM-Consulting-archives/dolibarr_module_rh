@@ -363,7 +363,7 @@ class TRH_Absence extends TObjetStd {
 		$PDOdb->Execute($sqlReqUser);
 
 		while($PDOdb->Get_line()) {
-			$TUser[$PDOdb->Get_field('rowid')]=htmlentities($PDOdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($PDOdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$TUser[$PDOdb->Get_field('rowid')]=htmlentities($PDOdb->Get_field('lastname'), ENT_COMPAT , 'UTF-8')." ".htmlentities($PDOdb->Get_field('firstname'), ENT_COMPAT , 'UTF-8');
 		}
 		return $TUser;
 	}
@@ -2807,7 +2807,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup";
 		$PDOdb->Execute($sqlReq);
 		while($PDOdb->Get_line()) {
-			$this->TGroup[$PDOdb->Get_field('rowid')] = htmlentities($PDOdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+			$this->TGroup[$PDOdb->Get_field('rowid')] = htmlentities($PDOdb->Get_field('nom'), ENT_COMPAT , 'UTF-8');
 		}
 		
 		//LISTE DE USERS
@@ -2815,7 +2815,7 @@ class TRH_RegleAbsence extends TObjetStd {
 		$sqlReq="SELECT rowid, firstname, lastname FROM ".MAIN_DB_PREFIX."user";
 		$PDOdb->Execute($sqlReq);
 		while($PDOdb->Get_line()) {
-			$this->TUser[$PDOdb->Get_field('rowid')] = htmlentities($PDOdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1').' '.htmlentities($PDOdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1');
+			$this->TUser[$PDOdb->Get_field('rowid')] = htmlentities($PDOdb->Get_field('firstname'), ENT_COMPAT , 'UTF-8').' '.htmlentities($PDOdb->Get_field('lastname'), ENT_COMPAT , 'UTF-8');
 		}
 	}
 }

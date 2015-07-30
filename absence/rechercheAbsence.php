@@ -60,7 +60,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
-		$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+		$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'UTF-8');
 	}
 	
 	//tableau pour la combobox des utilisateurs
@@ -70,7 +70,7 @@ function _fiche(&$ATMdb, $absence,  $mode) {
 
 	$ATMdb->Execute($sqlReqUser);
 	while($ATMdb->Get_line()) {
-		$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1');
+		$TUser[$ATMdb->Get_field('rowid')]=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'UTF-8')." ".htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1');
 	}
 	
 	//on récupère tous les types d'absences existants
@@ -168,7 +168,7 @@ function _listeResult(&$ATMdb, &$absence) {
 		WHERE rowid =".$idUserRecherche;
 		$ATMdb->Execute($sql);
 		while($ATMdb->Get_line()) {
-			$nomUserRecherche=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1');
+			$nomUserRecherche=htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'UTF-8')." ".htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'UTF-8');
 		}
 	}else{
 		$nomUserRecherche='Tous';
@@ -291,8 +291,8 @@ function _listeResult(&$ATMdb, &$absence) {
 			,'firstname'=>true
 		)
 		,'eval'=>array(
-				'lastname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
-				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+				'lastname'=>'htmlentities("@val@", ENT_COMPAT , "UTF-8")'
+				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "UTF-8")'
 		)
 		,'orderBy'=>$TOrder
 		

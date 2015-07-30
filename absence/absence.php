@@ -369,8 +369,8 @@ function _listeAdmin(&$PDOdb, &$absence) {
 			,'etat'=>$absence->TEtat
 		)
 		,'eval'=>array(
-			'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
-			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "UTF-8")))'
+			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "UTF-8")'
 			,'etat'=>'_setColorEtat("@val@")'
 		)
 		,'orderBy'=>$TOrder
@@ -421,7 +421,7 @@ function _listeValidation(&$PDOdb, &$absence) {
 		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;	
 		$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');	
 		echo $form->hidden('action', 'listeValidation');
-			
+		
 		//print $page;
 		$r->liste($PDOdb, $sql, array(
 			'limit'=>array(
@@ -467,8 +467,8 @@ function _listeValidation(&$PDOdb, &$absence) {
 				,"name"=>true
 			)
 			,'eval'=>array(
-				'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
-				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+				'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "UTF-8")))'
+				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "UTF-8")'
 			)
 			
 			,'orderBy'=>$TOrder

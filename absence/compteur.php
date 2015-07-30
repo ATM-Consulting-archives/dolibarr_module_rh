@@ -176,8 +176,8 @@ function _liste(&$PDOdb, &$compteur) {
 		)
 		,'orderBy'=>$TOrder
 		,'eval'=>array(
-			'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
-			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "UTF-8")))'
+			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "UTF-8")'
 		)
 		
 	));
@@ -249,8 +249,8 @@ function _listeAdmin(&$PDOdb, &$compteur) {
 			,'login'=>true
 		)
 		,'eval'=>array(
-			'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "ISO8859-1")))'
-			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+			'lastname'=>'ucwords(strtolower(htmlentities("@val@", ENT_COMPAT , "UTF-8")))'
+			,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "UTF-8")'
 		)
 		,'orderBy'=>$TOrder
 
