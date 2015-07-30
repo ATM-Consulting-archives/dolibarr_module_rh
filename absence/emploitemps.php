@@ -200,7 +200,7 @@ function _liste(&$PDOdb, &$emploiTemps) {
 		)
 		,'eval'=>array(
 				'lastname'=>'_getNomUrl(@fk_user@, "@val@")'
-				,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
+				//,'firstname'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")' // [PH] Je sais j'ai encore mis quelque chose en commentaire MAIS c'est pcq'on a plus besoin de convertir en ISO depuis la maj d'abricot pour l'encodage en utf-8
 		)
 		
 	));
