@@ -128,7 +128,7 @@ class modCompetence extends DolibarrModules
 		// 'contact'          to add a tab in contact view
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
         $this->tabs = array(
-        	'user:+competence:Formations et expériences:competence@competence:/competence/experience.php?fk_user=__ID__'  // To add a new tab identified by code tabname1
+        	'user:+competence:Formations et expériences:competence@competence:$user->rights->curriculumvitae->myactions->skill:/competence/experience.php?fk_user=__ID__'  // To add a new tab identified by code tabname1
             ,'user:+remuneration:Rémunérations:competence@competence:$user->rights->curriculumvitae->myactions->voirRemuneration:/competence/remuneration.php?fk_user=__ID__'
             ,'user:+productivite:Productivité:competence@competence:$user->rights->curriculumvitae->productivite->read:/competence/productivite_user.php?fk_user=__ID__&action=view'
        	);
@@ -255,6 +255,13 @@ class modCompetence extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'remuneration';
         $this->rights[$r][5] = 'importer';
+		$r++;
+		
+		$this->rights[$r][0] = 7964;
+		$this->rights[$r][1] = 'Ajouter/Supprimer une compétence/formation';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'skill';
 		$r++;
 		
 	

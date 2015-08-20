@@ -9,6 +9,8 @@
 	$langs->load('competence@competence');
 	$langs->load("users");
 	
+	if (!$user->rights->curriculumvitae->myactions->skill) accessforbidden();
+	
 	$ATMdb=new TPDOdb;
 	$lignecv=new TRH_ligne_cv;
 	$formation=new TRH_formation_cv;
