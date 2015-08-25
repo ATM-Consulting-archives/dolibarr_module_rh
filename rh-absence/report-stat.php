@@ -122,6 +122,8 @@ function _fiche(&$ATMdb) {
 		)
 	);
 	
+	print $form->btsubmit('Télécharger','export');
+	
 	echo $form->end_form();
 	
 	global $mesg, $error;
