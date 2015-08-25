@@ -12,34 +12,6 @@
 	$mesg = '';
 	$error=false;
 	
-	if(!empty($_REQUEST['export'])){
-		//On récupère  les données sous forme d'un tableau bien comme il faut
-		$TRecap = _get_stat_recap($ATMdb, $_REQUEST['TType'], $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['fk_usergroup'], $_REQUEST['fk_user'],true);
-		
-		$filename="Export_stats_absence_".date('d-m-Y').".csv";
-		
-		header("Content-disposition: attachment; filename=$filename");
-		header("Content-Type: application/force-download");
-		header("Content-Transfer-Encoding: application/octet-stream");
-		header("Pragma: no-cache");
-		header("Cache-Control: must-revalidate, post-check=0, pre-check=0, public");
-		header("Expires: 0");
-		
-		$arraysize=count($TRecap);
-		
-		for($k=0;$k<$arraysize;$k++){
-			
-			print $TRecap[$k]['trigramme'].";";
-			print $TRecap[$k]['nom'].";";
-			print $TRecap[$k]['type_absence'].";";
-			print $TRecap[$k]['libelle_absence'].";";
-			print $TRecap[$k]['dureeJour'].";";
-			print $TRecap[$k]['dureeHeure'].";";
-			print $TRecap[$k]['date_debut'].";";
-			print $TRecap[$k]['date_fin'].";";
-		}
-	}
-	
 	_fiche($ATMdb);
 	
 	$ATMdb->close();
@@ -122,9 +94,18 @@ function _fiche(&$ATMdb) {
 		)
 	);
 	
-	print $form->btsubmit('Télécharger','export');
-	
 	echo $form->end_form();
+	
+	?>
+	
+	<form style="text-align:center;" action="./downloadFile.php" method="POST">
+		<input type="hidden" name="url" value='<?php echo json_encode($TExport); ?>' />
+		<input type="hidden" name="filename" value="Export_absences_<?php echo $date_debut."_".$date_fin; ?>.txt" />
+		<input type="hidden" name="typeFile" value="absence" />
+		<input type="submit" class="button" name="export_csv" value="Télécharger CSV" />
+	</form>
+	
+	<?php
 	
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
