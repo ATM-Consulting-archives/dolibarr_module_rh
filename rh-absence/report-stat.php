@@ -12,6 +12,33 @@
 	$mesg = '';
 	$error=false;
 	
+	if(!empty($_REQUEST['export'])){
+		//On récupère  les données sous forme d'un tableau bien comme il faut
+		$TRecap = _get_stat_recap($ATMdb, $_REQUEST['TType'], $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['fk_usergroup'], $_REQUEST['fk_user'],true);
+		
+		$filename="Export_stats_absence_".date('d-m-Y').".csv";
+		
+		header("Content-disposition: attachment; filename=$filename");
+		header("Content-Type: application/force-download");
+		header("Content-Transfer-Encoding: application/octet-stream");
+		header("Pragma: no-cache");
+		header("Cache-Control: must-revalidate, post-check=0, pre-check=0, public");
+		header("Expires: 0");
+		
+		$arraysize=count($TRecap);
+		
+		for($k=0;$k<$arraysize;$k++){
+			
+			print $TRecap[$k]['trigramme'].";";
+			print $TRecap[$k]['nom'].";";
+			print $TRecap[$k]['type_absence'].";";
+			print $TRecap[$k]['libelle_absence'].";";
+			print $TRecap[$k]['dureeJour'].";";
+			print $TRecap[$k]['dureeHeure'].";";
+			print $TRecap[$k]['date_debut'].";";
+			print $TRecap[$k]['date_fin'].";";
+		}
+	}
 	
 	_fiche($ATMdb);
 	
@@ -278,18 +305,37 @@ function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup,
 			$dureeJourPlage = $absence->calculDureeAbsenceParAddition($ATMdb);
 			$dureeHeurePlage = $absence->dureeHeure;
 
-			$Tab[]=array(
-				'event'=>$absence->type
-				,'fk_user'=>$absence->fk_user			
-				,'date_debut'=>$date_debut
-				,'date_fin'=>$date_fin
-				,'date_debutPlage'=>$date_debutPlage
-				,'date_finPlage'=>$date_finPlage
-				,'dureeJour'=>$dureeJour
-				,'dureeHeure'=>$dureeHeure
-				,'dureeJourPlage'=>$dureeJourPlage
-				,'dureeHeurePlage'=>$dureeHeurePlage
-			);
+			if(!$export){
+				$Tab[]=array(
+					'event'=>$absence->type
+					,'fk_user'=>$absence->fk_user			
+					,'date_debut'=>$date_debut
+					,'date_fin'=>$date_fin
+					,'date_debutPlage'=>$date_debutPlage
+					,'date_finPlage'=>$date_finPlage
+					,'dureeJour'=>$dureeJour
+					,'dureeHeure'=>$dureeHeure
+					,'dureeJourPlage'=>$dureeJourPlage
+					,'dureeHeurePlage'=>$dureeHeurePlage
+				);
+			}
+			else{
+				
+				$userAbsence = new User($db);
+				$userAbsence->fetch($absence->fk_user);
+				
+				$Tab[]=array(
+					'type_absence'=>$absence->type
+					,'libelle_absence'=>$absence->libelle
+					,'fk_user'=>$absence->fk_user
+					,'trigramme'=>$userAbsence->login
+					,'nom'=>$userAbsence->nom." ".$userAbsence->prenom
+					,'date_debut'=>$date_debut
+					,'date_fin'=>$date_fin
+					,'dureeJour'=>$dureeJour
+					,'dureeHeure'=>$dureeHeure
+				);
+			}
 
 			
 
