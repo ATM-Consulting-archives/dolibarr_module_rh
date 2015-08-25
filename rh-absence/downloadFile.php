@@ -27,6 +27,6 @@ if(!empty($_REQUEST['export_csv'])){
 		print $TRecap[$k]['dureeJour'].";";
 		print $TRecap[$k]['dureeHeure'].";";
 		print $TRecap[$k]['date_debut'].";";
-		print $TRecap[$k]['date_fin'].";";
+		print $TRecap[$k]['date_fin'].";\n\r";
 	}
 }
