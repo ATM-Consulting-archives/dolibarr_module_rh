@@ -18,7 +18,7 @@ if(!empty($_REQUEST['export_csv'])){
 	
 	$arraysize=count($TRecap);
 	
-	print utf8_decode("Trigramme;Nom Prénom;Type absence;Libellé type absence;Durée en jours;Durée en heures;Date de début;Date de fin;\n\r");
+	print utf8_decode("Trigramme;Nom Prénom;Type absence;Libellé type absence;Durée en jours;Durée en heures;Date de début;Date de fin;\r\n");
 	
 	for($k=0;$k<$arraysize;$k++){
 		
@@ -29,6 +29,6 @@ if(!empty($_REQUEST['export_csv'])){
 		print $TRecap[$k]['dureeJour'].";";
 		print $TRecap[$k]['dureeHeure'].";";
 		print $TRecap[$k]['date_debut'].";";
-		print $TRecap[$k]['date_fin'].";\n\r";
+		print $TRecap[$k]['date_fin'].";\r\n";
 	}
 }
