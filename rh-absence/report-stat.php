@@ -96,7 +96,7 @@ function _fiche(&$ATMdb) {
 	
 	echo $form->end_form();
 	
-	$TExport = _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup, $fk_user,true);
+	$TExport = _get_stat_recap($ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup, $fk_user,true);
 	?>
 	
 	<form style="text-align:center;" action="./downloadFile.php" method="POST">
