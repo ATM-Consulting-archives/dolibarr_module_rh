@@ -96,7 +96,7 @@ function _fiche(&$ATMdb) {
 	
 	echo $form->end_form();
 	
-	$TExport = _get_stat_recap($ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup, $fk_user,true);
+	$TExport = _get_stat_recap($ATMdb, $_REQUEST['TType'], $_REQUEST['date_debut'], $_REQUEST['date_fin'], $_REQUEST['fk_usergroup'], $_REQUEST['fk_user'],true);
 	?>
 	
 	<form style="text-align:center;" action="./downloadFile.php" method="POST">
@@ -227,6 +227,8 @@ global $db;
 
 function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup, $fk_user,$export=false){
 	global $conf, $db;
+	
+	dol_include_once('/user/class/user.class.php');
 	
 	$o=new TObjetStd;
 	$t_debut_export = $o->set_date('date_debut',$date_debut );
