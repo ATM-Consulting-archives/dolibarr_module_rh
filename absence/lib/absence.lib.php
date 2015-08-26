@@ -400,6 +400,8 @@ function mailConges(&$absence,$presence=false){
 			$tpl = dol_buildpath('/absence/tpl/mail.presence.refus.tpl.php');
 		}
 		
+		$absence->libelleEtat=saveLibelleEtat($absence->etat);
+		
 		$message = $TBS->render($tpl
 			,array()
 			,array(
