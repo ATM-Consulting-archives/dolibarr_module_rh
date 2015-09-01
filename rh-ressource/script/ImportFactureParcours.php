@@ -124,7 +124,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				null;
 			}
 			
-			if (!empty($TRessource[$plaque])){
+			if (!empty($TRessource[strtoupper($plaque)])){
 				$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], $date);
 				if ($idUser==0){ //si il trouve, on l'affecte à l'utilisateur 
 					$idUser = $idSuperAdmin;
