@@ -877,6 +877,9 @@ function _getSQLListValidation($userid) {
 function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin, &$TStatPlanning) {
 	global $langs,$user;
 //on va obtenir la requête correspondant à la recherche désirée
+	
+	if(array_sum($idGroupeRecherche)>0) $idUserRecherche = 0; // si un groupe est sélectionner on ne prend pas en compte l'utilisateur
+
 
 	$TPlanningUser=$absence->requetePlanningAbsence($ATMdb, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin);
 
