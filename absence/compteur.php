@@ -195,14 +195,21 @@ function _listeAdmin(&$PDOdb, &$compteur) {
 	getStandartJS();
 	print dol_get_fiche_head(adminCompteurPrepareHead($compteur, 'compteur')  , 'compteur', $langs->trans('HolidaysAdministration'));
 	$r = new TSSRenderControler($compteur);
-	$sql="SELECT  r.rowid as 'ID', login, firstname, lastname, '' as 'Compteur',
+	
+	
+	$fk_group = GETPOST('fk_group');
+	
+	$sql="SELECT  DISTINCT r.rowid as 'ID', login, firstname, lastname, '' as 'Compteur',
 		r.date_cre as 'DateCre', CAST(r.acquisExerciceN as DECIMAL(16,1)) as 'Congés acquis N', 
 		CAST(r.acquisAncienneteN as DECIMAL(16,1)) as 'Congés Ancienneté', 
 		CAST(r.acquisExerciceNM1 as DECIMAL(16,1)) as 'Conges Acquis N-1', 
 		CAST(r.congesPrisNM1 as DECIMAL(16,1)) as 'Conges Pris N-1'
-		FROM ".MAIN_DB_PREFIX."rh_compteur as r INNER JOIN ".MAIN_DB_PREFIX."user as c ON (r.fk_user=c.rowid) 
+		FROM ".MAIN_DB_PREFIX."rh_compteur as r 
+				INNER JOIN ".MAIN_DB_PREFIX."user as c ON (r.fk_user=c.rowid)
+				LEFT JOIN  ".MAIN_DB_PREFIX."usergroup_user as gu ON (r.fk_user=gu.fk_user)
 		WHERE 1 ";
 	
+	if($fk_group>0) $sql.=" AND gu.fk_usergroup=".$fk_group;
 	
 	$TOrder = array('lastname'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -213,10 +220,13 @@ function _listeAdmin(&$PDOdb, &$compteur) {
 	//print $page;
 	$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
 	echo $form->hidden('action', 'compteurAdmin');		
+	
+	$formDoli = new Form($db);
+	
 	$r->liste($PDOdb, $sql, array(
 		'limit'=>array(
 			'page'=>$page
-			,'nbLine'=>'30'
+			,'nbLine'=>$conf->liste_limit
 		)
 		,'link'=>array(
 			'Compteur'=>'<a href="?id=@ID@&action=view">'. $langs->trans('Counter') . '</a>'
@@ -235,7 +245,8 @@ function _listeAdmin(&$PDOdb, &$compteur) {
 			,'messageNothing'=> $langs->trans('NoAcquiredDaysToShow')
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
-			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			,'picto_search'=>img_picto('','search.png', '', 0)
+			,'head_search'=>$formDoli->select_dolgroups($fk_group, 'fk_group',1)
 			
 		)
 		,'title'=>array(
