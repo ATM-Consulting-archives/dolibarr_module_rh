@@ -647,7 +647,7 @@ class modAbsence extends DolibarrModules
 					'user'=> 2
         );
 		$r++;
-		$this->menu[$r]=array(
+		/*$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence,fk_leftmenu=admin',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
 		        	'titre'=> $langs->trans('SeekAbsences'),
@@ -663,7 +663,7 @@ class modAbsence extends DolibarrModules
         );
 		
 		
-		$r++;
+		$r++;*/
 		$this->menu[$r]=array(
 		            'fk_menu'=>'fk_mainmenu=absence',			// Put 0 if this is a top menu
 		        	'type'=> 'left',			// This is a Top menu entry
