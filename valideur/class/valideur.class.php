@@ -103,6 +103,12 @@ class TRH_valideur_groupe extends TObjetStd {
 			$TGValideur[]=$PDOdb->Get_field('fk_usergroup');
 		}
 		
+		if (empty($TGValideur)) 
+		{
+			setEventMessage('Attention aucun groupe associé à votre compte utilisateur', 'warnings');
+			return array();
+		}
+		
 		$sql="SELECT fk_user,is_weak
 		FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
 		WHERE type = '".$type."' AND fk_usergroup IN (".implode(',', $TGValideur).") 
