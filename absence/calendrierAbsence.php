@@ -58,7 +58,7 @@
 	$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup ORDER BY nom";
 	$ATMdb->Execute($sqlReq);
 	while($ATMdb->Get_line()) {
-		$TabGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+		$TabGroupe[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
 	}
 		
 	//on récupère tous les types d'absences existants
@@ -77,7 +77,7 @@
 		$sql="SELECT rowid,lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$user->id;
 		$ATMdb->Execute($sql);
 		if($ATMdb->Get_line()) {
-			$TabUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(html_entity_decode(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
+			$TabUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower($ATMdb->Get_field('lastname'))).' '.$ATMdb->Get_field('firstname');
 		}
 		$sql="SELECT u.rowid,u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u";
 	}else{
@@ -91,7 +91,7 @@
 	
 	
 	while($ATMdb->Get_line()) {
-		$TabUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(html_entity_decode(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))).' '.html_entity_decode(htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1'));
+		$TabUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower($ATMdb->Get_field('lastname'))).' '.$ATMdb->Get_field('firstname');
 	}
 
 
