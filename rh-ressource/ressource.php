@@ -468,7 +468,8 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 				
 				,'typehidden'=>$form->hidden('fk_rh_ressource_type', $ressource->fk_rh_ressource_type) 
 				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
-				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
+				,'bailvoit_value'=>$ressource->bailvoit
+				,'bailvoit'=>$form->combo('','bailvoit',$ressource->TBail,$ressource->bailvoit)
 				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->date_achat,12, 12)
 				,'date_vente'=>(empty($ressource->date_vente) || ($ressource->date_vente<=0) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' ,12, 12) : $form->calendrier('', 'date_vente', $ressource->date_vente,12 , 12)
 				//,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->date_garantie, 12)
