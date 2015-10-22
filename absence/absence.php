@@ -843,6 +843,11 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 				'Delete' => $langs->trans('Delete')
 				,'AbsenceBy' => $langs->trans('AbsenceBy')
 				,'acquisRecuperation'=>$langs->trans('acquisRecuperation')
+				,'dontSendMail'=>$langs->trans('dontSendMail')
+			)
+			,'other' => array(
+				'dontSendMail' => $user->rights->absence->myactions->CanAvoidSendMail
+				,'dontSendMail_CB' => $form->checkbox1('','dontSendMail', 1)
 			)
 			
 		)

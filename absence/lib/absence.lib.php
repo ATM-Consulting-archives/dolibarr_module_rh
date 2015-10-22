@@ -432,7 +432,9 @@ function mailConges(&$absence,$presence=false){
 		);
 	}
 	
-	if(!empty($sendto)) {
+	$dont_send_mail = GETPOST('dontSendMail');
+	
+	if(!empty($sendto) && !$dont_send_mail) {
 		$mail = new TReponseMail($from,$sendto,$subject,$message);
 		$result = $mail->send(true, 'utf-8');
 	}
@@ -485,15 +487,15 @@ function mailCongesValideur(&$ATMdb, &$absence,$presence=false){
 
 //fonction permettant l'envoi de mail aux valideurs de la demande d'absence
 function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
-	global $db, $langs;
+	global $db, $langs, $user;
 		
-	$from = USER_MAIL_SENDER;global $langs,$user;
+	$from = USER_MAIL_SENDER;
 
-	$user = new User($db);  
-	$user->fetch($absence->fk_user);
+	$userr = new User($db);  
+	$userr->fetch($absence->fk_user);
 
-    	$name=$user->lastname;
-    	$firstname=$user->firstname;
+    	$name=$userr->lastname;
+    	$firstname=$userr->firstname;
 
 	/*
 	 * Mail destinataire
@@ -541,10 +543,13 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
 		)
 	);
 	
-	$mail = new TReponseMail($from,$sendto,$subject,$message);
-    	
-	$result = $mail->send(true, 'utf-8');
+	$dont_send_mail = GETPOST('dontSendMail');
 	
+	if(!$dont_send_mail){
+		$mail = new TReponseMail($from,$sendto,$subject,$message);
+	    $result = $mail->send(true, 'utf-8');
+	}
+
 	return 1;
 }
 
