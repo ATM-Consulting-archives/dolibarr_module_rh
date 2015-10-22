@@ -61,6 +61,7 @@
 				<th>Type de pièce</th>
 				<th>Compte général</th>
 				<th>Type de compte</th>
+				<th>Immatriculation</th>
 				<th>Code analytique</th>
 				<th>Nom</th>
 				<th>Prénom</th>
@@ -102,6 +103,7 @@
 				<td> [ligne.typePiece;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.compteGeneral;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.typeCompte;strconv=no;protect=no;noerr] </td>
+				<td> [ligne.immatriculation;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.codeAnalytique;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.nom;strconv=no;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.prenom;strconv=no;protect=no;noerr] </td>
