@@ -478,6 +478,8 @@ class TRH_Absence extends TObjetStd {
 		
 		$dureeAbsenceCourante = $this->calculDureeAbsenceParAddition($PDOdb, $compteur->date_congesCloture);
 		
+		$conges_nm1_restants = $compteur->acquisExerciceNM1+$compteur->acquisAncienneteNM1+$compteur->acquisHorsPeriodeNM1+$compteur->reportCongesNM1-$compteur->congesPrisNM1;
+		
 		//autres paramètes à sauvegarder
 		$this->duree=$dureeAbsenceCourante;
 		$this->etat="Avalider";
@@ -488,7 +490,7 @@ class TRH_Absence extends TObjetStd {
 		$dureeAbsenceRecevable=$this->dureeAbsenceRecevable($PDOdb);
 		
 	
-		if($dureeAbsenceRecevable==0){
+		if($dureeAbsenceRecevable==0 || ($conf->global->ABSENCE_GREATER_THAN_CONGES_RESTANTS_FORBIDDEN && $dureeAbsenceCourante > $conges_nm1_restants)){
 			return 0;
 		}
 		

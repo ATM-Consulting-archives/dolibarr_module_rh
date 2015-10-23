@@ -476,3 +476,4 @@ GroupAbsCreated=Absences créés pour le groupe
 AbsenceRequestForGroup=Absences pour un groupe 
 CanAvoidSendMail=Pouvoir annuler l'envoi de mail lors d'une action sur une absence/présence
 dontSendMail=Ne pas envoyer de mail
+absenceGreaterThanCongesRestantsForbidden=Interdire la création d'absences si durée supérieure aux Congés payés N-1 restants
