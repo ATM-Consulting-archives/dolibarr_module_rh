@@ -715,7 +715,11 @@ class TRH_Absence extends TObjetStd {
 								
 				$dureeJour=0;
 
-				if($emploiTemps->estJourTempsPartiel($current_day) && !empty($TJourFerie[date('Y-m-d', $t_current)])) $dureeJour = 1;
+				if($emploiTemps->estJourTempsPartiel($current_day) && empty($TJourFerie[date('Y-m-d', $t_current)])) {
+					$dureeJour += 1;
+					$this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"am");
+	                $this->dureeHeure += $emploiTemps->getHeurePeriode($current_day,"pm");
+				}
 				else {
 					
 	                if($typeAbs->insecable == 1) {
