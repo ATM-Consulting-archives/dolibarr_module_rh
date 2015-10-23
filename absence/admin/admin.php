@@ -27,6 +27,7 @@
 // Change this following line to use the correct relative path (../, ../../, etc)
 include '../config.php';
 dol_include_once('/core/lib/admin.lib.php');
+dol_include_once('/core/lib/ajax.lib.php');
 // Change this following line to use the correct relative path from htdocs (do not remove DOL_DOCUMENT_ROOT)
 
 // Protection if external user
@@ -101,8 +102,14 @@ function showParameters(&$form) {
 		
 		}
 		
-				
-		
+		print '<tr>';
+		print '<td>';
+		print $langs->trans('absenceGreaterThanCongesRestantsForbidden');
+		print '</td>';
+		print '<td>';
+		print ajax_constantonoff('ABSENCE_GREATER_THAN_CONGES_RESTANTS_FORBIDDEN');
+		print '</td>';
+		print '</tr>';
 		
 	?>	
 	</table>
