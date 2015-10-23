@@ -847,7 +847,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 			)
 			,'other' => array(
 				'dontSendMail' => $user->rights->absence->myactions->CanAvoidSendMail
-				,'dontSendMail_CB' => $form->checkbox1('','dontSendMail', 1)
+				,'dontSendMail_CB' => '<input type="checkbox" name="dontSendMail" id="dontSendMail" value="1" />' // J'utilise pas $form->checkbox1('','dontSendMail', 1) parce que j'ai besoin que la ce soit toujours cochable meme en mode view pour les valideurs
 			)
 			
 		)

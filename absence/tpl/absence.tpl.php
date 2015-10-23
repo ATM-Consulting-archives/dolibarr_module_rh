@@ -139,9 +139,9 @@
 				[onshow;block=begin;when [view.mode]!='edit']
 					[onshow;block=begin;when [userCourant.valideurConges]=='1']
 					
-						<a class="butAction" id="action-update"  onclick="if (window.confirm('[translate.ConfirmAcceptAbsenceRequest;strconv=no]')){document.location.href='?action=accept&id=[absenceCourante.id]'};">[translate.Accept;strconv=no;protect=no]</a>	
+						<a class="butAction" id="action-update"  onclick="if (window.confirm('[translate.ConfirmAcceptAbsenceRequest;strconv=no]')){actionValidAbsence('accept')};">[translate.Accept;strconv=no;protect=no]</a>	
 						<span class="butActionDelete" id="action-delete"  onclick="refuseAbsence()">[translate.Refuse;strconv=no;protect=no]</span>
-						<a style='width:30%' class="butAction" id="action-update"  onclick="if (window.confirm('[translate.ConfirmSendToSuperiorAbsenceRequest;strconv=no]')){document.location.href='?action=niveausuperieur&id=[absenceCourante.id]&validation=ok'};">[translate.SendToSuperiorValidator;strconv=no;protect=no]</a>	
+						<a style='width:30%' class="butAction" id="action-update"  onclick="if (window.confirm('[translate.ConfirmSendToSuperiorAbsenceRequest;strconv=no]')){actionValidAbsence('sendToSuperior')};">[translate.SendToSuperiorValidator;strconv=no;protect=no]</a>	
 									
 					[onshow;block=end]
 				[onshow;block=end]
@@ -211,9 +211,16 @@
 		<script type="text/javascript">
 			function refuseAbsence() {
 				
+				var caseDontSendMail = $("#dontSendMail");
+
+				if(caseDontSendMail.is(':checked')){
+					var dontSendMail = '&dontSendMail=1'
+				};
+				
 				if (commentaireValideur = window.prompt('[translate.ConfirmRefuseAbsenceRequest;strconv=no]')){
 					
-					document.location.href='?action=refuse&id=[absenceCourante.id]&commentaireValideur='+commentaireValideur
+					var link = '?action=refuse&id=[absenceCourante.id]&commentaireValideur='+commentaireValideur+dontSendMail;
+					document.location.href=link;
 					
 				};
 				
@@ -361,6 +368,25 @@
 		   }
 		    
 		});
+		
+		function actionValidAbsence(type) {
+			
+			var link = '';
+			var caseDontSendMail = $("#dontSendMail");
+			
+			if(type == 'sendToSuperior') {
+				link = '?action=niveausuperieur&id=[absenceCourante.id]&validation=ok';
+			} else {
+				link = '?action=accept&id=[absenceCourante.id]';
+			}
+			
+			if(caseDontSendMail.is(':checked')){
+				link += '&dontSendMail=1'
+			};
+			
+			document.location.href=link;
+			
+		}
 		
 		</script>
 
