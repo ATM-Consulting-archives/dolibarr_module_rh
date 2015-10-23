@@ -718,7 +718,12 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 				'Delete' => $langs->trans('Delete'),
 				'AbsenceType' => $langs->trans('AbsenceType'),
 				'State' => $langs->trans('State'),
-				'Warning' => $langs->trans('Warning')
+				'Warning' => $langs->trans('Warning'),
+				'dontSendMail'=>$langs->trans('dontSendMail')
+			)
+			,'other' => array(
+				'dontSendMail' => $user->rights->absence->myactions->CanAvoidSendMail
+				,'dontSendMail_CB' => '<input type="checkbox" name="dontSendMail" id="dontSendMail" value="1" />' // J'utilise pas $form->checkbox1('','dontSendMail', 1) parce que j'ai besoin que la ce soit toujours cochable meme en mode view pour les valideurs
 			)
 			
 		)	

@@ -61,6 +61,13 @@
 					</tr>
 					[onshow;block=end]
 				
+					[onshow;block=begin;when [other.dontSendMail]==1]
+					<tr>
+						<td>[translate.dontSendMail;strconv=no;protect=no]</td>
+						<td id="dont_send_mail">[other.dontSendMail_CB;strconv=no;protect=no]</td>
+					</tr>
+					[onshow;block=end]
+				
 			</table>
 			
 		<div class="tabsAction" >

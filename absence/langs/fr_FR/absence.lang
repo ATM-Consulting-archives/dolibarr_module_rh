@@ -474,5 +474,5 @@ ApplyEmploiTempToGroup=Appliquer cet emploi du temps sur un groupe
 NewAbsenceRequestCollective=Nouvelle absence collective
 GroupAbsCreated=Absences créés pour le groupe
 AbsenceRequestForGroup=Absences pour un groupe 
-CanAvoidSendMail=Pouvoir annuler l'envoi de mail lors d'une action sur une absence
+CanAvoidSendMail=Pouvoir annuler l'envoi de mail lors d'une action sur une absence/présence
 dontSendMail=Ne pas envoyer de mail
