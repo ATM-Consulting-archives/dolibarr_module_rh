@@ -274,6 +274,7 @@ function mailConges(&$absence,$presence=false){
 
 	$from = USER_MAIL_SENDER;
 	
+	$dont_send_mail = GETPOST('dontSendMail');
 
 	/*
 	 * Mail destinataire
@@ -377,7 +378,7 @@ function mailConges(&$absence,$presence=false){
 				$valideur=new User($db);
 				$valideur->fetch($row->fk_user);
 				
-				if(!empty($valideur->email)) {
+				if(!empty($valideur->email) && !$dont_send_mail) {
 					$mail = new TReponseMail($from,$valideur->email,'[Copie] '. $subject,$message);
 			
 					$result = $mail->send(true, 'utf-8');
@@ -431,8 +432,6 @@ function mailConges(&$absence,$presence=false){
 			)
 		);
 	}
-	
-	$dont_send_mail = GETPOST('dontSendMail');
 	
 	if(!empty($sendto) && !$dont_send_mail) {
 		$mail = new TReponseMail($from,$sendto,$subject,$message);
