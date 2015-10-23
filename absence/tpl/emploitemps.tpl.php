@@ -13,6 +13,7 @@
 					<td style="text-align:center;"><b>[translate.Midday;strconv=no;protect=no]</b></td>
 					<td style="text-align:center;"><b>[translate.Afternoon;strconv=no;protect=no]</b></td>
 					<td style="text-align:center;"><b>[translate.Evening;strconv=no;protect=no]</b></td>
+					<td style="text-align:center;"><b>[translate.is_tempspartiel;strconv=no;protect=no]</b></td>
 				</tr>
 				<tr>
 					<td style="text-align:center;"><b>[translate.Monday;strconv=no;protect=no]</b></td>
@@ -23,6 +24,7 @@
 					<td style="text-align:center;"> [horaires.lundi_heurefam;strconv=no;protect=no]     </td>
 					<td style="text-align:center;"> [horaires.lundi_heuredpm;strconv=no;protect=no]    </td>
 					<td style="text-align:center;"> [horaires.lundi_heurefpm;strconv=no;protect=no]    </td>
+					<td style="text-align:center;"> [joursTempsPartiel.lundi_is_tempspartiel;strconv=no;protect=no]    </td>
 				</tr>
 				<tr>
 					<td style="text-align:center;"><b>[translate.Tuesday;strconv=no;protect=no]</b></td>
@@ -32,6 +34,7 @@
 					<td style="text-align:center;"> [horaires.mardi_heurefam;strconv=no;protect=no]     </td>
 					<td style="text-align:center;"> [horaires.mardi_heuredpm;strconv=no;protect=no]    </td>
 					<td style="text-align:center;"> [horaires.mardi_heurefpm;strconv=no;protect=no]    </td>
+					<td style="text-align:center;"> [joursTempsPartiel.mardi_is_tempspartiel;strconv=no;protect=no]    </td>
 				</tr>
 				<tr>
 					<td style="text-align:center;"><b>[translate.Wednesday;strconv=no;protect=no]</b></td>
@@ -41,6 +44,7 @@
 					<td style="text-align:center;"> [horaires.mercredi_heurefam;strconv=no;protect=no]     </td>
 					<td style="text-align:center;"> [horaires.mercredi_heuredpm;strconv=no;protect=no]    </td>
 					<td style="text-align:center;"> [horaires.mercredi_heurefpm;strconv=no;protect=no]    </td>
+					<td style="text-align:center;"> [joursTempsPartiel.mercredi_is_tempspartiel;strconv=no;protect=no]    </td>
 				</tr>
 				<tr>
 					<td style="text-align:center;"><b>[translate.Thursday;strconv=no;protect=no]</b></td>
@@ -50,6 +54,7 @@
 					<td style="text-align:center;"> [horaires.jeudi_heurefam;strconv=no;protect=no]     </td>
 					<td style="text-align:center;"> [horaires.jeudi_heuredpm;strconv=no;protect=no]    </td>
 					<td style="text-align:center;"> [horaires.jeudi_heurefpm;strconv=no;protect=no]    </td>
+					<td style="text-align:center;"> [joursTempsPartiel.jeudi_is_tempspartiel;strconv=no;protect=no]    </td>
 				</tr>
 				<tr>
 					<td style="text-align:center;"><b>[translate.Friday;strconv=no;protect=no]</b></td>
@@ -59,6 +64,7 @@
 					<td style="text-align:center;"> [horaires.vendredi_heurefam;strconv=no;protect=no]     </td>
 					<td style="text-align:center;"> [horaires.vendredi_heuredpm;strconv=no;protect=no]    </td>
 					<td style="text-align:center;"> [horaires.vendredi_heurefpm;strconv=no;protect=no]    </td>
+					<td style="text-align:center;"> [joursTempsPartiel.vendredi_is_tempspartiel;strconv=no;protect=no]    </td>
 				</tr>
 				<tr>
 					<td style="text-align:center;"><b>[translate.Saturday;strconv=no;protect=no]</b></td>
@@ -68,6 +74,7 @@
 					<td style="text-align:center;"> [horaires.samedi_heurefam;strconv=no;protect=no]     </td>
 					<td style="text-align:center;"> [horaires.samedi_heuredpm;strconv=no;protect=no]    </td>
 					<td style="text-align:center;"> [horaires.samedi_heurefpm;strconv=no;protect=no]    </td>
+					<td style="text-align:center;"> [joursTempsPartiel.samedi_is_tempspartiel;strconv=no;protect=no]    </td>
 				</tr>
 				<tr>
 					<td style="text-align:center;"><b>[translate.Sunday;strconv=no;protect=no]</b></td>
@@ -77,6 +84,7 @@
 					<td style="text-align:center;"> [horaires.dimanche_heurefam;strconv=no;protect=no]     </td>
 					<td style="text-align:center;"> [horaires.dimanche_heuredpm;strconv=no;protect=no]    </td>
 					<td style="text-align:center;"> [horaires.dimanche_heurefpm;strconv=no;protect=no]    </td>
+					<td style="text-align:center;"> [joursTempsPartiel.dimanche_is_tempspartiel;strconv=no;protect=no]    </td>
 				</tr>
 		</table>
 		

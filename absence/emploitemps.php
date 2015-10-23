@@ -237,6 +237,11 @@ function _fiche(&$PDOdb, &$emploiTemps, $mode) {
 			$TPlanning[$jour.$pm]=$form->checkbox1('',$jour.$pm,'1',$emploiTemps->{$jour.$pm}==1?true:false);	
 		}
 	}
+	
+	$TJoursTempsPartiel=array();
+	foreach($emploiTemps->TJour as $jour) {
+		$TJoursTempsPartiel[$jour.'_is_tempspartiel']=$form->checkbox1('',$jour.'_is_tempspartiel','1',$emploiTemps->{$jour.'_is_tempspartiel'}==1?true:false);
+	}
 	 
 	$THoraire=array();
 	foreach($emploiTemps->TJour as $jour) {
@@ -287,6 +292,7 @@ function _fiche(&$PDOdb, &$emploiTemps, $mode) {
 			'planning'=>$TPlanning
 			,'horaires'=>$THoraire
 			,'emploiTemps'=>$TEmploiTemps
+			,'joursTempsPartiel'=>$TJoursTempsPartiel
 			,'userCourant'=>array(
 				'id'=>$userCourant->id
 				,'tempsHebdo'=>$emploiTemps->tempsHebdo
@@ -326,7 +332,8 @@ function _fiche(&$PDOdb, &$emploiTemps, $mode) {
 				'Register' 				=> $langs->trans('Register'),
 				'Cancel' 				=> $langs->trans('Cancel'),
 				'Modify' 				=> $langs->trans('Modify'),
-				'Archive' 				=> $langs->trans('Archive')
+				'Archive' 				=> $langs->trans('Archive'),
+				'is_tempspartiel'		=> $langs->trans('is_tempspartiel')
 			)
 			
 		)	
