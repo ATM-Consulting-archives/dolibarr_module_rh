@@ -381,6 +381,9 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 				case checkbox:
 					$temp = $form->combo('',$field->code,array('oui'=>'Oui', 'non'=>'Non'),$ressource->{$field->code});
 					break;
+				case date:
+					$temp = $form->calendrier('', $field->code, $ressource->{$field->code});
+					break;
 				default:
 					$temp = $form->texte('', $field->code, $ressource->{$field->code}, 50,255,'','','-');
 					break;
