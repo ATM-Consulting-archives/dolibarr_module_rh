@@ -364,6 +364,7 @@ function _listeAdmin(&$PDOdb, &$absence) {
 			,'date_fin'=>array('recherche'=>'calendar')
 			,'libelle'=>true
 			,"firstname"=>true
+			,"lastname"=>true
 			,"name"=>true
 			,"login"=>true
 			,'etat'=>$absence->TEtat
