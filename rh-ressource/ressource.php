@@ -22,7 +22,7 @@
 			case 'new':
 				$ressource->set_values($_REQUEST);
 				_fiche($ATMdb, $emprunt, $ressource, $contrat,'new');
-				break;	
+				break;
 			case 'clone':
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$ressource->load_ressource_type($ATMdb);
@@ -371,7 +371,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 	?>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			
+		
 		<?php
 		foreach($ressource->ressourceType->TField as $k=>$field) {
 			switch($field->type){
@@ -449,7 +449,6 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 	$listeContrat = $ressource->liste_contrat($ATMdb);
 	
 	$combo_entite_utilisatrice = (defined('AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE') && AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE ) ? $ressource->TEntity[$ressource->fk_entity_utilisatrice] : $form->combo('','fk_entity_utilisatrice', $ressource->TEntity, $ressource->fk_entity_utilisatrice );
-		
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'

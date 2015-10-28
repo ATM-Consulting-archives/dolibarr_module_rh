@@ -330,7 +330,10 @@ class TRH_Ressource extends TObjetStd {
 		global $conf;
 		$this->entity = $conf->entity;
 		//$this->setStatut($db, date("Y-m-d"));
-		
+		if($this->bailvoit == 'Immo')
+		{
+			$this->date_vente = null;
+		}
 		//on transforme les champs sensés être entier en int
 		foreach($this->ressourceType->TField as $k=>$field) {
 			if ($field->type=='entier'){
