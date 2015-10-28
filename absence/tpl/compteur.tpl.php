@@ -9,7 +9,7 @@
 		<table class="border " style="width:100%;"  >
 				<tr>
 					<td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" > 
-				    [translate.Year;strconv=no;protect=no] N-1   </td> </div>
+				    [translate.Year;strconv=no;protect=no] en cours</td> </div>
 				</tr>
 				<tr>
 					<td width="30%">[translate.CurrentUser;strconv=no;protect=no]</td>
@@ -46,7 +46,7 @@
 
 				<tr>
 					<td colspan="2" style="color: #2AA8B9; font-size: 15px;font-family: arial,tahoma,verdana,helvetica; font-weight: bold; text-decoration: none; text-shadow: 1px 1px 2px #CFCFCF;" > 
-						[translate.Year;strconv=no;protect=no] N    </td> 
+						[translate.Year;strconv=no;protect=no] suivante   </td> 
 				</tr>
 				<tr>
 					<td>[translate.AcquiredExercise;strconv=no;protect=no]</td>
