@@ -240,13 +240,13 @@ class ActionsValideur
 			return 1;
 
 		}
-		/*else if($action=='buttons') {
-			if($object->statut==4) {
+		else if($action=='buttons') {
+			if($object->statut==4 && $user->rights->ndfp->allactions->showvalideur1) {
 				$parameters['buttons'][]= '<a class="butActionDelete" href="javascript:ndfp_alert_next_level('.$object->id.')">Montrer au valideur + 1</a>';	
 			}
 			
 			
-		}*/
+		}
 		
 		elseif($parameters['action']=='delegation'){
 
