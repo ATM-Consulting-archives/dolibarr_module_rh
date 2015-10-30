@@ -9,7 +9,7 @@
 	$PDOdb=new TPDOdb;
 	$absence=new TRH_Absence;
 	$absence->loadTypeAbsencePerTypeUser($PDOdb);
-
+	
 	if(isset($_REQUEST['action'])) {
 		switch($_REQUEST['action']) {
 			case 'add':
@@ -140,16 +140,20 @@
 				
 			case 'refuse':
 				$absence->load($PDOdb, $_REQUEST['id']);
-				$absence->recrediterHeure($PDOdb);
+				/*$absence->recrediterHeure($PDOdb);
 				$absence->load($PDOdb, $_REQUEST['id']);
 
 				$absence->etat='Refusee';
 				$absence->commentaireValideur = GETPOST('commentaireValideur');
 
 				$absence->save($PDOdb);
-
+				
+				//pre($absence,true);exit;
+				
 				//$absence->load($PDOdb, $_REQUEST['id']);
-				mailConges($absence);
+				mailConges($absence);*/
+				$absence->setRefusee($PDOdb);
+				
 				$mesg = $langs->trans('DeniedAbsenceRequest');
 				setEventMessage($mesg);
 				_ficheCommentaire($PDOdb, $absence,'edit');
