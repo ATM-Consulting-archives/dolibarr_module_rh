@@ -42,7 +42,7 @@
 		<td>Libellé</td>
 		<td>[ressource.libelle;strconv=no;protect=no] </td>
 	</tr>
-	[onshow;block=begin;when [view.mode]=='edit']
+	[onshow;block=begin;when [view.mode]!='new']
 		[onshow;block=begin;when [ressource.bailvoit_value]!='']
 			[onshow;block=begin;when [ressource.bailvoit_value]=='Immo']
 			<tr>
