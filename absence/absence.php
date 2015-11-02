@@ -116,6 +116,7 @@
 				if ($absence->etat == 'Validee')
 				{
 					mailConges($absence);
+					
 				
 					$mesg = $langs->trans('AbsenceRequestAccepted');
 					setEventMessage($mesg);
@@ -131,6 +132,7 @@
 				$PDOdb->Execute($sqlEtat);
 				$absence->load($PDOdb, $_REQUEST['id']);
 				mailConges($absence);
+				mailCongesValideur($PDOdb,$absence);
 				
 				$mesg = $langs->trans('AbsenceRequestSentToSuperior');
 				setEventMessage($mesg);
