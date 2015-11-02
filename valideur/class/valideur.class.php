@@ -112,7 +112,7 @@ class TRH_valideur_groupe extends TObjetStd {
 		$sql="SELECT fk_user,is_weak
 		FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
 		WHERE type = '".$type."' AND fk_usergroup IN (".implode(',', $TGValideur).") 
-		AND pointeur=0 AND level>=".(int)$object->niveauValidation;
+		AND pointeur=0 AND level>=".(int)$object->niveauValidation." AND entity IN (".getEntity().")";
 		
 		if(!$withMe)$sq.= " AND fk_user NOT IN(".$object->fk_user.",".$user->id.")";
 
