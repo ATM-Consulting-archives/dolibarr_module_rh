@@ -457,7 +457,9 @@ function mailCongesValideur(&$ATMdb, &$absence,$presence=false){
 	
 	//on récupère tous les ids des collaborateurs à qui on devra envoyer un mail lors de la création d'une absence (valideurs des groupes précédents)
 	$sql="SELECT fk_user FROM ".MAIN_DB_PREFIX."rh_valideur_groupe 
-	WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).") AND pointeur=0 AND level=".$absence->niveauValidation." AND fk_user!=".$absence->fk_user;
+		WHERE type LIKE 'Conges' AND fk_usergroup IN(".implode(',', $TGValideur).") 
+		AND pointeur=0 AND level=".$absence->niveauValidation." AND fk_user!=".$absence->fk_user."
+		AND entity IN (".getEntity().")";
 	
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()){
