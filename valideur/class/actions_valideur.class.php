@@ -280,7 +280,7 @@ class ActionsValideur
 				      	Délégation Note de Frais      	
 				      </td>	
 				      <td>
-				          	<?
+				          	<?php
 						  	if($action=='edit'){				//on affiche la liste déroulante des utilisateurs
 						      	echo $form->select_dolusers($fk_user_delegation, "fk_user_delegation", 1,$idUsercourant,0,'','', empty($conf->multicompany->transverse_mode) ? $user->entity : 1 );
 						  	}else if($action=='update'||$action==''){		//on affiche le délégateur courant
@@ -307,7 +307,7 @@ class ActionsValideur
 				          	?>	
 				      </td>
 			      </tr>
-			      <? 
+			      <?php
 			      }   
 	        }else if (in_array('ndfpcard',explode(':',$parameters['context']))){
 	        	if($action=="create"){		//au moment de la création de la ndf et non dans le default
