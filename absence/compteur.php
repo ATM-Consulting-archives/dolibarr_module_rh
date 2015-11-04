@@ -199,7 +199,7 @@ function _listeAdmin(&$PDOdb, &$compteur) {
 	
 	$fk_group = GETPOST('fk_group');
 	
-	$sql="SELECT  DISTINCT r.rowid as 'ID', login, firstname, lastname, '' as 'Compteur',
+	$sql="SELECT  DISTINCT r.rowid as 'ID', login, firstname, lastname, IF(c.entity=0,'Toutes',e.label) as 'Entité', '' as 'Compteur',
 		r.date_cre as 'DateCre', CAST(r.acquisExerciceN as DECIMAL(16,1)) as 'Congés acquis N', 
 		CAST(r.acquisAncienneteN as DECIMAL(16,1)) as 'Congés Ancienneté', 
 		CAST(r.acquisExerciceNM1 as DECIMAL(16,1)) as 'Conges Acquis N-1', 
@@ -207,6 +207,7 @@ function _listeAdmin(&$PDOdb, &$compteur) {
 		FROM ".MAIN_DB_PREFIX."rh_compteur as r 
 				INNER JOIN ".MAIN_DB_PREFIX."user as c ON (r.fk_user=c.rowid)
 				LEFT JOIN  ".MAIN_DB_PREFIX."usergroup_user as gu ON (r.fk_user=gu.fk_user)
+				LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON (e.rowid = c.entity)
 		WHERE 1 ";
 	
 	if($fk_group>0) $sql.=" AND gu.fk_usergroup=".$fk_group;
