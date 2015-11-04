@@ -416,6 +416,7 @@ class TRH_Absence extends TObjetStd {
 		WHERE r.choixApplication LIKE 'user' AND r.fk_user=".$fk_user."
 		OR (r.choixApplication LIKE 'all')
 		OR (r.choixApplication LIKE 'group' AND g.fk_user=".$fk_user.") 
+		AND r.entity IN (".getEntity().")
 		ORDER BY r.nbJourCumulable";
 
 		$PDOdb->Execute($sql);
@@ -450,7 +451,7 @@ class TRH_Absence extends TObjetStd {
 		global $conf;
 		$sql="SELECT DATE_FORMAT(date_debut, '%d/%m/%Y') as 'dateD', 
 		DATE_FORMAT(date_fin, '%d/%m/%Y')  as 'dateF', libelle, libelleEtat 
-		FROM `".MAIN_DB_PREFIX."rh_absence` WHERE fk_user=".$fk_user." 
+		FROM `".MAIN_DB_PREFIX."rh_absence` WHERE fk_user=".$fk_user." AND entity IN (".getEntity().")
 		GROUP BY date_cre LIMIT 0,10";
 
 		$PDOdb->Execute($sql);
