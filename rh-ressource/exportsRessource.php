@@ -225,7 +225,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 	
 	if($boutonGenerer){
 		// ---- Exports
-		$url ='http://'.$_SERVER['SERVER_NAME']. dol_buildpath("/ressource/script/interface.php", 1)."?DEBUG&date_debut=".$date_debut."&date_fin=".$date_fin."&get=".$TType[$type]."&fk_fournisseur=".$type."&idTypeRessource=".$TIdRessource[$type]."&entity=".$conf->entity;
+		$url ='http://'.$_SERVER['SERVER_NAME']. dol_buildpath("/ressource/script/interface.php", 1)."?date_debut=".$date_debut."&date_fin=".$date_fin."&get=".$TType[$type]."&fk_fournisseur=".$type."&idTypeRessource=".$TIdRessource[$type]."&entity=".$conf->entity;
 
 		if(!empty($_REQUEST['idImport'])) $url.='&idImport='.$_REQUEST['idImport'];
 		
