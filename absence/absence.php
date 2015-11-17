@@ -815,7 +815,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 				'id'=>$userCourant->id
 				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
 				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
-				,'valideurConges'=>$user->rights->absence->myactions->creerAbsenceCollaborateur==1||$user->rights->absence->myactions->CanValidPersonalAbsencePresence?1:$user->rights->absence->myactions->valideurConges&&$estValideur
+				,'valideurConges'=>($user->rights->absence->myactions->creerAbsenceCollaborateur==1 && ($absence->fk_user != $user->id && $user->rights->absence->myactions->CanValidPersonalAbsencePresence))?1:$user->rights->absence->myactions->valideurConges&&$estValideur
 				//,'valideurConges'=>$user->rights->absence->myactions->valideurConges
 				,'droitCreationAbsenceCollaborateur'=>$droitsCreation==1?'1':'0'
 				//,'enregistrerPaieAbsences'=>$user->rights->absence->myactions->enregistrerPaieAbsences&&$estValideur
