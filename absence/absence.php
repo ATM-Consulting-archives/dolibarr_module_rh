@@ -603,7 +603,15 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 
 	$droitAdmin=0;
 
-	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
+	if($user->rights->absence->myactions->CanValidPersonalAbsencePresence){
+		$sql="SELECT rowid, lastname,  firstname 
+		FROM `".MAIN_DB_PREFIX."user` 
+		WHERE rowid=".$user->id;
+		$droitsCreation=1;
+		$comboAbsence=2;
+		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($PDOdb, 'admin', 0);
+		$droitAdmin=1;
+	}else if($user->rights->absence->myactions->creerAbsenceCollaborateur){
 		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user`";
 		$droitsCreation=1;
 		$comboAbsence=2;
@@ -807,7 +815,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 				'id'=>$userCourant->id
 				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
 				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
-				,'valideurConges'=>$user->rights->absence->myactions->creerAbsenceCollaborateur==1?1:$user->rights->absence->myactions->valideurConges&&$estValideur
+				,'valideurConges'=>($user->rights->absence->myactions->creerAbsenceCollaborateur==1 && ($absence->fk_user!=$user->id || $user->rights->absence->myactions->CanValidPersonalAbsencePresence==1))?1:$user->rights->absence->myactions->valideurConges&&$estValideur
 				//,'valideurConges'=>$user->rights->absence->myactions->valideurConges
 				,'droitCreationAbsenceCollaborateur'=>$droitsCreation==1?'1':'0'
 				//,'enregistrerPaieAbsences'=>$user->rights->absence->myactions->enregistrerPaieAbsences&&$estValideur

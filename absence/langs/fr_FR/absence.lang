@@ -80,6 +80,7 @@ AbsenceBy=par
 Cancel=Annuler
 CanReportAbsenceInPast=Peut déclarer une absence dans le passé
 CanReportAbsenceToDay=Peut déclarer une absence le jour même
+CanValidPersonalAbsencePresence=Pouvoir valider ses propres absences et présences
 Card=Fiche
 ChangesMade=Modifications effectuées
 CheckAllTypes=Cocher tous les types
