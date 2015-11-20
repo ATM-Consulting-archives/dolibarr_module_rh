@@ -6,6 +6,7 @@ class TRH_Ressource extends TObjetStd {
 		parent::set_table(MAIN_DB_PREFIX.'rh_ressource');
 		parent::add_champs('libelle','type=chaine;');
 		parent::add_champs('numId','type=chaine;');
+		parent::add_champs('bailvoit','type=chaine;');
 		parent::add_champs('date_achat, date_vente, date_garantie','type=date;');
 		
 		//types énuméré
@@ -29,7 +30,7 @@ class TRH_Ressource extends TObjetStd {
 		$this->ressourceType=new TRH_Ressource_type;
 
 		$this->TType = array();
-		$this->TBail = array('location'=>'Location','immobilisation'=>'Immobilisation');
+		$this->TBail = array('Location'=>'Location','Immo'=>'Immo', 'Crédit Bail'=>'Crédit Bail', 'Véh. Attente'=>'Véh. Attente');
 		
 		$this->TRessource = array('');
 		$this->TEvenement = array();
@@ -366,7 +367,10 @@ class TRH_Ressource extends TObjetStd {
 		global $conf;
 		$this->entity = $conf->entity;
 		//$this->setStatut($db, date("Y-m-d"));
-		
+		if($this->bailvoit == 'Immo')
+		{
+			$this->date_vente = null;
+		}
 		//on transforme les champs sensés être entier en int
 		foreach($this->ressourceType->TField as $k=>$field) {
 			if ($field->type=='entier'){

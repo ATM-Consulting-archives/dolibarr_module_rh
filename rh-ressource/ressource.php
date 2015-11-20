@@ -22,7 +22,7 @@
 			case 'new':
 				$ressource->set_values($_REQUEST);
 				_fiche($ATMdb, $emprunt, $ressource, $contrat,'new');
-				break;	
+				break;
 			case 'clone':
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				$ressource->load_ressource_type($ATMdb);
@@ -371,7 +371,7 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 	?>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			
+		
 		<?php
 		foreach($ressource->ressourceType->TField as $k=>$field) {
 			switch($field->type){
@@ -380,6 +380,9 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 					break;
 				case checkbox:
 					$temp = $form->combo('',$field->code,array('oui'=>'Oui', 'non'=>'Non'),$ressource->{$field->code});
+					break;
+				case date:
+					$temp = $form->calendrier('', $field->code, $ressource->{$field->code});
 					break;
 				default:
 					$temp = $form->texte('', $field->code, $ressource->{$field->code}, 50,255,'','','-');
@@ -446,7 +449,6 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 	$listeContrat = $ressource->liste_contrat($ATMdb);
 	
 	$combo_entite_utilisatrice = (defined('AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE') && AUTOMATIC_ATTRIBUTION_USER_ENTITY_ON_RESSOURCE ) ? $ressource->TEntity[$ressource->fk_entity_utilisatrice] : $form->combo('','fk_entity_utilisatrice', $ressource->TEntity, $ressource->fk_entity_utilisatrice );
-		
 	
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/ressource.tpl.php'
@@ -468,7 +470,8 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 				
 				,'typehidden'=>$form->hidden('fk_rh_ressource_type', $ressource->fk_rh_ressource_type) 
 				,'type'=>$ressource->TType[$ressource->fk_rh_ressource_type]
-				,'bail'=>$form->combo('','bail',$ressource->TBail,$ressource->TBail[0])
+				,'bailvoit_value'=>$ressource->bailvoit
+				,'bailvoit'=>$form->combo('','bailvoit',$ressource->TBail,$ressource->bailvoit)
 				,'date_achat'=>$form->calendrier('', 'date_achat', $ressource->date_achat,12, 12)
 				,'date_vente'=>(empty($ressource->date_vente) || ($ressource->date_vente<=0) || ($mode=='new')) ? $form->calendrier('', 'date_vente', '' ,12, 12) : $form->calendrier('', 'date_vente', $ressource->date_vente,12 , 12)
 				//,'date_garantie'=>(empty($ressource->date_garantie) || ($ressource->date_garantie<=0) || ($mode=='new')) ? $form->calendrier('', 'date_garantie', '' , 10) : $form->calendrier('', 'date_garantie', $ressource->date_garantie, 12)

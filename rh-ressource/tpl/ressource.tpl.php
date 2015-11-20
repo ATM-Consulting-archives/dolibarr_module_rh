@@ -42,14 +42,60 @@
 		<td>Libellé</td>
 		<td>[ressource.libelle;strconv=no;protect=no] </td>
 	</tr>
+	[onshow;block=begin;when [view.mode]!='new']
+		[onshow;block=begin;when [ressource.bailvoit_value]!='']
+			[onshow;block=begin;when [ressource.bailvoit_value]=='Immo']
+			<tr>
+				<td id="datedeb">Date d'achat</td>
+				<td>[ressource.date_achat;strconv=no;protect=no]</td>
+			</tr>
+			<tr id="trdatefin" style="display:none;">
+				<td>Date fin location</td>
+				<td>[ressource.date_vente;strconv=no;protect=no]</td>
+			</tr>
+			[onshow;block=end]
+			[onshow;block=begin;when [ressource.bailvoit_value]!='Immo']
+			<tr>
+				<td id="datedeb">Date début location</td>
+				<td>[ressource.date_achat;strconv=no;protect=no]</td>
+			</tr>
+			<tr id="trdatefin">
+				<td>Date fin location</td>
+				<td>[ressource.date_vente;strconv=no;protect=no]</td>
+			</tr>
+			[onshow;block=end]
+		[onshow;block=end]
+		[onshow;block=begin;when [ressource.bailvoit_value]=='']
+			<tr>
+				<td id="datedeb">Date début location</td>
+				<td>[ressource.date_achat;strconv=no;protect=no]</td>
+			</tr>
+			<tr id="trdatefin">
+				<td>Date fin location</td>
+				<td>[ressource.date_vente;strconv=no;protect=no]</td>
+			</tr>
+		[onshow;block=end]
+		<script>
+			$(document).ready( function(){
+				
+				$("#bailvoit").change(function(){
+					if($("#bailvoit").val() == 'Immo')
+					{
+						$('#datedeb').html('Date d\'achat');
+						$('#trdatefin').hide();
+					}else{
+						$('#datedeb').html('Date début location');
+						$('#trdatefin').show();
+					}
+				});
+					
+			});
+		</script>
+	[onshow;block=end]
 	<tr>
-		<td>Date début</td>
-		<td>[ressource.date_achat;strconv=no;protect=no]</td>
+		<td>Mode d'acquisition</td>
+		<td>[ressource.bailvoit;strconv=no;protect=no]</td>
 	</tr>
-	<tr>
-		<td>Date fin</td>
-		<td>[ressource.date_vente;strconv=no;protect=no]</td>
-	</tr>	
 		
 	<tr>
 		<td>Entité Propriétaire</td>
