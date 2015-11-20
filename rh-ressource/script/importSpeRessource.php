@@ -85,15 +85,14 @@
 	}
 	
 	fclose($handle);
-	
-	
+
 	foreach ($TData as &$line) 
 	{
 		$numid = $line['ressource']['numId'];
-		
+
 		$ressource = new TRH_Ressource;
 		$ressource->load_by_numId($PDOdb, $numid);
-		
+
 		if ($ressource->getId() > 0)
 		{
 			print "<br>OK $numid...<br>";
@@ -188,7 +187,7 @@ function _getUserByName(&$PDOdb, $firstname, $lastname)
 	$found = false;
 	$id = 0;
 	
-	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'user WHERE lastname = "'.$db->escape($lastname).'" AND firstname = "'.$db->escape($firstname).'"';
+	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'user WHERE name = "'.$db->escape($lastname).'" AND firstname = "'.$db->escape($firstname).'"';
 	
 	$resql = $db->query($sql);
 	if ($db->num_rows($resql) == 1)
