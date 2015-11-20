@@ -97,15 +97,14 @@
 	}
 	
 	fclose($handle);
-	
-	
+
 	foreach ($TData as &$line) 
 	{
 		$numid = $line['ressource']['numId'];
-		
+
 		$ressource = new TRH_Ressource;
 		$ressource->load_by_numId($PDOdb, $numid);
-		
+
 		if ($ressource->getId() > 0)
 		{
 			print "<br>OK $numid...<br>";
