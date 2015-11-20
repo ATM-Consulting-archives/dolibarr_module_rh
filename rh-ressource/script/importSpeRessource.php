@@ -10,12 +10,20 @@
 	$file = 'fichierImports/baseressource.csv';
 	$TData = array();
 	$TTypeRessource = array();
+	$TTVA = array();
 	
 	$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource_type ";
 	$PDOdb->Execute($sqlReq);
 	while($PDOdb->Get_line()) 
 	{
 		$TTypeRessource[$PDOdb->Get_field('libelle')] = $PDOdb->Get_field('rowid');
+	}
+	
+	$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva ";
+	$PDOdb->Execute($sqlReq);
+	while($PDOdb->Get_line()) 
+	{
+		$TTVA[$PDOdb->Get_field('taux')] = $PDOdb->Get_field('rowid');
 	}
 	
 	$handle = fopen($file, 'r');
@@ -27,6 +35,9 @@
 	{
 		$fk_type_ressource = isset($TTypeRessource[$row[29]]) ? $TTypeRessource[$row[29]] : false;
 		if (!$fk_type_ressource) exit("ressourceTypeNotFound => ".$row[29]);
+		
+		$fk_tva = isset($TTVA[(int) $row[38]]) ? $TTVA[(int) $row[38]] : 0;
+		if (!$fk_tva) exit("tvaNotFound => ".$row[38]);
 		
 		$TData[] = array(
 			'ressource'=>array(
@@ -48,9 +59,9 @@
 				,'co2' => $row[17]
 				,'coderefac' => $row[18]
 				,'typecarburant' => $row[19]
-				,'premisecircvoit' => date('Y-m-d',Tools::get_time($row[20]))
-				,'dateimmatrvoit' => date('Y-m-d',Tools::get_time($row[21]))
-				,'echeancectvoit' => date('Y-m-d',Tools::get_time($row[22]))
+				,'premisecircvoit' => $row[20]
+				,'dateimmatrvoit' => $row[21]
+				,'echeancectvoit' => $row[22]
 				,'pf' => $row[23]
 			)
 			,'emprunt'=>array(
@@ -76,10 +87,11 @@
 				,'frais'=>$row[35]
 				,'assurance'=>$row[36]
 				,'loyer_TTC'=>$row[37]
-				,'TVA'=>$row[38]
-				,'loyer_HT'=>$row[38]
+				,'TVA'=>$fk_tva
+				//,'loyer_HT'=>$row[39]
 				//,'entity'=> _getEntityByName($PDOdb, $row[8]) // FIXME 
-				,'fk_tier_fournisseur' => _getIdFournisseurByName($PDOdb, $row[7]) //FIXME
+				//,'fk_tier_fournisseur' => _getIdFournisseurByName($PDOdb, $row[7]) //FIXME
+				,'fk_tier_fournisseur' => 0
 			)
 		);
 	}
@@ -119,28 +131,38 @@
 				var_dump($fk_emprunt);
 			}
 			
-			if(!_contratAssocie($ressource->TContratAssocies, $line['contrat']['fk_contrat'] )) 
+			if (!empty($line['contrat']['numContrat']))
 			{
-				if ($line['contrat']['fk_contrat'] > 0) echo 'updateContrat => '.$line['contrat']['fk_contrat'].'...<br>';
-				else 
+				if(!_contratAssocie($ressource->TContratAssocies, $line['contrat']['fk_contrat'] )) 
 				{
+					if ($line['contrat']['fk_contrat'] > 0) echo 'updateContrat => '.$line['contrat']['fk_contrat'].'...<br>';
+					else 
+					{
+						echo 'nouveauContrat...<br>';
+						// $contrat new or update
+						$contrat = new TRH_Contrat;
+						$contrat->load($PDOdb, $line['contrat']['fk_contrat']);
+						$line['contrat']['date_debut'] = date('d/m/Y', $line['contrat']['date_debut']);
+						$line['contrat']['date_fin'] = date('d/m/Y', $line['contrat']['date_fin']);
+						$contrat->set_values($line['contrat']);
+						$contrat->save($PDOdb);
+					}
+							
+					$ressource->addContrat($PDOdb, array(
+						'fk_rh_contrat' => $line['contrat']['fk_contrat']
+						,'entity' => $line['ressource']['fk_entity_utilisatrice']
+						,'fk_rh_ressource' => $ressource->getId()
+					)); // <= on va créer le TRH_Contrat_Ressource
 					
-					echo 'nouveauContrat...<br>';
-					// $contrat new or update
+				}
+				else {
 					$contrat = new TRH_Contrat;
 					$contrat->load($PDOdb, $line['contrat']['fk_contrat']);
-					$line['contrat']['date_debut'] = date('d/m/Y', $line['contrat']['date_debut']);
-					$line['contrat']['date_fin'] = date('d/m/Y', $line['contrat']['date_fin']);
+					$line['contrat']['date_debut'] = date('d/m/Y', strtotime($line['contrat']['date_debut']));
+					$line['contrat']['date_fin'] = date('d/m/Y', strtotime($line['contrat']['date_fin']));
 					$contrat->set_values($line['contrat']);
 					$contrat->save($PDOdb);
-				}
-						
-				$ressource->addContrat($PDOdb, array(
-					'fk_rh_contrat' => $line['contrat']['fk_contrat']
-					,'entity' => $line['ressource']['fk_entity_utilisatrice']
-					,'fk_rh_ressource' => $ressource->getId()
-				)); // <= on va créer le TRH_Contrat_Ressource
-				
+				}	
 			}
 			
 			print "terminé<br />";
@@ -188,7 +210,7 @@ function _getUserByName(&$PDOdb, $firstname, $lastname)
 	$found = false;
 	$id = 0;
 	
-	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'user WHERE lastname = "'.$db->escape($lastname).'" AND firstname = "'.$db->escape($firstname).'"';
+	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'user WHERE name = "'.$db->escape($lastname).'" AND firstname = "'.$db->escape($firstname).'"';
 	
 	$resql = $db->query($sql);
 	if ($db->num_rows($resql) == 1)
