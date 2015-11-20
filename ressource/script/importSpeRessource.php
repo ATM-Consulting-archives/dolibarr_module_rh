@@ -45,9 +45,9 @@
 				,'modlevoitversioncomm' => $row[13]
 				,'localisationvehicule' => $row[14]
 				,'typevehicule' => $row[15]
-				,'co2' => $row[16]
-				,'coderefac' => $row[17]
-				,'typecarburant' => $row[18]
+				,'co2' => $row[17]
+				,'coderefac' => $row[18]
+				,'typecarburant' => $row[19]
 				,'premisecircvoit' => date('Y-m-d',Tools::get_time($row[20]))
 				,'dateimmatrvoit' => date('Y-m-d',Tools::get_time($row[21]))
 				,'echeancectvoit' => date('Y-m-d',Tools::get_time($row[22]))
@@ -198,7 +198,10 @@ function _getUserByName(&$PDOdb, $firstname, $lastname)
 		$found = true;
 	}
 	
-	if(!$found) exit("userNotFound => $firstname $lastname");
+	
+	
+	if(!$found) return 0; 
+	//exit("userNotFound => $firstname $lastname");
 	
 	return $id;
 }
@@ -229,7 +232,9 @@ function _getIdFournisseurByName(&$PDOdb, $name)
 	}
 	
 	if ($db->num_rows($resql) > 1) exit("idFournisseurMultipleKeyFound => $name");
-	else exit("idFournisseurNotFound => $name");
+	else return 0;
+	
+	exit("idFournisseurNotFound => $name");
 }
 
 function _getIdUtilisateurByName(&$PDOdb, $name) 
@@ -243,5 +248,6 @@ function _getIdUtilisateurByName(&$PDOdb, $name)
 		return $row->rowid;
 	}
 	
+	return 0;
 	exit("userGroupNotFound => $name");
 }
