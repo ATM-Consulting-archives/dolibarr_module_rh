@@ -395,7 +395,7 @@ function _liste(&$ATMdb, $lignecv, $formation, $dif) {
 	<?
 	
 	////////////AFFICHAGE DES DIF
-	if((($user->rights->curriculumvitae->myactions->consulterOwnDif=="1")&&($user->id==$fuser->id))||($user->rights->curriculumvitae->myactions->consulterAllDif=="1")){
+	/*if((($user->rights->curriculumvitae->myactions->consulterOwnDif=="1")&&($user->id==$fuser->id))||($user->rights->curriculumvitae->myactions->consulterAllDif=="1")){
 		$r = new TSSRenderControler($dif);
 		$sql="SELECT rowid as 'ID'
 				,annee
@@ -461,7 +461,7 @@ function _liste(&$ATMdb, $lignecv, $formation, $dif) {
 		}else{
 			?><br><br><?
 		}
-	}
+	}*/
 		
 	llxFooter();
 }	
