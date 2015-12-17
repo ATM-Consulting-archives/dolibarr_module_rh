@@ -883,7 +883,8 @@ function _getSQLListValidation($userid) {
 function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $date_debut, $date_fin, &$TStatPlanning) {
 	global $langs,$user;
 //on va obtenir la requête correspondant à la recherche désirée
-	
+	// Test si somme des trois groupes = (99999 * 3) Tous les select sur Aucun alors recherche vide
+	if(array_sum($idGroupeRecherche) == 299997)$idGroupeRecherche = array('0'=>0);
 	if(array_sum($idGroupeRecherche)>0) $idUserRecherche = 0; // si un groupe est sélectionner on ne prend pas en compte l'utilisateur
 
 
