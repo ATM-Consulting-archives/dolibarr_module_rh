@@ -2372,6 +2372,8 @@ class TRH_Absence extends TObjetStd {
 						
 						if(!in_array($idGroup, $TLGroup)) {
 							unset($TabLogin[$idUser]);
+						}else{
+							break;
 						}
 						
 					}
