@@ -324,6 +324,13 @@ class modAbsence extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'declarationCadre';
+		$r++;
+		
+		$this->rights[$r][0] = 7123;
+		$this->rights[$r][1] = 'Modifier le compteur de congés d\'un collaborateur dont je suis supérieur hiérarchique';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'modifierCompteurEquipe';
 		
 		
 		
@@ -518,7 +525,7 @@ class modAbsence extends DolibarrModules
 					'langs'=> 'absence@absence',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 					'position'=> 105,
 					'enabled'=> '1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-					'perms'=> '$user->rights->absence->myactions->modifierCompteur',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+					'perms'=> '$user->rights->absence->myactions->modifierCompteur || $user->rights->absence->myactions->modifierCompteurEquipe',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 					'target'=> '',
 					'user'=> 2
         );

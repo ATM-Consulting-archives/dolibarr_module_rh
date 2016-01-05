@@ -153,6 +153,10 @@ function _listeAdmin(&$ATMdb, &$compteur) {
 		FROM ".MAIN_DB_PREFIX."rh_compteur as r, ".MAIN_DB_PREFIX."user as c 
 		WHERE r.fk_user=c.rowid";
 	
+	// Pour ne voir que les compteurs des utilisateurs dont on est supérieur hiérarchique, il faut avoir le droit modifierCompteurEquipe et NE PAS AVOIR le droit modifierCompteur, car sinon, somme toute logique les droits se cumulent et permettent de voir et modifier tous les compteurs
+	if($user->rights->absence->myactions->modifierCompteurEquipe && !$user->rights->absence->myactions->modifierCompteur) {
+		$sql.= ' AND c.fk_user = '.$user->id;
+	}
 	
 	$TOrder = array('name'=>'ASC');
 	if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
@@ -427,7 +431,7 @@ function _fiche(&$ATMdb, &$compteur, $mode) {
 				'id'=>$userCourant->id
 				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
 				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
-				,'modifierCompteur'=>$user->rights->absence->myactions->modifierCompteur
+				,'modifierCompteur'=>$user->rights->absence->myactions->modifierCompteur || $user->rights->absence->myactions->modifierCompteurEquipe
 			)
 			
 			,'view'=>array(
