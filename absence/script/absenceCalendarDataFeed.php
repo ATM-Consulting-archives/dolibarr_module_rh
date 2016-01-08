@@ -188,11 +188,11 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 		        	$attends = 'presence';//$attends
 
 				if($user->id!=$row->fk_user && !TRH_valideur_groupe::isValideur($ATMdb, $user->id)) {
-					$label = utf8_encode($row->lastname.' '.$row->firstname);
+					$label = $row->lastname.' '.$row->firstname;
                                 }
                                 else {
 
-					$label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
+					$label = $row->lastname.' '.$row->firstname.' : '.$row->libelle;
 	
                                 }
 	
@@ -250,11 +250,11 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 		        $attends = 'absence';//$attends
 				
 			if($user->id!=$row->fk_user && !TRH_valideur_groupe::isValideur($ATMdb, $user->id)) {
-                     $label = utf8_encode($row->lastname.' '.$row->firstname);
+                     $label = $row->lastname.' '.$row->firstname;
                      $url = '#';
             }
             else {
-                     $label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
+                     $label = $row->lastname.' '.$row->firstname.' : '.$row->libelle;
 
             }
 //	var_dump($label, $user->id,$row->fk_user,TRH_valideur_groupe::isValideur($ATMdb, $row->fk_user), '<br>');        
