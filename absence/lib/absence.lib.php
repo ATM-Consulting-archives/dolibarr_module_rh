@@ -63,7 +63,7 @@ function adminCompteurPrepareHead(&$obj, $type='compteur') {
 		
 		case 'compteur':
 			return array(
-			array(dol_buildpath('/absence/adminCompteur.php',1), $langs->trans('HolidayCounter'), 'compteur')
+			array(dol_buildpath('/absence/compteur.php?action=compteurAdmin',1), $langs->trans('HolidayCounter'), 'compteur')
 			);
 			break;				
 	}
