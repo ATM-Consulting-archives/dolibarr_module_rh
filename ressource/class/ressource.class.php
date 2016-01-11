@@ -264,7 +264,42 @@ class TRH_Ressource extends TObjetStd {
 			return 0;}
 	}
 	
+	function nouvelEmprunt($PDOdb, $TValue, $forceEmprunt = false)
+	{
+		$fk_emprunt = $this->nouvelEmpruntSeChevauche($PDOdb, $this->getId(), $TValue, true);
+		
+		//Eventuellement si sa ce chevauche, voir pour terminer l'emprunt et créer le suivant ?
+		if ($forceEmprunt || empty($fk_emprunt))
+		{
+			dol_include_once('/ressource/class/evenement.class.php');
+			
+			if (!empty($fk_emprunt))
+			{
+				
+				// on termine l'emprunt précédent pour commencer le nouveau
+				$old_emprunt = new TRH_Evenement;
+				$old_emprunt->load($PDOdb, $fk_emprunt);
+				$old_emprunt->date_fin = date('Y-m-d', strtotime($date_debut.' -1 day'));
+				$old_emprunt->save($PDOdb);
+			}
+		
+			$emprunt = new TRH_Evenement;
+			$emprunt->set_values($TValue);
+			
+			$emprunt->save($PDOdb);
+			
+			return $emprunt->getId();
+		}
+		
+		return false;
+	}
 	
+	function addContrat(&$PDOdb, $TValue)
+	{
+		$contrat_ressource = new TRH_Contrat_Ressource;
+		$contrat_ressource->set_values($TValue);
+		$contrat_ressource->save($PDOdb);
+	}
 	
 	/**
 	 * retourne le timestamp d'une chaine au format jj/mm/aaaa
@@ -281,9 +316,9 @@ class TRH_Ressource extends TObjetStd {
 	/**
 	 * La fonction renvoie vrai si les nouvelles date proposé pour un emprunt se chevauchent avec d'autres.
 	 */
-	function nouvelEmpruntSeChevauche(&$ATMdb,  $idRessource, $newEmprunt){
+	function nouvelEmpruntSeChevauche(&$ATMdb,  $idRessource, $newEmprunt, $returnId=false){
 		global $conf;
-		$sqlReq="SELECT date_debut,date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$idRessource."
+		$sqlReq="SELECT rowid, date_debut,date_fin FROM ".MAIN_DB_PREFIX."rh_evenement WHERE fk_rh_ressource=".$idRessource."
 		AND type='emprunt' AND rowid != ".$newEmprunt['idEven']; 
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
@@ -291,8 +326,10 @@ class TRH_Ressource extends TObjetStd {
 										,$this->strToTimestamp($newEmprunt['date_fin'])
 										,$this->strToTimestamp(date("d/m/Y",strtotime($ATMdb->Get_field('date_debut'))))
 										,$this->strToTimestamp(date("d/m/Y",strtotime($ATMdb->Get_field('date_fin'))))))
-				{
-				return true;}}
+			{
+				return $returnId ? $ATMdb->Get_field('rowid') : true;
+			}
+		}
 		return false;
 	}
 	

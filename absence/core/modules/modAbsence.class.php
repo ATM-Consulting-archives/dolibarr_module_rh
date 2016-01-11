@@ -409,6 +409,13 @@ class modAbsence extends DolibarrModules
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'CanAvoidSendMail';
+		
+		$this->rights[$r][0] = 7135;
+		$this->rights[$r][1] = $langs->trans('CanValidPersonalAbsencePresence');
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'myactions';
+        $this->rights[$r][5] = 'CanValidPersonalAbsencePresence';
+		$r++;
         
         
 		
