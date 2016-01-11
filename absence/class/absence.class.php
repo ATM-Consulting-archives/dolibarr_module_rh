@@ -139,6 +139,7 @@ class TRH_Compteur extends TObjetStd {
 		$this->entity = $conf->entity;
 		
 		parent::save($db);
+		TRH_CompteurLog::log($db, $this->getId(), 'compteur', $this->acquisExerciceN, 'sauvegarde compteur ');
 	}
 	
 	function initCompteur(&$PDOdb, $idUser){
