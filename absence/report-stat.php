@@ -37,8 +37,10 @@
 			print $TRecap[$k]['dureeJour'].";";
 			print $TRecap[$k]['dureeHeure'].";";
 			print $TRecap[$k]['date_debut'].";";
-			print $TRecap[$k]['date_fin'].";";
+			print $TRecap[$k]['date_fin'].";\r\n";
 		}
+		
+		exit;
 	}
 	
 	_fiche($ATMdb);
