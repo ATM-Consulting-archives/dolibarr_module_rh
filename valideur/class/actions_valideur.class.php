@@ -372,6 +372,8 @@ class ActionsValideur
     {
     	global $db, $user, $html;  
 		
+		if(empty($html)) return 0;
+		
 		$idUsercourant=$user->id;
 		dol_include_once('/core/class/html.form.class.php');
 		$tabDelegation=array();

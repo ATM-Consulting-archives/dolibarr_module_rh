@@ -153,7 +153,7 @@ function _liste(&$PDOdb, &$emploiTemps) {
 	 e.fk_user as 'Id Utilisateur', '' as 'Emploi du temps', u.login
 	,u.rowid as 'fk_user',u.firstname, u.lastname
 		FROM ".MAIN_DB_PREFIX."rh_absence_emploitemps as e INNER JOIN ".MAIN_DB_PREFIX."user as u ON (u.rowid=e.fk_user)
-		WHERE e.entity IN (0,".$conf->entity.") AND e.is_archive=0 ";
+		WHERE e.entity IN (0,".$conf->entity.") AND e.is_archive=0 AND u.statut = 1 ";
 
 	if($user->rights->absence->myactions->voirTousEdt!="1"){
 		$sql.=" AND e.fk_user=".$user->id;
@@ -190,7 +190,7 @@ function _liste(&$PDOdb, &$emploiTemps) {
 			,'messageNothing'=> $langs->trans('NoScheduleToShow')
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
-			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			
 		)
 		,'orderBy'=>$TOrder
 		,'search'=>array(
