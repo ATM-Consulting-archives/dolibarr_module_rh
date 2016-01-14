@@ -201,6 +201,8 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 					$label.=' du '._justDate($timeDebut,'d/m').' au '._justDate($timeFin,'d/m/Y');
 				}
 				
+				if(mb_detect_encoding($label,'UTF-8', true) === false  ) $label = utf8_encode($label);
+				
 				$ret['events'][] = array(
 			        $row->rowid,
 			        $label,
@@ -251,12 +253,15 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 				
 			if($user->id!=$row->fk_user && !TRH_valideur_groupe::isValideur($ATMdb, $user->id)) {
                      $label = $row->lastname.' '.$row->firstname;
-                     $url = '#';
+				     $url = '#';
             }
             else {
                      $label = $row->lastname.' '.$row->firstname.' : '.$row->libelle;
 
             }
+			
+			if(mb_detect_encoding($label,'UTF-8', true) === false  ) $label = utf8_encode($label);
+			
 //	var_dump($label, $user->id,$row->fk_user,TRH_valideur_groupe::isValideur($ATMdb, $row->fk_user), '<br>');        
 	//	        $label = utf8_encode($row->lastname.' '.$row->firstname).' : '.$row->libelle;
 			if($moreOneDay) {
