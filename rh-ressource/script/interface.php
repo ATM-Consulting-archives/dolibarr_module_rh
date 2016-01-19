@@ -167,6 +167,7 @@ if(isset($_REQUEST['DEBUG'])) print 'MontantTotal = '. $montantTotal.'<br />';
 			$TUser[$code_anal][$fk_user]=array(
 					'nom' => ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('lastname') ." (".$ATMdb2->Get_field('fk_rh_ressource').")</a>"
 					,'prenom' => $ATMdb2->Get_field('firstname')
+					,'immat' => $immat
 			);
 			if(isset($_REQUEST['DEBUG'])) {
 				print "$code_anal=$total_anal<br/>";
@@ -203,7 +204,7 @@ if(isset($_REQUEST['DEBUG'])) print 'MontantTotal = '. $montantTotal.'<br />';
 							,'typePiece'=> 'FF'
 							,'compteGeneral'=> $code_compta
 							,'typeCompte'=> $type_compte
-							,'immatriculation'=> $immat
+							,'immatriculation'=> $TUser[$code_analytique][$fk_user]['immat']
 							,'codeAnalytique'=> $code_analytique
 							,'nom'=>$TUser[$code_analytique][$fk_user]['nom']
 							,'prenom'=>$TUser[$code_analytique][$fk_user]['prenom']
