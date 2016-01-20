@@ -2713,6 +2713,17 @@ class TRH_EmploiTemps extends TObjetStd {
 	}	
 	
 	static function estTravaille(&$PDOdb, $id_user, $date) {
+		global $db,$TCacheUserDateEntree;
+		
+		if(!isset($TRHCacheUserDateEntree))$TRHCacheUserDateEntree=array();
+		if(!isset($TRHCacheUserDateEntree[$id_user])) {
+			$u =new User($db);
+			$u->fetch($id_user);
+			
+			$TRHCacheUserDateEntree[$id_user] = $u->array_options['option_DDA'];
+		}
+		
+		if(!empty($TRHCacheUserDateEntree[$id_user]) && strtotime($TRHCacheUserDateEntree[$id_user]) > strtotime($date) ) return 'NON';
 		
 		$e=new TRH_EmploiTemps;
 		$e->load_by_fkuser($PDOdb, $id_user, $date);
