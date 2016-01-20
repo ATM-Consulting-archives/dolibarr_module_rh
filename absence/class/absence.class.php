@@ -2716,13 +2716,13 @@ class TRH_EmploiTemps extends TObjetStd {
 		global $db,$TCacheUserDateEntree;
 		
 		if(!isset($TRHCacheUserDateEntree))$TRHCacheUserDateEntree=array();
-		if(!isset($TRHCacheUserDateEntree[$id_user])) {
+		if(empty($TRHCacheUserDateEntree[$id_user])) {
 			$u =new User($db);
 			$u->fetch($id_user);
 			
-			$TRHCacheUserDateEntree[$id_user] = $u->array_options['option_DDA'];
+			$TRHCacheUserDateEntree[$id_user] = $u->array_options['options_DDA'];
 		}
-		
+///		var_dump($TRHCacheUserDateEntree[$id_user], $date);exit;
 		if(!empty($TRHCacheUserDateEntree[$id_user]) && strtotime($TRHCacheUserDateEntree[$id_user]) > strtotime($date) ) return 'NON';
 		
 		$e=new TRH_EmploiTemps;
