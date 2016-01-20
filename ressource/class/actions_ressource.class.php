@@ -29,7 +29,7 @@ class ActionsRessource
 							datee = $('#f').val();
 							
 							$.ajax({
-								url : '<?=dol_buildpath('/ressource/script/utilisateur-a-un-vehicule.php',1) ?>?fk_user='+fk_user+'&dates='+dates+'&datee='+datee
+								url : '<?php echo dol_buildpath('/ressource/script/utilisateur-a-un-vehicule.php',1) ?>?fk_user='+fk_user+'&dates='+dates+'&datee='+datee
 								,dataType: 'json'
 								,data: {
 									json:1
@@ -46,7 +46,7 @@ class ActionsRessource
 						});
 						
 						$.ajax({
-							url : '<?=dol_buildpath('/ressource/script/utilisateur-a-un-vehicule.php',1) ?>?fk_user='+fk_user+'&dates='+dates+'&datee='+datee
+							url : '<?php echo dol_buildpath('/ressource/script/utilisateur-a-un-vehicule.php',1) ?>?fk_user='+fk_user+'&dates='+dates+'&datee='+datee
 							,dataType: 'json'
 							,data: {
 								json:1
@@ -61,7 +61,7 @@ class ActionsRessource
 							}
 						});
 					});
-				</script><?
+				</script><?php
 			}elseif($action=="vehiculeAttributed"){
 				/*$sqlReq="SELECT *";
 				$sqlReq.=" FROM ".MAIN_DB_PREFIX."rh_ressource_type as t, ";
@@ -92,8 +92,7 @@ class ActionsRessource
 			    		$('#fk_exp option[value='+ <? echo $obj->rowid ?> +']').hide();
 			    	});
 			    	</script>
-			    	<?
-					
+			    	<?php					
 					return 1;
 				}else{
 					?>
@@ -102,8 +101,7 @@ class ActionsRessource
 			    		$('#fk_exp option[value='+ <? echo $obj->rowid ?> +']').show();
 			    	});
 			    	</script>
-			    	<?
-					
+			    	<?php					
 					return 0;
 				}*/
 				
@@ -128,8 +126,7 @@ class ActionsRessource
 			    		$('#fk_exp option[value='+ <? echo $obj->rowid ?> +']').hide();
 			    	});
 			    	</script>
-			    	<?
-					
+			    	<?php					
 					return $resultReq->num_rows;
 				}else{
 					?>
@@ -138,8 +135,7 @@ class ActionsRessource
 			    		$('#fk_exp option[value='+ <? echo $obj->rowid ?> +']').show();
 			    	});
 			    	</script>
-			    	<?
-					
+			    	<?php					
 					return $resultReq->num_rows;
 				}
 			}
