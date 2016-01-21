@@ -66,7 +66,7 @@ function _generate_ticket_resto(&$ATMdb, $Tab, $type = 'standard') {
 			print $langs->trans('PostalCodeAndCityOnBook') . ';' . $langs->trans('DeliveryDate') . ";\n";
 		}
 		else{
-			print $langs->trans('EmployeeName').';'.$langs->trans('Matricule').';'.$langs->trans('NbTitle').';'.$langs->trans('FacialValueInCents').';';
+			print html_entity_decode($langs->trans('EmployeeName')).';'.$langs->trans('Matricule').';'.$langs->trans('NbTitle').';'.$langs->trans('FacialValueInCents').';';
 			print $langs->trans('DeliveryPoint').';'.$langs->trans('Libelle').";\n";
 		}
 		
@@ -97,10 +97,11 @@ function _generate_ticket_resto(&$ATMdb, $Tab, $type = 'standard') {
 					))."\n";
 				}
 				else{
-					print implode(';',array(
+				print implode(';',array(
 						$row['name']
-						,'" "'
+						,''
 						,$row['nbTicket']
+						,$conf->global->RH_MONTANT_TICKET_RESTO
 						,$row['pointlivraison']
 						,$row['cp']." ".$row['ville']
 					))."\n";
