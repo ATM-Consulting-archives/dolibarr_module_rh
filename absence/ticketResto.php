@@ -99,9 +99,8 @@ function _generate_ticket_resto(&$ATMdb, $Tab, $type = 'standard') {
 				else{
 					print implode(';',array(
 						$row['name']
-						,''
+						,'" "'
 						,$row['nbTicket']
-						,$row['nomtitre']
 						,$row['pointlivraison']
 						,$row['cp']." ".$row['ville']
 					))."\n";
