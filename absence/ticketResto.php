@@ -63,11 +63,11 @@ function _generate_ticket_resto(&$ATMdb, $Tab, $type = 'standard') {
 			print $langs->trans('EditingNameOnCover') . ';' . $langs->trans('EditingNameOnTitle') . ';' . $langs->trans('FacialValueInCents') . ';';
 			print $langs->trans('EmployersShareInCents') . ';' . $langs->trans('NbTitle') . ';' . $langs->trans('CompanyName') . ';';
 			print $langs->trans('PostalCode') . ';' . $langs->trans('City') . ';' . $langs->trans('CompanyNameOnBook') . ';';
-			print $langs->trans('PostalCodeAndCityOnBook') . ';' . $langs->trans('DeliveryDate') . ';\n';
+			print $langs->trans('PostalCodeAndCityOnBook') . ';' . $langs->trans('DeliveryDate') . ";\n";
 		}
 		else{
 			print $langs->trans('EmployeeName').';'.$langs->trans('Matricule').';'.$langs->trans('NbTitle').';'.$langs->trans('FacialValueInCents').';';
-			print $langs->trans('DeliveryPoint').';'.$langs->trans('Libelle').';';
+			print $langs->trans('DeliveryPoint').';'.$langs->trans('Libelle').";\n";
 		}
 		
 		foreach($Tab as $fk_user=>$row) {
