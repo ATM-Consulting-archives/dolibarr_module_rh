@@ -16,12 +16,13 @@
 			if(isset($_POST['Archive'])) {
 				_archive_ticket_resto($ATMdb, $_POST['TTicket']);
 			}
+			elseif(isset($_POST['GenererPrimoclic'])){
+				_generate_ticket_resto($ATMdb, $_POST['TTicket'],'primoclic');
+			}
 			else{
 				_generate_ticket_resto($ATMdb, $_POST['TTicket']);	
 			}
 			break;
-	
-		
 	}
 
 	_planningResult($ATMdb,$absence, 'edit');
@@ -30,7 +31,7 @@
 	
 	llxFooter();
 	
-function _generate_ticket_resto(&$ATMdb, $Tab) {
+function _generate_ticket_resto(&$ATMdb, $Tab, $type = 'standard') {
 	global $conf, $langs;
 	
 	
@@ -56,49 +57,55 @@ function _generate_ticket_resto(&$ATMdb, $Tab) {
 	    header('Content-Disposition: attachment; filename=TicketResto-'.date('Y-m-d-h-i-s').'.csv');
 	    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 		
-		print $langs->trans('ProductCode') . '
-			;' . $langs->trans('ClientCode') . '
-			;' . $langs->trans('DeliveryPoint') . '
-			;' . $langs->trans('Level') . ' 1
-			;' . $langs->trans('Level') . ' 2
-			;' . $langs->trans('EmployeeName') . '
-			;' . $langs->trans('EditingNameOnCover') . '
-			;' . $langs->trans('EditingNameOnTitle') . '
-			;' . $langs->trans('FacialValueInCents') . '
-			;' . $langs->trans('EmployersShareInCents') . '
-			;' . $langs->trans('NbTitle') . '
-			;' . $langs->trans('CompanyName') . '
-			;' . $langs->trans('PostalCode') . '
-			;' . $langs->trans('City') . '
-			;' . $langs->trans('CompanyNameOnBook') . '
-			;' . $langs->trans('PostalCodeAndCityOnBook') . '
-			;' . $langs->trans('DeliveryDate') . '
-		;\n';
+		if($type != 'primoclic'){
+			print $langs->trans('ProductCode') . ';' . $langs->trans('ClientCode') . ';' . $langs->trans('DeliveryPoint') . ';';
+			print $langs->trans('Level') . ' 1;' . $langs->trans('Level') . ' 2;' . $langs->trans('EmployeeName') . ';';
+			print $langs->trans('EditingNameOnCover') . ';' . $langs->trans('EditingNameOnTitle') . ';' . $langs->trans('FacialValueInCents') . ';';
+			print $langs->trans('EmployersShareInCents') . ';' . $langs->trans('NbTitle') . ';' . $langs->trans('CompanyName') . ';';
+			print $langs->trans('PostalCode') . ';' . $langs->trans('City') . ';' . $langs->trans('CompanyNameOnBook') . ';';
+			print $langs->trans('PostalCodeAndCityOnBook') . ';' . $langs->trans('DeliveryDate') . ';\n';
+		}
+		else{
+			print $langs->trans('EmployeeName').';'.$langs->trans('Matricule').';'.$langs->trans('NbTitle').';'.$langs->trans('FacialValueInCents').';';
+			print $langs->trans('DeliveryPoint').';'.$langs->trans('Libelle').';';
+		}
 		
 		foreach($Tab as $fk_user=>$row) {
 			
 			if($row['nbTicket'] > 0) {
-	
-				print implode(';',array(
-					$conf->global->RH_CODEPRODUIT_TICKET_RESTO
-					,(empty($row['code_client']) ? $conf->global->RH_CODECLIENT_TICKET_RESTO : $row['code_client'])
-					,$row['pointlivraison']
-					,$row['niveau1']
-					,$row['niveau2']
-					,$row['matricule']
-					,$row['name']
-					,$row['nomcouv']
-					,$row['nomtitre']
-					,$conf->global->RH_MONTANT_TICKET_RESTO
-					,($conf->global->RH_MONTANT_TICKET_RESTO * ($conf->global->RH_PART_PATRON_TICKET_RESTO / 100) )
-					,$row['nbTicket']
-					,$row['raisonsociale']
-					,$row['cp']
-					,$row['ville']
-					,$row['rscarnet']
-					,$row['cpcarnet']
-					,$row['date_distribution']
-				))."\n";
+				
+				if($type != 'primoclic'){
+					print implode(';',array(
+						$conf->global->RH_CODEPRODUIT_TICKET_RESTO
+						,(empty($row['code_client']) ? $conf->global->RH_CODECLIENT_TICKET_RESTO : $row['code_client'])
+						,$row['pointlivraison']
+						,$row['niveau1']
+						,$row['niveau2']
+						,$row['matricule']
+						,$row['name']
+						,$row['nomcouv']
+						,$row['nomtitre']
+						,$conf->global->RH_MONTANT_TICKET_RESTO
+						,($conf->global->RH_MONTANT_TICKET_RESTO * ($conf->global->RH_PART_PATRON_TICKET_RESTO / 100) )
+						,$row['nbTicket']
+						,$row['raisonsociale']
+						,$row['cp']
+						,$row['ville']
+						,$row['rscarnet']
+						,$row['cpcarnet']
+						,$row['date_distribution']
+					))."\n";
+				}
+				else{
+					print implode(';',array(
+						$row['name']
+						,''
+						,$row['nbTicket']
+						,$row['nomtitre']
+						,$row['pointlivraison']
+						,$row['cp']." ".$row['ville']
+					))."\n";
+				}
 				
 			}
 				
@@ -446,6 +453,7 @@ function _ticket(&$ATMdb) {
 	
 	echo $form->btsubmit($langs->trans('GenerateFile'), 'Generer');
 	//echo $form->btsubmit('Générer le fichier Sage', 'bt_sage');
+	echo $form->btsubmit($langs->trans('GenerateFilePrimoclic'), 'GenererPrimoclic');
 	echo $langs->trans('Then');
 	echo $form->btsubmit($langs->trans('ArchiveThisSending'), 'Archive');
 	
