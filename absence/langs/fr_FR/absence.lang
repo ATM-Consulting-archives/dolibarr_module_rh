@@ -480,4 +480,4 @@ dontSendMail=Ne pas envoyer de mail
 absenceGreaterThanCongesRestantsForbidden=Interdire la création d'absences si durée supérieure aux Congés payés N-1 restants
 is_tempspartiel=Est un jour temps partiel
 absenceGreaterThanCongesRestantsForbidden=Les absences ne peuvent pas être prisent par anticipation (compteur N -1 < 0)
-GenerateFilePrimocli=Générer format Primoclic
+GenerateFilePrimoclic=Générer format Primoclic
