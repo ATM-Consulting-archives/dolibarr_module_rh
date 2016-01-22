@@ -1,3 +1,3 @@
 <?php
 
-	require __DIR__.'/default.config.php';
+	require __DIR__.'/config.default.php';
