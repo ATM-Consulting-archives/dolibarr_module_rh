@@ -28,14 +28,14 @@
 		
 		$arraysize=count($TRecap);
 		
-		print "Collaborateur;Type Absence;Intitulé Absence;Durée en Jours;Durée en Heures;Date de début; Date de fin;\r\n";
+		print "Collaborateur;Type Absence;Intitule Absence;Duree en Jours;Duree en Heures;Date de debut; Date de fin;\r\n";
 		
 		for($k=0;$k<$arraysize;$k++){
 			
 			//print $TRecap[$k]['trigramme'].";";
-			print $TRecap[$k]['nom'].";";
+			print utf8_decode($TRecap[$k]['nom']).";";
 			print $TRecap[$k]['type_absence'].";";
-			print utf8_encode(html_entity_decode($TRecap[$k]['libelle_absence'])).";";
+			print html_entity_decode($TRecap[$k]['libelle_absence']).";";
 			print $TRecap[$k]['dureeJour'].";";
 			print $TRecap[$k]['dureeHeure'].";";
 			print $TRecap[$k]['date_debut'].";";
