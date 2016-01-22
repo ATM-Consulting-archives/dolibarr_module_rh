@@ -35,7 +35,7 @@
 			//print $TRecap[$k]['trigramme'].";";
 			print $TRecap[$k]['nom'].";";
 			print $TRecap[$k]['type_absence'].";";
-			print htmlentities($TRecap[$k]['libelle_absence']).";";
+			print utf8_encode(html_entity_decode($TRecap[$k]['libelle_absence'])).";";
 			print $TRecap[$k]['dureeJour'].";";
 			print $TRecap[$k]['dureeHeure'].";";
 			print $TRecap[$k]['date_debut'].";";
