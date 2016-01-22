@@ -28,12 +28,14 @@
 		
 		$arraysize=count($TRecap);
 		
+		print "Collaborateur;Type Absence;Intitulé Absence;Durée en Jours;Durée en Heures;Date de début; Date de fin;\r\n";
+		
 		for($k=0;$k<$arraysize;$k++){
 			
-			print $TRecap[$k]['trigramme'].";";
+			//print $TRecap[$k]['trigramme'].";";
 			print $TRecap[$k]['nom'].";";
 			print $TRecap[$k]['type_absence'].";";
-			print $TRecap[$k]['libelle_absence'].";";
+			print htmlentities($TRecap[$k]['libelle_absence']).";";
 			print $TRecap[$k]['dureeJour'].";";
 			print $TRecap[$k]['dureeHeure'].";";
 			print $TRecap[$k]['date_debut'].";";
@@ -352,7 +354,7 @@ function _get_stat_recap(&$ATMdb, $TType, $date_debut, $date_fin, $fk_usergroup,
 					,'libelle_absence'=>$absence->libelle
 					,'fk_user'=>$absence->fk_user
 					,'trigramme'=>$userAbsence->login
-					,'nom'=>$userAbsence->nom." ".$userAbsence->prenom
+					,'nom'=>($userAbsence->nom) ? $userAbsence->nom." ".$userAbsence->prenom : $userAbsence->lastname." ".$userAbsence->firstname
 					,'date_debut'=>$date_debut
 					,'date_fin'=>$date_fin
 					,'dureeJour'=>$dureeJour
