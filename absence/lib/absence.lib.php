@@ -275,8 +275,9 @@ function php2dmy($phpDate){
 function mailConges(&$absence,$presence=false){
 	global $db, $langs,$conf, $user;		
 
-	$from = USER_MAIL_SENDER;
-	
+	//$from = USER_MAIL_SENDER;
+	$from = !empty($user->email) ? $user->email : $conf->global->MAIN_MAIL_EMAIL_FROM;
+
 	$dont_send_mail = GETPOST('dontSendMail');
 
 	/*
@@ -439,6 +440,8 @@ function mailConges(&$absence,$presence=false){
 	if(!empty($sendto) && !$dont_send_mail) {
 		$mail = new TReponseMail($from,$sendto,$subject,$message);
 		$result = $mail->send(true, 'utf-8');
+		/*if($result) setEventMessage('Email envoyé avec succès à l\'utilisateur');
+		else setEventMessage('Erreur lors de l\'envoi du mail à l\'utilisateur');*/
 	}
 	
 	return 1;	
@@ -491,9 +494,9 @@ function mailCongesValideur(&$ATMdb, &$absence,$presence=false){
 
 //fonction permettant l'envoi de mail aux valideurs de la demande d'absence
 function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
-	global $db, $langs, $user;
+	global $db, $langs, $user, $conf;
 		
-	$from = USER_MAIL_SENDER;
+	$from = !empty($user->email) ? $user->email : $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 	$userr = new User($db);  
 	$userr->fetch($absence->fk_user);
@@ -551,7 +554,9 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
 	
 	if(!$dont_send_mail){
 		$mail = new TReponseMail($from,$sendto,$subject,$message);
-	    $result = $mail->send(true, 'utf-8');
+	    	$result = $mail->send(true, 'utf-8');
+		if($result) setEventMessage('Email envoyé avec succès au valideur '.$sendto);
+                else setEventMessage('Erreur lors de l\'envoi du mail à un valideur '.$sendto,'error');
 	}
 
 	return 1;
