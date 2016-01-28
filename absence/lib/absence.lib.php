@@ -556,7 +556,7 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
 		$mail = new TReponseMail($from,$sendto,$subject,$message);
 	    	$result = $mail->send(true, 'utf-8');
 		if($result) setEventMessage('Email envoyé avec succès au valideur '.$sendto);
-                else setEventMessage('Erreur lors de l\'envoi du mail à un valideur '.$sendto,'error');
+                else setEventMessage('Erreur lors de l\'envoi du mail à un valideur '.$sendto,'errors');
 	}
 
 	return 1;
