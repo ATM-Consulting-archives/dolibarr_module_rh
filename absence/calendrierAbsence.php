@@ -79,11 +79,11 @@
 		if($ATMdb->Get_line()) {
 			$TabUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower($ATMdb->Get_field('lastname'))).' '.$ATMdb->Get_field('firstname');
 		}
-		$sql="SELECT u.rowid,u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u";
+		$sql="SELECT u.rowid,u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u WHERE u.statut=1";
 	}else{
 		$sql="SELECT u.rowid,u.lastname, u.firstname FROM ".MAIN_DB_PREFIX."user as u,
 		".MAIN_DB_PREFIX."usergroup_user as g 
-		WHERE g.fk_user=u.rowid AND g.fk_usergroup=".$idGroupe;
+		WHERE g.fk_user=u.rowid AND u.statut=1 AND g.fk_usergroup=".$idGroupe;
 	}
 	$sql.=" ORDER BY lastname";
 	

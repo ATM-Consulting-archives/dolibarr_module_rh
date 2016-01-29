@@ -211,6 +211,7 @@ function _listeAdmin(&$PDOdb, &$compteur) {
 				LEFT JOIN  ".MAIN_DB_PREFIX."usergroup_user as gu ON (r.fk_user=gu.fk_user) ";
 	if($conf->multicompany->enabled) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON (e.rowid = c.entity) ";
 	$sql .=	" WHERE 1 ";
+	$sql .= " AND c.statut=1";
 	
 	if($fk_group>0) $sql.=" AND gu.fk_usergroup=".$fk_group;
 	

@@ -612,7 +612,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($PDOdb, 'admin', 0);
 		$droitAdmin=1;
 	}else if($user->rights->absence->myactions->creerAbsenceCollaborateur){
-		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user`";
+		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE statut=1";
 		$droitsCreation=1;
 		$comboAbsence=2;
 		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($PDOdb, 'admin', 0);
@@ -623,7 +623,8 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.lastname,  s.firstname 
 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as u ON (v.fk_usergroup=u.fk_usergroup)
 				INNER JOIN ".MAIN_DB_PREFIX."user as s ON (s.rowid=u.fk_user)  
-			WHERE v.fk_user=".$user->id." 
+			WHERE v.fk_user=".$user->id."
+			AND s.staut=1 
 			AND v.type='Conges'";
 			$comboAbsence=1;
 			//echo $sqlReqUser;exit;
@@ -668,6 +669,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 			WHERE v.fk_user=".$user->id." 
 			AND v.type='Conges'
 			AND v.pointeur=1
+			AND statut=1
 			ORDER BY s.lastname
 			";
 			$PDOdb->Execute($sql);

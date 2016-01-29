@@ -570,7 +570,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$comboAbsence=0;
 	//création du tableau des utilisateurs liés au groupe du valideur, pour créer une absence, pointage...
 	$TUser = array();
-	$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id;
+	$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id." AND statut=1";
 	$ATMdb->Execute($sql);
 	if($ATMdb->Get_line()){
 		$TUser[$ATMdb->Get_field('rowid')]=ucwords(strtolower(htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')))." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
@@ -581,7 +581,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 	$droitAdmin=0;
 
 	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
-		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user`";
+		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE statut=1";
 		$droitsCreation=1;
 		$comboAbsence=2;
 		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($ATMdb, 'admin',true);
@@ -592,6 +592,7 @@ function _fiche(&$ATMdb, &$absence, $mode) {
 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as u ON (v.fk_usergroup=u.fk_usergroup)
 				INNER JOIN ".MAIN_DB_PREFIX."user as s ON (s.rowid=u.fk_user)  
 			WHERE v.fk_user=".$user->id." 
+			AND s.statut=1
 			AND v.type='Conges'";
 			$comboAbsence=1;
 			$droitsCreation=1;
