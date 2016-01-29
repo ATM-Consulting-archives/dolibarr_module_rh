@@ -277,6 +277,7 @@ function mailConges(&$absence,$presence=false){
 
 	//$from = USER_MAIL_SENDER;
 	$from = !empty($user->email) ? $user->email : $conf->global->MAIN_MAIL_EMAIL_FROM;
+	if(!empty($conf->global->RH_USER_MAIL_OVERWRITE)) $from = $conf->global->RH_USER_MAIL_OVERWRITE;
 
 	$dont_send_mail = GETPOST('dontSendMail');
 
@@ -497,6 +498,7 @@ function envoieMailValideur(&$ATMdb, &$absence, $idValideur,$presence=false){
 	global $db, $langs, $user, $conf;
 		
 	$from = !empty($user->email) ? $user->email : $conf->global->MAIN_MAIL_EMAIL_FROM;
+	if(!empty($conf->global->RH_USER_MAIL_OVERWRITE)) $from = $conf->global->RH_USER_MAIL_OVERWRITE;
 
 	$userr = new User($db);  
 	$userr->fetch($absence->fk_user);
