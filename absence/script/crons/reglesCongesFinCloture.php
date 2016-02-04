@@ -12,7 +12,7 @@
 	require('../../class/absence.class.php');
 
 	$PDOdb=new TPDOdb;
-	$PDOdb->debug=true;
+//	$PDOdb->debug=true;
 
 	$o=new TRH_Compteur;
 	$o->init_db_by_vars($PDOdb); // TODO remove or not : on sait jamais, dans la nuit :-/
@@ -28,14 +28,24 @@
 
 	foreach($Tab as $idUser => $dateCloture )
 	{
-	   	//echo $idUser." ".$dateCloture. "<br/>";
-		$date=strtotime('+1day',strtotime($dateCloture));
-		$dateMD=date('dm',$date);
-	
+		$u=new User($db);
+		$u->fetch($idUser);
+		
+		if($u->id<=0)continue;
+
+	   	echo $u->getNomUrl(1)." ".$dateCloture. "...";
+
+		$date=strtotime('+1day',strtotime($dateCloture)); // Car on passe à 1h du matin le lendemain
+		$dateMD=date('Ymd',$date);
 		////// 1er juin, tous les congés de l'année N sont remis à 0, et sont transférés vers le compteur congés N-1
-		$juin=date('dm');
-		if($juin==$dateMD || isset($_REQUEST['force_for_test'])){
+		$juin=date('Ymd');
+//var_dump( $juin , $dateMD);
+		echo $juin.'?='.$dateMD.'...';	
+
+		if(!strcmp($juin,$dateMD) || isset($_REQUEST['force_for_test'])){
 			
+			echo 'Oui...';
+
 			$compteur=new TRH_Compteur;
 			$compteur->load_by_fkuser($PDOdb, $idUser);
 			$compteur->reportCongesNM1 = 0;
@@ -49,10 +59,15 @@
 			$compteur->acquisExerciceN = 0;
 			$compteur->acquisHorsPeriodeN = 0;
 			$compteur->congesPrisN = 0;
-			$compteur->date_congesCloture = strtotime('+1 year',$date);
+			$compteur->date_congesCloture = strtotime('+1 year',strtotime($dateCloture));
 			
 			$compteur->save($PDOdb);
 		}
+		else {
+			echo 'Non...';
+		}
+
+		echo '<br />';
 	}
 	
 $PDOdb->close();
