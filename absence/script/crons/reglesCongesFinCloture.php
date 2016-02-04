@@ -4,6 +4,16 @@
  * SCRIPT 1 à exécuter
  * 
  */
+        $sapi_type = php_sapi_name();
+        $script_file = basename(__FILE__);
+        $path=dirname(__FILE__).'/';
+        // Test if batch mode
+        if (substr($sapi_type, 0, 3) != 'cli') {
+            echo "Error: ".$script_file." you must use PHP for CLI mode.\n";
+                exit(-1);
+        }
+
+
  	define('INC_FROM_CRON_SCRIPT', true);
 	
 	chdir(__DIR__);
@@ -42,7 +52,7 @@
 //var_dump( $juin , $dateMD);
 		echo $juin.'?='.$dateMD.'...';	
 
-		if(!strcmp($juin,$dateMD) || isset($_REQUEST['force_for_test'])){
+		if(!strcmp($juin,$dateMD)/* || isset($_REQUEST['force_for_test'])*/){
 			
 			echo 'Oui...';
 
