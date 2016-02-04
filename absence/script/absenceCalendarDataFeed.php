@@ -79,27 +79,27 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
   
   	$TJourFerie=getJourFerie($ATMdb, $date_start, $date_end);
 	$ret['events'] = array_merge($TJourFerie, $ret['events']); 
-  
+
   	if($user->rights->absence->myactions->voirToutesAbsences){		//si on a le droit de voir toutes les absences
 	  	
 	  	if($idUser>0){		//on recherche un groupe et un utilisateur
 	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, t.libelleAbsence as 'libelle', r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat, r.ddMoment, r.dfMoment,t.isPresence, r.date_hourStart, r.date_hourEnd ,t.colorId
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r LEFT JOIN `".MAIN_DB_PREFIX."user` as u ON (r.fk_user=u.rowid)
 	  			LEFT JOIN `".MAIN_DB_PREFIX."rh_type_absence` t ON (r.type=t.typeAbsence) 
-	  		WHERE u.rowid=".$idUser." AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
+	  		WHERE u.rowid=".$idUser." AND r.date_debut<='".$date_end."' AND r.date_fin>='".$date_start."'";
 	  	}
 	  	else if($idGroupe>0){		//on recherche un groupe
 	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, t.libelleAbsence as 'libelle',  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat, r.ddMoment, r.dfMoment,t.isPresence, r.date_hourStart, r.date_hourEnd ,t.colorId
 	  			FROM `".MAIN_DB_PREFIX."rh_absence` as r LEFT JOIN `".MAIN_DB_PREFIX."user` as u ON (r.fk_user=u.rowid)
 	  				LEFT JOIN `".MAIN_DB_PREFIX."usergroup_user` as g ON (u.rowid=g.fk_user)
 	  				LEFT JOIN `".MAIN_DB_PREFIX."rh_type_absence` t ON (r.type=t.typeAbsence) 
-	  		WHERE g.fk_usergroup=".$idGroupe." AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";;
+	  		WHERE g.fk_usergroup=".$idGroupe." AND r.date_debut<='".$date_end."' AND r.date_fin>='".$date_start."'";;
 	  	}
 		else {
 			$sql1 = "SELECT DISTINCT r.rowid as rowid, t.libelleAbsence as 'libelle',  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat , r.ddMoment, r.dfMoment,t.isPresence, r.date_hourStart, r.date_hourEnd,t.colorId
 			  		FROM `".MAIN_DB_PREFIX."rh_absence` as r LEFT JOIN `".MAIN_DB_PREFIX."user` as u ON (r.fk_user=u.rowid)
 	  						LEFT JOIN `".MAIN_DB_PREFIX."rh_type_absence` t ON (r.type=t.typeAbsence) 
-			  		WHERE r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
+			  		WHERE r.date_debut<='".$date_end."' AND r.date_fin>='".$date_start."'";
 		}
 
 		if($typeAbsence!= 'Tous'){
@@ -120,21 +120,21 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r LEFT JOIN `".MAIN_DB_PREFIX."user` as u ON (r.fk_user=u.rowid)
 				LEFT JOIN `".MAIN_DB_PREFIX."usergroup_user` as g ON (u.rowid=g.fk_user)
 	  			LEFT JOIN `".MAIN_DB_PREFIX."rh_type_absence` t ON (r.type=t.typeAbsence) 
-	  		WHERE u.rowid=".$idUser." AND g.fk_usergroup IN (".implode(',',$TGroup).") AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
+	  		WHERE u.rowid=".$idUser." AND g.fk_usergroup IN (".implode(',',$TGroup).") AND r.date_debut<='".$date_end."' AND r.date_fin>='".$date_start."'";
 	  	}
 	  	else if($idGroupe>0){		//on recherche un groupe
 	  		$sql1 = "SELECT DISTINCT r.rowid as rowid, t.libelleAbsence as 'libelle',  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat, r.ddMoment, r.dfMoment,t.isPresence, r.date_hourStart, r.date_hourEnd ,t.colorId
 	  			FROM `".MAIN_DB_PREFIX."rh_absence` as r LEFT JOIN `".MAIN_DB_PREFIX."user` as u ON (r.fk_user=u.rowid)
 	  				LEFT JOIN `".MAIN_DB_PREFIX."usergroup_user` as g ON (u.rowid=g.fk_user)
 	  				LEFT JOIN `".MAIN_DB_PREFIX."rh_type_absence` t ON (r.type=t.typeAbsence) 
-	  		WHERE g.fk_usergroup=".$idGroupe." AND g.fk_usergroup IN (".implode(',',$TGroup).") AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";;
+	  		WHERE g.fk_usergroup=".$idGroupe." AND g.fk_usergroup IN (".implode(',',$TGroup).") AND r.date_debut<='".$date_end."' AND r.date_fin>='".$date_start."'";;
 	  	}
 		else {
 			$sql1 = "SELECT DISTINCT r.rowid as rowid, t.libelleAbsence as 'libelle',  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat , r.ddMoment, r.dfMoment,t.isPresence, r.date_hourStart, r.date_hourEnd,t.colorId
 			  		FROM `".MAIN_DB_PREFIX."rh_absence` as r LEFT JOIN `".MAIN_DB_PREFIX."user` as u ON (r.fk_user=u.rowid)
 			  			LEFT JOIN `".MAIN_DB_PREFIX."usergroup_user` as g ON (u.rowid=g.fk_user)
 	  						LEFT JOIN `".MAIN_DB_PREFIX."rh_type_absence` t ON (r.type=t.typeAbsence) 
-			  		WHERE  g.fk_usergroup IN (".implode(',',$TGroup).") AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
+			  		WHERE  g.fk_usergroup IN (".implode(',',$TGroup).") AND r.date_debut<='".$date_end."' AND r.date_fin>='".$date_start."'";
 		}
 
 		if($typeAbsence!= 'Tous'){
@@ -148,7 +148,7 @@ function listCalendarByRange(&$ATMdb, $date_start, $date_end, $idUser=0, $idGrou
 		$sql1="SELECT DISTINCT r.rowid as rowid, t.libelleAbsence as 'libelle',  r.type, u.lastname, u.firstname, r.fk_user, r.date_debut, r.date_fin, r.etat , r.ddMoment, r.dfMoment,t.isPresence, r.date_hourStart, r.date_hourEnd,t.colorId
 	  		FROM `".MAIN_DB_PREFIX."rh_absence` as r LEFT JOIN `".MAIN_DB_PREFIX."user` as u ON (r.fk_user=u.rowid)
 	  						LEFT JOIN `".MAIN_DB_PREFIX."rh_type_absence` t ON (r.type=t.typeAbsence) 
-	  		WHERE u.rowid=".$user->id." AND r.date_debut<'".$date_end."' AND r.date_fin>'".$date_start."'";
+	  		WHERE u.rowid=".$user->id." AND r.date_debut<='".$date_end."' AND r.date_fin>='".$date_start."'";
 			if($typeAbsence != 'Tous'){
 	  			$sql1.=" AND r.type LIKE '".$typeAbsence."' ";
 	  		}
@@ -369,7 +369,7 @@ function listCalendar(&$ATMdb, $day, $type, $idAbsence, $idGroupe, $typeAbsence)
 		$et =  strtotime( date('Y-m-t 23:59:59', strtotime($day)));
 	  
   }
-  
+
   $date_start = date('Y-m-d 00:00:00', $st);
   $date_end = date('Y-m-d 23:59:59', $et);
 	  
