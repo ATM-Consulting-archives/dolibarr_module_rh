@@ -1641,10 +1641,10 @@
 
             var daystr = this.abbr;
             var arrdays = daystr.split('/');
-            var day = new Date(arrdays[0], parseInt(arrdays[1] - 1), arrdays[2]);
+            var day = new Date(arrdays[2], parseInt(arrdays[0] - 1), parseInt(arrdays[1]));
             var cc = $("#cal-month-cc");
             var ccontent = $("#cal-month-cc-content table tbody");
-            var ctitle = $("#cal-month-cc-title");
+            var ctitle = $("#cal-month-cc-title");console.log(arrdays[0], arrdays[1] , arrdays[2], day);
             ctitle.html(dateFormat.call(day, i18n.xgcalendar.dateformat.Md3) + " " + __WDAY[day.getDay()]);
             ccontent.empty();
             //var c = tc()[2];
