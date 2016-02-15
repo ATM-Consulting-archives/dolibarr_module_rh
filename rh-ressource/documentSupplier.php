@@ -151,6 +151,7 @@
 									,'ImportFactureArea.php' => 'Area'
 									,'ImportFactureEuromaster.php' => 'Euromaster'
 									,'ImportFactureParcours.php' => 'Parcours'
+									,'ImportFacturePneumatiques.php' => 'Côté-Route'
 									,'ImportFactureOrange.php' => 'Orange');
 		
 		$TBS=new TTemplateTBS();

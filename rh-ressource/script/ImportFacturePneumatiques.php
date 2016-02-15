@@ -91,10 +91,13 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		$numFacture = $infos[1];
 		
 		if ($numLigne >=1 && $r->rowid > 0){
-			
-			$timestamp = mktime(0,0,0,substr($infos[3], 3,2),substr($infos[3], 0,2), substr($infos[3], 6,4));
+
+			$timestamp = mktime(0,0,0,substr($infos[$mapping['date_facture']], 3,2),substr($infos[$mapping['date_facture']], 0,2), substr($infos[$mapping['date_facture']], 6,4));
 			$date = date("Y-m-d", $timestamp);
 
+			$idUser = ressourceIsEmpruntee($ATMdb, $r->rowid, $date);
+			if(empty($idUser)) $idUser = 3;
+			
 			$fact = new TRH_Evenement;
 			$fact->type = 'Pneumatique';
 			$fact->numFacture = $infos[$mapping['num_facture']];
@@ -103,9 +106,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$fact->fk_rh_ressource_type = $idVoiture;
 			$fact->motif = 'Facture pneumatique';
 			$fact->commentaire = $infos[$mapping['designation']];
-			$fact->commentaire.= "\nQuantité : ".$infos[$mapping['qty']];
-			$fact->commentaire.= "\nPV base unitaire HT : ".$infos[$mapping['pv_base_unitaire_ht']];
-			$fact->commentaire.= "\nRemise : ".$infos[$mapping['remise']];
+			$fact->commentaire.= "<br />Quantité : ".(int)$infos[$mapping['qty']];
+			$fact->commentaire.= "<br />PV base unitaire HT : ".$infos[$mapping['pv_base_unitaire_ht']];
+			$fact->commentaire.= "<br />Remise : ".$infos[$mapping['remise']];
+			$fact->commentaire.= "<br />Num. BL : ".$infos[$mapping['num_bl']];
 			$fact->set_date('date_debut', $infos[$mapping['date_facture']]);
 			$fact->set_date('date_fin', $infos[$mapping['echeance']]);
 			$fact->coutTTC = $infos[$mapping['total_ttc']];
@@ -119,13 +123,14 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$fact->save($ATMdb);
 			$cptFactureLoyer++;
 			
+			print '<tr>';
 			print '<td>'.$infos[$mapping['id_agence']].'</td>'
 			.'<td>'.$infos[$mapping['sigle']].'</td>'
 			.'<td>'.$infos[$mapping['num_facture']].'</td>'
 			.'<td>'.$infos[$mapping['date_facture']].'</td>'
 			.'<td>'.$infos[$mapping['echeance']].'</td>'
 			.'<td>'.$infos[$mapping['num_bl']].'</td>'
-			.'<td>'.$infos[$mapping['designation']].'/td>'
+			.'<td>'.$infos[$mapping['designation']].'</td>'
 			.'<td>'.$infos[$mapping['qty']].'</td>'
 			.'<td>'.$infos[$mapping['vehicule']].'</td>'
 			.'<td>'.$infos[$mapping['ca_facture_ht']].'</td>'
@@ -133,7 +138,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			.'<td>'.$infos[$mapping['pv_reel_unitaire_ht']].'</td>'
 			.'<td>'.$infos[$mapping['total_ttc']].'</td>'
 			.'<td>'.$infos[$mapping['remise']].'</td>';
-						
+			print '</tr>';
+			
 		}
 		$numLigne++;
 	
@@ -141,18 +147,24 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	?></table>
 	<?
 
-	$message .= count($TVehiculesNonTrouve).' voitures non trouvées<br>';
+	print count($TVehiculesNonTrouve).' voiture(s) non trouvée(s)<br><br>';
 	
 	if(count($TVehiculesNonTrouve)> 0) {
-		print 'Détail : ';
-		echo' <pre>';
-		print_r($TVehiculesNonTrouve);
-		echo' </pre>';
+		print 'Détail : <br />';
+		foreach($TVehiculesNonTrouve as $TData) {
+			
+			print 'ligne : '.$TData['line'];
+			print '<br />';
+			print 'voiture : '.$TData['num_id'];
+			print '<br />';
+			print '<br />';
+			
+		}
 	}
 	
 	$timeend=microtime(true);
 	$page_load_time = number_format($timeend-$timestart, 3);
-	$message .= '<br>Fin du traitement. Durée : '.$page_load_time . " sec.<br><br>";
+	$message = '<br>Fin du traitement. Durée : '.$page_load_time . " sec.<br><br>";
 	echo $message;
 
 }
