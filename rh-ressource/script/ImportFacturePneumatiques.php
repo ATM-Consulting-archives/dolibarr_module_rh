@@ -40,10 +40,10 @@ $mapping = array(
 $timestart=microtime(true);
 
 $idVoiture = getIdType('voiture');
-$idTiers = getIdSociete($ATMdb, 'Côté-Route');
-if (!$idTiers){echo 'Pas de fournisseur (tiers) du nom de "Côté-Route" ! Pensez à le créer';exit();}
+$idTiers = getIdSociete($ATMdb, strtolower('Cote-Route'));
+if (!$idTiers){echo 'Pas de fournisseur (tiers) du nom de "Cote-Route" ! Pensez à le créer';exit();}
 
-if ($idTiers == 0){echo 'Aucun fournisseur du nom de "Côté-Route" ! Pensez à le créer';exit;}
+if ($idTiers == 0){echo 'Aucun fournisseur du nom de "Cote-Route" ! Pensez à le créer';exit;}
 
 if (empty($nomFichier)){$nomFichier = "./fichierImports/CPRO - PRELVT DU 05 04 13.csv";}
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
@@ -94,37 +94,28 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			$timestamp = mktime(0,0,0,substr($infos[3], 3,2),substr($infos[3], 0,2), substr($infos[3], 6,4));
 			$date = date("Y-m-d", $timestamp);
-			
-			?>
-			<tr>
-				<td>Ajout facture <?=$numFacture ?></td>
-				<td><?=$plaque ?></td>
-			<?
-				 
-				 
-			$loyerTTC = floatval(strtr($infos[22], ',','.'));
-			$loyerHT = floatval(strtr($infos[12], ',','.'));
-		
-			$taux = '20';
-			
+
 			$fact = new TRH_Evenement;
-			$fact->type = 'facturepneumatique';
+			$fact->type = 'Pneumatique';
 			$fact->numFacture = $infos[$mapping['num_facture']];
 			$fact->fk_rh_ressource = $r->rowid;
 			$fact->fk_user = $idUser;
 			$fact->fk_rh_ressource_type = $idVoiture;
 			$fact->motif = 'Facture pneumatique';
-			$fact->commentaire = 'Facture lié au contrat '.$infos[0];
+			$fact->commentaire = $infos[$mapping['designation']];
+			$fact->commentaire.= "\nQuantité : ".$infos[$mapping['qty']];
+			$fact->commentaire.= "\nPV base unitaire HT : ".$infos[$mapping['pv_base_unitaire_ht']];
+			$fact->commentaire.= "\nRemise : ".$infos[$mapping['remise']];
 			$fact->set_date('date_debut', $infos[$mapping['date_facture']]);
 			$fact->set_date('date_fin', $infos[$mapping['echeance']]);
-			$fact->coutTTC = $loyerTTC;
-			$fact->coutEntrepriseTTC =  $loyerTTC;
-			$fact->TVA= $TTVA[$taux];
-			$fact->coutEntrepriseHT = $loyerHT;
+			$fact->coutTTC = $infos[$mapping['total_ttc']];
+			$fact->coutEntrepriseTTC =  $infos[$mapping['total_ttc']];
+			//$fact->TVA= $TTVA[$taux]; Non renseigné dans le fichier d'exemple
+			$fact->coutEntrepriseHT = $infos[$mapping['pv_reel_unitaire_ht']];
 			$fact->entity =$entity;
 			$fact->fk_fournisseur = $idTiers;
 			$fact->idImport = $idImport;
-			$fact->date_facture = dateToInt($infos[3]);
+			$fact->date_facture = dateToInt($infos[$mapping['date_facture']]);
 			$fact->save($ATMdb);
 			$cptFactureLoyer++;
 			
@@ -149,12 +140,16 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	}
 	?></table>
 	<?
-	//Fin du code PHP : Afficher le temps d'éxecution et le bilan.
-	//$message .= $cptContrat.' contrats importés.<br>';
-	$message .= $cptNoVoiture.' plaques sans correspondance.<br>';
-	$message .= $cptNoAttribution.' voitures non attribués<br>';
-	$message .= $cptFactureLoyer.' factures loyer importés.<br>';
-	$message .= $cptFactureGestEntre.' factures gestion+entretien importés.<br>';
+
+	$message .= count($TVehiculesNonTrouve).' voitures non trouvées<br>';
+	
+	if(count($TVehiculesNonTrouve)> 0) {
+		print 'Détail : ';
+		echo' <pre>';
+		print_r($TVehiculesNonTrouve);
+		echo' </pre>';
+	}
+	
 	$timeend=microtime(true);
 	$page_load_time = number_format($timeend-$timestart, 3);
 	$message .= '<br>Fin du traitement. Durée : '.$page_load_time . " sec.<br><br>";

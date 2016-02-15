@@ -153,6 +153,9 @@
 				case 'facture':
 					$('#numFacture').show();
 					break;
+				case 'pneumatique':
+					$('#numFacture').show();
+					break;
 				case 'facttel':
 				case 'facture téléphonique' :
 					$('#listeappels').show();
