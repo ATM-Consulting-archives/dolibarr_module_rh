@@ -106,10 +106,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$fact->fk_rh_ressource_type = $idVoiture;
 			$fact->motif = 'Facture pneumatique';
 			$fact->commentaire = $infos[$mapping['designation']];
-			$fact->commentaire.= "<br />Quantité : ".(int)$infos[$mapping['qty']];
-			$fact->commentaire.= "<br />PV base unitaire HT : ".$infos[$mapping['pv_base_unitaire_ht']];
-			$fact->commentaire.= "<br />Remise : ".$infos[$mapping['remise']];
-			$fact->commentaire.= "<br />Num. BL : ".$infos[$mapping['num_bl']];
+			$fact->commentaire.= "<br />\nQuantité : ".(int)$infos[$mapping['qty']];
+			$fact->commentaire.= "<br />\nPV base unitaire HT : ".$infos[$mapping['pv_base_unitaire_ht']];
+			$fact->commentaire.= "<br />\nRemise : ".$infos[$mapping['remise']];
+			$fact->commentaire.= "<br />\nNum. BL : ".$infos[$mapping['num_bl']];
 			$fact->set_date('date_debut', $infos[$mapping['date_facture']]);
 			$fact->set_date('date_fin', $infos[$mapping['echeance']]);
 			$fact->coutTTC = $infos[$mapping['total_ttc']];
