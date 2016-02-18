@@ -592,15 +592,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 
 	$droitAdmin=0;
 
-	if($user->rights->absence->myactions->CanValidPersonalAbsencePresence){
-		$sql="SELECT rowid, lastname,  firstname 
-		FROM `".MAIN_DB_PREFIX."user` 
-		WHERE rowid=".$user->id;
-		$droitsCreation=1;
-		$comboAbsence=2;
-		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($PDOdb, 'admin', 0);
-		$droitAdmin=1;
-	}else if($user->rights->absence->myactions->creerAbsenceCollaborateur){
+	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
 		$sql="SELECT DISTINCT rowid, lastname,  firstname, login FROM `".MAIN_DB_PREFIX."user` WHERE statut=1 AND entity IN (0,".$conf->entity.")";
 		$droitsCreation=1;
 		$comboAbsence=2;
@@ -620,17 +612,28 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 		$droitsCreation=1;
 		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($PDOdb, 'user', 0);
 	}
+	else if($user->rights->absence->myactions->CanValidPersonalAbsencePresence){
+                $sql="SELECT rowid, lastname,  firstname,login 
+                FROM `".MAIN_DB_PREFIX."user` 
+                WHERE rowid=".$user->id;
+                $droitsCreation=1;
+                $comboAbsence=2;
+                $typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($PDOdb, 'admin', 0);
+                $droitAdmin=1;
+        }
 	else $droitsCreation=2; //on n'a pas les droits de création
 	
 	if($droitsCreation==1){
 		$sql.=" ORDER BY lastname";
 		$PDOdb->Execute($sql);
 		while($obju = $PDOdb->Get_line()) {
-					
+//var_dump($obju);					
 			$name = $obju->lastname.' '.$obju->firstname;
-			
-			$TUser[$obju->rowid]=empty($name) ? $obju->login : $$name;
+//			var_dump($name);
+			$TUser[$obju->rowid]=empty($name) ? $obju->login : $name;
 		}
+//var_dump($TUser);
+
 	}
 	//Tableau affichant les 10 dernières absences du collaborateur
 	$TRecap=array();
