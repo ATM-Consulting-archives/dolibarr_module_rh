@@ -555,25 +555,14 @@ function _fiche(&$PDOdb, &$absence, $mode) {
     $congeCourantTotal=$congeCourant['acquisEx']+$congeCourant['acquisAnc']+$congeCourant['acquisHorsPer']+$congeCourant['reportConges'];
     $congeCourantReste=$congePrecTotal-$congeCourant['congesPris'];
     
-
-	
-	
-	
-	//récupération informations utilisateur dont on observe l'absence, ou la crée
-	// TODO object again & again !
+	$userCourant=new User($db);
 	if($absence->fk_user!=0){
-		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$absence->fk_user;
-	}else{
-		$sqlReqUser="SELECT * FROM `".MAIN_DB_PREFIX."user` WHERE rowid=".$user->id;
+		$userCourant->fetch($absence->fk_user);
 	}
-	$PDOdb->Execute($sqlReqUser);
-	$Tab=array();
-	while($PDOdb->Get_line()) { // TODO utiliser objet std dolibarr
-				$userCourant=new User($db);
-				$userCourant->firstname=$PDOdb->Get_field('firstname');
-				$userCourant->id=$PDOdb->Get_field('rowid');
-				$userCourant->lastname=$PDOdb->Get_field('lastname');
+	else{
+		$userCourant->fetch($user->id);
 	}
+	
 	
 	
 	//$estValideur=$absence->estValideur($PDOdb,$user->id);
@@ -603,16 +592,8 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 
 	$droitAdmin=0;
 
-	if($user->rights->absence->myactions->CanValidPersonalAbsencePresence){
-		$sql="SELECT rowid, lastname,  firstname 
-		FROM `".MAIN_DB_PREFIX."user` 
-		WHERE rowid=".$user->id;
-		$droitsCreation=1;
-		$comboAbsence=2;
-		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($PDOdb, 'admin', 0);
-		$droitAdmin=1;
-	}else if($user->rights->absence->myactions->creerAbsenceCollaborateur){
-		$sql="SELECT rowid, lastname,  firstname FROM `".MAIN_DB_PREFIX."user` WHERE statut=1";
+	if($user->rights->absence->myactions->creerAbsenceCollaborateur){
+		$sql="SELECT DISTINCT rowid, lastname,  firstname, login FROM `".MAIN_DB_PREFIX."user` WHERE statut=1 AND entity IN (0,".$conf->entity.")";
 		$droitsCreation=1;
 		$comboAbsence=2;
 		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($PDOdb, 'admin', 0);
@@ -620,7 +601,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 //print "admin";
 //print_r( $typeAbsenceCreable);
 	}else if($user->rights->absence->myactions->creerAbsenceCollaborateurGroupe){
-		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.lastname,  s.firstname 
+		$sql=" SELECT DISTINCT u.fk_user,s.rowid, s.lastname,  s.firstname ,s.login
 			FROM `".MAIN_DB_PREFIX."rh_valideur_groupe` as v INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as u ON (v.fk_usergroup=u.fk_usergroup)
 				INNER JOIN ".MAIN_DB_PREFIX."user as s ON (s.rowid=u.fk_user)  
 			WHERE v.fk_user=".$user->id."
@@ -631,14 +612,28 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 		$droitsCreation=1;
 		$typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($PDOdb, 'user', 0);
 	}
+	else if($user->rights->absence->myactions->CanValidPersonalAbsencePresence){
+                $sql="SELECT rowid, lastname,  firstname,login 
+                FROM `".MAIN_DB_PREFIX."user` 
+                WHERE rowid=".$user->id;
+                $droitsCreation=1;
+                $comboAbsence=2;
+                $typeAbsenceCreable=TRH_TypeAbsence::getTypeAbsence($PDOdb, 'admin', 0);
+                $droitAdmin=1;
+        }
 	else $droitsCreation=2; //on n'a pas les droits de création
 	
 	if($droitsCreation==1){
 		$sql.=" ORDER BY lastname";
 		$PDOdb->Execute($sql);
-		while($PDOdb->Get_line()) {
-			$TUser[$PDOdb->Get_field('rowid')]=$PDOdb->Get_field('lastname')." ".$PDOdb->Get_field('firstname');
+		while($obju = $PDOdb->Get_line()) {
+//var_dump($obju);					
+			$name = $obju->lastname.' '.$obju->firstname;
+//			var_dump($name);
+			$TUser[$obju->rowid]=empty($name) ? $obju->login : $name;
 		}
+//var_dump($TUser);
+
 	}
 	//Tableau affichant les 10 dernières absences du collaborateur
 	$TRecap=array();
@@ -727,6 +722,17 @@ function _fiche(&$PDOdb, &$absence, $mode) {
         if(!empty($valideurs)) $valideurs = ' (à valider par '.$valideurs.')';
         
     }
+	
+	$userAbsenceVisu = '';
+	
+	if($droitsCreation==1) {
+		if($form->type_aff == 'edit') $userAbsenceVisu = $form->combo('','fk_user',$TUser,$absence->fk_user);
+		else $userAbsenceVisu = $userCourant->getNomUrl(1);
+		
+	}
+		
+	
+	
 //    var_dump($droitSupprimer);
     print $TBS->render('./tpl/absence.tpl.php'
 		,array(
@@ -787,7 +793,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 				,'dureeHeurePaie'=>$form->texte('','dureeHeurePaie',$absence->dureeHeurePaie,5,10)
 				,'avertissement'=>$absence->avertissement==1?'<img src="./img/warning.png" />' . $langs->trans('DoNotRespectRules') . ' : '.$absence->avertissementInfo: $langs->trans('None')
 				,'fk_user'=>$absence->fk_user
-				,'userAbsence'=>$droitsCreation==1?$form->combo('','fk_user',$TUser,$absence->fk_user):''
+				,'userAbsence'=>$userAbsenceVisu
 				,'userAbsenceCourant'=>$droitsCreation==1?'':$form->hidden('fk_user', $user->id)
 				,'fk_user_absence'=>$form->hidden('fk_user_absence', $absence->fk_user)
 				,'niveauValidation'=>$absence->niveauValidation
@@ -817,6 +823,7 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 				'id'=>$userCourant->id
 				,'lastname'=>htmlentities($userCourant->lastname, ENT_COMPAT , 'ISO8859-1')
 				,'firstname'=>htmlentities($userCourant->firstname, ENT_COMPAT , 'ISO8859-1')
+				,'link'=>$userCourant->getNomUrl(1)
 				,'valideurConges'=>($user->rights->absence->myactions->creerAbsenceCollaborateur==1 && ($absence->fk_user!=$user->id || $user->rights->absence->myactions->CanValidPersonalAbsencePresence==1))?1:$user->rights->absence->myactions->valideurConges&&$estValideur
 				//,'valideurConges'=>$user->rights->absence->myactions->valideurConges
 				,'droitCreationAbsenceCollaborateur'=>$droitsCreation==1?'1':'0'

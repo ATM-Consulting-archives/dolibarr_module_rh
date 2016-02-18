@@ -29,7 +29,7 @@
 				[onshow;block=begin;when [userCourant.droitCreationAbsenceCollaborateur]=='0']
 				<tr>
 					<td>[translate.CurrentUser;strconv=no;protect=no]</td>
-					<td>[userCourant.firstname;strconv=no;protect=no] [userCourant.lastname;strconv=no;protect=no]</td>
+					<td>[userCourant.link;strconv=no;protect=no]</td>
 					[absenceCourante.userAbsenceCourant;strconv=no;protect=no]
 				</tr>
 				[onshow;block=end]	
