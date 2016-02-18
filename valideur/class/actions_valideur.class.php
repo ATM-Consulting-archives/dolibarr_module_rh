@@ -104,9 +104,8 @@ class ActionsValideur
             }
                    
             $sql = "SELECT n.rowid, n.ref, n.tms, n.total_ht, n.total_ttc, n.fk_user, n.statut, n.fk_soc, n.dates, n.datee,
-			u.rowid as uid, u.lastname, u.firstname, s.nom AS soc_name, s.rowid AS soc_id, u.login, n.total_tva, SUM(p.amount) AS already_paid 
+			u.rowid as uid, u.lastname, u.firstname, s.nom AS soc_name, s.rowid AS soc_id, u.login, n.total_tva, (SELECT SUM(p.amount) FROM ".MAIN_DB_PREFIX."ndfp_pay_det p WHERE (p.fk_ndfp = n.rowid)) AS already_paid 
 			FROM (((((".MAIN_DB_PREFIX."ndfp as n 
-			LEFT JOIN ".MAIN_DB_PREFIX."ndfp_pay_det as p ON (p.fk_ndfp = n.rowid))
 			       LEFT OUTER JOIN ".MAIN_DB_PREFIX."user as u ON (n.fk_user = u.rowid))
 			               LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.rowid = n.fk_soc))
 			                       LEFT OUTER JOIN ".MAIN_DB_PREFIX."usergroup_user as g ON (n.fk_user=g.fk_user))
