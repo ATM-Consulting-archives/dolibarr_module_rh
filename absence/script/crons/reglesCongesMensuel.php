@@ -41,6 +41,8 @@
 
 		}
 		
+	} else {
+		echo 'ce n est pas un jour 1';
 	}
 	
 $ATMdb->close();
