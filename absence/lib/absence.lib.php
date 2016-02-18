@@ -931,10 +931,11 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 		$sql="SELECT lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$idUser;
 		$ATMdb->Execute($sql);
 		if($ATMdb->Get_line()) {
-			$name = htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$name =$ATMdb->Get_field('lastname').' '.$ATMdb->Get_field('firstname');
 		}
 		print '<tr >';		
 		print '<td style="text-align:right; font-weight:bold;height:20px;" nowrap="nowrap">'.$name.'</td>';
+//$planning=array();
 		foreach($planning as $dateJour => $ouinon){
 			
 			
@@ -992,7 +993,9 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 				//var_dump($ouinon);
 				$labelAbs = $ouinon->label;
 				if(!empty($ouinon->description)) $labelAbs.=' : '.$ouinon->description;
-				
+			
+				if(mb_detect_encoding($labelAbs,'UTF-8', true) === false  ) $labelAbs = utf8_encode($labelAbs);
+
 				if(strpos($ouinon, 'RTT')!==false) {
 					$class .= ' rougeRTT';
 				}
