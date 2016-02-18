@@ -626,7 +626,10 @@ function _fiche(&$PDOdb, &$absence, $mode) {
 		$sql.=" ORDER BY lastname";
 		$PDOdb->Execute($sql);
 		while($obju = $PDOdb->Get_line()) {
-			$TUser[$obju->rowid]=empty($obju->lastname.' '.$obju->firstname) ? $obju->login : $obju->lastname.' '.$obju->firstname;
+					
+			$name = $obju->lastname.' '.$obju->firstname;
+			
+			$TUser[$obju->rowid]=empty($name) ? $obju->login : $$name;
 		}
 	}
 	//Tableau affichant les 10 dernières absences du collaborateur
