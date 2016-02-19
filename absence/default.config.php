@@ -34,7 +34,7 @@
 	define('DATE_RTT_CLOTURE', __val($conf->global->RH_DATE_RTT_CLOTURE,'28-02-2014'));
 	define('DATE_CONGES_CLOTURE', __val($conf->global->RH_DATE_CONGES_CLOTURE,'31-05-2014'));
 	
-	$TJourNonTravailleEntreprise= explode(',', __val($conf->global->RH_JOURS_NON_TRAVAILLE,'samedi,dimanche'))  ;//array('samedi','dimanche');
+	$TJourNonTravailleEntreprise= explode(',', __val($conf->global->RH_JOURS_NON_TRAVAILLE,'aucun'))  ;//array('samedi','dimanche');
 
 	$TTypeMetier=array(
 	/*	'cadre'=>'Cadre'
