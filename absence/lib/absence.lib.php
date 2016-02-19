@@ -894,7 +894,7 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 	global $langs,$user;
 //on va obtenir la requête correspondant à la recherche désirée
 	// Test si somme des trois groupes = (99999 * 3) Tous les select sur Aucun alors recherche vide
-	if(array_sum($idGroupeRecherche) == 299997)$idGroupeRecherche = array('0'=>0);
+	if(array_sum($idGroupeRecherche) == 299997)$idGroupeRecherche = array('0'=>0); //TODO mais c'est quoi cette merde ?!
 	if(array_sum($idGroupeRecherche)>0) $idUserRecherche = 0; // si un groupe est sélectionner on ne prend pas en compte l'utilisateur
 
 
@@ -928,13 +928,17 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 	//var_dump($tabUserMisEnForme);
 	$TTotal=array();
 	foreach($tabUserMisEnForme as $idUser => $planning){
+		
 		$sql="SELECT lastname, firstname FROM ".MAIN_DB_PREFIX."user WHERE rowid=".$idUser;
 		$ATMdb->Execute($sql);
 		if($ATMdb->Get_line()) {
-			$name = htmlentities($ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1')." ".htmlentities($ATMdb->Get_field('firstname'), ENT_COMPAT , 'ISO8859-1');
+			$name =$ATMdb->Get_field('lastname').' '.$ATMdb->Get_field('firstname');
 		}
+		if(mb_detect_encoding($name,'UTF-8', true) === false  ) $name = utf8_encode($name);
+
 		print '<tr >';		
 		print '<td style="text-align:right; font-weight:bold;height:20px;" nowrap="nowrap">'.$name.'</td>';
+//$planning=array();
 		foreach($planning as $dateJour => $ouinon){
 			
 			
@@ -992,7 +996,9 @@ function _planning(&$ATMdb, &$absence, $idGroupeRecherche, $idUserRecherche, $da
 				//var_dump($ouinon);
 				$labelAbs = $ouinon->label;
 				if(!empty($ouinon->description)) $labelAbs.=' : '.$ouinon->description;
-				
+			
+				if(mb_detect_encoding($labelAbs,'UTF-8', true) === false  ) $labelAbs = utf8_encode($labelAbs);
+
 				if(strpos($ouinon, 'RTT')!==false) {
 					$class .= ' rougeRTT';
 				}

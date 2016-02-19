@@ -124,7 +124,7 @@ function _planningResult(&$ATMdb, &$absence, $mode) {
 		AND ug.fk_user=".$user->id;
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
-			$TGroupe[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+			$TGroupe[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('nom');
 		}
 		
 		$TUser[0] = $langs->trans('AllThis');
