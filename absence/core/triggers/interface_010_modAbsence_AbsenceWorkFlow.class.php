@@ -145,18 +145,24 @@ class InterfaceAbsenceWorkflow
 		elseif ($action === 'ABSENCE_BEFOREVALIDATE') {
 			
 			if($object->isPresence==0) {
-				
-				
 				$u=new User($db);
 				$u->fetch($object->fk_user);
 				$u->getrights('absence');
 				
 				if($u->rights->absence->myactions->alertAllMyCoWorker) {
 					define('INC_FROM_DOLIBARR', true);
-			        dol_include_once('/absence/config.php');	
-				
-					$ATMdb=new TPDOdb;
-					
+					dol_include_once('/absence/config.php');
+
+                	                $ATMdb=new TPDOdb;
+                                	
+					// Gestion type absence
+					$the_type='absent';
+                        	        $typeAbs = new TRH_TypeAbsence;
+        	                        $typeAbs->load_by_type($ATMdb, $object->type);
+	                                if($typeAbs->isPresence)
+					{
+						$the_type='present';
+					}
 					if($object->date_debut == $object->date_debut) {
 						$dateInterval = 'le '.dol_print_date($object->date_debut);
 					}
@@ -186,11 +192,12 @@ class InterfaceAbsenceWorkflow
 										'name'=>$uMail->getNomUrl()
 										,'collabName'=>$u->getNomUrl()
 										,'DateInterval'=>$dateInterval
+										,'theType'=>$the_type
 									)
 								)
 							);
 							
-							$rep=new TReponseMail($conf->global->RH_USER_MAIL_SENDER, $uMail->email,"Votre collaborateur sera absent", $html);
+							$rep=new TReponseMail($conf->global->RH_USER_MAIL_SENDER, $uMail->email,"Votre collaborateur sera ".$the_type, $html);
 							$rep->send();
 							
 						}

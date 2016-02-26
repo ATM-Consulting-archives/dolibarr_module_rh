@@ -36,7 +36,7 @@
 						//} else {
 							$absence->duree = $absence->calculDureeAbsenceParAddition($ATMdb);
 						//}
-						
+
 						if($absence->save($ATMdb)) {
 							if($absence->avertissementInfo) setEventMessage($absence->avertissementInfo, 'warnings');
 							
@@ -87,6 +87,14 @@
 					document.location.href="?delete_ok=1";					
 				</script>
 				<?php
+				break;
+
+
+			case 'saveComment':
+				$absence->load($ATMdb, $_REQUEST['id']);
+				$absence->commentaireValideur=$_REQUEST['commentValid'];
+				$absence->save($ATMdb);
+				_fiche($ATMdb, $absence,'view');
 				break;
 				
 			case 'listeValidation' : 
