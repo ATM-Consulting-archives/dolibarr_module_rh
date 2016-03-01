@@ -124,7 +124,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$tva = 2463; // TVA 20 %
 			if($r->typevehicule == "VU") { null; }
 			else {
-				$tva=0; // Pas de TVA
+				$tva=15; // TVA 0%
 			} 
 			
 			$fact->TVA = $tva;
