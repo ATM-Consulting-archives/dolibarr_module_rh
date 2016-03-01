@@ -7,3 +7,6 @@
 [submodule "valideur"]
 	path = valideur
 	url = git@github.com:ATM-Consulting/dolibarr_module_valideur.git
+[submodule "absence"]
+	path = absence
+	url = git@github.com:ATM-Consulting/dolibarr_module_absence.git
