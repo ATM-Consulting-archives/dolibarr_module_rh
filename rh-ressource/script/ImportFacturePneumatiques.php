@@ -115,7 +115,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$fact->coutTTC = $infos[$mapping['total_ttc']];
 			$fact->coutEntrepriseTTC =  $infos[$mapping['total_ttc']];
 			//$fact->TVA= $TTVA[$taux]; Non renseigné dans le fichier d'exemple
-			$fact->coutEntrepriseHT = $infos[$mapping['pv_reel_unitaire_ht']];
+			//$fact->coutEntrepriseHT = $infos[$mapping['pv_reel_unitaire_ht']];
+			// En fait le countEntrepriseHT se calcule dans le save grâce à $fact->TTVA :
+			$fact->TVA = 2463; // TVA 20 %
 			$fact->entity =$entity;
 			$fact->fk_fournisseur = $idTiers;
 			$fact->idImport = $idImport;
