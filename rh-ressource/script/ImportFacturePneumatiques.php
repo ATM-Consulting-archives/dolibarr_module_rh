@@ -94,7 +94,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 
 			$timestamp = mktime(0,0,0,substr($infos[$mapping['date_facture']], 3,2),substr($infos[$mapping['date_facture']], 0,2), substr($infos[$mapping['date_facture']], 6,4));
 			$date = date("Y-m-d", $timestamp);
-
+			
+			//echo $infos[$mapping['vehicule']].' : '.$r->typevehicule.'<br>';
+			
 			$idUser = ressourceIsEmpruntee($ATMdb, $r->rowid, $date);
 			if(empty($idUser)) $idUser = 3;
 			
@@ -116,8 +118,16 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$fact->coutEntrepriseTTC =  $infos[$mapping['total_ttc']];
 			//$fact->TVA= $TTVA[$taux]; Non renseigné dans le fichier d'exemple
 			//$fact->coutEntrepriseHT = $infos[$mapping['pv_reel_unitaire_ht']];
+			
 			// En fait le countEntrepriseHT se calcule dans le save grâce à $fact->TTVA :
-			$fact->TVA = 2463; // TVA 20 %
+			
+			$tva = 2463; // TVA 20 %
+			if($r->typevehicule == "VU") { null; }
+			else {
+				$tva=0; // Pas de TVA
+			} 
+			
+			$fact->TVA = $tva;
 			$fact->entity =$entity;
 			$fact->fk_fournisseur = $idTiers;
 			$fact->idImport = $idImport;
