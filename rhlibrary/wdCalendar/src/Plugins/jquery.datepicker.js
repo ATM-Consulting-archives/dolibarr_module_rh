@@ -84,9 +84,10 @@
         }
     }
     var userAgent = window.navigator.userAgent.toLowerCase();
-    $.browser.msie8 = $.browser.msie && /msie 8\.0/i.test(userAgent);
-    $.browser.msie7 = $.browser.msie && /msie 7\.0/i.test(userAgent);
-    $.browser.msie6 = !$.browser.msie8 && !$.browser.msie7 && $.browser.msie && /msie 6\.0/i.test(userAgent);
+    $.browser={};
+    $.browser.msie8 = false;
+    $.browser.msie7 = false;
+    $.browser.msie6 = false;
     if ($.fn.noSelect == undefined) {
         $.fn.noSelect = function(p) { //no select plugin by me :-)
             if (p == null)
