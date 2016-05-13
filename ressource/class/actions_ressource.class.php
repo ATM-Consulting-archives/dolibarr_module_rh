@@ -123,7 +123,7 @@ class ActionsRessource
 					?>
 			    	<script>
 			    	$(document).ready(function(){
-			    		$('#fk_exp option[value='+ <? echo $obj->rowid ?> +']').hide();
+			    		$('#fk_exp option[value='+ <?php echo $obj->rowid ?> +']').hide();
 			    	});
 			    	</script>
 			    	<?php					
@@ -132,7 +132,7 @@ class ActionsRessource
 					?>
 			    	<script>
 			    	$(document).ready(function(){
-			    		$('#fk_exp option[value='+ <? echo $obj->rowid ?> +']').show();
+			    		$('#fk_exp option[value='+ <?php echo $obj->rowid ?> +']').show();
 			    	});
 			    	</script>
 			    	<?php					
