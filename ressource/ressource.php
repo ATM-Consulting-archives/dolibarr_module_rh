@@ -268,7 +268,7 @@ function _liste(&$ATMdb, &$ressource) {
 				'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
 				,'numId'=>true
 				,'libelle'=>true
-				,'name'=>true
+				,'lastname'=>true
 				,'firstname'=>true	
 			), $TSearch)
 			: array()
