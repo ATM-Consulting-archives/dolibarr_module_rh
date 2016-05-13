@@ -1,10 +1,15 @@
 <?php
 
+
+
 	if(is_file('../main.inc.php'))$dir = '../';
+	else if(is_file( '../../main.inc.php')) $dir = '../../';
 	else  if(is_file('../../../main.inc.php'))$dir = '../../../';
 	else  if(is_file('../../../../main.inc.php'))$dir = '../../../../';
-	else $dir = '../../';
-
+	else  if(is_file('../../../../../main.inc.php'))$dir = '../../../../../';
+	else {
+		exit('Impossible to find main.inc');
+	}
 
 	if(!defined('INC_FROM_DOLIBARR') && defined('INC_FROM_CRON_SCRIPT')) {
 		include($dir."master.inc.php");
