@@ -124,7 +124,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				null;
 			}
 			
-			if (!empty($TRessource[$plaque])){
+			if (!empty($TRessource[strtoupper($plaque)])){
 				$idUser = ressourceIsEmpruntee($ATMdb, $TRessource[$plaque], $date);
 				if ($idUser==0){ //si il trouve, on l'affecte à l'utilisateur 
 					$idUser = $idSuperAdmin;
@@ -265,6 +265,15 @@ function chargeVoiture(&$ATMdb){
 		}
 	return $TRessource;
 }
+
+
+/*
+ * prend un format d/m/Y et renvoie un timestamp
+ */
+function dateToInt($chaine){
+	return mktime(0,0,0,substr($chaine,3,2),substr($chaine,0,2),substr($chaine,6,4));
+}
+
 
 
 	

@@ -1,6 +1,8 @@
 <?php
 	require('config.php');
 	set_time_limit(0);
+	ini_set("memory_limit", "128M");
+
 	dol_include_once('/ressource/class/ressource.class.php');
 	dol_include_once('/ressource//class/evenement.class.php');
 	dol_include_once('/ressource//class/contrat.class.php');

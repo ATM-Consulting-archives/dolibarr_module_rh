@@ -10,12 +10,20 @@
 	$file = 'fichierImports/baseressource.csv';
 	$TData = array();
 	$TTypeRessource = array();
+	$TTVA = array();
 	
 	$sqlReq="SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."rh_ressource_type ";
 	$PDOdb->Execute($sqlReq);
 	while($PDOdb->Get_line()) 
 	{
 		$TTypeRessource[$PDOdb->Get_field('libelle')] = $PDOdb->Get_field('rowid');
+	}
+	
+	$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva ";
+	$PDOdb->Execute($sqlReq);
+	while($PDOdb->Get_line()) 
+	{
+		$TTVA[$PDOdb->Get_field('taux')] = $PDOdb->Get_field('rowid');
 	}
 	
 	$handle = fopen($file, 'r');
@@ -27,6 +35,9 @@
 	{
 		$fk_type_ressource = isset($TTypeRessource[$row[29]]) ? $TTypeRessource[$row[29]] : false;
 		if (!$fk_type_ressource) exit("ressourceTypeNotFound => ".$row[29]);
+		
+		$fk_tva = isset($TTVA[(int) $row[38]]) ? $TTVA[(int) $row[38]] : 0;
+		if (!$fk_tva) exit("tvaNotFound => ".$row[38]);
 		
 		$TData[] = array(
 			'ressource'=>array(
@@ -76,10 +87,11 @@
 				,'frais'=>$row[35]
 				,'assurance'=>$row[36]
 				,'loyer_TTC'=>$row[37]
-				,'TVA'=>$row[38]
-				,'loyer_HT'=>$row[38]
+				,'TVA'=>$fk_tva
+				//,'loyer_HT'=>$row[39]
 				//,'entity'=> _getEntityByName($PDOdb, $row[8]) // FIXME 
-				,'fk_tier_fournisseur' => _getIdFournisseurByName($PDOdb, $row[7]) //FIXME
+				//,'fk_tier_fournisseur' => _getIdFournisseurByName($PDOdb, $row[7]) //FIXME
+				,'fk_tier_fournisseur' => 0
 			)
 		);
 	}

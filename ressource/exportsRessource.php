@@ -81,6 +81,10 @@ global $user,$db;
 				$t_facture = strtotime($row->date_facture);
 				
 				$montant_ligne = $row->montant_euros_ht;
+
+				if(in_array($row->num_appele, $TNumerosSpeciaux)) { //non facturé
+					 $montant_ligne=0;
+				}
 				
 				if(strpos($row->volume_reel,':')!==false) {
 					
@@ -106,7 +110,7 @@ global $user,$db;
 				
 				$total+=$montant_ligne;
 				
-				if($row->montant_euros_ht>0 || $conf->global->RH_RESSOURCE_SHOW_EMPTY_LINE__IN_REPORT) {
+				if($montant_ligne>0 || $conf->global->RH_RESSOURCE_SHOW_EMPTY_LINE__IN_REPORT) {
 					$TLine[]=array(
 						'date_appel'=> date('d/m/Y', $t_appel)
 						,'heure_appel'=> date('H:i:s', $t_appel)
@@ -120,6 +124,19 @@ global $user,$db;
 			
 			$financement = isset($r2->financement) ? $r2->financement : 0;
 			
+			if($total==0) continue; // on saute le tour
+			
+			$total = round($total,2);
+			$total_financement = round($financement,2);
+			$total_all = round($total+$financement,2);
+			//echo $total.' : '.$total_financement.' : '.$total_all.'<br>';
+			if($total < 5.5) {
+				$total_all = $total_financement;
+			} else {
+				//echo 'calcul : '.$total.' - 5 + '.$total_financement.'<br>';
+				$total_all = round(($total - 5 + $total_financement), 2);
+			}
+			//echo 'après : '.$total_all.'<br><br>';
 			$mail.=$TBS->render('tpl/mailExportRessource.tpl.php'
 				,array(
 					'line'=>$TLine
@@ -129,11 +146,11 @@ global $user,$db;
 						'username'=>$ligne['nom']
 						,'date_facture'=>date('d/m/Y', $t_facture)
 						,'gsm'=>$ligne['numero']
-						,'total'=>price(round($total,2)).' €'
-						,'total_financement'=>price(round($financement,2)).' €'
-						,'total_all'=>price(round($total+$financement,2)).' €'
-						,'duree_total_interne'=>convertSecondToTime($duree_total_interne,'all')
-						,'duree_total_externe'=>convertSecondToTime($duree_total_externe,'all')
+						,'total'=>price($total).' €'
+						,'total_financement'=>price($total_financement).' €'
+						,'total_all'=>price($total_all).' €'
+						,'duree_total_interne'=>convertSecondToTime($duree_total_interne)
+						,'duree_total_externe'=>convertSecondToTime($duree_total_externe)
 					)
 					,'view'=>array(
 						'mode'=>$mode
@@ -169,6 +186,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 	llxHeader('', 'Exports Ressources');
 	
 	$TLignes = array();
+	$TLignesSansLignesAZero = array();
 	
 	$idVoiture = getIdType('voiture');
 	$idTotal = getIdType('cartetotal');
@@ -180,9 +198,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 	while($row = $ATMdb->Get_line()) {
 		$TType[$row->rowid] = $row->nom;
 		if (strtolower($row->nom)=='parcours')
-		{
-			$TIdRessource[$row->rowid] = $idVoiture;
-		}
+			{$TIdRessource[$row->rowid] = $idVoiture;}
 		else if (strtolower($row->nom)=='orange')
 			{$TIdRessource[$row->rowid] = $idOrange;}
 		else if (strtolower($row->nom)=='total') 
@@ -213,15 +229,20 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		
 		if(stripos($TType[$type],'orange')!==false) {
 			$TLines = array();
+			$TLinesSansLignesAZero = array();
 		
 			foreach($TLignes as $line) {
 				foreach($line as $line_niveau2)
-					foreach($line_niveau2 as $line_niveau3)
+					foreach($line_niveau2 as $line_niveau3) {
 						$TLines[] = $line_niveau3;
+						if($line_niveau3['total_non_pondere'] > 0) $TLinesSansLignesAZero[] = $line_niveau3;
+					}
 			}
 	
 			$TLignes = $TLines;
-	
+			
+			$TLignesSansLignesAZero = $TLinesSansLignesAZero;
+			
 			$npm = false;
 			$sendMail=true;
 		}
@@ -244,14 +265,15 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 	$TBS=new TTemplateTBS();
 	print $TBS->render($template
 		,array(
-			'ligne'=>$TLignes
+			'ligne'=>(empty( $TLignesSansLignesAZero ) ? $TLignes : $TLignesSansLignesAZero )
 		)
 		,array(
 			'exports'=>array(
 				'date_debut'=>$form->calendrier('Date de début', 'date_debut', $date_debut,12, 10)
 				,'date_fin'=>$form->calendrier('Date de fin', 'date_fin', $date_fin, 12,10)
 				,'type'=>$form->combo('Fournisseur', 'type',$TType, $type)
-				,'urlFacture'=>$form->hidden('urlFacture',dol_buildpath('/ressource/script/loadListeFactures.php?fk_fournisseur=',2) )
+				//,'urlFacture'=>$form->hidden('urlFacture', 'http://'.$_SERVER['SERVER_NAME'].DOL_URL_ROOT_ALT.'/ressource/script/loadListeFactures.php?fk_fournisseur=')
+				,'urlFacture'=>$form->hidden('urlFacture', dol_buildpath('/ressource/script/loadListeFactures.php?fk_fournisseur=', 2))
 				,'idImport'=>$form->combo('Facture', 'idImport',$TIdFacture, $idImport)
 				,'action'=>$form->hidden('action','save')
 				,'typeDirect'=>$TType[$type]
@@ -307,7 +329,7 @@ function _genererRapport(&$ATMdb, $date_debut, $date_fin, $type, $idImport , $mo
 		
 		?>
 		<form name="downExcel" style="text-align:center; display:inline;" action="<?php echo dol_buildpath('/report/report.php',2); ?>" method="POST">
-			<input type="hidden" name="serialData" value="<?=base64_encode(serialize($TLignes)) ?>" />
+			<input type="hidden" name="serialData" value="<?=base64_encode(serialize( !empty( $TLignesSansLignesAZero ) ?  $TLignesSansLignesAZero :  $TLignes )) ?>" />
 			<input type="hidden" name="format" value="ExcelTBS" />
 			<input type="hidden" name="rapport" value="ExportRessource" />
 			

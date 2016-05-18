@@ -75,10 +75,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			//if(empty($plaque)) continue; si avoir plaque vide alors faut faire le taf
 			
-			$timestamp = mktime(0,0,0,intval(substr($infos[4], 3,2)),intval(substr($infos[4], 0,2)), intval(substr($infos[4], 6,4)));
+			$timestamp = mktime(0,0,0,intval(substr($infos[3], 3,2)),intval(substr($infos[3], 0,2)), intval(substr($infos[3], 6,4)));
 			$date = date("Y-m-d", $timestamp);
 		
-			$numero =  $infos[22];
+			$numero =  $infos[24];
 		
 			
 			$style = '';
@@ -120,10 +120,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 		
 			$temp = new TRH_Evenement;
 			
-			$loyerHT = (double)strtr($infos[10], ',','.');
-			$loyerTTC = strtr($infos[25], ',','.');
+			$loyerHT = (double)strtr($infos[9], ',','.');
+			$loyerTTC = strtr($infos[27], ',','.');
 			 
-			$taux = '19.6';
+			$taux = '20';
             if($typeVehicule == "VU") { null; }
             else {
                    $taux="0";
@@ -139,8 +139,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$temp->coutTTC = $loyerTTC;
 			$temp->coutEntrepriseTTC = $loyerTTC;
 			$temp->numFacture = $numero;
-			$temp->motif = $infos[8];
-			$temp->commentaire = $infos[7];
+			$temp->motif = $infos[7];
+			$temp->commentaire = $infos[6];
 			$temp->fk_fournisseur = $idEuromaster;
 			$temp->entity = $entity;
 			
@@ -149,13 +149,13 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$temp->TVA = getTVAId($ressource_source->TTVA,$taux);
 			//$temp->compteFacture = $infos[13];
 			$temp->idImport = $idImport;
-			$temp->numFacture = $infos[22];
-			$temp->date_facture = dateToInt($infos[23]);
+			$temp->numFacture = $numero;
+			$temp->date_facture = dateToInt($infos[25]);
 			
 			
 			$temp->save($ATMdbEvent);
 		
-			?><td><?=$infos[25] ?></td><td><?=$ressource_source->TTVA[$temp->TVA] ?></td><td><?=$info ?></td></tr><?
+			?><td><?=$infos[27] ?></td><td><?=$ressource_source->TTVA[$temp->TVA] ?></td><td><?=$info ?></td></tr><?
 		
 		}
 		$numLigne++;
@@ -248,8 +248,8 @@ function chargeVoiture(&$ATMdb){
 	$TRessource = array();
 	$sql="SELECT r.rowid as 'ID', t.rowid as 'IdType', r.numId FROM ".MAIN_DB_PREFIX."rh_ressource as r 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource_type as t on (r.fk_rh_ressource_type = t.rowid)
-	WHERE r.entity=".$conf->entity."
-	 AND (t.code='voiture' OR t.code='cartearea') ";
+	WHERE 1 AND (t.code='voiture' OR t.code='cartearea') "; // r.entity=".$conf->entity."
+
 	$ATMdb->Execute($sql);
 	while($ATMdb->Get_line()) {
 		$TRessource[$ATMdb->Get_field('numId')] = $ATMdb->Get_field('ID');
@@ -258,3 +258,10 @@ function chargeVoiture(&$ATMdb){
 }
 
 
+
+/*
+ * prend un format d/m/Y et renvoie un timestamp
+ */
+function dateToInt($chaine){
+	return mktime(0,0,0,substr($chaine,3,2),substr($chaine,0,2),substr($chaine,6,4));
+}

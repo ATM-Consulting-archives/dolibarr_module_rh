@@ -539,7 +539,8 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
             ,'typePiece'=> 'FF'
             ,'compteGeneral'=> $code_compta
             ,'typeCompte'=> $type_compte
-            ,'codeAnalytique'=> ''
+	    ,'immatriculation'=> ''
+	    ,'codeAnalytique'=> ''
             ,'nom'=>''
             ,'prenom'=>''
             ,'referenceEcriture' => ''
@@ -566,6 +567,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
                 , a.pourcentage as 'pourcentage'
                 ,u.firstname,u.lastname,u.rowid as 'fk_user'
                 ,e.idImport,e.numFacture
+		,r.numId as immat
         FROM ".MAIN_DB_PREFIX."rh_evenement as e
         LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (r.rowid=e.fk_rh_ressource)
         LEFT JOIN ".MAIN_DB_PREFIX."rh_type_evenement as t ON (e.type=t.code)
@@ -588,10 +590,12 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
             $total_anal = $ATMdb2->Get_field('coutEntrepriseHT');
             $fk_user =  $ATMdb2->Get_field('fk_user');
 //print_r($code_anal);
+		$immat = $ATMdb2->Get_field('immat');
 
             $TUser[$code_anal][$fk_user]=array(
                     'nom' => ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('lastname') ."</a>"
                     ,'prenom' => $ATMdb2->Get_field('firstname')
+		   ,'immat' => $immat
             );
                         
             if(isset($_REQUEST['DEBUG'])) {
@@ -629,6 +633,8 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
                             ,'typePiece'=> 'FF'
                             ,'compteGeneral'=> $code_compta
                             ,'typeCompte'=> $type_compte
+				,'immatriculation'=> $TUser[$code_analytique][$fk_user]['immat']
+							
                             ,'codeAnalytique'=> $code_analytique
                             ,'nom'=>$TUser[$code_analytique][$fk_user]['nom']
                             ,'prenom'=>$TUser[$code_analytique][$fk_user]['prenom']
@@ -689,6 +695,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
                 ,'typePiece'=> 'FF'
                 ,'compteGeneral'=> '445660'
                 ,'typeCompte'=> 'G'
+		,'immatriculation'=> ''				
                 ,'codeAnalytique'=> ''
                 ,'nom'=>''
                 ,'prenom'=>''
@@ -787,6 +794,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
                 ,'typePiece'=> 'FF'
                 ,'compteGeneral'=> $code_compta
                 ,'typeCompte'=> $type_compte
+		,'immatriculation'=> ''
                 ,'codeAnalytique'=> $compte_tiers
                 ,'nom'=>''
                 ,'prenom'=>''

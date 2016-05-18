@@ -5,7 +5,7 @@
 	
 	
 	llxHeader('','Calendrier des ressources', '', '', 0,0,
-		array(//"/rhlibrary/wdCalendar/src/jquery.js"   
+		array(
 			"/rhlibrary/wdCalendar/src/Plugins/Common.js"    
 			,"/rhlibrary/wdCalendar/src/Plugins/datepicker_lang_FR.js" 
 			,"/rhlibrary/wdCalendar/src/Plugins/jquery.datepicker.js" 

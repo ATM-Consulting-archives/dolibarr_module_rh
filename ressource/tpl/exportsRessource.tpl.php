@@ -2,7 +2,7 @@
 <table>
 	<tr>
 		<td>[exports.type;strconv=no;protect=no]</td>
-		<td>[exports.idImport;strconv=no;protect=no]</td>
+		<td id="col-list-import">[exports.idImport;strconv=no;protect=no]</td>
 		<td>[exports.date_debut;strconv=no;protect=no]</td>
 		<td>[exports.date_fin;strconv=no;protect=no]</td>
 		[exports.urlFacture;strconv=no;protect=no]
@@ -18,7 +18,10 @@
 			 url: urlFact
 			 ,dataType:'json'
 		}).done(function(liste) {
-			$("#idImport").empty(); // remove old options
+			$("#col-list-import").empty(); // remove old options
+			
+			$("#col-list-import").append('<select id="idImport" name="idImport"></select>');
+			
 			$.each(liste, function(key, value) {
 			  $("#idImport").append($("<option></option>")
 			     .attr("value", key).text(value));
@@ -58,6 +61,7 @@
 				<th>Type de pièce</th>
 				<th>Compte général</th>
 				<th>Type de compte</th>
+				<th>Immatriculation</th>
 				<th>Code analytique</th>
 				<th>Nom</th>
 				<th>Prénom</th>
@@ -99,6 +103,7 @@
 				<td> [ligne.typePiece;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.compteGeneral;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.typeCompte;strconv=no;protect=no;noerr] </td>
+				<td> [ligne.immatriculation;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.codeAnalytique;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.nom;strconv=no;strconv=no;protect=no;noerr] </td>
 				<td> [ligne.prenom;strconv=no;protect=no;noerr] </td>
