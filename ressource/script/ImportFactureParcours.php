@@ -65,7 +65,7 @@ while($ATMdb->Get_line()) {
 if (empty($nomFichier)){$nomFichier = "./fichierImports/CPRO - PRELVT DU 05 04 13.csv";}
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
-$idImport = _url_format(basename($nomFichier), false, true);
+$idImport = Tools::url_format(basename($nomFichier), false, true);
 
 $ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement WHERE idImport='$idImport'");
 

@@ -37,7 +37,7 @@ $entity = (isset($_REQUEST['entity'])) ? $_REQUEST['entity'] : $conf->entity;
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 //pour avoir un joli nom, on prend la chaine après le dernier caractère /  et on remplace les espaces par des underscores
-$idImport = _url_format(basename($nomFichier), false, true);
+$idImport = Tools::url_format(basename($nomFichier), false, true);
 
 $ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement WHERE idImport='$idImport'");
 

@@ -39,7 +39,7 @@ $TCarteNonAttribue = array();
 $cpt =0;
 //print_r($TRessource);
 
-$idImport = _url_format(basename($nomFichier), false, true);
+$idImport = Tools::url_format(basename($nomFichier), false, true);
 $ATMdb->Execute("DELETE FROM ".MAIN_DB_PREFIX."rh_evenement WHERE idImport='$idImport'");
 
 //début du parsing
