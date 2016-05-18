@@ -136,7 +136,6 @@ function _liste(&$ATMdb, &$emprunt, &$ressource) {
 			//,'Supprimer'=>'<a href="?id='.$ressource->getId().'&idEven=@ID@&action=deleteAttribution"><img src="./img/delete.png"></a>'
 		)
 		,'eval'=>array(
-			'Utilisateur'=>'htmlentities("@val@", ENT_COMPAT , "ISO8859-1")'
 		)
 		,'translate'=>array()
 		,'hide'=>array('IDRessource')

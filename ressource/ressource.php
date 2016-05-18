@@ -260,7 +260,7 @@ function _liste(&$ATMdb, &$ressource) {
 			'libelle'=>'Libellé'
 			,'numId'=>'Numéro Id'
 			,'fk_rh_ressource_type'=> 'Type'
-			,'name'=>'Nom'
+			,'lastname'=>'Nom'
 			,'firstname'=>'Prénom'), $TSpeciaux
 		)
 		,'search'=>($user->rights->ressource->ressource->searchRessource) ? 		
@@ -268,7 +268,7 @@ function _liste(&$ATMdb, &$ressource) {
 				'fk_rh_ressource_type'=>array('recherche'=>$ressource->TType)
 				,'numId'=>true
 				,'libelle'=>true
-				,'name'=>true
+				,'lastname'=>true
 				,'firstname'=>true	
 			), $TSearch)
 			: array()
