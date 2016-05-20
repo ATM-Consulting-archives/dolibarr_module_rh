@@ -127,9 +127,9 @@
 		
 		if($user->rights->ressource->ressource->uploadFiles){
 			$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$ressource->getId(), '', 0, 0, $can_upload);
-			$formfile->list_of_documents($filearray, $ressource, 'ressource', '&id='.$ressource->getId(),0,'ressource/'.$ressource->getId().'/',1);
+			$formfile->list_of_documents($filearray, $ressource, 'ressource', '&id='.$ressource->getId(),0,$ressource->getId().'/',1);
 		}else{
-			$formfile->list_of_documents($filearray, $ressource, 'ressource', '&id='.$ressource->getId(),0,'ressource/'.$ressource->getId().'/',0);
+			$formfile->list_of_documents($filearray, $ressource, 'ressource', '&id='.$ressource->getId(),0,$ressource->getId().'/',0);
 		}
 		
 		?><div style="clear:both"></div><?
