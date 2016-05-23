@@ -27,7 +27,8 @@
 	function _fiche(&$ATMdb, &$ressource) {
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers confidentiels');
-		$upload_dir_base = DOL_DATA_ROOT.'/ressource/ressource_restricted/';
+		$dir_base = DOL_DATA_ROOT.'/ressource/';
+		$upload_dir_base = $dir_base.'ressource_restricted/';
 		
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];
@@ -77,9 +78,7 @@
 		// Delete
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		{
-			$upload_dir = $upload_dir_base.dol_sanitizeFileName($ressource->getId());
-		
-			$file = $upload_dir . '/' . $_REQUEST['urlfile'];
+			$file = $dir_base . '/' . $_REQUEST['urlfile'];
 			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $object);
 		
 			$message = $langs->trans("FileHasBeenRemoved");

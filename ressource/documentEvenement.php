@@ -29,7 +29,8 @@
 	function _fiche(&$ATMdb, &$evenement, &$ressource) {
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers joints');
-		$upload_dir_base = DOL_DATA_ROOT.'/ressource/evenement/';
+		$dir_base = DOL_DATA_ROOT.'/ressource/';
+		$upload_dir_base = $dir_base.'evenement/';
 		
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];
@@ -79,9 +80,7 @@
 		// Delete
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		{
-			$upload_dir = $upload_dir_base.dol_sanitizeFileName($evenement->getId());
-		
-			$file = $upload_dir . '/' . $_REQUEST['urlfile'];
+			$file = $dir_base . '/' . $_REQUEST['urlfile'];
 			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $object);
 		
 			$message = $langs->trans("FileHasBeenRemoved");

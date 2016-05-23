@@ -28,7 +28,8 @@
 	function _fiche(&$ATMdb, &$ressource) {
 		global $db,$user,$conf,$langs,$mysoc;
 		llxHeader('','Fichiers joints');
-		$upload_dir = DOL_DATA_ROOT.'/ressource/import_fournisseurs/';
+		$dir_base = DOL_DATA_ROOT.'/ressource/';
+		$upload_dir_base = $dir_base.'import_fournisseurs/';
 		
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];
@@ -82,7 +83,7 @@
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		{
 		
-			$file = $upload_dir . '/' . $_REQUEST['urlfile'];
+			$file = $dir_base . '/' . $_REQUEST['urlfile'];
 			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $object);
 		
 			$message = $langs->trans("FileHasBeenRemoved");
