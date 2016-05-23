@@ -14,7 +14,6 @@
 	
 	$ATMdb=new TPDOdb;
 	$contrat=new TRH_contrat;
-	$upload_dir_base = DOL_DATA_ROOT.'ressource/contrat/';
 	
 	if(isset($_REQUEST['id'])) {
 		$contrat->load($ATMdb, $_REQUEST['id']);
@@ -27,6 +26,7 @@
 	function _fiche(&$ATMdb, &$contrat) {
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers joints');
+		$upload_dir_base = DOL_DATA_ROOT.'ressource/contrat/';
 		
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];

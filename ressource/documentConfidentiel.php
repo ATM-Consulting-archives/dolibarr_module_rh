@@ -15,7 +15,6 @@
 	
 	$ATMdb=new TPDOdb;
 	$ressource=new TRH_ressource;
-	$upload_dir_base = DOL_DATA_ROOT.'ressource/ressource_restricted/';
 	
 	if(isset($_REQUEST['id'])) {
 		$ressource->load($ATMdb, $_REQUEST['id']);
@@ -28,6 +27,7 @@
 	function _fiche(&$ATMdb, &$ressource) {
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers confidentiels');
+		$upload_dir_base = DOL_DATA_ROOT.'ressource/ressource_restricted/';
 		
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];

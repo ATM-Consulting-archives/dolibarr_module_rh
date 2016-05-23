@@ -16,7 +16,6 @@
 	$ATMdb=new TPDOdb;
 	$evenement=new TRH_Evenement;
 	$ressource = new TRH_Ressource;
-	$upload_dir_base = DOL_DATA_ROOT.'ressource/evenement/';
 	
 	if(isset($_REQUEST['idEven'])) {
 		$ressource->load($ATMdb, $_REQUEST['id']);
@@ -30,6 +29,7 @@
 	function _fiche(&$ATMdb, &$evenement, &$ressource) {
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers joints');
+		$upload_dir_base = DOL_DATA_ROOT.'ressource/evenement/';
 		
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];

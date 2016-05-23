@@ -15,7 +15,6 @@
 	
 	$ATMdb=new TPDOdb;
 	$ressource=new TRH_ressource;
-	$upload_dir_base = DOL_DATA_ROOT.'ressource/ressource/';
 	
 	if(isset($_REQUEST['id'])) {
 		$ressource->load($ATMdb, $_REQUEST['id']);
@@ -30,6 +29,7 @@
 		llxHeader('','Fichiers joints');
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];
+		$upload_dir_base = DOL_DATA_ROOT.'ressource/ressource/';
 		
 		$error = false;
 		$message = false;
