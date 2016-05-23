@@ -38,7 +38,8 @@ class TRH_Contrat  extends TObjetStd {
 		
 		//chargement d'une liste de touts les groupes
 		$this->TAgence = array();
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
+		//$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TAgence[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
@@ -46,7 +47,8 @@ class TRH_Contrat  extends TObjetStd {
 		
 		//chargement d'une liste des tiers
 		$this->TFournisseur = array();
-		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity IN (0,".$conf->entity.")";
+		//$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe WHERE entity IN (0,".$conf->entity.")";
+		$sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe";
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TFournisseur[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
