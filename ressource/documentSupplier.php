@@ -28,7 +28,7 @@
 	function _fiche(&$ATMdb, &$ressource) {
 		global $db,$user,$conf,$langs,$mysoc;
 		llxHeader('','Fichiers joints');
-		$upload_dir = DOL_DATA_ROOT.'ressource/import_fournisseurs/';
+		$upload_dir = DOL_DATA_ROOT.'/ressource/import_fournisseurs/';
 		
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];

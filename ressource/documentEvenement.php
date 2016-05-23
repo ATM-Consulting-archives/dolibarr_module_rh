@@ -29,7 +29,7 @@
 	function _fiche(&$ATMdb, &$evenement, &$ressource) {
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers joints');
-		$upload_dir_base = DOL_DATA_ROOT.'ressource/evenement/';
+		$upload_dir_base = DOL_DATA_ROOT.'/ressource/evenement/';
 		
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];

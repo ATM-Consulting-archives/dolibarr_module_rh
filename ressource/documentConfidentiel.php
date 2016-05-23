@@ -27,7 +27,7 @@
 	function _fiche(&$ATMdb, &$ressource) {
 		global $db,$user,$conf,$langs;
 		llxHeader('','Fichiers confidentiels');
-		$upload_dir_base = DOL_DATA_ROOT.'ressource/ressource_restricted/';
+		$upload_dir_base = DOL_DATA_ROOT.'/ressource/ressource_restricted/';
 		
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];

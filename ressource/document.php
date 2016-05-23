@@ -29,7 +29,7 @@
 		llxHeader('','Fichiers joints');
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];
-		$upload_dir_base = DOL_DATA_ROOT.'ressource/ressource/';
+		$upload_dir_base = DOL_DATA_ROOT.'/ressource/ressource/';
 		
 		$error = false;
 		$message = false;
