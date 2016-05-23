@@ -19,6 +19,7 @@
 	
 	$ATMdb=new TPDOdb;
 	$ressource = new TRH_Ressource;
+	$upload_dir = DOL_DATA_ROOT.'ressource/import_fournisseurs/';
 	
 	_fiche($ATMdb, $ressource);
 	
@@ -41,9 +42,7 @@
 		
 		if ($_REQUEST["sendit"])
 		{
-			
-			$upload_dir = DOL_DATA_ROOT.'/import_fournisseurs';
-		
+					
 			dol_mkdir($upload_dir);
 			
 				
@@ -82,7 +81,6 @@
 		// Delete
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		{
-			$upload_dir = DOL_DATA_ROOT.'/import_fournisseurs';
 		
 			$file = $upload_dir . '/' . $_REQUEST['urlfile'];
 			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $object);
@@ -114,9 +112,7 @@
 		if (!$sortorder) $sortorder = "ASC";
 		if (!$sortfield) $sortfield = "name";
 		
-		
-		$upload_dir = DOL_DATA_ROOT.'/import_fournisseurs';
-		
+				
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$totalsize = 0;
 		foreach($filearray as $key => $file)

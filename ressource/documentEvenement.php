@@ -16,6 +16,8 @@
 	$ATMdb=new TPDOdb;
 	$evenement=new TRH_Evenement;
 	$ressource = new TRH_Ressource;
+	$upload_dir_base = DOL_DATA_ROOT.'ressource/evenement/';
+	
 	if(isset($_REQUEST['idEven'])) {
 		$ressource->load($ATMdb, $_REQUEST['id']);
 		$evenement->load($ATMdb, $_REQUEST['idEven']);
@@ -41,7 +43,7 @@
 		
 		if ($_REQUEST["sendit"])
 		{
-			$upload_dir = DOL_DATA_ROOT.'/evenement/'.dol_sanitizeFileName($evenement->getId());
+			$upload_dir = $upload_dir_base.dol_sanitizeFileName($evenement->getId());
 		
 			if (dol_mkdir($upload_dir) >= 0)
 			{
@@ -77,7 +79,7 @@
 		// Delete
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		{
-			$upload_dir = DOL_DATA_ROOT.'/evenement/'.dol_sanitizeFileName($evenement->getId());
+			$upload_dir = $upload_dir_base.dol_sanitizeFileName($evenement->getId());
 		
 			$file = $upload_dir . '/' . $_REQUEST['urlfile'];
 			dol_delete_file( $file, 0, 0, 0, 'FILE_DELETE', $object);
@@ -103,7 +105,7 @@
 		if (!$sortfield) $sortfield = "name";
 		
 		
-		$upload_dir = DOL_DATA_ROOT.'/evenement/'.dol_sanitizeFileName($evenement->getId());
+		$upload_dir = $upload_dir_base.dol_sanitizeFileName($evenement->getId());
 		
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$totalsize = 0;
@@ -129,9 +131,9 @@
 		
 		if($user->rights->ressource->ressource->uploadFiles){
 			$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$ressource->getId().'&idEven='.$evenement->getId(), '', 0, 0, $can_upload);
-			$formfile->list_of_documents($filearray, $evenement, 'evenement', '&id='.$ressource->getId().'&idEven='.$evenement->getId(),0,'evenement/'.$evenement->getId().'/',1);
+			$formfile->list_of_documents($filearray, $evenement, 'ressource', '&id='.$ressource->getId().'&idEven='.$evenement->getId(),0,'evenement/'.$evenement->getId().'/',1);
 		}else{
-			$formfile->list_of_documents($filearray, $evenement, 'evenement', '&id='.$ressource->getId().'&idEven='.$evenement->getId(),0,'evenement/'.$evenement->getId().'/',0);
+			$formfile->list_of_documents($filearray, $evenement, 'ressource', '&id='.$ressource->getId().'&idEven='.$evenement->getId(),0,'evenement/'.$evenement->getId().'/',0);
 		}
 		
 		?><div style="clear:both"></div><?
