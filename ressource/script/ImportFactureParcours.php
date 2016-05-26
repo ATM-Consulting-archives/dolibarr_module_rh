@@ -89,7 +89,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 
 <?php
 	
-	
+	$totalHT = $totalTTC = 0;
 	
 	while(($infos = fgetcsv($handle, 0,';')) != false){
 		//echo 'Traitement de la ligne '.$numLigne.'...';
@@ -157,8 +157,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			//$typeVehicule = $info[9];	 
 				 
 				 
-			$loyerTTC = floatval(strtr($infos[22], ',','.'));
-			$loyerHT = floatval(strtr($infos[12], ',','.'));
+			$loyerTTC = (double)price2num($infos[22]);
+			$loyerHT = (double)price2num($infos[12]);
 		
 			$taux = '20';
 			if($typeVehicule == "VU") { null; }
@@ -191,8 +191,8 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				
 				
 		
-			$loyerTTC = floatval(strtr($infos[23], ',','.')+strtr($infos[24], ',','.'));
-			$loyerHT = floatval(strtr($infos[13], ',','.')+strtr($infos[14], ',','.'));
+			$loyerTTC = (double)price2num($infos[23]) + (double)price2num($infos[24]); 
+			$loyerHT = (double)price2num($infos[13]) + (double)price2num($infos[14]) ; 
 		
 			$taux = '20';
 			if($typeVehicule == "VU") { null; }
@@ -226,8 +226,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$factEnt->save($ATMdb);
 			$cptFactureGestEntre++;
 				
-			
-			?><td><?php echo $fact->coutEntrepriseTTC ?></td><td><?php echo $factEnt->coutEntrepriseHT.'/'.$factEnt->coutEntrepriseTTC ?></td><td><?php echo $msgInfo ?></td></tr><?php
+			$totalHT+=	$fact->coutEntrepriseHT + $factEnt->coutEntrepriseHT;
+			$totalTTC+=	$fact->coutEntrepriseTTC + $factEnt->coutEntrepriseTTC;
+				
+			?><td><?php echo $fact->coutEntrepriseHT.'/'.$fact->coutEntrepriseTTC ?></td><td><?php echo $factEnt->coutEntrepriseHT.'/'.$factEnt->coutEntrepriseTTC ?></td><td><?php echo $msgInfo ?></td></tr><?php
 						
 		}
 	$numLigne++;
@@ -237,7 +239,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	?></table>
 	<?php
 	//Fin du code PHP : Afficher le temps d'éxecution et le bilan.
-	//$message .= $cptContrat.' contrats importés.<br>';
+	$message .='Total HT = ' .$totalHT.' / Total TTC = '.$totalTTC.' <br>';
 	$message .= $cptNoVoiture.' plaques sans correspondance.<br>';
 	$message .= $cptNoAttribution.' voitures non attribués<br>';
 	$message .= $cptFactureLoyer.' factures loyer importés.<br>';
