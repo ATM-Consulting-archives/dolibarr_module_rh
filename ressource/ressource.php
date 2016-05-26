@@ -146,7 +146,7 @@
 				<script language="javascript">
 					document.location.href="?delete_ok=1";					
 				</script>
-				<?
+				<?php
 				
 				
 				break;
@@ -398,8 +398,8 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 			//Autocompletion
 			if($field->type != combo && $field->type != liste){
 				?>
-				$("#<?=$field->code; ?>").autocomplete({
-					source: "script/interface.php?get=autocomplete&json=1&fieldcode=<?=$field->code; ?>",
+				$("#<?php echo $field->code; ?>").autocomplete({
+					source: "script/interface.php?get=autocomplete&json=1&fieldcode=<?php echo $field->code; ?>",
 					minLength : 1
 				});
 				
@@ -419,8 +419,8 @@ function _fiche(&$ATMdb, &$emprunt, &$ressource, &$contrat, $mode) {
 		$chaineval = substr($chaineval, 0,-5);
 		$chaineid = substr($chaineid, 0,-2);
 		?>
-			$('<?=$chaineid; ?>').bind("keyup change", function(e) {
-				$('#libelle').val(<?=$chaineval; ?>);
+			$('<?php echo $chaineid; ?>').bind("keyup change", function(e) {
+				$('#libelle').val(<?php echo $chaineval; ?>);
 			});
 		});
 	</script>

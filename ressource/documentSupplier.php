@@ -179,7 +179,7 @@ if($resupload<=0) var_dump( $resupload,  $upload_dir . "/" . $_FILES['userfile']
 		?>
 		<script>
 			$(document).ready(function(){
-				$("form#formDocSupplier").children().children().children().children().prepend('<? print $select_types_imports; ?>');
+				$("form#formDocSupplier").children().children().children().children().prepend('<?php print $select_types_imports; ?>');
 				$("form#formDocSupplier").submit(function() {
 					
 					$(this).hide();
@@ -234,7 +234,7 @@ if($resupload<=0) var_dump( $resupload,  $upload_dir . "/" . $_FILES['userfile']
 		
 		?>
 		
-		<div style="clear:both"></div></div><?
+		<div style="clear:both"></div></div><?php
 		
 		dol_fiche_end();
 		llxFooter();

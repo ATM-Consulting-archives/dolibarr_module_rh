@@ -35,14 +35,6 @@ while($ATMdb->Get_line()) {
 	$TUser[strtolower($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('lastname'))] = $ATMdb->Get_field('rowid');
 }
 
-/*$TContrat = array();
-$sql="SELECT rowid,  numContrat FROM ".MAIN_DB_PREFIX."rh_contrat WHERE entity=".$conf->entity;
-$ATMdb->Execute($sql);
-while($ATMdb->Get_line()) {
-	$TContrat[strtolower($ATMdb->Get_field('numContrat'))] = $ATMdb->Get_field('rowid');
-}*/
-
-
 //chargement d'une liste :  plaque => typeVehicule (vu ou vp) 
 $TVuVp = array();
 $sql="SELECT rowid,  numId, typeVehicule FROM ".MAIN_DB_PREFIX."rh_ressource 
@@ -52,17 +44,19 @@ $ATMdb->Execute($sql);
 while($row = $ATMdb->Get_line()) {
 	$TVuVp[strtolower($row->numId)] = $row->typeVehicule;
 }
+//pre($conf->global->MAIN_INFO_SOCIETE_COUNTRY,1);exit;
 
+list($fk_pays) = explode(':',$conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 //chargement des TVA.
 $TTVA = array();
-$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
+$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$fk_pays;
 $ATMdb->Execute($sqlReq);
 while($ATMdb->Get_line()) {
 	$TTVA[$ATMdb->Get_field('taux')] = $ATMdb->Get_field('rowid');
-	}
+}
 
 
-if (empty($nomFichier)){ exit("Aucun fichier fourni"  };
+if (empty($nomFichier)){ exit("Aucun fichier fourni"); }
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 $idImport = Tools::url_format(basename($nomFichier), false, true);
@@ -87,12 +81,13 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 	<tr>
 		<th>Message</th>
 		<th>Ressource</th>
+		<th>VU/VP</th>
 		<th>Montant Loyer</th>
 		<th>Montant Entretient</th>
 		<th>Info</th>
 	</tr>
 
-<?
+<?php
 	
 	
 	
@@ -114,9 +109,9 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			
 			?>
 			<tr>
-				<td>Ajout facture <?=$numFacture ?></td>
-				<td><?=$plaque ?></td>
-			<?
+				<td>Ajout facture <?php echo $numFacture ?></td>
+				<td><?php echo $plaque ?></td>
+			<?php
 		
 			
 			
@@ -129,10 +124,10 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				if ($idUser==0){ //si il trouve, on l'affecte à l'utilisateur 
 					$idUser = $idSuperAdmin;
 					$cptNoAttribution++;
-					$info =  'Voiture non attribué le '.$date;
+					$msgInfo =  'Voiture non attribué le '.$date;
 				}
 				else {
-					$info = 'Ok';
+					$msgInfo = 'Ok';
 				}
 				
 				$id_ressource = $TRessource[$plaque];
@@ -145,11 +140,13 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 				$id_ressource = $idRessFactice;
 				
 				$idUser = $idSuperAdmin;
-				$info = 'Pas de voiture correspondante';
+				$msgInfo = 'Pas de voiture correspondante';
 				$cptNoVoiture ++;
-				
-				$typeVehicule = $info[9];	
+				$typeVehicule = $infos[9];	
 			}
+			
+			echo '<td>'.$typeVehicule.'</td>';
+			
 				//echo $idUser.'<br>';
 				
 			$ATMdb=new TPDOdb;
@@ -166,7 +163,7 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$taux = '20';
 			if($typeVehicule == "VU") { null; }
 			else {
-				$taux="0";
+				$taux='0';
 				$loyerHT = $loyerTTC;
 			} 
 			
@@ -230,15 +227,15 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			$cptFactureGestEntre++;
 				
 			
-			?><td><?=$fact->coutEntrepriseTTC ?></td><td><?=$factEnt->coutEntrepriseTTC ?></td><td><?=$info ?></td></tr><?
+			?><td><?php echo $fact->coutEntrepriseTTC ?></td><td><?php echo $factEnt->coutEntrepriseHT.'/'.$factEnt->coutEntrepriseTTC ?></td><td><?php echo $msgInfo ?></td></tr><?php
 						
 		}
 	$numLigne++;
 	
 	
-}
+	}//while
 	?></table>
-	<?
+	<?php
 	//Fin du code PHP : Afficher le temps d'éxecution et le bilan.
 	//$message .= $cptContrat.' contrats importés.<br>';
 	$message .= $cptNoVoiture.' plaques sans correspondance.<br>';
@@ -264,14 +261,6 @@ function chargeVoiture(&$ATMdb){
 		$TRessource[$ATMdb->Get_field('numId')] = $ATMdb->Get_field('ID');
 		}
 	return $TRessource;
-}
-
-
-/*
- * prend un format d/m/Y et renvoie un timestamp
- */
-function dateToInt($chaine){
-	return mktime(0,0,0,substr($chaine,3,2),substr($chaine,0,2),substr($chaine,6,4));
 }
 
 
