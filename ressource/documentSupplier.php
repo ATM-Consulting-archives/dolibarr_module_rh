@@ -30,7 +30,9 @@
 		llxHeader('','Fichiers joints');
 		$dir_base = DOL_DATA_ROOT.'/ressource/';
 		$upload_dir_base = $dir_base.'import_fournisseurs/';
-		
+
+		 $upload_dir= $upload_dir_base;
+
 		$confirm = $_REQUEST['confirm'];
 		$action = $_REQUEST['action'];
 		
@@ -48,7 +50,7 @@
 			
 				
 				$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1,0,$_FILES['userfile']['error']);
-				
+if($resupload<=0) var_dump( $resupload,  $upload_dir . "/" . $_FILES['userfile']['name']);				
 		        if (is_numeric($resupload) && $resupload > 0)
 				{
 					

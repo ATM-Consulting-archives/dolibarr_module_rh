@@ -62,7 +62,7 @@ while($ATMdb->Get_line()) {
 	}
 
 
-if (empty($nomFichier)){$nomFichier = "./fichierImports/CPRO - PRELVT DU 05 04 13.csv";}
+if (empty($nomFichier)){ exit("Aucun fichier fourni"  };
 $message = 'Traitement du fichier '.$nomFichier.' : <br><br>';
 
 $idImport = Tools::url_format(basename($nomFichier), false, true);
