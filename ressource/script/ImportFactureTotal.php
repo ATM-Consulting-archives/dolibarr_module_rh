@@ -63,7 +63,7 @@ while($row = $ATMdb->Get_line()) {
 
 //Tableau des TVAs
 $TTVA = array();
-$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0].' AND active=1';
+$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_COUNTRY[0].' AND active=1';
 $ATMdb->Execute($sqlReq);
 while($ATMdb->Get_line()) {
 	$TTVA[$ATMdb->Get_field('taux')] = $ATMdb->Get_field('rowid');

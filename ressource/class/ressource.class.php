@@ -176,7 +176,7 @@ class TRH_Ressource extends TObjetStd {
 		}
 		// AA c'est un contrat ça ? (outre le fait que je ne comprends pas toutes ces notions de contrats)
 		$this->TTVA = array();
-		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_PAYS[0];
+		$sqlReq="SELECT rowid, taux FROM ".MAIN_DB_PREFIX."c_tva WHERE fk_pays=".$conf->global->MAIN_INFO_SOCIETE_COUNTRY[0];
 		$ATMdb->Execute($sqlReq);
 		while($ATMdb->Get_line()) {
 			$this->TTVA[$ATMdb->Get_field('rowid')] = $ATMdb->Get_field('taux');
