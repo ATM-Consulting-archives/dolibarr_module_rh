@@ -677,6 +677,11 @@ class modRessource extends DolibarrModules
 		echo $url;
 		file_get_contents($url);
 		
+		
+       	$extrafields=new ExtraFields($this->db);
+		$res = $extrafields->addExtraField('COMPTE_TIERS', 'CompteTiers', 'varchar', 0, 255, 'user');
+		
+		
 		return $this->_init($sql, $options);
 	}
 

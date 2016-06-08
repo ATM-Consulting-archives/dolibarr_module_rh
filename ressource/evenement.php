@@ -61,9 +61,9 @@
 				$evenement->delete($ATMdb);
 				?>
 				<script language="javascript">
-					document.location.href="?id=<?echo $_REQUEST['id'];?>&delete_ok=1";					
+					document.location.href="?id=<?php echo $_REQUEST['id'];?>&delete_ok=1";					
 				</script>
-				<?
+				<?php
 				/*$ressource->load($ATMdb, $_REQUEST['id']);
 				$mesg = '<div class="ok">L\'attribution a bien été supprimée.</div>';
 				_liste($ATMdb, $evenement, $ressource, $_REQUEST['type']);*/
@@ -111,11 +111,11 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	<table>
 		<tr>
 			<td> Type d'évenement à afficher : </td>
-			<td> <? echo $form->combo('','type', $evenement->TType ,$type) ?> </td>
-			<td> <? echo $form->btsubmit('Valider','Valider'); ?>	</td>
+			<td> <?php echo $form->combo('','type', $evenement->TType ,$type) ?> </td>
+			<td> <?php echo $form->btsubmit('Valider','Valider'); ?>	</td>
 		</tr>
 	</table>
-	<?
+	<?php
 	//'onclick=\'document.location.href="?id='.$ressource->getId().'&action=afficherListe "\''
 	
 	$r = new TSSRenderControler($evenement);
@@ -197,9 +197,9 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 	));
 	
 	if($user->rights->ressource->ressource->manageEvents){
-	?></div><a class="butAction" href="?id=<?=$ressource->getId()?>&action=new">Nouveau</a><?
+	?></div><a class="butAction" href="?id=<?php echo $ressource->getId()?>&action=new">Nouveau</a><?php
 	}
-	?><div style="clear:both"></div></div><?
+	?><div style="clear:both"></div></div><?php
 	$form->end();
 	global $mesg, $error;
 	dol_htmloutput_mesg($mesg, '', ($error ? 'error' : 'ok'));
