@@ -82,12 +82,12 @@ function getTypeEvent($idTypeRessource = 0){
 	
 	$sql="SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."rh_type_evenement 
 	WHERE (fk_rh_ressource_type=".$idTypeRessource." OR fk_rh_ressource_type=0) ORDER BY fk_rh_ressource_type";
-	$ATMdb =new TPDOdb;
-	$ATMdb->Execute($sql);
-	while($row = $ATMdb->Get_line()) {
+	$PDOdb =new TPDOdb;
+	$PDOdb->Execute($sql);
+	while($row = $PDOdb->Get_line()) {
 		$TEvent[$row->code] = $row->libelle;	
 	}
-	$ATMdb->close();
+	$PDOdb->close();
 	return $TEvent;
 }
 
@@ -97,15 +97,15 @@ function getTypeEvent($idTypeRessource = 0){
 function getRessource($idTypeRessource = 0){
 	global $conf;
 	$TRessource = array(0=>'');
-	$ATMdb =new TPDOdb;
+	$PDOdb =new TPDOdb;
 	
 	$sqlReq="SELECT rowid,libelle, numId FROM ".MAIN_DB_PREFIX."rh_ressource WHERE 1 ";
 	if ($idTypeRessource>0){$sqlReq.= " AND fk_rh_ressource_type=".$idTypeRessource;}
-	$ATMdb->Execute($sqlReq);
-	while($ATMdb->Get_line()) {
-		$TRessource[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('libelle').' '.$ATMdb->Get_field('numId'), ENT_COMPAT , 'ISO8859-1');
+	$PDOdb->Execute($sqlReq);
+	while($PDOdb->Get_line()) {
+		$TRessource[$PDOdb->Get_field('rowid')] = htmlentities($PDOdb->Get_field('libelle').' '.$PDOdb->Get_field('numId'), ENT_COMPAT , 'ISO8859-1');
 		}
-	$ATMdb->close();
+	$PDOdb->close();
 	return $TRessource;
 }
 
@@ -114,29 +114,29 @@ function getRessource($idTypeRessource = 0){
  */
 function getIdType($code){
 	global $conf;
-	$ATMdb =new TPDOdb;
+	$PDOdb =new TPDOdb;
 	$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."rh_ressource_type 
 		WHERE code= '".$code."'";
-	$ATMdb->Execute($sql);
+	$PDOdb->Execute($sql);
 	$id = false;
-	if ($ATMdb->Get_line()) {$id = $ATMdb->Get_field('rowid');}
-	$ATMdb->close();
+	if ($PDOdb->Get_line()) {$id = $PDOdb->Get_field('rowid');}
+	$PDOdb->close();
 	return $id;
 }
 
 /**
  * Renvoie un tableau $numId=>$rowid des ressources du type spécifié.
  */
-function getIDRessource(&$ATMdb, $idType=0){
+function getIDRessource(&$PDOdb, $idType=0){
 	global $conf;
 	$TRessource = array();
 	
 	$sql="SELECT rowid, numId  FROM ".MAIN_DB_PREFIX."rh_ressource
 	 WHERE fk_rh_ressource_type=".$idType;
 	// echo $sql.'<br>';
-	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		$TRessource[$ATMdb->Get_field('numId')] = $ATMdb->Get_field('rowid');
+	$PDOdb->Execute($sql);
+	while($PDOdb->Get_line()) {
+		$TRessource[$PDOdb->Get_field('numId')] = $PDOdb->Get_field('rowid');
 	}
 	return $TRessource;
 }
@@ -149,22 +149,22 @@ function getIDRessource(&$ATMdb, $idType=0){
 function getUsers($avecAll = false, $inEntity = true){
 	global $conf;
 	$TUser = $avecAll ? array(0=>'Tous') : array() ;
-	$ATMdb =new TPDOdb;
+	$PDOdb =new TPDOdb;
 	
 	$sqlReq = "SELECT rowid,lastname, firstname FROM ".MAIN_DB_PREFIX."user";
 	if ($inEntity){$sqlReq .= " WHERE entity IN (0,".$conf->entity.") ";} 
 	$sqlReq.= " ORDER BY lastname, firstname ";
 	
-	$ATMdb->Execute($sqlReq);
-	while($ATMdb->Get_line()) {
-		$TUser[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('firstname').' '.$ATMdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1');
+	$PDOdb->Execute($sqlReq);
+	while($PDOdb->Get_line()) {
+		$TUser[$PDOdb->Get_field('rowid')] = htmlentities($PDOdb->Get_field('firstname').' '.$PDOdb->Get_field('lastname'), ENT_COMPAT , 'ISO8859-1');
 		}
-	$ATMdb->close();
+	$PDOdb->close();
 	return $TUser;
 	
 }
 
-function getFactures(&$ATMdb, $fk_fournisseur) {
+function getFactures(&$PDOdb, $fk_fournisseur) {
         //chargement des voitures
         $TFacture = array(0=>'Tous');
         $sql = "SELECT DISTINCT idImport
@@ -174,8 +174,8 @@ function getFactures(&$ATMdb, $fk_fournisseur) {
 	ORDER BY date_cre DESC";
         
         
-        $ATMdb->Execute($sql);
-        while($row = $ATMdb->Get_line()) {
+        $PDOdb->Execute($sql);
+        while($row = $PDOdb->Get_line()) {
             $TFacture[$row->idImport] = $row->idImport;
         }
         if(isset($_REQUEST['DEBUG'])) {
@@ -194,13 +194,13 @@ function getFactures(&$ATMdb, $fk_fournisseur) {
 function getGroups(){
 	global $conf;
 	$TGroups = array();
-	$ATMdb =new TPDOdb;
+	$PDOdb =new TPDOdb;
 	
 	$sqlReq="SELECT rowid,nom FROM ".MAIN_DB_PREFIX."usergroup WHERE entity IN (0,".$conf->entity.")";
 	
-	$ATMdb->Execute($sqlReq);
-	while($ATMdb->Get_line()) {
-		$TGroups[$ATMdb->Get_field('rowid')] = htmlentities($ATMdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
+	$PDOdb->Execute($sqlReq);
+	while($PDOdb->Get_line()) {
+		$TGroups[$PDOdb->Get_field('rowid')] = htmlentities($PDOdb->Get_field('nom'), ENT_COMPAT , 'ISO8859-1');
 		}
 	return $TGroups;
 	
@@ -267,7 +267,7 @@ function timeToInt($h, $m){
 /**
  * Charge les règles pour chacun des utilisateurs
  */
-function load_limites_telephone(&$ATMdb, $TGroups, $TRowidUser){
+function load_limites_telephone(&$PDOdb, $TGroups, $TRowidUser){
 	$default = 359940; //consideration conso infinie : 99H
 	$TLimites = array();
 	foreach ($TRowidUser as $id) {		
@@ -297,56 +297,56 @@ foreach ($TLimites as $key => $value) {
 		dataIllimite, dataIphone, smsIllimite, mailforfait, data15Mo, natureRefac, montantRefac 
 		FROM ".MAIN_DB_PREFIX."rh_ressource_regle
 		";
-	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		if ($ATMdb->Get_field('choixApplication')=='user'){
-			modifierLimites($TLimites, $ATMdb->Get_field('fk_user')
-				, $ATMdb->Get_field('duree')
-				, $ATMdb->Get_field('dureeInt')
-				, $ATMdb->Get_field('dureeExt')
-				, $ATMdb->Get_field('dataIllimite')
-				, $ATMdb->Get_field('dataIphone')
-				, $ATMdb->Get_field('mailforfait')
-				, $ATMdb->Get_field('smsIllimite')
-				, $ATMdb->Get_field('data15Mo')
-				, $ATMdb->Get_field('natureRefac')
-				, $ATMdb->Get_field('montantRefac')
+	$PDOdb->Execute($sql);
+	while($PDOdb->Get_line()) {
+		if ($PDOdb->Get_field('choixApplication')=='user'){
+			modifierLimites($TLimites, $PDOdb->Get_field('fk_user')
+				, $PDOdb->Get_field('duree')
+				, $PDOdb->Get_field('dureeInt')
+				, $PDOdb->Get_field('dureeExt')
+				, $PDOdb->Get_field('dataIllimite')
+				, $PDOdb->Get_field('dataIphone')
+				, $PDOdb->Get_field('mailforfait')
+				, $PDOdb->Get_field('smsIllimite')
+				, $PDOdb->Get_field('data15Mo')
+				, $PDOdb->Get_field('natureRefac')
+				, $PDOdb->Get_field('montantRefac')
 				);
 			}
-		else if ($ATMdb->Get_field('choixApplication')=='group'){
-			if (empty($TGroups[$ATMdb->Get_field('fk_usergroup')]))
-				{$message .= 'Groupe n°'.$ATMdb->Get_field('fk_usergroup').' inexistant.<br>';}
+		else if ($PDOdb->Get_field('choixApplication')=='group'){
+			if (empty($TGroups[$PDOdb->Get_field('fk_usergroup')]))
+				{$message .= 'Groupe n°'.$PDOdb->Get_field('fk_usergroup').' inexistant.<br>';}
 			else{
-				foreach ($TGroups[$ATMdb->Get_field('fk_usergroup')] as $members) {
+				foreach ($TGroups[$PDOdb->Get_field('fk_usergroup')] as $members) {
 					modifierLimites($TLimites, $members
-						, $ATMdb->Get_field('duree')
-						, $ATMdb->Get_field('dureeInt')
-						, $ATMdb->Get_field('dureeExt')
-						, $ATMdb->Get_field('dataIllimite')
-						, $ATMdb->Get_field('dataIphone')
-						, $ATMdb->Get_field('mailforfait')
-						, $ATMdb->Get_field('smsIllimite')
-						, $ATMdb->Get_field('data15Mo')
-						, $ATMdb->Get_field('natureRefac')
-						, $ATMdb->Get_field('montantRefac')
+						, $PDOdb->Get_field('duree')
+						, $PDOdb->Get_field('dureeInt')
+						, $PDOdb->Get_field('dureeExt')
+						, $PDOdb->Get_field('dataIllimite')
+						, $PDOdb->Get_field('dataIphone')
+						, $PDOdb->Get_field('mailforfait')
+						, $PDOdb->Get_field('smsIllimite')
+						, $PDOdb->Get_field('data15Mo')
+						, $PDOdb->Get_field('natureRefac')
+						, $PDOdb->Get_field('montantRefac')
 						
 						);
 					}
 				}
 			}
-		else if ($ATMdb->Get_field('choixApplication')=='all'){
+		else if ($PDOdb->Get_field('choixApplication')=='all'){
 			foreach ($TRowidUser as $idUser) {
 				modifierLimites($TLimites, $idUser
-					, $ATMdb->Get_field('duree')
-					, $ATMdb->Get_field('dureeInt')
-					, $ATMdb->Get_field('dureeExt')
-					, $ATMdb->Get_field('dataIllimite')
-					, $ATMdb->Get_field('dataIphone')
-					, $ATMdb->Get_field('mailforfait')
-					, $ATMdb->Get_field('smsIllimite')
-					, $ATMdb->Get_field('data15Mo')
-					, $ATMdb->Get_field('natureRefac')
-					, $ATMdb->Get_field('montantRefac')
+					, $PDOdb->Get_field('duree')
+					, $PDOdb->Get_field('dureeInt')
+					, $PDOdb->Get_field('dureeExt')
+					, $PDOdb->Get_field('dataIllimite')
+					, $PDOdb->Get_field('dataIphone')
+					, $PDOdb->Get_field('mailforfait')
+					, $PDOdb->Get_field('smsIllimite')
+					, $PDOdb->Get_field('data15Mo')
+					, $PDOdb->Get_field('natureRefac')
+					, $PDOdb->Get_field('montantRefac')
 					);
 				}
 			}
@@ -406,7 +406,7 @@ function send_mail_resources($subject, $message){
  * La fonction renvoie le rowid de l'user qui a la ressource $idRessource à la date $jour, 0 sinon.
  * $jour a la forme Y-m-d
  */
-function ressourceIsEmpruntee(&$ATMdb, $idRessource, $jour){
+function ressourceIsEmpruntee(&$PDOdb, $idRessource, $jour){
 		global $conf;
 		$sql = "SELECT e.fk_user, e.date_debut , e.date_fin
 				FROM ".MAIN_DB_PREFIX."rh_evenement as e
@@ -416,40 +416,40 @@ function ressourceIsEmpruntee(&$ATMdb, $idRessource, $jour){
 				AND e.date_debut<='".$jour."' AND e.date_fin >= '".$jour."' 
 				";
 				
-		$ATMdb->Execute($sql);
-		if ($ATMdb->Get_line()){
-			return $ATMdb->Get_field('fk_user');
+		$PDOdb->Execute($sql);
+		if ($PDOdb->Get_line()){
+			return $PDOdb->Get_field('fk_user');
 		}
 		return 0;
 }	
 
-function getIdSuperAdmin(&$ATMdb){
+function getIdSuperAdmin(&$PDOdb){
 	//trouve l'id du SuperAdmin
 	$idSuperAdmin = 0;
 	$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE name = 'SuperAdmin' ";
-		$ATMdb->Execute($sql);
-		if($row = $ATMdb->Get_line()) {
+		$PDOdb->Execute($sql);
+		if($row = $PDOdb->Get_line()) {
 		$idSuperAdmin = $row->rowid;}
 	return $idSuperAdmin;
 }
 
-function getIdSociete(&$ATMdb, $nomMinuscule){
+function getIdSociete(&$PDOdb, $nomMinuscule){
 	global $conf;
 	$idParcours = 0;
 	$sql="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe ";
-	$ATMdb->Execute($sql);
-	while($ATMdb->Get_line()) {
-		if (strtolower($ATMdb->Get_field('nom')) == $nomMinuscule){ 
-			return $ATMdb->Get_field('rowid');}}
+	$PDOdb->Execute($sql);
+	while($PDOdb->Get_line()) {
+		if (strtolower($PDOdb->Get_field('nom')) == $nomMinuscule){ 
+			return $PDOdb->Get_field('rowid');}}
 	
 	return false;
 }
 
 	
 
-function createRessourceFactice(&$ATMdb, $type, $idFacture, $entity, $fournisseur){
+function createRessourceFactice(&$PDOdb, $type, $idFacture, $entity, $fournisseur){
 	$ress = new TRH_Ressource;
-	if ($ress->loadBy($ATMdb, 'factice'.$idFacture, 'numId' )){
+	if ($ress->loadBy($PDOdb, 'factice'.$idFacture, 'numId' )){
 		return $ress->getId();}
 	
 	$ress->numId = 'factice'.$idFacture;
@@ -458,13 +458,13 @@ function createRessourceFactice(&$ATMdb, $type, $idFacture, $entity, $fournisseu
 	$ress->fk_entity_utilisatrice = $entity;
 	$ress->fk_proprietaire = $entity;
 	$ress->fk_loueur = $fournisseur;
-	$ress->save($ATMdb);
+	$ress->save($PDOdb);
 	return $ress->getId();
 }
 
 
 
-function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseur, $idTypeRessource, $idImport){
+function _exportVoiture(&$PDOdb, $date_debut, $date_fin, $entity, $fk_fournisseur, $idTypeRessource, $idImport){
     $TLignes = array();
     if(isset($_REQUEST['DEBUG'])) {echo $idImport.'<br>';}
                         
@@ -490,9 +490,9 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
         print $sql;
     }
     
-    $ATMdb->Execute($sql);
-    while($ATMdb->Get_line()) {
-        $TLignes[]=$ATMdb->Get_field('label');
+    $PDOdb->Execute($sql);
+    while($PDOdb->Get_line()) {
+        $TLignes[]=$PDOdb->Get_field('label');
     }
     
     /**----***********************----**/
@@ -522,11 +522,11 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
         print $sql;
     }
     
-    $ATMdb2=new TPDOdb;
-            
-    $ATMdb->Execute($sql);
-    while($row = $ATMdb->Get_line()) {
-        $montant = $row->coutEntrepriseHT;
+    $PDOdb2=new TPDOdb;
+    
+    $PDOdb->Execute($sql);
+    while($row = $PDOdb->Get_line()) {
+    	$montant = $row->coutEntrepriseHT;
         $sens = 'D';
         $code_compta = $row->codecomptable;
         $type_compte = 'G';
@@ -540,8 +540,8 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
             ,'typePiece'=> 'FF'
             ,'compteGeneral'=> $code_compta
             ,'typeCompte'=> $type_compte
-	    ,'immatriculation'=> ''
-	    ,'codeAnalytique'=> ''
+	    	,'immatriculation'=> ''
+	    	,'codeAnalytique'=> ''
             ,'nom'=>''
             ,'prenom'=>''
             ,'referenceEcriture' => ''
@@ -583,19 +583,19 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
         if(isset($_REQUEST['DEBUG'])) {
             print $sql_anal;
         }
-            $ATMdb2->Execute($sql_anal);
+            $PDOdb2->Execute($sql_anal);
         $TabAna=array();    $TUser=array(); 
-        while($ATMdb2->Get_line()) {
+        while($PDOdb2->Get_line()) {
 
-            $code_anal = $ATMdb2->Get_field('code_analytique');
-            $total_anal = $ATMdb2->Get_field('coutEntrepriseHT');
-            $fk_user =  $ATMdb2->Get_field('fk_user');
+            $code_anal = $PDOdb2->Get_field('code_analytique');
+            $total_anal = $PDOdb2->Get_field('coutEntrepriseHT');
+            $fk_user =  $PDOdb2->Get_field('fk_user');
 //print_r($code_anal);
-		$immat = $ATMdb2->Get_field('immat');
+			$immat = $PDOdb2->Get_field('immat');
 
             $TUser[$code_anal][$fk_user]=array(
-                    'nom' => ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$ATMdb2->Get_field('fk_user').'">'. $ATMdb2->Get_field('lastname') ."</a>"
-                    ,'prenom' => $ATMdb2->Get_field('firstname')
+                    'nom' => ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$PDOdb2->Get_field('fk_user').'">'. $PDOdb2->Get_field('lastname') ."</a>"
+                    ,'prenom' => $PDOdb2->Get_field('firstname')
 		   ,'immat' => $immat
             );
                         
@@ -606,7 +606,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
             $TabAna[$code_anal][$fk_user]+=$total_anal;
             /*$TabAna[] = array(
                 $code_anal
-                ,number_format($ATMdb2->Get_field('total_ht'),2,'.','' )
+                ,number_format($PDOdb2->Get_field('total_ht'),2,'.','' )
             );*/
         }
     
@@ -685,9 +685,9 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
             print $sql;
         }
         
-        $ATMdb->Execute($sql);
-        while($row = $ATMdb->Get_line()) {
-            $total_tva  = number_format(floatval($ATMdb->Get_field('coutEntrepriseTTC')) - floatval($ATMdb->Get_field('coutEntrepriseHT')),2,'.','');
+        $PDOdb->Execute($sql);
+        while($row = $PDOdb->Get_line()) {
+            $total_tva  = number_format(floatval($PDOdb->Get_field('coutEntrepriseTTC')) - floatval($PDOdb->Get_field('coutEntrepriseHT')),2,'.','');
             
             $TLignes[] =array(
                 'numFacture'=>$row->numFacture
@@ -724,19 +724,19 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
     
     $TLoueurs = array();
     $sql="SELECT rowid, code_fournisseur FROM ".MAIN_DB_PREFIX."societe";
-    $ATMdb->Execute($sql);
-    while($row = $ATMdb->Get_line()) {
+    $PDOdb->Execute($sql);
+    while($row = $PDOdb->Get_line()) {
         $TLoueurs[$row->rowid] = $row->code_fournisseur;
     }
     
     $TEntity = array();
     $sql="SELECT rowid, label FROM ".MAIN_DB_PREFIX."entity";
-    $ATMdb->Execute($sql);
-    while($row = $ATMdb->Get_line()) {
+    $PDOdb->Execute($sql);
+    while($row = $PDOdb->Get_line()) {
         $TEntity[$row->rowid] = substr($row->label,0,13);
     }
     
-    $idTotal = getIdSociete($ATMdb, 'total');
+    $idTotal = getIdSociete($PDOdb, 'total');
     
     $sql="SELECT SUM(e.coutEntrepriseTTC) as coutEntrepriseTTC, 
                 e.coutEntrepriseHT as coutEntrepriseHT, type, e.date_facture, 
@@ -761,10 +761,10 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
     
     
     
-    $ATMdb->Execute($sql);
+    $PDOdb->Execute($sql);
     $TCredits = array();
     
-    while($row = $ATMdb->Get_line()) {
+    while($row = $PDOdb->Get_line()) {
         $date = $row->date_debut;
         $date_mois = $row->mois_date_debut;
         $date_annee = $row->annee_date_debut;
@@ -779,11 +779,11 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
         $montant = $row->coutEntrepriseTTC;
         
         $sens = 'C';
-        $code_compta = '425902'; //TODO paramètre
+        $code_compta = !empty($conf->global->RH_RESSOURCE_CODE_COMPTABLE_COMPTE_X) ? $conf->global->RH_RESSOURCE_CODE_COMPTABLE_COMPTE_X : '425902'; 
         $type_compte = 'X';
         
         //if($row->fk_entity_utilisatrice==$entity || $row->$fk_fournisseur==$idTotal){
-            $compte_tiers=$TLoueurs[$fk_fournisseur];
+        $compte_tiers=$TLoueurs[$fk_fournisseur];
         /*}else{
             $compte_tiers=$TEntity[$entity];
         }*/
@@ -821,7 +821,7 @@ function _exportVoiture(&$ATMdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 }
 
 
-function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
+function _exportOrange2($PDOdb, $date_debut, $date_fin, $entity, $idImport){
     
     global $db;
     
@@ -872,17 +872,17 @@ function _exportOrange2($ATMdb, $date_debut, $date_fin, $entity, $idImport){
         if($non_facture || $res->montant_euros_ht == 0) continue; // On sort pas les lignes à 0 dans le CSV
                 
                     
-        if(!$r1->load_by_numId($ATMdb, $gsm)) continue; // pas de ressource associée        
+        if(!$r1->load_by_numId($PDOdb, $gsm)) continue; // pas de ressource associée        
     
-        $r2->load($ATMdb, $r1->fk_rh_ressource);        
+        $r2->load($PDOdb, $r1->fk_rh_ressource);        
     
-        $id_user = $r2->isEmpruntee($ATMdb, $res->date_appel);
+        $id_user = $r2->isEmpruntee($PDOdb, $res->date_appel);
         if($id_user>0) {
         
             if($user_ressource->id!=$id_user) {
                     $user_ressource->fetch($id_user);
                     $user_ressource->fetch_optionals($user_ressource->id, array('COMPTE_TIERS' => ""));
-                    $TAnal = TRH_analytique_user::getUserAnalytique($ATMdb, $id_user);  
+                    $TAnal = TRH_analytique_user::getUserAnalytique($PDOdb, $id_user);  
             } 
             
             foreach($TAnal as $anal) {
@@ -959,7 +959,7 @@ function _getFormattedArray(&$TabLine) {
     
 }
 
-function _emprunt(&$ATMdb, $userId, $date_debut, $date_fin){
+function _emprunt(&$PDOdb, $userId, $date_debut, $date_fin){
     global $user, $conf;
     
     $TabEmprunt=array();
@@ -977,16 +977,16 @@ function _emprunt(&$ATMdb, $userId, $date_debut, $date_fin){
     AND e.fk_user=".$userId."
     AND (date_debut<='".$date_fin."' AND date_fin>='".$date_debut."')";
     
-    $ATMdb->Execute($sql);
-    while($ATMdb->Get_line()) {
+    $PDOdb->Execute($sql);
+    while($PDOdb->Get_line()) {
         $TabEmprunt[]=array(
-            'nom'=>$ATMdb->Get_field('libelle').' - '.$ATMdb->Get_field('numId')
-            ,'date_debut'=>$ATMdb->Get_field('date_debut')
-            ,'date_fin'=>$ATMdb->Get_field('date_fin')
+            'nom'=>$PDOdb->Get_field('libelle').' - '.$PDOdb->Get_field('numId')
+            ,'date_debut'=>$PDOdb->Get_field('date_debut')
+            ,'date_fin'=>$PDOdb->Get_field('date_fin')
         );
     }
     
-    $ATMdb->close();
+    $PDOdb->close();
     return $TabEmprunt;
 }
 
@@ -1005,7 +1005,7 @@ function dateToInt($chaine){
 }
 
 
-function getContratLimit(&$ATMdb, $deb, $fin, $entity) {
+function getContratLimit(&$PDOdb, $deb, $fin, $entity) {
     
     
 $idVoiture = getIdType('voiture');
@@ -1023,8 +1023,8 @@ $sql = "SELECT r.rowid, fk_utilisatrice,  immatriculation , marquevoit, modlevoi
     AND fk_rh_ressource_type =".$idVoiture;
 
     //echo $sql;
-$ATMdb->Execute($sql);
-while($row = $ATMdb->Get_line()) {
+$PDOdb->Execute($sql);
+while($row = $PDOdb->Get_line()) {
     
     //echo $plagedeb.'   '.$row->date_debut.'<br>';
     $TVoitures[$row->rowid] = array(
@@ -1043,8 +1043,8 @@ $sql="SELECT rowid, loyer_TTC, assurance, entretien, date_debut, date_fin, fk_ti
     FROM ".MAIN_DB_PREFIX."rh_contrat` 
     WHERE entity=".$conf->entity."
     ";
-$ATMdb->Execute($sql);
-while($row = $ATMdb->Get_line()) {
+$PDOdb->Execute($sql);
+while($row = $PDOdb->Get_line()) {
     $date_debut = mktime(0,0,0,substr($row->date_debut,5,2),substr($row->date_debut,8,2),substr($row->date_debut,0,4));
     $date_fin = mktime(0,0,0,substr($row->date_fin,5,2),substr($row->date_fin,8,2),substr($row->date_fin,0,4));
     $TContrats[$row->rowid] = array(
@@ -1062,8 +1062,8 @@ $TAssociations = array();
 $sql="SELECT rowid, fk_rh_ressource, fk_rh_contrat 
     FROM ".MAIN_DB_PREFIX."rh_contrat_ressource` 
     WHERE entity=".$conf->entity;
-$ATMdb->Execute($sql);
-while($row = $ATMdb->Get_line()) {
+$PDOdb->Execute($sql);
+while($row = $PDOdb->Get_line()) {
     $TAssociations[$row->rowid] = array(
         'voiture'=>$row->fk_rh_ressource
         ,'contrat'=>$row->fk_rh_contrat
@@ -1076,8 +1076,8 @@ $TGroups = getGroups();
 //chargement des fournisseurs
 $TFournisseurs = array();
 $sqlReq="SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe";
-$ATMdb->Execute($sqlReq);
-while($row = $ATMdb->Get_line()) {
+$PDOdb->Execute($sqlReq);
+while($row = $PDOdb->Get_line()) {
     $TFournisseurs[$row->rowid] = htmlentities($row->nom, ENT_COMPAT , 'ISO8859-1'); 
     }
 
@@ -1124,7 +1124,7 @@ foreach ($TAssociations as $value) {
     
 }
 
-function getConsommation(&$ATMdb, $plagedeb, $plagefin, $fk_user,  $limite ) {
+function getConsommation(&$PDOdb, $plagedeb, $plagefin, $fk_user,  $limite ) {
     $idTotal = getIdType('cartetotal');
     $idVoiture = getIdType('voiture');
     $TCartes = getRessource($idTotal);
@@ -1143,8 +1143,8 @@ function getConsommation(&$ATMdb, $plagedeb, $plagefin, $fk_user,  $limite ) {
     
     $TUser = getUsers(false, false);
     
-    $ATMdb->Execute($sql);
-    while($row = $ATMdb->Get_line()) {  
+    $PDOdb->Execute($sql);
+    while($row = $PDOdb->Get_line()) {  
         $TPleins[$row->carte][$row->kilometrage] = array(
             //'idcarte'=>$row->fk_rh_ressource
             'km'=>$row->kilometrage

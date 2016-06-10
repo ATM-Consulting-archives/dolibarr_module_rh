@@ -232,12 +232,13 @@ if (($handle = fopen($nomFichier, "r")) !== FALSE) {
 			?><td><?php echo $fact->coutEntrepriseHT.'/'.$fact->coutEntrepriseTTC ?></td><td><?php echo $factEnt->coutEntrepriseHT.'/'.$factEnt->coutEntrepriseTTC ?></td><td><?php echo $msgInfo ?></td></tr><?php
 						
 		}
-	$numLigne++;
+		$numLigne++;
 	
 	
-	}//while
-	?></table>
-	<?php
+	} //while
+	
+	echo '</table>';
+	
 	//Fin du code PHP : Afficher le temps d'éxecution et le bilan.
 	$message .='Total HT = ' .$totalHT.' / Total TTC = '.$totalTTC.' <br>';
 	$message .= $cptNoVoiture.' plaques sans correspondance.<br>';

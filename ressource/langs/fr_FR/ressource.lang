@@ -27,3 +27,5 @@ NumerosSpeciauxSetup=Gestion des numéros spéciaux
 SaveNumeros=Enregistrer
 SpecialNumbersList=Liste des numéros
 specialNumbers=Gestion des numéros spéciaux
+
+RH_RESSOURCE_CODE_COMPTABLE_COMPTE_X=Code comptable du compte X pour les exports ressources
