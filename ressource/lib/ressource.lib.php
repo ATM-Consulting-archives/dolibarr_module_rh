@@ -170,7 +170,8 @@ function getFactures(&$ATMdb, $fk_fournisseur) {
         $sql = "SELECT DISTINCT idImport
             FROM ".MAIN_DB_PREFIX."rh_evenement
             WHERE fk_fournisseur =".$fk_fournisseur."
-            AND idImport IS NOT NULL";
+            AND idImport IS NOT NULL
+	ORDER BY date_cre DESC";
         
         
         $ATMdb->Execute($sql);
