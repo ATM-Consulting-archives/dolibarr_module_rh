@@ -590,7 +590,7 @@ function _exportVoiture(&$PDOdb, $date_debut, $date_fin, $entity, $fk_fournisseu
             $total_anal = $PDOdb2->Get_field('coutEntrepriseHT');
             $fk_user =  $PDOdb2->Get_field('fk_user');
 //print_r($code_anal);
-		$immat = $PDOdb2->Get_field('immat');
+			$immat = $PDOdb2->Get_field('immat');
 
             $TUser[$code_anal][$fk_user]=array(
                     'nom' => ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$PDOdb2->Get_field('fk_user').'">'. $PDOdb2->Get_field('lastname') ."</a>"
@@ -778,11 +778,11 @@ function _exportVoiture(&$PDOdb, $date_debut, $date_fin, $entity, $fk_fournisseu
         $montant = $row->coutEntrepriseTTC;
         
         $sens = 'C';
-        $code_compta = '425902'; //TODO paramètre
+        $code_compta = !empty($conf->global->RH_RESSOURCE_CODE_COMPTABLE_COMPTE_X) ? $conf->global->RH_RESSOURCE_CODE_COMPTABLE_COMPTE_X : '425902'; 
         $type_compte = 'X';
         
         //if($row->fk_entity_utilisatrice==$entity || $row->$fk_fournisseur==$idTotal){
-            $compte_tiers=$TLoueurs[$fk_fournisseur];
+        $compte_tiers=$TLoueurs[$fk_fournisseur];
         /*}else{
             $compte_tiers=$TEntity[$entity];
         }*/
