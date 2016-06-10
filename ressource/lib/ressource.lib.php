@@ -465,6 +465,8 @@ function createRessourceFactice(&$PDOdb, $type, $idFacture, $entity, $fournisseu
 
 
 function _exportVoiture(&$PDOdb, $date_debut, $date_fin, $entity, $fk_fournisseur, $idTypeRessource, $idImport){
+global $conf;
+
     $TLignes = array();
     if(isset($_REQUEST['DEBUG'])) {echo $idImport.'<br>';}
                         
@@ -589,16 +591,24 @@ function _exportVoiture(&$PDOdb, $date_debut, $date_fin, $entity, $fk_fournisseu
 
             $code_anal = $PDOdb2->Get_field('code_analytique');
             $total_anal = $PDOdb2->Get_field('coutEntrepriseHT');
-            $fk_user =  $PDOdb2->Get_field('fk_user');
+            $fk_user =  (int)$PDOdb2->Get_field('fk_user');
 //print_r($code_anal);
-			$immat = $PDOdb2->Get_field('immat');
+	    if(empty($code_anal)) $code_anal = 'JESUISPASBON';
 
+			$immat = $PDOdb2->Get_field('immat');
+	   if(empty($fk_user)) {
+@		 $TUser[$code_anal][0]['nom'] = 'Non attribué';
+@		 $TUser[$code_anal][0]['prenom'] = '';
+@		 $TUser[$code_anal][0]['immat'] .= ' '.$immat;
+	   }
+	  else {
             $TUser[$code_anal][$fk_user]=array(
                     'nom' => ' <a href="'.HTTP.'custom/valideur/analytique.php?fk_user='.$PDOdb2->Get_field('fk_user').'">'. $PDOdb2->Get_field('lastname') ."</a>"
                     ,'prenom' => $PDOdb2->Get_field('firstname')
 		   ,'immat' => $immat
             );
-                        
+                
+	}        
             if(isset($_REQUEST['DEBUG'])) {
                 print "$code_anal=$total_anal<br/>";
             }
