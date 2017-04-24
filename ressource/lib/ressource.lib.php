@@ -76,9 +76,12 @@ function getLibelle($ressource){
 /**
  * Retourne la liste des types d'événement associé à un type de ressource
  */
-function getTypeEvent($idTypeRessource = 0){
-	global $conf;
+function getTypeEvent($idTypeRessource = 0, $showEmpty = false){
+	global $conf, $langs;
 	$TEvent = array();
+
+	if($showEmpty) $TEvent['']=$langs->trans('All');
+
 	
 	$sql="SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."rh_type_evenement 
 	WHERE (fk_rh_ressource_type=".$idTypeRessource." OR fk_rh_ressource_type=0) ORDER BY fk_rh_ressource_type";
@@ -88,6 +91,8 @@ function getTypeEvent($idTypeRessource = 0){
 		$TEvent[$row->code] = $row->libelle;	
 	}
 	$PDOdb->close();
+
+
 	return $TEvent;
 }
 
