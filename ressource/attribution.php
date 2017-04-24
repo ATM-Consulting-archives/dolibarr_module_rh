@@ -19,7 +19,7 @@
 			case 'new':
 				/*$ATMdb->db->debug=true;*/
 				$ressource->load($ATMdb, $_REQUEST['id']);
-				
+				 $emprunt->date_fin = strtotime('+10year', $emprunt->date_fin);
 				_fiche($ATMdb, $emprunt,$ressource, 'new');
 				
 				break;	
@@ -42,6 +42,7 @@
 					$emprunt->load($ATMdb, $_REQUEST['idEven']);
 					$emprunt->set_values($_REQUEST);
 					$emprunt->save($ATMdb);
+//var_dump($_REQUEST);
 				}
 				$ressource->load($ATMdb, $_REQUEST['id']);
 				_liste($ATMdb, $emprunt,$ressource);
