@@ -243,7 +243,6 @@ class TRH_Ressource extends TObjetStd {
 		global $conf;
 		
 		// AA Par contre je la function peut se résumer en une seule requete
-		
 		$sql = "SELECT u.rowid, e.date_debut as 'debut', e.date_fin as 'fin'
 				FROM ".MAIN_DB_PREFIX."user as u
 				LEFT JOIN ".MAIN_DB_PREFIX."rh_evenement as e ON (e.fk_user = u.rowid)
@@ -252,9 +251,9 @@ class TRH_Ressource extends TObjetStd {
 				AND e.type='emprunt'";
 		$ATMdb->Execute($sql);
 		$Tab=array();
-		while($ATMdb->Get_line()){
-			if ( date("Y-m-d",strtotime($ATMdb->Get_field('debut'))) <= $jour  
-				&& date("Y-m-d",strtotime($ATMdb->Get_field('fin'))) >= $jour ){
+		while($obj = $ATMdb->Get_line()){
+			if ( date("Y-m-d",strtotime($obj->debut)) <= $jour  
+				&& (date("Y-m-d",strtotime($ATMdb->Get_field('fin'))) >= $jour ) ){
 				$Tab[]=$ATMdb->Get_field('rowid');	
 			}
 			

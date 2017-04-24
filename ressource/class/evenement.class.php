@@ -95,7 +95,8 @@ class TRH_Evenement  extends TObjetStd {
 		//si l'entité n'est pas encore renseigné, on met celle de l'entité courante.
 		$this->entity = (empty($this->entity)) ? $conf->entity : $this->entity ;
 		
-		if ($this->date_fin < $this->date_debut) {
+		if (($this->type!='emprunt' && $this->date_fin < $this->date_debut)
+			|| ( $this->type=='emprunt' && !empty($this->date_fin)) )  {
 			$this->date_fin = $this->date_debut;
 		}
 		
