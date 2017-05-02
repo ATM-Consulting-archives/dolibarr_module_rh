@@ -254,7 +254,7 @@ function _liste(&$ATMdb, &$ressource) {
 			,'messageNothing'=>"Il n'y a aucune ressource à afficher"
 			,'order_down'=>img_picto('','1downarrow.png', '', 0)
 			,'order_up'=>img_picto('','1uparrow.png', '', 0)
-			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+			,'picto_search'=>'<img src="../../theme/eldy/img/search.png">'
 		)
 		,'title'=>array_merge(array(
 			'libelle'=>'Libellé'
@@ -329,7 +329,7 @@ function _liste(&$ATMdb, &$ressource) {
 				,'messageNothing'=>"Il n'y a aucune règle à afficher"
 				,'order_down'=>img_picto('','1downarrow.png', '', 0)
 				,'order_up'=>img_picto('','1uparrow.png', '', 0)
-				,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
+				,'picto_search'=>'<img src="../../theme/eldy/img/search.png">'
 			)
 			,'orderBy'=>$TOrder
 		));

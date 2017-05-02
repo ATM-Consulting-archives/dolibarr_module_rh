@@ -1,10 +1,11 @@
 <?php
 
+
+//TODO bullshit code, need rewrite !
 require('config.php');
 require('./lib/ressource.lib.php');
 include_once("../rhlibrary/wdCalendar/php/functions.php");
-$ATMdb=new TPDOdb;
-
+$PDOdb=new TPDOdb;
 
 $method = $_GET["method"];
 switch ($method) {
@@ -14,8 +15,8 @@ switch ($method) {
 			$sql = "SELECT fk_rh_ressource FROM ".MAIN_DB_PREFIX."rh_ressource 
 			WHERE rowid=".$_REQUEST['id']."
 			AND entity IN (0, ".$conf->entity.")";
-			$ATMdb->Execute($sql);
-			if ($row=$ATMdb->Get_line()) {
+			$PDOdb->Execute($sql);
+			if ($row=$PDOdb->Get_line()) {
 				$idRessourceSup = $row->fk_rh_ressource ;
 			}
 		}
@@ -24,16 +25,16 @@ switch ($method) {
 		if ($idRessourceSup!= 0){$type = 0;}
 		else {$type = $_REQUEST['type'];}
 		//echo $sql.' '.$id;
-		$ret = listCalendar($ATMdb, $_POST["showdate"], $_POST["viewtype"], 
+		$ret = listCalendar($PDOdb, $_POST["showdate"], $_POST["viewtype"], 
 					$type, $_REQUEST['id'], $_REQUEST['fk_user'], $_REQUEST['typeEven'],$idRessourceSup);
         
         break;   
 
 }
-$ATMdb->close();
+$PDOdb->close();
 echo json_encode($ret); 
 
-function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = 'all', $idRessourceSup = 0){
+function listCalendarByRange(&$PDOdb, $sd, $ed, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = 'all', $idRessourceSup = 0){
   global $user;
   $ret = array();
   $ret['events'] = array();
@@ -47,7 +48,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
   $TUser = getUsers();
  
   try{
-	$sql = "SELECT e.rowid,  date_debut, date_fin, isAllDayEvent, fk_user, color, type, e.fk_rh_ressource 
+	$sql = "SELECT e.rowid,  e.date_debut, e.date_fin, e.isAllDayEvent, e.fk_user, e.color, e.type, e.fk_rh_ressource 
 	FROM ".MAIN_DB_PREFIX."rh_evenement as e 
 	LEFT JOIN ".MAIN_DB_PREFIX."rh_ressource as r ON (e.fk_rh_ressource = r.rowid)
 	WHERE ";
@@ -74,14 +75,11 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
 	if (!$user->rights->ressource->agenda->viewAgenda){
     	$sql.=" AND e.fk_user=".$user->id;
 	}
-	//echo '     '.$sql.'      ';
-   $ATMdb->Execute($sql);
-    while ($row=$ATMdb->Get_line()) {
-      //$ret['events'][] = $row;
-      //$attends = $row->AttendeeNames;
-      //if($row->OtherAttendee){
-      //  $attends .= $row->OtherAttendee;
-      //}
+//	echo '     '.$sql.'      ';exit;
+   $PDOdb->Execute($sql);
+//	var_dump($PDOdb);exit;
+    while ($row=$PDOdb->Get_line()) {
+
       if ($row->type == 'emprunt'){
       	$lien = 'attribution.php?id='.$row->fk_rh_ressource.'&idEven='.$row->rowid.'&action=view';
       }
@@ -97,8 +95,9 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
 	  $sujet .= (empty($idRessource) || ($idRessource==0)) ? html_entity_decode($TRessource[$row->fk_rh_ressource], ENT_COMPAT , "ISO8859-1").', ' : '';
 	  $sujet .=  ($typeEven=='all') ? $TEvent[$row->type] : '' ;
 	  $sujet .= ($fk_user==0) ? ', '.$TUser[$row->fk_user] : ''; 
-	  if (empty($sujet)){$sujet=' Emprunt ';}
-	  
+	 
+//var_dump($row);exit;
+	 if (empty($sujet)){$sujet=' Emprunt ';}
       $ret['events'][] = array(
        $row->rowid,
         $sujet,
@@ -113,6 +112,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
         $lien,//$row->location,
         '',//$attends
         $row->fk_user
+		
       );
     }
 	}catch(Exception $e){
@@ -121,7 +121,7 @@ function listCalendarByRange(&$ATMdb, $sd, $ed, $idTypeRessource=0, $idRessource
   return $ret;
 }
 
-function listCalendar(&$ATMdb, $day, $type, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = 'all', $idRessourceSup = 0){
+function listCalendar(&$PDOdb, $day, $type, $idTypeRessource=0, $idRessource = 0,$fk_user = 0, $typeEven = 'all', $idRessourceSup = 0){
   $phpTime = js2PhpTime($day);
   //echo $phpTime . "+" . $type;
   switch($type){
@@ -142,7 +142,7 @@ function listCalendar(&$ATMdb, $day, $type, $idTypeRessource=0, $idRessource = 0
       break;
   }
  
-	return listCalendarByRange($ATMdb, $st, $et, $idTypeRessource, $idRessource ,$fk_user , $typeEven, $idRessourceSup );
+	return listCalendarByRange($PDOdb, $st, $et, $idTypeRessource, $idRessource ,$fk_user , $typeEven, $idRessourceSup );
   
 
 }

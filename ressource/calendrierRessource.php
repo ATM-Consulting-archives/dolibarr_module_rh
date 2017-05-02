@@ -1,4 +1,6 @@
 <?php
+//TODO fullcalendar instead of wdcalendar
+
 	require('config.php');
 	require('./class/ressource.class.php');
 	require('./lib/ressource.lib.php');
@@ -58,8 +60,12 @@
 
 	$ressource->load_liste_type_ressource($ATMdb);
 	$TType = array_merge($ressource->TType);
-	$TTypeEvent = getTypeEvent($type);
-	if ($fiche) {$TTypeEvent = getTypeEvent($ressource->fk_rh_ressource_type);}
+	if ($fiche) {
+		$TTypeEvent = getTypeEvent($ressource->fk_rh_ressource_type,true);
+	}
+	else {
+		$TTypeEvent = getTypeEvent($type, true);
+	}
 
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/calendrier.tpl.php'

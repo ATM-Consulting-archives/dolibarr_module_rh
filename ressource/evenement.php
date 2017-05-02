@@ -207,7 +207,7 @@ function _liste(&$ATMdb, &$evenement, &$ressource, $type = "all") {
 }	
 
 function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
-	global $db,$user,$conf;
+	global $db,$user,$conf,$langs;
 	llxHeader('', 'Evénement');
 
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
@@ -219,8 +219,9 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 	$evenement->load_liste($ATMdb);
 	$evenement->load_liste_type($ressource->fk_rh_ressource_type);
 	$idUserCourant =  $ressource->isEmpruntee($ATMdb, date("Y-m-d", time()));
-	$tab = array_splice ( $evenement->TType , 1); //on enlève le champs 'all'
-	
+
+	$tab = $evenement->TType;
+
 	$TBS=new TTemplateTBS();
 	print $TBS->render('./tpl/evenement.tpl.php'
 		,array()
@@ -242,7 +243,7 @@ function _fiche(&$ATMdb, &$evenement,&$ressource,  $mode) {
 				,'commentaire'=>$form->zonetexte('','commentaire',$evenement->commentaire,100,10,'','','')
 				,'numFacture'=>$form->texte('', 'numFacture', $evenement->numFacture, 10,10)
 				,'refexterne'=>$form->texte('', 'refexterne', $evenement->refexterne, 30,60)
-				,'confidentiel'=>$form->combo('', 'confidentiel', array("oui"=>"Oui", "non"=>"Non") ,$evenement->confidentiel)
+				,'confidentiel'=>$form->combo('', 'confidentiel', array("oui"=>$langs->trans('Yes'), "non"=>$langs->trans('No')) ,$evenement->confidentiel)
 				,'idContrat'=>$evenement->fk_contrat
 				,'motif'=>$form->texte('','motif',$evenement->motif, 30,100,'','','-')
 				,'date_debut'=> $form->calendrier('', 'date_debut', $evenement->date_debut,12, 12)
