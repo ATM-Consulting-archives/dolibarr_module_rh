@@ -10,3 +10,6 @@
 [submodule "absence"]
 	path = absence
 	url = git@github.com:ATM-Consulting/dolibarr_module_absence.git
+[submodule "ressource"]
+	path = ressource
+	url = git@github.com:ATM-Consulting/dolibarr_module_ressource.git
