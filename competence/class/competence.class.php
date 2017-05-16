@@ -35,7 +35,7 @@ class TRH_formation_cv extends TObjetStd {
 	function __construct() { 
 		
 		parent::set_table(MAIN_DB_PREFIX.'rh_formation_cv');
-		parent::add_champs('date_debut,date_fin','type=date;');		//dates de début et de fin de la formation suivie
+		parent::add_champs('date_debut,date_fin,date_formationEcheance','type=date;');		//dates de début et de fin de la formation suivie
 		parent::add_champs('libelleFormation','type=chaine;');		
 		parent::add_champs('competenceFormation','type=chaine;');	
 		parent::add_champs('commentaireFormation','type=chaine;');		//commentaire associé	

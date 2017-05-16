@@ -19,7 +19,6 @@
 	$dif=new TRH_dif;
 
 	if(isset($_REQUEST['action'])) {
-
 		switch($_REQUEST['action']) {
 			case 'add':
 			case 'newlignecv':
@@ -259,11 +258,11 @@ function _liste(&$ATMdb, $lignecv, $formation, $dif) {
 	dol_fiche_head($head, 'competence', $langs->trans('Utilisateur'),0, 'user');
 	
 	?><table width="100%" class="border"><tbody>
-		<tr><td width="25%" valign="top">Réf.</td><td><?=$fuser->id ?></td></tr>
-		<tr><td width="25%" valign="top">Nom</td><td><?=$fuser->lastname ?></td></tr>
-		<tr><td width="25%" valign="top">Prénom</td><td><?=$fuser->firstname ?></td></tr>
+		<tr><td width="25%" valign="top">Réf.</td><td><?php echo $fuser->id ?></td></tr>
+		<tr><td width="25%" valign="top">Nom</td><td><?php echo $fuser->lastname ?></td></tr>
+		<tr><td width="25%" valign="top">Prénom</td><td><?php echo $fuser->firstname ?></td></tr>
 	</tbody></table>
-	<br/><?
+	<br/><?php
 	
 	////////////AFFICHAGE DES LIGNES DE CV 
 	$r = new TSSRenderControler($lignecv);
@@ -297,13 +296,8 @@ function _liste(&$ATMdb, $lignecv, $formation, $dif) {
 		,'liste'=>array(
 			'titre'=>'Visualisation de votre CV'
 			,'image'=>img_picto('','title.png', '', 0)
-			,'picto_precedent'=>img_picto('','back.png', '', 0)
-			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Aucune expérience professionnelle"
-			,'order_down'=>img_picto('','1downarrow.png', '', 0)
-			,'order_up'=>img_picto('','1uparrow.png', '', 0)
-			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 			
 		)
 		,'title'=>array(
@@ -322,9 +316,9 @@ function _liste(&$ATMdb, $lignecv, $formation, $dif) {
 	));
 
 		?>
-		<a class="butAction" href="?id=0&action=newlignecv&fk_user=<?=$fuser->id?>">Ajouter une expérience</a><div style="clear:both"></div>
+		<a class="butAction" href="?id=0&action=newlignecv&fk_user=<?php echo $fuser->id?>">Ajouter une expérience</a><div style="clear:both"></div>
 		<br/>
-		<?
+		<?php
 	$form->end();
 	
 	
@@ -368,9 +362,6 @@ function _liste(&$ATMdb, $lignecv, $formation, $dif) {
 			,'picto_suivant'=>img_picto('','next.png', '', 0)
 			,'noheader'=> (int)isset($_REQUEST['socid'])
 			,'messageNothing'=>"Aucune formation suivie"
-			,'order_down'=>img_picto('','1downarrow.png', '', 0)
-			,'order_up'=>img_picto('','1uparrow.png', '', 0)
-			,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
 			
 		)
 		,'title'=>array(
@@ -390,78 +381,10 @@ function _liste(&$ATMdb, $lignecv, $formation, $dif) {
 		
 	));
 	?>
-		<a class="butAction" href="?id=0&action=newformationcv&fk_user=<?=$fuser->id?>">Ajouter une formation</a><div style="clear:both"></div>
+		<a class="butAction" href="?id=0&action=newformationcv&fk_user=<?php echo $fuser->id?>">Ajouter une formation</a><div style="clear:both"></div>
 		<br/>
-	<?
+	<?php
 	
-	////////////AFFICHAGE DES DIF
-	/*if((($user->rights->curriculumvitae->myactions->consulterOwnDif=="1")&&($user->id==$fuser->id))||($user->rights->curriculumvitae->myactions->consulterAllDif=="1")){
-		$r = new TSSRenderControler($dif);
-		$sql="SELECT rowid as 'ID'
-				,annee
-				,nb_heures_acquises
-				,nb_heures_prises
-				,nb_heures_restantes
-				,fk_user";
-		if($user->rights->curriculumvitae->myactions->gererDif=="1"){
-			$sql.=",'' as 'Supprimer'";
-		}
-		$sql.=" FROM ".MAIN_DB_PREFIX."rh_dif
-				WHERE fk_user=".$_REQUEST['fk_user']." AND entity=".$conf->entity;
-	
-		$TOrder = array('ID'=>'DESC');
-		if(isset($_REQUEST['orderDown']))$TOrder = array($_REQUEST['orderDown']=>'DESC');
-		if(isset($_REQUEST['orderUp']))$TOrder = array($_REQUEST['orderUp']=>'ASC');
-					
-		$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : 1;
-		$form=new TFormCore($_SERVER['PHP_SELF'],'formtranslateList','GET');
-		
-		$r->liste($ATMdb, $sql, array(
-			'limit'=>array(
-				'page'=>$page
-				,'nbLine'=>'30'
-			)
-			,'link'=>array(
-				'annee'=>'<a href="?id=@ID@&action=viewDIF&fk_user='.$fuser->id.'">@val@</a>'
-				,'nb_heures_acquises'=>'@val@h'
-				,'nb_heures_prises'=>'@val@h'
-				,'nb_heures_restantes'=>'@val@h'
-				,'ID'=>'<a href="?id=@ID@&action=viewDIF&fk_user='.$fuser->id.'">@val@</a>'
-				,'Supprimer'=>'<a href="?id=@ID@&action=deleteDIF&fk_user='.$fuser->id.'"><img src="./img/delete.png"></a>'
-			)
-			,'translate'=>array(
-			)
-			,'hide'=>array('fk_user', 'ID')
-			,'type'=>array()
-			,'liste'=>array(
-				'titre'=>'Liste de vos fiches de DIF'
-				,'image'=>img_picto('','title.png', '', 0)
-				,'picto_precedent'=>img_picto('','back.png', '', 0)
-				,'picto_suivant'=>img_picto('','next.png', '', 0)
-				,'noheader'=> (int)isset($_REQUEST['socid'])
-				,'messageNothing'=>"Aucune fiche de DIF disponible"
-				,'order_down'=>img_picto('','1downarrow.png', '', 0)
-				,'order_up'=>img_picto('','1uparrow.png', '', 0)
-				,'picto_search'=>'<img src="../../theme/rh/img/search.png">'
-				
-			)
-			,'title'=>array(
-				'annee'=>'Année'
-				,'nb_heures_acquises'=>'Nombre d\'heures acquises'
-				,'nb_heures_prises'=>'Nombre d\'heures prises'
-				,'nb_heures_restantes'=>'Nombre d\'heures restantes'
-			)
-			,'search'=>array()
-			,'orderBy'=>$TOrder
-			
-		));
-		
-		if($user->rights->curriculumvitae->myactions->gererDif=="1"){
-			?><a class="butAction" href="?id=0&action=newDIF&fk_user=<?=$fuser->id?>">Ajouter une fiche de DIF</a><div style="clear:both"></div><?
-		}else{
-			?><br><br><?
-		}
-	}*/
 		
 	llxFooter();
 }	
@@ -480,11 +403,11 @@ function _ficheCV(&$ATMdb, $lignecv, $tagCompetence, $mode) {
 	dol_fiche_head($head, $current_head, $langs->trans('Utilisateur'),0, 'user');
 	
 	?><table width="100%" class="border"><tbody>
-		<tr><td width="25%" valign="top">Réf.</td><td><?=$fuser->id ?></td></tr>
-		<tr><td width="25%" valign="top">Nom</td><td><?=$fuser->lastname ?></td></tr>
-		<tr><td width="25%" valign="top">Prénom</td><td><?=$fuser->firstname ?></td></tr>
+		<tr><td width="25%" valign="top">Réf.</td><td><?php echo $fuser->id ?></td></tr>
+		<tr><td width="25%" valign="top">Nom</td><td><?php echo $fuser->lastname ?></td></tr>
+		<tr><td width="25%" valign="top">Prénom</td><td><?php echo $fuser->firstname ?></td></tr>
 	</tbody></table>
-	<br/><?
+	<br/><?php
 	
 	$form=new TFormCore($_SERVER['PHP_SELF'],'form1','POST');
 	$form->Set_typeaff($mode);
