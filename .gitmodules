@@ -13,3 +13,6 @@
 [submodule "ressource"]
 	path = ressource
 	url = git@github.com:ATM-Consulting/dolibarr_module_ressource.git
+[submodule "competence"]
+	path = competence
+	url = git@github.com:ATM-Consulting/dolibarr_module_competence.git
