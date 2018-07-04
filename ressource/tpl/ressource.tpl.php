@@ -215,7 +215,7 @@
 	 			{actuKm();});
 	 		
 	 		function actuKm(){
-	 			if ($('#fk_tier_fournisseur option:selected').html()=='Parcours'){
+	 			if ($('#fk_tier_fournisseur option:selected').html()=='Parcours' || $('#fk_tier_fournisseur option:selected').html()=='LEASEPLAN'){
 	 				$('#km').show();
 	 				$('#dureeeenmois').show();}
 	 			else{
